@@ -764,6 +764,333 @@ body{font-family:'DM Sans',sans-serif;background:#f0f1f8;color:#0c0e1a;line-heig
 
 <div class="toast" id="toast">Скопировано!</div>
 
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ANIMATIONS SECTION -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-head"><h2>Анимации</h2></div>
+
+  <div class="card" style="background:#0c0e1a;color:white;border:none;">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px;">Как вставлять в Webflow</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:0;">
+      <div style="background:rgba(105,81,244,0.15);border:1px solid rgba(105,81,244,0.3);border-radius:12px;padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">①</div>
+        <div style="font-size:13px;font-weight:600;color:#9b8fff;margin-bottom:6px;">Петлевые анимации</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">Orbit, Float, Blink, Breathe — <strong style="color:white;">вставляй CSS в Project Settings → Custom Code → &lt;head&gt;</strong></div>
+      </div>
+      <div style="background:rgba(77,212,255,0.1);border:1px solid rgba(77,212,255,0.25);border-radius:12px;padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">②</div>
+        <div style="font-size:13px;font-weight:600;color:#4DD4FF;margin-bottom:6px;">Появление при загрузке</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">FadeUp (герой), BarGrow (шкалы) — <strong style="color:white;">Webflow Interactions → Page Load trigger</strong></div>
+      </div>
+      <div style="background:rgba(195,93,253,0.1);border:1px solid rgba(195,93,253,0.25);border-radius:12px;padding:16px;">
+        <div style="font-size:24px;margin-bottom:8px;">③</div>
+        <div style="font-size:13px;font-weight:600;color:#C35DFD;margin-bottom:6px;">Hover эффекты</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">Кнопки, карточки — <strong style="color:white;">Webflow Interactions → Hover trigger</strong> или Transitions в настройках элемента</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANIM 1: fadeUp -->
+  <div class="card">
+    <div class="card-title">① Герой — появление текста (fadeUp)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+      <div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Каждый элемент героя появляется снизу вверх с задержкой. Eyebrow → H1 → Subtitle → Кнопки → Trust bar</div>
+        </div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">В Webflow:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Interactions → <strong>Page Load</strong> → Move (Y: +24px → 0) + Opacity (0 → 1) → каждому элементу задержка +0.1s</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#8888a0;margin-bottom:6px;font-family:'DM Mono',monospace;">ЗАДЕРЖКИ (Animation Delay):</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;border-radius:6px 0 0 6px;">Элемент</th><th style="padding:6px 10px;text-align:left;">Задержка</th><th style="padding:6px 10px;text-align:left;border-radius:0 6px 6px 0;">Duration</th></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Eyebrow badge</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.1s</td><td style="padding:6px 10px;">0.7s</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Заголовок H1</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.2s</td><td style="padding:6px 10px;">0.7s</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Подзаголовок</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.3s</td><td style="padding:6px 10px;">0.7s</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Кнопки</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.4s</td><td style="padding:6px 10px;">0.7s</td></tr>
+          <tr><td style="padding:6px 10px;">Trust bar</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.5s</td><td style="padding:6px 10px;">0.7s</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">Easing: ease (cubic-bezier)</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <div style="font-size:11px;color:#8888a0;margin-bottom:6px;font-family:'DM Mono',monospace;">CSS (для Custom Code если нужно):</div>
+      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-eyebrow  { animation: fadeUp 0.7s ease 0.1s both; }
+.hero-headline { animation: fadeUp 0.7s ease 0.2s both; }
+.hero-sub      { animation: fadeUp 0.7s ease 0.3s both; }
+.hero-actions  { animation: fadeUp 0.7s ease 0.4s both; }
+.hero-trust    { animation: fadeUp 0.7s ease 0.5s both; }</pre>
+    </div>
+  </div>
+
+  <!-- ANIM 2: tagFloat -->
+  <div class="card">
+    <div class="card-title">② Плавающие теги (tagFloat)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+      <div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">5 тегов (Brand Safe, Verified, LIVE, AI Compliant, Trend) плавно поднимаются на 8px и опускаются обратно. Каждый с разной скоростью и задержкой — создаёт органичное движение.</div>
+        </div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">В Webflow:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Вставить CSS в Custom Code. В Webflow Interactions нельзя сделать такой loop с разными скоростями.</div>
+        </div>
+      </div>
+      <div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;">Тег</th><th style="padding:6px 10px;text-align:left;">Duration</th><th style="padding:6px 10px;text-align:left;">Delay</th></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Brand Safe ✓</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">6s</td><td style="padding:6px 10px;">0s</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Verified</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">7s</td><td style="padding:6px 10px;">1s</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">LIVE</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">8s</td><td style="padding:6px 10px;">0.5s</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">AI Compliant</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">6.5s</td><td style="padding:6px 10px;">1.5s</td></tr>
+          <tr><td style="padding:6px 10px;">Trend ↑</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">9s</td><td style="padding:6px 10px;">0.8s</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">Move Y: 0 → -8px → 0 | ease-in-out | infinite</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes tagFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-8px); }
+}
+.viz-tag { animation: tagFloat ease-in-out infinite; }
+/* Каждому тегу свой class: viz-tag-1 ... viz-tag-5 */
+.viz-tag-1 { animation-duration: 6s;   animation-delay: 0s; }
+.viz-tag-2 { animation-duration: 7s;   animation-delay: 1s; }
+.viz-tag-3 { animation-duration: 8s;   animation-delay: 0.5s; }
+.viz-tag-4 { animation-duration: 6.5s; animation-delay: 1.5s; }
+.viz-tag-5 { animation-duration: 9s;   animation-delay: 0.8s; }</pre>
+    </div>
+  </div>
+
+  <!-- ANIM 3: Orbit -->
+  <div class="card">
+    <div class="card-title">③ Орбитальные кольца (spin)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+      <div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">3 кольца вокруг центрального графика медленно вращаются. Второе кольцо крутится в обратную сторону.</div>
+        </div>
+        <div style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:#e65100;margin-bottom:6px;font-weight:600;">⚠ Важно в Webflow:</div>
+          <div style="font-size:13px;color:#bf360c;line-height:1.6;">Это SVG анимация. В Webflow нужно вставить SVG через HTML Embed и добавить CSS в Custom Code. Webflow Interactions здесь не подойдут.</div>
+        </div>
+      </div>
+      <div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;">
+          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;">Кольцо</th><th style="padding:6px 10px;text-align:left;">Duration</th><th style="padding:6px 10px;text-align:left;">Direction</th></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Orbit 1 (внутр.)</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">22s</td><td style="padding:6px 10px;">normal</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Orbit 2 (средн.)</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">34s</td><td style="padding:6px 10px;color:#ef4444;font-weight:600;">reverse</td></tr>
+          <tr><td style="padding:6px 10px;">Orbit 3 (внешн.)</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">50s</td><td style="padding:6px 10px;">normal</td></tr>
+        </table>
+        <div style="font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">Easing: linear | Loop: infinite<br>transform-origin: center of SVG</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.orbit-ring-1 { animation: spin 22s linear infinite; transform-origin: 240px 240px; }
+.orbit-ring-2 { animation: spin 34s linear infinite reverse; transform-origin: 240px 240px; }
+.orbit-ring-3 { animation: spin 50s linear infinite; transform-origin: 240px 240px; }</pre>
+    </div>
+  </div>
+
+  <!-- ANIM 4: Breathe + Pulse -->
+  <div class="card">
+    <div class="card-title">④ Пульсация (breathe / centerPulse / dotPulse)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="background:#f7f7fb;border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:600;color:#6951F4;margin-bottom:6px;">breathe</div>
+        <div style="font-size:12px;color:#52526a;line-height:1.5;">Glow в герое пульсирует: scale 1 → 1.08 → 1, opacity 0.7 → 1 → 0.7</div>
+        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">5s ease-in-out infinite</div>
+      </div>
+      <div style="background:#f7f7fb;border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:600;color:#6951F4;margin-bottom:6px;">centerPulse</div>
+        <div style="font-size:12px;color:#52526a;line-height:1.5;">Центр графика мерцает: opacity 0.15 → 0.3 → 0.15, scale 1 → 1.05 → 1</div>
+        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">4s ease-in-out infinite</div>
+      </div>
+      <div style="background:#f7f7fb;border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:600;color:#6951F4;margin-bottom:6px;">dotPulse</div>
+        <div style="font-size:12px;color:#52526a;line-height:1.5;">Точки на орбитах: opacity 0.4 → 1 → 0.4, scale 0.8 → 1 → 0.8</div>
+        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">3s ease-in-out infinite</div>
+      </div>
+    </div>
+    <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.08); opacity: 1; }
+}
+@keyframes centerPulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%       { opacity: 0.3;  transform: scale(1.05); }
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1); }
+}</pre>
+  </div>
+
+  <!-- ANIM 5: barGrow -->
+  <div class="card">
+    <div class="card-title">⑤ Рост шкал при загрузке (barGrow)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+      <div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Полоски прогресса и score шкалы вырастают от 0 до нужной ширины при загрузке страницы. Ширина у каждой своя (через CSS-переменную <code style="background:#f0f1f8;padding:1px 4px;border-radius:3px;">--w</code>).</div>
+        </div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">В Webflow:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Interactions → Page Load → для каждой полоски: Width от 0% до нужного % (1.8-2s, ease). Или Custom Code.</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-family:'DM Mono',monospace;">ШИРИНЫ ШКАЛ (% от контейнера):</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;">Шкала</th><th style="padding:6px 10px;text-align:left;">Ширина</th></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Brand Safe Score</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">92%</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Pharma Risk</td><td style="padding:6px 10px;font-weight:700;color:#ef4444;">23%</td></tr>
+          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Audience Trust</td><td style="padding:6px 10px;font-weight:700;color:#4ade80;">87%</td></tr>
+          <tr><td style="padding:6px 10px;">Content Risk</td><td style="padding:6px 10px;font-weight:700;color:#f59e0b;">41%</td></tr>
+        </table>
+        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">Duration: 1.8–2s | Easing: ease | Trigger: Page Load</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes barGrow { from { width: 0; } to { width: var(--w); } }
+/* Пример применения: */
+.bar-brand-safe { --w: 92%; animation: barGrow 2s ease forwards; }
+.bar-pharma     { --w: 23%; animation: barGrow 2s ease forwards; }
+.bar-trust      { --w: 87%; animation: barGrow 1.8s ease forwards; }
+.bar-risk       { --w: 41%; animation: barGrow 1.8s ease forwards; }</pre>
+    </div>
+  </div>
+
+  <!-- ANIM 6: liveBlink -->
+  <div class="card">
+    <div class="card-title">⑥ Мигающий индикатор LIVE (liveBlink)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;">
+      <div>
+        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
+          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Красная точка рядом с надписью "LIVE" мигает: плавно исчезает до opacity 0.35 и появляется обратно.</div>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#ef4444;animation:liveBlink 1.4s ease-in-out infinite;flex-shrink:0;"></div>
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;color:#ef4444;">LIVE</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;line-height:1.6;">@keyframes liveBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+.live-dot {
+  animation: liveBlink 1.4s
+    ease-in-out infinite;
+}</pre>
+        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">В Webflow: Custom Code или Interactions Loop</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANIM 7: Hover -->
+  <div class="card">
+    <div class="card-title">⑦ Hover эффекты</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Кнопки (Primary, Outline)</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Transform</td><td style="padding:5px 0;font-weight:600;">translateY(-1px)</td></tr>
+          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Box-shadow</td><td style="padding:5px 0;font-weight:600;">+glow усиливается</td></tr>
+          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.25s ease</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Hover State → Transform → Move Y: -1px</div>
+      </div>
+      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Стрелка в кнопке Ghost</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Transform</td><td style="padding:5px 0;font-weight:600;">translateX(+3px)</td></tr>
+          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Trigger</td><td style="padding:5px 0;font-weight:600;">Hover на родителе</td></tr>
+          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.2s ease</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Interactions → Hover → child Move X: 3px</div>
+      </div>
+      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Intel карточки</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Border</td><td style="padding:5px 0;font-weight:600;">rgba(105,81,244,0.15) → 0.3</td></tr>
+          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.2s ease</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Hover State → Border Color</div>
+      </div>
+      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Score Panel (Frankie Edgar)</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Box-shadow</td><td style="padding:5px 0;font-weight:600;">усиливается glow</td></tr>
+          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.2s ease</td></tr>
+        </table>
+        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Hover State → Shadow</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Code block -->
+  <div class="card" style="background:#0c0e1a;color:white;border:none;">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">Весь CSS анимаций — вставить в Webflow Project Settings → Custom Code → &lt;head&gt;</div>
+    <pre style="color:#9b8fff;font-size:11px;line-height:1.7;overflow-x:auto;">/* ── VwD AI — All Animations ── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.08); opacity: 1; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1); }
+}
+@keyframes centerPulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%       { opacity: 0.3;  transform: scale(1.05); }
+}
+@keyframes barGrow {
+  from { width: 0; }
+  to   { width: var(--w); }
+}
+@keyframes tagFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-8px); }
+}
+@keyframes liveBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}</pre>
+  </div>
+</div>
+
+<style>
+@keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+</style>
+
 <script>
 function copy(val, el) {
   navigator.clipboard.writeText(val);
