@@ -1,680 +1,682 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VwD — Webflow Style Guide</title>
+<title>VwD — Webflow Инструкция</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <style>
 :root {
   --violet: #6951F4; --violet-light: #9b8fff;
   --purple: #C35DFD; --cyan: #4DD4FF;
-  --ink: #0c0e1a; --warm: #131628;
-  --light-bg: #f5f6fa; --light-surface: #fff;
-  --light-mid: #52526a; --light-secondary: #8888a0;
-  --light-border: rgba(10,10,15,0.08);
-  --safe: #4ade80; --risk: #ef4444; --warn: #f59e0b; --alert: #f4786f;
+  --ink: #0c0e1a;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#f0f1f8;color:#0c0e1a;line-height:1.5}
+body{font-family:'DM Sans',sans-serif;background:#f0f1f8;color:#0c0e1a;line-height:1.5;font-size:14px}
+.page{max-width:960px;margin:0 auto;padding:40px 24px 80px}
 
-/* ── LAYOUT ─────────────── */
-.page{max-width:1100px;margin:0 auto;padding:48px 32px 80px}
+/* HEADER */
+.guide-header{background:var(--ink);border-radius:20px;padding:40px 48px;margin-bottom:32px;position:relative;overflow:hidden}
+.guide-header::after{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(105,81,244,0.3) 0%,transparent 70%);pointer-events:none}
+.guide-header h1{font-family:'Lexend',sans-serif;font-size:36px;font-weight:800;color:white;letter-spacing:-1px;margin-bottom:6px}
+.guide-header h1 span{color:var(--cyan)}
+.guide-header p{color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:20px;max-width:500px}
+.header-badges{display:flex;gap:8px;flex-wrap:wrap}
+.hbadge{font-size:11px;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace}
 
-/* ── HEADER ─────────────── */
-.doc-header{background:var(--ink);border-radius:20px;padding:48px 56px;margin-bottom:40px;position:relative;overflow:hidden}
-.doc-header::after{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(105,81,244,0.25) 0%,transparent 70%);pointer-events:none}
-.doc-header h1{font-family:'Lexend',sans-serif;font-size:42px;font-weight:800;color:white;letter-spacing:-1.5px;margin-bottom:8px}
-.doc-header h1 span{color:var(--cyan)}
-.doc-header p{color:rgba(255,255,255,0.55);font-size:15px;margin-bottom:24px}
-.doc-pills{display:flex;gap:10px;flex-wrap:wrap}
-.doc-pill{font-family:'DM Mono',monospace;font-size:11px;padding:5px 12px;border-radius:100px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6)}
+/* NAV */
+.toc{background:white;border-radius:16px;padding:20px 24px;margin-bottom:32px;border:1px solid rgba(10,10,15,0.07)}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8888a0;margin-bottom:12px;font-family:'DM Mono',monospace}
+.toc-list{display:flex;flex-wrap:wrap;gap:8px}
+.toc-list a{font-size:13px;color:var(--violet);text-decoration:none;background:rgba(105,81,244,0.06);border:1px solid rgba(105,81,244,0.15);padding:5px 12px;border-radius:8px;transition:background 0.15s}
+.toc-list a:hover{background:rgba(105,81,244,0.12)}
 
-/* ── SECTION ─────────────── */
-.section{margin-bottom:48px}
-.section-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.section-head h2{font-family:'Lexend',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--violet)}
-.section-head::after{content:'';flex:1;height:1px;background:rgba(105,81,244,0.15)}
+/* CHAPTER */
+.chapter{margin-bottom:48px}
+.chapter-title{font-family:'Lexend',sans-serif;font-size:22px;font-weight:800;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:12px}
+.chapter-num{width:32px;height:32px;border-radius:10px;background:var(--violet);color:white;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace}
+.chapter-sub{font-size:13px;color:#8888a0;margin-bottom:20px;margin-left:44px}
+.chapter-line{height:1px;background:rgba(105,81,244,0.12);margin-bottom:24px}
 
-/* ── CARD ─────────────── */
-.card{background:white;border-radius:14px;padding:24px;border:1px solid rgba(10,10,15,0.07);margin-bottom:12px}
-.card-title{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;color:var(--light-secondary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px}
+/* CARD */
+.card{background:white;border-radius:16px;padding:24px;border:1px solid rgba(10,10,15,0.07);margin-bottom:16px}
+.card-label{font-size:10px;font-family:'DM Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:#8888a0;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-label::after{content:'';flex:1;height:1px;background:#f0f1f8}
 
-/* ── GRID ─────────────── */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.full{grid-column:1/-1}
+/* PREVIEW BOX */
+.preview-wrap{border-radius:12px;overflow:hidden;margin-bottom:20px}
+.preview-bar{background:#e8eaf0;padding:5px 12px;display:flex;align-items:center;gap:5px}
+.preview-dot{width:7px;height:7px;border-radius:50%}
+.preview-dark{background:#0c0e1a;padding:28px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.preview-light{background:#f5f6fa;padding:28px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.state-label{font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;text-align:center;margin-top:6px;margin-bottom:16px}
 
-/* ── COLOR TOKENS ─────────────── */
-.color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.color-item{background:white;border-radius:12px;overflow:hidden;border:1px solid rgba(10,10,15,0.07);cursor:pointer;transition:transform 0.15s}
-.color-item:hover{transform:translateY(-2px)}
-.color-swatch{height:72px}
-.color-info{padding:10px 12px}
-.color-name{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#0c0e1a;margin-bottom:2px}
-.color-hex{font-family:'DM Mono',monospace;font-size:11px;color:var(--light-secondary)}
-.copy-hint{font-size:9px;color:var(--violet);opacity:0;transition:opacity 0.15s;margin-top:2px}
-.color-item:hover .copy-hint{opacity:1}
+/* STEP INSTRUCTIONS */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:0;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;width:1px;height:calc(100% - 8px);background:#e8eaf0}
+.step-circle{width:30px;height:30px;border-radius:50%;background:var(--violet);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;margin-right:14px;font-family:'DM Mono',monospace;position:relative;z-index:1}
+.step-body{flex:1;padding-bottom:20px}
+.step-where{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--violet);margin-bottom:6px;font-family:'DM Mono',monospace}
+.step-title{font-size:14px;font-weight:600;color:#0c0e1a;margin-bottom:8px}
+.step-desc{font-size:13px;color:#52526a;line-height:1.6;margin-bottom:8px}
 
-/* ── PROP TABLE ─────────────── */
-.prop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid #f0f1f8;flex-wrap:wrap}
-.prop:last-child{border-bottom:none}
-.prop-k{font-size:12px;color:var(--light-mid);flex-shrink:0;min-width:140px}
-.prop-v{font-family:'DM Mono',monospace;font-size:11px;color:#0c0e1a;background:#f5f6fa;padding:3px 8px;border-radius:5px;text-align:right;word-break:break-all}
+/* FIELD ROW */
+.fields{background:#f7f8fc;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+.field{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.field-name{font-size:12px;color:#52526a;min-width:130px}
+.field-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);background:white;border:1px solid #e8eaf0;padding:3px 10px;border-radius:6px;text-align:right}
+.field-val.accent{background:rgba(105,81,244,0.08);border-color:rgba(105,81,244,0.2);color:var(--violet)}
 
-/* ── TYPE SCALE ─────────────── */
-.type-item{background:white;border-radius:14px;padding:20px 24px;border:1px solid rgba(10,10,15,0.07);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:32px}
-.type-sample{min-width:0;overflow:hidden}
-.type-specs{text-align:right;flex-shrink:0}
-.type-spec-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--violet);margin-bottom:3px}
-.type-spec-val{font-family:'DM Mono',monospace;font-size:10px;color:var(--light-secondary);line-height:1.6}
+/* HOVER STATE INDICATOR */
+.hover-indicator{background:rgba(105,81,244,0.06);border:1px solid rgba(105,81,244,0.2);border-radius:10px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.hover-dot{width:8px;height:8px;border-radius:50%;background:var(--violet);flex-shrink:0}
+.hover-text{font-size:12px;color:var(--violet);font-weight:600}
 
-/* ── ICONS ─────────────── */
-.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.icon-item{background:white;border:1px solid rgba(10,10,15,0.07);border-radius:12px;padding:20px 12px 14px;text-align:center;transition:border-color 0.15s,background 0.15s;cursor:pointer}
-.icon-item:hover{border-color:var(--violet);background:#faf9ff}
-.icon-item i{font-size:28px;color:var(--violet);display:block;margin-bottom:10px}
-.icon-name{font-family:'DM Mono',monospace;font-size:9px;color:var(--light-secondary);word-break:break-all}
-.icon-usage{font-size:9px;color:var(--violet);margin-top:4px;opacity:0}
-.icon-item:hover .icon-usage{opacity:1}
-.icon-section-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--light-mid);letter-spacing:0.06em;text-transform:uppercase;margin:20px 0 10px;background:var(--light-bg);border-radius:6px;padding:5px 10px;display:inline-block}
+/* WARNING / TIP BOX */
+.tip{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;font-size:12px;color:#92400e;margin-bottom:12px;display:flex;gap:8px;line-height:1.5}
+.tip-icon{flex-shrink:0;font-size:14px}
+.note{background:#f0f7ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:12px;color:#1e40af;margin-bottom:12px;display:flex;gap:8px;line-height:1.5}
+.note-icon{flex-shrink:0;font-size:14px}
 
-/* ── SPACING ─────────────── */
-.spacing-item{display:flex;align-items:center;gap:16px;margin-bottom:8px}
-.spacing-bar-wrap{flex:1;background:#f0f1f8;border-radius:4px;overflow:hidden;height:20px}
-.spacing-fill{background:linear-gradient(90deg,var(--violet),var(--violet-light));height:100%;border-radius:4px}
-.spacing-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--light-mid);width:80px;flex-shrink:0}
-.spacing-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#0c0e1a;width:40px;text-align:right;flex-shrink:0}
+/* PALETTE GRID */
+.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.swatch{border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.06);cursor:pointer}
+.swatch-color{height:60px}
+.swatch-info{background:white;padding:8px 10px}
+.swatch-name{font-size:11px;font-weight:600;color:#0c0e1a;margin-bottom:2px}
+.swatch-hex{font-family:'DM Mono',monospace;font-size:10px;color:#8888a0}
 
-/* ── RADIUS ─────────────── */
-.radius-row{display:flex;gap:12px;flex-wrap:wrap}
-.radius-item{background:white;border:2px solid var(--violet);padding:24px 32px;text-align:center;min-width:90px;transition:background 0.15s}
-.radius-item:hover{background:#faf9ff}
-.radius-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--violet)}
-.radius-use{font-size:9px;color:var(--light-secondary);margin-top:4px}
+/* CODE BLOCK */
+.code{font-family:'DM Mono',monospace;font-size:11px;background:#0c0e1a;color:#9b8fff;padding:14px 16px;border-radius:10px;line-height:1.7;overflow-x:auto;white-space:pre;margin-top:8px}
+.code .c{color:#4DD4FF}
+.code .s{color:#4ade80}
+.code .g{color:#e2e8f0}
 
-/* ── SECTION PREVIEW ─────────────── */
-.section-preview{border-radius:14px;overflow:hidden;border:1px solid rgba(10,10,15,0.07)}
-.preview-bar{background:#e8eaf0;padding:6px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(10,10,15,0.07)}
-.preview-dot{width:8px;height:8px;border-radius:50%}
-.preview-content{padding:0}
+/* SECTION DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(105,81,244,0.2),transparent);margin:40px 0}
 
-/* ── ANIMATIONS ─────────────── */
-.anim-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f0f1f8;gap:16px}
-.anim-item:last-child{border-bottom:none}
-.anim-name{font-family:'DM Mono',monospace;font-size:12px;color:var(--violet);min-width:180px;flex-shrink:0}
-.anim-desc{font-size:12px;color:var(--light-mid);flex:1}
-.anim-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--light-secondary);text-align:right}
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:640px){.two-col{grid-template-columns:1fr}}
 
-/* ── SETUP STEPS ─────────────── */
-.setup-step{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
-.setup-num{width:28px;height:28px;border-radius:50%;background:var(--violet);color:white;font-family:'Lexend',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.setup-content h4{font-family:'Lexend',sans-serif;font-size:14px;font-weight:700;color:#0c0e1a;margin-bottom:4px}
-.setup-content p{font-size:13px;color:var(--light-mid);line-height:1.55}
-.code-block{font-family:'DM Mono',monospace;font-size:11px;background:#0c0e1a;color:#b8a4ff;padding:12px 16px;border-radius:8px;margin-top:8px;line-height:1.7;overflow-x:auto;white-space:pre}
-.code-block .c{color:#4DD4FF}
-.code-block .s{color:#4ade80}
-.code-block .p{color:rgba(255,255,255,0.4)}
-
-/* ── BADGES ─────────────── */
-.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600}
-.badge-dark{background:var(--ink);color:rgba(255,255,255,0.6)}
-.badge-light{background:var(--light-bg);color:var(--light-mid);border:1px solid var(--light-border)}
-.badge-violet{background:rgba(105,81,244,0.12);color:var(--violet);border:1px solid rgba(105,81,244,0.2)}
-.badge-cyan{background:rgba(77,212,255,0.1);color:var(--cyan);border:1px solid rgba(77,212,255,0.2)}
-
-/* ── COMPONENT CARD PREVIEWS ─────────────── */
-.comp-preview{background:#0c0e1a;border-radius:10px;padding:24px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;min-height:80px}
-.comp-preview.light{background:#f5f6fa}
-
-/* copy toast */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:12px;padding:10px 18px;border-radius:100px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:999;border:1px solid rgba(105,81,244,0.4)}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:#0c0e1a;color:white;font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:100px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:999;border:1px solid rgba(105,81,244,0.4)}
 .toast.show{opacity:1}
+
+/* PANEL CALLOUT */
+.panel-ref{display:inline-flex;align-items:center;gap:5px;background:#0c0e1a;color:#9b8fff;font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:6px;margin-bottom:8px}
+
+/* COMPONENT HEADER */
+.comp-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.comp-icon{width:44px;height:44px;border-radius:12px;background:rgba(105,81,244,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.comp-icon i{font-size:22px;color:var(--violet)}
+.comp-meta h3{font-family:'Lexend',sans-serif;font-size:17px;font-weight:700;color:#0c0e1a;margin-bottom:3px}
+.comp-meta p{font-size:12px;color:#8888a0;line-height:1.5}
+
+/* ANIMATION keyframes liveBlink */
+@keyframes liveBlink{0%,100%{opacity:1}50%{opacity:0.35}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:0.7}50%{transform:scale(1.08);opacity:1}}
 </style>
 </head>
 <body>
 <div class="page">
 
 <!-- HEADER -->
-<div class="doc-header">
-  <h1>VwD <span>Style Guide</span></h1>
-  <p>Полный reference для переноса в Webflow — цвета, типографика, иконки, отступы, компоненты.</p>
-  <div class="doc-pills">
-    <span class="doc-pill">Lexend + DM Sans</span>
-    <span class="doc-pill">Phosphor Icons ph-light</span>
-    <span class="doc-pill">Dark + Light sections</span>
-    <span class="doc-pill">March 2026</span>
+<div class="guide-header">
+  <h1>VwD <span>Webflow Guide</span></h1>
+  <p>Пошаговая инструкция для переноса сайта в Webflow. Без технических знаний — только конкретные поля и значения.</p>
+  <div class="header-badges">
+    <span class="hbadge">Lexend + DM Sans</span>
+    <span class="hbadge">Phosphor Icons</span>
+    <span class="hbadge">Март 2026</span>
   </div>
 </div>
 
-<!-- ════════════════════════════════ COLORS ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Colors</h2></div>
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">Содержание</div>
+  <div class="toc-list">
+    <a href="#setup">1. Первые шаги</a>
+    <a href="#colors">2. Цвета</a>
+    <a href="#typography">3. Шрифты</a>
+    <a href="#btn-primary">4. Кнопка Primary</a>
+    <a href="#btn-outline">5. Кнопка Outline</a>
+    <a href="#chips">6. Чипсы / Tags</a>
+    <a href="#score-panel">7. Score Panel</a>
+    <a href="#step-card">8. Step Card</a>
+    <a href="#intel-card">9. Intel Card</a>
+    <a href="#animations">10. Анимации</a>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 1: SETUP -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="setup">
+  <div class="chapter-title"><span class="chapter-num">1</span> Первые шаги в Webflow</div>
+  <div class="chapter-sub">Сделай это до начала работы — иначе шрифты и анимации не появятся</div>
+  <div class="chapter-line"></div>
 
   <div class="card">
-    <div class="card-title">Brand Palette — кликни чтобы скопировать</div>
-    <div class="color-grid">
-      <div class="color-item" onclick="copy('#6951F4',this)">
-        <div class="color-swatch" style="background:#6951F4"></div>
-        <div class="color-info">
-          <div class="color-name">--violet</div>
-          <div class="color-hex">#6951F4</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
+    <div class="card-label">Шаг 1 — Подключи шрифты Google</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">В Webflow</div>
+          <div class="step-title">Открой Project Settings</div>
+          <div class="step-desc">В левом верхнем углу нажми на логотип Webflow → <strong>Project Settings</strong> → вкладка <strong>Custom Code</strong></div>
         </div>
       </div>
-      <div class="color-item" onclick="copy('#9b8fff',this)">
-        <div class="color-swatch" style="background:#9b8fff"></div>
-        <div class="color-info">
-          <div class="color-name">--violet-light</div>
-          <div class="color-hex">#9b8fff</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Поле «Head Code»</div>
+          <div class="step-title">Вставь ссылки на шрифты и иконки</div>
+          <div class="step-desc">Скопируй целиком и вставь в поле <strong>«Head Code»</strong>:</div>
+          <div class="code"><span class="c">&lt;!-- Шрифты --&gt;</span>
+&lt;link href="https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;700;800&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"&gt;
+
+<span class="c">&lt;!-- Иконки Phosphor --&gt;</span>
+&lt;script src="https://unpkg.com/@phosphor-icons/web@2.1.1"&gt;&lt;/script&gt;</div>
         </div>
       </div>
-      <div class="color-item" onclick="copy('#C35DFD',this)">
-        <div class="color-swatch" style="background:#C35DFD"></div>
-        <div class="color-info">
-          <div class="color-name">--purple</div>
-          <div class="color-hex">#C35DFD</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#4DD4FF',this)">
-        <div class="color-swatch" style="background:#4DD4FF"></div>
-        <div class="color-info">
-          <div class="color-name">--cyan</div>
-          <div class="color-hex">#4DD4FF</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#0c0e1a',this)">
-        <div class="color-swatch" style="background:#0c0e1a"></div>
-        <div class="color-info">
-          <div class="color-name">--ink</div>
-          <div class="color-hex">#0c0e1a</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#131628',this)">
-        <div class="color-swatch" style="background:#131628"></div>
-        <div class="color-info">
-          <div class="color-name">--warm</div>
-          <div class="color-hex">#131628</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#f5f6fa',this)">
-        <div class="color-swatch" style="background:#f5f6fa;border-bottom:1px solid #e4e4ef"></div>
-        <div class="color-info">
-          <div class="color-name">--light-bg</div>
-          <div class="color-hex">#f5f6fa</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#ffffff',this)">
-        <div class="color-swatch" style="background:#fff;border-bottom:1px solid #e4e4ef"></div>
-        <div class="color-info">
-          <div class="color-name">--light-surface</div>
-          <div class="color-hex">#ffffff</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#52526a',this)">
-        <div class="color-swatch" style="background:#52526a"></div>
-        <div class="color-info">
-          <div class="color-name">--light-mid</div>
-          <div class="color-hex">#52526a</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
-        </div>
-      </div>
-      <div class="color-item" onclick="copy('#8888a0',this)">
-        <div class="color-swatch" style="background:#8888a0"></div>
-        <div class="color-info">
-          <div class="color-name">--light-secondary</div>
-          <div class="color-hex">#8888a0</div>
-          <div class="copy-hint">Нажми чтобы скопировать</div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Сохрани</div>
+          <div class="step-title">Нажми Save Changes</div>
+          <div class="step-desc">После этого в поле выбора шрифта появятся Lexend и DM Sans.</div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">Status Colors</div>
-    <div class="color-grid">
-      <div class="color-item" onclick="copy('#4ade80',this)">
-        <div class="color-swatch" style="background:#4ade80"></div>
-        <div class="color-info"><div class="color-name">Safe / Success</div><div class="color-hex">#4ade80</div><div class="copy-hint">Нажми чтобы скопировать</div></div>
-      </div>
-      <div class="color-item" onclick="copy('#ef4444',this)">
-        <div class="color-swatch" style="background:#ef4444"></div>
-        <div class="color-info"><div class="color-name">Risk / Error</div><div class="color-hex">#ef4444</div><div class="copy-hint">Нажми чтобы скопировать</div></div>
-      </div>
-      <div class="color-item" onclick="copy('#f59e0b',this)">
-        <div class="color-swatch" style="background:#f59e0b"></div>
-        <div class="color-info"><div class="color-name">Warning</div><div class="color-hex">#f59e0b</div><div class="copy-hint">Нажми чтобы скопировать</div></div>
-      </div>
-      <div class="color-item" onclick="copy('#f4786f',this)">
-        <div class="color-swatch" style="background:#f4786f"></div>
-        <div class="color-info"><div class="color-name">Alert</div><div class="color-hex">#f4786f</div><div class="copy-hint">Нажми чтобы скопировать</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Opacity Variations (dark sections)</div>
-    <div style="background:#0c0e1a;border-radius:10px;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-      <div style="padding:10px 12px;border-radius:8px;background:rgba(105,81,244,0.18)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:#9b8fff">violet / 0.18</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Build own bg start</div></div>
-      <div style="padding:10px 12px;border-radius:8px;background:rgba(77,212,255,0.1)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:#4DD4FF">cyan / 0.10</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Intel/Build own</div></div>
-      <div style="padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.04)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6)">white / 0.04</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Compliance badge bg</div></div>
-      <div style="padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.08)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.6)">white / 0.08</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Borders dark</div></div>
-      <div style="padding:10px 12px;border-radius:8px;background:rgba(74,222,128,0.1)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:#4ade80">green / 0.10</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Monitoring badge</div></div>
-      <div style="padding:10px 12px;border-radius:8px;background:rgba(105,81,244,0.07)"><div style="font-family:'DM Mono',monospace;font-size:10px;color:#9b8fff">violet / 0.07</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Step bg number</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════ TYPOGRAPHY ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Typography</h2></div>
-
-  <div class="g2" style="margin-bottom:12px">
-    <div class="card">
-      <div class="card-title">Шрифты</div>
-      <div class="prop"><span class="prop-k">Заголовки</span><span class="prop-v">Lexend</span></div>
-      <div class="prop"><span class="prop-k">Веса Lexend</span><span class="prop-v">200 300 400 500 600 700 800</span></div>
-      <div class="prop"><span class="prop-k">Тело / UI</span><span class="prop-v">DM Sans</span></div>
-      <div class="prop"><span class="prop-k">Веса DM Sans</span><span class="prop-v">300 400 500 600</span></div>
-      <div class="prop"><span class="prop-k">Google Fonts URL</span><span class="prop-v">fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Webflow: подключение шрифтов</div>
-      <div class="prop"><span class="prop-k">Lexend в Webflow</span><span class="prop-v">Project Settings → Fonts → Add Google Font → Lexend</span></div>
-      <div class="prop"><span class="prop-k">DM Sans в Webflow</span><span class="prop-v">Project Settings → Fonts → Add Google Font → DM Sans</span></div>
-      <div class="prop"><span class="prop-k">Body font</span><span class="prop-v">DM Sans · 400 · #0c0e1a</span></div>
-      <div class="prop"><span class="prop-k">Heading font override</span><span class="prop-v">Lexend на H1–H4</span></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Type Scale</div>
-
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:clamp(36px,4vw,64px);font-weight:800;letter-spacing:-2px;line-height:1;color:#0c0e1a">Hero Headline</div></div>
-      <div class="type-specs"><div class="type-spec-name">.hero-headline</div><div class="type-spec-val">Lexend 800<br>clamp(48px, 5vw, 72px)<br>ls: -2px · lh: 1.0</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:clamp(28px,3vw,50px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;color:#0c0e1a">Section Headline</div></div>
-      <div class="type-specs"><div class="type-spec-name">.section-headline</div><div class="type-spec-val">Lexend 800<br>clamp(36px, 3.5vw, 52px)<br>ls: -1.5px · lh: 1.05</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px">Build Your Own Title</div></div>
-      <div class="type-specs"><div class="type-spec-name">.build-own h3</div><div class="type-spec-val">Lexend 800 · 24px<br>ls: -0.5px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px">Card / Pillar Heading</div></div>
-      <div class="type-specs"><div class="type-spec-name">.pillar h3</div><div class="type-spec-val">Lexend 700 · 20px<br>ls: -0.5px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.3px">Frankie Edgar</div></div>
-      <div class="type-specs"><div class="type-spec-name">.vsp-name</div><div class="type-spec-val">Lexend 800 · 20px<br>ls: -0.3px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.3px">Step Card Heading</div></div>
-      <div class="type-specs"><div class="type-spec-name">.how-step h4</div><div class="type-spec-val">Lexend 700 · 18px<br>ls: -0.3px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-family:'Lexend',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.3px">Intel Card Heading</div></div>
-      <div class="type-specs"><div class="type-spec-name">.intel-card h4</div><div class="type-spec-val">Lexend 700 · 15px<br>ls: -0.3px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-size:18px;font-weight:300;color:#52526a;line-height:1.65">Hero subtitle — supporting copy that explains the main value proposition in a few lines</div></div>
-      <div class="type-specs"><div class="type-spec-name">.hero-sub</div><div class="type-spec-val">DM Sans 300 · 18px<br>lh: 1.65 · max-w: 440px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-size:17px;font-weight:300;color:#52526a;line-height:1.65">Section subheading with supporting description text</div></div>
-      <div class="type-specs"><div class="type-spec-name">.section-sub</div><div class="type-spec-val">DM Sans 300 · 17px<br>lh: 1.65 · max-w: 560px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-size:14px;font-weight:300;color:#8888a0;line-height:1.65">Body / card paragraph text at 14px weight 300</div></div>
-      <div class="type-specs"><div class="type-spec-name">.pillar p · .build-own p</div><div class="type-spec-val">DM Sans 300 · 14px · lh 1.65</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-size:13px;font-weight:300;color:#8888a0;line-height:1.7">Small card description at 13px</div></div>
-      <div class="type-specs"><div class="type-spec-name">.intel-card p · .how-step p</div><div class="type-spec-val">DM Sans 300 · 13px · lh 1.7</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample"><div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6951F4;display:flex;align-items:center;gap:8px"><span style="display:block;width:16px;height:2px;background:#6951F4;flex-shrink:0"></span>How It Works</div></div>
-      <div class="type-specs"><div class="type-spec-name">.section-eyebrow</div><div class="type-spec-val">DM Sans 600 · 11px<br>ls: 0.12em · uppercase<br>+ violet line 16×2px</div></div>
-    </div>
-    <div class="type-item">
-      <div class="type-sample">
-        <div style="background:#0c0e1a;padding:12px 16px;border-radius:8px;display:inline-flex;align-items:baseline;gap:2px">
-          <span style="font-family:'Lexend',sans-serif;font-size:56px;font-weight:200;color:white;letter-spacing:-3px;line-height:1">80</span>
-          <span style="font-family:'Lexend',sans-serif;font-size:28px;font-weight:700;color:#9b8fff;vertical-align:super">+</span>
-        </div>
-      </div>
-      <div class="type-specs"><div class="type-spec-name">.stat-number</div><div class="type-spec-val">Lexend 200 · clamp(56px,6vw,88px)<br>ls: -3px · lh: 1<br>Suffix: Lexend 700 · clamp(28px,2.8vw,42px) · #9b8fff · vertical-align: super</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════ ICONS ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Phosphor Icons</h2></div>
-
-  <div class="card" style="margin-bottom:12px">
-    <div class="card-title">Подключение CDN (в Head Code Webflow)</div>
-    <div class="code-block"><span class="p">&lt;</span><span class="c">script</span> <span class="s">src</span><span class="p">="</span>https://unpkg.com/@phosphor-icons/web@2.1.1<span class="p">"&gt;&lt;/</span><span class="c">script</span><span class="p">&gt;</span></div>
-    <div style="margin-top:12px">
-      <div class="prop"><span class="prop-k">Класс</span><span class="prop-v">ph-light ph-{name}</span></div>
-      <div class="prop"><span class="prop-k">Пример</span><span class="prop-v">&lt;i class="ph-light ph-eye"&gt;&lt;/i&gt;</span></div>
-      <div class="prop"><span class="prop-k">Вес</span><span class="prop-v">ph-light (тонкий, используется везде)</span></div>
-      <div class="prop"><span class="prop-k">Документация</span><span class="prop-v">phosphoricons.com</span></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Все иконки сайта — кликни чтобы скопировать класс</div>
-
-    <div class="icon-section-label">Навигация и UI</div>
-    <div class="icon-grid">
-      <div class="icon-item" onclick="copyIcon('ph-light ph-arrow-right',this)"><i class="ph-light ph-arrow-right"></i><div class="icon-name">ph-arrow-right</div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-plus',this)"><i class="ph-light ph-plus"></i><div class="icon-name">ph-plus</div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-x',this)"><i class="ph-light ph-x"></i><div class="icon-name">ph-x</div><div class="icon-usage">Скопировано!</div></div>
-    </div>
-
-    <div class="icon-section-label">Platform Pillars (56px · violet)</div>
-    <div class="icon-grid">
-      <div class="icon-item" onclick="copyIcon('ph-light ph-eye',this)"><i class="ph-light ph-eye"></i><div class="icon-name">ph-eye</div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-stack',this)"><i class="ph-light ph-stack"></i><div class="icon-name">ph-stack</div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-chart-bar',this)"><i class="ph-light ph-chart-bar"></i><div class="icon-name">ph-chart-bar</div><div class="icon-usage">Скопировано!</div></div>
-    </div>
-
-    <div class="icon-section-label">How It Works Steps (56px · violet)</div>
-    <div class="icon-grid">
-      <div class="icon-item" onclick="copyIcon('ph-light ph-magnifying-glass',this)"><i class="ph-light ph-magnifying-glass"></i><div class="icon-name">ph-magnifying-glass<br><span style="color:#52526a">Step 01 · Scan</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-clock',this)"><i class="ph-light ph-clock"></i><div class="icon-name">ph-clock<br><span style="color:#52526a">Step 02 · Process</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-trend-up',this)"><i class="ph-light ph-trend-up"></i><div class="icon-name">ph-trend-up<br><span style="color:#52526a">Step 03 · Report</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-bell',this)"><i class="ph-light ph-bell"></i><div class="icon-name">ph-bell<br><span style="color:#52526a">Step 04 · Monitor</span></div><div class="icon-usage">Скопировано!</div></div>
-    </div>
-
-    <div class="icon-section-label">Creator Intelligence Cards (20px · cyan · в контейнере 36×36px)</div>
-    <div class="icon-grid">
-      <div class="icon-item" onclick="copyIcon('ph-light ph-shield-check',this)"><i class="ph-light ph-shield-check"></i><div class="icon-name">ph-shield-check<br><span style="color:#52526a">Content Alignment</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-scales',this)"><i class="ph-light ph-scales"></i><div class="icon-name">ph-scales<br><span style="color:#52526a">Reg. Compliance</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-chart-bar',this)"><i class="ph-light ph-chart-bar"></i><div class="icon-name">ph-chart-bar<br><span style="color:#52526a">Brand Intelligence</span></div><div class="icon-usage">Скопировано!</div></div>
-    </div>
-
-    <div class="icon-section-label">Compliance Badges (20px · cyan · в контейнере 48×48px)</div>
-    <div class="icon-grid">
-      <div class="icon-item" onclick="copyIcon('ph-light ph-file-text',this)"><i class="ph-light ph-file-text"></i><div class="icon-name">ph-file-text<br><span style="color:#52526a">FTC Compliance</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-trend-up',this)"><i class="ph-light ph-trend-up"></i><div class="icon-name">ph-trend-up<br><span style="color:#52526a">FINRA</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-flask',this)"><i class="ph-light ph-flask"></i><div class="icon-name">ph-flask<br><span style="color:#52526a">FDA</span></div><div class="icon-usage">Скопировано!</div></div>
-    </div>
-
-    <div class="icon-section-label">Build Your Own Tags (15px · inline)</div>
-    <div class="icon-grid">
-      <div class="icon-item" onclick="copyIcon('ph-light ph-pill',this)"><i class="ph-light ph-pill"></i><div class="icon-name">ph-pill<br><span style="color:#52526a">Pharma Safe</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-baby',this)"><i class="ph-light ph-baby"></i><div class="icon-name">ph-baby<br><span style="color:#52526a">Kids Content</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-buildings',this)"><i class="ph-light ph-buildings"></i><div class="icon-name">ph-buildings<br><span style="color:#52526a">Competitor: Nike</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-scales',this)"><i class="ph-light ph-scales"></i><div class="icon-name">ph-scales<br><span style="color:#52526a">Political Neutrality</span></div><div class="icon-usage">Скопировано!</div></div>
-      <div class="icon-item" onclick="copyIcon('ph-light ph-leaf',this)"><i class="ph-light ph-leaf"></i><div class="icon-name">ph-leaf<br><span style="color:#52526a">ESG Alignment</span></div><div class="icon-usage">Скопировано!</div></div>
-    </div>
-
-    <div style="margin-top:16px;padding:12px 16px;background:#f5f6fa;border-radius:8px">
-      <div style="font-size:12px;color:var(--light-mid)">Размеры иконок на сайте:</div>
-      <div style="display:flex;gap:24px;margin-top:8px;flex-wrap:wrap">
-        <div style="font-family:'DM Mono',monospace;font-size:11px"><span style="color:var(--violet)">56px</span> — Platform Pillars + Steps</div>
-        <div style="font-family:'DM Mono',monospace;font-size:11px"><span style="color:var(--violet)">20px</span> — Intel cards + Compliance</div>
-        <div style="font-family:'DM Mono',monospace;font-size:11px"><span style="color:var(--violet)">15px</span> — Теги / чипсы</div>
-        <div style="font-family:'DM Mono',monospace;font-size:11px"><span style="color:var(--violet)">14px</span> — Add category</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════ SPACING ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Spacing & Layout</h2></div>
-
-  <div class="g2">
-    <div class="card">
-      <div class="card-title">Section Padding</div>
-      <div class="prop"><span class="prop-k">Секции (default)</span><span class="prop-v">120px TB · 80px LR</span></div>
-      <div class="prop"><span class="prop-k">Stats Bar</span><span class="prop-v">56px TB</span></div>
-      <div class="prop"><span class="prop-k">Clients</span><span class="prop-v">80px all</span></div>
-      <div class="prop"><span class="prop-k">CTA Section</span><span class="prop-v">140px TB · 80px LR</span></div>
-      <div class="prop"><span class="prop-k">Footer</span><span class="prop-v">64px T · 40px B · 80px LR</span></div>
-      <div class="prop"><span class="prop-k">Nav</span><span class="prop-v">20px TB · 48px LR</span></div>
-      <div class="prop"><span class="prop-k">Pillar cards</span><span class="prop-v">40px TB · 32px LR</span></div>
-      <div class="prop"><span class="prop-k">Step cards</span><span class="prop-v">40px TB · 28px LR</span></div>
-      <div class="prop"><span class="prop-k">Intel cards</span><span class="prop-v">36px TB · 32px LR</span></div>
-      <div class="prop"><span class="prop-k">Compliance badge</span><span class="prop-v">24px TB · 28px LR</span></div>
-      <div class="prop"><span class="prop-k">Build own</span><span class="prop-v">40px TB · 44px LR</span></div>
-      <div class="prop"><span class="prop-k">Score panel</span><span class="prop-v">20px TB · 22px LR</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Max Widths & Containers</div>
-      <div class="prop"><span class="prop-k">Stats bar inner</span><span class="prop-v">max-width: 1120px</span></div>
-      <div class="prop"><span class="prop-k">Hero sub text</span><span class="prop-v">max-width: 440px</span></div>
-      <div class="prop"><span class="prop-k">Section sub</span><span class="prop-v">max-width: 560px</span></div>
-      <div class="prop"><span class="prop-k">Build own p</span><span class="prop-v">max-width: 480px</span></div>
-      <div class="prop"><span class="prop-k">Footer brand p</span><span class="prop-v">max-width: 240px</span></div>
-      <div class="prop"><span class="prop-k">Score panel</span><span class="prop-v">width: 310px</span></div>
-      <div class="card-title" style="margin-top:16px">Grid Gaps</div>
-      <div class="prop"><span class="prop-k">What We Do header</span><span class="prop-v">gap: 80px</span></div>
-      <div class="prop"><span class="prop-k">Intel header</span><span class="prop-v">gap: 80px</span></div>
-      <div class="prop"><span class="prop-k">Build own</span><span class="prop-v">gap: 48px</span></div>
-      <div class="prop"><span class="prop-k">Footer top</span><span class="prop-v">gap: 60px</span></div>
-      <div class="prop"><span class="prop-k">Between cards (1px)</span><span class="prop-v">gap: 1px · bg: --light-border</span></div>
-      <div class="prop"><span class="prop-k">Score panel rows</span><span class="prop-v">gap: 8px · rows: 10px</span></div>
-    </div>
-
-    <div class="card full">
-      <div class="card-title">Grid Systems</div>
-      <div class="prop"><span class="prop-k">Hero</span><span class="prop-v">grid-template-columns: 1fr 1fr · min-height: 100vh · padding-top: 80px</span></div>
-      <div class="prop"><span class="prop-k">What We Do header</span><span class="prop-v">grid: 1fr 1fr · gap 80px · align-items center</span></div>
-      <div class="prop"><span class="prop-k">Pillars (3 col)</span><span class="prop-v">grid: repeat(3, 1fr) · gap 1px · background --light-border</span></div>
-      <div class="prop"><span class="prop-k">Creator Intelligence header</span><span class="prop-v">grid: 1fr 1fr · gap 80px</span></div>
-      <div class="prop"><span class="prop-k">Intel cards (3 col)</span><span class="prop-v">grid: repeat(3, 1fr) · border 1px rgba(255,255,255,0.07) · radius 16px</span></div>
-      <div class="prop"><span class="prop-k">Build Your Own</span><span class="prop-v">grid: 1fr 1fr · gap 48px · align-items center</span></div>
-      <div class="prop"><span class="prop-k">How It Works (4 col)</span><span class="prop-v">grid: repeat(4, 1fr) · gap 1px · bg --light-border · margin-top 64px</span></div>
-      <div class="prop"><span class="prop-k">Compliance inner</span><span class="prop-v">grid: 1fr 1fr · gap 80px</span></div>
-      <div class="prop"><span class="prop-k">Testimonials (3 col)</span><span class="prop-v">grid: repeat(3, 1fr) · gap 1px · bg --light-border</span></div>
-      <div class="prop"><span class="prop-k">Footer top</span><span class="prop-v">grid: 1.5fr 1fr 1fr 1fr · gap 60px</span></div>
-      <div class="prop"><span class="prop-k">Score panel row</span><span class="prop-v">grid: 90px 1fr 28px · gap 8px · align-items center</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════ BORDER RADIUS ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Border Radius</h2></div>
-  <div class="card">
-    <div class="radius-row">
-      <div><div class="radius-item" style="border-radius:6px"><div class="radius-val">6px</div></div><div class="radius-use">code chips</div></div>
-      <div><div class="radius-item" style="border-radius:8px"><div class="radius-val">8px</div></div><div class="radius-use">intel card icon</div></div>
-      <div><div class="radius-item" style="border-radius:10px"><div class="radius-val">10px</div></div><div class="radius-use">score panel rows</div></div>
-      <div><div class="radius-item" style="border-radius:12px"><div class="radius-val">12px</div></div><div class="radius-use">badge icon<br>compliance</div></div>
-      <div><div class="radius-item" style="border-radius:16px"><div class="radius-val">16px</div></div><div class="radius-use">intel cards<br>build-own</div></div>
-      <div><div class="radius-item" style="border-radius:20px"><div class="radius-val">20px</div></div><div class="radius-use">score panel<br>(Frankie card)</div></div>
-      <div><div class="radius-item" style="border-radius:100px;padding:24px 40px"><div class="radius-val">100px</div></div><div class="radius-use">все кнопки<br>теги · чипсы</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════ COMPONENTS ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Components</h2></div>
-  <div class="g2">
-
-    <div class="card">
-      <div class="card-title">btn-primary</div>
-      <div class="comp-preview" style="background:#0c0e1a">
-        <a style="background:#6951F4;color:white;padding:14px 32px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;text-decoration:none">Request Demo</a>
-      </div>
-      <div class="prop"><span class="prop-k">Background</span><span class="prop-v">#6951F4</span></div>
-      <div class="prop"><span class="prop-k">Color</span><span class="prop-v">white</span></div>
-      <div class="prop"><span class="prop-k">Padding</span><span class="prop-v">14px 32px</span></div>
-      <div class="prop"><span class="prop-k">Radius</span><span class="prop-v">100px</span></div>
-      <div class="prop"><span class="prop-k">Font</span><span class="prop-v">DM Sans 500 · 15px · ls 0.01em</span></div>
-      <div class="prop"><span class="prop-k">Hover</span><span class="prop-v">bg white · color #6951F4 · translateY(-1px)</span></div>
-      <div style="margin-top:14px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;margin-bottom:6px;">HTML → вставить в Webflow Embed</div>
-        <pre class="code-block">&lt;a href="#" class="btn-primary"&gt;Request Demo&lt;/a&gt;
-
-<span class="p">/* CSS */</span>
-.btn-primary {
-  background: <span class="s">#6951F4</span>;
-  color: white;
-  padding: <span class="s">14px 32px</span>;
-  border-radius: <span class="s">100px</span>;
-  font-family: <span class="s">'DM Sans', sans-serif</span>;
-  font-size: <span class="s">15px</span>;
-  font-weight: <span class="s">500</span>;
-  letter-spacing: <span class="s">0.01em</span>;
-  text-decoration: none;
-  display: inline-block;
-  transition: all <span class="s">0.25s</span>;
+    <div class="card-label">Шаг 2 — Добавь CSS переменные (цвета)</div>
+    <div class="step-desc" style="margin-bottom:12px">В том же поле <strong>«Head Code»</strong> добавь после предыдущего кода:</div>
+    <div class="code"><span class="c">&lt;style&gt;</span>
+:root {
+  --violet:       <span class="s">#6951F4</span>;
+  --violet-light: <span class="s">#9b8fff</span>;
+  --purple:       <span class="s">#C35DFD</span>;
+  --cyan:         <span class="s">#4DD4FF</span>;
+  --ink:          <span class="s">#0c0e1a</span>;
+  --warm:         <span class="s">#131628</span>;
 }
-.btn-primary:hover {
-  background: white;
-  color: <span class="s">#6951F4</span>;
-  transform: translateY(<span class="s">-1px</span>);
-}</pre>
-      </div>
-    </div>
+<span class="c">&lt;/style&gt;</span></div>
+    <div class="tip" style="margin-top:12px"><div class="tip-icon">💡</div><div>После этого в Webflow ты сможешь вводить <code>var(--violet)</code> прямо в поля цвета — и это будет работать.</div></div>
+  </div>
+</div>
 
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 2: COLORS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="colors">
+  <div class="chapter-title"><span class="chapter-num">2</span> Цвета — быстрый справочник</div>
+  <div class="chapter-sub">Кликни на цвет — скопируется HEX</div>
+  <div class="chapter-line"></div>
+
+  <div class="card">
+    <div class="card-label">Основная палитра</div>
+    <div class="palette">
+      <div class="swatch" onclick="copyColor('#6951F4','--violet')"><div class="swatch-color" style="background:#6951F4"></div><div class="swatch-info"><div class="swatch-name">Violet (основной)</div><div class="swatch-hex">#6951F4</div></div></div>
+      <div class="swatch" onclick="copyColor('#9b8fff','--violet-light')"><div class="swatch-color" style="background:#9b8fff"></div><div class="swatch-info"><div class="swatch-name">Violet Light</div><div class="swatch-hex">#9b8fff</div></div></div>
+      <div class="swatch" onclick="copyColor('#C35DFD','--purple')"><div class="swatch-color" style="background:#C35DFD"></div><div class="swatch-info"><div class="swatch-name">Purple</div><div class="swatch-hex">#C35DFD</div></div></div>
+      <div class="swatch" onclick="copyColor('#4DD4FF','--cyan')"><div class="swatch-color" style="background:#4DD4FF"></div><div class="swatch-info"><div class="swatch-name">Cyan (акцент)</div><div class="swatch-hex">#4DD4FF</div></div></div>
+      <div class="swatch" onclick="copyColor('#0c0e1a','--ink')"><div class="swatch-color" style="background:#0c0e1a;border:1px solid #333"></div><div class="swatch-info"><div class="swatch-name">Ink (фон)</div><div class="swatch-hex">#0c0e1a</div></div></div>
+      <div class="swatch" onclick="copyColor('#131628','--warm')"><div class="swatch-color" style="background:#131628;border:1px solid #333"></div><div class="swatch-info"><div class="swatch-name">Warm Dark</div><div class="swatch-hex">#131628</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Цвета статусов (progress bars)</div>
+    <div class="palette">
+      <div class="swatch" onclick="copyColor('#4ade80','safe-green')"><div class="swatch-color" style="background:linear-gradient(90deg,#4ade80,#22d3ee)"></div><div class="swatch-info"><div class="swatch-name">Safe (градиент)</div><div class="swatch-hex">#4ade80 → #22d3ee</div></div></div>
+      <div class="swatch" onclick="copyColor('#ef4444','risk-red')"><div class="swatch-color" style="background:linear-gradient(90deg,#f97316,#ef4444)"></div><div class="swatch-info"><div class="swatch-name">Risk (градиент)</div><div class="swatch-hex">#f97316 → #ef4444</div></div></div>
+      <div class="swatch" onclick="copyColor('#f59e0b','warn-yellow')"><div class="swatch-color" style="background:linear-gradient(90deg,#f59e0b,#f97316)"></div><div class="swatch-info"><div class="swatch-name">Warn (градиент)</div><div class="swatch-hex">#f59e0b → #f97316</div></div></div>
+      <div class="swatch" onclick="copyColor('#f4786f','alert-coral')"><div class="swatch-color" style="background:#f4786f"></div><div class="swatch-info"><div class="swatch-name">Alert (! иконка)</div><div class="swatch-hex">#f4786f</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 3: TYPOGRAPHY -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="typography">
+  <div class="chapter-title"><span class="chapter-num">3</span> Шрифты и текст</div>
+  <div class="chapter-sub">Два шрифта: Lexend (заголовки) и DM Sans (обычный текст)</div>
+  <div class="chapter-line"></div>
+
+  <div class="two-col">
     <div class="card">
-      <div class="card-title">btn-outline</div>
-      <div class="comp-preview" style="background:#0c0e1a">
-        <a style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:100px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;text-decoration:none">See How It Works →</a>
+      <div class="card-label">Lexend — заголовки</div>
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Lexend',sans-serif;font-size:36px;font-weight:800;color:#0c0e1a;letter-spacing:-1px;line-height:1.05;margin-bottom:8px;">Hero H1</div>
+        <div style="font-family:'Lexend',sans-serif;font-size:48px;font-weight:800;background:linear-gradient(135deg,#6951F4,#C35DFD);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px;">clamp()</div>
       </div>
-      <div class="prop"><span class="prop-k">Background</span><span class="prop-v">transparent</span></div>
-      <div class="prop"><span class="prop-k">Border</span><span class="prop-v">1px solid rgba(255,255,255,0.2)</span></div>
-      <div class="prop"><span class="prop-k">Color</span><span class="prop-v">rgba(255,255,255,0.8)</span></div>
-      <div class="prop"><span class="prop-k">Padding</span><span class="prop-v">12px 24px</span></div>
-      <div class="prop"><span class="prop-k">Font</span><span class="prop-v">Lexend 500 · 14px</span></div>
-      <div style="margin-top:14px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;margin-bottom:6px;">HTML → вставить в Webflow Embed</div>
-        <pre class="code-block">&lt;a href="#" class="btn-outline"&gt;
-  See How It Works
-  &lt;svg width="16" height="16" viewBox="0 0 16 16" fill="none"&gt;
-    &lt;path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor"
-          stroke-width="1.5" stroke-linecap="round"/&gt;
-  &lt;/svg&gt;
-&lt;/a&gt;
+      <div class="fields">
+        <div class="field"><span class="field-name">Font Family</span><span class="field-val accent">Lexend</span></div>
+        <div class="field"><span class="field-name">H1 (Hero)</span><span class="field-val">800 · clamp(44px, 5vw, 72px)</span></div>
+        <div class="field"><span class="field-name">H2 (Section)</span><span class="field-val">800 · clamp(36px, 3.5vw, 52px)</span></div>
+        <div class="field"><span class="field-name">H3 (Card)</span><span class="field-val">700 · 20px</span></div>
+        <div class="field"><span class="field-name">Letter Spacing H1</span><span class="field-val">-2px</span></div>
+        <div class="field"><span class="field-name">Letter Spacing H2</span><span class="field-val">-1.5px</span></div>
+        <div class="field"><span class="field-name">Line Height</span><span class="field-val">1.05</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">DM Sans — текст</div>
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'DM Sans',sans-serif;font-size:17px;font-weight:300;color:#52526a;line-height:1.65;margin-bottom:8px;">Hero subtitle — supporting copy that explains the main value.</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;color:#52526a;line-height:1.6;">Body paragraph text at 14px weight 300 — used in cards and sections throughout the site.</div>
+      </div>
+      <div class="fields">
+        <div class="field"><span class="field-name">Font Family</span><span class="field-val accent">DM Sans</span></div>
+        <div class="field"><span class="field-name">Hero subtitle</span><span class="field-val">300 · 17–18px · lh 1.65</span></div>
+        <div class="field"><span class="field-name">Body text</span><span class="field-val">300 · 14px · lh 1.6</span></div>
+        <div class="field"><span class="field-name">Small text</span><span class="field-val">300 · 13px · lh 1.55</span></div>
+        <div class="field"><span class="field-name">Button text</span><span class="field-val">500 · 15px</span></div>
+        <div class="field"><span class="field-name">Eyebrow label</span><span class="field-val">700 · 11px · uppercase · ls 0.1em</span></div>
+      </div>
+    </div>
+  </div>
 
-<span class="p">/* CSS */</span>
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: <span class="s">8px</span>;
-  padding: <span class="s">12px 24px</span>;
-  border-radius: <span class="s">100px</span>;
-  border: 1px solid rgba(255,255,255,<span class="s">0.2</span>);
-  color: rgba(255,255,255,<span class="s">0.8</span>);
-  font-family: <span class="s">'Lexend', sans-serif</span>;
-  font-size: <span class="s">14px</span>;
-  font-weight: <span class="s">500</span>;
-  text-decoration: none;
-  transition: all <span class="s">0.2s</span>;
-}
-.btn-outline svg { transition: transform <span class="s">0.2s</span>; }
-.btn-outline:hover svg { transform: translateX(<span class="s">3px</span>); }</pre>
+  <div class="note"><div class="note-icon">ℹ️</div><div>Для <strong>clamp()</strong> в Webflow: поле Font Size → введи вручную через кастомный CSS или используй фиксированные значения. На десктопе: H1 = 64px, H2 = 48px. На планшете: H1 = 48px, H2 = 36px.</div></div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 4: BTN PRIMARY -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="btn-primary">
+  <div class="chapter-title"><span class="chapter-num">4</span> Кнопка Primary</div>
+  <div class="chapter-sub">Основная кнопка — фиолетовая, используется в Hero и CTA секции</div>
+  <div class="chapter-line"></div>
+
+  <div class="card">
+    <!-- PREVIEW: 2 states -->
+    <div class="card-label">Как выглядит</div>
+    <div class="two-col" style="margin-bottom:4px">
+      <div>
+        <div class="preview-wrap">
+          <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+          <div class="preview-dark">
+            <a style="background:#6951F4;color:white;padding:14px 32px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.01em;text-decoration:none;display:inline-block">Request Demo</a>
+          </div>
+        </div>
+        <div class="state-label">Обычное состояние (Normal)</div>
+      </div>
+      <div>
+        <div class="preview-wrap">
+          <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+          <div class="preview-dark">
+            <a style="background:white;color:#6951F4;padding:14px 32px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.01em;text-decoration:none;display:inline-block;transform:translateY(-1px)">Request Demo</a>
+          </div>
+        </div>
+        <div class="state-label">При наведении мышки (:hover)</div>
       </div>
     </div>
 
-    <div class="card full">
-      <div class="card-title">Tags / Chips</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+    <div class="card-label">Как создать в Webflow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">Navigator (левая панель)</div>
+          <div class="step-title">Добавь элемент Link Block</div>
+          <div class="step-desc">Нажми <strong>+</strong> → найди <strong>Link Block</strong> → перетащи на страницу. Внутрь добавь Text Block с текстом <em>«Request Demo»</em>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Typography</div>
+          <div class="step-title">Настрой текст</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Font</span><span class="field-val accent">DM Sans</span></div>
+            <div class="field"><span class="field-name">Size</span><span class="field-val">15px</span></div>
+            <div class="field"><span class="field-name">Weight</span><span class="field-val">500 (Medium)</span></div>
+            <div class="field"><span class="field-name">Color</span><span class="field-val accent">#FFFFFF</span></div>
+            <div class="field"><span class="field-name">Letter Spacing</span><span class="field-val">0.01em</span></div>
+            <div class="field"><span class="field-name">Text Align</span><span class="field-val">Center</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Spacing</div>
+          <div class="step-title">Задай отступы (Padding)</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Padding Top</span><span class="field-val">14px</span></div>
+            <div class="field"><span class="field-name">Padding Bottom</span><span class="field-val">14px</span></div>
+            <div class="field"><span class="field-name">Padding Left</span><span class="field-val">32px</span></div>
+            <div class="field"><span class="field-name">Padding Right</span><span class="field-val">32px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Background</div>
+          <div class="step-title">Задай фоновый цвет</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Background Color</span><span class="field-val accent">#6951F4</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Border</div>
+          <div class="step-title">Скругли углы</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Border Radius</span><span class="field-val">100px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">6</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Transitions</div>
+          <div class="step-title">Добавь плавный переход</div>
+          <div class="step-desc">В нижней части Style Panel найди <strong>Transitions</strong>. Нажми <strong>+</strong> и добавь:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Property</span><span class="field-val">All</span></div>
+            <div class="field"><span class="field-name">Duration</span><span class="field-val">250ms</span></div>
+            <div class="field"><span class="field-name">Easing</span><span class="field-val">Ease</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">7</div>
+        <div class="step-body">
+          <div class="hover-indicator"><div class="hover-dot"></div><div class="hover-text">Теперь настраиваем состояние при наведении мышки (:hover)</div></div>
+          <div class="step-where">Style Panel → вверху нажми «:hover»</div>
+          <div class="step-title">Переключись в состояние Hover</div>
+          <div class="step-desc">В верхней части Style Panel есть выпадающий список со словом <strong>«None»</strong>. Нажми на него → выбери <strong>«Hovered»</strong>. Теперь всё что ты меняешь — применится только при наведении.</div>
+          <div class="fields" style="margin-top:8px">
+            <div class="field"><span class="field-name">Background Color</span><span class="field-val accent">#FFFFFF</span></div>
+            <div class="field"><span class="field-name">Text Color</span><span class="field-val accent">#6951F4</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">8</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Hovered → Transform</div>
+          <div class="step-title">Добавь лёгкий подъём при ховере</div>
+          <div class="step-desc">В том же состоянии Hovered → прокрути вниз Style Panel до раздела <strong>Transform</strong> → нажми на иконку Move (стрелки) → поставь:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Move Y</span><span class="field-val">-1px</span></div>
+          </div>
+          <div class="tip" style="margin-top:10px"><div class="tip-icon">⚠️</div><div>После настройки hover — не забудь переключиться обратно в <strong>«None»</strong>, иначе будешь редактировать только hover-стиль.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 5: BTN OUTLINE -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="btn-outline">
+  <div class="chapter-title"><span class="chapter-num">5</span> Кнопка Outline + стрелка</div>
+  <div class="chapter-sub">Прозрачная кнопка с белой обводкой — стрелка сдвигается вправо при ховере</div>
+  <div class="chapter-line"></div>
+
+  <div class="card">
+    <div class="card-label">Как выглядит</div>
+    <div class="two-col" style="margin-bottom:4px">
+      <div>
+        <div class="preview-wrap">
+          <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+          <div class="preview-dark">
+            <a style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:100px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;text-decoration:none">See How It Works <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+        <div class="state-label">Normal</div>
+      </div>
+      <div>
+        <div class="preview-wrap">
+          <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+          <div class="preview-dark">
+            <a style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:100px;border:1px solid rgba(255,255,255,0.5);color:white;font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;text-decoration:none">See How It Works <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="transform:translateX(3px)"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+        <div class="state-label">Hover — стрелка сдвигается на 3px</div>
+      </div>
+    </div>
+
+    <div class="card-label">Как создать в Webflow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">Navigator</div>
+          <div class="step-title">Структура кнопки</div>
+          <div class="step-desc">Добавь <strong>Link Block</strong>. Внутрь положи два элемента рядом:<br>① <strong>Text Block</strong> — «See How It Works»<br>② <strong>HTML Embed</strong> — вставь SVG стрелки:</div>
+          <div class="code">&lt;svg width="16" height="16" viewBox="0 0 16 16" fill="none"&gt;
+  &lt;path d="M3 8h10M9 4l4 4-4 4"
+    stroke="currentColor" stroke-width="1.5"
+    stroke-linecap="round" stroke-linejoin="round"/&gt;
+&lt;/svg&gt;</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Layout</div>
+          <div class="step-title">Расположи текст и стрелку в ряд</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Flex</span></div>
+            <div class="field"><span class="field-name">Direction</span><span class="field-val">Horizontal</span></div>
+            <div class="field"><span class="field-name">Align Items</span><span class="field-val">Center</span></div>
+            <div class="field"><span class="field-name">Gap</span><span class="field-val">8px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Spacing + Border + Typography</div>
+          <div class="step-title">Стили кнопки</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Padding</span><span class="field-val">12px top/bottom · 24px left/right</span></div>
+            <div class="field"><span class="field-name">Border Radius</span><span class="field-val">100px</span></div>
+            <div class="field"><span class="field-name">Border Width</span><span class="field-val">1px</span></div>
+            <div class="field"><span class="field-name">Border Color</span><span class="field-val">rgba(255,255,255,0.2)</span></div>
+            <div class="field"><span class="field-name">Font</span><span class="field-val accent">Lexend</span></div>
+            <div class="field"><span class="field-name">Size</span><span class="field-val">14px</span></div>
+            <div class="field"><span class="field-name">Weight</span><span class="field-val">500</span></div>
+            <div class="field"><span class="field-name">Color</span><span class="field-val">rgba(255,255,255,0.8)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Transitions</div>
+          <div class="step-title">Добавь переход для стрелки</div>
+          <div class="step-desc">Выдели элемент SVG-стрелки → в Transitions добавь:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Property</span><span class="field-val">Transform</span></div>
+            <div class="field"><span class="field-name">Duration</span><span class="field-val">200ms</span></div>
+            <div class="field"><span class="field-name">Easing</span><span class="field-val">Ease</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <div class="step-body">
+          <div class="hover-indicator"><div class="hover-dot"></div><div class="hover-text">Hover состояние</div></div>
+          <div class="step-where">Interactions → Hover на Link Block</div>
+          <div class="step-title">Стрелка едет вправо при наведении</div>
+          <div class="step-desc">Выдели <strong>Link Block</strong> → Interactions → <strong>Mouse Hover</strong> → Add Action → выбери SVG элемент → <strong>Move</strong> → X: <strong>3px</strong>.</div>
+          <div class="step-desc" style="margin-top:8px">Для самой кнопки в состоянии Hovered поменяй:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Border Color</span><span class="field-val">rgba(255,255,255,0.5)</span></div>
+            <div class="field"><span class="field-name">Text Color</span><span class="field-val">#FFFFFF</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 6: CHIPS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="chips">
+  <div class="chapter-title"><span class="chapter-num">6</span> Чипсы / Tags</div>
+  <div class="chapter-sub">Три варианта: фиолетовый, контурный и «Add category»</div>
+  <div class="chapter-line"></div>
+
+  <div class="card">
+    <div class="card-label">Как выглядят все три варианта</div>
+    <div class="preview-wrap" style="margin-bottom:16px">
+      <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+      <div class="preview-dark" style="gap:10px;flex-wrap:wrap;justify-content:flex-start;padding:24px 28px">
         <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:rgba(195,93,253,0.12);border:1px solid rgba(195,93,253,0.3);color:#D89DFF;font-family:'DM Sans',sans-serif"><i class="ph-light ph-pill" style="font-size:15px"></i>Pharma Safe</span>
         <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:rgba(195,93,253,0.12);border:1px solid rgba(195,93,253,0.3);color:#D89DFF;font-family:'DM Sans',sans-serif"><i class="ph-light ph-baby" style="font-size:15px"></i>Kids Content</span>
         <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:rgba(195,93,253,0.12);border:1px solid rgba(195,93,253,0.3);color:#D89DFF;font-family:'DM Sans',sans-serif"><i class="ph-light ph-buildings" style="font-size:15px"></i>Competitor: Nike</span>
-        <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:transparent;border:1px solid rgba(105,81,244,0.35);color:rgba(0,0,0,0.65);font-family:'DM Sans',sans-serif"><i class="ph-light ph-scales" style="font-size:15px;color:#6951F4"></i>Political Neutrality</span>
-        <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:transparent;border:1px solid rgba(105,81,244,0.35);color:rgba(0,0,0,0.65);font-family:'DM Sans',sans-serif"><i class="ph-light ph-leaf" style="font-size:15px;color:#6951F4"></i>ESG Alignment</span>
-        <a style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:linear-gradient(135deg,rgba(105,81,244,0.3),rgba(195,93,253,0.2));border:1px solid rgba(155,133,255,0.45);color:#d4c8ff;font-family:'DM Sans',sans-serif;text-decoration:none;box-shadow:0 0 16px rgba(105,81,244,0.2)"><i class="ph-light ph-plus" style="font-size:15px"></i>Add category</a>
-      </div>
-      <div class="g2">
-        <div>
-          <div class="prop"><span class="prop-k">Base padding</span><span class="prop-v">9px 16px</span></div>
-          <div class="prop"><span class="prop-k">Radius</span><span class="prop-v">100px</span></div>
-          <div class="prop"><span class="prop-k">Font</span><span class="prop-v">DM Sans 500 · 13px</span></div>
-          <div class="prop"><span class="prop-k">Icon size</span><span class="prop-v">15px · gap 7px</span></div>
-        </div>
-        <div>
-          <div class="prop"><span class="prop-k">tag-purple bg</span><span class="prop-v">rgba(195,93,253,0.12) · border rgba(195,93,253,0.3) · color #D89DFF</span></div>
-          <div class="prop"><span class="prop-k">tag-outline border</span><span class="prop-v">rgba(105,81,244,0.35) · color rgba(255,255,255,0.65)</span></div>
-          <div class="prop"><span class="prop-k">Add category bg</span><span class="prop-v">gradient violet→purple · box-shadow 0 0 16px rgba(105,81,244,0.2)</span></div>
-        </div>
-      </div>
-      <div style="margin-top:14px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;margin-bottom:6px;">HTML всех чипсов → вставить в Webflow Embed</div>
-        <pre class="code-block"><span class="p">&lt;!-- Chip фиолетовый (первые 3) --&gt;</span>
-&lt;span class="chip chip-purple"&gt;
-  &lt;i class="ph-light ph-pill"&gt;&lt;/i&gt; Pharma Safe
-&lt;/span&gt;
-&lt;span class="chip chip-purple"&gt;
-  &lt;i class="ph-light ph-baby"&gt;&lt;/i&gt; Kids Content
-&lt;/span&gt;
-&lt;span class="chip chip-purple"&gt;
-  &lt;i class="ph-light ph-buildings"&gt;&lt;/i&gt; Competitor: Nike
-&lt;/span&gt;
-
-<span class="p">&lt;!-- Chip контур (outline) --&gt;</span>
-&lt;span class="chip chip-outline"&gt;
-  &lt;i class="ph-light ph-scales"&gt;&lt;/i&gt; Political Neutrality
-&lt;/span&gt;
-&lt;span class="chip chip-outline"&gt;
-  &lt;i class="ph-light ph-leaf"&gt;&lt;/i&gt; ESG Alignment
-&lt;/span&gt;
-
-<span class="p">&lt;!-- Кнопка Add category --&gt;</span>
-&lt;a href="#" class="chip chip-add"&gt;
-  &lt;i class="ph-light ph-plus"&gt;&lt;/i&gt; Add category
-&lt;/a&gt;
-
-<span class="p">/* CSS */</span>
-.chip {
-  display: inline-flex; align-items: center;
-  gap: <span class="s">7px</span>; padding: <span class="s">9px 16px</span>;
-  border-radius: <span class="s">100px</span>;
-  font-family: <span class="s">'DM Sans', sans-serif</span>;
-  font-size: <span class="s">13px</span>; font-weight: <span class="s">500</span>;
-}
-.chip i { font-size: <span class="s">15px</span>; }
-.chip-purple {
-  background: rgba(195,93,253,<span class="s">0.12</span>);
-  border: 1px solid rgba(195,93,253,<span class="s">0.3</span>);
-  color: <span class="s">#D89DFF</span>;
-}
-.chip-outline {
-  background: transparent;
-  border: 1px solid rgba(105,81,244,<span class="s">0.35</span>);
-  color: rgba(255,255,255,<span class="s">0.65</span>);
-}
-.chip-outline i { color: <span class="s">#6951F4</span>; }
-.chip-add {
-  background: linear-gradient(135deg, rgba(105,81,244,<span class="s">0.3</span>), rgba(195,93,253,<span class="s">0.2</span>));
-  border: 1px solid rgba(155,133,255,<span class="s">0.45</span>);
-  color: <span class="s">#d4c8ff</span>;
-  text-decoration: none;
-  box-shadow: 0 0 16px rgba(105,81,244,<span class="s">0.2</span>);
-}</pre>
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:transparent;border:1px solid rgba(105,81,244,0.35);color:rgba(255,255,255,0.65);font-family:'DM Sans',sans-serif"><i class="ph-light ph-scales" style="font-size:15px;color:#6951F4"></i>Political Neutrality</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:transparent;border:1px solid rgba(105,81,244,0.35);color:rgba(255,255,255,0.65);font-family:'DM Sans',sans-serif"><i class="ph-light ph-leaf" style="font-size:15px;color:#6951F4"></i>ESG Alignment</span>
+        <a href="#" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:500;background:linear-gradient(135deg,rgba(105,81,244,0.3),rgba(195,93,253,0.2));border:1px solid rgba(155,133,255,0.45);color:#d4c8ff;font-family:'DM Sans',sans-serif;text-decoration:none;box-shadow:0 0 16px rgba(105,81,244,0.2)"><i class="ph-light ph-plus" style="font-size:15px"></i>Add category</a>
       </div>
     </div>
 
-    <div class="card full">
-      <div class="card-title">Score Panel — Frankie Edgar Card</div>
-      <div style="background:#0c0e1a;padding:24px;border-radius:12px;display:flex;justify-content:center;margin-bottom:16px">
-        <div style="background:linear-gradient(145deg,rgba(16,14,36,0.97),rgba(22,16,48,0.95));border:1px solid rgba(155,133,255,0.25);border-radius:20px;padding:20px 22px;width:310px;box-shadow:0 0 40px rgba(105,81,244,0.18),0 24px 64px rgba(0,0,0,0.55)">
+    <div class="card-label">Общие настройки для всех чипсов</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">Navigator</div>
+          <div class="step-title">Структура чипса</div>
+          <div class="step-desc">Для первых 5 чипсов: добавь <strong>Div Block</strong>. Внутрь положи:<br>① <strong>HTML Embed</strong> — иконка Phosphor<br>② <strong>Text Block</strong> — название<br><br>Для «Add category»: используй <strong>Link Block</strong> (чтобы работала ссылка).</div>
+          <div class="code"><span class="c">&lt;!-- HTML Embed для иконки: --&gt;</span>
+&lt;i class="ph-light ph-pill"&gt;&lt;/i&gt;
+
+<span class="c">&lt;!-- Остальные иконки: --&gt;</span>
+ph-baby        → Kids Content
+ph-buildings   → Competitor: Nike
+ph-scales      → Political Neutrality
+ph-leaf        → ESG Alignment
+ph-plus        → Add category</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Layout</div>
+          <div class="step-title">Расположи иконку и текст в ряд</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Flex</span></div>
+            <div class="field"><span class="field-name">Direction</span><span class="field-val">Horizontal</span></div>
+            <div class="field"><span class="field-name">Align Items</span><span class="field-val">Center</span></div>
+            <div class="field"><span class="field-name">Gap</span><span class="field-val">7px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Spacing + Typography</div>
+          <div class="step-title">Общие размеры для всех чипсов</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Padding</span><span class="field-val">9px top/bottom · 16px left/right</span></div>
+            <div class="field"><span class="field-name">Border Radius</span><span class="field-val">100px</span></div>
+            <div class="field"><span class="field-name">Font</span><span class="field-val accent">DM Sans</span></div>
+            <div class="field"><span class="field-name">Size</span><span class="field-val">13px</span></div>
+            <div class="field"><span class="field-name">Weight</span><span class="field-val">500</span></div>
+            <div class="field"><span class="field-name">Иконка Font Size</span><span class="field-val">15px</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+      <!-- Variant 1 -->
+      <div style="background:#f7f8fc;border-radius:12px;padding:16px 18px;border-left:3px solid #C35DFD">
+        <div style="font-size:12px;font-weight:700;color:#C35DFD;margin-bottom:10px;display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:rgba(195,93,253,0.12);border:1px solid rgba(195,93,253,0.3);color:#D89DFF;font-size:11px"><i class="ph-light ph-pill" style="font-size:12px"></i>Pharma Safe</span> Вариант 1 — Фиолетовый (первые 3 чипса)</div>
+        <div class="fields">
+          <div class="field"><span class="field-name">Background</span><span class="field-val">rgba(195,93,253, 0.12)</span></div>
+          <div class="field"><span class="field-name">Border Color</span><span class="field-val">rgba(195,93,253, 0.3)</span></div>
+          <div class="field"><span class="field-name">Border Width</span><span class="field-val">1px</span></div>
+          <div class="field"><span class="field-name">Text Color</span><span class="field-val accent">#D89DFF</span></div>
+          <div class="field"><span class="field-name">Icon Color</span><span class="field-val accent">#D89DFF</span></div>
+        </div>
+      </div>
+
+      <!-- Variant 2 -->
+      <div style="background:#f7f8fc;border-radius:12px;padding:16px 18px;border-left:3px solid #6951F4">
+        <div style="font-size:12px;font-weight:700;color:#6951F4;margin-bottom:10px;display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;border:1px solid rgba(105,81,244,0.35);color:rgba(80,80,100,0.9);font-size:11px"><i class="ph-light ph-scales" style="font-size:12px;color:#6951F4"></i>Political Neutrality</span> Вариант 2 — Контурный (2 чипса)</div>
+        <div class="fields">
+          <div class="field"><span class="field-name">Background</span><span class="field-val">Transparent (нет фона)</span></div>
+          <div class="field"><span class="field-name">Border Color</span><span class="field-val">rgba(105,81,244, 0.35)</span></div>
+          <div class="field"><span class="field-name">Border Width</span><span class="field-val">1px</span></div>
+          <div class="field"><span class="field-name">Text Color</span><span class="field-val">rgba(255,255,255, 0.65)</span></div>
+          <div class="field"><span class="field-name">Icon Color</span><span class="field-val accent">#6951F4</span></div>
+        </div>
+      </div>
+
+      <!-- Variant 3: Add category -->
+      <div style="background:#f7f8fc;border-radius:12px;padding:16px 18px;border-left:3px solid #9b8fff">
+        <div style="font-size:12px;font-weight:700;color:#6951F4;margin-bottom:10px;display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:linear-gradient(135deg,rgba(105,81,244,0.3),rgba(195,93,253,0.2));border:1px solid rgba(155,133,255,0.45);color:#d4c8ff;font-size:11px"><i class="ph-light ph-plus" style="font-size:12px"></i>Add category</span> Вариант 3 — Add category (Link Block)</div>
+        <div class="fields">
+          <div class="field"><span class="field-name">Background</span><span class="field-val">Gradient: linear-gradient(135deg, rgba(105,81,244,0.3), rgba(195,93,253,0.2))</span></div>
+          <div class="field"><span class="field-name">Border Color</span><span class="field-val">rgba(155,133,255, 0.45)</span></div>
+          <div class="field"><span class="field-name">Border Width</span><span class="field-val">1px</span></div>
+          <div class="field"><span class="field-name">Text + Icon Color</span><span class="field-val accent">#d4c8ff</span></div>
+          <div class="field"><span class="field-name">Box Shadow</span><span class="field-val">0 0 16px rgba(105,81,244, 0.2)</span></div>
+        </div>
+        <div class="note" style="margin-top:10px"><div class="note-icon">ℹ️</div><div>Gradient через Webflow: Style Panel → Background → выбери <strong>Gradient</strong> → поставь Direction 135° → добавь два стопа с нужными цветами.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 7: SCORE PANEL -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="score-panel">
+  <div class="chapter-title"><span class="chapter-num">7</span> Score Panel — карточка Frankie Edgar</div>
+  <div class="chapter-sub">Glassmorphism карточка поверх hero-изображения, абсолютное позиционирование</div>
+  <div class="chapter-line"></div>
+
+  <div class="card">
+    <div class="card-label">Как выглядит</div>
+    <div class="preview-wrap" style="margin-bottom:20px">
+      <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+      <div class="preview-dark" style="padding:32px">
+        <div style="background:linear-gradient(145deg,rgba(16,14,36,0.97),rgba(22,16,48,0.95));border:1px solid rgba(155,133,255,0.25);border-radius:20px;padding:20px 22px;width:310px;box-shadow:0 0 40px rgba(105,81,244,0.18),0 24px 64px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.07)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
             <div>
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px">Creator Profile</div>
-              <div style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:800;color:white;letter-spacing:-0.3px">Frankie Edgar</div>
+              <div style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:800;color:white">Frankie Edgar</div>
             </div>
-            <span style="font-size:10px;font-weight:600;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);padding:3px 10px;border-radius:100px;display:flex;align-items:center;gap:5px">● Monitoring</span>
+            <span style="font-size:10px;font-weight:600;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);padding:3px 10px;border-radius:100px">● Monitoring</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:10px">
             <div style="display:grid;grid-template-columns:90px 1fr 28px;gap:8px;align-items:center"><span style="font-size:11px;color:rgba(255,255,255,0.45)">Brand Alignment</span><div style="height:2px;background:repeating-linear-gradient(90deg,rgba(105,81,244,0.35) 0px,rgba(105,81,244,0.35) 4px,transparent 4px,transparent 8px)"><div style="height:100%;width:88%;background:linear-gradient(90deg,#4ade80,#22d3ee)"></div></div><span style="font-size:12px;font-weight:700;color:white;text-align:right">88</span></div>
@@ -684,749 +686,523 @@ body{font-family:'DM Sans',sans-serif;background:#f0f1f8;color:#0c0e1a;line-heig
           </div>
         </div>
       </div>
-      <div class="g2">
-        <div>
-          <div class="prop"><span class="prop-k">Background</span><span class="prop-v">linear-gradient(145deg, rgba(16,14,36,0.97), rgba(22,16,48,0.95))</span></div>
-          <div class="prop"><span class="prop-k">Border</span><span class="prop-v">1px solid rgba(155,133,255,0.25)</span></div>
-          <div class="prop"><span class="prop-k">Radius</span><span class="prop-v">20px</span></div>
-          <div class="prop"><span class="prop-k">Width</span><span class="prop-v">310px</span></div>
-          <div class="prop"><span class="prop-k">Backdrop filter</span><span class="prop-v">blur(24px)</span></div>
-        </div>
-        <div>
-          <div class="prop"><span class="prop-k">Box shadow</span><span class="prop-v">0 0 40px rgba(105,81,244,0.18) · 0 24px 64px rgba(0,0,0,0.55) · inset 0 0 0 1px rgba(105,81,244,0.12) · inset 0 1px 0 rgba(255,255,255,0.07)</span></div>
-          <div class="prop"><span class="prop-k">Progress track</span><span class="prop-v">height 2px · dashed: rgba(105,81,244,0.35) 4px / 8px</span></div>
-          <div class="prop"><span class="prop-k">Row grid</span><span class="prop-v">90px 1fr 28px · gap 8px</span></div>
-          <div class="prop"><span class="prop-k">Bar Safe</span><span class="prop-v">gradient #4ade80 → #22d3ee</span></div>
-          <div class="prop"><span class="prop-k">Bar Risk</span><span class="prop-v">gradient #f97316 → #ef4444</span></div>
-          <div class="prop"><span class="prop-k">Bar Warn</span><span class="prop-v">gradient #f59e0b → #f97316</span></div>
-        </div>
-      </div>
-      <div style="margin-top:14px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;margin-bottom:6px;">HTML Score Panel → вставить в Webflow Embed</div>
-        <pre class="code-block">&lt;div class="score-panel"&gt;
-  &lt;div class="score-header"&gt;
-    &lt;div&gt;
-      &lt;div class="score-role"&gt;Creator Profile&lt;/div&gt;
-      &lt;div class="score-name"&gt;Frankie Edgar&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;span class="score-badge"&gt;● Monitoring&lt;/span&gt;
-  &lt;/div&gt;
-  &lt;div class="score-rows"&gt;
-    &lt;div class="score-row"&gt;
-      &lt;span class="score-label"&gt;Brand Alignment&lt;/span&gt;
-      &lt;div class="score-track"&gt;&lt;div class="score-fill fill-safe" style="--w:88%"&gt;&lt;/div&gt;&lt;/div&gt;
-      &lt;span class="score-val"&gt;88&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="score-row"&gt;
-      &lt;span class="score-label"&gt;FTC Compliance&lt;/span&gt;
-      &lt;div class="score-track"&gt;&lt;div class="score-fill fill-risk" style="--w:62%"&gt;&lt;/div&gt;&lt;/div&gt;
-      &lt;span class="score-alert"&gt;!&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="score-row"&gt;
-      &lt;span class="score-label"&gt;Hate / Violence&lt;/span&gt;
-      &lt;div class="score-track"&gt;&lt;div class="score-fill fill-risk" style="--w:75%"&gt;&lt;/div&gt;&lt;/div&gt;
-      &lt;span class="score-val"&gt;75&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="score-row"&gt;
-      &lt;span class="score-label"&gt;Political Content&lt;/span&gt;
-      &lt;div class="score-track"&gt;&lt;div class="score-fill fill-warn" style="--w:48%"&gt;&lt;/div&gt;&lt;/div&gt;
-      &lt;span class="score-val"&gt;48&lt;/span&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-<span class="p">/* CSS Score Panel */</span>
-.score-panel {
-  background: linear-gradient(145deg, rgba(16,14,36,<span class="s">0.97</span>), rgba(22,16,48,<span class="s">0.95</span>));
-  border: 1px solid rgba(155,133,255,<span class="s">0.25</span>);
-  border-radius: <span class="s">20px</span>; padding: <span class="s">20px 22px</span>; width: <span class="s">310px</span>;
-  backdrop-filter: blur(<span class="s">24px</span>);
-  box-shadow: 0 0 0 1px rgba(105,81,244,0.12) inset,
-              0 0 40px rgba(105,81,244,<span class="s">0.18</span>),
-              0 24px 64px rgba(0,0,0,<span class="s">0.55</span>),
-              inset 0 1px 0 rgba(255,255,255,<span class="s">0.07</span>);
-}
-.score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: <span class="s">14px</span>; }
-.score-role { font-size: <span class="s">9px</span>; font-weight: <span class="s">600</span>; color: rgba(255,255,255,<span class="s">0.45</span>); text-transform: uppercase; letter-spacing: <span class="s">0.1em</span>; margin-bottom: <span class="s">4px</span>; }
-.score-name { font-family: <span class="s">'Lexend'</span>; font-size: <span class="s">20px</span>; font-weight: <span class="s">800</span>; color: white; }
-.score-badge { font-size: <span class="s">10px</span>; font-weight: <span class="s">600</span>; color: <span class="s">#4ade80</span>; background: rgba(74,222,128,<span class="s">0.1</span>); border: 1px solid rgba(74,222,128,<span class="s">0.3</span>); padding: <span class="s">3px 10px</span>; border-radius: <span class="s">100px</span>; }
-.score-rows { display: flex; flex-direction: column; gap: <span class="s">10px</span>; }
-.score-row { display: grid; grid-template-columns: <span class="s">90px 1fr 28px</span>; gap: <span class="s">8px</span>; align-items: center; }
-.score-label { font-size: <span class="s">11px</span>; color: rgba(255,255,255,<span class="s">0.45</span>); }
-.score-track { height: <span class="s">2px</span>; background: repeating-linear-gradient(90deg, rgba(105,81,244,0.35) 0px, rgba(105,81,244,0.35) 4px, transparent 4px, transparent 8px); }
-.score-fill { height: <span class="s">100%</span>; width: var(<span class="s">--w</span>); animation: barGrow <span class="s">2s ease forwards</span>; }
-.fill-safe { background: linear-gradient(90deg, <span class="s">#4ade80, #22d3ee</span>); }
-.fill-risk { background: linear-gradient(90deg, <span class="s">#f97316, #ef4444</span>); }
-.fill-warn { background: linear-gradient(90deg, <span class="s">#f59e0b, #f97316</span>); }
-.score-val { font-size: <span class="s">12px</span>; font-weight: <span class="s">700</span>; color: white; text-align: right; }
-.score-alert { width: <span class="s">16px</span>; height: <span class="s">16px</span>; border-radius: <span class="s">50%</span>; border: 1.5px solid <span class="s">#f4786f</span>; color: <span class="s">#f4786f</span>; font-size: <span class="s">9px</span>; font-weight: <span class="s">700</span>; display: flex; align-items: center; justify-content: center; margin-left: auto; }</pre>
-      </div>
     </div>
 
-    <!-- STEP CARD -->
-    <div class="card full">
-      <div class="card-title">Step Card — How It Works</div>
-      <div style="background:#0c0e1a;padding:32px;border-radius:12px;display:flex;gap:1px;margin-bottom:16px;overflow:hidden;">
-        <div style="flex:1;background:rgba(255,255,255,0.04);padding:32px 28px;position:relative;overflow:hidden;">
-          <span style="position:absolute;top:16px;right:20px;font-family:'Lexend',sans-serif;font-size:96px;font-weight:800;line-height:1;color:rgba(105,81,244,0.07);letter-spacing:-4px;pointer-events:none;">01</span>
-          <i class="ph-light ph-magnifying-glass" style="font-size:56px;color:#6951F4;display:block;margin-bottom:20px;"></i>
-          <h4 style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:700;color:white;margin-bottom:12px;">Scan</h4>
-          <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;">We scan thousands of posts, videos and comments across every platform in real time.</p>
-        </div>
-        <div style="flex:1;background:rgba(255,255,255,0.04);padding:32px 28px;position:relative;overflow:hidden;">
-          <span style="position:absolute;top:16px;right:20px;font-family:'Lexend',sans-serif;font-size:96px;font-weight:800;line-height:1;color:rgba(105,81,244,0.07);letter-spacing:-4px;pointer-events:none;">02</span>
-          <i class="ph-light ph-sliders" style="font-size:56px;color:#6951F4;display:block;margin-bottom:20px;"></i>
-          <h4 style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:700;color:white;margin-bottom:12px;">Score</h4>
-          <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;">Our AI scores every creator against 40+ brand safety, compliance, and values signals.</p>
+    <div class="card-label">Структура и настройки</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">Navigator — позиционирование</div>
+          <div class="step-title">Карточка лежит поверх изображения</div>
+          <div class="step-desc">Родительский контейнер (секция с фото Frankie) должен иметь <strong>Position: Relative</strong>. Сама карточка — <strong>Position: Absolute</strong>.</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Position</span><span class="field-val">Absolute</span></div>
+            <div class="field"><span class="field-name">Bottom</span><span class="field-val">20%</span></div>
+            <div class="field"><span class="field-name">Left</span><span class="field-val">65%</span></div>
+            <div class="field"><span class="field-name">Transform → Move X</span><span class="field-val">-50%</span></div>
+            <div class="field"><span class="field-name">Z-index</span><span class="field-val">3</span></div>
+          </div>
         </div>
       </div>
-      <div style="margin-top:4px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;margin-bottom:6px;">HTML Step Card → вставить в Webflow Embed</div>
-        <pre class="code-block"><span class="p">&lt;!-- Сетка шагов: gap 1px на тёмном фоне = разделители --&gt;</span>
-&lt;div class="how-grid"&gt;
-
-  &lt;div class="how-step"&gt;
-    &lt;span class="step-bg-num"&gt;01&lt;/span&gt;
-    &lt;i class="ph-light ph-magnifying-glass step-icon"&gt;&lt;/i&gt;
-    &lt;h4 class="step-title"&gt;Scan&lt;/h4&gt;
-    &lt;p class="step-text"&gt;We scan thousands of posts, videos and comments
-    across every platform in real time.&lt;/p&gt;
-  &lt;/div&gt;
-
-  &lt;div class="how-step"&gt;
-    &lt;span class="step-bg-num"&gt;02&lt;/span&gt;
-    &lt;i class="ph-light ph-sliders step-icon"&gt;&lt;/i&gt;
-    &lt;h4 class="step-title"&gt;Score&lt;/h4&gt;
-    &lt;p class="step-text"&gt;Our AI scores every creator against 40+ signals.&lt;/p&gt;
-  &lt;/div&gt;
-
-  <span class="p">&lt;!-- повторить для 03, 04 --&gt;</span>
-&lt;/div&gt;
-
-<span class="p">/* CSS */</span>
-.how-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: <span class="s">1px</span>; <span class="p">/* 1px gap = линии-разделители */</span>
-  background: rgba(255,255,255,<span class="s">0.06</span>); <span class="p">/* цвет разделителей */</span>
-}
-.how-step {
-  background: <span class="s">#0c0e1a</span>; <span class="p">/* или rgba(255,255,255,0.04) */</span>
-  padding: <span class="s">32px 28px</span>;
-  position: relative;
-  overflow: hidden;
-}
-.step-bg-num {
-  position: absolute; top: <span class="s">16px</span>; right: <span class="s">20px</span>;
-  font-family: <span class="s">'Lexend'</span>; font-size: <span class="s">96px</span>; font-weight: <span class="s">800</span>;
-  line-height: 1; letter-spacing: <span class="s">-4px</span>;
-  color: rgba(105,81,244,<span class="s">0.07</span>);
-  pointer-events: none; user-select: none;
-}
-.step-icon { font-size: <span class="s">56px</span>; color: <span class="s">#6951F4</span>; display: block; margin-bottom: <span class="s">20px</span>; }
-.step-title { font-family: <span class="s">'Lexend'</span>; font-size: <span class="s">20px</span>; font-weight: <span class="s">700</span>; color: white; margin-bottom: <span class="s">12px</span>; }
-.step-text { font-size: <span class="s">14px</span>; color: rgba(255,255,255,<span class="s">0.5</span>); line-height: <span class="s">1.6</span>; }
-
-<span class="p">/* Иконки для каждого шага: */</span>
-<span class="p">/* 01 Scan    → ph-magnifying-glass */</span>
-<span class="p">/* 02 Score   → ph-sliders          */</span>
-<span class="p">/* 03 Match   → ph-check-circle     */</span>
-<span class="p">/* 04 Monitor → ph-bell             */</span></pre>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Background + Border</div>
+          <div class="step-title">Glassmorphism фон карточки</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Background</span><span class="field-val">Gradient 145° · rgba(16,14,36,0.97) → rgba(22,16,48,0.95)</span></div>
+            <div class="field"><span class="field-name">Border</span><span class="field-val">1px · rgba(155,133,255, 0.25)</span></div>
+            <div class="field"><span class="field-name">Border Radius</span><span class="field-val">20px</span></div>
+            <div class="field"><span class="field-name">Padding</span><span class="field-val">20px top/bottom · 22px left/right</span></div>
+            <div class="field"><span class="field-name">Width</span><span class="field-val">310px</span></div>
+            <div class="field"><span class="field-name">Backdrop Filter (Effects)</span><span class="field-val">blur(24px)</span></div>
+          </div>
+          <div class="note" style="margin-top:10px"><div class="note-icon">ℹ️</div><div><strong>Backdrop Filter</strong> в Webflow: Style Panel → прокрути в самый низ → раздел <strong>Filters</strong> → переключись на <strong>Backdrop Filters</strong> → добавь Blur 24px.</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Style Panel → Effects → Box Shadow</div>
+          <div class="step-title">Добавь 3 тени (glow эффект)</div>
+          <div class="step-desc">В Webflow можно добавить несколько теней — нажимай <strong>+</strong> для каждой:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Тень 1 (outer glow)</span><span class="field-val">X:0 Y:0 Blur:40px Spread:0 · rgba(105,81,244, 0.18)</span></div>
+            <div class="field"><span class="field-name">Тень 2 (depth)</span><span class="field-val">X:0 Y:24px Blur:64px Spread:0 · rgba(0,0,0, 0.55)</span></div>
+            <div class="field"><span class="field-name">Тень 3 (inset highlight)</span><span class="field-val">Inset · X:0 Y:1px Blur:0 Spread:0 · rgba(255,255,255, 0.07)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-body">
+          <div class="step-where">Внутри карточки — шапка</div>
+          <div class="step-title">Creator Profile + имя + бейдж</div>
+          <div class="step-desc">Div Block → Display Flex → Horizontal → Space Between → Align Center → Margin Bottom 14px</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">«Creator Profile» — Font</span><span class="field-val">DM Sans · 9px · 600 · Uppercase · ls 0.1em</span></div>
+            <div class="field"><span class="field-name">«Creator Profile» — Color</span><span class="field-val">rgba(255,255,255, 0.45)</span></div>
+            <div class="field"><span class="field-name">«Frankie Edgar» — Font</span><span class="field-val accent">Lexend · 20px · 800</span></div>
+            <div class="field"><span class="field-name">«Frankie Edgar» — Color</span><span class="field-val">#FFFFFF</span></div>
+            <div class="field"><span class="field-name">Бейдж «● Monitoring»</span><span class="field-val">DM Sans · 10px · 600 · #4ade80 · padding 3px 10px · radius 100px · bg rgba(74,222,128,0.1) · border rgba(74,222,128,0.3)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <div class="step-body">
+          <div class="step-where">Строки с прогресс-барами</div>
+          <div class="step-title">Каждая строка — Grid из 3 колонок</div>
+          <div class="step-desc">Для каждой строки: Div Block → Display Grid → 3 колонки: <strong>90px · 1fr · 28px</strong> → Gap 8px → Align Items Center.</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Лейбл (название)</span><span class="field-val">DM Sans · 11px · 300 · rgba(255,255,255,0.45)</span></div>
+            <div class="field"><span class="field-name">Track (фон полоски)</span><span class="field-val">высота 2px · пунктир через Custom Code</span></div>
+            <div class="field"><span class="field-name">Цифра</span><span class="field-val">DM Sans · 12px · 700 · white</span></div>
+          </div>
+          <div class="tip" style="margin-top:10px"><div class="tip-icon">⚠️</div><div>Пунктирный track (дашборд-линию) нельзя сделать через Webflow UI — нужен <strong>HTML Embed</strong> с готовым div:<br><code style="font-size:10px;font-family:monospace">&lt;div style="height:2px;background:repeating-linear-gradient(90deg,rgba(105,81,244,0.35) 0px,rgba(105,81,244,0.35) 4px,transparent 4px,transparent 8px)"&gt;&lt;div style="height:100%;width:88%;background:linear-gradient(90deg,#4ade80,#22d3ee)"&gt;&lt;/div&gt;&lt;/div&gt;</code></div></div>
+        </div>
       </div>
     </div>
-
-    <!-- INTEL CARD -->
-    <div class="card full">
-      <div class="card-title">Intel Card — Creator Intelligence Section</div>
-      <div style="background:#f5f6fa;padding:24px;border-radius:12px;display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
-        <div style="background:white;border:1px solid rgba(10,10,15,0.07);border-radius:16px;padding:24px;flex:1;min-width:200px;display:flex;flex-direction:column;gap:14px;">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(77,212,255,0.12);display:flex;align-items:center;justify-content:center;">
-            <i class="ph-light ph-chart-bar" style="font-size:20px;color:#4DD4FF;"></i>
-          </div>
-          <div>
-            <div style="font-family:'Lexend',sans-serif;font-size:16px;font-weight:700;color:#0c0e1a;margin-bottom:6px;">Audience Analysis</div>
-            <div style="font-size:13px;color:#52526a;line-height:1.55;">Demographic breakdown, engagement patterns, and follower authenticity scores.</div>
-          </div>
-        </div>
-        <div style="background:white;border:1px solid rgba(10,10,15,0.07);border-radius:16px;padding:24px;flex:1;min-width:200px;display:flex;flex-direction:column;gap:14px;">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(77,212,255,0.12);display:flex;align-items:center;justify-content:center;">
-            <i class="ph-light ph-shield-check" style="font-size:20px;color:#4DD4FF;"></i>
-          </div>
-          <div>
-            <div style="font-family:'Lexend',sans-serif;font-size:16px;font-weight:700;color:#0c0e1a;margin-bottom:6px;">Risk Detection</div>
-            <div style="font-size:13px;color:#52526a;line-height:1.55;">Flags controversial content, brand conflicts, and compliance violations automatically.</div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:4px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:#8888a0;margin-bottom:6px;">HTML Intel Card → вставить в Webflow Embed</div>
-        <pre class="code-block">&lt;div class="intel-grid"&gt;
-
-  &lt;div class="intel-card"&gt;
-    &lt;div class="intel-icon"&gt;
-      &lt;i class="ph-light ph-chart-bar"&gt;&lt;/i&gt;
-    &lt;/div&gt;
-    &lt;div&gt;
-      &lt;h4 class="intel-title"&gt;Audience Analysis&lt;/h4&gt;
-      &lt;p class="intel-text"&gt;Demographic breakdown, engagement patterns,
-      and follower authenticity scores.&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-
-  <span class="p">&lt;!-- повторить для остальных карточек --&gt;</span>
-&lt;/div&gt;
-
-<span class="p">/* CSS */</span>
-.intel-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); <span class="p">/* или 2 на мобайле */</span>
-  gap: <span class="s">20px</span>;
-}
-.intel-card {
-  background: white;
-  border: 1px solid rgba(10,10,15,<span class="s">0.07</span>);
-  border-radius: <span class="s">16px</span>;
-  padding: <span class="s">24px</span>;
-  display: flex; flex-direction: column; gap: <span class="s">14px</span>;
-  transition: border-color <span class="s">0.2s</span>;
-}
-.intel-card:hover { border-color: rgba(105,81,244,<span class="s">0.3</span>); }
-.intel-icon {
-  width: <span class="s">40px</span>; height: <span class="s">40px</span>; border-radius: <span class="s">10px</span>;
-  background: rgba(77,212,255,<span class="s">0.12</span>);
-  display: flex; align-items: center; justify-content: center;
-}
-.intel-icon i { font-size: <span class="s">20px</span>; color: <span class="s">#4DD4FF</span>; }
-.intel-title { font-family: <span class="s">'Lexend'</span>; font-size: <span class="s">16px</span>; font-weight: <span class="s">700</span>; color: <span class="s">#0c0e1a</span>; margin-bottom: <span class="s">6px</span>; }
-.intel-text { font-size: <span class="s">13px</span>; color: <span class="s">#52526a</span>; line-height: <span class="s">1.55</span>; }
-
-<span class="p">/* Иконки для каждой карточки: */</span>
-<span class="p">/* Audience Analysis → ph-chart-bar   */</span>
-<span class="p">/* Risk Detection    → ph-shield-check */</span>
-<span class="p">/* Content History   → ph-clock        */</span>
-<span class="p">/* Brand Alignment   → ph-trend-up     */</span>
-<span class="p">/* Compliance        → ph-scales       */</span>
-<span class="p">/* Live Monitoring   → ph-bell         */</span></pre>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- ════════════════════════════════ SHADOWS ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Shadows & Effects</h2></div>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 8: STEP CARD -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="step-card">
+  <div class="chapter-title"><span class="chapter-num">8</span> Step Card — «How It Works»</div>
+  <div class="chapter-sub">4 карточки в ряд, разделены тонкими линиями (gap 1px), большой номер в фоне</div>
+  <div class="chapter-line"></div>
+
   <div class="card">
-    <div class="prop"><span class="prop-k">Score panel glow</span><span class="prop-v">0 0 40px rgba(105,81,244,0.18) · 0 24px 64px rgba(0,0,0,0.55) · inset 0 0 0 1px rgba(105,81,244,0.12) · inset 0 1px 0 rgba(255,255,255,0.07)</span></div>
-    <div class="prop"><span class="prop-k">Default card shadow</span><span class="prop-v">0 8px 32px rgba(0,0,0,0.4)</span></div>
-    <div class="prop"><span class="prop-k">Add tag glow</span><span class="prop-v">0 0 16px rgba(105,81,244,0.2) · inset 0 1px 0 rgba(255,255,255,0.08)</span></div>
-    <div class="prop"><span class="prop-k">CTA radial glow</span><span class="prop-v">radial-gradient(circle, rgba(107,81,244,0.35) 0%, rgba(107,81,244,0.08) 50%, transparent 70%) · 700×700px centered</span></div>
-    <div class="prop"><span class="prop-k">Nav backdrop</span><span class="prop-v">backdrop-filter: blur(16px)</span></div>
-    <div class="prop"><span class="prop-k">Score panel backdrop</span><span class="prop-v">backdrop-filter: blur(24px)</span></div>
-    <div class="prop"><span class="prop-k">Viz tags backdrop</span><span class="prop-v">backdrop-filter: blur(8px)</span></div>
-    <div class="prop"><span class="prop-k">Add tag backdrop</span><span class="prop-v">backdrop-filter: blur(4px)</span></div>
+    <div class="card-label">Как выглядит</div>
+    <div class="preview-wrap" style="margin-bottom:20px">
+      <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+      <div style="background:#0c0e1a;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:1px;background-color:rgba(255,255,255,0.06)">
+        <div style="background:#0c0e1a;padding:32px 28px;position:relative;overflow:hidden">
+          <span style="position:absolute;top:16px;right:20px;font-family:'Lexend',sans-serif;font-size:96px;font-weight:800;line-height:1;color:rgba(105,81,244,0.07);letter-spacing:-4px;pointer-events:none">01</span>
+          <i class="ph-light ph-magnifying-glass" style="font-size:56px;color:#6951F4;display:block;margin-bottom:20px"></i>
+          <h4 style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:700;color:white;margin-bottom:12px">Scan</h4>
+          <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6">We scan thousands of posts, videos and comments across every platform in real time.</p>
+        </div>
+        <div style="background:#0c0e1a;padding:32px 28px;position:relative;overflow:hidden">
+          <span style="position:absolute;top:16px;right:20px;font-family:'Lexend',sans-serif;font-size:96px;font-weight:800;line-height:1;color:rgba(105,81,244,0.07);letter-spacing:-4px;pointer-events:none">02</span>
+          <i class="ph-light ph-sliders" style="font-size:56px;color:#6951F4;display:block;margin-bottom:20px"></i>
+          <h4 style="font-family:'Lexend',sans-serif;font-size:20px;font-weight:700;color:white;margin-bottom:12px">Score</h4>
+          <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6">Our AI scores every creator against 40+ brand safety, compliance, and values signals.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-label">Как создать в Webflow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">Navigator — сетка</div>
+          <div class="step-title">Создай Grid-контейнер для 4 карточек</div>
+          <div class="step-desc">Добавь <strong>Div Block</strong> → Display Grid:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Grid</span></div>
+            <div class="field"><span class="field-name">Grid Template Columns</span><span class="field-val">1fr 1fr 1fr 1fr</span></div>
+            <div class="field"><span class="field-name">Gap</span><span class="field-val">1px</span></div>
+            <div class="field"><span class="field-name">Background Color</span><span class="field-val">rgba(255,255,255, 0.06)</span></div>
+          </div>
+          <div class="tip" style="margin-top:8px"><div class="tip-icon">💡</div><div>Gap 1px на тёмном фоне-контейнере — это и есть линии-разделители между карточками. Умный трюк!</div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Каждая карточка — Div Block</div>
+          <div class="step-title">Настройки карточки</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Background</span><span class="field-val">#0c0e1a</span></div>
+            <div class="field"><span class="field-name">Padding</span><span class="field-val">32px top/bottom · 28px left/right</span></div>
+            <div class="field"><span class="field-name">Position</span><span class="field-val">Relative</span></div>
+            <div class="field"><span class="field-name">Overflow</span><span class="field-val">Hidden</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Внутри карточки — большой номер</div>
+          <div class="step-title">Фоновый номер «01», «02»...</div>
+          <div class="step-desc">Добавь <strong>Text Block</strong> с цифрой «01» и настрой:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Position</span><span class="field-val">Absolute</span></div>
+            <div class="field"><span class="field-name">Top</span><span class="field-val">16px</span></div>
+            <div class="field"><span class="field-name">Right</span><span class="field-val">20px</span></div>
+            <div class="field"><span class="field-name">Font</span><span class="field-val accent">Lexend</span></div>
+            <div class="field"><span class="field-name">Size</span><span class="field-val">96px</span></div>
+            <div class="field"><span class="field-name">Weight</span><span class="field-val">800</span></div>
+            <div class="field"><span class="field-name">Color</span><span class="field-val">rgba(105,81,244, 0.07)</span></div>
+            <div class="field"><span class="field-name">Letter Spacing</span><span class="field-val">-4px</span></div>
+            <div class="field"><span class="field-name">Line Height</span><span class="field-val">1</span></div>
+            <div class="field"><span class="field-name">Pointer Events</span><span class="field-val">None (через Custom CSS)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-body">
+          <div class="step-where">HTML Embed — иконка</div>
+          <div class="step-title">Иконка Phosphor</div>
+          <div class="step-desc">Добавь <strong>HTML Embed</strong> и вставь тег иконки:</div>
+          <div class="code"><span class="c">&lt;!-- 01 Scan --&gt;</span>    &lt;i class="ph-light ph-magnifying-glass"&gt;&lt;/i&gt;
+<span class="c">&lt;!-- 02 Score --&gt;</span>   &lt;i class="ph-light ph-sliders"&gt;&lt;/i&gt;
+<span class="c">&lt;!-- 03 Match --&gt;</span>   &lt;i class="ph-light ph-check-circle"&gt;&lt;/i&gt;
+<span class="c">&lt;!-- 04 Monitor --&gt;</span> &lt;i class="ph-light ph-bell"&gt;&lt;/i&gt;</div>
+          <div class="fields" style="margin-top:8px">
+            <div class="field"><span class="field-name">Иконка Size</span><span class="field-val">56px</span></div>
+            <div class="field"><span class="field-name">Иконка Color</span><span class="field-val accent">#6951F4</span></div>
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Block</span></div>
+            <div class="field"><span class="field-name">Margin Bottom</span><span class="field-val">20px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <div class="step-body">
+          <div class="step-where">Text Blocks — заголовок и текст</div>
+          <div class="step-title">Заголовок и описание шага</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Заголовок Font</span><span class="field-val accent">Lexend · 20px · 700</span></div>
+            <div class="field"><span class="field-name">Заголовок Color</span><span class="field-val">#FFFFFF</span></div>
+            <div class="field"><span class="field-name">Заголовок Margin Bottom</span><span class="field-val">12px</span></div>
+            <div class="field"><span class="field-name">Описание Font</span><span class="field-val">DM Sans · 14px · 300</span></div>
+            <div class="field"><span class="field-name">Описание Color</span><span class="field-val">rgba(255,255,255, 0.5)</span></div>
+            <div class="field"><span class="field-name">Описание Line Height</span><span class="field-val">1.6</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════ ANIMATIONS ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Animations</h2></div>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 9: INTEL CARD -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="intel-card">
+  <div class="chapter-title"><span class="chapter-num">9</span> Intel Card — Creator Intelligence</div>
+  <div class="chapter-sub">Светлые карточки с cyan иконкой, секция на белом фоне</div>
+  <div class="chapter-line"></div>
+
   <div class="card">
-    <div class="anim-item">
-      <div class="anim-name">fadeUp</div>
-      <div class="anim-desc">Hero элементы появляются снизу вверх при загрузке</div>
-      <div class="anim-val">opacity 0→1 · translateY 24px→0<br>0.7s ease · delays 0.1–0.5s</div>
-    </div>
-    <div class="anim-item">
-      <div class="anim-name">barGrow</div>
-      <div class="anim-desc">Полосы прогресса вырастают от 0 до target width</div>
-      <div class="anim-val">width 0→var(--target-width)<br>2s ease forwards</div>
-    </div>
-    <div class="anim-item">
-      <div class="anim-name">tagFloat</div>
-      <div class="anim-desc">Плавающие теги в hero секции поднимаются и опускаются</div>
-      <div class="anim-val">translateY 0→-8px→0<br>6–9s ease-in-out infinite<br>per-tag delays 0–1.5s</div>
-    </div>
-    <div class="anim-item">
-      <div class="anim-name">breathe</div>
-      <div class="anim-desc">Центральное свечение в hero visualization</div>
-      <div class="anim-val">scale 1→1.08 · opacity 0.7→1<br>5s ease-in-out infinite</div>
-    </div>
-    <div class="anim-item">
-      <div class="anim-name">spin</div>
-      <div class="anim-desc">Орбитальные кольца вращаются вокруг центра</div>
-      <div class="anim-val">rotate 0→360deg<br>22s / 34s / 50s linear</div>
-    </div>
-    <div class="anim-item">
-      <div class="anim-name">liveBlink</div>
-      <div class="anim-desc">Зелёная точка "Monitoring" мигает</div>
-      <div class="anim-val">opacity 1→0.35→1<br>1.4s ease-in-out infinite</div>
-    </div>
-    <div class="anim-item">
-      <div class="anim-name">centerPulse</div>
-      <div class="anim-desc">Пульсация кольца вокруг аватара в визуализации</div>
-      <div class="anim-val">opacity 0.15→0.3 · scale 1→1.05<br>4s ease-in-out infinite</div>
-    </div>
-  </div>
-
-  <div class="card" style="background:#fffbeb;border-color:#fde68a;margin-top:12px">
-    <div style="font-size:13px;color:#92400e;line-height:1.6">
-      <strong>⚡ В Webflow:</strong> fadeUp и barGrow реализуются через <strong>Webflow Interactions</strong> (Panel → Interactions → On Page Load). Все остальные анимации (spin, breathe, tagFloat, liveBlink, centerPulse) требуют кастомного CSS — вставляй в <strong>Site Settings → Custom Code → Head</strong>.
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════ WEBFLOW SETUP ════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Webflow Setup — пошагово</h2></div>
-
-  <div class="setup-step">
-    <div class="setup-num">1</div>
-    <div class="setup-content">
-      <h4>Подключи Google Fonts</h4>
-      <p>Project Settings → Fonts → Add Google Font → выбери Lexend (200–800) и DM Sans (300–600). Лексенд — для всех заголовков H1–H4. DM Sans — для body и UI.</p>
-    </div>
-  </div>
-
-  <div class="setup-step">
-    <div class="setup-num">2</div>
-    <div class="setup-content">
-      <h4>Добавь Phosphor Icons CDN</h4>
-      <p>Project Settings → Custom Code → Head Code — вставь:</p>
-      <div class="code-block"><span class="p">&lt;</span><span class="c">script</span> <span class="s">src</span><span class="p">="</span>https://unpkg.com/@phosphor-icons/web@2.1.1<span class="p">"&gt;&lt;/</span><span class="c">script</span><span class="p">&gt;</span></div>
-      <p style="margin-top:8px">Иконки вставляются через HTML Embed: <code style="font-family:'DM Mono',monospace;font-size:11px;background:#f0f1f8;padding:2px 6px;border-radius:4px">&lt;i class="ph-light ph-eye"&gt;&lt;/i&gt;</code></p>
-    </div>
-  </div>
-
-  <div class="setup-step">
-    <div class="setup-num">3</div>
-    <div class="setup-content">
-      <h4>Вставь CSS-переменные и @keyframes</h4>
-      <p>Project Settings → Custom Code → Head Code — вставь после script тега:</p>
-      <div class="code-block"><span class="p">&lt;</span><span class="c">style</span><span class="p">&gt;</span>
-<span class="s">:root</span> <span class="p">{</span>
-  --violet<span class="p">:</span> #6951F4<span class="p">;</span>
-  --violet-light<span class="p">:</span> #9b8fff<span class="p">;</span>
-  --purple<span class="p">:</span> #C35DFD<span class="p">;</span>
-  --cyan<span class="p">:</span> #4DD4FF<span class="p">;</span>
-  --ink<span class="p">:</span> #0c0e1a<span class="p">;</span>
-  --warm<span class="p">:</span> #131628<span class="p">;</span>
-  --light-bg<span class="p">:</span> #f5f6fa<span class="p">;</span>
-  --light-surface<span class="p">:</span> #ffffff<span class="p">;</span>
-  --light-mid<span class="p">:</span> #52526a<span class="p">;</span>
-  --light-secondary<span class="p">:</span> #8888a0<span class="p">;</span>
-  --light-border<span class="p">:</span> rgba(10,10,15,0.08)<span class="p">;</span>
-<span class="p">}</span>
-<span class="p">&lt;/</span><span class="c">style</span><span class="p">&gt;</span></div>
-    </div>
-  </div>
-
-  <div class="setup-step">
-    <div class="setup-num">4</div>
-    <div class="setup-content">
-      <h4>Секции с gap: 1px (Pillars, Steps, Testimonials)</h4>
-      <p>Создай обёртку-div с фоновым цветом <code style="font-family:'DM Mono',monospace;font-size:11px;background:#f0f1f8;padding:2px 6px;border-radius:4px">rgba(10,10,15,0.08)</code>, display Grid, gap 1px. Карточки внутри — белый фон. Эффект: тонкие разделители между карточками без явного border.</p>
-    </div>
-  </div>
-
-  <div class="setup-step">
-    <div class="setup-num">5</div>
-    <div class="setup-content">
-      <h4>Большие фоновые числа в Step карточках</h4>
-      <p>Внутри каждой карточки: добавь Text Block с текстом "01", "02" и т.д. → position: absolute, top: 16px, right: 20px, font-size: 96px, Lexend 800, color: rgba(105,81,244,0.07). Родительская карточка — position: relative. Всё через Webflow Designer, кода не нужно.</p>
-    </div>
-  </div>
-
-  <div class="setup-step">
-    <div class="setup-num">6</div>
-    <div class="setup-content">
-      <h4>Radar SVG и Score Panel</h4>
-      <p>Обе части Hero-визуализации — сложные SVG с JS-анимацией. Используй HTML Embed block и вставь код как есть из index.html. Расположи через absolute positioning внутри relative родителя.</p>
-    </div>
-  </div>
-
-  <div class="setup-step">
-    <div class="setup-num">7</div>
-    <div class="setup-content">
-      <h4>Плавающие теги (FTC, Followers и т.д.)</h4>
-      <p>Каждый тег — отдельный Div, position: absolute, с кастомным CSS-классом. Анимация tagFloat добавляется через Custom CSS. Координаты смотри в таблице ниже.</p>
-      <div style="margin-top:12px;background:white;border:1px solid #e4e4ef;border-radius:10px;overflow:hidden">
-        <div style="display:grid;grid-template-columns:1fr 80px 80px;background:#f5f6fa;padding:8px 16px;font-family:'DM Mono',monospace;font-size:10px;color:#8888a0">
-          <span>Тег</span><span>top</span><span>left</span>
+    <div class="card-label">Как выглядит</div>
+    <div class="preview-wrap" style="margin-bottom:20px">
+      <div class="preview-bar"><div class="preview-dot" style="background:#ff5f56"></div><div class="preview-dot" style="background:#ffbd2e"></div><div class="preview-dot" style="background:#27c93f"></div></div>
+      <div class="preview-light" style="gap:16px;align-items:stretch;padding:28px">
+        <div style="background:white;border:1px solid rgba(10,10,15,0.07);border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column;gap:14px;min-width:180px">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(77,212,255,0.12);display:flex;align-items:center;justify-content:center"><i class="ph-light ph-chart-bar" style="font-size:20px;color:#4DD4FF"></i></div>
+          <div><div style="font-family:'Lexend',sans-serif;font-size:16px;font-weight:700;color:#0c0e1a;margin-bottom:6px">Audience Analysis</div><div style="font-size:13px;color:#52526a;line-height:1.55">Demographic breakdown, engagement patterns, and follower authenticity scores.</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 80px 80px;padding:8px 16px;border-top:1px solid #f0f1f8;font-size:12px"><span>FTC: 3 Violations</span><span style="font-family:'DM Mono',monospace">8%</span><span style="font-family:'DM Mono',monospace">52%</span></div>
-        <div style="display:grid;grid-template-columns:1fr 80px 80px;padding:8px 16px;border-top:1px solid #f0f1f8;font-size:12px"><span>744.8K Followers</span><span style="font-family:'DM Mono',monospace">26%</span><span style="font-family:'DM Mono',monospace">90%</span></div>
-        <div style="display:grid;grid-template-columns:1fr 80px 80px;padding:8px 16px;border-top:1px solid #f0f1f8;font-size:12px"><span>⚠ Hate Content: High</span><span style="font-family:'DM Mono',monospace">62%</span><span style="font-family:'DM Mono',monospace">16%</span></div>
-        <div style="display:grid;grid-template-columns:1fr 80px 80px;padding:8px 16px;border-top:1px solid #f0f1f8;font-size:12px"><span>Brand Safe ✓</span><span style="font-family:'DM Mono',monospace">44%</span><span style="font-family:'DM Mono',monospace">80%</span></div>
-        <div style="display:grid;grid-template-columns:1fr 80px 80px;padding:8px 16px;border-top:1px solid #f0f1f8;font-size:12px"><span>Political: Moderate</span><span style="font-family:'DM Mono',monospace">26%</span><span style="font-family:'DM Mono',monospace">14%</span></div>
+        <div style="background:white;border:1px solid rgba(10,10,15,0.07);border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column;gap:14px;min-width:180px">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(77,212,255,0.12);display:flex;align-items:center;justify-content:center"><i class="ph-light ph-shield-check" style="font-size:20px;color:#4DD4FF"></i></div>
+          <div><div style="font-family:'Lexend',sans-serif;font-size:16px;font-weight:700;color:#0c0e1a;margin-bottom:6px">Risk Detection</div><div style="font-size:13px;color:#52526a;line-height:1.55">Flags controversial content, brand conflicts, and compliance violations.</div></div>
+        </div>
       </div>
-      <p style="margin-top:8px;font-size:12px;color:#8888a0">Все теги имеют <code style="font-family:'DM Mono',monospace;background:#f0f1f8;padding:1px 5px;border-radius:3px">transform: translateX(-50%)</code> для центровки по left-оси.</p>
     </div>
-  </div>
 
-  <div class="setup-step">
-    <div class="setup-num">8</div>
-    <div class="setup-content">
-      <h4>barGrow animation для прогресс-баров</h4>
-      <p>В Webflow используй Interaction: On Page Load → target .vsp-fill → width от 0% до нужного значения, 2s ease. Или через Custom CSS c <code style="font-family:'DM Mono',monospace;font-size:11px;background:#f0f1f8;padding:2px 6px;border-radius:4px">animation: barGrow 2s ease forwards</code> и CSS-переменной <code style="font-family:'DM Mono',monospace;font-size:11px;background:#f0f1f8;padding:2px 6px;border-radius:4px">--target-width</code>.</p>
+    <div class="card-label">Как создать в Webflow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-body">
+          <div class="step-where">Navigator — сетка</div>
+          <div class="step-title">Grid для карточек (3 в ряд)</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Grid</span></div>
+            <div class="field"><span class="field-name">Columns</span><span class="field-val">1fr 1fr 1fr</span></div>
+            <div class="field"><span class="field-name">Gap</span><span class="field-val">20px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-body">
+          <div class="step-where">Каждая карточка — Div Block</div>
+          <div class="step-title">Стили карточки</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Background</span><span class="field-val">#FFFFFF</span></div>
+            <div class="field"><span class="field-name">Border</span><span class="field-val">1px · rgba(10,10,15, 0.07)</span></div>
+            <div class="field"><span class="field-name">Border Radius</span><span class="field-val">16px</span></div>
+            <div class="field"><span class="field-name">Padding</span><span class="field-val">24px (все стороны)</span></div>
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Flex · Vertical · Gap 14px</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-body">
+          <div class="step-where">Hover состояние карточки</div>
+          <div class="step-title">Обводка появляется при наведении</div>
+          <div class="step-desc">Выдели карточку → вверху Style Panel → переключись в <strong>Hovered</strong>:</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Border Color (Hovered)</span><span class="field-val">rgba(105,81,244, 0.3)</span></div>
+          </div>
+          <div class="step-desc" style="margin-top:8px">В Normal состоянии добавь Transition → All → 200ms → Ease.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-body">
+          <div class="step-where">Иконка — Div Block</div>
+          <div class="step-title">Круглый контейнер с иконкой</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Width / Height</span><span class="field-val">40px · 40px</span></div>
+            <div class="field"><span class="field-name">Border Radius</span><span class="field-val">10px</span></div>
+            <div class="field"><span class="field-name">Background</span><span class="field-val">rgba(77,212,255, 0.12)</span></div>
+            <div class="field"><span class="field-name">Display</span><span class="field-val">Flex · Center Center</span></div>
+          </div>
+          <div class="step-desc" style="margin-top:8px">Внутрь добавь <strong>HTML Embed</strong> с иконкой:</div>
+          <div class="code"><span class="c">&lt;!-- Иконки для каждой карточки: --&gt;</span>
+&lt;i class="ph-light ph-chart-bar"&gt;&lt;/i&gt;     <span class="c">→ Audience Analysis</span>
+&lt;i class="ph-light ph-shield-check"&gt;&lt;/i&gt;  <span class="c">→ Risk Detection</span>
+&lt;i class="ph-light ph-clock"&gt;&lt;/i&gt;         <span class="c">→ Content History</span>
+&lt;i class="ph-light ph-trend-up"&gt;&lt;/i&gt;      <span class="c">→ Brand Alignment</span>
+&lt;i class="ph-light ph-scales"&gt;&lt;/i&gt;        <span class="c">→ Compliance</span>
+&lt;i class="ph-light ph-bell"&gt;&lt;/i&gt;          <span class="c">→ Live Monitoring</span></div>
+          <div class="fields" style="margin-top:8px">
+            <div class="field"><span class="field-name">Иконка Size</span><span class="field-val">20px</span></div>
+            <div class="field"><span class="field-name">Иконка Color</span><span class="field-val accent">#4DD4FF</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <div class="step-body">
+          <div class="step-where">Text Blocks</div>
+          <div class="step-title">Заголовок и описание</div>
+          <div class="fields">
+            <div class="field"><span class="field-name">Заголовок Font</span><span class="field-val accent">Lexend · 16px · 700</span></div>
+            <div class="field"><span class="field-name">Заголовок Color</span><span class="field-val">#0c0e1a</span></div>
+            <div class="field"><span class="field-name">Заголовок Margin Bottom</span><span class="field-val">6px</span></div>
+            <div class="field"><span class="field-name">Описание Font</span><span class="field-val">DM Sans · 13px · 300</span></div>
+            <div class="field"><span class="field-name">Описание Color</span><span class="field-val">#52526a</span></div>
+            <div class="field"><span class="field-name">Описание Line Height</span><span class="field-val">1.55</span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-</div>
+<div class="divider"></div>
 
-<div class="toast" id="toast">Скопировано!</div>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- ANIMATIONS SECTION -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head"><h2>Анимации</h2></div>
+<!-- ══════════════════════════════════════════════ -->
+<!-- CHAPTER 10: ANIMATIONS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="chapter" id="animations">
+  <div class="chapter-title"><span class="chapter-num">10</span> Анимации</div>
+  <div class="chapter-sub">Большинство анимаций — готовый CSS, вставь один раз в Head Code и они заработают</div>
+  <div class="chapter-line"></div>
 
-  <div class="card" style="background:#0c0e1a;color:white;border:none;">
-    <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px;">Как вставлять в Webflow</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:0;">
-      <div style="background:rgba(105,81,244,0.15);border:1px solid rgba(105,81,244,0.3);border-radius:12px;padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">①</div>
-        <div style="font-size:13px;font-weight:600;color:#9b8fff;margin-bottom:6px;">Петлевые анимации</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">Orbit, Float, Blink, Breathe — <strong style="color:white;">вставляй CSS в Project Settings → Custom Code → &lt;head&gt;</strong></div>
-      </div>
-      <div style="background:rgba(77,212,255,0.1);border:1px solid rgba(77,212,255,0.25);border-radius:12px;padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">②</div>
-        <div style="font-size:13px;font-weight:600;color:#4DD4FF;margin-bottom:6px;">Появление при загрузке</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">FadeUp (герой), BarGrow (шкалы) — <strong style="color:white;">Webflow Interactions → Page Load trigger</strong></div>
-      </div>
-      <div style="background:rgba(195,93,253,0.1);border:1px solid rgba(195,93,253,0.25);border-radius:12px;padding:16px;">
-        <div style="font-size:24px;margin-bottom:8px;">③</div>
-        <div style="font-size:13px;font-weight:600;color:#C35DFD;margin-bottom:6px;">Hover эффекты</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">Кнопки, карточки — <strong style="color:white;">Webflow Interactions → Hover trigger</strong> или Transitions в настройках элемента</div>
-      </div>
-    </div>
-  </div>
+  <div class="note"><div class="note-icon">ℹ️</div><div>Вставь весь CSS анимаций в <strong>Project Settings → Custom Code → Head Code</strong> — в блок &lt;style&gt; который ты добавлял в Главе 1. Вставь перед закрывающим тегом &lt;/style&gt;.</div></div>
 
-  <!-- ANIM 1: fadeUp -->
+  <!-- Anim 1 -->
   <div class="card">
-    <div class="card-title">① Герой — появление текста (fadeUp)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
-      <div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Каждый элемент героя появляется снизу вверх с задержкой. Eyebrow → H1 → Subtitle → Кнопки → Trust bar</div>
-        </div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">В Webflow:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Interactions → <strong>Page Load</strong> → Move (Y: +24px → 0) + Opacity (0 → 1) → каждому элементу задержка +0.1s</div>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:#8888a0;margin-bottom:6px;font-family:'DM Mono',monospace;">ЗАДЕРЖКИ (Animation Delay):</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;border-radius:6px 0 0 6px;">Элемент</th><th style="padding:6px 10px;text-align:left;">Задержка</th><th style="padding:6px 10px;text-align:left;border-radius:0 6px 6px 0;">Duration</th></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Eyebrow badge</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.1s</td><td style="padding:6px 10px;">0.7s</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Заголовок H1</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.2s</td><td style="padding:6px 10px;">0.7s</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Подзаголовок</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.3s</td><td style="padding:6px 10px;">0.7s</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Кнопки</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.4s</td><td style="padding:6px 10px;">0.7s</td></tr>
-          <tr><td style="padding:6px 10px;">Trust bar</td><td style="padding:6px 10px;color:#6951F4;font-weight:700;">0.5s</td><td style="padding:6px 10px;">0.7s</td></tr>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">Easing: ease (cubic-bezier)</div>
-      </div>
+    <div class="card-label">Анимация 1 — Появление Hero при загрузке (fadeUp)</div>
+    <div style="background:#f7f8fc;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;color:#0c0e1a;font-weight:600;margin-bottom:6px">Что происходит:</div>
+      <div style="font-size:13px;color:#52526a;line-height:1.6">Текст в Hero снизу вверх появляется с задержкой — сначала badge, потом заголовок, потом подзаголовок, потом кнопки.</div>
     </div>
-    <div style="margin-top:16px;">
-      <div style="font-size:11px;color:#8888a0;margin-bottom:6px;font-family:'DM Mono',monospace;">CSS (для Custom Code если нужно):</div>
-      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes fadeUp {
+    <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600">Задержки для каждого элемента Hero:</div>
+    <div class="fields" style="margin-bottom:12px">
+      <div class="field"><span class="field-name">Badge (eyebrow)</span><span class="field-val">задержка 0.1 сек</span></div>
+      <div class="field"><span class="field-name">Заголовок H1</span><span class="field-val">задержка 0.2 сек</span></div>
+      <div class="field"><span class="field-name">Подзаголовок</span><span class="field-val">задержка 0.3 сек</span></div>
+      <div class="field"><span class="field-name">Кнопки</span><span class="field-val">задержка 0.4 сек</span></div>
+      <div class="field"><span class="field-name">Trust bar</span><span class="field-val">задержка 0.5 сек</span></div>
+    </div>
+    <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600">CSS — добавь в Head Code:</div>
+    <div class="code">@keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.hero-eyebrow  { animation: fadeUp 0.7s ease 0.1s both; }
-.hero-headline { animation: fadeUp 0.7s ease 0.2s both; }
-.hero-sub      { animation: fadeUp 0.7s ease 0.3s both; }
-.hero-actions  { animation: fadeUp 0.7s ease 0.4s both; }
-.hero-trust    { animation: fadeUp 0.7s ease 0.5s both; }</pre>
-    </div>
+
+.hero-eyebrow  { animation: fadeUp 0.7s ease <span class="s">0.1s</span> both; }
+.hero-headline { animation: fadeUp 0.7s ease <span class="s">0.2s</span> both; }
+.hero-sub      { animation: fadeUp 0.7s ease <span class="s">0.3s</span> both; }
+.hero-actions  { animation: fadeUp 0.7s ease <span class="s">0.4s</span> both; }
+.hero-trust    { animation: fadeUp 0.7s ease <span class="s">0.5s</span> both; }</div>
+    <div class="tip" style="margin-top:10px"><div class="tip-icon">⚠️</div><div>Каждому элементу Hero в Webflow дай соответствующий класс: <strong>hero-eyebrow</strong>, <strong>hero-headline</strong> и т.д.</div></div>
   </div>
 
-  <!-- ANIM 2: tagFloat -->
+  <!-- Anim 2 -->
   <div class="card">
-    <div class="card-title">② Плавающие теги (tagFloat)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
-      <div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">5 тегов (Brand Safe, Verified, LIVE, AI Compliant, Trend) плавно поднимаются на 8px и опускаются обратно. Каждый с разной скоростью и задержкой — создаёт органичное движение.</div>
-        </div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">В Webflow:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Вставить CSS в Custom Code. В Webflow Interactions нельзя сделать такой loop с разными скоростями.</div>
-        </div>
-      </div>
-      <div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;">Тег</th><th style="padding:6px 10px;text-align:left;">Duration</th><th style="padding:6px 10px;text-align:left;">Delay</th></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Brand Safe ✓</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">6s</td><td style="padding:6px 10px;">0s</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Verified</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">7s</td><td style="padding:6px 10px;">1s</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">LIVE</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">8s</td><td style="padding:6px 10px;">0.5s</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">AI Compliant</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">6.5s</td><td style="padding:6px 10px;">1.5s</td></tr>
-          <tr><td style="padding:6px 10px;">Trend ↑</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">9s</td><td style="padding:6px 10px;">0.8s</td></tr>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">Move Y: 0 → -8px → 0 | ease-in-out | infinite</div>
-      </div>
+    <div class="card-label">Анимация 2 — Плавающие теги (tagFloat)</div>
+    <div style="background:#f7f8fc;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;color:#0c0e1a;font-weight:600;margin-bottom:4px">Что происходит:</div>
+      <div style="font-size:13px;color:#52526a;line-height:1.6">5 тегов в Hero-секции (Brand Safe ✓, Verified, LIVE, AI Compliant, Trend ↑) медленно поднимаются на 8px и опускаются. Каждый с разной скоростью — выглядит органично.</div>
     </div>
-    <div style="margin-top:16px;">
-      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes tagFloat {
+    <div class="fields" style="margin-bottom:12px">
+      <div class="field"><span class="field-name">Движение</span><span class="field-val">вверх на 8px и обратно</span></div>
+      <div class="field"><span class="field-name">Тег 1 (Brand Safe)</span><span class="field-val">6 сек · задержка 0</span></div>
+      <div class="field"><span class="field-name">Тег 2 (Verified)</span><span class="field-val">7 сек · задержка 1 сек</span></div>
+      <div class="field"><span class="field-name">Тег 3 (LIVE)</span><span class="field-val">8 сек · задержка 0.5 сек</span></div>
+      <div class="field"><span class="field-name">Тег 4 (AI Compliant)</span><span class="field-val">6.5 сек · задержка 1.5 сек</span></div>
+      <div class="field"><span class="field-name">Тег 5 (Trend ↑)</span><span class="field-val">9 сек · задержка 0.8 сек</span></div>
+    </div>
+    <div class="code">@keyframes tagFloat {
   0%, 100% { transform: translateX(-50%) translateY(0px); }
   50%       { transform: translateX(-50%) translateY(-8px); }
 }
-.viz-tag { animation: tagFloat ease-in-out infinite; }
-/* Каждому тегу свой class: viz-tag-1 ... viz-tag-5 */
-.viz-tag-1 { animation-duration: 6s;   animation-delay: 0s; }
-.viz-tag-2 { animation-duration: 7s;   animation-delay: 1s; }
-.viz-tag-3 { animation-duration: 8s;   animation-delay: 0.5s; }
-.viz-tag-4 { animation-duration: 6.5s; animation-delay: 1.5s; }
-.viz-tag-5 { animation-duration: 9s;   animation-delay: 0.8s; }</pre>
-    </div>
+
+.viz-tag-1 { animation: tagFloat 6s   ease-in-out 0s   infinite; }
+.viz-tag-2 { animation: tagFloat 7s   ease-in-out 1s   infinite; }
+.viz-tag-3 { animation: tagFloat 8s   ease-in-out 0.5s infinite; }
+.viz-tag-4 { animation: tagFloat 6.5s ease-in-out 1.5s infinite; }
+.viz-tag-5 { animation: tagFloat 9s   ease-in-out 0.8s infinite; }</div>
+    <div class="tip" style="margin-top:10px"><div class="tip-icon">⚠️</div><div>Каждому тегу в Webflow дай класс <strong>viz-tag-1</strong> ... <strong>viz-tag-5</strong>. Теги должны быть Position: Absolute внутри контейнера с Position: Relative.</div></div>
   </div>
 
-  <!-- ANIM 3: Orbit -->
+  <!-- Anim 3 -->
   <div class="card">
-    <div class="card-title">③ Орбитальные кольца (spin)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
-      <div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">3 кольца вокруг центрального графика медленно вращаются. Второе кольцо крутится в обратную сторону.</div>
-        </div>
-        <div style="background:#fff3e0;border:1px solid #ffe0b2;border-radius:10px;padding:16px;">
-          <div style="font-size:12px;color:#e65100;margin-bottom:6px;font-weight:600;">⚠ Важно в Webflow:</div>
-          <div style="font-size:13px;color:#bf360c;line-height:1.6;">Это SVG анимация. В Webflow нужно вставить SVG через HTML Embed и добавить CSS в Custom Code. Webflow Interactions здесь не подойдут.</div>
-        </div>
-      </div>
-      <div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;">
-          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;">Кольцо</th><th style="padding:6px 10px;text-align:left;">Duration</th><th style="padding:6px 10px;text-align:left;">Direction</th></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Orbit 1 (внутр.)</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">22s</td><td style="padding:6px 10px;">normal</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Orbit 2 (средн.)</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">34s</td><td style="padding:6px 10px;color:#ef4444;font-weight:600;">reverse</td></tr>
-          <tr><td style="padding:6px 10px;">Orbit 3 (внешн.)</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">50s</td><td style="padding:6px 10px;">normal</td></tr>
-        </table>
-        <div style="font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">Easing: linear | Loop: infinite<br>transform-origin: center of SVG</div>
-      </div>
+    <div class="card-label">Анимация 3 — Рост progress bars (barGrow)</div>
+    <div style="background:#f7f8fc;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;color:#0c0e1a;font-weight:600;margin-bottom:4px">Что происходит:</div>
+      <div style="font-size:13px;color:#52526a;line-height:1.6">Цветные полоски в Score Panel вырастают от 0% до нужной ширины при загрузке страницы.</div>
     </div>
-    <div style="margin-top:16px;">
-      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+    <div class="fields" style="margin-bottom:12px">
+      <div class="field"><span class="field-name">Brand Alignment</span><span class="field-val">88% · зелёный</span></div>
+      <div class="field"><span class="field-name">FTC Compliance</span><span class="field-val">62% · красный</span></div>
+      <div class="field"><span class="field-name">Hate / Violence</span><span class="field-val">75% · красный</span></div>
+      <div class="field"><span class="field-name">Political Content</span><span class="field-val">48% · оранжевый</span></div>
+    </div>
+    <div class="code">@keyframes barGrow {
+  from { width: 0; }
+  to   { width: var(--w); }
 }
-.orbit-ring-1 { animation: spin 22s linear infinite; transform-origin: 240px 240px; }
-.orbit-ring-2 { animation: spin 34s linear infinite reverse; transform-origin: 240px 240px; }
-.orbit-ring-3 { animation: spin 50s linear infinite; transform-origin: 240px 240px; }</pre>
-    </div>
+
+<span class="c">/* Каждой полоске задай класс и переменную --w: */</span>
+.bar-1 { --w: <span class="s">88%</span>; animation: barGrow 2s ease forwards; }
+.bar-2 { --w: <span class="s">62%</span>; animation: barGrow 2s ease forwards; }
+.bar-3 { --w: <span class="s">75%</span>; animation: barGrow 2s ease forwards; }
+.bar-4 { --w: <span class="s">48%</span>; animation: barGrow 2s ease forwards; }</div>
   </div>
 
-  <!-- ANIM 4: Breathe + Pulse -->
+  <!-- Anim 4 -->
   <div class="card">
-    <div class="card-title">④ Пульсация (breathe / centerPulse / dotPulse)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
-      <div style="background:#f7f7fb;border-radius:10px;padding:14px;">
-        <div style="font-size:12px;font-weight:600;color:#6951F4;margin-bottom:6px;">breathe</div>
-        <div style="font-size:12px;color:#52526a;line-height:1.5;">Glow в герое пульсирует: scale 1 → 1.08 → 1, opacity 0.7 → 1 → 0.7</div>
-        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">5s ease-in-out infinite</div>
-      </div>
-      <div style="background:#f7f7fb;border-radius:10px;padding:14px;">
-        <div style="font-size:12px;font-weight:600;color:#6951F4;margin-bottom:6px;">centerPulse</div>
-        <div style="font-size:12px;color:#52526a;line-height:1.5;">Центр графика мерцает: opacity 0.15 → 0.3 → 0.15, scale 1 → 1.05 → 1</div>
-        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">4s ease-in-out infinite</div>
-      </div>
-      <div style="background:#f7f7fb;border-radius:10px;padding:14px;">
-        <div style="font-size:12px;font-weight:600;color:#6951F4;margin-bottom:6px;">dotPulse</div>
-        <div style="font-size:12px;color:#52526a;line-height:1.5;">Точки на орбитах: opacity 0.4 → 1 → 0.4, scale 0.8 → 1 → 0.8</div>
-        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">3s ease-in-out infinite</div>
-      </div>
+    <div class="card-label">Анимация 4 — Мигающая точка LIVE (liveBlink)</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 16px;background:#f7f8fc;border-radius:10px">
+      <div style="width:8px;height:8px;border-radius:50%;background:#ef4444;animation:liveBlink 1.4s ease-in-out infinite"></div>
+      <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;color:#ef4444">LIVE</span>
+      <span style="font-size:12px;color:#8888a0;margin-left:4px">← вот так выглядит</span>
     </div>
-    <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes breathe {
-  0%, 100% { transform: scale(1);    opacity: 0.7; }
-  50%       { transform: scale(1.08); opacity: 1; }
-}
-@keyframes centerPulse {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50%       { opacity: 0.3;  transform: scale(1.05); }
-}
-@keyframes dotPulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.8); }
-  50%       { opacity: 1;   transform: scale(1); }
-}</pre>
-  </div>
-
-  <!-- ANIM 5: barGrow -->
-  <div class="card">
-    <div class="card-title">⑤ Рост шкал при загрузке (barGrow)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
-      <div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;margin-bottom:12px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Полоски прогресса и score шкалы вырастают от 0 до нужной ширины при загрузке страницы. Ширина у каждой своя (через CSS-переменную <code style="background:#f0f1f8;padding:1px 4px;border-radius:3px;">--w</code>).</div>
-        </div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">В Webflow:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Interactions → Page Load → для каждой полоски: Width от 0% до нужного % (1.8-2s, ease). Или Custom Code.</div>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-family:'DM Mono',monospace;">ШИРИНЫ ШКАЛ (% от контейнера):</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <tr style="background:#f0f1f8;"><th style="padding:6px 10px;text-align:left;">Шкала</th><th style="padding:6px 10px;text-align:left;">Ширина</th></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Brand Safe Score</td><td style="padding:6px 10px;font-weight:700;color:#6951F4;">92%</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Pharma Risk</td><td style="padding:6px 10px;font-weight:700;color:#ef4444;">23%</td></tr>
-          <tr style="border-bottom:1px solid #f0f1f8;"><td style="padding:6px 10px;">Audience Trust</td><td style="padding:6px 10px;font-weight:700;color:#4ade80;">87%</td></tr>
-          <tr><td style="padding:6px 10px;">Content Risk</td><td style="padding:6px 10px;font-weight:700;color:#f59e0b;">41%</td></tr>
-        </table>
-        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">Duration: 1.8–2s | Easing: ease | Trigger: Page Load</div>
-      </div>
-    </div>
-    <div style="margin-top:16px;">
-      <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;">@keyframes barGrow { from { width: 0; } to { width: var(--w); } }
-/* Пример применения: */
-.bar-brand-safe { --w: 92%; animation: barGrow 2s ease forwards; }
-.bar-pharma     { --w: 23%; animation: barGrow 2s ease forwards; }
-.bar-trust      { --w: 87%; animation: barGrow 1.8s ease forwards; }
-.bar-risk       { --w: 41%; animation: barGrow 1.8s ease forwards; }</pre>
-    </div>
-  </div>
-
-  <!-- ANIM 6: liveBlink -->
-  <div class="card">
-    <div class="card-title">⑥ Мигающий индикатор LIVE (liveBlink)</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;">
-      <div>
-        <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-          <div style="font-size:12px;color:#52526a;margin-bottom:8px;font-weight:600;">Что делает:</div>
-          <div style="font-size:13px;color:#0c0e1a;line-height:1.6;">Красная точка рядом с надписью "LIVE" мигает: плавно исчезает до opacity 0.35 и появляется обратно.</div>
-          <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:#ef4444;animation:liveBlink 1.4s ease-in-out infinite;flex-shrink:0;"></div>
-            <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;color:#ef4444;">LIVE</span>
-          </div>
-        </div>
-      </div>
-      <div>
-        <pre style="background:#0c0e1a;color:#9b8fff;padding:14px;border-radius:8px;font-size:11px;line-height:1.6;">@keyframes liveBlink {
+    <div class="code">@keyframes liveBlink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.35; }
 }
-.live-dot {
-  animation: liveBlink 1.4s
-    ease-in-out infinite;
-}</pre>
-        <div style="margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#8888a0;">В Webflow: Custom Code или Interactions Loop</div>
-      </div>
-    </div>
+
+.live-dot { animation: liveBlink 1.4s ease-in-out infinite; }</div>
+    <div class="tip" style="margin-top:10px"><div class="tip-icon">💡</div><div>Красная точка — Div Block, Width 8px, Height 8px, Border Radius 50%, Background #ef4444. Дай ему класс <strong>live-dot</strong>.</div></div>
   </div>
 
-  <!-- ANIM 7: Hover -->
+  <!-- Anim 5 -->
   <div class="card">
-    <div class="card-title">⑦ Hover эффекты</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Кнопки (Primary, Outline)</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;">
-          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Transform</td><td style="padding:5px 0;font-weight:600;">translateY(-1px)</td></tr>
-          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Box-shadow</td><td style="padding:5px 0;font-weight:600;">+glow усиливается</td></tr>
-          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.25s ease</td></tr>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Hover State → Transform → Move Y: -1px</div>
-      </div>
-      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Стрелка в кнопке Ghost</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;">
-          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Transform</td><td style="padding:5px 0;font-weight:600;">translateX(+3px)</td></tr>
-          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Trigger</td><td style="padding:5px 0;font-weight:600;">Hover на родителе</td></tr>
-          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.2s ease</td></tr>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Interactions → Hover → child Move X: 3px</div>
-      </div>
-      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Intel карточки</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;">
-          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Border</td><td style="padding:5px 0;font-weight:600;">rgba(105,81,244,0.15) → 0.3</td></tr>
-          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.2s ease</td></tr>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Hover State → Border Color</div>
-      </div>
-      <div style="background:#f7f7fb;border-radius:10px;padding:16px;">
-        <div style="font-size:12px;font-weight:600;margin-bottom:10px;">Score Panel (Frankie Edgar)</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;">
-          <tr style="border-bottom:1px solid #e8e8f0;"><td style="padding:5px 0;color:#52526a;">Box-shadow</td><td style="padding:5px 0;font-weight:600;">усиливается glow</td></tr>
-          <tr><td style="padding:5px 0;color:#52526a;">Transition</td><td style="padding:5px 0;font-weight:600;">0.2s ease</td></tr>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:#8888a0;font-family:'DM Mono',monospace;">В Webflow: Hover State → Shadow</div>
-      </div>
+    <div class="card-label">Анимация 5 — Орбитальные кольца (только через CSS)</div>
+    <div style="background:#fff3e0;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:12px;color:#92400e;font-weight:600;margin-bottom:4px">⚠ Важно</div>
+      <div style="font-size:12px;color:#92400e;line-height:1.5">Орбиты — это SVG элемент. Его нельзя нарисовать в Webflow визуально. Вставь через <strong>HTML Embed</strong> целиком из исходного кода сайта.</div>
     </div>
+    <div class="fields">
+      <div class="field"><span class="field-name">Кольцо 1 (внутреннее)</span><span class="field-val">22 сек · по часовой</span></div>
+      <div class="field"><span class="field-name">Кольцо 2 (среднее)</span><span class="field-val">34 сек · против часовой</span></div>
+      <div class="field"><span class="field-name">Кольцо 3 (внешнее)</span><span class="field-val">50 сек · по часовой</span></div>
+    </div>
+    <div class="code" style="margin-top:10px">@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.orbit-ring-1 { animation: spin 22s linear infinite; transform-origin: 240px 240px; }
+.orbit-ring-2 { animation: spin 34s linear infinite reverse; transform-origin: 240px 240px; }
+.orbit-ring-3 { animation: spin 50s linear infinite; transform-origin: 240px 240px; }</div>
   </div>
 
-  <!-- Custom Code block -->
-  <div class="card" style="background:#0c0e1a;color:white;border:none;">
-    <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">Весь CSS анимаций — вставить в Webflow Project Settings → Custom Code → &lt;head&gt;</div>
-    <pre style="color:#9b8fff;font-size:11px;line-height:1.7;overflow-x:auto;">/* ── VwD AI — All Animations ── */
+  <!-- ALL CSS block -->
+  <div class="card" style="background:#0c0e1a;border:none">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px">Весь CSS анимаций — одним куском для вставки в Head Code</div>
+    <div class="code" style="margin-top:0;color:#b8a4ff">/* ── VwD All Animations ── */
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes breathe {
-  0%, 100% { transform: scale(1);    opacity: 0.7; }
-  50%       { transform: scale(1.08); opacity: 1; }
-}
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-@keyframes dotPulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.8); }
-  50%       { opacity: 1;   transform: scale(1); }
-}
-@keyframes centerPulse {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50%       { opacity: 0.3;  transform: scale(1.05); }
+@keyframes tagFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-8px); }
 }
 @keyframes barGrow {
   from { width: 0; }
   to   { width: var(--w); }
 }
-@keyframes tagFloat {
-  0%, 100% { transform: translateX(-50%) translateY(0px); }
-  50%       { transform: translateX(-50%) translateY(-8px); }
-}
 @keyframes liveBlink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.35; }
-}</pre>
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.08); opacity: 1; }
+}
+
+/* Hero fadeUp delays */
+.hero-eyebrow  { animation: fadeUp 0.7s ease 0.1s both; }
+.hero-headline { animation: fadeUp 0.7s ease 0.2s both; }
+.hero-sub      { animation: fadeUp 0.7s ease 0.3s both; }
+.hero-actions  { animation: fadeUp 0.7s ease 0.4s both; }
+.hero-trust    { animation: fadeUp 0.7s ease 0.5s both; }
+
+/* Floating tags */
+.viz-tag-1 { animation: tagFloat 6s   ease-in-out 0s   infinite; }
+.viz-tag-2 { animation: tagFloat 7s   ease-in-out 1s   infinite; }
+.viz-tag-3 { animation: tagFloat 8s   ease-in-out 0.5s infinite; }
+.viz-tag-4 { animation: tagFloat 6.5s ease-in-out 1.5s infinite; }
+.viz-tag-5 { animation: tagFloat 9s   ease-in-out 0.8s infinite; }
+
+/* Orbit rings */
+.orbit-ring-1 { animation: spin 22s linear infinite; transform-origin: 240px 240px; }
+.orbit-ring-2 { animation: spin 34s linear infinite reverse; transform-origin: 240px 240px; }
+.orbit-ring-3 { animation: spin 50s linear infinite; transform-origin: 240px 240px; }
+
+/* Progress bars */
+.bar-1 { --w: 88%; animation: barGrow 2s ease forwards; }
+.bar-2 { --w: 62%; animation: barGrow 2s ease forwards; }
+.bar-3 { --w: 75%; animation: barGrow 2s ease forwards; }
+.bar-4 { --w: 48%; animation: barGrow 2s ease forwards; }
+
+/* Live dot */
+.live-dot { animation: liveBlink 1.4s ease-in-out infinite; }
+
+/* Hero glow breathe */
+.hero-glow { animation: breathe 5s ease-in-out infinite; }</div>
   </div>
 </div>
 
-<style>
-@keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.35} }
-</style>
 
+</div><!-- /page -->
+<div class="toast" id="toast"></div>
 <script>
-function copy(val, el) {
-  navigator.clipboard.writeText(val);
+function copyColor(hex, name) {
+  navigator.clipboard.writeText(hex);
   const t = document.getElementById('toast');
-  t.textContent = 'Скопировано: ' + val;
+  t.textContent = 'Скопировано: ' + hex;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 1800);
-}
-
-function copyIcon(cls, el) {
-  const html = `<i class="${cls}"></i>`;
-  navigator.clipboard.writeText(html);
-  const usage = el.querySelector('.icon-usage');
-  usage.textContent = 'Скопировано!';
-  usage.style.opacity = '1';
-  const t = document.getElementById('toast');
-  t.textContent = 'Скопировано: ' + html;
-  t.classList.add('show');
-  setTimeout(() => {
-    t.classList.remove('show');
-    usage.style.opacity = '';
-    usage.textContent = 'Скопировано!';
-  }, 1800);
 }
 </script>
 </body>
