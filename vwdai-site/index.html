@@ -570,7 +570,7 @@
     letter-spacing: -3px;
     line-height: 1;
     margin-bottom: 12px;
-    background: linear-gradient(135deg, var(--violet-light) 0%, var(--purple) 100%);
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 50%, var(--purple) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1166,7 +1166,7 @@
 
   /* WHITEPAPER */
   .whitepaper-section {
-    background: var(--warm);
+    background: var(--light-bg);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -1176,7 +1176,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(77,212,255,0.15) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(105,81,244,0.07) 0%, transparent 60%);
     pointer-events: none;
   }
 
@@ -1184,7 +1184,7 @@
     font-family: 'Lexend', sans-serif;
     font-size: clamp(32px, 3.5vw, 52px);
     font-weight: 800;
-    color: white;
+    color: var(--light-ink);
     letter-spacing: -2px;
     line-height: 1.1;
     margin-bottom: 16px;
@@ -1193,7 +1193,7 @@
   }
 
   .whitepaper-section h2 span {
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    background: linear-gradient(135deg, var(--violet), var(--purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -1201,7 +1201,7 @@
   .whitepaper-section p {
     font-size: 16px;
     font-weight: 300;
-    color: rgba(255,255,255,0.6);
+    color: var(--light-secondary);
     margin-bottom: 36px;
     position: relative;
     z-index: 2;
@@ -1216,23 +1216,25 @@
     margin: 0 auto;
     border-radius: 14px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid var(--light-border);
     position: relative;
     z-index: 2;
+    background: white;
+    box-shadow: 0 4px 24px rgba(105,81,244,0.08);
   }
 
   .whitepaper-form input {
     flex: 1;
-    background: rgba(255,255,255,0.08);
+    background: transparent;
     border: none;
     padding: 16px 20px;
     font-size: 15px;
-    color: white;
+    color: var(--light-ink);
     font-family: 'DM Sans', sans-serif;
     outline: none;
   }
 
-  .whitepaper-form input::placeholder { color: rgba(255,255,255,0.35); }
+  .whitepaper-form input::placeholder { color: rgba(10,10,15,0.35); }
 
   .whitepaper-form button {
     background: var(--violet);
@@ -2079,17 +2081,15 @@
 
   /* CLIENTS */
   .clients {
-    background: var(--ink);
+    background: var(--light-bg);
     padding: 80px max(48px, calc((100vw - 1280px) / 2));
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
   .clients-label {
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.42);
+    color: var(--light-mid);
     text-align: center;
     margin-bottom: 40px;
   }
@@ -2106,13 +2106,13 @@
     font-family: 'Lexend', sans-serif;
     font-weight: 700;
     font-size: 16px;
-    color: rgba(255,255,255,0.42);
+    color: rgba(10,10,15,0.50);
     letter-spacing: -0.3px;
     white-space: nowrap;
     transition: color 0.2s;
   }
 
-  .client-name:hover { color: white; }
+  .client-name:hover { color: var(--light-ink); }
 
   /* CTA SECTION */
   .cta-section {
