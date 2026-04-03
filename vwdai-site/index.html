@@ -570,7 +570,7 @@
     letter-spacing: -3px;
     line-height: 1;
     margin-bottom: 12px;
-    background: linear-gradient(160deg, #ffffff 0%, var(--violet-light) 100%);
+    background: linear-gradient(135deg, var(--violet-light) 0%, var(--purple) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -626,20 +626,6 @@
     margin-bottom: 20px;
   }
 
-  /* Accent words inside headlines — dark sections */
-  .section-headline em {
-    font-style: normal;
-    color: var(--violet-light);
-  }
-
-  /* Light-bg sections override: deeper violet for contrast */
-  .what-we-do .section-headline em,
-  .how .section-headline em,
-  .faq-section .section-headline em,
-  .pricing-section .section-headline em,
-  .testimonials .section-headline em {
-    color: var(--violet);
-  }
 
   .section-sub {
     font-size: 17px;
@@ -1049,7 +1035,6 @@
     background: var(--light-bg);
   }
   .pillars .section-headline { color: var(--light-ink) !important; }
-  .pillars .section-headline em { color: var(--violet); font-style: normal; }
   .pillars .section-sub { color: var(--light-mid) !important; }
   .pillars .section-eyebrow { color: var(--violet) !important; }
   .pillars .section-eyebrow::before { background: var(--violet) !important; }
@@ -2775,7 +2760,7 @@
 <!-- FOUR PILLARS -->
 <section class="pillars">
   <p class="section-eyebrow">Why VwD</p>
-  <h2 class="section-headline">Four Pillars of <em>Intelligence</em></h2>
+  <h2 class="section-headline">Four Pillars of Intelligence</h2>
   <div class="pillars-grid">
     <div class="pillar-card">
       <div class="pillar-card-icon"><i class="ph-light ph-lightning"></i></div>
@@ -3162,7 +3147,7 @@
 <!-- FAQ -->
 <section class="faq-section">
   <p class="section-eyebrow">Got Questions</p>
-  <h2 class="section-headline">Frequently Asked <em>Questions</em></h2>
+  <h2 class="section-headline">Frequently Asked Questions</h2>
   <div class="faq-list">
     <div class="faq-item open">
       <button class="faq-q" onclick="toggleFaq(this)">
