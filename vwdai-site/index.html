@@ -922,6 +922,51 @@
     box-shadow: 0 0 24px rgba(105,81,244,0.35), inset 0 1px 0 rgba(255,255,255,0.1);
   }
 
+  /* CUSTOM CATEGORIES SECTION */
+  .custom-section {
+    background: var(--light-bg);
+  }
+  .custom-section .section-headline { color: var(--light-ink) !important; }
+  .custom-section .section-sub { color: var(--light-secondary) !important; max-width: 480px; }
+  .custom-section .section-eyebrow { color: var(--violet) !important; }
+  .custom-section .section-eyebrow::before { background: var(--violet) !important; }
+
+  .custom-section-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .custom-tags-light {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+  }
+
+  .tag-purple-light {
+    background: rgba(195,93,253,0.10);
+    border: 1px solid rgba(195,93,253,0.3);
+    color: #7c2fbe;
+  }
+  .tag-outline-light {
+    background: rgba(105,81,244,0.06);
+    border: 1px solid rgba(105,81,244,0.25);
+    color: var(--violet);
+  }
+  .tag-add-light {
+    background: linear-gradient(135deg, rgba(105,81,244,0.12), rgba(195,93,253,0.08));
+    border: 1px solid rgba(105,81,244,0.3);
+    color: var(--violet);
+    text-decoration: none;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .tag-add-light:hover {
+    border-color: rgba(105,81,244,0.5);
+    box-shadow: 0 2px 12px rgba(105,81,244,0.15);
+  }
+
   /* HOW IT WORKS — pipeline */
   .how {
     background: var(--light-bg);
@@ -2694,9 +2739,9 @@
   <div class="intel-header">
     <div>
       <p class="section-eyebrow">Creator Intelligence</p>
-      <h2 class="section-headline">80+ Categories.<br>Endless Customization.</h2>
+      <h2 class="section-headline">80+ Categories.<br>Ready Out of the Box.</h2>
     </div>
-    <p class="section-sub">VwD's proprietary detection framework covers every dimension of creator risk. Build your own on top of it.</p>
+    <p class="section-sub">VwD's proprietary detection framework covers every dimension of creator risk — out of the box, from day one.</p>
   </div>
   <div class="intel-cards">
     <div class="intel-card intel-card-highlight">
@@ -2722,20 +2767,24 @@
     </div>
   </div>
 
-  <div class="build-own">
-    <div>
-      <p class="build-own-label">✦ New</p>
-      <h3>Build Your Own Safety Categories</h3>
-      <p>Go beyond the standard framework. Define custom detection categories based on your brand values, competitive landscape, or regulatory environment. Backed by the same AI that powers 80+ proprietary models. Not keyword matching. Creator intelligence.</p>
-      <a href="#" class="btn-outline" style="display:inline-flex;align-items:center;gap:6px;margin-top:24px;">See How It Works <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+</section>
+
+<!-- CUSTOM CATEGORIES -->
+<section class="custom-section">
+  <div class="custom-section-inner">
+    <div class="custom-section-left">
+      <p class="section-eyebrow">Custom Categories</p>
+      <h2 class="section-headline">Build Your Own<br>Safety Framework.</h2>
+      <p class="section-sub">Go beyond the standard. Define detection categories based on your brand values, competitive landscape, or regulatory environment. Backed by the same AI that powers 80+ proprietary models. Not keyword matching — creator intelligence.</p>
+      <a href="#" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;margin-top:36px;text-decoration:none;">See How It Works <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
-    <div class="custom-tags">
-      <span class="custom-tag tag-purple"><i class="ph-light ph-pill"></i>Pharma Safe</span>
-      <span class="custom-tag tag-purple"><i class="ph-light ph-baby"></i>Kids Content</span>
-      <span class="custom-tag tag-purple"><i class="ph-light ph-buildings"></i>Competitor: Nike</span>
-      <span class="custom-tag tag-outline"><i class="ph-light ph-scales"></i>Political Neutrality</span>
-      <span class="custom-tag tag-outline"><i class="ph-light ph-leaf"></i>ESG Alignment</span>
-      <a href="#" class="custom-tag tag-add-neutral"><i class="ph-light ph-plus"></i>Add category</a>
+    <div class="custom-tags custom-tags-light">
+      <span class="custom-tag tag-purple-light"><i class="ph-light ph-pill"></i>Pharma Safe</span>
+      <span class="custom-tag tag-purple-light"><i class="ph-light ph-baby"></i>Kids Content</span>
+      <span class="custom-tag tag-purple-light"><i class="ph-light ph-buildings"></i>Competitor: Nike</span>
+      <span class="custom-tag tag-outline-light"><i class="ph-light ph-scales"></i>Political Neutrality</span>
+      <span class="custom-tag tag-outline-light"><i class="ph-light ph-leaf"></i>ESG Alignment</span>
+      <a href="#" class="custom-tag tag-add-light"><i class="ph-light ph-plus"></i>Add category</a>
     </div>
   </div>
 </section>
