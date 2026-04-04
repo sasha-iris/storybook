@@ -180,6 +180,24 @@
     transform: translateY(-1px);
   }
 
+  .btn-primary-outline {
+    background: transparent;
+    color: var(--violet);
+    padding: 14px 32px;
+    border-radius: 100px;
+    border: 1.5px solid var(--violet);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary-outline:hover {
+    background: var(--violet);
+    color: white;
+    transform: translateY(-1px);
+  }
+
   .btn-ghost {
     color: rgba(255,255,255,0.7);
     font-size: 14px;
@@ -644,23 +662,7 @@
   .what-we-do .section-eyebrow { color: var(--violet) !important; }
   .what-we-do .section-eyebrow::before { background: var(--violet) !important; }
 
-  /* BUILT FOR YOUR TEAM — dark override */
-  #built-team { background: var(--ink); }
-  #built-team .section-headline { color: white !important; }
-  #built-team .section-sub { color: rgba(255,255,255,0.72) !important; }
-  #built-team .section-eyebrow { color: var(--violet-light) !important; }
-  #built-team .section-eyebrow::before { background: var(--violet-light) !important; }
-  #built-team .what-pillars { background: transparent; gap: 16px; }
-  #built-team .pillar {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  #built-team .pillar:hover { background: rgba(105,81,244,0.08); border-color: rgba(155,133,255,0.3); }
-  #built-team .pillar-icon { color: var(--violet-light); }
-  #built-team .pillar h3 { color: white; }
-  #built-team .pillar p { color: rgba(255,255,255,0.62); }
+  /* BUILT FOR YOUR TEAM — light (default what-we-do styling, no overrides needed) */
 
   .what-header {
     display: grid;
@@ -759,48 +761,45 @@
   .intel-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px;
-    overflow: hidden;
+    gap: 16px;
   }
 
   .intel-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
     padding: 36px 32px;
-    border-right: 1px solid rgba(255,255,255,0.07);
-    transition: background 0.25s;
-  }
-
-  .intel-card:last-child {
-    border-right: none;
+    transition: background 0.25s, border-color 0.25s;
   }
 
   .intel-card:hover {
-    background: rgba(255,255,255,0.03);
+    background: rgba(105,81,244,0.08);
+    border-color: rgba(155,133,255,0.3);
   }
 
   .intel-card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
-  .intel-card .intel-card-icon { background: rgba(77,212,255,0.12); color: var(--cyan); }
+  .intel-card .intel-card-icon { background: rgba(77,212,255,0.14); color: var(--cyan); }
 
   .intel-card h4 {
     font-family: 'Lexend', sans-serif;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 700;
     color: white;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     letter-spacing: -0.3px;
   }
 
   .intel-card p {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 300;
     color: rgba(255,255,255,0.55);
     line-height: 1.7;
@@ -955,26 +954,44 @@
     border: 1px solid rgba(105,81,244,0.25);
     color: var(--violet);
   }
-  .tag-add-light {
-    background: linear-gradient(135deg, rgba(105,81,244,0.12), rgba(195,93,253,0.08));
-    border: 1px solid rgba(105,81,244,0.3);
-    color: var(--violet);
+  .custom-tags-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .btn-add-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: var(--light-bg);
+    border: 1.5px dashed rgba(12,14,26,0.5);
+    border-radius: 100px;
+    color: rgba(12,14,26,0.6);
+    pointer-events: none;
+    font-family: 'Lexend', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     text-decoration: none;
-    transition: box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+    transition: all 0.25s;
   }
-  .tag-add-light:hover {
-    border-color: rgba(105,81,244,0.5);
-    box-shadow: 0 2px 12px rgba(105,81,244,0.15);
+  .btn-add-category:hover {
+    background: var(--light-bg);
   }
+  .btn-add-category i { font-size: 16px; }
 
   /* HOW IT WORKS — pipeline */
   .how {
-    background: var(--light-bg);
+    background: var(--ink);
   }
-  .how .section-headline { color: var(--light-ink) !important; }
-  .how .section-sub { color: var(--light-mid) !important; }
-  .how .section-eyebrow { color: var(--violet) !important; }
-  .how .section-eyebrow::before { background: var(--violet) !important; }
+  .how .section-headline { color: white !important; }
+  .how .section-sub { color: rgba(255,255,255,0.72) !important; }
+  .how .section-eyebrow { color: var(--violet-light) !important; }
+  .how .section-eyebrow::before { background: var(--violet-light) !important; }
 
   .how-pipeline {
     margin-top: 64px;
@@ -1013,15 +1030,15 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1.5px solid var(--violet);
-    background: var(--light-surface);
+    border: 1.5px solid rgba(155,133,255,0.5);
+    background: rgba(255,255,255,0.06);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Lexend', sans-serif;
     font-size: 16px;
     font-weight: 700;
-    color: var(--violet);
+    color: var(--violet-light);
     position: relative;
     z-index: 2;
   }
@@ -1034,28 +1051,28 @@
   }
 
   .pipeline-card {
-    background: var(--light-surface);
-    border: 1px solid var(--light-border);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
     padding: 28px 24px;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .pipeline-card:hover {
-    border-color: rgba(105,81,244,0.3);
-    box-shadow: 0 4px 24px rgba(105,81,244,0.08);
+    border-color: rgba(155,133,255,0.35);
+    box-shadow: 0 4px 24px rgba(105,81,244,0.12);
   }
 
   .pipeline-card-icon {
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: rgba(105,81,244,0.1);
+    background: rgba(105,81,244,0.18);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 16px;
-    color: var(--violet);
+    color: var(--violet-light);
     font-size: 20px;
   }
 
@@ -1063,7 +1080,7 @@
     font-family: 'Lexend', sans-serif;
     font-size: 17px;
     font-weight: 700;
-    color: var(--light-ink);
+    color: white;
     margin-bottom: 10px;
     letter-spacing: -0.3px;
   }
@@ -1071,18 +1088,18 @@
   .pipeline-card p {
     font-size: 13px;
     font-weight: 300;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.6);
     line-height: 1.65;
   }
 
   /* FOUR PILLARS */
   .pillars {
-    background: var(--light-bg);
+    background: var(--ink);
   }
-  .pillars .section-headline { color: var(--light-ink) !important; }
-  .pillars .section-sub { color: var(--light-mid) !important; }
-  .pillars .section-eyebrow { color: var(--violet) !important; }
-  .pillars .section-eyebrow::before { background: var(--violet) !important; }
+  .pillars .section-headline { color: white !important; }
+  .pillars .section-sub { color: rgba(255,255,255,0.6) !important; }
+  .pillars .section-eyebrow { color: var(--violet-light) !important; }
+  .pillars .section-eyebrow::before { background: var(--violet-light) !important; }
 
   .pillars-grid {
     display: grid;
@@ -1092,28 +1109,28 @@
   }
 
   .pillar-card {
-    background: var(--light-surface);
-    border: 1px solid var(--light-border);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
     padding: 32px 24px;
     transition: border-color 0.2s, background 0.2s;
   }
 
   .pillar-card:hover {
-    background: #f5f3ff;
-    border-color: rgba(105,81,244,0.25);
+    background: rgba(105,81,244,0.08);
+    border-color: rgba(155,133,255,0.35);
   }
 
   .pillar-card-icon {
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: rgba(105,81,244,0.10);
+    background: rgba(105,81,244,0.18);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-    color: var(--violet);
+    color: var(--violet-light);
     font-size: 22px;
   }
 
@@ -1121,7 +1138,7 @@
     font-family: 'Lexend', sans-serif;
     font-size: 18px;
     font-weight: 700;
-    color: var(--light-ink);
+    color: white;
     margin-bottom: 10px;
     letter-spacing: -0.3px;
   }
@@ -1129,7 +1146,7 @@
   .pillar-card p {
     font-size: 13px;
     font-weight: 300;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.55);
     line-height: 1.65;
   }
 
@@ -1211,18 +1228,17 @@
 
   /* WHITEPAPER */
   .whitepaper-section {
-    background: var(--light-bg);
+    background: var(--ink);
     text-align: center;
     position: relative;
     overflow: hidden;
   }
 
-
   .whitepaper-section h2 {
     font-family: 'Lexend', sans-serif;
     font-size: clamp(32px, 3.5vw, 52px);
     font-weight: 800;
-    color: var(--light-ink);
+    color: white;
     letter-spacing: -2px;
     line-height: 1.1;
     margin-bottom: 16px;
@@ -1231,7 +1247,7 @@
   }
 
   .whitepaper-section h2 span {
-    background: linear-gradient(135deg, var(--violet), var(--purple));
+    background: linear-gradient(135deg, var(--violet-light), var(--cyan));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -1239,7 +1255,7 @@
   .whitepaper-section p {
     font-size: 16px;
     font-weight: 300;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.6);
     margin-bottom: 36px;
     position: relative;
     z-index: 2;
@@ -1254,11 +1270,11 @@
     margin: 0 auto;
     border-radius: 14px;
     overflow: hidden;
-    border: 1px solid var(--light-border);
+    border: 1px solid rgba(255,255,255,0.12);
     position: relative;
     z-index: 2;
-    background: white;
-    box-shadow: 0 4px 24px rgba(105,81,244,0.08);
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
   }
 
   .whitepaper-form input {
@@ -1267,12 +1283,12 @@
     border: none;
     padding: 16px 20px;
     font-size: 15px;
-    color: var(--light-ink);
+    color: white;
     font-family: 'DM Sans', sans-serif;
     outline: none;
   }
 
-  .whitepaper-form input::placeholder { color: rgba(10,10,15,0.35); }
+  .whitepaper-form input::placeholder { color: rgba(255,255,255,0.35); }
 
   .whitepaper-form button {
     background: var(--violet);
@@ -1293,11 +1309,24 @@
   .whitepaper-form button:hover { background: #5a42e0; }
 
 
-  /* TESTIMONIALS v2 — light bg, dense 1px gap grid like Zed reference */
+  /* TESTIMONIALS v2 — dark */
   .testimonials-v2 {
-    background: var(--light-bg);
+    background: var(--ink);
     padding: 100px max(48px, calc((100vw - 1280px) / 2));
+    position: relative;
+    overflow: hidden;
   }
+  .testimonials-v2::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 85% 15%, rgba(195,93,253,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 15% 85%, rgba(77,212,255,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .testimonials-v2 > * { position: relative; z-index: 1; }
 
   .tv2-header {
     display: flex;
@@ -1308,19 +1337,19 @@
   }
 
   .tv2-header .section-headline {
-    color: var(--light-ink) !important;
+    color: white !important;
   }
 
   .tv2-header .section-eyebrow {
-    color: var(--violet) !important;
+    color: var(--violet-light) !important;
   }
 
   .tv2-header .section-eyebrow::before {
-    background: var(--violet) !important;
+    background: var(--violet-light) !important;
   }
 
   .tv2-header .section-sub {
-    color: var(--light-mid) !important;
+    color: rgba(255,255,255,0.55) !important;
     max-width: 280px;
     text-align: right;
     flex-shrink: 0;
@@ -1333,7 +1362,7 @@
     gap: 48px;
     margin-bottom: 56px;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--light-border);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
     padding-bottom: 48px;
   }
 
@@ -1341,30 +1370,32 @@
     font-family: 'Lexend', sans-serif;
     font-size: 13px;
     font-weight: 700;
-    color: rgba(10,10,15,0.50);
+    color: rgba(255,255,255,0.28);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     transition: color 0.2s;
   }
 
-  .tv2-logo:hover { color: var(--light-ink); }
+  .tv2-logo:hover { color: rgba(255,255,255,0.75); }
 
   .tv2-grid {
     display: grid;
     grid-template-columns: 1fr 1.35fr 1fr;
     gap: 1px;
-    background: var(--light-border);
+    background: rgba(155,133,255,0.12);
+    border-radius: 20px;
+    overflow: hidden;
   }
 
   .tv2-col {
     display: flex;
     flex-direction: column;
     gap: 1px;
-    background: var(--light-border);
+    background: rgba(155,133,255,0.12);
   }
 
   .tv2-bare {
-    background: var(--light-surface);
+    background: rgba(105,81,244,0.08);
     padding: 40px;
     display: flex;
     flex-direction: column;
@@ -1373,13 +1404,13 @@
   }
 
   .tv2-bare:hover {
-    background: #f9f9fc;
+    background: rgba(105,81,244,0.14);
   }
 
   .tv2-quote {
     font-size: 15px;
     font-weight: 300;
-    color: var(--light-ink);
+    color: rgba(255,255,255,0.88);
     line-height: 1.7;
     margin-bottom: 28px;
     flex: 1;
@@ -1390,7 +1421,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    border-top: 1px solid var(--light-border);
+    border-top: 1px solid rgba(155,133,255,0.15);
     padding-top: 20px;
   }
 
@@ -1404,28 +1435,28 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(105,81,244,0.1);
+    background: linear-gradient(135deg, rgba(105,81,244,0.5), rgba(195,93,253,0.4));
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Lexend', sans-serif;
     font-size: 11px;
     font-weight: 700;
-    color: var(--violet);
+    color: white;
     flex-shrink: 0;
   }
 
   .tv2-name {
     font-size: 13px;
     font-weight: 600;
-    color: var(--light-ink);
+    color: white;
     line-height: 1.3;
   }
 
   .tv2-role {
     font-size: 11px;
     font-weight: 300;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.52);
     line-height: 1.3;
   }
 
@@ -1435,7 +1466,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(10,10,15,0.52);
+    color: rgba(155,133,255,0.6);
     flex-shrink: 0;
   }
 
@@ -1445,32 +1476,30 @@
     font-size: 52px;
     line-height: 0.75;
     font-weight: 800;
-    color: var(--violet);
+    background: linear-gradient(135deg, var(--violet-light), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     display: block;
     margin-bottom: 16px;
   }
 
-  /* Featured center column — light bg with grid pattern */
+  /* Featured center column — dark solid, stands out via border */
   .tv2-featured {
-    background: var(--light-surface);
+    background: rgba(15,13,35,0.95);
+    border-left: 1px solid rgba(155,133,255,0.25);
+    border-right: 1px solid rgba(155,133,255,0.25);
     position: relative;
     padding: 40px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     transition: background 0.2s;
+    box-shadow: 0 0 60px rgba(105,81,244,0.12) inset;
   }
 
   .tv2-featured::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(105,81,244,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(105,81,244,0.07) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
+    display: none;
   }
 
   .tv2-featured > * {
@@ -1479,7 +1508,7 @@
   }
 
   .tv2-featured:hover {
-    background: #f9f9fc;
+    background: rgba(20,16,44,0.98);
   }
 
   .tv2-feat-company {
@@ -1488,31 +1517,34 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--violet);
+    color: var(--violet-light);
     margin-bottom: 4px;
   }
 
   .tv2-feat-quote {
     font-size: 15px;
     font-weight: 300;
-    color: var(--light-ink);
+    color: rgba(255,255,255,0.85);
     line-height: 1.7;
     margin-bottom: 28px;
     flex: 1;
   }
 
   .tv2-feat-quote mark {
-    background: rgba(105,81,244,0.1);
-    color: var(--violet);
-    padding: 1px 4px;
-    border-radius: 3px;
+    background: rgba(155,133,255,0.22);
+    color: #c4b5fd;
+    padding: 2px 5px;
+    border-radius: 4px;
+    text-decoration: underline;
+    text-decoration-color: rgba(155,133,255,0.5);
+    text-underline-offset: 2px;
   }
 
   .tv2-feat-author {
     display: flex;
     align-items: center;
     gap: 12px;
-    border-top: 1px solid var(--light-border);
+    border-top: 1px solid rgba(255,255,255,0.08);
     padding-top: 20px;
   }
 
@@ -1520,33 +1552,33 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(105,81,244,0.1);
+    background: rgba(105,81,244,0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Lexend', sans-serif;
     font-size: 11px;
     font-weight: 700;
-    color: var(--violet);
+    color: var(--violet-light);
     flex-shrink: 0;
   }
 
   .tv2-feat-name {
     font-size: 13px;
     font-weight: 600;
-    color: var(--light-ink);
+    color: white;
     line-height: 1.3;
   }
 
   .tv2-feat-role {
     font-size: 11px;
     font-weight: 300;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.52);
   }
 
   /* PLANS / PRICING */
   .pricing-section {
-    background: var(--light-bg);
+    background: var(--ink);
     position: relative;
     overflow: hidden;
   }
@@ -1556,19 +1588,19 @@
     position: absolute;
     width: 900px; height: 900px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(105,81,244,0.05) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(105,81,244,0.08) 0%, transparent 65%);
     top: -200px; left: 50%;
     transform: translateX(-50%);
     pointer-events: none;
   }
 
-  .pricing-section .section-headline { color: var(--light-ink) !important; }
-  .pricing-section .section-eyebrow { color: var(--violet) !important; }
-  .pricing-section .section-eyebrow::before { background: var(--violet) !important; }
+  .pricing-section .section-headline { color: white !important; }
+  .pricing-section .section-eyebrow { color: var(--violet-light) !important; }
+  .pricing-section .section-eyebrow::before { background: var(--violet-light) !important; }
 
   .pricing-meta {
     font-size: 13px;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.45);
     margin-top: 8px;
     letter-spacing: 0.03em;
   }
@@ -1577,7 +1609,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-top: 64px; /* extra space for floating badge */
+    margin-top: 64px;
     position: relative;
     z-index: 2;
     align-items: stretch;
@@ -1587,30 +1619,30 @@
   /* Base card */
   .pricing-card {
     border-radius: 20px;
-    overflow: visible; /* allow badge to overflow top */
+    overflow: visible;
     position: relative;
     display: flex;
     flex-direction: column;
     transition: transform 0.25s, box-shadow 0.25s;
-    background: var(--light-surface);
-    border: 1px solid var(--light-border);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: none;
   }
 
-  .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+  .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
 
   .pricing-stripe { display: none; }
 
   /* Default plan card */
   .pricing-card.default-plan {
-    border: 2px solid var(--violet);
+    border: 2px solid rgba(105,81,244,0.6);
   }
 
   /* Featured PRO card */
   .pricing-card.popular {
-    background: linear-gradient(160deg, rgba(195,93,253,0.08) 0%, rgba(105,81,244,0.06) 100%);
-    border-color: rgba(195,93,253,0.35);
-    box-shadow: 0 0 48px rgba(195,93,253,0.12), 0 8px 32px rgba(0,0,0,0.08);
+    background: linear-gradient(160deg, rgba(195,93,253,0.12) 0%, rgba(105,81,244,0.10) 100%);
+    border-color: rgba(195,93,253,0.4);
+    box-shadow: 0 0 48px rgba(195,93,253,0.15), 0 8px 32px rgba(0,0,0,0.2);
   }
 
   .pricing-card.popular:hover { transform: translateY(-4px); }
@@ -1651,10 +1683,10 @@
     margin-bottom: 20px;
   }
 
-  .pricing-card:nth-child(1) .pricing-tier { color: #6951F4; }   /* violet — 5.2:1 ✓ */
-  .pricing-card:nth-child(2) .pricing-tier { color: #0284c7; }   /* sky-600 — 4.6:1 ✓ */
-  .pricing-card:nth-child(3) .pricing-tier { color: #9333ea; }   /* purple — 5.4:1 ✓ */
-  .pricing-card:nth-child(4) .pricing-tier { color: #0d9488; }   /* teal-600 — 3.7:1 ✓ large */
+  .pricing-card:nth-child(1) .pricing-tier { color: var(--violet-light); }
+  .pricing-card:nth-child(2) .pricing-tier { color: #38bdf8; }
+  .pricing-card:nth-child(3) .pricing-tier { color: #c084fc; }
+  .pricing-card:nth-child(4) .pricing-tier { color: #2dd4bf; }
 
   .pricing-price {
     display: flex;
@@ -1667,28 +1699,28 @@
     font-family: 'Lexend', sans-serif;
     font-size: 48px;
     font-weight: 600;
-    color: var(--light-ink);
+    color: white;
     letter-spacing: -2px;
     line-height: 1;
   }
 
   .pricing-price .unit {
     font-size: 13px;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.45);
     font-weight: 300;
   }
 
   .pricing-volume {
     display: inline-block;
     font-size: 13px;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.45);
     margin-bottom: 20px;
     margin-top: 4px;
   }
 
   .pricing-divider {
     height: 1px;
-    background: var(--light-border);
+    background: rgba(255,255,255,0.08);
     margin: 16px 0;
   }
 
@@ -1696,7 +1728,7 @@
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.1em;
-    color: var(--light-secondary);
+    color: rgba(255,255,255,0.4);
     text-transform: uppercase;
     margin-bottom: 8px;
   }
@@ -1704,7 +1736,7 @@
   .pricing-best-for {
     font-size: 15px;
     font-weight: 300;
-    color: var(--light-ink);
+    color: rgba(255,255,255,0.72);
     line-height: 1.6;
     margin-bottom: 20px;
     flex: 1;
@@ -1714,7 +1746,7 @@
     font-family: 'Lexend', sans-serif;
     font-size: 18px;
     font-weight: 600;
-    color: var(--light-ink);
+    color: white;
     letter-spacing: -0.3px;
     margin-bottom: 20px;
   }
@@ -1728,8 +1760,8 @@
     font-weight: 600;
     text-decoration: none;
     font-family: 'DM Sans', sans-serif;
-    border: 1px solid var(--light-border);
-    color: var(--light-ink);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
     transition: all 0.2s;
     cursor: pointer;
     background: transparent;
@@ -1738,9 +1770,9 @@
   }
 
   .pricing-cta:hover {
-    background: rgba(105,81,244,0.06);
-    border-color: rgba(105,81,244,0.3);
-    color: var(--violet);
+    background: rgba(105,81,244,0.15);
+    border-color: rgba(155,133,255,0.4);
+    color: white;
   }
 
   .pricing-cta.cta-accent {
@@ -1951,7 +1983,7 @@
 
   /* COMPLIANCE */
   .compliance {
-    background: var(--ink);
+    background: var(--light-bg);
     position: relative;
     overflow: hidden;
   }
@@ -1965,10 +1997,10 @@
     z-index: 2;
   }
 
-  .compliance .section-headline { color: white; }
-  .compliance .section-sub { color: rgba(255,255,255,0.72); }
-  .compliance .section-eyebrow { color: var(--cyan); }
-  .compliance .section-eyebrow::before { background: var(--cyan); }
+  .compliance .section-headline { color: var(--light-ink) !important; }
+  .compliance .section-sub { color: var(--light-secondary) !important; }
+  .compliance .section-eyebrow { color: var(--violet) !important; }
+  .compliance .section-eyebrow::before { background: var(--violet) !important; }
 
   .compliance-badges {
     display: flex;
@@ -1980,16 +2012,16 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--light-surface);
+    border: 1px solid var(--light-border);
     border-radius: 16px;
     padding: 24px 28px;
     transition: all 0.3s;
   }
 
   .compliance-badge:hover {
-    border-color: rgba(77,212,255,0.3);
-    background: rgba(77,212,255,0.05);
+    border-color: rgba(105,81,244,0.25);
+    background: #f5f3ff;
   }
 
   .badge-icon {
@@ -1997,29 +2029,31 @@
     height: 48px;
     flex-shrink: 0;
     border-radius: 12px;
-    background: rgba(77,212,255,0.12);
+    background: rgba(105,81,244,0.10);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--cyan);
+    color: var(--violet);
   }
 
   .badge-text h4 {
     font-family: 'Lexend', sans-serif;
     font-size: 16px;
     font-weight: 700;
-    color: white;
+    color: var(--light-ink);
     margin-bottom: 4px;
   }
 
   .badge-text p {
     font-size: 13px;
-    color: rgba(255,255,255,0.55);
+    color: var(--light-secondary);
   }
 
   /* TESTIMONIALS */
   .testimonials {
     background: var(--light-bg);
+    position: relative;
+    overflow: hidden;
   }
   .testimonials .section-headline { color: var(--light-ink) !important; }
   .testimonials .section-eyebrow { color: var(--violet) !important; }
@@ -2038,6 +2072,8 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 1px;
     background: var(--light-border);
+    border-radius: 20px;
+    overflow: hidden;
   }
 
   .testimonial {
@@ -2053,7 +2089,7 @@
   }
 
   .testimonial:hover {
-    background: #f9f9fc;
+    background: #f5f3ff;
   }
 
   .testimonial-mark {
@@ -2063,6 +2099,10 @@
     margin-bottom: 16px;
     display: block;
     font-weight: 800;
+    background: linear-gradient(135deg, var(--violet), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .testimonial-quote {
@@ -2087,7 +2127,7 @@
     align-items: center;
     gap: 12px;
     padding-top: 20px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--light-border);
   }
 
   .author-avatar {
@@ -2121,6 +2161,7 @@
   .clients {
     background: var(--light-bg);
     padding: 80px max(48px, calc((100vw - 1280px) / 2));
+    border-top: 1px solid var(--light-border);
   }
 
   .clients-label {
@@ -2144,7 +2185,7 @@
     font-family: 'Lexend', sans-serif;
     font-weight: 700;
     font-size: 16px;
-    color: rgba(10,10,15,0.50);
+    color: rgba(10,10,15,0.35);
     letter-spacing: -0.3px;
     white-space: nowrap;
     transition: color 0.2s;
@@ -2154,7 +2195,7 @@
 
   /* CTA SECTION */
   .cta-section {
-    background: var(--warm);
+    background: white;
     padding: 140px max(48px, calc((100vw - 1280px) / 2));
     text-align: center;
     position: relative;
@@ -2163,10 +2204,10 @@
 
   .cta-glow {
     position: absolute;
-    width: 700px;
-    height: 700px;
+    width: 900px;
+    height: 900px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(107,81,244,0.35) 0%, rgba(107,81,244,0.08) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(105,81,244,0.08) 0%, rgba(195,93,253,0.04) 40%, transparent 70%);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -2177,7 +2218,7 @@
     font-family: 'Lexend', sans-serif;
     font-size: clamp(36px, 4vw, 56px);
     font-weight: 800;
-    color: white;
+    color: var(--light-ink);
     letter-spacing: -2px;
     line-height: 1.05;
     margin-bottom: 20px;
@@ -2188,14 +2229,14 @@
   .cta-section p {
     font-size: 17px;
     font-weight: 300;
-    color: rgba(255,255,255,0.72);
+    color: var(--light-secondary);
     margin-bottom: 40px;
     position: relative;
     z-index: 2;
   }
 
   .btn-white {
-    background: var(--violet);
+    background: linear-gradient(135deg, var(--violet), var(--purple));
     color: white;
     padding: 16px 40px;
     border-radius: 100px;
@@ -2206,12 +2247,12 @@
     transition: all 0.25s;
     position: relative;
     z-index: 2;
+    box-shadow: 0 6px 24px rgba(105,81,244,0.3);
   }
 
   .btn-white:hover {
-    background: white;
-    color: var(--violet);
     transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(105,81,244,0.42);
   }
 
   /* FOOTER */
@@ -2312,7 +2353,7 @@
   /* PHOSPHOR ICONS */
   .pillar-icon { font-size: 56px; color: var(--violet); margin-bottom: 20px; display: block; }
   .step-icon i { font-size: 56px; color: var(--violet); }
-  .intel-card-icon i { font-size: 20px; color: var(--cyan); }
+  .intel-card-icon i { font-size: 22px; color: var(--cyan); }
   .badge-icon i { font-size: 20px; }
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -2778,13 +2819,22 @@
       <p class="section-sub">Go beyond the standard. Define detection categories based on your brand values, competitive landscape, or regulatory environment. Backed by the same AI that powers 80+ proprietary models. Not keyword matching — creator intelligence.</p>
       <a href="#" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;margin-top:36px;text-decoration:none;">See How It Works <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
-    <div class="custom-tags custom-tags-light">
-      <span class="custom-tag tag-purple-light"><i class="ph-light ph-pill"></i>Pharma Safe</span>
-      <span class="custom-tag tag-purple-light"><i class="ph-light ph-baby"></i>Kids Content</span>
-      <span class="custom-tag tag-purple-light"><i class="ph-light ph-buildings"></i>Competitor: Nike</span>
-      <span class="custom-tag tag-outline-light"><i class="ph-light ph-scales"></i>Political Neutrality</span>
-      <span class="custom-tag tag-outline-light"><i class="ph-light ph-leaf"></i>ESG Alignment</span>
-      <a href="#" class="custom-tag tag-add-light"><i class="ph-light ph-plus"></i>Add category</a>
+    <div class="custom-tags-wrap">
+      <div class="custom-tags custom-tags-light">
+        <span class="custom-tag tag-purple-light"><i class="ph-light ph-pill"></i>Pharma Safe</span>
+        <span class="custom-tag tag-purple-light"><i class="ph-light ph-baby"></i>Kids Content</span>
+        <span class="custom-tag tag-purple-light"><i class="ph-light ph-buildings"></i>Competitor: Nike</span>
+        <span class="custom-tag tag-purple-light"><i class="ph-light ph-hand-pointing"></i>No Alcohol</span>
+        <span class="custom-tag tag-purple-light"><i class="ph-light ph-heartbeat"></i>Health Claims</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-scales"></i>Political Neutrality</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-leaf"></i>ESG Alignment</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-shield-check"></i>Brand Safe</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-gender-intersex"></i>Inclusive Language</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-currency-dollar"></i>No Gambling</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-fire"></i>Controversy Free</span>
+        <span class="custom-tag tag-outline-light"><i class="ph-light ph-flag"></i>FTC Compliant</span>
+      </div>
+      <a href="#" class="btn-add-category"><i class="ph-light ph-plus-circle"></i>Add Your Own Category</a>
     </div>
   </div>
 </section>
@@ -2889,7 +2939,7 @@
       <p class="section-eyebrow">Regulatory Compliance</p>
       <h2 class="section-headline">Compliance<br>Equals<br>Confidence</h2>
       <p class="section-sub" style="margin-top:20px">VwD ensures your brand adheres to the most stringent regulatory standards through continuous monitoring of your creator partnerships. We identify and mitigate compliance risks in real time, before they become headlines or fines.</p>
-      <a href="#" class="btn-outline" style="margin-top:36px">See Compliance Features <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="#" class="btn-primary" style="margin-top:36px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;">See Compliance Features <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
     <div class="compliance-badges">
       <div class="compliance-badge">
@@ -2923,6 +2973,19 @@
   </div>
 </section>
 
+<!-- WHITEPAPER -->
+<section class="whitepaper-section" id="whitepaper">
+  <h2>Get the <span>Free White Paper</span></h2>
+  <p>Learn how top brands vet creators at scale and avoid costly compliance risks.</p>
+  <div class="whitepaper-form">
+    <input type="email" placeholder="Enter your business email">
+    <button type="button">
+      Download
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v8M4 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</section>
+
 <!-- TESTIMONIALS -->
 <section class="testimonials">
   <div class="testimonials-header">
@@ -2933,7 +2996,7 @@
   </div>
   <div class="testimonials-grid">
     <div class="testimonial">
-      <span class="testimonial-mark" style="color: var(--violet)">&ldquo;</span>
+      <span class="testimonial-mark">&ldquo;</span>
       <p class="testimonial-quote">The technology has unlocked enhanced vetting of the creators we partner with and gives our team a <strong style="color: var(--violet)">forensic look into potential risks</strong> quickly and efficiently. And by including ongoing monitoring, we can be the best agency partners by protecting our brands against real time risks.</p>
       <div class="testimonial-author">
         <div class="author-avatar">FD</div>
@@ -2944,7 +3007,7 @@
       </div>
     </div>
     <div class="testimonial">
-      <span class="testimonial-mark" style="color: var(--violet)">&ldquo;</span>
+      <span class="testimonial-mark">&ldquo;</span>
       <p class="testimonial-quote">With VwD, we were able to vet and move forward with launching campaigns within just <strong style="color: var(--violet)">2–3 days, compared to the 2+ weeks</strong> it used to take us manually. The platform enabled faster, more confident decisions and significantly improved our speed to market.</p>
       <div class="testimonial-author">
         <div class="author-avatar">KJ</div>
@@ -2955,7 +3018,7 @@
       </div>
     </div>
     <div class="testimonial">
-      <span class="testimonial-mark" style="color: var(--violet)">&ldquo;</span>
+      <span class="testimonial-mark">&ldquo;</span>
       <p class="testimonial-quote">VwD has been a useful addition to our influencer vetting process, helping teams <strong style="color: var(--violet)">identify content opportunities all in one place</strong>. For clients operating in highly regulated environments, features like influencer report cards and monitoring alerts offer valuable peace of mind.</p>
       <div class="testimonial-author">
         <div class="author-avatar">ZG</div>
@@ -2979,109 +3042,6 @@
     <span class="client-name">Stagwell</span>
   </div>
 </div>
-
-<!-- TESTIMONIALS v2 — dense grid like Zed reference -->
-<section class="testimonials-v2">
-  <div class="tv2-header">
-    <div>
-      <p class="section-eyebrow">Testimonials</p>
-      <h2 class="section-headline">Hard To Unuse.<br>Don't Take Our Word.</h2>
-    </div>
-  </div>
-
-  <div class="tv2-grid">
-    <!-- LEFT — 2 naked quotes -->
-    <div class="tv2-col">
-      <div class="tv2-bare">
-        <span class="tv2-mark">&ldquo;</span>
-        <p class="tv2-quote">"The technology has unlocked enhanced vetting of the creators we partner with and gives our team a forensic look into potential risks quickly and efficiently."</p>
-        <div class="tv2-author">
-          <div class="tv2-author-left">
-            <div class="tv2-avatar">FD</div>
-            <div>
-              <div class="tv2-name">Freddy Dabaghi</div>
-              <div class="tv2-role">Chief Transformation Officer</div>
-            </div>
-          </div>
-          <div class="tv2-company-tag">Crispin</div>
-        </div>
-      </div>
-      <div class="tv2-bare">
-        <span class="tv2-mark">&ldquo;</span>
-        <p class="tv2-quote">"With VwD, we were able to vet and move forward with launching campaigns within just 2–3 days, compared to the 2+ weeks it used to take us manually."</p>
-        <div class="tv2-author">
-          <div class="tv2-author-left">
-            <div class="tv2-avatar">KJ</div>
-            <div>
-              <div class="tv2-name">Kassia Janesch</div>
-              <div class="tv2-role">Brand Manager</div>
-            </div>
-          </div>
-          <div class="tv2-company-tag">Foundation</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CENTER — featured block -->
-    <div class="tv2-featured">
-      <div class="tv2-feat-company">Zeno Group</div>
-      <span class="tv2-mark">&ldquo;</span>
-      <p class="tv2-feat-quote">"VwD has been a useful addition to our influencer vetting process, helping teams <mark>identify content opportunities all in one place</mark>. For clients operating in highly regulated environments, features like <mark>influencer report cards and monitoring alerts</mark> offer valuable peace of mind. What we appreciate most is the speed — what used to take our teams days of manual digging now surfaces in minutes. The <mark>depth of creator intelligence</mark>, from audience authenticity to historical content flags, has genuinely changed how we approach risk conversations with clients. It's not just a vetting tool — it's become part of how we build trust with the brands we serve."</p>
-      <div class="tv2-feat-author">
-        <div class="tv2-feat-avatar">ZG</div>
-        <div>
-          <div class="tv2-feat-name">VP, Influencer Marketing</div>
-          <div class="tv2-feat-role">Zeno Group</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT — 2 naked quotes -->
-    <div class="tv2-col">
-      <div class="tv2-bare">
-        <span class="tv2-mark">&ldquo;</span>
-        <p class="tv2-quote">"VwD's monitoring alerts let us stay protected long after the partnership begins. Alerts land before headlines do — that's the kind of intelligence we needed."</p>
-        <div class="tv2-author">
-          <div class="tv2-author-left">
-            <div class="tv2-avatar">ST</div>
-            <div>
-              <div class="tv2-name">Head of Partnerships</div>
-              <div class="tv2-role">Strategy & Growth</div>
-            </div>
-          </div>
-          <div class="tv2-company-tag">Stagwell</div>
-        </div>
-      </div>
-      <div class="tv2-bare">
-        <span class="tv2-mark">&ldquo;</span>
-        <p class="tv2-quote">"The compliance layer alone saved us weeks of manual review. Regulatory confidence at scale — that's exactly what VwD delivers for our teams."</p>
-        <div class="tv2-author">
-          <div class="tv2-author-left">
-            <div class="tv2-avatar">BL</div>
-            <div>
-              <div class="tv2-name">Marketing Director</div>
-              <div class="tv2-role">Brand Safety</div>
-            </div>
-          </div>
-          <div class="tv2-company-tag">BioLife</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHITEPAPER -->
-<section class="whitepaper-section" id="whitepaper">
-  <h2>Get the <span>Free White Paper</span></h2>
-  <p>Learn how top brands vet creators at scale and avoid costly compliance risks.</p>
-  <div class="whitepaper-form">
-    <input type="email" placeholder="Enter your business email">
-    <button type="button">
-      Download
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v8M4 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-  </div>
-</section>
 
 <!-- PRICING -->
 <section class="pricing-section">
