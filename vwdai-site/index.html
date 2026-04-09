@@ -108,7 +108,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 80px 48px 80px 0;
+    padding: 24px 48px 24px 0;
+    padding-left: 0;
   }
 
   .hero-eyebrow {
@@ -271,12 +272,10 @@
 
   /* ── HERO RIGHT: CONCEPTUAL VISUALIZATION ─────────────────────── */
   .hero {
-    min-height: 100vh;
+    min-height: calc(100vh - 100px);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding-top: 80px;
-    padding-left: max(48px, calc((100vw - 1280px) / 2));
-    padding-right: 0;
+    padding: 40px max(48px, calc((100vw - 1280px) / 2)) 0;
     overflow: hidden;
     background: var(--ink);
   }
@@ -288,7 +287,7 @@
     align-items: center;
     justify-content: center;
     background: #0c0e1a;
-    padding-bottom: 120px;
+    padding-bottom: 20px;
   }
 
   /* Subtle grid */
@@ -381,7 +380,7 @@
 
   /* Orbital layout: center ~52% / 44%, H-radius 36%, V-radius 30% */
   .viz-tag-1 { /* 12 o'clock — FTC */
-    top: 8%; left: 52%; transform: translateX(-50%);
+    top: 16%; left: 52%; transform: translateX(-50%);
     background: rgba(155,133,255,0.12); border-color: rgba(155,133,255,0.35); color: #b8a4ff;
     animation-duration: 6s; animation-delay: 0s;
   }
@@ -561,7 +560,7 @@
     /* STATS BAR */
   .stats-bar {
     background: var(--ink);
-    padding: 36px 0;
+    padding: 36px max(48px, calc((100vw - 1280px) / 2));
     display: flex;
     justify-content: center;
     overflow: hidden;
@@ -569,19 +568,18 @@
   .stats-bar-inner {
     display: flex;
     width: 100%;
-    max-width: 1280px;
-    padding: 0 max(48px, calc((100vw - 1280px) / 2));
+    max-width: 896px;
     box-sizing: border-box;
   }
 
   .stat-item {
     flex: 1;
-    padding: 0 40px;
+    padding: 0 12px;
     text-align: center;
   }
 
-  .stat-item:first-child { padding-left: 0; text-align: left; }
-  .stat-item:last-child { padding-right: 0; text-align: right; }
+  .stat-item:first-child { padding-left: 0; }
+  .stat-item:last-child { padding-right: 0; }
 
   .stat-number {
     font-family: 'Lexend', sans-serif;
@@ -606,6 +604,7 @@
     font-weight: 400;
     color: rgba(255,255,255,0.65);
     letter-spacing: 0;
+    white-space: nowrap;
   }
 
   /* SECTION SHARED */
