@@ -19,37 +19,42 @@
  * Simpler content-card variants (Card+Button, Card+Link, Horizontal) live in
  * Card.stories.js (Card/Basics).
  *
- * ⚠️ Figma asset URLs expire after 7 days from extraction.
- *    Host images locally before production use.
+ * Images use stable CDN URLs (ui-avatars.com, picsum.photos, simpleicons.org) — no TTL.
  */
 
-/* ── Figma raster asset URLs (7-day TTL) ─────────────────── */
+/* ── Stable asset URLs ────────────────────────────────────
+   Avatars:      ui-avatars.com — initials-based, no expiry, no face photos.
+   Product img:  picsum.photos  — seed-stable, no expiry.
+   App icons:    cdn.simpleicons.org — stable SVG CDN, no expiry.
+   Crypto logos: cdn.simpleicons.org — stable SVG CDN, no expiry.
+   Fortmatic:    placehold.co badge  — not in SimpleIcons.
+─────────────────────────────────────────────────────────── */
 const IMG = {
   /* User profile */
-  bonnieGreen:      'https://www.figma.com/api/mcp/asset/3f53a6ae-3269-4f52-9830-92aff3133593',
+  bonnieGreen:      'https://ui-avatars.com/api/?name=Bonnie+Green&size=96&background=e0e7ff&color=42389d&bold=true',
   /* E-commerce product */
-  appleWatch:       'https://www.figma.com/api/mcp/asset/816fef1c-0bea-4170-b394-cb03f256e811',
+  appleWatch:       'https://picsum.photos/seed/applewatch/275/174',
   /* Card-with-list avatars */
-  neilSims:         'https://www.figma.com/api/mcp/asset/afa89892-0305-4bd5-8a1e-be20d89de311',
-  bonnieGreenList:  'https://www.figma.com/api/mcp/asset/0a0e18c8-de3b-4a88-a0ad-772d180bdcbc',
-  michealGough:     'https://www.figma.com/api/mcp/asset/61f0d8f4-111f-4ef2-9dec-66fa472bc78e',
-  thomasLean:       'https://www.figma.com/api/mcp/asset/87bb6760-f758-4d17-93f3-212a04c210e7',
-  lanaByrd:         'https://www.figma.com/api/mcp/asset/0e18715c-a9ed-4564-acb4-b6db158a3949',
-  karenNelson:      'https://www.figma.com/api/mcp/asset/ac2cc84a-0e5d-49b2-b15d-1c6415488f11',
-  /* CTA card — app-store buttons */
-  googlePlay:       'https://www.figma.com/api/mcp/asset/c130a69a-cb30-4286-8724-bf89a74460e8',
-  appleLogo:        'https://www.figma.com/api/mcp/asset/674ef329-9ad6-41e3-9946-7f29dd8bc65a',
+  neilSims:         'https://ui-avatars.com/api/?name=Neil+Sims&size=32&background=dbeafe&color=1447e6&bold=true',
+  bonnieGreenList:  'https://ui-avatars.com/api/?name=Bonnie+Green&size=32&background=e0e7ff&color=42389d&bold=true',
+  michealGough:     'https://ui-avatars.com/api/?name=Micheal+Gough&size=32&background=d1fae5&color=065f46&bold=true',
+  thomasLean:       'https://ui-avatars.com/api/?name=Thomas+Lean&size=32&background=fef3c7&color=92400e&bold=true',
+  lanaByrd:         'https://ui-avatars.com/api/?name=Lana+Byrd&size=32&background=fce7f3&color=9d174d&bold=true',
+  karenNelson:      'https://ui-avatars.com/api/?name=Karen+Nelson&size=32&background=ede9fe&color=3730a3&bold=true',
+  /* CTA card — app-store button icons */
+  googlePlay:       'https://cdn.simpleicons.org/googleplay/ffffff',
+  appleLogo:        'https://cdn.simpleicons.org/apple/ffffff',
   /* Testimonial avatars */
-  neilSimsTest:     'https://www.figma.com/api/mcp/asset/6399a649-f5dd-49ce-ba6e-58d28ceba194',
-  michealGoughTest: 'https://www.figma.com/api/mcp/asset/189aee5a-6203-4dba-8649-4839ff4c2a9f',
-  heleneEngels:     'https://www.figma.com/api/mcp/asset/caf2a4bd-e071-4587-9e7c-14be1b01d02f',
-  karenNelsonTest:  'https://www.figma.com/api/mcp/asset/cf0a5918-36ac-4240-abe4-323d9eb4c1c2',
-  /* Crypto wallet icons */
-  metamask:         'https://www.figma.com/api/mcp/asset/5d56d3fe-9690-4166-a9b5-ce0004c483d0',
-  coinbase:         'https://www.figma.com/api/mcp/asset/8c9c4e3b-111e-4769-9bb0-999a97064ab2',
-  opera:            'https://www.figma.com/api/mcp/asset/cd92a013-77a1-4213-bba0-2f6816b227ba',
-  walletconnect:    'https://www.figma.com/api/mcp/asset/9af9250e-c8b3-460f-a34e-a0e56db85ab9',
-  fortmatic:        'https://www.figma.com/api/mcp/asset/1901f0b8-1d50-4fca-82fe-5bd3e7a7829a',
+  neilSimsTest:     'https://ui-avatars.com/api/?name=Neil+Sims&size=32&background=dbeafe&color=1447e6&bold=true',
+  michealGoughTest: 'https://ui-avatars.com/api/?name=Micheal+Gough&size=32&background=d1fae5&color=065f46&bold=true',
+  heleneEngels:     'https://ui-avatars.com/api/?name=Helene+Engels&size=32&background=ede9fe&color=5b21b6&bold=true',
+  karenNelsonTest:  'https://ui-avatars.com/api/?name=Karen+Nelson&size=32&background=ede9fe&color=3730a3&bold=true',
+  /* Crypto wallet icons — cdn.simpleicons.org (stable, no expiry) */
+  metamask:         'https://cdn.simpleicons.org/metamask/E2761B',
+  coinbase:         'https://cdn.simpleicons.org/coinbase/0052FF',
+  opera:            'https://cdn.simpleicons.org/opera/FF1B2D',
+  walletconnect:    'https://cdn.simpleicons.org/walletconnect/3B99FC',
+  fortmatic:        'https://placehold.co/16x16/7c3aed/ffffff?text=F', /* APPROX — not in SimpleIcons */
 };
 
 /* ── Shared shell helpers ─────────────────────────────────── */
@@ -113,7 +118,7 @@ All 10 variants here are distinct enough from the basic text/image card (see **C
 | Testimonial    | 790px | 13567:76479   | 2×2 testimonial grid                    |
 | Crypto         | 384px | 13567:76480   | Wallet-connect list card                |
 
-> ⚠️ **TTL warning:** Figma raster URLs expire after **7 days**. Replace with locally-hosted assets in production.
+> All images use stable CDN URLs (ui-avatars.com, picsum.photos, simpleicons.org) — no TTL, no local hosting required.
 
 ### Border-radius note
 These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--radius-xl, 16px)\` used by the \`.card\` CSS class in Card/Basics. Inline styles are used here for Figma parity.
@@ -580,7 +585,7 @@ export const CTACard = {
 Wide call-to-action card. Centered heading and body copy with two app-store download buttons.
 **Node:** 13561:76545 | Width: 790px | Shadow: shadow-md
 
-**Approximations:** App-store button icons use Figma raster assets (⚠️ 7-day TTL).
+**Approximations:** App-store button icons use SimpleIcons CDN (stable, no TTL).
         `,
       },
     },
@@ -852,7 +857,7 @@ export const TestimonialCard = {
  * - Helper text: question icon + 12px regular #6b7280
  *
  * **Approximations:**
- * - Wallet icons use Figma raster assets (⚠️ 7-day TTL)
+ * - Wallet icons use SimpleIcons CDN (stable, no TTL); Fortmatic approximated
  * - Question-circle is inline SVG
  */
 export const CryptoCard = {
@@ -864,7 +869,7 @@ export const CryptoCard = {
 Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" badge.
 **Node:** 13567:76480 | Width: 384px | Shadow: shadow-sm (no border)
 
-**Approximations:** Question-circle icon is inline SVG. Wallet icons use Figma raster assets (7-day TTL).
+**Approximations:** Question-circle icon is inline SVG. Wallet icons use SimpleIcons CDN (stable). Fortmatic uses a text-badge placeholder.
         `,
       },
     },
