@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Storybook build output
+storybook-static/
+dist/
+build/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# macOS
+.DS_Store
+
+# Test coverage
+coverage/
