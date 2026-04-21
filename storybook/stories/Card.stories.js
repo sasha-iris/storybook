@@ -499,7 +499,7 @@ Width: 576 px · Height: 258 px · Image column: 192 px.
      background:#fff;border:1px solid #e5e7eb;border-radius:8px;
      box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
      overflow:hidden;">
-  <img src="https://www.figma.com/api/mcp/asset/f46ffde6-48a1-436a-b37c-b53a62c81953"
+  <img src="https://picsum.photos/seed/horizcard/192/258"
        alt="Card image"
        style="width:192px;flex-shrink:0;object-fit:cover;">
   <div style="padding:20px;display:flex;flex-direction:column;justify-content:center;">
@@ -520,7 +520,7 @@ Width: 576 px · Height: 258 px · Image column: 192 px.
                 background:#fff;border:1px solid #e5e7eb;border-radius:8px;
                 box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
                 overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/f46ffde6-48a1-436a-b37c-b53a62c81953"
+      <img src="https://picsum.photos/seed/horizcard/192/258"
            alt="Card image"
            style="width:192px;flex-shrink:0;object-fit:cover;">
       <div style="padding:20px;display:flex;flex-direction:column;justify-content:center;">

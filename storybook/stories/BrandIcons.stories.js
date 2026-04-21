@@ -19,13 +19,9 @@
  * - **Xero**: complex mask/clip-path assembly in Figma with no single composite raster.
  *   Rendered as a teal circle 'x' placeholder. Replace with official Xero SVG in production.
  *
- * ## TTL warning
- * All `figma.com/api/mcp/asset/` URLs expire after 7 days from extraction.
- * Host assets locally before going to production.
- *
  * ## QA notes
- * - Multi-fragment icons (Google, YouTube, Snapchat, PayPal, NetSuite, Amazon dark, TikTok)
- *   use absolute positioning with Figma-derived percentage insets — verify no gap/overlap at 48px.
+ * - Icons sourced from cdn.simpleicons.org (stable, no TTL) — no local hosting required.
+ * - Approximated icons (Shopify, Xero, SPS, NetSuite) use text/badge placeholders.
  * - Dark variants should work on both #101828 and #1f2937 backgrounds.
  * - Stripe: same raster for original and dark — context bg provides the dark treatment.
  * - NetSuite dark: same vectors as original — dark bg provides the treatment.

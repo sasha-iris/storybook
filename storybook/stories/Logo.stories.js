@@ -72,7 +72,7 @@ irisLogo({ size: 'lg', dark: true })
 - The mark raster already includes the hexagonal shape and shadow — do **not** add border-radius.
 - Use \`irisMarkImg\` (mark only) inside constrained slots (e.g. card owner badges).
 - Use \`irisLogo\` (mark + text) for nav bars, onboarding headers, and splash screens.
-- **TTL warning:** Figma asset URLs expire after 7 days. Replace with locally-hosted assets in production.
+- Mark PNGs are locally hosted in `public/assets/` (served via `staticDirs` in `.storybook/main.js`) — no TTL.
 - \`xs\` dark falls back to \`xs\` light (the Figma xs dark is a raw vector assembly with no composite raster).
         `,
       },
