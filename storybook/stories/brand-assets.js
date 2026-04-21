@@ -78,8 +78,8 @@ export const BRAND_ICON_URLS = {
   /* ── Social ── */
   facebookOriginal:   'https://cdn.simpleicons.org/facebook/1877F2',
   facebookDark:       'https://cdn.simpleicons.org/facebook/ffffff',
-  linkedInOriginal:   'https://cdn.simpleicons.org/linkedin/0A66C2',
-  linkedInDark:       'https://cdn.simpleicons.org/linkedin/ffffff',
+  linkedInOriginal:   'https://placehold.co/48x48/0A66C2/ffffff?text=in', /* APPROX — LinkedIn not in SimpleIcons CDN */
+  linkedInDark:       'https://placehold.co/48x48/ffffff/0A66C2?text=in', /* APPROX */
   googleOriginal:     'https://cdn.simpleicons.org/google',
   googleDark:         'https://cdn.simpleicons.org/google/ffffff',
   youtubeOriginal:    'https://cdn.simpleicons.org/youtube/FF0000',
@@ -92,8 +92,8 @@ export const BRAND_ICON_URLS = {
   tiktokDark:         'https://cdn.simpleicons.org/tiktok/ffffff',
 
   /* ── E-commerce ── */
-  amazonOriginal:     'https://cdn.simpleicons.org/amazon/FF9900',
-  amazonDark:         'https://cdn.simpleicons.org/amazon/ffffff',
+  amazonOriginal:     'https://placehold.co/48x48/FF9900/000000?text=a', /* APPROX — Amazon not in SimpleIcons CDN */
+  amazonDark:         'https://placehold.co/48x48/1a1a1a/FF9900?text=a',  /* APPROX */
   shopifyOriginal:    null, /* APPROXIMATED — complex vector assembly, no SimpleIcons composite */
   shopifyDark:        null, /* APPROXIMATED */
   googleAds:          'https://cdn.simpleicons.org/googleads',
@@ -107,8 +107,8 @@ export const BRAND_ICON_URLS = {
   quickbooksDark:     'https://cdn.simpleicons.org/quickbooks/ffffff',
   paypalOriginal:     'https://cdn.simpleicons.org/paypal/003087',
   paypalDark:         'https://cdn.simpleicons.org/paypal/ffffff',
-  plaidOriginal:      'https://cdn.simpleicons.org/plaid/000000',
-  plaidDark:          'https://cdn.simpleicons.org/plaid/ffffff',
+  plaidOriginal:      'https://placehold.co/48x48/000000/ffffff?text=P', /* APPROX — Plaid not resolving on SimpleIcons CDN */
+  plaidDark:          'https://placehold.co/48x48/ffffff/000000?text=P', /* APPROX */
   stripe:             'https://cdn.simpleicons.org/stripe/635BFF',
   netsuiteOriginal:   null, /* APPROXIMATED — Netsuite not in SimpleIcons */
   netsuiteDark:       null, /* APPROXIMATED */

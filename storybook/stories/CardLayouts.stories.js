@@ -50,7 +50,7 @@ const IMG = {
   heleneEngels:     'https://ui-avatars.com/api/?name=Helene+Engels&size=32&background=ede9fe&color=5b21b6&bold=true',
   karenNelsonTest:  'https://ui-avatars.com/api/?name=Karen+Nelson&size=32&background=ede9fe&color=3730a3&bold=true',
   /* Crypto wallet icons — cdn.simpleicons.org (stable, no expiry) */
-  metamask:         'https://cdn.simpleicons.org/metamask/E2761B',
+  metamask:         'https://placehold.co/18x17/E2761B/ffffff?text=M', /* APPROX — MetaMask not in SimpleIcons CDN */
   coinbase:         'https://cdn.simpleicons.org/coinbase/0052FF',
   opera:            'https://cdn.simpleicons.org/opera/FF1B2D',
   walletconnect:    'https://cdn.simpleicons.org/walletconnect/3B99FC',
