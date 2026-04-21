@@ -23,14 +23,14 @@
 
 export const IRIS_MARK = {
   /* Light mode */
-  xs:     '/assets/iris-mark-xs.png',     /* 24 px */
-  sm:     '/assets/iris-mark-sm.png',     /* 32 px */
-  md:     '/assets/iris-mark-md.png',     /* 48 px */
-  lg:     '/assets/iris-mark-lg.png',     /* 64 px */
+  xs:     './assets/iris-mark-xs.png',     /* 24 px */
+  sm:     './assets/iris-mark-sm.png',     /* 32 px */
+  md:     './assets/iris-mark-md.png',     /* 48 px */
+  lg:     './assets/iris-mark-lg.png',     /* 64 px */
   /* Dark mode (sm / md / lg only — xs dark falls back to xs light) */
-  smDark: '/assets/iris-mark-sm-dark.png', /* 32 px */
-  mdDark: '/assets/iris-mark-md-dark.png', /* 48 px */
-  lgDark: '/assets/iris-mark-lg-dark.png', /* 64 px */
+  smDark: './assets/iris-mark-sm-dark.png', /* 32 px */
+  mdDark: './assets/iris-mark-md-dark.png', /* 48 px */
+  lgDark: './assets/iris-mark-lg-dark.png', /* 64 px */
 };
 
 /** Figma-exact size config from LogoNew component (node 3778:41269) */
