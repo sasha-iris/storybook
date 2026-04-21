@@ -50,8 +50,8 @@ export const irisMarkImg = ({ size = 'xs', dark = false } = {}) => {
   const url = dark
     ? (IRIS_MARK[`${size}Dark`] || IRIS_MARK[size]) /* xs dark → falls back to xs light */
     : IRIS_MARK[size];
-  return `<img src="${url}" width="${s.mark}" alt="Iris mark"
-               style="display:block;flex-shrink:0;height:auto;">`;
+  return `<img src="${url}" width="${s.mark}" height="${s.mark}" alt="Iris mark"
+               style="display:block;flex-shrink:0;object-fit:contain;">`;
 };
 
 /**
