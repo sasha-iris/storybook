@@ -64,9 +64,25 @@ Rules:
 
 Actions tab shows events fired by the component. Required for developer self-sufficiency.
 
-### Correct approach for `html-vite`: `parameters.actions.handles`
+### Step 1 — register `withActions` globally in `.storybook/preview.js`
 
-Use CSS selectors — Storybook listens to DOM events automatically. No manual `addEventListener` needed.
+`parameters.actions.handles` only works when the `withActions` decorator is active.
+It is NOT auto-registered by `addon-essentials` — must be added manually once:
+
+```js
+// .storybook/preview.js
+import { withActions } from '@storybook/addon-actions/decorator';
+
+const preview = {
+  decorators: [withActions],   // ← required, without this handles do nothing
+  parameters: { ... },
+};
+export default preview;
+```
+
+This is a one-time global setup. Once done, all stories can use `handles`.
+
+### Step 2 — use `parameters.actions.handles` in the story
 
 ```js
 export const Interactive = {
@@ -85,16 +101,19 @@ export const Interactive = {
 // ❌ WRONG — console.log goes to browser console, not Actions tab
 el.addEventListener('click', (e) => console.log(e));
 
-// ❌ WRONG — action() via addEventListener does not reach the Actions tab in html-vite
+// ❌ WRONG — action() via addEventListener silently fails without withActions decorator
 import { action } from '@storybook/addon-actions';
-el.addEventListener('click', action('click'));   // silently fails
+el.addEventListener('click', action('click'));
+
+// ❌ WRONG — parameters.actions.handles silently does nothing without withActions in preview.js
 ```
 
 **Validation checklist before pushing:**
+- [ ] `withActions` is imported and added to `decorators` in `.storybook/preview.js`
 - [ ] Build passes with no errors
 - [ ] `parameters.actions.handles` uses CSS selectors matching actual DOM elements
 - [ ] `render()` returns an HTML string (not a DOM element)
-- [ ] Click the element in the preview — event appears in Actions tab
+- [ ] Manually click the element in the preview — event appears in Actions tab
 
 ---
 
