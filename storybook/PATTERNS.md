@@ -64,36 +64,37 @@ Rules:
 
 Actions tab shows events fired by the component. Required for developer self-sufficiency.
 
-**CRITICAL:** always use `action()` from `@storybook/addon-actions`, never `console.log`.
-`console.log` goes to the browser console only. `action()` goes to the Storybook Actions tab.
+### Correct approach for `html-vite`: `parameters.actions.handles`
+
+Use CSS selectors — Storybook listens to DOM events automatically. No manual `addEventListener` needed.
 
 ```js
-import { action } from '@storybook/addon-actions';
-// @storybook/addon-actions is included via @storybook/addon-essentials — no separate install needed
+export const Interactive = {
+  render: (args) => component(args),   // plain HTML string, no DOM manipulation
+  parameters: {
+    actions: {
+      handles: ['click button', 'focus button', 'blur button', 'keydown button'],
+    },
+  },
+};
 ```
 
-In `html-vite`, return a DOM element (not a string) to attach event listeners:
+**DO NOT use these approaches — they do not work in html-vite v8:**
 
 ```js
-render: (args) => {
-  const wrap = document.createElement('div');
-  wrap.innerHTML = component(args);           // your HTML string
-  const el = wrap.querySelector('button');    // or whatever the root element is
-  if (el) {
-    el.addEventListener('click',   action('click'));
-    el.addEventListener('focus',   action('focus'));
-    el.addEventListener('blur',    action('blur'));
-    el.addEventListener('keydown', (e) => action('keydown')(e.key));
-  }
-  return wrap;                                // return the DOM element, not a string
-},
+// ❌ WRONG — console.log goes to browser console, not Actions tab
+el.addEventListener('click', (e) => console.log(e));
+
+// ❌ WRONG — action() via addEventListener does not reach the Actions tab in html-vite
+import { action } from '@storybook/addon-actions';
+el.addEventListener('click', action('click'));   // silently fails
 ```
 
 **Validation checklist before pushing:**
 - [ ] Build passes with no errors
-- [ ] `action` is imported from `@storybook/addon-actions`
-- [ ] `render()` returns a DOM element (not a string) when events are attached
-- [ ] No `console.log` used for event logging
+- [ ] `parameters.actions.handles` uses CSS selectors matching actual DOM elements
+- [ ] `render()` returns an HTML string (not a DOM element)
+- [ ] Click the element in the preview — event appears in Actions tab
 
 ---
 
