@@ -214,23 +214,23 @@ export const Interactive = {
   },
 };
 
-/* ── Figma Colors ────────────────────────────────────────────
-   All 7 Figma color values — base (md) size, default state   */
+/* ── Colors ──────────────────────────────────────────────────
+   All 7 colors. Control: size — changes all buttons at once  */
 export const FigmaColors = {
-  name: 'Colors — Figma palette',
+  name: 'Colors — all Figma colors',
+  args: { size: 'md' },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['size'] },
     docs: {
       description: {
         story: `
-All 7 colors from Figma Buttons page (node 84:13517). Sizes shown: **md** (Figma "base").
+All 7 Figma colors shown solid + outline. Use **size** control to preview all colors at any size.
 
 **QA:** Primary = \`#42389d\` (purple, not blue). "Yellow" = \`#d03801\` (orange — intentional). Gray = light surface \`#f9fafb\` with dark text \`#1e2939\`.
         `,
       },
       source: {
-        code: `<!-- Solid -->
-<button class="btn btn-primary btn-md">Primary</button>
+        code: `<button class="btn btn-primary btn-md">Primary</button>
 <button class="btn btn-dark btn-md">Dark</button>
 <button class="btn btn-green btn-md">Green</button>
 <button class="btn btn-red btn-md">Red</button>
@@ -239,20 +239,19 @@ All 7 colors from Figma Buttons page (node 84:13517). Sizes shown: **md** (Figma
 <button class="btn btn-gray btn-md">Gray</button>
 
 <!-- Outline -->
-<button class="btn btn-outline-primary btn-md">Primary</button>
-<button class="btn btn-outline-dark btn-md">Dark</button>`,
+<button class="btn btn-outline-primary btn-md">Primary</button>`,
         language: 'html',
       },
     },
   },
-  render: () => `
+  render: ({ size }) => `
     <div style="display:flex;flex-direction:column;gap:16px;">
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
                   color:#9CA3AF;margin:0 0 8px;">Solid</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           ${['primary','dark','green','red','yellow','blue','gray'].map(c =>
-            btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c })
+            btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, size })
           ).join('')}
         </div>
       </div>
@@ -261,54 +260,50 @@ All 7 colors from Figma Buttons page (node 84:13517). Sizes shown: **md** (Figma
                   color:#9CA3AF;margin:0 0 8px;">Outline</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           ${['primary','dark','green','red','yellow','blue','gray'].map(c =>
-            btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, outline: true })
+            btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, size, outline: true })
           ).join('')}
         </div>
       </div>
     </div>`,
 };
 
-/* ── Figma Sizes ─────────────────────────────────────────────
-   All 5 sizes from Figma (xs/sm/base/l/xl)                   */
+/* ── Sizes ───────────────────────────────────────────────────
+   All 5 sizes. Controls: color, outline — change the color   */
 export const FigmaSizes = {
-  name: 'Sizes — Figma scale (xs → xl)',
+  name: 'Sizes — xs to xl',
+  args: { color: 'primary', outline: false },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['color', 'outline'] },
     docs: {
       description: {
         story: `
-All 5 sizes from Figma — xs (34px h) · sm (36px) · md/base (40px) · lg/l (48px) · xl (52px).
-Padding and font size scale with size as specified in Figma.
+All 5 sizes: xs (34px) · sm (36px) · md (40px) · lg (48px) · xl (52px).
+Use **color** and **outline** controls to preview the full size scale in any color.
         `,
       },
       source: {
-        code: `<button class="btn btn-primary btn-xs">Extra small</button>
-<button class="btn btn-primary btn-sm">Small</button>
-<button class="btn btn-primary btn-md">Medium (base)</button>
-<button class="btn btn-primary btn-lg">Large</button>
-<button class="btn btn-primary btn-xl">Extra large</button>
-
-<!-- Icon-only at each size -->
-<button class="btn btn-primary btn-icon btn-xs" aria-label="Action"><!-- icon --></button>
-<button class="btn btn-primary btn-icon btn-md" aria-label="Action"><!-- icon --></button>
-<button class="btn btn-primary btn-icon btn-xl" aria-label="Action"><!-- icon --></button>`,
+        code: `<button class="btn btn-primary btn-xs">xs</button>
+<button class="btn btn-primary btn-sm">sm</button>
+<button class="btn btn-primary btn-md">md</button>
+<button class="btn btn-primary btn-lg">lg</button>
+<button class="btn btn-primary btn-xl">xl</button>`,
         language: 'html',
       },
     },
   },
-  render: () => `
+  render: ({ color, outline }) => `
     <div style="display:flex;flex-direction:column;gap:20px;">
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Primary — all sizes</p>
+                  color:#9CA3AF;margin:0 0 8px;">Text button — all sizes</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           ${[
-            { size:'xs', label:'xs · 12px · py8/px12' },
-            { size:'sm', label:'sm · 14px · py8/px12' },
-            { size:'md', label:'base · 14px · py10/px20' },
-            { size:'lg', label:'l · 16px · py12/px20' },
-            { size:'xl', label:'xl · 16px · py14/px24' },
-          ].map(({ size, label }) => btn({ label, color: 'primary', size })).join('')}
+            { size:'xs', label:'xs · 12px' },
+            { size:'sm', label:'sm · 14px' },
+            { size:'md', label:'md · 14px' },
+            { size:'lg', label:'lg · 16px' },
+            { size:'xl', label:'xl · 16px' },
+          ].map(({ size, label }) => btn({ label, color, size, outline })).join('')}
         </div>
       </div>
       <div>
@@ -316,7 +311,7 @@ Padding and font size scale with size as specified in Figma.
                   color:#9CA3AF;margin:0 0 8px;">Icon-only — all sizes</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           ${['xs','sm','md','lg','xl'].map(size =>
-            btn({ label: `${size} icon`, color: 'primary', size, iconOnly: true })
+            btn({ label: `${size}`, color, size, outline, iconOnly: true })
           ).join('')}
         </div>
       </div>
@@ -324,71 +319,61 @@ Padding and font size scale with size as specified in Figma.
 };
 
 /* ── States ──────────────────────────────────────────────────
-   Default / Hover (class-based) / Disabled                   */
+   Default / Disabled / Outline / Outline-disabled.
+   Control: size — see states at any size                      */
 export const FigmaStates = {
-  name: 'States — default / hover / disabled',
+  name: 'States — default / disabled',
+  args: { size: 'md' },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['size'] },
     docs: {
       description: {
         story: `
-Figma states: **Default** · **Hover** (darker fill) · **Disabled** (50% opacity).
-Focus state: 2px outline, color = \`--btn-primary-bg\` (#42389d), offset 2px — visible on keyboard nav.
+Each row: **Default** · **Disabled** · **Outline** · **Outline disabled**.
+Use **size** control to verify states render correctly at all sizes.
 
-QA: Hover on primary should show \`#362f78\` (brand/900). Disabled must not respond to pointer events.
+**QA:** Disabled = 50% opacity, \`pointer-events: none\`. Hover darkens fill by one palette step.
         `,
       },
     },
   },
-  render: () => `
-    <div style="display:flex;flex-direction:column;gap:16px;">
-      ${['primary','dark','green','red'].map(color => `
+  render: ({ size }) => `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      ${['primary','dark','green','red','yellow','blue'].map(color => `
         <div style="display:flex;gap:8px;align-items:center;">
-          <span style="width:80px;font:11px/1 sans-serif;color:#6B7280;">${color}</span>
-          ${btn({ label: 'Default', color })}
-          ${btn({ label: 'Disabled', color, disabled: true })}
-          ${btn({ label: 'Outline', color, outline: true })}
-          ${btn({ label: 'Outline disabled', color, outline: true, disabled: true })}
+          <span style="width:64px;font:11px/1 sans-serif;color:#6B7280;flex-shrink:0;">${color}</span>
+          ${btn({ label: 'Default',          color, size })}
+          ${btn({ label: 'Disabled',         color, size, disabled: true })}
+          ${btn({ label: 'Outline',          color, size, outline: true })}
+          ${btn({ label: 'Outline disabled', color, size, outline: true, disabled: true })}
         </div>`).join('')}
     </div>`,
 };
 
-/* ── Outline variants ────────────────────────────────────────
-   All outline colors at base (md) size                        */
-export const OutlineVariants = {
-  name: 'Outline — all colors',
-  parameters: { controls: { disable: true } },
-  render: () => `
-    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-      ${['primary','dark','green','red','yellow','blue','gray'].map(c =>
-        btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, outline: true })
-      ).join('')}
-    </div>`,
-};
-
-/* ── Icon placement ──────────────────────────────────────────
-   Left icon · right icon · icon-only                         */
+/* ── With Icons ──────────────────────────────────────────────
+   Left / right / icon-only. Controls: color + size           */
 export const IconPlacement = {
   name: 'With Icons',
+  args: { color: 'primary', size: 'md' },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['color', 'size'] },
     docs: {
       description: {
         story: `
-Figma button supports left icon, right icon, or icon-only.
-Gap between icon and label: **8px**. Icon size: **20px** for md/lg/xl, **16px** for xs/sm.
+Left icon, right icon, and icon-only at any **color** + **size** combination.
+Icon size: 20px for md/lg/xl, 16px for xs/sm.
         `,
       },
       source: {
         code: `<!-- Left icon -->
 <button class="btn btn-primary btn-md">
   <svg><!-- heroicon 20px --></svg>
-  <span>Button text</span>
+  <span>Label</span>
 </button>
 
 <!-- Right icon -->
 <button class="btn btn-primary btn-md">
-  <span>Button text</span>
+  <span>Label</span>
   <svg><!-- heroicon 20px --></svg>
 </button>
 
@@ -400,92 +385,88 @@ Gap between icon and label: **8px**. Icon size: **20px** for md/lg/xl, **16px** 
       },
     },
   },
-  render: () => `
+  render: ({ color, size }) => `
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;gap:8px;align-items:center;">
-        <span style="width:120px;font:11px/1 sans-serif;color:#6B7280;">Left icon</span>
-        ${btn({ label: 'Button text', color: 'primary', iconLeft: true })}
-        ${btn({ label: 'Button text', color: 'dark', iconLeft: true })}
-        ${btn({ label: 'Button text', color: 'green', iconLeft: true })}
+        <span style="width:100px;font:11px/1 sans-serif;color:#6B7280;">Left icon</span>
+        ${btn({ label: 'Button', color, size, iconLeft: true })}
+        ${btn({ label: 'Button', color, size, iconLeft: true, outline: true })}
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <span style="width:120px;font:11px/1 sans-serif;color:#6B7280;">Right icon</span>
-        ${btn({ label: 'Button text', color: 'primary', iconRight: true })}
-        ${btn({ label: 'Button text', color: 'dark', iconRight: true })}
-        ${btn({ label: 'Button text', color: 'green', iconRight: true })}
+        <span style="width:100px;font:11px/1 sans-serif;color:#6B7280;">Right icon</span>
+        ${btn({ label: 'Button', color, size, iconRight: true })}
+        ${btn({ label: 'Button', color, size, iconRight: true, outline: true })}
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <span style="width:120px;font:11px/1 sans-serif;color:#6B7280;">Icon only</span>
-        ${['primary','dark','green','red','gray'].map(c =>
-          btn({ label: c, color: c, iconOnly: true })
+        <span style="width:100px;font:11px/1 sans-serif;color:#6B7280;">Icon only</span>
+        ${btn({ label: 'Action', color, size, iconOnly: true })}
+        ${btn({ label: 'Action', color, size, iconOnly: true, outline: true })}
+      </div>
+    </div>`,
+};
+
+/* ── Pill ────────────────────────────────────────────────────
+   Pill border-radius. Controls: color + size                  */
+export const Pill = {
+  name: 'Pill — rounded corners',
+  args: { size: 'md' },
+  parameters: {
+    controls: { include: ['size'] },
+    docs: {
+      description: {
+        story: 'Full pill border-radius via `.btn-pill`. Use **size** to see pill at any size.',
+      },
+      source: {
+        code: `<button class="btn btn-primary btn-pill btn-md">Primary</button>
+<button class="btn btn-outline-primary btn-pill btn-md">Primary outline</button>`,
+        language: 'html',
+      },
+    },
+  },
+  render: ({ size }) => `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+        ${['primary','dark','green','red','yellow','blue','gray'].map(c =>
+          btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, size, pill: true })
+        ).join('')}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+        ${['primary','dark','green','red','yellow','blue'].map(c =>
+          btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, size, pill: true, outline: true })
         ).join('')}
       </div>
     </div>`,
 };
 
-/* ── Pill shape ──────────────────────────────────────────── */
-export const Pill = {
-  parameters: { controls: { disable: true } },
-  render: () => `
-    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-      ${['primary','dark','green'].map(c =>
-        btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, pill: true })
-      ).join('')}
-      ${['primary','dark'].map(c =>
-        btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, pill: true, outline: true })
-      ).join('')}
-    </div>`,
-};
-
-/* ── Disabled ────────────────────────────────────────────── */
+/* ── Disabled ────────────────────────────────────────────────
+   Disabled state across colors. Control: size                 */
 export const Disabled = {
-  parameters: { controls: { disable: true } },
-  render: () => `
-    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-      ${btn({ label: 'Disabled primary', color: 'primary', disabled: true })}
-      ${btn({ label: 'Disabled outline', color: 'primary', outline: true, disabled: true })}
-      ${btn({ label: 'Disabled dark',    color: 'dark',    disabled: true })}
-      ${btn({ label: 'Disabled green',   color: 'green',   disabled: true })}
-    </div>`,
-};
-
-/* ── Legacy: AllVariants ─────────────────────────────────────
-   Kept for backward compat; reflects old variant naming       */
-export const AllVariants = {
-  name: 'Overview',
+  name: 'Disabled state',
+  args: { size: 'md' },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['size'] },
     docs: {
       description: {
-        story: `Legacy overview story. For Figma-exact stories, see FigmaColors and FigmaSizes.`,
+        story: 'Disabled renders at 50% opacity with `pointer-events: none`. Use **size** to verify across sizes.',
+      },
+      source: {
+        code: `<button class="btn btn-primary btn-md" disabled aria-disabled="true">Disabled</button>
+<button class="btn btn-outline-primary btn-md" disabled aria-disabled="true">Outline disabled</button>`,
+        language: 'html',
       },
     },
   },
-  render: () => `
-    <div style="display:flex;flex-direction:column;gap:20px;">
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;
-                  letter-spacing:.1em;color:#9CA3AF;margin-bottom:8px;">Figma colors (solid)</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          ${['primary','dark','green','red','yellow','blue','gray']
-            .map(c => btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c })).join('')}
-        </div>
+  render: ({ size }) => `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${['primary','dark','green','red','yellow','blue','gray'].map(c =>
+          btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, size, disabled: true })
+        ).join('')}
       </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;
-                  letter-spacing:.1em;color:#9CA3AF;margin-bottom:8px;">Legacy colors</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          ${['alternative','light','purple']
-            .map(c => btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c })).join('')}
-        </div>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;
-                  letter-spacing:.1em;color:#9CA3AF;margin-bottom:8px;">Outline</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-          ${['primary','dark','green','red','yellow','blue','gray']
-            .map(c => btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, outline: true })).join('')}
-        </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${['primary','dark','green','red','yellow','blue'].map(c =>
+          btn({ label: c.charAt(0).toUpperCase()+c.slice(1), color: c, size, disabled: true, outline: true })
+        ).join('')}
       </div>
     </div>`,
 };
