@@ -1,7 +1,9 @@
 import '../styles.css';
+import { withActions } from '@storybook/addon-actions/decorator';
 
 /** @type { import('@storybook/html').Preview } */
 const preview = {
+  decorators: [withActions],
   parameters: {
     layout: 'padded',
     backgrounds: {
