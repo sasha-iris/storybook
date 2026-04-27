@@ -65,24 +65,63 @@ Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
     },
   },
   argTypes: {
-    label:   { control: 'text',    description: 'Button label text' },
-    color:   {
+    // ── Content ──────────────────────────────────────────────
+    label: {
+      control: 'text',
+      description: 'Button label text. Ignored when `iconOnly` is true.',
+      table: { category: 'Content', defaultValue: { summary: 'Button text' } },
+    },
+    iconLeft: {
+      control: 'boolean',
+      description: 'Prepend a left icon (star placeholder). Size: 16px for xs/sm, 20px for md/lg/xl.',
+      table: { category: 'Content', defaultValue: { summary: false } },
+    },
+    iconRight: {
+      control: 'boolean',
+      description: 'Append a right icon (arrow). Ignored when `iconOnly` is true.',
+      table: { category: 'Content', defaultValue: { summary: false } },
+    },
+    iconOnly: {
+      control: 'boolean',
+      description: 'Icon-only mode — removes label, forces square aspect ratio via `.btn-icon`.',
+      table: { category: 'Content', defaultValue: { summary: false } },
+    },
+    // ── Appearance ───────────────────────────────────────────
+    color: {
       control: 'select',
       options: ['primary','dark','green','red','yellow','blue','gray',
                 'alternative','light','purple'],
-      description: 'Figma colors: primary · dark · green · red · yellow · blue · gray',
+      description: [
+        'Figma colors: **primary** `#42389d` · **dark** `#1e2939` · **green** `#007a55` ·',
+        '**red** `#c10007` · **yellow** `#d03801` (renders orange) · **blue** `#1447e6` ·',
+        '**gray** light surface w/ dark text.',
+        '',
+        '`alternative` / `light` / `purple` are legacy variants not in current Figma.',
+      ].join('\n'),
+      table: { category: 'Appearance', defaultValue: { summary: 'primary' } },
     },
-    size:    {
+    size: {
       control: 'select',
       options: ['xs','sm','md','lg','xl'],
-      description: 'xs=34h · sm=36h · md=40h (base) · lg=48h (l) · xl=52h',
+      description: 'Figma sizes: xs (34px h) · sm (36px) · md / base (40px) · lg / l (48px) · xl (52px).',
+      table: { category: 'Appearance', defaultValue: { summary: 'md' } },
     },
-    outline:   { control: 'boolean', description: 'Outline/ghost mode' },
-    pill:      { control: 'boolean', description: 'Full pill border-radius' },
-    disabled:  { control: 'boolean', description: 'Disabled state' },
-    iconLeft:  { control: 'boolean', description: 'Show left icon placeholder' },
-    iconRight: { control: 'boolean', description: 'Show right icon placeholder' },
-    iconOnly:  { control: 'boolean', description: 'Icon-only square button' },
+    outline: {
+      control: 'boolean',
+      description: 'Outline / ghost mode. Swaps `.btn-{color}` for `.btn-outline-{color}`. Background becomes transparent.',
+      table: { category: 'Appearance', defaultValue: { summary: false } },
+    },
+    pill: {
+      control: 'boolean',
+      description: 'Full pill border-radius via `.btn-pill`. Default radius is 12px (`--radius-lg`).',
+      table: { category: 'Appearance', defaultValue: { summary: false } },
+    },
+    // ── State ────────────────────────────────────────────────
+    disabled: {
+      control: 'boolean',
+      description: 'Disabled state — 50% opacity, `pointer-events: none`. Adds `disabled` + `aria-disabled="true"` attributes.',
+      table: { category: 'State', defaultValue: { summary: false } },
+    },
   },
   args: {
     label: 'Button text',
@@ -153,6 +192,26 @@ const btn = ({
 export const Interactive = {
   name: 'Interactive (Controls)',
   render: (args) => btn(args),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use the **Controls** panel below to configure any combination of color, size, and modifiers. The rendered HTML updates live.',
+      },
+      source: {
+        // Dynamically generate a clean snippet from current args
+        transform: (_src, storyCtx) => {
+          const a = storyCtx.args;
+          const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;
+          const classes = ['btn', colorClass, `btn-${a.size}`, a.pill ? 'btn-pill' : '', a.iconOnly ? 'btn-icon' : ''].filter(Boolean).join(' ');
+          if (a.iconOnly) return `<button class="${classes}" aria-label="${a.label}">\n  <!-- icon svg here -->\n</button>`;
+          const left  = a.iconLeft  ? '\n  <!-- left icon -->' : '';
+          const right = a.iconRight ? '\n  <!-- right icon -->' : '';
+          const dis   = a.disabled  ? ' disabled aria-disabled="true"' : '';
+          return `<button class="${classes}"${dis}>${left}\n  <span>${a.label}</span>${right}\n</button>`;
+        },
+      },
+    },
+  },
 };
 
 /* ── Figma Colors ────────────────────────────────────────────
@@ -165,8 +224,23 @@ export const FigmaColors = {
         story: `
 All 7 colors from Figma Buttons page (node 84:13517). Sizes shown: **md** (Figma "base").
 
-QA: Primary = #42389d (purple). "Yellow" = #d03801 (orange). Gray = light surface w/ dark text.
+**QA:** Primary = \`#42389d\` (purple, not blue). "Yellow" = \`#d03801\` (orange — intentional). Gray = light surface \`#f9fafb\` with dark text \`#1e2939\`.
         `,
+      },
+      source: {
+        code: `<!-- Solid -->
+<button class="btn btn-primary btn-md">Primary</button>
+<button class="btn btn-dark btn-md">Dark</button>
+<button class="btn btn-green btn-md">Green</button>
+<button class="btn btn-red btn-md">Red</button>
+<button class="btn btn-yellow btn-md">Yellow</button>
+<button class="btn btn-blue btn-md">Blue</button>
+<button class="btn btn-gray btn-md">Gray</button>
+
+<!-- Outline -->
+<button class="btn btn-outline-primary btn-md">Primary</button>
+<button class="btn btn-outline-dark btn-md">Dark</button>`,
+        language: 'html',
       },
     },
   },
@@ -201,9 +275,22 @@ export const FigmaSizes = {
     docs: {
       description: {
         story: `
-All 5 sizes from Figma (xs=34h · sm=36h · base/md=40h · l/lg=48h · xl=52h).
-Padding and font size change per size as specified in Figma.
+All 5 sizes from Figma — xs (34px h) · sm (36px) · md/base (40px) · lg/l (48px) · xl (52px).
+Padding and font size scale with size as specified in Figma.
         `,
+      },
+      source: {
+        code: `<button class="btn btn-primary btn-xs">Extra small</button>
+<button class="btn btn-primary btn-sm">Small</button>
+<button class="btn btn-primary btn-md">Medium (base)</button>
+<button class="btn btn-primary btn-lg">Large</button>
+<button class="btn btn-primary btn-xl">Extra large</button>
+
+<!-- Icon-only at each size -->
+<button class="btn btn-primary btn-icon btn-xs" aria-label="Action"><!-- icon --></button>
+<button class="btn btn-primary btn-icon btn-md" aria-label="Action"><!-- icon --></button>
+<button class="btn btn-primary btn-icon btn-xl" aria-label="Action"><!-- icon --></button>`,
+        language: 'html',
       },
     },
   },
@@ -283,10 +370,28 @@ export const IconPlacement = {
     docs: {
       description: {
         story: `
-Figma button allows left icon, right icon, or icon-only.
-Gap between icon and label: **8px** (Figma: gap-[8px]).
-Icon size: 20px for base/lg/xl; 16px for xs/sm.
+Figma button supports left icon, right icon, or icon-only.
+Gap between icon and label: **8px**. Icon size: **20px** for md/lg/xl, **16px** for xs/sm.
         `,
+      },
+      source: {
+        code: `<!-- Left icon -->
+<button class="btn btn-primary btn-md">
+  <svg><!-- heroicon 20px --></svg>
+  <span>Button text</span>
+</button>
+
+<!-- Right icon -->
+<button class="btn btn-primary btn-md">
+  <span>Button text</span>
+  <svg><!-- heroicon 20px --></svg>
+</button>
+
+<!-- Icon only -->
+<button class="btn btn-primary btn-icon btn-md" aria-label="Action">
+  <svg><!-- heroicon 20px --></svg>
+</button>`,
+        language: 'html',
       },
     },
   },
