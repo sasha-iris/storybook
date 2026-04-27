@@ -38,47 +38,55 @@
 
 import { irisLogo } from './brand-assets.js';
 
-// ─── Icon helpers (Heroicons v1 outline, 24px viewBox) ───────────────────────
+// ─── Icon helpers (Heroicons v1 solid, 20×20 viewBox) ────────────────────────
+// All fill icons use viewBox="0 0 20 20" — the Heroicons v1 solid convention.
+// Displayed at width/height 24 so they scale up proportionally.
 
 const icons = {
-  viewGrid: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm8 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 14a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm8 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" fill="currentColor"/>
+  // Overview
+  viewGrid: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/>
   </svg>`,
 
-  documentReport: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm7 1.5V8h4.5L13 3.5zM8 13a1 1 0 011-1h6a1 1 0 110 2H9a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H9z" fill="currentColor"/>
+  // Metrics Library — document with 3 vertical bar charts
+  documentReport: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
   </svg>`,
 
-  chartPie: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11 2a9 9 0 00-9 9 9 9 0 009 9 9 9 0 009-9h-9V2z" fill="currentColor"/>
-    <path d="M13 2v7h7a9 9 0 00-7-7z" fill="currentColor"/>
+  // Profit & Loss — filled pie chart
+  chartPie: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
   </svg>`,
 
-  creditCard: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 5h16v2H4V9zm2 5h4v2H6v-2z" fill="currentColor"/>
+  // Budget — credit card
+  creditCard: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 000 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
   </svg>`,
 
-  viewGridAdd: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm8 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 14a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm11-1a1 1 0 10-2 0v2h-2a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2v-2z" fill="currentColor"/>
+  // Cohorts — grid with plus
+  viewGridAdd: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1v-1z"/>
   </svg>`,
 
-  presentationChart: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M2 3a1 1 0 011-1h18a1 1 0 110 2H3a1 1 0 01-1-1zm2 4a1 1 0 011-1h14a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V7zm3 1v6h10V8H7zm1 4l2-2 2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <path d="M10 19l2 2 2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  // 13-week Cash Flow — presentation screen with upward line chart
+  presentationChartLine: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
   </svg>`,
 
-  currencyDollar: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2v2m0 16v2M8 6.268A4 4 0 0112 6c2.21 0 4 1.343 4 3s-1.79 3-4 3-4 1.343-4 3 1.79 3 4 3a4 4 0 004-1.268" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  // Financial model — dollar sign in circle
+  currencyDollar: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
   </svg>`,
 
-  cog: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM12 15a3 3 0 100-6 3 3 0 000 6z" fill="currentColor"/>
+  // Help — question mark circle
+  help: `<svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
   </svg>`,
 
-  help: `<svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" fill="currentColor"/>
-  </svg>`,
-
+  // Chevrons (outline stroke, 20px display)
   chevronDown: `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`,
@@ -157,7 +165,7 @@ function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded =
         ${menuItem({ icon: icons.chartPie, label: 'Profit & Loss', active: activeItem === 'pnl' })}
         ${menuItem({ icon: icons.creditCard, label: 'Budget', active: activeItem === 'budget' })}
         ${menuItem({ icon: icons.viewGridAdd, label: 'Cohorts', active: activeItem === 'cohorts' })}
-        ${menuItem({ icon: icons.presentationChart, label: '13-week Cash Flow', active: activeItem === 'cashflow' })}
+        ${menuItem({ icon: icons.presentationChartLine, label: '13-week Cash Flow', active: activeItem === 'cashflow' })}
         ${menuItem({ icon: icons.currencyDollar, label: 'Financial model', active: activeItem === 'financial', expandable: true, expanded: financialExpanded })}
         ${financialExpanded ? `
           ${subItem({ label: 'Overview', active: activeItem === 'financial-overview' })}
@@ -172,7 +180,6 @@ function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded =
 
       <!-- Bottom nav -->
       <div style="display:flex;flex-direction:column;gap:8px;padding:0 8px 24px 28px;width:100%;box-sizing:border-box;">
-        ${menuItem({ icon: icons.cog, label: 'Settings', active: activeItem === 'settings' })}
         ${menuItem({ icon: icons.help, label: 'Help', active: activeItem === 'help' })}
       </div>
     </div>
@@ -264,7 +271,7 @@ export const ActiveStates = {
   },
   render: () => `
     <div style="display:flex;gap:16px;flex-wrap:wrap;padding:16px;background:#f9fafb;">
-      ${['overview','metrics','pnl','budget','cohorts','cashflow','financial','settings','help'].map(item => `
+      ${['overview','metrics','pnl','budget','cohorts','cashflow','financial','help'].map(item => `
         <div>
           <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#9CA3AF;margin:0 0 8px;">${item}</p>
           ${sidebar({ showLogo: false, activeItem: item, financialExpanded: false })}
