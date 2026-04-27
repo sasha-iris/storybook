@@ -40,8 +40,6 @@
  * - Icon-only: same sizes, aspect-ratio 1:1 via `.btn-icon`
  */
 
-import { action } from '@storybook/addon-actions';
-
 export default {
   title: 'Iris Library/Components/Button',
   tags: ['autodocs'],
@@ -194,27 +192,18 @@ const btn = ({
 /* ── Interactive story (Controls + Actions) ─────────────────── */
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => {
-    // Return DOM element so we can attach event listeners → Actions tab
-    const wrap = document.createElement('div');
-    wrap.innerHTML = btn(args);
-    const el = wrap.querySelector('button');
-    if (el) {
-      el.addEventListener('click',   action('click'));
-      el.addEventListener('focus',   action('focus'));
-      el.addEventListener('blur',    action('blur'));
-      el.addEventListener('keydown', (e) => action('keydown')(e.key));
-    }
-    return wrap;
-  },
+  render: (args) => btn(args),
   parameters: {
+    // html-vite native approach: Storybook listens to DOM events via CSS selectors
+    actions: {
+      handles: ['click button', 'focus button', 'blur button', 'keydown button'],
+    },
     docs: {
       description: {
         story: [
           'Use the **Controls** panel to configure any combination of color, size, and modifiers.',
           '',
-          '**Actions tab** logs: `click` · `focus` · `blur` · `keydown` — useful for verifying',
-          'event behaviour without reading source code.',
+          '**Actions tab** logs: `click` · `focus` · `blur` · `keydown`.',
         ].join('\n'),
       },
       source: {
