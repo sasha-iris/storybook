@@ -188,17 +188,33 @@ const btn = ({
   >${leftSlot}${labelHtml}${rightSlot}</button>`;
 };
 
-/* ── Interactive story (Controls) ──────────────────────────── */
+/* ── Interactive story (Controls + Actions) ─────────────────── */
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => btn(args),
+  render: (args) => {
+    // Return DOM element so we can attach event listeners → Actions tab
+    const wrap = document.createElement('div');
+    wrap.innerHTML = btn(args);
+    const el = wrap.querySelector('button');
+    if (el) {
+      el.addEventListener('click',  (e) => console.log('[Button] click',  e));
+      el.addEventListener('focus',  (e) => console.log('[Button] focus',  e));
+      el.addEventListener('blur',   (e) => console.log('[Button] blur',   e));
+      el.addEventListener('keydown',(e) => console.log('[Button] keydown', e.key));
+    }
+    return wrap;
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Use the **Controls** panel below to configure any combination of color, size, and modifiers. The rendered HTML updates live.',
+        story: [
+          'Use the **Controls** panel to configure any combination of color, size, and modifiers.',
+          '',
+          '**Actions tab** logs: `click` · `focus` · `blur` · `keydown` — useful for verifying',
+          'event behaviour without reading source code.',
+        ].join('\n'),
       },
       source: {
-        // Dynamically generate a clean snippet from current args
         transform: (_src, storyCtx) => {
           const a = storyCtx.args;
           const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;
