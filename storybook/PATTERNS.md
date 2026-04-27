@@ -60,7 +60,44 @@ Rules:
 
 ---
 
-## 2. Interactive story (full Controls playground)
+## 2. Actions tab — event logging
+
+Actions tab shows events fired by the component. Required for developer self-sufficiency.
+
+**CRITICAL:** always use `action()` from `@storybook/addon-actions`, never `console.log`.
+`console.log` goes to the browser console only. `action()` goes to the Storybook Actions tab.
+
+```js
+import { action } from '@storybook/addon-actions';
+// @storybook/addon-actions is included via @storybook/addon-essentials — no separate install needed
+```
+
+In `html-vite`, return a DOM element (not a string) to attach event listeners:
+
+```js
+render: (args) => {
+  const wrap = document.createElement('div');
+  wrap.innerHTML = component(args);           // your HTML string
+  const el = wrap.querySelector('button');    // or whatever the root element is
+  if (el) {
+    el.addEventListener('click',   action('click'));
+    el.addEventListener('focus',   action('focus'));
+    el.addEventListener('blur',    action('blur'));
+    el.addEventListener('keydown', (e) => action('keydown')(e.key));
+  }
+  return wrap;                                // return the DOM element, not a string
+},
+```
+
+**Validation checklist before pushing:**
+- [ ] Build passes with no errors
+- [ ] `action` is imported from `@storybook/addon-actions`
+- [ ] `render()` returns a DOM element (not a string) when events are attached
+- [ ] No `console.log` used for event logging
+
+---
+
+## 3. Interactive story (full Controls playground)
 
 ```js
 export const Interactive = {

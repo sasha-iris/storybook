@@ -98,3 +98,23 @@ Before major edits, produce a short audit first in plain text:
 Be efficient.
 Avoid broad rewrites, broad CSS rewrites, or expanding unrelated areas.
 Prefer improving a small number of stories to a high standard
+
+## Validation before every push — MANDATORY
+
+Never push a change without self-validating it first. This applies even when the user does not ask.
+
+Checklist before every `git push`:
+1. **Build passes** — `npm run build-storybook` with no errors
+2. **Behaviour is correct** — not just "code looks right", but verified:
+   - If adding Controls: confirm `render` actually receives and uses the arg
+   - If adding Actions: confirm using `action()` from `@storybook/addon-actions`, NOT `console.log`
+   - If adding source snippets: confirm `source.code` or `source.transform` is wired correctly
+   - If deleting a file: confirm nothing else imports it
+3. **No half-finished patterns** — if a feature is broken or incomplete, fix it before pushing
+4. Do not wait for the user to find the bug. Find it yourself first.
+
+Known failure modes to check:
+- `console.log` in event listeners → logs to browser console, NOT to Storybook Actions tab
+- `render: () => ...` ignoring args → Controls panel shows but does nothing
+- `controls: { disable: true }` on gallery stories → Controls useless
+- Pushing to `sasha-iris/main` deploys to the live site immediately — only push when correct

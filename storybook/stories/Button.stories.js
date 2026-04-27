@@ -1,5 +1,6 @@
 /**
  * Iris Library — Button
+ * @requires @storybook/addon-actions — included via addon-essentials
  *
  * Source: Figma › Iris Library › ---- Buttons page
  * Frames used: node 84:13517 (main Buttons frame), node 84:13521 (Button component)
@@ -38,6 +39,8 @@
  * - Focus ring: 2px outline, color = --btn-primary-bg, offset 2px
  * - Icon-only: same sizes, aspect-ratio 1:1 via `.btn-icon`
  */
+
+import { action } from '@storybook/addon-actions';
 
 export default {
   title: 'Iris Library/Components/Button',
@@ -197,10 +200,10 @@ export const Interactive = {
     wrap.innerHTML = btn(args);
     const el = wrap.querySelector('button');
     if (el) {
-      el.addEventListener('click',  (e) => console.log('[Button] click',  e));
-      el.addEventListener('focus',  (e) => console.log('[Button] focus',  e));
-      el.addEventListener('blur',   (e) => console.log('[Button] blur',   e));
-      el.addEventListener('keydown',(e) => console.log('[Button] keydown', e.key));
+      el.addEventListener('click',   action('click'));
+      el.addEventListener('focus',   action('focus'));
+      el.addEventListener('blur',    action('blur'));
+      el.addEventListener('keydown', (e) => action('keydown')(e.key));
     }
     return wrap;
   },
