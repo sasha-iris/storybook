@@ -219,6 +219,7 @@ export const Interactive = {
 export const FigmaColors = {
   name: 'Colors — Figma palette',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -272,6 +273,7 @@ All 7 colors from Figma Buttons page (node 84:13517). Sizes shown: **md** (Figma
 export const FigmaSizes = {
   name: 'Sizes — Figma scale (xs → xl)',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -326,6 +328,7 @@ Padding and font size scale with size as specified in Figma.
 export const FigmaStates = {
   name: 'States — default / hover / disabled',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -354,6 +357,7 @@ QA: Hover on primary should show \`#362f78\` (brand/900). Disabled must not resp
    All outline colors at base (md) size                        */
 export const OutlineVariants = {
   name: 'Outline — all colors',
+  parameters: { controls: { disable: true } },
   render: () => `
     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
       ${['primary','dark','green','red','yellow','blue','gray'].map(c =>
@@ -367,6 +371,7 @@ export const OutlineVariants = {
 export const IconPlacement = {
   name: 'With Icons',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -420,6 +425,7 @@ Gap between icon and label: **8px**. Icon size: **20px** for md/lg/xl, **16px** 
 
 /* ── Pill shape ──────────────────────────────────────────── */
 export const Pill = {
+  parameters: { controls: { disable: true } },
   render: () => `
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
       ${['primary','dark','green'].map(c =>
@@ -433,6 +439,7 @@ export const Pill = {
 
 /* ── Disabled ────────────────────────────────────────────── */
 export const Disabled = {
+  parameters: { controls: { disable: true } },
   render: () => `
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
       ${btn({ label: 'Disabled primary', color: 'primary', disabled: true })}
@@ -447,6 +454,7 @@ export const Disabled = {
 export const AllVariants = {
   name: 'Overview',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: `Legacy overview story. For Figma-exact stories, see FigmaColors and FigmaSizes.`,
