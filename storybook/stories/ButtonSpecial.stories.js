@@ -52,19 +52,50 @@ export default {
         component: `
 Two compact utility button patterns used inside chart toolbars and data tables.
 
-**Chart button** — \`.btn-chart\` — 24px, transparent, only icon
-**Table button** — \`.btn-table\` — 28px, white, border + shadow, only icon
+**Chart button** — \`.btn-chart\` — 24×24px, transparent bg, no border, icon-only
+**Table button** — \`.btn-table\` — 28×28px, white bg, border + shadow, icon-only
 
-These are NOT general-purpose buttons. They are purpose-built for dense UI contexts.
+\`\`\`html
+<!-- Chart button -->
+<button class="btn-chart" aria-label="Navigate">
+  <!-- 16px arrow-right icon -->
+</button>
+
+<!-- Table button -->
+<button class="btn-table" aria-label="Navigate">
+  <!-- 12px arrow-right icon -->
+</button>
+\`\`\`
+
+These are NOT general-purpose buttons — purpose-built for dense UI contexts.
       `,
       },
     },
+  },
+  argTypes: {
+    // ── Appearance ───────────────────────────────────────────
+    variant: {
+      control: 'select',
+      options: ['chart', 'table'],
+      description: 'Button type. `chart`: 24×24px, transparent bg, no border. `table`: 28×28px, white bg, border + shadow.',
+      table: { category: 'Appearance', defaultValue: { summary: 'chart' } },
+    },
+    // ── State ────────────────────────────────────────────────
+    state: {
+      control: 'select',
+      options: ['default', 'hover', 'disabled'],
+      description: 'Render state. Hover and disabled are simulated via inline styles (not real CSS :hover).',
+      table: { category: 'State', defaultValue: { summary: 'default' } },
+    },
+  },
+  args: {
+    variant: 'chart',
+    state: 'default',
   },
 };
 
 /* ── Helpers ──────────────────────────────────────────────── */
 
-/* Arrow-right icon — Chart button uses 16px, Table button uses 12px */
 const ARROW_RIGHT = (size = 16) => `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
   style="width:${size}px;height:${size}px;" aria-hidden="true">
@@ -74,122 +105,137 @@ const ARROW_RIGHT = (size = 16) => `
     clip-rule="evenodd"/>
 </svg>`;
 
-/* ── Chart Button Stories ─────────────────────────────────── */
+const chartBtn = ({ state = 'default' } = {}) => {
+  const stateStyle = state === 'hover'
+    ? 'background:var(--color-bg-tertiary,#f3f4f6);border-radius:9px;'
+    : '';
+  const dis = state === 'disabled' ? ' disabled' : '';
+  return `<button class="btn-chart"${dis} aria-label="Navigate" style="${stateStyle}">${ARROW_RIGHT(16)}</button>`;
+};
 
-/**
- * Chart button — Default state.
- * QA: No border, no bg, no shadow. Icon is dark (#374151).
- */
-export const ChartButtonDefault = {
-  name: 'Chart Button — Default',
+const tableBtn = ({ state = 'default' } = {}) => {
+  const stateStyle = state === 'hover'
+    ? 'background:#f3f4f6;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);'
+    : '';
+  const dis = state === 'disabled' ? ' disabled' : '';
+  return `<button class="btn-table"${dis} aria-label="Navigate" style="${stateStyle}">${ARROW_RIGHT(12)}</button>`;
+};
+
+/* ── Stories ─────────────────────────────────────────────── */
+
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  render: ({ variant, state }) => variant === 'chart' ? chartBtn({ state }) : tableBtn({ state }),
   parameters: {
     docs: {
       description: {
-        story: `
-Compact icon trigger for chart toolbars (node 9705:152804).
-Default: 24×24px, transparent bg, no border, no shadow.
-        `,
+        story: 'Use **variant** to switch between chart and table button. Use **state** to simulate default / hover / disabled.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const { variant, state } = storyCtx.args;
+          const cls = variant === 'chart' ? 'btn-chart' : 'btn-table';
+          const iconPx = variant === 'chart' ? 16 : 12;
+          const dis = state === 'disabled' ? ' disabled' : '';
+          return `<button class="${cls}" aria-label="Navigate"${dis}>\n  <!-- ${iconPx}px arrow-right icon -->\n</button>`;
+        },
       },
     },
   },
-  render: () => `
-    <div style="display:flex;gap:16px;align-items:center;">
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Default</p>
-        <button class="btn-chart" aria-label="Navigate">${ARROW_RIGHT(16)}</button>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Hover (simulated)</p>
-        <button class="btn-chart" style="background:var(--color-bg-tertiary);border-radius:9px;"
-          aria-label="Navigate">${ARROW_RIGHT(16)}</button>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Disabled</p>
-        <button class="btn-chart" disabled aria-label="Navigate">${ARROW_RIGHT(16)}</button>
-      </div>
-    </div>`,
 };
 
 /**
- * Chart button — all 3 states in Figma context (toolbar strip).
+ * Chart button — switch between states using the `state` control.
+ * QA: Default = transparent bg, no border. Hover = bg #f3f4f6. Disabled = icon #D1D5DB.
  */
 export const ChartButtonStates = {
-  name: 'Chart Button — all states',
+  name: 'Chart Button — states',
+  args: { state: 'default' },
   parameters: {
+    controls: { include: ['state'] },
     docs: {
       description: {
         story: `
-All 3 Figma states: **Default** (transparent) · **Hover** (bg #f3f4f6) · **Disabled** (icon gray #D1D5DB).
+Chart button (node 9705:152804) — 24×24px, transparent bg. Use **state** control to switch between Default / Hover / Disabled.
 
-QA: Hover uses bg-fill only, NO border change. Disabled icon must be #D1D5DB.
+| State    | BG           | Icon color |
+|---------|--------------|------------|
+| Default  | transparent  | #374151    |
+| Hover    | #f3f4f6      | #374151    |
+| Disabled | transparent  | #D1D5DB    |
         `,
+      },
+      source: {
+        code: `<button class="btn-chart" aria-label="Navigate">
+  <!-- 16px arrow-right icon -->
+</button>`,
+        language: 'html',
+      },
+    },
+  },
+  render: ({ state }) => chartBtn({ state }),
+};
+
+/**
+ * Chart button — all 3 states side by side, simulated toolbar context.
+ * QA: No border, no bg in default. Hover fills bg only. Disabled icon = gray/300.
+ */
+export const ChartButtonToolbar = {
+  name: 'Chart Button — toolbar context',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: 'All 3 states shown in a simulated chart toolbar wrapper.',
       },
     },
   },
   render: () => `
     <div style="display:inline-flex;border:1px solid #e5e7eb;border-radius:8px;
                 padding:4px;gap:2px;background:#fff;">
-      <!-- Simulated chart toolbar context -->
       <button class="btn-chart" aria-label="Previous"
         style="transform:scaleX(-1);">${ARROW_RIGHT(16)}</button>
-      <button class="btn-chart" style="background:var(--color-bg-tertiary);border-radius:9px;"
+      <button class="btn-chart" style="background:var(--color-bg-tertiary,#f3f4f6);border-radius:9px;"
         aria-label="Next (hovered)">${ARROW_RIGHT(16)}</button>
       <button class="btn-chart" disabled aria-label="Disabled">${ARROW_RIGHT(16)}</button>
     </div>
     <p style="margin-top:12px;font:11px/1.5 sans-serif;color:#6B7280;">
-      ← shown in a simulated chart toolbar wrapper
+      Default · Hover (simulated) · Disabled — shown in a chart toolbar wrapper
     </p>`,
 };
 
-/* ── Table Button Stories ─────────────────────────────────── */
-
 /**
- * Table button — all 3 states.
- * QA: Default has shadow-sm. Hover amplifies shadow. Disabled = no shadow, bg gray.
+ * Table button — switch between states using the `state` control.
+ * QA: Shadow always present in default. Hover = amplified shadow. Disabled = no shadow, bg gray.
  */
 export const TableButtonStates = {
-  name: 'Table Button — all states',
+  name: 'Table Button — states',
+  args: { state: 'default' },
   parameters: {
+    controls: { include: ['state'] },
     docs: {
       description: {
         story: `
-Icon action button for table row cells (node 9287:163857). 28×28px, always bordered.
+Table button (node 9287:163857) — 28×28px, always bordered. Use **state** control to switch states.
 
 | State    | BG       | Shadow    | Icon     |
 |---------|----------|-----------|----------|
 | Default  | #ffffff  | shadow-sm | #374151  |
 | Hover    | #f3f4f6  | shadow-lg | #374151  |
-| Disabled | #f3f4f6  | shadow-sm | #D1D5DB  |
+| Disabled | #f3f4f6  | none      | #D1D5DB  |
 
 QA: Icon is **12px** (smaller than chart button's 16px).
         `,
       },
+      source: {
+        code: `<button class="btn-table" aria-label="Navigate">
+  <!-- 12px arrow-right icon -->
+</button>`,
+        language: 'html',
+      },
     },
   },
-  render: () => `
-    <div style="display:flex;gap:16px;align-items:center;">
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Default</p>
-        <button class="btn-table" aria-label="Go">${ARROW_RIGHT(12)}</button>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Hover (simulated)</p>
-        <button class="btn-table"
-          style="background:var(--color-bg-tertiary);
-                 box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);"
-          aria-label="Go (hover)">${ARROW_RIGHT(12)}</button>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Disabled</p>
-        <button class="btn-table" disabled aria-label="Go (disabled)">${ARROW_RIGHT(12)}</button>
-      </div>
-    </div>`,
+  render: ({ state }) => tableBtn({ state }),
 };
 
 /**
@@ -198,9 +244,10 @@ QA: Icon is **12px** (smaller than chart button's 16px).
 export const TableButtonInContext = {
   name: 'Table Button — table row context',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Buttons shown in a realistic data table row to verify sizing and shadow in context.',
+        story: 'Button shown in a realistic data table row to verify sizing and shadow in context.',
       },
     },
   },
@@ -232,11 +279,13 @@ export const TableButtonInContext = {
     </table>`,
 };
 
-/* ── Side-by-side comparison ─────────────────────────────── */
-
+/**
+ * Both utility button types side-by-side for QA comparison.
+ */
 export const BothUtilityButtons = {
   name: 'Overview — Chart vs Table button',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
@@ -262,7 +311,7 @@ Both utility button types side-by-side for easy QA comparison.
                   color:#9CA3AF;margin:0 0 10px;">Chart Button (node 9705:152804)</p>
         <div style="display:flex;gap:12px;align-items:center;">
           <button class="btn-chart" aria-label="Default">${ARROW_RIGHT(16)}</button>
-          <button class="btn-chart" style="background:var(--color-bg-tertiary);"
+          <button class="btn-chart" style="background:var(--color-bg-tertiary,#f3f4f6);"
             aria-label="Hover">${ARROW_RIGHT(16)}</button>
           <button class="btn-chart" disabled aria-label="Disabled">${ARROW_RIGHT(16)}</button>
           <span style="font:11px/1 sans-serif;color:#9CA3AF;">Default · Hover · Disabled</span>

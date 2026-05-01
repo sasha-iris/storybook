@@ -20,13 +20,13 @@
  * - Text: #111928 (--color-text-heading equivalent)
  * - Font: 14px / 500 (Inter Medium)
  * - Border-radius: 6px on the group container (NOT 12px — group uses 6px in Figma)
- * - Padding per segment: 8px 16px (left segment), 8px (icon segment)
+ * - Padding per segment: 8px 16px (text segment), 8px 9px (icon segment)
  * - Height: 40px
  *
  * ## QA notes
  * - Segments share a single continuous border — no double border between segments
  * - Only first segment gets left-rounded corners; only last gets right-rounded corners
- * - Hover darkens the segment to #f3f4f6; pressed/focus state gets #d1d5db outline
+ * - Hover darkens the segment to #f3f4f6; active class applies the same fill
  * - "With stat" right slot shows a muted count, not a badge pill
  * - "With dropdown" right slot is an icon-only square segment
  * - Tooltip renders above the group, dark bg #111928, 4px radius
@@ -51,9 +51,42 @@ Segmented button groups — joined segments sharing a single border line.
   <button class="btn active">Days</button>
 </div>
 \`\`\`
+
+Border-radius: **6px** on the container (not the standard 12px).
         `,
       },
     },
+  },
+  argTypes: {
+    // ── Content ──────────────────────────────────────────────
+    seg1: {
+      control: 'text',
+      description: 'Label for segment 1 (leftmost).',
+      table: { category: 'Content', defaultValue: { summary: 'Years' } },
+    },
+    seg2: {
+      control: 'text',
+      description: 'Label for segment 2 (middle).',
+      table: { category: 'Content', defaultValue: { summary: 'Months' } },
+    },
+    seg3: {
+      control: 'text',
+      description: 'Label for segment 3 (rightmost).',
+      table: { category: 'Content', defaultValue: { summary: 'Days' } },
+    },
+    // ── State ────────────────────────────────────────────────
+    activeIndex: {
+      control: 'select',
+      options: [0, 1, 2],
+      description: 'Which segment (0-indexed) gets the `.active` class — bg #f3f4f6.',
+      table: { category: 'State', defaultValue: { summary: 2 } },
+    },
+  },
+  args: {
+    seg1: 'Years',
+    seg2: 'Months',
+    seg3: 'Days',
+    activeIndex: 2,
   },
 };
 
@@ -88,17 +121,62 @@ const BOOKMARK_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 2
 
 /* ── Stories ─────────────────────────────────────────────── */
 
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  render: ({ seg1, seg2, seg3, activeIndex }) => `
+    <div class="btn-group">
+      <button class="btn${activeIndex === 0 ? ' active' : ''}">${seg1}</button>
+      <button class="btn${activeIndex === 1 ? ' active' : ''}">${seg2}</button>
+      <button class="btn${activeIndex === 2 ? ' active' : ''}">${seg3}</button>
+    </div>`,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use **seg1–seg3** to rename segments and **activeIndex** to change which segment is active.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const a = storyCtx.args;
+          const segs = [a.seg1, a.seg2, a.seg3];
+          const buttons = segs.map((seg, i) =>
+            `  <button class="btn${i === a.activeIndex ? ' active' : ''}">${seg}</button>`
+          ).join('\n');
+          return `<div class="btn-group">\n${buttons}\n</div>`;
+        },
+      },
+    },
+  },
+};
+
 /**
  * Default 3-segment text group.
+ * Use `activeIndex` control to change which segment is active.
  * QA: Each segment is 40px tall. Active segment gets #f3f4f6 bg.
  */
 export const Default = {
   name: 'Default — text segments (Years / Months / Days)',
-  render: () => `
+  args: { activeIndex: 2 },
+  parameters: {
+    controls: { include: ['activeIndex'] },
+    docs: {
+      description: {
+        story: 'Standard 3-segment text group. Use **activeIndex** control to highlight a different segment.',
+      },
+      source: {
+        code: `<div class="btn-group">
+  <button class="btn">Years</button>
+  <button class="btn">Months</button>
+  <button class="btn active">Days</button>
+</div>`,
+        language: 'html',
+      },
+    },
+  },
+  render: ({ activeIndex }) => `
     <div class="btn-group">
-      <button class="btn">Years</button>
-      <button class="btn">Months</button>
-      <button class="btn active">Days</button>
+      <button class="btn${activeIndex === 0 ? ' active' : ''}">Years</button>
+      <button class="btn${activeIndex === 1 ? ' active' : ''}">Months</button>
+      <button class="btn${activeIndex === 2 ? ' active' : ''}">Days</button>
     </div>`,
 };
 
@@ -109,9 +187,17 @@ export const Default = {
 export const OnlyIcon = {
   name: 'Only Icon — prev / next',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Icon-only segments — common for pagination controls.',
+        story: 'Icon-only segments — common for pagination controls. Segments are square (40×40px).',
+      },
+      source: {
+        code: `<div class="btn-group">
+  <button class="btn" style="padding:9px;" aria-label="Previous"><!-- chevron-left --></button>
+  <button class="btn" style="padding:9px;" aria-label="Next"><!-- chevron-right --></button>
+</div>`,
+        language: 'html',
       },
     },
   },
@@ -129,9 +215,22 @@ export const OnlyIcon = {
 export const WithStat = {
   name: 'With stat — action + count',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Left segment: icon + label. Right segment: numeric count in muted style.',
+        story: 'Left segment: icon + label. Right segment: numeric count in muted style (`btn-group-stat-count`).',
+      },
+      source: {
+        code: `<div class="btn-group">
+  <button class="btn" style="gap:8px;padding:8px 16px;">
+    <!-- download icon -->
+    <span>Download</span>
+  </button>
+  <button class="btn" style="padding:8px 16px;">
+    <span class="btn-group-stat-count">12k</span>
+  </button>
+</div>`,
+        language: 'html',
       },
     },
   },
@@ -154,9 +253,17 @@ export const WithStat = {
 export const WithDropdown = {
   name: 'With dropdown — text + icon slot',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Common pattern: primary action text + secondary icon (save/bookmark).',
+        story: 'Common pattern: primary action text + secondary icon (save/bookmark). Right slot is icon-only square.',
+      },
+      source: {
+        code: `<div class="btn-group">
+  <button class="btn" style="padding:8px 16px;">Save changes</button>
+  <button class="btn" style="padding:8px 9px;" aria-label="Bookmark"><!-- bookmark icon --></button>
+</div>`,
+        language: 'html',
       },
     },
   },
@@ -172,7 +279,7 @@ export const WithDropdown = {
       </div>
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 6px;">Hover state</p>
+                  color:#9CA3AF;margin:0 0 6px;">Active (hover) state</p>
         <div class="btn-group">
           <button class="btn active" style="padding:8px 16px;">Save changes</button>
           <button class="btn active" style="padding:8px 9px;" aria-label="Bookmark">${BOOKMARK_ICON}</button>
@@ -189,11 +296,12 @@ export const WithDropdown = {
 export const WithTooltip = {
   name: 'With tooltip',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
-Tooltip appears above the hovered segment.
-Figma specs: \`bg-[#111928]\`, border-radius 4px, shadow-xs, arrow pointing down.
+Tooltip appears above the active segment.
+Figma specs: bg \`#111928\`, border-radius 4px, shadow-xs, arrow pointing down.
         `,
       },
     },
@@ -201,14 +309,12 @@ Figma specs: \`bg-[#111928]\`, border-radius 4px, shadow-xs, arrow pointing down
   render: () => `
     <div style="display:flex;align-items:flex-end;gap:40px;padding-top:48px;">
       <div style="position:relative;display:inline-block;">
-        <!-- Tooltip -->
         <div style="
           position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
           background:#111928;color:#fff;font-size:12px;font-weight:500;
           padding:6px 12px;border-radius:4px;white-space:nowrap;
           box-shadow:0px 1px 2px rgba(0,0,0,0.08);pointer-events:none;">
           Tooltip on top
-          <!-- Arrow -->
           <span style="
             position:absolute;top:100%;left:50%;transform:translateX(-50%);
             border:5px solid transparent;border-top-color:#111928;display:block;width:0;height:0;">
@@ -224,10 +330,18 @@ Figma specs: \`bg-[#111928]\`, border-radius 4px, shadow-xs, arrow pointing down
 };
 
 /**
- * All types side by side for a quick QA scan.
+ * All group types side by side for a quick QA scan.
  */
 export const AllTypes = {
   name: 'All types — overview',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: 'All 4 group patterns in one view for quick QA comparison.',
+      },
+    },
+  },
   render: () => `
     <div style="display:flex;flex-direction:column;gap:20px;">
       <div style="display:flex;align-items:center;gap:12px;">
