@@ -160,11 +160,52 @@ Prefer existing Storybook standards:
 4. Keep file edits tightly scoped.
 5. Avoid broad rewrites.
 
+## Self-test before declaring done — MANDATORY
+
+Do not say "готово" or push until every applicable item below is verified.
+Verify by reading the built output and story source, not by assuming the code is correct.
+
+### 1. Build
+```bash
+npm run build-storybook
+```
+Must exit with `✓ built` and zero errors.
+
+### 2. Interactive story — verify Controls are wired
+- `render: (args) => card(args)` — args used, not ignored
+- Every argType key exists in `args` with a matching default
+- `source.transform` reads `storyCtx.args` and returns a real HTML string
+- No `controls: { disable: true }` on this story
+
+### 3. Gallery stories — verify scoped Controls are wired
+For each gallery story:
+- `args` has the scoped default (e.g. `{ color: 'primary' }`)
+- `parameters.controls.include` lists the same keys
+- `render` destructures and uses the arg — changing it would change all items
+
+### 4. argTypes — verify structure
+- Every argType has `table.category` (Content / Appearance / State / Data)
+- Every argType has `table.defaultValue: { summary: value }`
+- Summary matches the value in `args`
+
+### 5. Source snippets
+- Gallery stories have `parameters.docs.source.code` with real HTML
+- Interactive story has `parameters.docs.source.transform`
+
+### 6. Figma fidelity
+- No variants that aren't confirmed in Figma node
+- Colors match Figma hex values exactly
+- Figma node ID in file header comment
+
+### 7. Title format
+- `'Iris Library/Card/SubVariant'` — no `Components/` wrapper
+
+### If any check fails — fix before pushing. Never push broken work.
+
 ## Definition of done
-Card is done for this pass when:
+Card is done for this pass when all self-tests above pass AND:
 - it no longer looks like a primitive preview gallery
 - story names are clearer
 - the docs are more useful to developers
 - QA has concrete guidance
 - important variants are visible and understandable
-- the section is presentation-ready without broadening the project

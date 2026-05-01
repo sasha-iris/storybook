@@ -89,10 +89,54 @@ export const AllColors = {
 3. Only implement variants confirmed in Figma — do not invent
 4. Note the node ID in the story file header comment
 
-## Validation before pushing
-- [ ] `npm run build-storybook` passes with no errors
-- [ ] Interactive story: change a Control → component updates
-- [ ] Gallery story: changing the scoped Control → all items update
-- [ ] source.transform or source.code present on key stories
-- [ ] Title matches approved hierarchy
-- [ ] No Components/ wrapper in title
+## Self-test before declaring done — MANDATORY
+
+Do not say "готово" or push until every applicable item below is verified.
+Verify by reading the built output, not by assuming the code is correct.
+
+### 1. Build
+```bash
+npm run build-storybook
+```
+Must exit with `✓ built` and zero errors. Warnings are acceptable.
+
+### 2. Interactive story — verify Controls are wired
+Read the render function. Confirm:
+- `render: (args) => component(args)` — args parameter is used, not ignored
+- Every argType in `argTypes` has a matching key in `args`
+- `source.transform` reads from `storyCtx.args` and builds a real HTML string
+- No `controls: { disable: true }` on this story
+
+### 3. Gallery stories — verify scoped Controls are wired
+For each gallery story, read the render function. Confirm:
+- `args` contains the scoped default (e.g. `{ size: 'md' }`)
+- `parameters.controls.include` lists the same keys as `args`
+- `render: ({ size }) => ...` destructures and uses the arg — not ignored
+- If `size` is the control, changing it would visibly affect all items in the output
+
+### 4. argTypes — verify structure
+Grep the story file for `table.category`. Confirm:
+- Every argType has `table.category` (Content / Appearance / State)
+- Every argType has `table.defaultValue: { summary: value }`
+- The summary value matches the default in `args`
+
+### 5. Source snippets — verify present
+Confirm at least one of:
+- `parameters.docs.source.code` on gallery stories with a real HTML example
+- `parameters.docs.source.transform` on Interactive story that builds HTML from args
+
+### 6. Hierarchy — verify title
+Grep for `title:` in the story file. Confirm:
+- Matches `'Iris Library/FamilyName'` or `'Iris Library/FamilyName/SubVariant'`
+- Does NOT contain `Components/`
+- Family name matches the approved list in CLAUDE.md
+
+### 7. Figma fidelity — verify no invented content
+For each story, confirm:
+- Colors match Figma tokens (check hex values against Figma node or CLAUDE.md tokens)
+- No variants added that aren't confirmed in Figma
+- Figma node ID noted in file header comment if component was pulled from Figma
+
+### If any check fails
+Fix before pushing. Do not push a half-working feature and say "should work".
+Do not ask the user to check — check yourself first.
