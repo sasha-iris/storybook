@@ -36,7 +36,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button/Social',
+  title: 'Iris Library/Button/Social',
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
@@ -68,10 +68,30 @@ Social sign-in buttons — provider icon + text, 2 color modes, 2 outline modes,
     },
   },
   argTypes: {
-    label: { control: 'text' },
-    color: { control: 'select', options: ['dark', 'white'] },
-    outline: { control: 'boolean' },
-    size: { control: 'select', options: ['xs', 'sm', 'md', 'lg'] },
+    // ── Content ──────────────────────────────────────────────
+    label: {
+      control: 'text',
+      description: 'Button text, typically "Sign in with {Provider}".',
+      table: { category: 'Content', defaultValue: { summary: 'Sign in with Facebook' } },
+    },
+    // ── Appearance ───────────────────────────────────────────
+    color: {
+      control: 'select',
+      options: ['dark', 'white'],
+      description: 'Color mode. `dark` = bg #111928, text white. `white` = bg #fff, text #111928. CSS class suffix added to `.btn-social-{color}`.',
+      table: { category: 'Appearance', defaultValue: { summary: 'dark' } },
+    },
+    outline: {
+      control: 'boolean',
+      description: 'Outline mode. Dark outline: border #e5e7eb (gray/200). White outline: border #fff (use on dark backgrounds).',
+      table: { category: 'Appearance', defaultValue: { summary: false } },
+    },
+    size: {
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg'],
+      description: 'Size variant. CSS class: `btn-{size}`. Icon scales: 18px (xs/sm), 20px (md), 24px (lg).',
+      table: { category: 'Appearance', defaultValue: { summary: 'md' } },
+    },
   },
   args: {
     label: 'Sign in with Facebook',
@@ -83,7 +103,6 @@ Social sign-in buttons — provider icon + text, 2 color modes, 2 outline modes,
 
 /* ── Helpers ──────────────────────────────────────────────── */
 
-/* Facebook icon (FA-style, representative) */
 const FB_ICON = (size = 20) => `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
   style="width:${size}px;height:${size}px;flex-shrink:0;" aria-hidden="true">
@@ -120,7 +139,7 @@ const GITHUB_ICON = (size = 20) => `
 
 const socialBtn = ({ label = 'Sign in with Facebook', color = 'dark', outline = false, size = 'md', iconFn = FB_ICON }) => {
   const iconSize = size === 'lg' ? 24 : size === 'xs' ? 18 : 20;
-  let colorClass = color === 'dark'
+  const colorClass = color === 'dark'
     ? (outline ? 'btn-social-dark-outline' : 'btn-social-dark')
     : (outline ? 'btn-social-white-outline' : 'btn-social-white');
   return `<button class="btn-social ${colorClass} btn-${size}">
@@ -133,115 +152,135 @@ const socialBtn = ({ label = 'Sign in with Facebook', color = 'dark', outline = 
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: ({ label, color, outline, size }) =>
-    socialBtn({ label, color, outline, size }),
-};
-
-/**
- * Dark solid — all 4 sizes.
- * QA: bg=#111928, text=white, border-radius=8px, icon scales with size.
- */
-export const DarkSolid = {
-  name: 'Dark solid — all sizes',
+  render: (args) => socialBtn(args),
   parameters: {
     docs: {
       description: {
-        story: 'Dark background variant (bg=#111928). Used on light page backgrounds.',
+        story: 'Use the **Controls** panel to configure any combination. The rendered HTML updates live.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const a = storyCtx.args;
+          const colorClass = a.color === 'dark'
+            ? (a.outline ? 'btn-social-dark-outline' : 'btn-social-dark')
+            : (a.outline ? 'btn-social-white-outline' : 'btn-social-white');
+          return `<button class="btn-social ${colorClass} btn-${a.size}">\n  <!-- provider icon -->\n  <span>${a.label}</span>\n</button>`;
+        },
       },
     },
   },
-  render: () => `
+};
+
+/**
+ * Dark color variant — all 4 sizes.
+ * Use `outline` control to toggle between solid (bg #111928) and outline (border #e5e7eb).
+ * QA: solid bg=#111928, text=white; outline border=#e5e7eb (NOT brand color); border-radius=8px.
+ */
+export const DarkSizes = {
+  name: 'Dark — all sizes',
+  args: { outline: false },
+  parameters: {
+    controls: { include: ['outline'] },
+    docs: {
+      description: {
+        story: 'Dark color at all 4 sizes. Toggle **outline** to switch between solid (bg #111928) and outline (border #e5e7eb).',
+      },
+      source: {
+        code: `<!-- Dark solid -->
+<button class="btn-social btn-social-dark btn-md">
+  <!-- provider icon -->
+  Sign in with Facebook
+</button>
+
+<!-- Dark outline -->
+<button class="btn-social btn-social-dark-outline btn-md">
+  <!-- provider icon -->
+  Sign in with Facebook
+</button>`,
+        language: 'html',
+      },
+    },
+  },
+  render: ({ outline }) => `
     <div style="display:flex;flex-direction:column;gap:12px;">
       ${['xs','sm','md','lg'].map(size =>
         `<div style="display:flex;align-items:center;gap:12px;">
           <span style="width:32px;font:10px/1 sans-serif;color:#6B7280;">${size}</span>
-          ${socialBtn({ label:'Sign in with Facebook', color:'dark', outline:false, size, iconFn:FB_ICON })}
+          ${socialBtn({ label:'Sign in with Facebook', color:'dark', outline, size, iconFn: FB_ICON })}
         </div>`
       ).join('')}
     </div>`,
 };
 
 /**
- * Dark outline — all 4 sizes.
- * QA: border=1px solid #e5e7eb (gray/200), text=#111928, no fill.
- */
-export const DarkOutline = {
-  name: 'Dark outline — all sizes',
-  parameters: {
-    docs: {
-      description: {
-        story: 'Outline variant for light backgrounds. Border = #e5e7eb (NOT brand color).',
-      },
-    },
-  },
-  render: () => `
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      ${['xs','sm','md','lg'].map(size =>
-        `<div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:32px;font:10px/1 sans-serif;color:#6B7280;">${size}</span>
-          ${socialBtn({ label:'Sign in with Facebook', color:'dark', outline:true, size, iconFn:FB_ICON })}
-        </div>`
-      ).join('')}
-    </div>`,
-};
-
-/**
- * White variants on dark panel.
- * QA: White solid on dark bg, white outline with white border.
+ * White variants on dark background — solid and outline.
+ * Use `size` control to preview at any size.
+ * QA: White solid on dark bg, white outline with white border, border-radius=8px.
  */
 export const WhiteVariants = {
   name: 'White variants (on dark background)',
+  args: { size: 'md' },
   parameters: {
     backgrounds: { default: 'dark' },
+    controls: { include: ['size'] },
     docs: {
       description: {
-        story: 'White-mode buttons for use on dark/photo backgrounds. See against dark background.',
+        story: 'White-mode buttons for dark/photo backgrounds. Use **size** control to preview at any size.',
+      },
+      source: {
+        code: `<!-- White solid -->
+<button class="btn-social btn-social-white btn-md">
+  <!-- provider icon -->
+  Sign in with Facebook
+</button>
+
+<!-- White outline -->
+<button class="btn-social btn-social-white-outline btn-md">
+  <!-- provider icon -->
+  Sign in with Facebook
+</button>`,
+        language: 'html',
       },
     },
   },
-  render: () => `
+  render: ({ size }) => `
     <div style="background:#111928;padding:24px;border-radius:8px;
                 display:flex;flex-direction:column;gap:16px;">
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
                   color:#6B7280;margin:0 0 8px;">White solid</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${['xs','sm','md','lg'].map(size =>
-            socialBtn({ label:'Sign in with Facebook', color:'white', outline:false, size, iconFn:FB_ICON })
-          ).join('')}
-        </div>
+        ${socialBtn({ label:'Sign in with Facebook', color:'white', outline:false, size, iconFn: FB_ICON })}
       </div>
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
                   color:#6B7280;margin:0 0 8px;">White outline</p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${['xs','sm','md','lg'].map(size =>
-            socialBtn({ label:'Sign in with Facebook', color:'white', outline:true, size, iconFn:FB_ICON })
-          ).join('')}
-        </div>
+        ${socialBtn({ label:'Sign in with Facebook', color:'white', outline:true, size, iconFn: FB_ICON })}
       </div>
     </div>`,
 };
 
 /**
- * Multi-provider showcase — swapping the icon while keeping the same button shell.
+ * Multi-provider showcase — different icons, same button shell.
+ * Use `size` + `outline` controls to preview all providers at any size/mode.
+ * Figma uses Facebook as the representative example icon.
  */
 export const MultiProvider = {
   name: 'Multi-provider showcase',
+  args: { size: 'md', outline: false },
   parameters: {
+    controls: { include: ['size', 'outline'] },
     docs: {
       description: {
-        story: 'Same button shell, different provider icons. Figma uses Facebook as the representative example.',
+        story: 'Same button shell, different provider icons. Use **size** and **outline** controls to preview combinations.',
       },
     },
   },
-  render: () => `
+  render: ({ size, outline }) => `
     <div style="display:flex;flex-direction:column;gap:10px;">
       ${[
-        { label: 'Sign in with Facebook', iconFn: FB_ICON,     color: 'dark',  outline: false },
-        { label: 'Sign in with Google',   iconFn: GOOGLE_ICON, color: 'dark',  outline: true  },
-        { label: 'Sign in with GitHub',   iconFn: GITHUB_ICON, color: 'dark',  outline: false },
-        { label: 'Sign in with GitHub',   iconFn: GITHUB_ICON, color: 'dark',  outline: true  },
-      ].map(p => socialBtn({ ...p, size: 'md' })).join('')}
+        { label: 'Sign in with Facebook', iconFn: FB_ICON     },
+        { label: 'Sign in with Google',   iconFn: GOOGLE_ICON },
+        { label: 'Sign in with GitHub',   iconFn: GITHUB_ICON },
+      ].map(p => socialBtn({ ...p, color: 'dark', outline, size })).join('')}
     </div>`,
 };

@@ -41,7 +41,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button',
+  title: 'Iris Library/Button',
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',

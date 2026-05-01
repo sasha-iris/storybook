@@ -39,7 +39,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button/Link',
+  title: 'Iris Library/Button/Link',
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
@@ -69,13 +69,35 @@ three sizes, optional left icon.
     },
   },
   argTypes: {
-    label:       { control: 'text'    },
-    type:        { control: 'select', options: ['semibold', 'medium'] },
-    size:        { control: 'select', options: ['xs', 'sm', 'md'] },
-    showIconLeft:{ control: 'boolean' },
-    hover:       {
+    // ── Content ──────────────────────────────────────────────
+    label: {
+      control: 'text',
+      description: 'Link text.',
+      table: { category: 'Content', defaultValue: { summary: 'Sign In' } },
+    },
+    showIconLeft: {
       control: 'boolean',
-      description: 'Simulate hover state (applies hover color + underline)',
+      description: 'Show information-circle icon to the left of the label. Icon scales with size: 12px (xs) / 14px (sm) / 16px (md).',
+      table: { category: 'Content', defaultValue: { summary: false } },
+    },
+    // ── Appearance ───────────────────────────────────────────
+    type: {
+      control: 'select',
+      options: ['semibold', 'medium'],
+      description: 'Font weight style. CSS class: `btn-link-semibold` (weight 600, color #42389d) or `btn-link-medium` (weight 500, color #6b7280).',
+      table: { category: 'Appearance', defaultValue: { summary: 'semibold' } },
+    },
+    size: {
+      control: 'select',
+      options: ['xs', 'sm', 'md'],
+      description: 'Size variant. CSS class: `btn-{size}`. Maps to 12px (xs) / 14px (sm) / 16px (md) font size.',
+      table: { category: 'Appearance', defaultValue: { summary: 'sm' } },
+    },
+    // ── State ────────────────────────────────────────────────
+    hover: {
+      control: 'boolean',
+      description: 'Simulate hover state — applies color #362f78 (brand/900) + `border-bottom: 1px solid #362f78`.',
+      table: { category: 'State', defaultValue: { summary: false } },
     },
   },
   args: {
@@ -103,7 +125,6 @@ const ICON_SIZES = { xs: 12, sm: 14, md: 16 };
 
 const linkBtn = ({ label = 'Sign In', type = 'semibold', size = 'sm', showIconLeft = false, hover = false }) => {
   const weightClass = `btn-link-${type}`;
-  /* Hover: inline style override to simulate hover */
   const hoverStyle = hover
     ? 'color:#362f78;border-bottom:1px solid #362f78;'
     : '';
@@ -119,106 +140,104 @@ const linkBtn = ({ label = 'Sign In', type = 'semibold', size = 'sm', showIconLe
 export const Interactive = {
   name: 'Interactive (Controls)',
   render: (args) => linkBtn(args),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use the **Controls** panel to configure any combination. The rendered HTML updates live.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const a = storyCtx.args;
+          const weightClass = `btn-link-${a.type}`;
+          const hoverStyle = a.hover ? ' style="color:#362f78;border-bottom:1px solid #362f78;"' : '';
+          const icon = a.showIconLeft ? '\n  <svg><!-- information-circle --></svg>' : '';
+          return `<a class="btn-link ${weightClass} btn-${a.size}" href="#"${hoverStyle}>${icon}\n  <span>${a.label}</span>\n</a>`;
+        },
+      },
+    },
+  },
 };
 
 /**
  * Semibold type — brand purple #42389d default, #362f78 hover.
+ * Shows all 3 sizes. Use `hover` + `showIconLeft` controls to preview states.
  * QA: color must be #42389d (NOT blue), underline on hover via border-bottom.
  */
 export const Semibold = {
   name: 'Semibold — brand purple',
+  args: { hover: false, showIconLeft: false },
   parameters: {
+    controls: { include: ['hover', 'showIconLeft'] },
     docs: {
       description: {
         story: `
 Semibold weight (600), default color = **#42389d** (brand/800 purple).
 Hover color = **#362f78** (brand/900) + bottom-border underline.
+Use **hover** and **showIconLeft** controls to preview states across all 3 sizes at once.
         `,
+      },
+      source: {
+        code: `<a class="btn-link btn-link-semibold btn-xs" href="#">Sign In</a>
+<a class="btn-link btn-link-semibold btn-sm" href="#">Sign In</a>
+<a class="btn-link btn-link-semibold btn-md" href="#">Sign In</a>`,
+        language: 'html',
       },
     },
   },
-  render: () => `
-    <div style="display:flex;flex-direction:column;gap:20px;">
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Default</p>
-        <div style="display:flex;gap:16px;align-items:center;">
-          ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'semibold', size })).join('')}
-        </div>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Hover</p>
-        <div style="display:flex;gap:16px;align-items:center;">
-          ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'semibold', size, hover:true })).join('')}
-        </div>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">With icon left</p>
-        <div style="display:flex;gap:16px;align-items:center;">
-          ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'semibold', size, showIconLeft:true })).join('')}
-        </div>
-      </div>
+  render: ({ hover, showIconLeft }) => `
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'semibold', size, hover, showIconLeft })).join('')}
     </div>`,
 };
 
 /**
  * Medium type — gray #6b7280 default, #362f78 hover.
- * QA: default color is --color-text-body-subtle (#6a7282), NOT brand color.
+ * QA: default color is --color-text-body-subtle (#6b7280), NOT brand color.
  */
 export const Medium = {
   name: 'Medium — subtle gray',
+  args: { hover: false, showIconLeft: false },
   parameters: {
+    controls: { include: ['hover', 'showIconLeft'] },
     docs: {
       description: {
         story: `
 Medium weight (500), default color = **#6b7280** (gray/500 = \`--color-text-body-subtle\`).
 Hover color = **#362f78** (brand/900) — same as Semibold hover.
+Use **hover** and **showIconLeft** controls to preview states across all 3 sizes at once.
         `,
+      },
+      source: {
+        code: `<a class="btn-link btn-link-medium btn-xs" href="#">Sign In</a>
+<a class="btn-link btn-link-medium btn-sm" href="#">Sign In</a>
+<a class="btn-link btn-link-medium btn-md" href="#">Sign In</a>`,
+        language: 'html',
       },
     },
   },
-  render: () => `
-    <div style="display:flex;flex-direction:column;gap:20px;">
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Default</p>
-        <div style="display:flex;gap:16px;align-items:center;">
-          ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'medium', size })).join('')}
-        </div>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Hover</p>
-        <div style="display:flex;gap:16px;align-items:center;">
-          ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'medium', size, hover:true })).join('')}
-        </div>
-      </div>
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">With icon left</p>
-        <div style="display:flex;gap:16px;align-items:center;">
-          ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'medium', size, showIconLeft:true })).join('')}
-        </div>
-      </div>
+  render: ({ hover, showIconLeft }) => `
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      ${['xs','sm','md'].map(size => linkBtn({ label:`Sign In (${size})`, type:'medium', size, hover, showIconLeft })).join('')}
     </div>`,
 };
 
 /**
- * Side-by-side comparison of both types — all 3 sizes.
+ * Side-by-side comparison of both types — all 3 sizes, default + hover states.
+ * Use `showIconLeft` control to add icons to all cells simultaneously.
  * QA: Semibold should appear visibly darker/more prominent than Medium.
  */
 export const TypeComparison = {
   name: 'Type comparison — Semibold vs Medium',
+  args: { showIconLeft: false },
   parameters: {
+    controls: { include: ['showIconLeft'] },
     docs: {
       description: {
-        story: 'Both types at all 3 sizes — default and hover states.',
+        story: 'Both types at all 3 sizes — default and hover states. Use **showIconLeft** control to toggle icons on all cells.',
       },
     },
   },
-  render: () => `
+  render: ({ showIconLeft }) => `
     <table style="border-collapse:collapse;font-size:13px;width:auto;">
       <thead>
         <tr>
@@ -238,10 +257,10 @@ export const TypeComparison = {
         ${['xs','sm','md'].map(size => `
           <tr>
             <td style="padding:8px 16px 8px 0;color:#9CA3AF;">${size}</td>
-            <td style="padding:8px 16px 8px 0;">${linkBtn({ label:'Sign In', type:'semibold', size })}</td>
-            <td style="padding:8px 16px 8px 0;">${linkBtn({ label:'Sign In', type:'semibold', size, hover:true })}</td>
-            <td style="padding:8px 16px 8px 0;">${linkBtn({ label:'Sign In', type:'medium', size })}</td>
-            <td style="padding:8px 0;">${linkBtn({ label:'Sign In', type:'medium', size, hover:true })}</td>
+            <td style="padding:8px 16px 8px 0;">${linkBtn({ label:'Sign In', type:'semibold', size, showIconLeft })}</td>
+            <td style="padding:8px 16px 8px 0;">${linkBtn({ label:'Sign In', type:'semibold', size, hover:true, showIconLeft })}</td>
+            <td style="padding:8px 16px 8px 0;">${linkBtn({ label:'Sign In', type:'medium', size, showIconLeft })}</td>
+            <td style="padding:8px 0;">${linkBtn({ label:'Sign In', type:'medium', size, hover:true, showIconLeft })}</td>
           </tr>`
         ).join('')}
       </tbody>
