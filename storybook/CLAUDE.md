@@ -57,6 +57,29 @@ Every argType must have:
 
 See `PATTERNS.md` for the full argTypes template.
 
+## Sidebar hierarchy — REQUIRED structure (decided April 2026)
+
+The project uses a **flat-by-family** structure. No `Components/` wrapper.
+
+```
+Iris Library/
+  Foundation/        ← Colors, Typography (was Primitives — rename pending)
+  Brand/             ← Logo, Icons
+  Button/            ← Button + Button/Group, Button/Link, Button/Social, Button/Special
+  Card/              ← Card/Basics, Card/KPI, Card/Layouts, Card/Reporting, Card/States
+  Navigation/        ← Navigation/Sidebar
+  Table/             ← Table/Cells, Table/Cohort, Table/Composed
+```
+
+Rules:
+- Every new component family gets its own top-level slot: `Iris Library/FamilyName/...`
+- Sub-variants go one level deeper: `Iris Library/Button/Group` not `Iris Library/Components/Button/Group`
+- Do NOT add a `Components/` wrapper — it was removed intentionally
+- Do NOT create a new top-level category without checking this list first
+- `Foundation/` = design tokens (Colors, Typography, Spacing, Icons-standalone)
+- `Brand/` = visual identity only (Logo, brand icon set)
+- When pulling a new component from Figma, slot it into the correct existing family or create a new top-level family
+
 ## Scope control
 If the task mentions only one family such as Card:
 - do not work on Buttons, Inputs, Dropdowns, Navigation, Sidebar, Pagination, Primitives, or any other family

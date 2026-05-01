@@ -5,6 +5,57 @@ Reference this file when building or improving any component family.
 
 ---
 
+## 0. Sidebar hierarchy and title conventions
+
+### The approved structure
+
+```
+Iris Library/
+  Foundation/        Colors, Typography
+  Brand/             Logo, Icons (brand icon set)
+  Button/            default + Group / Link / Social / Special
+  Card/              Basics / KPI / Layouts / Reporting / States
+  Navigation/        Sidebar (and future nav components)
+  Table/             Cells / Cohort / Composed
+```
+
+### Title format
+
+```js
+// Top-level family
+export default { title: 'Iris Library/Button' }
+
+// Sub-variant
+export default { title: 'Iris Library/Button/Group' }
+
+// ❌ WRONG — Components wrapper was removed
+export default { title: 'Iris Library/Components/Button' }
+
+// ❌ WRONG — do not invent new top-level categories without checking CLAUDE.md
+export default { title: 'Iris Library/UI/Button' }
+```
+
+### Adding a new Figma component
+
+1. Identify which family it belongs to from the list above
+2. If it fits an existing family → `Iris Library/Family/SubVariant`
+3. If it's genuinely new (e.g. Input, Modal, Badge) → new top-level `Iris Library/NewFamily/`
+4. Update the hierarchy table in CLAUDE.md
+
+### Pending renames (not done yet, requires updating all titles + rebuilding)
+
+| Current | Target | Reason |
+|---|---|---|
+| `Iris Library/Primitives/Colors` | `Iris Library/Foundation/Colors` | Industry standard naming |
+| `Iris Library/Primitives/Typography` | `Iris Library/Foundation/Typography` | Industry standard naming |
+| `Iris Library/Icons` | `Iris Library/Foundation/Icons` | Remove duplicate, merge into Foundation |
+| `Iris Library/Components/Button` | `Iris Library/Button` | Remove Components wrapper |
+| `Iris Library/Components/Button/Group` | `Iris Library/Button/Group` | Same |
+
+Do these renames together in one session, not one at a time.
+
+---
+
 ## 1. argTypes template
 
 Every component-level `argTypes` block follows this structure:
