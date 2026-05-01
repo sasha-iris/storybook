@@ -60,60 +60,30 @@ Rules:
 
 ---
 
-## 2. Actions tab — event logging
+## 2. Actions tab — KNOWN LIMITATION in html-vite
 
-Actions tab shows events fired by the component. Required for developer self-sufficiency.
+**Status: не работает в этом проекте (Storybook 8 html-vite статическая сборка).**
 
-### Step 1 — register `withActions` globally in `.storybook/preview.js`
+Actions tab рассчитан прежде всего на React/Vue/Angular, где события передаются как функции-пропы.
+Для HTML-string stories надёжного решения в Storybook 8 html-vite нет.
 
-`parameters.actions.handles` only works when the `withActions` decorator is active.
-It is NOT auto-registered by `addon-essentials` — must be added manually once:
-
-```js
-// .storybook/preview.js
-import { withActions } from '@storybook/addon-actions/decorator';
-
-const preview = {
-  decorators: [withActions],   // ← required, without this handles do nothing
-  parameters: { ... },
-};
-export default preview;
+Подходы, проверенные и подтверждённо не работающие:
+```
+❌ console.log в addEventListener         — идёт в браузерный консоль, не в Actions
+❌ action() из @storybook/addon-actions   — action() не достигает Actions panel
+❌ parameters.actions.handles             — withActions использует previewApi.useEffect,
+                                            который не срабатывает в html-vite
+❌ Кастомный decorator + setTimeout       — channel emission молча не работает
+                                            в статической сборке
 ```
 
-This is a one-time global setup. Once done, all stories can use `handles`.
+**Для диагностики нужна живая браузерная сессия:**
+открыть DevTools в preview iframe, кликнуть элемент, проверить вызывается ли
+`addons.getChannel().emit('storybook/actions/action-event')` и доходит ли
+postMessage до manager.
 
-### Step 2 — use `parameters.actions.handles` in the story
-
-```js
-export const Interactive = {
-  render: (args) => component(args),   // plain HTML string, no DOM manipulation
-  parameters: {
-    actions: {
-      handles: ['click button', 'focus button', 'blur button', 'keydown button'],
-    },
-  },
-};
-```
-
-**DO NOT use these approaches — they do not work in html-vite v8:**
-
-```js
-// ❌ WRONG — console.log goes to browser console, not Actions tab
-el.addEventListener('click', (e) => console.log(e));
-
-// ❌ WRONG — action() via addEventListener silently fails without withActions decorator
-import { action } from '@storybook/addon-actions';
-el.addEventListener('click', action('click'));
-
-// ❌ WRONG — parameters.actions.handles silently does nothing without withActions in preview.js
-```
-
-**Validation checklist before pushing:**
-- [ ] `withActions` is imported and added to `decorators` in `.storybook/preview.js`
-- [ ] Build passes with no errors
-- [ ] `parameters.actions.handles` uses CSS selectors matching actual DOM elements
-- [ ] `render()` returns an HTML string (not a DOM element)
-- [ ] Manually click the element in the preview — event appears in Actions tab
+**Не тратить время на это без доступа к браузеру.** Controls, Docs и source snippets
+работают и имеют значительно большую ценность.
 
 ---
 

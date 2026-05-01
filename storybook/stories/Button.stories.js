@@ -194,10 +194,6 @@ export const Interactive = {
   name: 'Interactive (Controls)',
   render: (args) => btn(args),
   parameters: {
-    // html-vite native approach: Storybook listens to DOM events via CSS selectors
-    actions: {
-      handles: ['click button', 'focus button', 'blur button', 'keydown button'],
-    },
     docs: {
       description: {
         story: [
