@@ -34,6 +34,7 @@
 
 export default {
   title: 'Iris Library/Button/Group',
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

@@ -40,6 +40,7 @@
 
 export default {
   title: 'Iris Library/Button/Link',
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
