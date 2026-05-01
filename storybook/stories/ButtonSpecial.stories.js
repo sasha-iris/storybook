@@ -43,7 +43,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button/Special',
+  title: 'Iris Library/Button/Special',
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

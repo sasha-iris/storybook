@@ -112,13 +112,27 @@ const finCell = ({
 
 export default {
   title: 'Iris Library/Table/Cohort',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
     docs: {
       description: {
-        component: `Cohort analysis table primitives — percentage heat-map badges and complete cohort rows.
+        component: `**Table / Cohort** — cohort analysis table primitives.
+
+Figma nodes: TableCellPercent \`9372:85\` · CohortRow \`9387:1751\`
+
+**When to use**
+- Retention analysis tables where each cell shows a percentage value on a brand heat-map
+- Cohort rows in financial dashboards (budget, P&L, subscriber cohorts)
+- Alternating white/grey row pattern for readability in dense data grids
+
+**When NOT to use**
+- Standard numeric tables without heatmap semantics → use Table/Cells
+- Non-cohort data → use Table/Composed
+
+**Anatomy**
+\`[row header] [count cell] [percent badges ×N] [financial cells]\`
 
 ### Percentage badge ramp
 
@@ -161,6 +175,60 @@ Grey row changes header + financial text to brand/800. Badge colours stay identi
 - Badges on grey row: badge colours are identical to white row — only outer cell bg shifts`,
       },
     },
+  },
+  argTypes: {
+    // ── Appearance ───────────────────────────────────────────
+    percentage: {
+      control: 'select',
+      options: ['10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
+      description: 'Retention percentage. Drives badge color from brand/50 (10%) to brand/900 (100%). Text flips from dark to white at 60%.',
+      table: { category: 'Appearance', defaultValue: { summary: '60%' } },
+    },
+    rowState: {
+      control: 'select',
+      options: ['white', 'grey'],
+      description: '`white` = default row (#ffffff). `grey` = alternate row (#f3f4f6) — also changes all text to brand/800 (#42389d).',
+      table: { category: 'Appearance', defaultValue: { summary: 'white' } },
+    },
+  },
+  args: {
+    percentage: '60%',
+    rowState: 'white',
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INTERACTIVE
+─────────────────────────────────────────────────────────────────────────── */
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Preview a single percent badge. Use **percentage** to walk the brand ramp and **rowState** to switch between white and grey row backgrounds.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const { percentage, rowState } = storyCtx.args;
+          const step = PERCENT_RAMP.find(r => r.pct === percentage) || PERCENT_RAMP[5];
+          const cellBg = rowState === 'grey' ? '#f3f4f6' : '#ffffff';
+          return `<div style="padding:8px 4px;background:${cellBg};box-sizing:border-box;">
+  <div style="display:flex;align-items:center;justify-content:center;
+              width:62px;height:42px;padding:10px;border-radius:4px;
+              background:${step.bg};box-sizing:border-box;">
+    <span style="font:600 12px/1.5 'Inter',sans-serif;color:${step.text};white-space:nowrap;">
+      ${step.pct}
+    </span>
+  </div>
+</div>`;
+        },
+      },
+    },
+  },
+  render: ({ percentage, rowState }) => {
+    const step = PERCENT_RAMP.find(r => r.pct === percentage) || PERCENT_RAMP[5];
+    const cellBg = rowState === 'grey' ? '#f3f4f6' : '#ffffff';
+    return pctCell({ pct: step.pct, bg: step.bg, text: step.text, cellBg });
   },
 };
 

@@ -65,8 +65,8 @@ function iconGrid(items) {
 // ─── Stories ─────────────────────────────────────────────────────────────────
 
 export default {
-  title: 'Iris Library/Icons',
-  tags: ['autodocs'],
+  title: 'Iris Library/Foundation/Icons',
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     docs: {

@@ -44,16 +44,28 @@ import { irisMarkImg, shopifyBadge24, amazonBadge24 } from './brand-assets.js';
 
 export default {
   title: 'Iris Library/Card/Reporting',
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
     docs: {
       description: {
         component: `
-Scheduled-report card for the Iris Finance reporting dashboard.
+**Card / Reporting** — Figma node \`10046:76406\`.
 
-Shows report configuration: delivery channels (E-mail / Slack), schedule, recipients,
-connected sales channels (Shopify, Amazon), and owner attribution.
+Scheduled-report card for the Iris Finance reporting dashboard. Shows report configuration: delivery channels (E-mail / Slack), schedule, recipients, connected sales channels (Shopify, Amazon), and owner attribution.
+
+**When to use**
+- Displaying a configured scheduled report in a report list or dashboard
+- Showing report status (active / paused) with delivery channel detail
+- Letting users toggle a report on/off inline
+
+**When NOT to use**
+- General content display → use Card/Basics
+- Metric data → use Card/KPI or Card/Reporting
+
+**Anatomy**
+\`[title + arrow] / [delivery chips] / [schedule] / [recipients] / [channels] / [owner + toggle]\`
 
 **CSS:** \`.card-reporting\` + optional state modifier.
 
@@ -75,21 +87,23 @@ connected sales channels (Shopify, Amazon), and owner attribution.
     },
   },
   argTypes: {
+    // ── State ────────────────────────────────────────────────
     active: {
       control: 'boolean',
-      description: 'Report is enabled — toggle ON. When false, shows paused state.',
-      table: { category: 'State' },
+      description: 'Report is enabled — toggle ON. When false, applies `card-reporting--inactive`: gray/50 bg, chips gray, toggle OFF.',
+      table: { category: 'State', defaultValue: { summary: true } },
     },
     hovered: {
       control: 'boolean',
-      description: 'Simulate hover (brand/500 border, shadow-md, title → brand purple).',
-      table: { category: 'State' },
+      description: 'Simulate hover: brand/500 border (#6875f5), shadow-md, title → brand purple (#42389d) + arrow-right icon.',
+      table: { category: 'State', defaultValue: { summary: false } },
     },
+    // ── Content ──────────────────────────────────────────────
     owner: {
       control: 'select',
       options: ['iris', 'user'],
-      description: '`iris` = Iris Finance logo + name; `user` = avatar circle + name.',
-      table: { category: 'Content' },
+      description: '`iris` = Iris Finance logo + "Iris Finance" label. `user` = avatar circle + "Jese Leos" name.',
+      table: { category: 'Content', defaultValue: { summary: 'iris' } },
     },
   },
   args: {
@@ -243,6 +257,23 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
  */
 export const Interactive = {
   name: 'Interactive (Controls)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use **active**, **hovered**, and **owner** Controls to preview all state combinations. Toggle `active` to see the paused state; toggle `hovered` to preview the hover treatment.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const { active, hovered } = storyCtx.args;
+          const mod = hovered ? ' card-reporting--hovered' : (!active ? ' card-reporting--inactive' : '');
+          return `<div class="card-reporting${mod}">
+  <!-- title row, delivery chips, schedule, recipients, channels, owner + toggle -->
+  <!-- See individual state stories for full markup -->
+</div>`;
+        },
+      },
+    },
+  },
   render: (args) => reportingCard(args),
 };
 

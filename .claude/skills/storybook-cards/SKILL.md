@@ -153,6 +153,41 @@ Prefer existing Storybook standards:
 - use source snippets
 - use MDX only if the existing docs quality is not enough
 
+## UX documentation quality — REQUIRED (see PATTERNS.md §6 for code)
+
+These are the practices UX specialists and design systems teams identify as most impactful.
+Apply them to every Card story file.
+
+### 1. Usage guidelines on the default export
+Every Card story file must have `parameters.docs.description.component` with:
+- What this Card variant is (one sentence)
+- **When to use** (2–4 bullets, e.g. "KPI Card: use when showing a single top-level metric")
+- **When NOT to use** (1–2 bullets, e.g. "Don't use KPI Card for multi-row tabular data")
+- **Anatomy** (list the key parts: header, value, trend, chart area, footer, etc.)
+
+### 2. Real content in args
+Never use placeholder text.
+- KPI card values: `12,480` / `+4.2%` / `Monthly active users` — not `0` / `Metric`
+- Content card: realistic title + description mimicking actual product copy
+- Vary content length across stories to surface truncation and layout issues
+
+### 3. Status tag
+```js
+tags: ['autodocs', 'stable']  // or 'beta' / 'experimental' as appropriate
+```
+
+### 4. Accessibility notes
+For any arg affecting a11y, note it in the description:
+- Image alt text requirement
+- ARIA role on interactive cards (e.g. `role="button"` if the whole card is clickable)
+- Focus management for selectable cards
+- Contrast requirement for color/status badges
+
+### 5. Do's and Don'ts in story descriptions
+For states (loading, error, empty) and tricky variants (truncation, overflow):
+- 2–3 ✅/❌ bullets per story where real mistakes are common
+- Skip if no clear guidance applies — don't invent rules
+
 ## Editing strategy
 1. Inspect existing Card stories.
 2. Reuse and improve existing stories first.
@@ -199,6 +234,12 @@ For each gallery story:
 
 ### 7. Title format
 - `'Iris Library/Card/SubVariant'` — no `Components/` wrapper
+
+### 8. UX documentation
+- Default export has `parameters.docs.description.component` with usage guidelines (When to use / When NOT to use / Anatomy)
+- Args use realistic product content — no placeholder text, no lorem ipsum
+- Default export has `tags: ['autodocs', 'stable']` or equivalent
+- State/edge stories (loading, empty, overflow) have ✅/❌ guidance where useful
 
 ### If any check fails — fix before pushing. Never push broken work.
 

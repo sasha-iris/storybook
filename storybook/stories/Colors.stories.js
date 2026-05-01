@@ -16,8 +16,8 @@
  */
 
 export default {
-  title: 'Iris Library/Primitives/Colors',
-  tags: ['autodocs'],
+  title: 'Iris Library/Foundation/Colors',
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     docs: {

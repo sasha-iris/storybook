@@ -39,7 +39,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button/Link',
+  title: 'Iris Library/Button/Link',
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

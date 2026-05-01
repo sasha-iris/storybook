@@ -50,7 +50,7 @@ import {
 
 export default {
   title: 'Iris Library/Brand/Icons',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

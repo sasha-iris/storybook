@@ -92,18 +92,33 @@ const MAIL_ICON = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280
 
 export default {
   title: 'Iris Library/Card/Layouts',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
     docs: {
       description: {
         component: `
-Specialised layout variants for the Iris Library card component.
+**Card / Layouts** — Figma node \`13559:76419\`. Specialised layout variants for the Iris Library card component.
 
-**Source:** Figma node [\`13559:76419\`](https://www.figma.com/design/ZKtEULdYKaXe5uQl1J6ijI/Iris-Library?node-id=13559-76419) — **light mode, desktop only**.
+**When to use**
+- User Profile card: account/team member pages
+- With Form card: authentication, onboarding flows
+- E-commerce card: product listings, marketplace items
+- Card with List: compact data rows inside a card (customers, transactions)
+- Pricing card: plan comparison, feature matrices
+- CTA card: full-width promotional banners
+- Nav Tabs card: in-card tabbed content
+- Stats card: dashboard summary sections with segmented metrics
+- Testimonial card: social proof sections
+- Crypto card: wallet/asset connection flows
 
-All 10 variants here are distinct enough from the basic text/image card (see **Card/Basics**) to warrant their own layout category.
+**When NOT to use**
+- Single numeric KPI → use Card/KPI
+- Async data with loading/empty/error → use Card/States
+- Standard text + image → use Card/Basics
+
+**Light mode, desktop only.** All 10 variants here are distinct enough from the basic text/image card (see **Card/Basics**) to warrant their own layout category.
 
 | Variant        | Width | Node          | Notes                                   |
 |---------------|-------|---------------|-----------------------------------------|

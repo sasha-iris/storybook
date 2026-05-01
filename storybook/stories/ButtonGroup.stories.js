@@ -33,7 +33,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button/Group',
+  title: 'Iris Library/Button/Group',
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

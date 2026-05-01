@@ -159,15 +159,49 @@ const sectionHead = (text) =>
 
 /* ── Default export ─────────────────────────────────────────────────────── */
 
+// ── Option → color map (used by Interactive story) ───────────────────────────
+const OPTION_COLORS = {
+  default:    { textColor: '#111928', cellBg: null },
+  grey:       { textColor: '#6b7280', cellBg: null },
+  editable:   { textColor: '#1c64f2', cellBg: null },
+  blue:       { textColor: '#1c64f2', cellBg: '#ebf5ff' },
+  calculated: { textColor: '#0e9f6e', cellBg: null },
+  waste:      { textColor: '#e74694', cellBg: null },
+  indigo:     { textColor: '#42389d', cellBg: null },
+};
+
+const ROW_BG = {
+  default:          '#ffffff',
+  derival:          '#fff8f1',
+  total:            '#f3f4f6',
+  'non-collapsible':'#f9fafb',
+};
+
 export default {
   title: 'Iris Library/Table/Cells',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
     docs: {
       description: {
-        component: `Primitive cell components for the Iris financial/analytics table — used in reporting dashboards (budget, P&L, cohort analysis).
+        component: `**Table / Cells** — primitive cell components for the Iris financial/analytics table.
+
+Figma nodes: TableCell \`9279:163646\` · TableHeaderHorizontal \`9279:163718\` · TableHeaderVertical \`9279:163779\`
+
+**When to use**
+- Building financial reporting tables: budget, P&L, cohort analysis
+- Displaying numeric data with semantic colour coding (positive/negative/calculated/derived)
+- Assembling period-column headers (ACTUALS vs FORECAST bands)
+
+**When NOT to use**
+- Generic data tables without financial semantics → use a standard HTML table
+- Non-numeric content rows → cells are right-aligned numeric by design
+
+**Anatomy**
+\`[$] [value] [caption?] [icon?]\` · width: 146px · height: 38px · padding: 8px 16px
+
+Primitive cell components for the Iris financial/analytics table — used in reporting dashboards (budget, P&L, cohort analysis).
 
 ### TableCell
 
@@ -233,6 +267,69 @@ Period column headers (time-series, e.g. months):
       },
     },
   },
+  argTypes: {
+    // ── Appearance ───────────────────────────────────────────
+    option: {
+      control: 'select',
+      options: ['default', 'grey', 'editable', 'blue', 'calculated', 'waste', 'indigo'],
+      description: 'Cell semantic colour. `blue` is the only option that also changes the cell background to `#ebf5ff`.',
+      table: { category: 'Appearance', defaultValue: { summary: 'default' } },
+    },
+    rowType: {
+      control: 'select',
+      options: ['default', 'derival', 'total', 'non-collapsible'],
+      description: 'Row background shared by all cells in that row. `blue` option overrides this with `#ebf5ff`.',
+      table: { category: 'Appearance', defaultValue: { summary: 'default' } },
+    },
+    // ── Content ──────────────────────────────────────────────
+    amount: {
+      control: 'text',
+      description: 'Formatted numeric value. Use locale-appropriate formatting (e.g. `500,00` or `1,234.56`).',
+      table: { category: 'Content', defaultValue: { summary: '500,00' } },
+    },
+    currency: {
+      control: 'boolean',
+      description: 'Show `$` currency prefix to the left of the value.',
+      table: { category: 'Content', defaultValue: { summary: true } },
+    },
+  },
+  args: {
+    option: 'default',
+    rowType: 'default',
+    amount: '500,00',
+    currency: true,
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INTERACTIVE
+─────────────────────────────────────────────────────────────────────────── */
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Configure a single cell with **option** (semantic colour), **rowType** (row background), **amount**, and **currency** Controls. The Blue option overrides rowType background with `#ebf5ff`.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const { option, rowType, amount, currency } = storyCtx.args;
+          const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
+          const bg = cellBg || ROW_BG[rowType] || '#ffffff';
+          return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
+     width:146px;height:38px;padding:8px 16px;background:${bg};box-sizing:border-box;">
+  ${currency ? `<span style="font:500 14px/1.5 'Inter',sans-serif;color:${textColor};flex-shrink:0;">$</span>` : ''}
+  <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textColor};text-align:right;">${amount}</span>
+</div>`;
+        },
+      },
+    },
+  },
+  render: ({ option, rowType, amount, currency }) => {
+    const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
+    const bg = cellBg || ROW_BG[rowType] || '#ffffff';
+    return dataCell({ amount, currency, textColor, bg });
+  },
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -253,10 +350,12 @@ Period column headers (time-series, e.g. months):
  */
 export const CellOptions = {
   name: 'Cell options — all variants',
+  args: { rowType: 'default' },
   parameters: {
+    controls: { include: ['rowType'] },
     docs: {
       description: {
-        story: 'All 7 `option` variants on a white (Default) row. The `Blue` option is the only one that also changes the cell background to `#ebf5ff`.',
+        story: 'All 7 `option` variants. Use the **rowType** control to preview how each option looks on different row backgrounds. Note: `Blue` always uses its own `#ebf5ff` background regardless of rowType.',
       },
       source: {
         language: 'html',
@@ -283,23 +382,28 @@ export const CellOptions = {
       },
     },
   },
-  render: () => {
+  render: ({ rowType }) => {
+    const rowBg = ROW_BG[rowType] || '#ffffff';
     const OPTIONS = [
-      { label: 'Default',    color: '#111928', bg: '#ffffff' },
-      { label: 'Grey',       color: '#6b7280', bg: '#ffffff' },
-      { label: 'Editable',   color: '#1c64f2', bg: '#ffffff' },
-      { label: 'Blue',       color: '#1c64f2', bg: '#ebf5ff' },
-      { label: 'Calculated', color: '#0e9f6e', bg: '#ffffff' },
-      { label: 'Waste',      color: '#e74694', bg: '#ffffff' },
-      { label: 'Indigo',     color: '#42389d', bg: '#ffffff' },
+      { label: 'Default',    key: 'default' },
+      { label: 'Grey',       key: 'grey' },
+      { label: 'Editable',   key: 'editable' },
+      { label: 'Blue',       key: 'blue' },
+      { label: 'Calculated', key: 'calculated' },
+      { label: 'Waste',      key: 'waste' },
+      { label: 'Indigo',     key: 'indigo' },
     ];
     return /* html */`
       <div style="display:inline-flex;flex-direction:column;gap:1px;">
-        ${OPTIONS.map(({ label, color, bg }) => /* html */`
-          <div style="display:flex;align-items:center;">
-            ${rowLabel(label)}
-            ${dataCell({ textColor: color, bg })}
-          </div>`).join('')}
+        ${OPTIONS.map(({ label, key }) => {
+          const { textColor, cellBg } = OPTION_COLORS[key];
+          const bg = cellBg || rowBg;
+          return /* html */`
+            <div style="display:flex;align-items:center;">
+              ${rowLabel(label)}
+              ${dataCell({ textColor, bg })}
+            </div>`;
+        }).join('')}
       </div>`;
   },
 };
@@ -319,26 +423,43 @@ export const CellOptions = {
  */
 export const CellRowTypes = {
   name: 'Cell × row type backgrounds',
+  args: { option: 'default' },
   parameters: {
+    controls: { include: ['option'] },
     docs: {
       description: {
-        story: 'The same Default-option cell on each of the 4 row type backgrounds. Only the background changes — layout and font are identical.',
+        story: 'All 4 row backgrounds with the same cell. Use the **option** control to see how different semantic colours look across each row type.',
+      },
+      source: {
+        code: `<!-- Default row -->
+<div style="background:#ffffff;width:146px;height:38px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">$</span>
+  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">500,00</span>
+</div>
+<!-- Derival row -->
+<div style="background:#fff8f1;…">…</div>
+<!-- Total row -->
+<div style="background:#f3f4f6;…">…</div>
+<!-- Non-collapsible row -->
+<div style="background:#f9fafb;…">…</div>`,
+        language: 'html',
       },
     },
   },
-  render: () => {
+  render: ({ option }) => {
+    const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
     const ROW_TYPES = [
       { label: 'Default',                bg: '#ffffff' },
       { label: 'Derival',                bg: '#fff8f1' },
       { label: 'Total',                  bg: '#f3f4f6' },
-      { label: 'Defaul-non-collapsible', bg: '#f9fafb' },
+      { label: 'Non-collapsible',        bg: '#f9fafb' },
     ];
     return /* html */`
       <div style="display:inline-flex;flex-direction:column;gap:1px;">
         ${ROW_TYPES.map(({ label, bg }) => /* html */`
           <div style="display:flex;align-items:center;">
             ${rowLabel(label)}
-            ${dataCell({ bg })}
+            ${dataCell({ textColor, bg: cellBg || bg })}
           </div>`).join('')}
       </div>`;
   },

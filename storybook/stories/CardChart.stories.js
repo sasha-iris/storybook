@@ -292,7 +292,7 @@ function cardCredit() {
 
 export default {
   title: 'Iris Library/Card/KPI',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     docs: {
@@ -300,7 +300,22 @@ export default {
         component: `
 **Card KPI** — Figma component node \`602:20752\`.
 
-Single-metric card with an embedded chart. The chart type and trend direction are the two variant axes.
+Single-metric card with an embedded mini-chart. Shows one top-level business metric with a trend indicator and a supporting sparkline or bar chart.
+
+**When to use**
+- Displaying a single numeric KPI at a glance (revenue, users, conversion rate)
+- Pairing a metric with its trend direction and magnitude
+- Dashboard overview rows where space is limited (286 × 168 – 200 px cards)
+
+**When NOT to use**
+- Multiple related metrics in one card → use Card/Reporting
+- Detailed time-series exploration → use a full chart component
+- Non-numeric content → use Card/Basics
+
+**Anatomy**
+\`[label] [value] [trend badge] [icon pill] / [chart area flush to bottom]\`
+
+The chart type (\`property3\`) and trend direction (\`property2\`) are the two Figma variant axes.
 
 ### Variant map
 | \`property3\` | \`property2\` | Node |
@@ -332,6 +347,87 @@ Single-metric card with an embedded chart. The chart type and trend direction ar
         `,
       },
     },
+  },
+  argTypes: {
+    // ── Appearance ───────────────────────────────────────────
+    direction: {
+      control: 'select',
+      options: ['up', 'down'],
+      description: 'Trend direction. **Up** = #5850EC (brand purple). **Down** = #E74694 (pink). Never use green/red — matches Figma tokens exactly.',
+      table: { category: 'Appearance', defaultValue: { summary: 'up' } },
+    },
+    chartType: {
+      control: 'select',
+      options: ['linechart', 'linechart-vert', 'barchart', 'barchart-vert', 'barchart-big', 'barchart-segm-hor', 'credit'],
+      description: 'Chart variant (Figma `property3`). Determines card dimensions and chart layout.',
+      table: { category: 'Appearance', defaultValue: { summary: 'linechart' } },
+    },
+  },
+  args: {
+    direction: 'up',
+    chartType: 'linechart',
+  },
+};
+
+/* ── Interactive (Controls) ─────────────────────────────────────────────────── */
+
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use **direction** to switch trend up/down and **chartType** to preview any KPI variant. Source snippet reflects the linechart structure — adapt the chart area for other types.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const { direction } = storyCtx.args;
+          const c = direction === 'up' ? '#5850EC' : '#E74694';
+          const pct = direction === 'up' ? '+12.5%' : '−8.3%';
+          const arrow = direction === 'up'
+            ? `<path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>`
+            : `<path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd"/>`;
+          return `<!-- Card KPI — Linechart / ${direction === 'up' ? 'Upwards' : 'Downwards'} -->
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            width:286px;height:168px;padding:16px;
+            display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;">
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;">
+      <div style="font:500 12px/1.5 sans-serif;color:#111928;">Total Sales</div>
+      <div style="font:600 24px/1.5 sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <!-- Trend badge -->
+    <div style="display:flex;align-items:center;gap:2px;">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="${c}" xmlns="http://www.w3.org/2000/svg">
+        ${arrow}
+      </svg>
+      <span style="font:600 12px/1.5 sans-serif;color:${c};">${pct}</span>
+    </div>
+    <!-- Icon pill -->
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;display:flex;align-items:center;justify-content:center;">
+      <!-- currency-dollar icon -->
+    </div>
+  </div>
+  <!-- Line chart SVG — flush to card bottom, absolutely positioned -->
+  <div style="position:absolute;bottom:0;left:0;right:0;">
+    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
+      <!-- sparkline path here -->
+    </svg>
+  </div>
+</div>`;
+        },
+      },
+    },
+  },
+  render: ({ direction, chartType }) => {
+    switch (chartType) {
+      case 'linechart-vert':   return cardLinechartVert(direction);
+      case 'barchart':         return cardBarchart(direction);
+      case 'barchart-vert':    return cardBarchartVert(direction);
+      case 'barchart-big':     return cardBarchartBig(direction);
+      case 'barchart-segm-hor': return cardBarchartSegmHor();
+      case 'credit':           return cardCredit();
+      default:                 return cardLinechart(direction);
+    }
   },
 };
 
@@ -417,31 +513,41 @@ export const CreditUp = {
 
 export const AllVariants = {
   name: 'All variants — overview',
+  args: { direction: 'up' },
   parameters: {
+    controls: { include: ['direction'] },
     layout: 'fullscreen',
-    docs: { description: { story: 'All 7 chart types (property3) from the Figma Card KPI component, shown side by side.' } },
+    docs: {
+      description: {
+        story: 'All 7 chart types side by side. Use the **direction** control to switch all cards between up and down trend simultaneously.',
+      },
+      source: {
+        code: `<!-- See individual chart type stories for copy-paste snippets -->`,
+        language: 'html',
+      },
+    },
   },
-  render: () => `
+  render: ({ direction }) => `
     <div style="padding:32px;background:#f3f4f6;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;">
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">Linechart</p>
-        ${cardLinechart('up')}
+        ${cardLinechart(direction)}
       </div>
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">Linechart-vert</p>
-        ${cardLinechartVert('up')}
+        ${cardLinechartVert(direction)}
       </div>
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">barchart</p>
-        ${cardBarchart('up')}
+        ${cardBarchart(direction)}
       </div>
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">barchart-vert</p>
-        ${cardBarchartVert('up')}
+        ${cardBarchartVert(direction)}
       </div>
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">barchart-big</p>
-        ${cardBarchartBig('up')}
+        ${cardBarchartBig(direction)}
       </div>
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">Credit</p>

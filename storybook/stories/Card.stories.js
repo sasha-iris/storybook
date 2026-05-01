@@ -47,7 +47,7 @@ import { ICON } from './card-icons.js';
  */
 export default {
   title: 'Iris Library/Card/Basics',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
@@ -83,23 +83,28 @@ It provides the border, background, border-radius, and \`overflow:hidden\` clip.
     },
   },
   argTypes: {
+    // ── Content ──────────────────────────────────────────────
     title: {
       control: 'text',
-      description: 'Card heading.',
-      table: { category: 'Content', type: { summary: 'string' } },
+      description: 'Card heading. Keep under ~60 characters to avoid multi-line wrapping at 380px width.',
+      table: { category: 'Content', defaultValue: { summary: 'Introducing the Iris Design System' } },
     },
     body: {
       control: 'text',
-      description: 'Body copy.',
-      table: { category: 'Content', type: { summary: 'string' } },
+      description: 'Body copy. Typically 1–3 sentences. Colour: `--color-text-body-subtle` (#6B7280).',
+      table: { category: 'Content', defaultValue: { summary: 'A shared component library for building consistent product interfaces.' } },
+    },
+    // ── Layout ───────────────────────────────────────────────
+    showImage: {
+      control: 'boolean',
+      description: 'Show a flush top image placeholder. Uses `.card-body` (no top padding) when true.',
+      table: { category: 'Layout', defaultValue: { summary: false } },
     },
     showFooter: {
       control: 'boolean',
-      description: 'Show the "Read more" CTA button.',
-      table: { category: 'Layout', type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+      description: 'Show the "Read more" CTA button (`btn-primary btn-sm`).',
+      table: { category: 'Layout', defaultValue: { summary: true } },
     },
-    /* internal — not surfaced in Controls */
-    showImage:   { table: { disable: true } },
     compareText: { table: { disable: true } },
   },
   args: {
@@ -123,30 +128,40 @@ It provides the border, background, border-radius, and \`overflow:hidden\` clip.
  * - Button is `btn-primary btn-sm` — verify hover/focus states
  * - No numeric metric in body — if a number is the hero, use Card/KPI instead
  */
-export const Default = {
-  parameters:{
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  parameters: {
     docs: {
-      description: { story: 'Interactive base card. Toggle `showImage` and `showFooter` in Controls to preview all combinations.' },
+      description: {
+        story: 'Use the **Controls** panel to configure any combination — title, body, image slot, footer CTA. The source snippet updates to reflect the current state.',
+      },
       source: {
-        language: 'html',
-        code: `<!-- Minimal content card — text + CTA only -->
-<div class="card">
-  <div class="card-body-padded">
-    <h5 style="font-size:var(--text-lg); font-weight:var(--font-semibold);
-               color:var(--color-text-heading); line-height:1.3; margin-bottom:8px;">
-      Introducing the Iris Design System
+        transform: (_src, storyCtx) => {
+          const a = storyCtx.args;
+          const imgSlot = a.showImage
+            ? `\n  <img src="https://picsum.photos/seed/card/380/180" alt="Card image"\n       style="width:100%;height:180px;object-fit:cover;display:block;">`
+            : '';
+          const bodyClass = a.showImage ? 'card-body' : 'card-body-padded';
+          const footerSlot = a.showFooter
+            ? `\n    <button class="btn btn-primary btn-sm">Read more</button>`
+            : '';
+          return `<div class="card" style="max-width:380px;">${imgSlot}
+  <div class="${bodyClass}">
+    <h5 style="font-size:var(--text-lg);font-weight:var(--font-semibold);
+               color:var(--color-text-heading);line-height:1.3;margin-bottom:8px;">
+      ${a.title}
     </h5>
-    <p style="font-size:var(--text-sm); color:var(--color-text-body-subtle);
-              line-height:1.6; margin-bottom:16px;">
-      A shared component library for building consistent product interfaces.
-    </p>
-    <button class="btn btn-primary btn-sm">Read more</button>
+    <p style="font-size:var(--text-sm);color:var(--color-text-body-subtle);
+              line-height:1.6;margin-bottom:${a.showFooter ? '16px' : '0'};">
+      ${a.body}
+    </p>${footerSlot}
   </div>
-</div>`,
+</div>`;
+        },
       },
     },
   },
-  render:({ title, body, showImage, showFooter, compareText }) => `
+  render: ({ title, body, showImage, showFooter, compareText }) => `
     <div class="card" style="max-width:380px;">
       ${showImage ? `
         <div style="height:180px;background:var(--color-bg-tertiary);display:flex;
@@ -202,7 +217,7 @@ export const WithImage = {
       },
     },
   },
-  render: Default.render,
+  render: Interactive.render,
 };
 
 /* ─────────────────────────────────────────────

@@ -190,36 +190,31 @@ function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded =
 
 export default {
   title: 'Iris Library/Navigation/Sidebar',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: `
-Iris left sidebar navigation — light theme.
+        component: `**Navigation / Sidebar** — Figma node \`9272:163206\`. Iris left sidebar navigation — light theme.
 
-**Source:** Figma node \`1057:2041\` — Sidebar component.
+**When to use**
+- Primary navigation for authenticated dashboard views
+- Persistent left nav with expandable sub-menus (Financial model)
+- Use \`showLogo: false\` when the logo is rendered in a top bar instead
 
-### Variants
-| Type | Color | Icons | Logo |
-|------|-------|-------|------|
-| Default | Light (gray/100 bg) | Yes | Yes |
-| Default | Light | Yes | No |
-| Contracted | Light | Yes | Yes |
+**When NOT to use**
+- Top navigation bars → use a separate Nav component
+- Mobile viewports — sidebar is desktop-only; use a drawer/overlay pattern on mobile
 
-### Anatomy
-- **Logo** — Iris mark + wordmark (top)
-- **Menu item** — icon (24px) + label + optional chevron
-- **Sub-item** — indented label, no icon (28px left padding)
-- **Divider** — 1px separator
-- **Bottom section** — Settings, Help
+**Anatomy**
+\`[Logo] / [Menu items with icons + chevrons] / [Sub-items indented] / [Divider] / [Settings + Help]\`
 
 ### Tokens
-- Background: \`var(--color-bg-tertiary)\` (#f3f4f6)
-- Border: \`var(--color-border-base)\` (#e5e7eb)
+- Background: \`#f3f4f6\` (gray/100)
+- Border: \`#e5e7eb\` (gray/200)
 - Active text: \`#42389d\` (brand/800)
-- Active bg: \`var(--color-bg-quaternary)\` (#e5e7eb)
-- Default text: \`var(--color-text-heading)\` (#111928)
+- Active bg: \`#e5e7eb\` (gray/200)
+- Default text: \`#111928\` (gray/900)
 
 ### QA checklist
 - Sidebar width: 256px
@@ -227,9 +222,35 @@ Iris left sidebar navigation — light theme.
 - Active item: bg #e5e7eb, text #42389d
 - Sub-items: 28px left indent, no icon
 - Logo: Iris mark sm (32px) + "Iris" wordmark
+- **Accessibility**: keyboard navigation must reach all items; active item needs \`aria-current="page"\`
         `,
       },
     },
+  },
+  argTypes: {
+    // ── Content ──────────────────────────────────────────────
+    showLogo: {
+      control: 'boolean',
+      description: 'Show the Iris logo + wordmark at the top. Set `false` when logo lives in a top bar.',
+      table: { category: 'Content', defaultValue: { summary: true } },
+    },
+    activeItem: {
+      control: 'select',
+      options: ['overview', 'metrics', 'pnl', 'budget', 'cohorts', 'cashflow', 'financial', 'help'],
+      description: 'Which nav item is in the active/selected state. Applies brand/800 text + gray/200 background.',
+      table: { category: 'Content', defaultValue: { summary: 'overview' } },
+    },
+    // ── State ────────────────────────────────────────────────
+    financialExpanded: {
+      control: 'boolean',
+      description: 'Whether the Financial model sub-menu is expanded. Controls chevron direction and sub-item visibility.',
+      table: { category: 'State', defaultValue: { summary: true } },
+    },
+  },
+  args: {
+    showLogo: true,
+    activeItem: 'overview',
+    financialExpanded: true,
   },
 };
 
@@ -245,8 +266,50 @@ Iris left sidebar navigation — light theme.
  * - Financial model shows chevron-up (expanded)
  * - Sub-items indented 28px, no icon
  */
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use **showLogo**, **activeItem**, and **financialExpanded** Controls to configure any sidebar combination.',
+      },
+      source: {
+        transform: (_src, storyCtx) => {
+          const { showLogo, activeItem, financialExpanded } = storyCtx.args;
+          return `<!-- Sidebar — showLogo:${showLogo}, active:${activeItem}, expanded:${financialExpanded} -->
+<aside style="width:256px;height:100vh;background:#f3f4f6;border-right:1px solid #e5e7eb;
+              display:flex;flex-direction:column;padding:16px 0;box-sizing:border-box;">
+  ${showLogo ? `<!-- Logo area -->\n  <div style="padding:0 16px 16px;"><!-- Iris mark + wordmark --></div>` : ''}
+  <nav>
+    <!-- Menu items — active item gets bg:#e5e7eb; color:#42389d -->
+    <!-- aria-current="page" on the active <a> for accessibility -->
+  </nav>
+</aside>`;
+        },
+      },
+    },
+  },
+  render: ({ showLogo, activeItem, financialExpanded }) => `
+    <div style="height:100vh;display:flex;">
+      ${sidebar({ showLogo, activeItem, financialExpanded })}
+    </div>
+  `,
+};
+
 export const Default = {
   name: 'Default — light, logo, overview active',
+  parameters: {
+    docs: {
+      description: { story: 'Default sidebar state: logo visible, Financial model expanded, Overview active.' },
+      source: {
+        code: `<aside style="width:256px;height:100vh;background:#f3f4f6;border-right:1px solid #e5e7eb;">
+  <!-- Logo -->
+  <!-- Nav items — active: bg:#e5e7eb; color:#42389d; aria-current="page" -->
+</aside>`,
+        language: 'html',
+      },
+    },
+  },
   render: () => `
     <div style="height:100vh;display:flex;">
       ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true })}

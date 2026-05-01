@@ -45,26 +45,39 @@ import { ICON, compact } from './card-icons.js';
  */
 export default {
   title: 'Iris Library/Card/States',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
     docs: {
       description: {
-        component: 'Card body state variants: loading (skeleton), empty (zero data), error (fetch failed), loaded. All states use the same `.card` shell — only the body content changes.',
+        component: `**Card / States** — data-lifecycle states for all card variants.
+
+All states use the same \`.card\` shell — only the body content changes. The card dimensions must remain constant across all states to prevent layout shift.
+
+**When to use**
+- Any card that fetches async data needs all four states: loaded, loading, empty, error
+- Use \`loading\` (skeleton) while data is in flight — never a spinner inside a card
+- Use \`empty\` when a query returns zero results (not an error)
+- Use \`error\` when the fetch fails — always show a retry action
+
+**✅ Do** — keep card height identical across all states to prevent layout shift.
+**❌ Don't** — use a spinner instead of skeleton for loading (causes size jump).
+**❌ Don't** — show an empty state and an error state with the same message.`,
       },
     },
   },
   argTypes: {
+    // ── State ────────────────────────────────────────────────
     state: {
       control: { type: 'radio', options: ['loaded', 'loading', 'empty', 'error'] },
-      description: 'Active data state. Switch here instead of navigating between stories to compare states in one place.',
-      table: { category: 'State', type: { summary: "'loaded'|'loading'|'empty'|'error'" } },
+      description: 'Active data state. Switch here to compare all four states without navigating between stories.',
+      table: { category: 'State', defaultValue: { summary: 'loaded' } },
     },
     variant: {
       control: { type: 'radio', options: ['content', 'kpi', 'chart'] },
-      description: 'Card type to render the state against. `content` = text card, `kpi` = metric card, `chart` = chart card.',
-      table: { category: 'State', type: { summary: "'content'|'kpi'|'chart'" } },
+      description: 'Card family to render the state against — `content` (text), `kpi` (metric), `chart` (sparkline).',
+      table: { category: 'State', defaultValue: { summary: 'content' } },
     },
   },
   args: {
@@ -266,8 +279,8 @@ const CARD_TITLES = { content: 'Recent articles', kpi: 'Total Revenue', chart: '
  * - `variant:kpi` → icon box renders in all states (header stays constant)
  * - `variant:chart` → period selector visible in all states (header stays constant)
  */
-export const Default = {
-  name: 'Interactive state switcher',
+export const Interactive = {
+  name: 'Interactive (Controls)',
   parameters: {
     backgrounds: { default: 'white' },
     docs: {

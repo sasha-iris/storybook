@@ -42,17 +42,9 @@ export default { title: 'Iris Library/UI/Button' }
 3. If it's genuinely new (e.g. Input, Modal, Badge) → new top-level `Iris Library/NewFamily/`
 4. Update the hierarchy table in CLAUDE.md
 
-### Pending renames (not done yet, requires updating all titles + rebuilding)
+### Renames — completed April 2026
 
-| Current | Target | Reason |
-|---|---|---|
-| `Iris Library/Primitives/Colors` | `Iris Library/Foundation/Colors` | Industry standard naming |
-| `Iris Library/Primitives/Typography` | `Iris Library/Foundation/Typography` | Industry standard naming |
-| `Iris Library/Icons` | `Iris Library/Foundation/Icons` | Remove duplicate, merge into Foundation |
-| `Iris Library/Components/Button` | `Iris Library/Button` | Remove Components wrapper |
-| `Iris Library/Components/Button/Group` | `Iris Library/Button/Group` | Same |
-
-Do these renames together in one session, not one at a time.
+All titles now match the approved structure. No `Components/` or `Primitives/` wrappers remain.
 
 ---
 
@@ -315,7 +307,170 @@ Rules:
 
 ---
 
-## 6. Icon rules
+## 6. UX documentation standards
+
+Established April 2026. Based on what UX specialists and design systems teams publish as best practice.
+
+### 6.1 Usage guidelines — When to use / when not to use
+
+Add to every component's default export description. This is the most cited gap in component libraries.
+
+```js
+export default {
+  title: 'Iris Library/Button',
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**Button** triggers an action or event.
+
+**When to use**
+- Submitting a form
+- Confirming a dialog
+- Starting a primary workflow (primary color)
+- Secondary/supplementary actions (outline)
+
+**When NOT to use**
+- Navigation between pages → use a Link instead
+- Toggling state persistently → use a Toggle/Switch
+- Displaying a label → use a Badge
+
+**Anatomy**
+\`[icon?] [label] [icon?]\` — icon-only buttons must have \`aria-label\`.
+        `,
+      },
+    },
+  },
+};
+```
+
+Rules:
+- Description goes on the **default export**, not on individual stories
+- Include "When to use", "When NOT to use", and "Anatomy" at minimum
+- Use plain language — write for a developer who has never seen this component before
+
+---
+
+### 6.2 Real content — never lorem ipsum
+
+Stories must use realistic labels and data. Placeholder text hides truncation bugs, spacing issues, and readability problems.
+
+```js
+// ❌ WRONG — tells developer nothing
+args: { label: 'Button text', description: 'Lorem ipsum dolor sit amet' }
+
+// ✅ CORRECT — mirrors real product content
+args: { label: 'Save changes', description: 'Last edited 2 minutes ago' }
+
+// ✅ CORRECT for KPI card
+args: { value: '12,480', trend: '+4.2%', label: 'Monthly active users' }
+```
+
+Rules:
+- Button labels: use real action verbs (Save, Cancel, Export, Create report)
+- Card content: use realistic metric names and plausible numbers
+- If showing multiple items: vary the content — some short, some long — to surface layout bugs
+
+---
+
+### 6.3 Status tags — maturity signal
+
+Every story file should declare a stability tag. This lets teams know what's safe to use in production.
+
+```js
+export default {
+  title: 'Iris Library/Button',
+  tags: ['autodocs', 'stable'],   // or 'beta', 'deprecated', 'experimental'
+};
+```
+
+Tag vocabulary:
+| Tag | Meaning |
+|---|---|
+| `stable` | Production-ready, won't break unexpectedly |
+| `beta` | Usable but API may change |
+| `experimental` | Proof of concept only |
+| `deprecated` | Will be removed — provide migration note |
+
+`autodocs` must always be included alongside the status tag.
+
+---
+
+### 6.4 Accessibility notes in argType descriptions
+
+For any arg that affects a11y, note the accessibility requirement in the description.
+
+```js
+argTypes: {
+  label: {
+    description: 'Visible button label. **Required** unless `iconOnly: true` — in that case provide `aria-label`.',
+    table: { category: 'Content', defaultValue: { summary: 'Save changes' } },
+  },
+  disabled: {
+    description: 'Disabled state. Sets `disabled` attribute + `aria-disabled="true"`. Keyboard focus is removed.',
+    table: { category: 'State', defaultValue: { summary: false } },
+  },
+},
+```
+
+Minimum a11y notes to include per component:
+- Which args require a companion ARIA attribute
+- Keyboard interaction (Enter / Space / Tab / Escape)
+- Contrast ratio requirement if the component has color variants (WCAG AA = 4.5:1 text, 3:1 UI)
+- Focus indicator behavior
+
+---
+
+### 6.5 Do's and Don'ts — story-level guidance
+
+For each important pattern, add a short Do / Don't note in `parameters.docs.description.story`.
+
+```js
+export const Disabled = {
+  name: 'States — disabled',
+  parameters: {
+    docs: {
+      description: {
+        story: `
+**✅ Do** — disable a button when the action is genuinely unavailable.  
+**❌ Don't** — use disabled as a loading state. Use a spinner + \`aria-busy\` instead.  
+**❌ Don't** — disable the primary CTA without showing the user why.
+        `,
+      },
+    },
+  },
+};
+```
+
+Rules:
+- Keep to 2–4 bullet points maximum — not a policy document
+- Focus on common mistakes found in the product, not generic rules
+- If no clear Do/Don't pattern exists, skip — do not invent one
+
+---
+
+### 6.6 Responsive behavior note
+
+For components that change at small viewports, note it in the story description.
+
+```js
+parameters: {
+  docs: {
+    description: {
+      story: `
+**Responsive**: Button does not collapse at small viewports. 
+For mobile nav, use icon-only (\`iconOnly: true\`) with visible label below if space allows.
+      `,
+    },
+  },
+},
+```
+
+Only add this if the component has a known mobile behavior difference. Do not write a note saying "no responsive behavior" — just omit it.
+
+---
+
+## 7. Icon rules
 
 All icons in this project are **Heroicons v1 solid** set:
 - `viewBox="0 0 20 20"`

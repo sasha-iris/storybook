@@ -15,8 +15,8 @@
  */
 
 export default {
-  title: 'Iris Library/Primitives/Typography',
-  tags: ['autodocs'],
+  title: 'Iris Library/Foundation/Typography',
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'white' },

@@ -36,7 +36,7 @@
  */
 
 export default {
-  title: 'Iris Library/Components/Button/Social',
+  title: 'Iris Library/Button/Social',
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

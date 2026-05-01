@@ -32,7 +32,7 @@ import { IRIS_MARK_SIZES, irisMarkImg, irisLogo } from './brand-assets.js';
 
 export default {
   title: 'Iris Library/Brand/Logo',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

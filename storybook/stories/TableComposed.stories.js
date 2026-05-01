@@ -129,13 +129,24 @@ const tableWrap = (content, { overflow = false } = {}) => /* html */`
 
 export default {
   title: 'Iris Library/Table/Composed',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },
     docs: {
       description: {
-        component: `Assembled table layouts that combine the building blocks from **Table/Cells** into realistic product tables.
+        component: `**Table / Composed** — assembled financial table layouts ready to ship.
+
+Combines the cell primitives from **Table/Cells** into complete product table structures.
+
+**When to use**
+- P&L statements, budget tables, and financial reports in Iris Finance dashboards
+- Any table that needs semantic row-type color coding (income/disbursement/total)
+- Period-column tables with ACTUALS vs FORECAST bands
+
+**When NOT to use**
+- Simple lists without financial semantics → use a standard HTML table or list group
+- Single-cell or cell composition work → start from Table/Cells
 
 Each composed story is the minimal complete structure you would ship in production.
 For the individual cell tokens and option reference see **Table/Cells**.
