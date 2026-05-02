@@ -70,6 +70,7 @@ Iris Library/
   Navigation/        ← Navigation/Sidebar
   Table/             ← Table/Cells, Table/Cohort, Table/Composed
   Tabs/              ← Tabs (Interactive, All states, With counter, With dropdown, Full bar)
+  Progress Bar/      ← Progress Bar (Interactive, All colors, All values, Label below, In context)
 ```
 
 Rules:
