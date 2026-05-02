@@ -540,6 +540,19 @@ export const CellWithCaption = {
       description: {
         story: 'Optional `showCaption` adds a secondary `12px` line below the value. Caption colour is always `#6b7280` regardless of option.',
       },
+      source: {
+        language: 'html',
+        code: `<!-- Cell with caption — Default option -->
+<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
+            width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
+  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;flex-shrink:0;">$</span>
+  <div style="flex:1 0 0;display:flex;flex-direction:column;align-items:flex-end;
+              justify-content:center;min-width:1px;">
+    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">500,00</span>
+    <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6b7280;text-align:right;">500,00</span>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => /* html */`

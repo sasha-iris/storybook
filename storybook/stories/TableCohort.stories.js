@@ -338,6 +338,48 @@ export const CohortRowExample = {
 Grey row changes header and all financial cell text to brand/800 (\`#42389d\`).
 Scroll horizontally if the viewport is narrow.`,
       },
+      source: {
+        language: 'html',
+        code: `<!-- CohortRow — white row state -->
+<div style="display:flex;align-items:stretch;background:#ffffff;border-bottom:1px solid #e5e7eb;">
+
+  <!-- Row header (140px) -->
+  <div style="display:flex;align-items:center;padding:8px 16px;
+              width:140px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
+    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Feb 2023</span>
+  </div>
+
+  <!-- Count cell (116px) -->
+  <div style="display:flex;align-items:center;justify-content:flex-end;
+              padding:8px 16px;width:116px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
+    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">1</span>
+  </div>
+
+  <!-- Percent badge cell (62×42px badge, px:4px container) -->
+  <div style="display:flex;flex-direction:column;align-items:flex-start;
+              padding:8px 4px;background:#ffffff;box-sizing:border-box;flex-shrink:0;">
+    <div style="display:flex;align-items:center;justify-content:center;
+                width:62px;height:42px;padding:10px;border-radius:4px;
+                background:#362f78;box-sizing:border-box;">
+      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#ffffff;white-space:nowrap;">100%</span>
+    </div>
+  </div>
+  <!-- … more percent cells … -->
+
+  <!-- Financial cell ($ per user, 140px) -->
+  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
+              padding:8px 16px;width:140px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
+    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;flex-shrink:0;">$</span>
+    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">25.00</span>
+  </div>
+</div>
+
+<!-- CohortRow — grey (alternate) row state: change background to #f3f4f6, text to #42389d -->
+<div style="display:flex;align-items:stretch;background:#f3f4f6;border-bottom:1px solid #e5e7eb;">
+  <!-- same structure, all text color: #42389d, all cell bg: #f3f4f6 -->
+  <!-- badge colours are identical — only cell container bg changes -->
+</div>`,
+      },
     },
   },
   render: () => {
@@ -500,6 +542,63 @@ Seven cohort periods (Aug 2023 – Feb 2024) with a triangular fill pattern —
 each newer cohort has one fewer months of data. The brand color ramp creates an
 immediate visual read of retention decay: darkest (brand/900) in Month 1,
 fading toward brand/50 as retention drops in later months.`,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Cohort analysis table shell -->
+<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+            border-radius:8px;overflow:hidden;min-width:max-content;">
+
+  <!-- Header row -->
+  <div style="display:flex;align-items:stretch;background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+    <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
+      <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+                   letter-spacing:.08em;color:#9ca3af;">Cohort</span>
+    </div>
+    <div style="width:116px;padding:8px 16px;box-sizing:border-box;display:flex;justify-content:flex-end;">
+      <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+                   letter-spacing:.08em;color:#9ca3af;">Users</span>
+    </div>
+    <!-- Month headers (70px each) -->
+    <div style="width:70px;padding:8px 4px;box-sizing:border-box;display:flex;justify-content:center;">
+      <span style="font:600 10px/1 'Inter',sans-serif;text-transform:uppercase;
+                   letter-spacing:.06em;color:#9ca3af;">Month 1</span>
+    </div>
+    <!-- … Month 2 … Month 7 … -->
+  </div>
+
+  <!-- Data row — white (even index) -->
+  <div style="display:flex;align-items:stretch;background:#ffffff;border-bottom:1px solid #e5e7eb;">
+    <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Aug 2023</span>
+    </div>
+    <div style="width:116px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">1,240</span>
+    </div>
+    <!-- 100% badge (brand/900) -->
+    <div style="padding:8px 4px;background:#ffffff;box-sizing:border-box;flex-shrink:0;">
+      <div style="display:flex;align-items:center;justify-content:center;
+                  width:62px;height:42px;border-radius:4px;background:#362f78;">
+        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#ffffff;">100%</span>
+      </div>
+    </div>
+    <!-- … remaining months … -->
+  </div>
+
+  <!-- Data row — grey (odd index): background #f3f4f6, text color #42389d -->
+  <div style="display:flex;align-items:stretch;background:#f3f4f6;border-bottom:1px solid #e5e7eb;">
+    <!-- same structure — badge colours unchanged, only cell container bg changes -->
+  </div>
+
+  <!-- Empty cell placeholder (no data yet):
+    <div style="padding:8px 4px;background:#ffffff;">
+      <div style="width:62px;height:42px;border-radius:4px;background:#f3f4f6;
+                  display:flex;align-items:center;justify-content:center;">
+        <span style="font:500 12px/1.5 'Inter',sans-serif;color:#d1d5db;">—</span>
+      </div>
+    </div>
+  -->
+</div>`,
       },
     },
   },

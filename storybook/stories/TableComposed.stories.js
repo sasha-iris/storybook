@@ -344,6 +344,55 @@ export const FinancialTableRowTypes = {
       description: {
         story: `All 4 row-type backgrounds in a realistic hierarchy: NonCollapsible section header → Default data rows → Derival sub-total → Total grand total.`,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Financial table — all 4 row types -->
+<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+            border-radius:8px;overflow:hidden;">
+
+  <!-- NonCollapsible section header row (#f9fafb) — bold label, no data -->
+  <div style="display:flex;align-items:stretch;background:#f9fafb;">
+    <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
+      <span style="font:600 14px/1.5 'Inter',sans-serif;color:#111928;">Revenue</span>
+    </div>
+    <!-- empty value cells -->
+  </div>
+
+  <!-- Default data row (#ffffff) — standard line item -->
+  <div style="display:flex;align-items:stretch;background:#ffffff;">
+    <div style="width:220px;height:38px;padding:8px 16px 8px 32px;box-sizing:border-box;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Product sales</span>
+    </div>
+    <div style="width:146px;height:38px;padding:8px 16px;box-sizing:border-box;
+                display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;">$</span>
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;text-align:right;">32,400,00</span>
+    </div>
+    <!-- … more period columns … -->
+  </div>
+
+  <!-- Derival sub-total row (#fff8f1) — warm orange tint, bold label -->
+  <div style="display:flex;align-items:stretch;background:#fff8f1;">
+    <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
+      <span style="font:600 14px/1.5 'Inter',sans-serif;color:#111928;">Revenue sub-total</span>
+    </div>
+    <!-- … -->
+  </div>
+
+  <!-- Total row (#f3f4f6) — cool gray, Indigo text (#42389d) -->
+  <div style="display:flex;align-items:stretch;background:#f3f4f6;">
+    <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
+      <span style="font:600 14px/1.5 'Inter',sans-serif;color:#111928;">Net Income</span>
+    </div>
+    <div style="width:146px;height:38px;padding:8px 16px;box-sizing:border-box;
+                display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#42389d;">$</span>
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#42389d;text-align:right;">68,331,00</span>
+    </div>
+    <!-- … -->
+  </div>
+</div>`,
+      },
     },
   },
   render: () => {
@@ -524,6 +573,50 @@ export const MixedOptionTable = {
       description: {
         story: `Budget vs Actual comparison table that shows all 7 cell option colours in realistic context.
 Use this story as a reference for when each option should appear.`,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Budget vs Actual table — cell option reference -->
+<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+            border-radius:8px;overflow:hidden;">
+
+  <!-- Column header row -->
+  <div style="display:flex;align-items:stretch;">
+    <div style="width:200px;height:38px;padding:8px 16px;background:#f9fafb;box-sizing:border-box;"></div>
+    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Budget</span>
+    </div>
+    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Actual</span>
+    </div>
+    <!-- Variance, % Var columns … -->
+  </div>
+
+  <!-- Default row — Calculated option (positive actual, green) -->
+  <div style="display:flex;align-items:stretch;background:#ffffff;">
+    <div style="width:200px;height:38px;padding:8px 16px;box-sizing:border-box;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Product sales</span>
+    </div>
+    <!-- Budget — Default (#111928) -->
+    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;
+                display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">$</span>
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">32,400,00</span>
+    </div>
+    <!-- Actual — Calculated (#0e9f6e, positive) -->
+    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;
+                display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;">$</span>
+      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;text-align:right;">35,100,00</span>
+    </div>
+  </div>
+
+  <!-- Blue option: Actual cell background:#ebf5ff, text:#1c64f2 — user-entered override -->
+  <!-- Waste option: Actual text:#e74694 — below-plan value -->
+  <!-- Grey option: text:#6b7280 — zero variance (plan === actual) -->
+  <!-- Derival sub-total row: background:#fff8f1 -->
+  <!-- Total row: background:#f3f4f6, all values Indigo (#42389d) -->
+</div>`,
       },
     },
   },
