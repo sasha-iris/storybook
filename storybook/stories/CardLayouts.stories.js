@@ -159,11 +159,18 @@ These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--
 export const UserProfileCard = {
   name: 'User profile card',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Social profile card. Centred avatar, name, role, and two action buttons.
 **Node:** 13559:76692 | Width: 384px | Shadow: shadow-md
+
+**✅ Do** — use for team member profiles, account pages, and "people" directory cards.
+**✅ Do** — keep the avatar 96 px circle with \`border: 1px solid #e5e7eb\` and shadow-md.
+**❌ Don't** — use this layout for showing metrics or data — use Card/KPI instead.
+
+**QA** — Avatar: 96 px circle, \`#e5e7eb\` border, shadow-md · "Add friend": bg \`#42389d\` (brand/800), rounded-12 px, 12 px medium · "Message": no fill, \`#f9fafb\` border, \`#1e2939\` text · Card padding: \`16px 16px 40px\` (asymmetric — more space at bottom).
 
 **Approximations:** Three-dots icon is an inline SVG (Figma uses a raster vector).
         `,
@@ -244,19 +251,21 @@ Social profile card. Centred avatar, name, role, and two action buttons.
 export const WithFormInputs = {
   name: 'With form inputs',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Sign-in form card. Email + password inputs, checkbox row, CTA button, helper link.
 **Node:** 13561:76495 | Width: 384px | Shadow: shadow-sm (0 1px 3px + 0 1px 2px)
 
-**Key design token differences vs other cards:**
-- Button uses \`#1447e6\` (blue/700) — **not** the brand/800 purple used elsewhere
-- Shadow uses a distinct shadow-sm variant
-- Checkbox border: \`0.5px solid #d1d5db\`
+**✅ Do** — use for authentication, onboarding, and sign-in flows embedded in a page layout.
+**❌ Don't** — place this inside a modal — the card itself acts as the visual container.
 
-**Approximations:**
-- Mail icon: Heroicons envelope inline SVG (Figma uses a 2-vector raster assembly)
+**Key token differences vs other cards:** CTA button is \`#1447e6\` (blue/700) — **not** brand/800 purple · shadow-sm variant (lighter) · checkbox border: \`0.5 px solid #d1d5db\`.
+
+**QA** — Input: bg \`#f9fafb\`, border \`1px solid #d1d5db\`, rounded-8 px, \`px-16 py-12\` · Email input has a 16 px mail icon · "Create account" button: bg \`#1447e6\`, full width · "Lost Password?" link: \`#155dfc\` (blue/600).
+
+**Approximations:** Mail icon is Heroicons envelope inline SVG (Figma uses a 2-vector raster assembly).
         `,
       },
       source: {
@@ -387,13 +396,20 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 export const EcommerceCard = {
   name: 'E-commerce card',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Product card for e-commerce. Centered product photo, star rating with badge, price and cart CTA.
 **Node:** 13561:76497 | Width: 384px | Shadow: shadow-md
 
-**Approximations:** Stars use inline SVG (Figma uses a raster star asset). Star color: \`#FFDF20\` (old-colors/yellow/300).
+**✅ Do** — use for product listings, marketplace items, or catalog grids.
+**✅ Do** — keep the product image at 275 × 174 px with \`px-16 py-24\` header padding.
+**❌ Don't** — use this card when the primary action is navigation rather than a purchase — use Card/Basics with a link instead.
+
+**QA** — Image area: 275 × 174 px, centered, \`px-16 py-24\` · Stars: 5 × yellow \`#FFDF20\` · Rating badge: bg \`#155dfc\` (blue/600), rounded-4 px, 12 px semibold white · Price: 30 px extrabold \`#111928\` · "Add to cart": bg \`#42389d\` (brand/800), rounded-12 px, 14 px medium, h-36 px.
+
+**Approximations:** Stars are inline SVG (Figma uses a raster star asset). Star color: \`#FFDF20\` (old-colors/yellow/300).
         `,
       },
       source: {
@@ -484,11 +500,18 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
 export const CardWithList = {
   name: 'Card with list',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Customer list card. Header with "View all" link, then 6 rows: avatar + name/email + amount.
 **Node:** 13561:77786 | Width: 384px | Shadow: shadow-sm (no border in Figma)
+
+**✅ Do** — use for compact data rows inside a card (customers, transactions, recent activity).
+**✅ Do** — keep row dividers at \`1px solid #e5e7eb\` to maintain visual separation without weight.
+**❌ Don't** — use more than ~8 rows without pagination — the card should not become a scrollable list.
+
+**QA** — No border (shadow-sm only) · Avatar: 32 px circle, \`object-fit: cover\` · Row divider: \`1px solid #e5e7eb\` · Amount: 16 px semibold, right-aligned · "View all" link: \`#155dfc\`, 16 px medium · Title "Latest Customers": 18 px extrabold \`#111928\`.
         `,
       },
       source: {
@@ -583,11 +606,18 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
 export const PricingCard = {
   name: 'Pricing card',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Standard pricing plan card. Plan name, price, feature checklist with enabled/disabled items, CTA.
 **Node:** 13561:77822 | Width: 384px | Shadow: shadow-md
+
+**✅ Do** — use for plan comparison pages, feature matrices, and upgrade prompts.
+**✅ Do** — keep disabled feature items visually muted (gray check + line-through text) to signal unavailability without removing them from the list.
+**❌ Don't** — list more than ~7 features — it creates excessive vertical scroll within the card.
+
+**QA** — Plan label: 20 px medium \`#6b7280\` · Price: 48 px extrabold \`#111928\` + "/month" 18 px medium \`#6b7280\` · Enabled (3): blue check-circle, normal text · Disabled (4): gray check-circle, line-through text · "Choose plan" button: full width, bg \`#42389d\`, rounded-12 px.
 
 **Approximations:** Check-circle icons are inline SVG (Figma uses raster vectors at \`inset:10%\`).
         `,
@@ -689,11 +719,18 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
 export const CTACard = {
   name: 'CTA card',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Wide call-to-action card. Centered heading and body copy with two app-store download buttons.
 **Node:** 13561:76545 | Width: 790px | Shadow: shadow-md
+
+**✅ Do** — use for full-width promotional banners in a dashboard or landing section.
+**✅ Do** — keep the two app-store buttons side-by-side on desktop; stack them on mobile.
+**❌ Don't** — use this width in a narrow sidebar or column — it requires at least 600 px to render correctly.
+
+**QA** — Width: 790 px, centered content, \`padding: 32 px\` · Title: 30 px bold \`#111928\` · Body: 18 px regular \`#6b7280\`, centered · Buttons: bg \`#111928\`, rounded-8 px, \`px-16 py-12\`, gap 10 px · Button text: two lines — "Download on the" (12 px reg) + brand name (18 px bold).
 
 **Approximations:** App-store button icons use SimpleIcons CDN (stable, no TTL).
         `,
@@ -796,11 +833,17 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
 export const NavTabsCard = {
   name: 'Nav tabs card',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Card with simple tab navigation above the content body.
 **Node:** 13561:77617 | Width: 790px | Shadow: shadow-md
+
+**✅ Do** — use when a card needs to switch between 2–4 content sections (About / Services / Facts).
+**❌ Don't** — use more than 4–5 tabs in this pattern — use a full Tabs component at page level instead.
+
+**QA** — Tab strip: bg \`#f9fafb\`, border-bottom \`1px #e5e7eb\`, \`p-16 px\` · Active tab: color \`#155dfc\` (blue/600), 14 px medium · Inactive tabs: \`#6b7280\`, 14 px medium · Tab gap: 32 px · Body: \`p-32 px\`, heading 30 px extrabold, body 18 px regular · "Learn more" link + chevron-right: color \`#155dfc\`.
 
 Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
         `,
@@ -885,12 +928,18 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
 export const StatsCard = {
   name: 'Stats card (segmented tabs)',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Card with a segmented tab navigation (Statistics / Services / FAQ) and a 2×3 statistics grid.
-Named "Type11" in Figma.
-**Node:** 13561:77668 | Width: 790px | Shadow: shadow-md
+Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-md
+
+**✅ Do** — use for dashboard summary sections that group multiple KPIs under named segments.
+**✅ Do** — keep stats to 6 (2 rows × 3 columns) — more than 6 items should use a separate Table.
+**❌ Don't** — use this pattern for a single metric — use Card/KPI instead.
+
+**QA** — Tab row: 3 equal columns, separated by \`1px #e5e7eb\` vertical dividers · Active tab: bg \`#f9fafb\`, color \`#155dfc\`, 14 px medium · Inactive tabs: bg \`#f9fafb\`, \`#6b7280\` · Stats: 30 px extrabold \`#111928\` value + 16 px regular \`#6b7280\` label, centered · Grid: 2 rows × 3 columns, gap 32 px.
         `,
       },
       source: {
@@ -992,11 +1041,18 @@ Named "Type11" in Figma.
 export const TestimonialCard = {
   name: 'Testimonial card',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 2×2 grid of testimonial cells, each with a heading, quote, and attributed author.
 **Node:** 13567:76479 | Width: 790px | Shadow: shadow-sm
+
+**✅ Do** — use for social proof sections on marketing or onboarding pages.
+**✅ Do** — vary quote length across the 4 cells to test layout stability at different text lengths.
+**❌ Don't** — truncate quotes with ellipsis — if a quote is too long, shorten it at the source.
+
+**QA** — Cell padding: 32 px · Title: 18 px semibold \`#111928\` · Quote: 16 px regular \`#6b7280\`, text-center · Author avatar: 32 px circle, \`border: 1px solid #e5e7eb\` · Author name: 18 px semibold · Author role: 14 px medium · Shadow: shadow-sm (lighter than shadow-md cards).
         `,
       },
       source: {
@@ -1098,11 +1154,18 @@ export const TestimonialCard = {
 export const CryptoCard = {
   name: 'Crypto card — connect wallet',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" badge.
 **Node:** 13567:76480 | Width: 384px | Shadow: shadow-sm (no border)
+
+**✅ Do** — use for wallet/account connection flows where the user picks from a list of providers.
+**✅ Do** — keep the "Popular" badge on the most-used provider to reduce decision friction.
+**❌ Don't** — add more than 6–7 wallet options without a search/filter — the list becomes unwieldy.
+
+**QA** — No border (shadow-sm only): \`box-shadow: 0 1px 2px rgba(0,0,0,.08)\` · Card: \`p-24 gap-16\` · Title: 18 px semibold \`#111928\` · Description: 14 px regular \`#6b7280\` · Wallet row: bg \`#f9fafb\`, \`p-12\`, rounded-8 px, icon 16–18 px + name bold · MetaMask "Popular" badge: bg \`#e5e7eb\`, rounded-6 px, 12 px medium \`#6b7280\` · Helper text: question icon + 12 px regular \`#6b7280\`.
 
 **Approximations:** Question-circle icon is inline SVG. Wallet icons use SimpleIcons CDN (stable). Fortmatic uses a text-badge placeholder.
         `,
