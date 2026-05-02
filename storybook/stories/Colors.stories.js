@@ -3,11 +3,16 @@
  * Source: Figma › ◐ Primitives · "Light" frames
  * File key: ZKtEULdYKaXe5uQl1J6ijI
  *
+ * Figma node IDs:
+ *   Text color variables       11498:1293
+ *   Background color variables 11498:1658
+ *   Border color variables     11498:2268
+ *
  * Covers all light-mode primitive color groups:
  *   - Text color variables (22 tokens)
  *   - Background color variables (36 tokens)
  *   - Border color variables (18 tokens)
- *   - Semantic aliases
+ *   - Semantic aliases (legacy)
  *
  * All swatches render via live CSS custom properties so any
  * downstream token override is immediately reflected here.
@@ -23,10 +28,30 @@ export default {
     docs: {
       description: {
         component: `
-**Light-mode color primitives** pulled from the Figma Primitive page (◐ Primitives).
+**Color tokens** are the single source of truth for all colors in the Iris Library.
+They are CSS custom properties defined in \`:root\` inside \`styles.css\` and available globally
+via \`var(--color-<group>-<name>)\`.
 
-All variables are defined in \`:root\` inside \`styles.css\` and are available globally.
-Use them via \`var(--color-<group>-<name>)\` in any component or story.
+**Token groups**
+- \`--color-text-*\` — foreground: text, icons, labels
+- \`--color-bg-*\` — surface fills, overlays, state-driven backgrounds
+- \`--color-border-*\` — dividers, input outlines, focus rings
+- \`--color-*\` (no group) — legacy semantic aliases (kept for backward compatibility)
+
+**When to use**
+- Always reference a token instead of a raw hex value in component styles
+- Use \`-soft\` and \`-subtle\` variants for tinted backgrounds and borders in alerts, badges, and inline callouts
+- Use \`-strong\` variants for filled, high-contrast surfaces (e.g. primary buttons, danger banners)
+- Use \`-disabled\` tokens for any disabled UI state to stay consistent across the system
+
+**When NOT to use**
+- Do not hardcode hex values in component CSS — use a token so overrides propagate automatically
+- Do not use \`--color-bg-*\` tokens as text colors or vice versa — each group is scoped to its role
+- Do not use legacy \`--color-primary\`, \`--color-danger\`, etc. for new work — migrate to the Figma-sourced tokens
+
+**Naming convention**
+\`--color-{group}-{semantic?}-{shade?}\`
+Examples: \`--color-text-fg-brand\`, \`--color-bg-success-soft\`, \`--color-border-danger\`
         `.trim(),
       },
     },
@@ -63,9 +88,37 @@ const group = (title, swatches) => `
 export const TextColors = {
   name: 'Text color variables',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'All `--color-text-*` tokens from the Figma "Text color variables / Light" frame. Use these for any foreground text, icons, or labels.',
+        story: `
+All \`--color-text-*\` tokens from the Figma "Text color variables / Light" frame (node \`11498:1293\`).
+Use these for any foreground text, icons, or labels.
+
+**✅ Do** — pair \`--color-text-body\` with \`--color-bg-white\` or \`--color-bg-secondary-soft\` for readable body text.
+**✅ Do** — use \`--color-text-fg-disabled\` for any input placeholder, inactive nav item, or muted label.
+**❌ Don't** — use \`--color-text-fg-brand-subtle\` (#bedbff) as body text on white — it fails WCAG AA contrast.
+**❌ Don't** — use accent tokens (purple, cyan, pink) for informational text without verifying contrast on the target background.
+        `.trim(),
+      },
+      source: {
+        code: `/* Page-level typography */
+.page-title   { color: var(--color-text-heading); }
+.body-copy    { color: var(--color-text-body); }
+.helper-text  { color: var(--color-text-body-subtle); }
+
+/* Interactive / brand */
+.link         { color: var(--color-text-fg-brand); }
+.link:hover   { color: var(--color-text-fg-brand-strong); }
+
+/* Feedback states */
+.error-msg    { color: var(--color-text-fg-danger); }
+.success-msg  { color: var(--color-text-fg-success); }
+.warning-msg  { color: var(--color-text-fg-warning); }
+
+/* Disabled */
+.label--disabled { color: var(--color-text-fg-disabled); }`,
+        language: 'css',
       },
     },
   },
@@ -98,9 +151,37 @@ export const TextColors = {
 export const BackgroundColors = {
   name: 'Background color variables',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'All `--color-bg-*` tokens from the Figma "Background color variables / Light" frame. Use these for surface fills, overlays, and state-driven backgrounds.',
+        story: `
+All \`--color-bg-*\` tokens from the Figma "Background color variables / Light" frame (node \`11498:1658\`).
+Use these for surface fills, overlays, and state-driven backgrounds.
+
+**✅ Do** — use \`-soft\` / \`-medium\` variants for tinted alert and badge backgrounds; reserve the solid variant for filled interactive elements.
+**✅ Do** — layer neutral tokens: \`--color-bg-white\` → \`--color-bg-secondary-soft\` → \`--color-bg-tertiary\` for page → sidebar → hover progressions.
+**❌ Don't** — place dark text on \`--color-bg-brand\` or \`--color-bg-danger\` without checking contrast — these require white text.
+**❌ Don't** — use accent tokens (purple, sky, fuchsia, etc.) as primary surface colors — they are for data-vis and category badges only.
+        `.trim(),
+      },
+      source: {
+        code: `/* Page surfaces */
+.page         { background: var(--color-bg-secondary-soft); }
+.card         { background: var(--color-bg-white); }
+.sidebar      { background: var(--color-bg-tertiary); }
+
+/* Semantic state backgrounds */
+.alert--success { background: var(--color-bg-success-soft); }
+.alert--danger  { background: var(--color-bg-danger-soft); }
+.alert--warning { background: var(--color-bg-warning-soft); }
+
+/* Filled interactive elements */
+.btn-primary    { background: var(--color-bg-brand); }
+.btn-primary:hover { background: var(--color-bg-brand-strong); }
+
+/* Disabled surface */
+.input--disabled { background: var(--color-bg-disabled); }`,
+        language: 'css',
       },
     },
   },
@@ -161,9 +242,40 @@ export const BackgroundColors = {
 export const BorderColors = {
   name: 'Border color variables',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'All `--color-border-*` tokens from the Figma "Border color variables / Light" frame. Use these for dividers, input outlines, focus rings, and card borders.',
+        story: `
+All \`--color-border-*\` tokens from the Figma "Border color variables / Light" frame (node \`11498:2268\`).
+Use these for dividers, input outlines, focus rings, and card borders.
+
+**✅ Do** — use \`--color-border-base\` as the default border for cards, inputs, and dividers.
+**✅ Do** — use \`--color-border-brand\` for focus rings on interactive elements to meet WCAG focus-visible requirements.
+**❌ Don't** — use \`--color-border-muted\` or \`--color-border-light\` as the only visual boundary on white backgrounds — they are near-invisible and fail 3:1 UI contrast.
+**❌ Don't** — mix state border tokens with the wrong background token (e.g. \`--color-border-success\` on a danger background).
+        `.trim(),
+      },
+      source: {
+        code: `/* Default input */
+.input {
+  border: 1px solid var(--color-border-base);
+}
+.input:focus {
+  border-color: var(--color-border-brand);
+  outline: 2px solid var(--color-border-brand-subtle);
+}
+
+/* Validation states */
+.input--error   { border-color: var(--color-border-danger); }
+.input--success { border-color: var(--color-border-success); }
+.input--warning { border-color: var(--color-border-warning); }
+
+/* Dividers */
+.divider { border-top: 1px solid var(--color-border-base-soft); }
+
+/* Card */
+.card { border: 1px solid var(--color-border-base); }`,
+        language: 'css',
       },
     },
   },
@@ -200,9 +312,34 @@ export const BorderColors = {
 export const SemanticColors = {
   name: 'Semantic aliases (legacy)',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Legacy semantic aliases kept for backward compatibility. Prefer the Figma-sourced `--color-text-fg-*` and `--color-bg-*` tokens for new work.',
+        story: `
+Legacy semantic aliases defined before the Figma token migration. Kept for backward compatibility with existing components.
+
+**✅ Do** — keep using these tokens in components that already reference them to avoid accidental color drift.
+**❌ Don't** — use these tokens in new components or new stories — use the Figma-sourced \`--color-text-fg-*\`, \`--color-bg-*\`, and \`--color-border-*\` tokens instead.
+
+Migration guide:
+| Legacy | Replace with |
+|---|---|
+| \`--color-primary\` | \`--color-bg-brand\` / \`--color-text-fg-brand\` |
+| \`--color-success\` | \`--color-bg-success\` / \`--color-text-fg-success\` |
+| \`--color-warning\` | \`--color-bg-warning\` / \`--color-text-fg-warning\` |
+| \`--color-danger\`  | \`--color-bg-danger\` / \`--color-text-fg-danger\` |
+| \`--color-info\`    | \`--color-text-fg-info\` |
+        `.trim(),
+      },
+      source: {
+        code: `/* Legacy usage — keep as-is in existing components */
+.badge--success { color: var(--color-success); }
+.badge--danger  { color: var(--color-danger); }
+
+/* New components — use Figma-sourced tokens instead */
+.badge--success { color: var(--color-text-fg-success); background: var(--color-bg-success-soft); }
+.badge--danger  { color: var(--color-text-fg-danger);  background: var(--color-bg-danger-soft); }`,
+        language: 'css',
       },
     },
   },
