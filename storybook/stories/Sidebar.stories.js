@@ -330,6 +330,24 @@ export const ActiveStates = {
       description: {
         story: 'Each sidebar item shown in its active state. Use to verify color (#42389d) and background (#e5e7eb) are applied correctly.',
       },
+      source: {
+        language: 'html',
+        code: `<!-- Active menu item: bg #e5e7eb, text #42389d, aria-current="page" -->
+<a href="#" aria-current="page"
+   style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
+          border-radius:8px;background:#e5e7eb;width:100%;box-sizing:border-box;text-decoration:none;">
+  <!-- icon: 24×24, color #42389d -->
+  <span style="font:500 16px/1.5 'Inter',sans-serif;color:#42389d;">Overview</span>
+</a>
+
+<!-- Inactive menu item: no background, text #111928 -->
+<a href="#"
+   style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
+          border-radius:8px;width:100%;box-sizing:border-box;text-decoration:none;">
+  <!-- icon: 24×24, color #111928 -->
+  <span style="font:500 16px/1.5 'Inter',sans-serif;color:#111928;">Metrics Library</span>
+</a>`,
+      },
     },
   },
   render: () => `
@@ -357,6 +375,21 @@ export const Collapsed = {
       description: {
         story: 'Financial model sub-menu collapsed. Chevron points down. Sub-items hidden.',
       },
+      source: {
+        language: 'html',
+        code: `<!-- Expandable menu item — collapsed state: chevron-down, sub-items hidden -->
+<div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
+            border-radius:8px;cursor:pointer;width:100%;box-sizing:border-box;">
+  <div style="display:flex;flex:1;gap:4px;align-items:center;">
+    <!-- icon: currency-dollar, 24×24, color #111928 -->
+    <span style="font:500 16px/1.5 'Inter',sans-serif;color:#111928;">Financial model</span>
+  </div>
+  <!-- chevron-down when collapsed, chevron-up when expanded -->
+  <!-- svg chevron-down here -->
+</div>
+<!-- Sub-items: rendered when expanded=true, hidden when collapsed -->
+<!-- <div style="padding-left:28px;"> sub-item rows </div> -->`,
+      },
     },
   },
   render: () => `
@@ -374,6 +407,24 @@ export const Collapsed = {
  */
 export const NoLogo = {
   name: 'Without logo',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Sidebar without the logo area — use when the Iris logo is already rendered in a top bar. Nav items start from the top with no additional padding.',
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Sidebar without logo: omit the logo div entirely; nav starts at top -->
+<aside style="width:256px;height:100vh;background:#f3f4f6;border-right:1px solid #e5e7eb;
+              display:flex;flex-direction:column;gap:24px;box-sizing:border-box;">
+  <!-- No logo area -->
+  <nav style="display:flex;flex-direction:column;gap:8px;padding:24px 8px 0 28px;">
+    <!-- Menu items here -->
+  </nav>
+</aside>`,
+      },
+    },
+  },
   render: () => `
     <div style="height:100vh;display:flex;">
       ${sidebar({ showLogo: false, activeItem: 'overview', financialExpanded: true })}
