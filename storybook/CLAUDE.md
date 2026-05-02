@@ -69,6 +69,7 @@ Iris Library/
   Card/              ← Card/Basics, Card/KPI, Card/Layouts, Card/Reporting, Card/States
   Navigation/        ← Navigation/Sidebar
   Table/             ← Table/Cells, Table/Cohort, Table/Composed
+  Tabs/              ← Tabs (Interactive, All states, With counter, With dropdown, Full bar)
 ```
 
 Rules:
