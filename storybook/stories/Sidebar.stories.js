@@ -154,6 +154,8 @@ function menuItem({ icon, label, active = false, expandable = false, expanded = 
   const activeColor = '#42389d';
   const textColor = active ? activeColor : color;
   const bg = active ? 'background:#e5e7eb;' : '';
+  // Chevron stroke is always #1f2a37 per Figma (node 9263:160845) — not textColor
+  const chevronColor = '#1f2a37';
 
   return `
     <div style="${menuItemStyles.base}${bg}">
@@ -161,7 +163,7 @@ function menuItem({ icon, label, active = false, expandable = false, expanded = 
         ${icon ? `<span style="flex-shrink:0;width:24px;height:24px;color:${textColor};display:flex;align-items:center;">${icon}</span>` : ''}
         <span style="font:500 16px/1.5 var(--font-family-base,Inter,sans-serif);color:${textColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
       </div>
-      ${expandable ? `<span style="flex-shrink:0;color:${textColor};">${expanded ? icons.chevronUp : icons.chevronDown}</span>` : ''}
+      ${expandable ? `<span style="flex-shrink:0;color:${chevronColor};">${expanded ? icons.chevronUp : icons.chevronDown}</span>` : ''}
     </div>
   `;
 }
@@ -251,11 +253,13 @@ function contractedSidebar({ activeKey = 'chartPie' } = {}) {
 
 // ─── Sidebar builder ─────────────────────────────────────────────────────────
 
-function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded = true } = {}) {
+// color: 'white' = #ffffff | 'gray' = #f3f4f6  (both are light-mode variants per Figma 1057:2041)
+function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded = true, color = 'gray' } = {}) {
+  const bg = color === 'white' ? '#ffffff' : '#f3f4f6';
   return `
     <div style="
-      background:var(--color-bg-tertiary,#f3f4f6);
-      border-right:1px solid var(--color-border-base,#e5e7eb);
+      background:${bg};
+      border-right:1px solid #e5e7eb;
       display:flex; flex-direction:column; gap:24px;
       width:256px; height:100%; min-height:600px;
       box-sizing:border-box;
@@ -303,35 +307,48 @@ export default {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: `**Navigation / Sidebar** — Figma node \`9272:163206\`. Iris left sidebar navigation — light theme.
+        component: `
+**Navigation / Sidebar** — left navigation for authenticated dashboard views.
+
+Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, live example \`9272:163206\`.
+
+**Light-mode variants (Color=White / Color=Gray)**
+| Variant | Background | Border/Separator |
+|---|---|---|
+| Color=Gray (default) | \`#f3f4f6\` | \`#e5e7eb\` |
+| Color=White | \`#ffffff\` | \`#e5e7eb\` |
+
+**Menu item types (node \`9263:160845\`)**
+| Type | Description |
+|---|---|
+| Primary | Regular nav item, optional icon, no chevron |
+| Expandable | Nav item with sub-menu — chevron rotates on expand |
+| Secondary | Sub-item — indented 28px, no icon |
+
+**Menu item states**
+| State | bg | text | icon | chevron |
+|---|---|---|---|---|
+| Selected | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | \`#1f2a37\` |
+| Default | transparent | \`#111928\` | \`#6b7280\` | \`#1f2a37\` |
 
 **When to use**
-- Primary navigation for authenticated dashboard views
-- Persistent left nav with expandable sub-menus (Financial model)
-- Use \`showLogo: false\` when the logo is rendered in a top bar instead
+- Persistent left navigation for dashboard / app views
+- Use \`color=gray\` as the default; \`color=white\` when the sidebar sits on an already-light page background
+- Use \`showLogo: false\` when the logo is rendered in a top bar
 
 **When NOT to use**
 - Top navigation bars → use a separate Nav component
 - Mobile viewports — sidebar is desktop-only; use a drawer/overlay pattern on mobile
 
 **Anatomy**
-\`[Logo] / [Menu items with icons + chevrons] / [Sub-items indented] / [Divider] / [Settings + Help]\`
+\`[Logo?] / [Primary nav items + expandable items] / [Sub-items 28px indent] / [Divider] / [Bottom items]\`
 
-### Tokens
-- Background: \`#f3f4f6\` (gray/100)
-- Border: \`#e5e7eb\` (gray/200)
-- Active text: \`#42389d\` (brand/800)
-- Active bg: \`#e5e7eb\` (gray/200)
-- Default text: \`#111928\` (gray/900)
-
-### QA checklist
-- Sidebar width: 256px
-- Menu item height: 40px, border-radius: 8px
-- Active item: bg #e5e7eb, text #42389d
-- Sub-items: 28px left indent, no icon
-- Logo: Iris mark sm (32px) + "Iris" wordmark
-- **Accessibility**: keyboard navigation must reach all items; active item needs \`aria-current="page"\`
-        `,
+**QA checklist**
+- Width: 256px · Menu item height: 40px · border-radius: 8px
+- Active: bg \`#e5e7eb\`, text+icon \`#42389d\`, chevron always \`#1f2a37\`
+- Sub-items: 28px left indent, no icon, \`#111928\` text
+- Active item requires \`aria-current="page"\` for accessibility
+        `.trim(),
       },
     },
   },
@@ -345,8 +362,15 @@ export default {
     activeItem: {
       control: 'select',
       options: ['overview', 'metrics', 'pnl', 'budget', 'cohorts', 'cashflow', 'financial', 'help'],
-      description: 'Which nav item is in the active/selected state. Applies brand/800 text + gray/200 background.',
+      description: 'Which nav item is in the active/selected state. Applies `#42389d` text + `#e5e7eb` bg.',
       table: { category: 'Content', defaultValue: { summary: 'overview' } },
+    },
+    // ── Appearance ───────────────────────────────────────────
+    color: {
+      control: 'select',
+      options: ['gray', 'white'],
+      description: 'Background color variant. `gray` = `#f3f4f6` (Figma Color=Gray). `white` = `#ffffff` (Figma Color=White). Both are light-mode variants (node `1057:2041`).',
+      table: { category: 'Appearance', defaultValue: { summary: 'gray' } },
     },
     // ── State ────────────────────────────────────────────────
     financialExpanded: {
@@ -358,6 +382,7 @@ export default {
   args: {
     showLogo: true,
     activeItem: 'overview',
+    color: 'gray',
     financialExpanded: true,
   },
 };
@@ -379,13 +404,14 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use **showLogo**, **activeItem**, and **financialExpanded** Controls to configure any sidebar combination.',
+        story: 'Use **Controls** to configure any sidebar combination: background color, active item, logo visibility, Financial model expanded.',
       },
       source: {
         transform: (_src, storyCtx) => {
-          const { showLogo, activeItem, financialExpanded } = storyCtx.args;
-          return `<!-- Sidebar — showLogo:${showLogo}, active:${activeItem}, expanded:${financialExpanded} -->
-<aside style="width:256px;height:100vh;background:#f3f4f6;border-right:1px solid #e5e7eb;
+          const { showLogo, activeItem, financialExpanded, color } = storyCtx.args;
+          const bg = color === 'white' ? '#ffffff' : '#f3f4f6';
+          return `<!-- Sidebar — color:${color}, showLogo:${showLogo}, active:${activeItem}, expanded:${financialExpanded} -->
+<aside style="width:256px;height:100vh;background:${bg};border-right:1px solid #e5e7eb;
               display:flex;flex-direction:column;padding:16px 0;box-sizing:border-box;">
   ${showLogo ? `<!-- Logo area -->\n  <div style="padding:0 16px 16px;"><!-- Iris mark + wordmark --></div>` : ''}
   <nav>
@@ -397,9 +423,9 @@ export const Interactive = {
       },
     },
   },
-  render: ({ showLogo, activeItem, financialExpanded }) => `
+  render: ({ showLogo, activeItem, financialExpanded, color }) => `
     <div style="height:100vh;display:flex;">
-      ${sidebar({ showLogo, activeItem, financialExpanded })}
+      ${sidebar({ showLogo, activeItem, financialExpanded, color })}
     </div>
   `,
 };
@@ -513,6 +539,129 @@ export const Collapsed = {
 /**
  * Sidebar without the logo area — used when logo is rendered in a top bar instead.
  */
+/* ─────────────────────────────────────────────
+   MENU ITEM STATES — all 8 from node 9263:160845
+───────────────────────────────────────────── */
+export const MenuItemStates = {
+  name: 'Menu item states — all variants',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+All 8 menu item states from Figma component set \`9263:160845\`.
+
+| Type | Selected | Expanded | bg | text | icon | chevron |
+|---|---|---|---|---|---|---|
+| Primary | ✅ | — | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | — |
+| Primary | ❌ | — | transparent | \`#111928\` | \`#6b7280\` | — |
+| Expandable | ✅ | ❌ | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | down · \`#1f2a37\` |
+| Expandable | ❌ | ❌ | transparent | \`#111928\` | \`#6b7280\` | down · \`#1f2a37\` |
+| Expandable | ✅ | ✅ | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | up · \`#1f2a37\` |
+| Expandable | ❌ | ✅ | transparent | \`#111928\` | \`#6b7280\` | up · \`#1f2a37\` |
+| Secondary | ✅ | — | \`#e5e7eb\` | \`#42389d\` | — | — |
+| Secondary | ❌ | — | transparent | \`#111928\` | — | — |
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Primary — Selected (active) -->
+<div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
+            border-radius:8px;background:#e5e7eb;width:220px;box-sizing:border-box;">
+  <span style="color:#42389d;"><!-- icon 24×24 --></span>
+  <span style="font:500 16px/1.5 Inter,sans-serif;color:#42389d;">Label</span>
+</div>
+
+<!-- Primary — Default -->
+<div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
+            border-radius:8px;width:220px;box-sizing:border-box;">
+  <span style="color:#6b7280;"><!-- icon 24×24 --></span>
+  <span style="font:500 16px/1.5 Inter,sans-serif;color:#111928;">Label</span>
+</div>
+
+<!-- Expandable — Selected, Collapsed -->
+<div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
+            border-radius:8px;background:#e5e7eb;width:220px;box-sizing:border-box;">
+  <div style="display:flex;flex:1;gap:4px;align-items:center;">
+    <span style="color:#42389d;"><!-- icon 24×24 --></span>
+    <span style="font:500 16px/1.5 Inter,sans-serif;color:#42389d;">Label</span>
+  </div>
+  <span style="color:#1f2a37;"><!-- chevron-down --></span>
+</div>
+
+<!-- Secondary — Selected (sub-item, 28px indent) -->
+<div style="padding-left:28px;">
+  <div style="display:flex;align-items:center;height:40px;padding:6px 8px;
+              border-radius:8px;background:#e5e7eb;width:192px;box-sizing:border-box;">
+    <span style="font:500 16px/1.5 Inter,sans-serif;color:#42389d;">Sub-item</span>
+  </div>
+</div>`,
+      },
+    },
+  },
+  render: () => {
+    const labeledItem = (label, html) => `
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div style="font:10px/1 600 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;">${label}</div>
+        <div style="background:#f9fafb;padding:8px;border-radius:8px;">${html}</div>
+      </div>`;
+
+    return `
+      <div style="padding:24px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:600px;">
+        ${labeledItem('Primary — Selected', menuItem({ icon: icons.viewGrid, label: 'Overview', active: true }))}
+        ${labeledItem('Primary — Default', menuItem({ icon: icons.viewGrid, label: 'Overview', active: false }))}
+        ${labeledItem('Expandable — Selected, Collapsed', menuItem({ icon: icons.currencyDollar, label: 'Financial model', active: true, expandable: true, expanded: false }))}
+        ${labeledItem('Expandable — Default, Collapsed', menuItem({ icon: icons.currencyDollar, label: 'Financial model', active: false, expandable: true, expanded: false }))}
+        ${labeledItem('Expandable — Selected, Expanded', menuItem({ icon: icons.currencyDollar, label: 'Financial model', active: true, expandable: true, expanded: true }))}
+        ${labeledItem('Expandable — Default, Expanded', menuItem({ icon: icons.currencyDollar, label: 'Financial model', active: false, expandable: true, expanded: true }))}
+        ${labeledItem('Secondary — Selected', subItem({ label: 'Income Statement', active: true }))}
+        ${labeledItem('Secondary — Default', subItem({ label: 'Income Statement', active: false }))}
+      </div>`;
+  },
+};
+
+/* ─────────────────────────────────────────────
+   COLOR VARIANTS — White vs Gray (light theme)
+───────────────────────────────────────────── */
+export const ColorVariants = {
+  name: 'Color variants — White vs Gray',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Both light-mode color variants side-by-side from Figma component set \`1057:2041\`.
+
+- **Color=Gray** (\`#f3f4f6\`) — default; use on white page backgrounds
+- **Color=White** (\`#ffffff\`) — use when the sidebar sits on an already-light or gray page background
+
+Both use identical menu item tokens and the same \`#e5e7eb\` right border.
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Color=Gray (default) -->
+<aside style="width:256px;background:#f3f4f6;border-right:1px solid #e5e7eb;">...</aside>
+
+<!-- Color=White -->
+<aside style="width:256px;background:#ffffff;border-right:1px solid #e5e7eb;">...</aside>`,
+      },
+    },
+  },
+  render: () => `
+    <div style="height:100vh;display:flex;gap:0;">
+      <div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:#6b7280;background:#f9fafb;border-bottom:1px solid #e5e7eb;">Color=Gray · #f3f4f6</div>
+        ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'gray' })}
+      </div>
+      <div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:#6b7280;background:#f9fafb;border-bottom:1px solid #e5e7eb;">Color=White · #ffffff</div>
+        ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'white' })}
+      </div>
+    </div>
+  `,
+};
+
 /* ─────────────────────────────────────────────
    CONTRACTED — icon-only 60px variant
 ───────────────────────────────────────────── */
