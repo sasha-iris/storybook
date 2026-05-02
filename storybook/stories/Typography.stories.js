@@ -3,6 +3,10 @@
  * Source: Figma › ◐ Primitives · "Light" frames
  * File key: ZKtEULdYKaXe5uQl1J6ijI
  *
+ * Figma node IDs:
+ *   [T] sizes   11484:2542
+ *   [T] weight  11484:2573 · 11484:2593
+ *
  * Named styles confirmed from Figma:
  *   H1/30px - 700 · H1/30px - 400
  *   H2/24px - 400 · H3/20px - 400 · H4/18px - 400
@@ -12,6 +16,8 @@
  * CSS tokens defined in styles.css :root:
  *   --text-h1 · --text-h2 · --text-h3 · --text-h4
  *   --text-body-1 · --text-body-2 · --text-caption
+ *   --font-light · --font-normal · --font-medium · --font-semibold · --font-bold · --font-extrabold
+ *   --leading-base · --font-family-base
  */
 
 export default {
@@ -23,11 +29,30 @@ export default {
     docs: {
       description: {
         component: `
-**Typography primitives** from the Figma Primitive page (◐ Primitives).
+**Typography tokens** define the complete type system for the Iris Library.
+All tokens are CSS custom properties in \`:root\` inside \`styles.css\`, applied via \`var(--token)\`.
 
-All size tokens (\`--text-h1\` through \`--text-caption\`) are defined in \`styles.css\`.
-The type scale maps directly to the named Figma styles: \`H1/30px - 700\`, \`Body 1/16px - 400\`, etc.
-Font family is **Inter** at line-height **1.5** for all sizes.
+**Token groups**
+- \`--text-h1\` → \`--text-caption\` — Figma named scale (preferred for new work)
+- \`--text-xs\` → \`--text-5xl\` — generic Tailwind-style scale (legacy, backward-compat)
+- \`--font-light\` → \`--font-extrabold\` — font-weight tokens
+- \`--leading-base\` — line-height (1.5 for all sizes)
+- \`--font-family-base\` — Inter, ui-sans-serif, system-ui
+
+**When to use**
+- Use the Figma named scale (\`--text-h1\` → \`--text-caption\`) for all new components and pages
+- Use \`--font-bold\` (700) for headings that need emphasis; use \`--font-normal\` (400) for body text
+- Use \`--text-caption\` for labels, helper text, and metadata below the main content hierarchy
+- Use \`--leading-base\` (1.5) as the default line-height to match the Figma spec
+
+**When NOT to use**
+- Do not hardcode \`font-size: 16px\` — use \`var(--text-body-1)\` so the scale stays overridable
+- Do not use the legacy generic scale (\`--text-xs\` etc.) in new components — use the named Figma scale
+- Do not mix font sizes from different scales in the same component hierarchy
+
+**Naming convention**
+Named scale: \`--text-{role}\` → \`--text-h1\`, \`--text-body-2\`, \`--text-caption\`
+Weight tokens: \`--font-{weight-name}\` → \`--font-bold\`, \`--font-semibold\`
         `.trim(),
       },
     },
@@ -72,9 +97,45 @@ const row = (sample, cssVar, px, weight, figmaStyle, isLast) => `
 export const TypeScale = {
   name: 'Type scale (H1 – Caption)',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Named typography scale from the Figma Primitive page. Tokens map to `--text-h1` through `--text-caption` in `styles.css`.',
+        story: `
+Named typography scale from the Figma Primitive page (node \`11484:2542\`).
+Tokens map to \`--text-h1\` through \`--text-caption\` in \`styles.css\`.
+
+**✅ Do** — use \`--text-body-1\` (16px) as the default body size; \`--text-body-2\` (14px) for secondary/supporting text.
+**✅ Do** — pair H1–H4 with \`--color-text-heading\` and body/caption with \`--color-text-body\` or \`--color-text-body-subtle\`.
+**❌ Don't** — skip heading levels (e.g. H1 → H4) — maintain a logical document hierarchy for screen readers.
+**❌ Don't** — use \`--text-caption\` (12px) for body content — it is only legible at normal reading distances as a label or hint.
+        `.trim(),
+      },
+      source: {
+        code: `<!-- Page heading -->
+<h1 style="font-size: var(--text-h1); font-weight: var(--font-bold); color: var(--color-text-heading); line-height: var(--leading-base);">
+  Dashboard overview
+</h1>
+
+<!-- Section heading -->
+<h2 style="font-size: var(--text-h2); font-weight: var(--font-normal); color: var(--color-text-heading);">
+  Monthly performance
+</h2>
+
+<!-- Body text -->
+<p style="font-size: var(--text-body-1); font-weight: var(--font-normal); color: var(--color-text-body);">
+  Showing results for the last 30 days. Export the report to share with your team.
+</p>
+
+<!-- Supporting / secondary text -->
+<p style="font-size: var(--text-body-2); color: var(--color-text-body-subtle);">
+  Last updated 3 minutes ago
+</p>
+
+<!-- Label / hint -->
+<span style="font-size: var(--text-caption); color: var(--color-text-fg-disabled);">
+  Required field
+</span>`,
+        language: 'html',
       },
     },
   },
@@ -102,9 +163,35 @@ export const TypeScale = {
 export const GenericScale = {
   name: 'Generic size scale (legacy)',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Tailwind-style size tokens (`--text-xs` through `--text-5xl`) defined in `styles.css`. Kept for backward compatibility — prefer the Figma named scale for new work.',
+        story: `
+Tailwind-style size tokens (\`--text-xs\` through \`--text-5xl\`) defined in \`styles.css\`.
+Kept for backward compatibility — do not use in new components.
+
+**✅ Do** — keep using these tokens in existing components that already reference them to avoid unintended size changes.
+**❌ Don't** — use this scale in new components or stories — use the Figma named scale (\`--text-h1\` → \`--text-caption\`) instead.
+
+Migration guide:
+| Legacy | Replace with |
+|---|---|
+| \`--text-3xl\` (30px) | \`--text-h1\` |
+| \`--text-2xl\` (24px) | \`--text-h2\` |
+| \`--text-xl\`  (20px) | \`--text-h3\` |
+| \`--text-lg\`  (18px) | \`--text-h4\` |
+| \`--text-base\` (16px) | \`--text-body-1\` |
+| \`--text-sm\`  (14px) | \`--text-body-2\` |
+| \`--text-xs\`  (12px) | \`--text-caption\` |
+        `.trim(),
+      },
+      source: {
+        code: `/* Legacy usage — keep as-is in existing components */
+.card-title { font-size: var(--text-xl); }
+
+/* New components — use Figma named scale instead */
+.card-title { font-size: var(--text-h3); font-weight: var(--font-normal); }`,
+        language: 'css',
       },
     },
   },
@@ -136,13 +223,34 @@ export const GenericScale = {
     </div>`,
 };
 
-/** Font weights from the Figma [T] weight frame. */
 export const FontWeights = {
   name: 'Font weights',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
-        story: 'Available Inter font weights. Tokens `--font-light` through `--font-extrabold` are defined in `styles.css`.',
+        story: `
+Available Inter font weights from the Figma \`[T] weight\` frame (nodes \`11484:2573\`, \`11484:2593\`).
+Tokens \`--font-light\` through \`--font-extrabold\` are defined in \`styles.css\`.
+
+**✅ Do** — use \`--font-bold\` (700) for H1 headings and primary CTAs; \`--font-semibold\` (600) for H2–H4 and table headers.
+**✅ Do** — use \`--font-normal\` (400) as the default for all body text and labels.
+**❌ Don't** — use \`--font-extrabold\` (800) outside of display/hero contexts — it overwhelms body text hierarchies.
+**❌ Don't** — use \`--font-light\` (300) for small text (below 16px) — low weight at small sizes fails WCAG contrast on most backgrounds.
+        `.trim(),
+      },
+      source: {
+        code: `/* Heading weights */
+h1 { font-weight: var(--font-bold); }      /* 700 */
+h2 { font-weight: var(--font-semibold); }  /* 600 */
+h3 { font-weight: var(--font-medium); }    /* 500 */
+
+/* Body */
+p  { font-weight: var(--font-normal); }    /* 400 */
+
+/* Emphasis within body */
+strong { font-weight: var(--font-semibold); }`,
+        language: 'css',
       },
     },
   },
