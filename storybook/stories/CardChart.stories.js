@@ -436,7 +436,45 @@ export const Interactive = {
 export const LinechartUp = {
   name: 'Linechart — Upwards (602:20753)',
   parameters: {
-    docs: { description: { story: 'Smooth line chart trending upward. Trend badge: **#5850EC** (brand purple). Area fill: 12% opacity.' } },
+    docs: {
+      description: { story: 'Smooth line chart trending upward. Trend badge: **#5850EC** (brand purple). Area fill: 12% opacity.' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — Linechart (286×168px) -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
+            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
+
+  <!-- Header row: label + trend + icon pill -->
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <!-- Trend badge (up: #5850EC, down: #E74694) -->
+    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+      <!-- trend-up arrow SVG here -->
+      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+    </div>
+    <!-- Grey pill icon -->
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;">
+      <!-- currency-dollar SVG here -->
+    </div>
+  </div>
+
+  <!-- Line chart SVG — flush to card bottom, absolute positioned -->
+  <div style="position:absolute;bottom:0;left:0;right:0;">
+    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
+      <!-- area fill at 12% opacity (color #5850EC for up, #E74694 for down) -->
+      <path d="M0,60 C30,55 55,64 85,48 …286,3 L286,70 L0,70 Z" fill="#5850EC" opacity="0.12"/>
+      <!-- stroke line -->
+      <path d="M0,60 C30,55 55,64 85,48 …286,3" fill="none" stroke="#5850EC" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => `<div style="display:flex;gap:16px;flex-wrap:wrap;">${cardLinechart('up')}${cardLinechart('down')}</div>`,
 };
@@ -444,7 +482,36 @@ export const LinechartUp = {
 export const LinechartDown = {
   name: 'Linechart — Downwards (602:20589)',
   parameters: {
-    docs: { description: { story: 'Smooth line chart trending downward. Trend badge: **#E74694** (pink).' } },
+    docs: {
+      description: { story: 'Smooth line chart trending downward. Trend badge: **#E74694** (pink).' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — Linechart Downwards: same structure as Linechart Upwards.
+     Change trend color to #E74694 (pink) and invert the SVG path direction. -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
+            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+      <!-- trend-down arrow SVG -->
+      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#E74694;">−8.3%</span>
+    </div>
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+  </div>
+  <div style="position:absolute;bottom:0;left:0;right:0;">
+    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
+      <path d="M0,3 C28,8 50,2 80,18 …286,65 L286,70 L0,70 Z" fill="#E74694" opacity="0.12"/>
+      <path d="M0,3 C28,8 50,2 80,18 …286,65" fill="none" stroke="#E74694" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => cardLinechart('down'),
 };
@@ -454,7 +521,35 @@ export const LinechartDown = {
 export const LinechartVertUp = {
   name: 'Linechart-vert — Upwards (602:22376)',
   parameters: {
-    docs: { description: { story: 'Line chart with "Compared to day prior" label. Up + down variants side by side.' } },
+    docs: {
+      description: { story: 'Line chart with "Compared to day prior" label. Up + down variants side by side.' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — Linechart-vert (286×168px)
+     Difference from Linechart: trend badge moves below the value, "Compared to day prior" label added. -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
+            gap:4px;position:relative;overflow:hidden;box-sizing:border-box;">
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+  </div>
+  <!-- "Compared to day prior" row with trend -->
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6B7280;">Compared to day prior</span>
+    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+      <!-- trend arrow SVG -->
+      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+    </div>
+  </div>
+  <!-- Line chart SVG (same as Linechart, see LinechartUp story) -->
+  <div style="position:absolute;bottom:0;left:0;right:0;"><!-- SVG chart --></div>
+</div>`,
+      },
+    },
   },
   render: () => `<div style="display:flex;gap:16px;flex-wrap:wrap;">${cardLinechartVert('up')}${cardLinechartVert('down')}</div>`,
 };
@@ -464,7 +559,39 @@ export const LinechartVertUp = {
 export const BarchartUp = {
   name: 'barchart — Upwards (602:20796)',
   parameters: {
-    docs: { description: { story: '14 bars × 3px. Bar color: **#6875F5** (brand/500), bar at index 6 lighter: **#B4C6FC** (brand/300). Trend in header row.' } },
+    docs: {
+      description: { story: '14 bars × 3px. Bar color: **#6875F5** (brand/500), bar at index 6 lighter: **#B4C6FC** (brand/300). Trend in header row.' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — barchart (286×200px)
+     Layout: header (label + trend + value) at top, bar chart at bottom.
+     14 bars × 3px wide, border-radius 32px, aligned to flex-end (bottom).
+     Bar color: up=#6875F5, down=#E74694. Index-6 bar is lighter: up=#B4C6FC, down=#F8B4D9. -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
+            gap:40px;box-sizing:border-box;">
+  <!-- Header -->
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+      <!-- Trend badge -->
+      <div style="display:flex;align-items:center;gap:2px;">
+        <!-- trend-up arrow SVG -->
+        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+      </div>
+      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+  </div>
+  <!-- Bar chart: 14 bars, flex-end aligned, container 56px tall -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">
+    <div style="width:3px;height:15px;background:#6875F5;border-radius:32px;"></div>
+    <!-- … 13 more bars with heights from Figma … -->
+    <!-- Index 6: width:3px; background:#B4C6FC (lighter shade) -->
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => `<div style="display:flex;gap:16px;flex-wrap:wrap;">${cardBarchart('up')}${cardBarchart('down')}</div>`,
 };
@@ -474,7 +601,38 @@ export const BarchartUp = {
 export const BarchartVert = {
   name: 'barchart-vert — Upwards (602:23611)',
   parameters: {
-    docs: { description: { story: 'Same 14-bar layout with "Compared to day prior" label above the chart.' } },
+    docs: {
+      description: { story: 'Same 14-bar layout with "Compared to day prior" label above the chart.' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — barchart-vert (286×200px)
+     Same as barchart but "Compared to day prior" label sits between the value and the bars. -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
+            gap:24px;box-sizing:border-box;">
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+      <div style="flex:1;min-width:0;">
+        <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+        <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      </div>
+      <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6B7280;">Compared to day prior</span>
+      <div style="display:flex;align-items:center;gap:2px;">
+        <!-- trend-up arrow SVG -->
+        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+      </div>
+    </div>
+  </div>
+  <!-- Bar chart (same as barchart, see BarchartUp story) -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">
+    <!-- 14 bars × 3px, heights from Figma -->
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => cardBarchartVert('up'),
 };
@@ -484,7 +642,38 @@ export const BarchartVert = {
 export const BarchartBig = {
   name: 'barchart-big — Upwards (602:24711)',
   parameters: {
-    docs: { description: { story: 'barchart with 4 bars at full container height instead of 2 (indexes 4, 9, 12, 13 = full).' } },
+    docs: {
+      description: { story: 'barchart with 4 bars at full container height instead of 2 (indexes 4, 9, 12, 13 = full).' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — barchart-big (286×200px)
+     Same structure as barchart, but bars at indexes 4, 9, 12, and 13 reach full height (56px).
+     All other bar heights differ from standard barchart. -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
+            gap:40px;box-sizing:border-box;">
+  <!-- Header: label + trend + value -->
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+      <div style="display:flex;align-items:center;gap:2px;">
+        <!-- trend-up arrow SVG -->
+        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+      </div>
+      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+  </div>
+  <!-- Bar chart: 14 bars × 3px, indexes 4/9/12/13 at 56px (100%) -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">
+    <div style="width:3px;height:15px;background:#6875F5;border-radius:32px;"></div>
+    <!-- … 11 more bars — index 6: background:#B4C6FC (lighter shade) … -->
+    <div style="width:3px;height:56px;background:#6875F5;border-radius:32px;"></div><!-- index 12 -->
+    <div style="width:3px;height:56px;background:#6875F5;border-radius:32px;"></div><!-- index 13 -->
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => cardBarchartBig('up'),
 };
@@ -494,7 +683,45 @@ export const BarchartBig = {
 export const BarchartSegmHor = {
   name: 'barchart-segm-hor — Upwards (602:25133)',
   parameters: {
-    docs: { description: { story: 'Wide horizontal card (449×104px). Left: 12 segmented columns with 5 color categories. Right: trend + subtitle.' } },
+    docs: {
+      description: { story: 'Wide horizontal card (449×104px). Left: 12 segmented columns with 5 color categories. Right: trend + subtitle.' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — barchart-segm-hor (449×104px)
+     Layout: flex-row. Left: label + 12 segmented columns. Right: trend badge + "Compared to day prior".
+     5 segment colors: gray #F2F4F7, green #22C55E, pink #EC4899, sky #33BFFF, blue #1D4ED8.
+     Column width: 6px. Gap between columns: 10px. Container height: 50px. -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:449px;height:104px;padding:32px 32px 16px;
+            display:flex;flex-direction:row;gap:16px;align-items:flex-end;box-sizing:border-box;">
+
+  <!-- Left: label + segmented columns -->
+  <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:0;justify-content:flex-end;">
+    <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+    <!-- Segmented chart: 12 columns × 6px wide, aligned to bottom -->
+    <div style="display:flex;align-items:flex-end;gap:10px;height:50px;flex-shrink:0;">
+      <!-- Each column: stacked color segments (height in px from data) -->
+      <div style="display:flex;flex-direction:column;width:6px;overflow:hidden;flex-shrink:0;">
+        <div style="width:6px;height:16px;background:#F2F4F7;flex-shrink:0;"></div>
+        <div style="width:6px;height:3px;background:#22C55E;flex-shrink:0;"></div>
+        <!-- … repeat for all 12 columns … -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: trend badge + subtitle + icon pill -->
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:2px;">
+      <!-- trend-up arrow SVG -->
+      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+    </div>
+    <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6B7280;text-align:right;">Compared to day prior</span>
+  </div>
+  <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+
+</div>`,
+      },
+    },
   },
   render: () => cardBarchartSegmHor(),
 };
@@ -504,7 +731,47 @@ export const BarchartSegmHor = {
 export const CreditUp = {
   name: 'Credit — Upwards (602:23265)',
   parameters: {
-    docs: { description: { story: 'Credit-style variant with a distinct wave curve shape (different from standard Linechart).' } },
+    docs: {
+      description: { story: 'Credit-style variant with a distinct wave curve shape (different from standard Linechart).' },
+      source: {
+        language: 'html',
+        code: `<!-- Card KPI — Credit (286×168px)
+     Same shell and header as Linechart. Different SVG path — smoother, credit-card-style wave.
+     Trend color: #5850EC (brand/600). No "Compared to day prior" row (same as standard Linechart). -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
+            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
+
+  <!-- Header row: label + value + trend + icon pill -->
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
+      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+      <!-- trend-up arrow SVG -->
+      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+    </div>
+    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+  </div>
+
+  <!-- Credit-style wave chart — flush to card bottom, absolutely positioned
+       Path differs from standard linechart: smoother, shallower curve with plateau in the middle -->
+  <div style="position:absolute;bottom:0;left:0;right:0;">
+    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70"
+         preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- area fill at 12% opacity -->
+      <path d="M0,40 C40,42 60,28 100,32 C140,36 155,20 190,24 C220,28 240,18 286,8
+               L286,70 L0,70 Z" fill="#5850EC" opacity="0.12"/>
+      <!-- stroke line -->
+      <path d="M0,40 C40,42 60,28 100,32 C140,36 155,20 190,24 C220,28 240,18 286,8"
+            fill="none" stroke="#5850EC" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => cardCredit(),
 };

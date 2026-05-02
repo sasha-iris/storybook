@@ -300,6 +300,51 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
 | Amazon icon bg | #fef9c2 (yellow/100)     |
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Card Reporting — Default (active, Iris owner) -->
+<div class="card-reporting">
+  <!-- ① Heading row: title + toggle -->
+  <div style="display:flex;gap:12px;align-items:flex-start;">
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <p style="font-size:18px;font-weight:600;color:#111928;margin:0;">Daily Report</p>
+        <!-- Toggle ON: class rpt-toggle rpt-toggle--on -->
+        <span class="rpt-toggle rpt-toggle--on" aria-label="Report enabled">
+          <span class="rpt-toggle__pill"></span>
+        </span>
+      </div>
+      <!-- Channel chips (active: colored) -->
+      <div style="display:flex;gap:4px;">
+        <span class="rpt-chip rpt-chip--email"><!-- mail icon -->E-mail</span>
+        <span class="rpt-chip rpt-chip--slack"><!-- slack icon -->Slack</span>
+      </div>
+    </div>
+  </div>
+  <!-- ② Schedule + recipients -->
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <p style="font-size:14px;color:#111928;margin:0;">Every day at 7am (PST)</p>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+      <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">namesur@gmail.com</span>
+      <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">name@gmail.com</span>
+      <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">+5</span>
+    </div>
+  </div>
+  <!-- ③ Footer: sales channels + owner -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;">
+    <!-- Shopify + Amazon icons -->
+    <div style="display:flex;gap:8px;"><!-- shopify badge --><!-- amazon badge (active: yellow) --></div>
+    <!-- Owner: Iris Finance -->
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+      <span style="font-size:12px;font-weight:500;color:#6b7280;">Owned by</span>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <!-- Iris Finance logo mark (xs) -->
+        <span style="font-size:14px;font-weight:600;color:#111928;">Iris Finance</span>
+      </div>
+    </div>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => reportingCard({ active: true, owner: 'iris', hovered: false }),
@@ -324,6 +369,37 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
 | Title color  | #111928       | #42389d        |
 | Arrow icon   | hidden        | visible        |
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Card Reporting — Hovered: add modifier class card-reporting--hovered -->
+<div class="card-reporting card-reporting--hovered">
+  <div style="display:flex;gap:12px;align-items:flex-start;">
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <!-- Title: color #42389d on hover (brand/800) -->
+          <p style="font-size:18px;font-weight:600;color:#42389d;margin:0;">Daily Report</p>
+          <!-- Arrow-right icon: only visible on hover -->
+          <span style="color:#42389d;display:inline-flex;"><!-- arrow-right SVG --></span>
+        </div>
+        <span class="rpt-toggle rpt-toggle--on" aria-label="Report enabled">
+          <span class="rpt-toggle__pill"></span>
+        </span>
+      </div>
+      <div style="display:flex;gap:4px;">
+        <span class="rpt-chip rpt-chip--email"><!-- mail -->E-mail</span>
+        <span class="rpt-chip rpt-chip--slack"><!-- slack -->Slack</span>
+      </div>
+    </div>
+  </div>
+  <!-- ② + ③ same as Default state -->
+</div>
+<!-- CSS for hovered modifier:
+.card-reporting--hovered {
+  border: 1px solid #6875f5;
+  box-shadow: var(--shadow-md);
+} -->`,
       },
     },
   },
@@ -353,6 +429,37 @@ Inactive state (active=no): report is paused.
 | Schedule text     | Time + frequency       | Paused message              |
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Card Reporting — Inactive (paused): add modifier class card-reporting--inactive -->
+<div class="card-reporting card-reporting--inactive">
+  <div style="display:flex;gap:12px;align-items:flex-start;">
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <p style="font-size:18px;font-weight:600;color:#111928;margin:0;">Daily Report</p>
+        <!-- Toggle OFF: rpt-toggle--off; pill color #d1d5db (gray/300) -->
+        <span class="rpt-toggle rpt-toggle--off" aria-label="Report disabled">
+          <span class="rpt-toggle__pill"></span>
+        </span>
+      </div>
+      <!-- Chips: muted (gray/100 bg + gray text when inactive) -->
+      <div style="display:flex;gap:4px;">
+        <span class="rpt-chip rpt-chip--muted"><!-- mail -->E-mail</span>
+        <span class="rpt-chip rpt-chip--muted"><!-- slack -->Slack</span>
+      </div>
+    </div>
+  </div>
+  <!-- Schedule text changes to paused message; text color #4b5563 (gray/600) -->
+  <p style="font-size:14px;color:#4b5563;margin:0;">
+    Right now the report is paused. We'll send it to you at 7am tomorrow morning when you turn it on
+  </p>
+  <!-- ③ Footer: Amazon bg changes to #e5e7eb (gray/200) when inactive -->
+</div>
+<!-- CSS for inactive modifier:
+.card-reporting--inactive {
+  background: #f9fafb;
+} -->`,
+      },
     },
   },
   render: () => reportingCard({ active: false, owner: 'iris', hovered: false }),
@@ -377,6 +484,23 @@ instead of the Iris Finance logo mark.
 | Name    | "Iris Finance"        | "Jese Leos"            |
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Card Reporting — User owner: only the owner section changes -->
+<!-- Replace the Iris Finance logo section with: -->
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+  <span style="font-size:12px;font-weight:500;color:#6b7280;">Owned by</span>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <!-- Round avatar: initials circle, 20×20px, border 1px #e5e7eb -->
+    <span aria-label="Jese Leos avatar"
+          style="display:inline-flex;align-items:center;justify-content:center;
+                 width:20px;height:20px;border-radius:100px;border:1px solid #e5e7eb;
+                 background:#f3f4f6;font-size:8px;font-weight:600;color:#374151;
+                 flex-shrink:0;">JL</span>
+    <span style="font-size:14px;font-weight:600;color:#111928;white-space:nowrap;">Jese Leos</span>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => reportingCard({ active: true, owner: 'user', hovered: false }),
@@ -396,6 +520,17 @@ export const AllVariants = {
 All 4 Figma light-mode variants in a 2×2 grid.
 Use this story for design review — verify each container's bg, border, toggle, and owner section.
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Card Reporting — All 4 variants in a 2×2 grid -->
+<div style="display:grid;grid-template-columns:repeat(2,362px);gap:24px;">
+  <div class="card-reporting"><!-- Default: active, Iris owner --></div>
+  <div class="card-reporting card-reporting--hovered"><!-- Hovered: brand border #6875f5 --></div>
+  <div class="card-reporting card-reporting--inactive"><!-- Inactive: gray/50 bg, toggle off --></div>
+  <div class="card-reporting"><!-- User owner: avatar circle + "Jese Leos" --></div>
+</div>
+<!-- See individual state stories for full markup of each variant -->`,
       },
     },
   },

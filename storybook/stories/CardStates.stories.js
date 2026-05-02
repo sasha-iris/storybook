@@ -353,7 +353,40 @@ export const Loading = {
   name: 'Loading (skeleton)',
   parameters: {
     backgrounds: { default: 'white' },
-    docs: { description: { story: 'Skeleton placeholder state for content, KPI, and chart cards. Skeleton dimensions mirror the loaded content to minimise layout shift.' } },
+    docs: {
+      description: { story: 'Skeleton placeholder state for content, KPI, and chart cards. Skeleton dimensions mirror the loaded content to minimise layout shift.' },
+      source: {
+        language: 'html',
+        code: `<!-- Loading state: skeleton placeholders (content card example) -->
+<div class="card" style="width:300px;">
+  <!-- Image placeholder — same height as loaded image -->
+  <div style="height:160px;background:#E5E7EB;animation:skeleton-pulse 1.5s ease-in-out infinite;"></div>
+  <div class="card-body-padded">
+    <!-- Title skeleton: 2/3 width -->
+    <div class="skeleton-text skeleton-w-2-3" style="height:16px;margin-bottom:10px;"></div>
+    <!-- Body lines: full width -->
+    <div class="skeleton-text skeleton-w-full" style="height:12px;margin-bottom:6px;"></div>
+    <div class="skeleton-text skeleton-w-full" style="height:12px;margin-bottom:6px;"></div>
+    <!-- Shorter line -->
+    <div class="skeleton-text skeleton-w-1-2" style="height:12px;margin-bottom:16px;"></div>
+    <!-- Button skeleton -->
+    <div class="skeleton" style="height:32px;width:100px;border-radius:6px;"></div>
+  </div>
+</div>
+
+<!-- Loading state: KPI card -->
+<div class="card" style="width:240px;">
+  <div class="card-body-padded">
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+      <div class="skeleton-text skeleton-w-1-2" style="height:12px;"></div>
+      <div class="skeleton" style="width:36px;height:36px;border-radius:8px;"></div>
+    </div>
+    <div class="skeleton-text skeleton-w-2-3" style="height:28px;margin-bottom:8px;"></div>
+    <div class="skeleton-text skeleton-w-1-3" style="height:12px;"></div>
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => `
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
@@ -399,7 +432,42 @@ export const Empty = {
   name: 'Empty state',
   parameters: {
     backgrounds: { default: 'white' },
-    docs: { description: { story: 'Zero-data state for content, KPI, and chart cards. Icon is decorative (aria-hidden). CTA is optional — only shown when there is a direct action the user can take.' } },
+    docs: {
+      description: { story: 'Zero-data state for content, KPI, and chart cards. Icon is decorative (aria-hidden). CTA is optional — only shown when there is a direct action the user can take.' },
+      source: {
+        language: 'html',
+        code: `<!-- Empty state: content card (with CTA) -->
+<div class="card" style="width:300px;">
+  <div class="card-header">
+    <div class="card-header-title">Recent articles</div>
+  </div>
+  <div class="card-body-padded" style="text-align:center;padding:40px 20px;">
+    <!-- Decorative icon — aria-hidden -->
+    <div aria-hidden="true" style="margin-bottom:12px;display:flex;justify-content:center;
+         color:var(--color-text-fg-disabled);"><!-- inbox SVG here --></div>
+    <div style="font-size:var(--text-sm);font-weight:600;color:var(--color-text-heading);
+                margin-bottom:6px;">No articles yet</div>
+    <div style="font-size:var(--text-xs);color:var(--color-text-body-subtle);
+                line-height:1.6;margin-bottom:16px;">
+      Published articles will appear here.</div>
+    <!-- CTA: only when a direct action is available -->
+    <button class="btn btn-primary btn-sm">Write your first article</button>
+  </div>
+</div>
+
+<!-- Empty state: KPI card (no CTA) -->
+<div class="card" style="width:240px;">
+  <div class="card-body-padded" style="text-align:center;padding:32px 20px;">
+    <div aria-hidden="true" style="margin-bottom:8px;display:flex;justify-content:center;
+         color:var(--color-text-fg-disabled);"><!-- chart SVG here --></div>
+    <div style="font-size:var(--text-sm);font-weight:600;color:var(--color-text-heading);
+                margin-bottom:6px;">No data yet</div>
+    <div style="font-size:var(--text-xs);color:var(--color-text-body-subtle);line-height:1.6;">
+      Revenue will appear once your first transaction is recorded.</div>
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => `
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
@@ -445,7 +513,56 @@ export const Error = {
   name: 'Error state',
   parameters: {
     backgrounds: { default: 'white' },
-    docs: { description: { story: 'Fetch-failed state. Centred treatment for content/KPI cards; inline error banner for chart cards. Retry button must be keyboard-accessible.' } },
+    docs: {
+      description: { story: 'Fetch-failed state. Centred treatment for content/KPI cards; inline error banner for chart cards. Retry button must be keyboard-accessible.' },
+      source: {
+        language: 'html',
+        code: `<!-- Error state: centred treatment (content / KPI cards) -->
+<div class="card" style="width:300px;">
+  <div class="card-header">
+    <div class="card-header-title">Recent articles</div>
+  </div>
+  <div class="card-body-padded" style="text-align:center;padding:40px 20px;">
+    <!-- Icon circle: bg #FEE2E2 (red-100), icon color #991B1B -->
+    <div aria-hidden="true"
+         style="width:44px;height:44px;border-radius:50%;background:#FEE2E2;
+                display:flex;align-items:center;justify-content:center;
+                color:#991B1B;margin:0 auto 12px;"><!-- warning SVG here --></div>
+    <div style="font-size:var(--text-sm);font-weight:600;color:var(--color-text-heading);
+                margin-bottom:6px;">Failed to load</div>
+    <div style="font-size:var(--text-xs);color:var(--color-text-body-subtle);
+                line-height:1.6;margin-bottom:16px;">
+      Something went wrong. Please try again.</div>
+    <!-- Retry must be a <button>, keyboard-accessible -->
+    <button class="btn btn-alternative btn-sm">↻ Retry</button>
+  </div>
+</div>
+
+<!-- Error state: inline banner (chart cards) -->
+<div class="card" style="width:380px;">
+  <div class="card-body-padded">
+    <!-- normal KPI header stays visible -->
+    <div style="padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;
+                border-radius:var(--radius-md);display:flex;align-items:flex-start;gap:8px;">
+      <span style="color:#991B1B;font-size:14px;flex-shrink:0;margin-top:1px;">✕</span>
+      <div>
+        <div style="font-size:var(--text-xs);font-weight:600;color:#991B1B;margin-bottom:2px;">
+          Data unavailable</div>
+        <div style="font-size:10px;color:#991B1B;opacity:.8;line-height:1.5;margin-bottom:6px;">
+          Unable to fetch data. Error code: 503.</div>
+        <button class="btn btn-sm"
+                style="background:#FEE2E2;border-color:#FECACA;color:#991B1B;font-size:10px;">
+          ↻ Try again</button>
+      </div>
+    </div>
+  </div>
+  <div style="height:60px;background:#FEF2F2;border-top:1px solid #FECACA;
+              display:flex;align-items:center;justify-content:center;">
+    <span style="font-size:10px;color:#991B1B;opacity:.6;">Chart unavailable</span>
+  </div>
+</div>`,
+      },
+    },
   },
   render: () => `
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
@@ -509,7 +626,73 @@ export const AllStates = {
   name: 'All states — side by side',
   parameters: {
     backgrounds: { default: 'light' },
-    docs: { description: { story: 'Loading / Empty / Error in one view. Use for design review — verify consistent card heights and no content leaks between states.' } },
+    docs: {
+      description: { story: 'Loading / Empty / Error in one view. Use for design review — verify consistent card heights and no content leaks between states.' },
+      source: {
+        language: 'html',
+        code: `<!-- All states side by side — 3-column grid -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:780px;">
+
+  <!-- Loading column -->
+  <div>
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+              color:var(--color-text-fg-disabled);margin-bottom:8px;">Loading</p>
+    <div class="card">
+      <div class="card-header">
+        <div class="skeleton-text skeleton-w-1-2" style="height:14px;"></div>
+      </div>
+      <div class="card-body-padded" style="padding-top:0;">
+        <div class="skeleton-text skeleton-w-1-3" style="height:28px;margin-bottom:8px;"></div>
+        <div class="skeleton-text skeleton-w-1-2" style="height:12px;margin-bottom:12px;"></div>
+        <div class="skeleton" style="height:60px;border-radius:6px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty column -->
+  <div>
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+              color:var(--color-text-fg-disabled);margin-bottom:8px;">Empty</p>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-title">Metric</div>
+      </div>
+      <div class="card-body-padded" style="text-align:center;padding:24px 16px;">
+        <div aria-hidden="true"
+             style="margin-bottom:8px;display:flex;justify-content:center;
+                    color:var(--color-text-fg-disabled);"><!-- inbox SVG --></div>
+        <div style="font-size:var(--text-xs);font-weight:600;color:var(--color-text-heading);
+                    margin-bottom:4px;">No data yet</div>
+        <div style="font-size:10px;color:var(--color-text-body-subtle);">
+          Data will appear here soon.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error column -->
+  <div>
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+              color:var(--color-text-fg-disabled);margin-bottom:8px;">Error</p>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-title">Metric</div>
+      </div>
+      <div class="card-body-padded" style="text-align:center;padding:24px 16px;">
+        <div aria-hidden="true"
+             style="margin-bottom:8px;display:flex;justify-content:center;
+                    color:var(--color-text-fg-danger);"><!-- x-circle SVG --></div>
+        <div style="font-size:var(--text-xs);font-weight:600;color:var(--color-text-heading);
+                    margin-bottom:4px;">Load failed</div>
+        <div style="font-size:10px;color:var(--color-text-body-subtle);margin-bottom:10px;">
+          Something went wrong.</div>
+        <button class="btn btn-alternative btn-xs">↻ Retry</button>
+      </div>
+    </div>
+  </div>
+
+</div>`,
+      },
+    },
   },
   render: () => `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:780px;">

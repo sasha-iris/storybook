@@ -396,6 +396,37 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
 **Approximations:** Stars use inline SVG (Figma uses a raster star asset). Star color: \`#FFDF20\` (old-colors/yellow/300).
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- E-commerce card (384px, shadow-md) -->
+<div style="width:384px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
+  <!-- Product image -->
+  <div style="display:flex;justify-content:center;align-items:center;padding:24px 16px;">
+    <img src="…" alt="Product name" style="width:275px;height:174px;object-fit:cover;">
+  </div>
+  <!-- Content -->
+  <div style="display:flex;flex-direction:column;gap:20px;padding:0 20px 20px;">
+    <!-- Title + stars -->
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <p style="font-size:20px;font-weight:600;color:#111928;margin:0;">Apple Watch Series 7 GPS</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- 5× yellow star SVGs (#FFDF20) -->
+        <span style="background:#155dfc;color:#fff;font-size:12px;font-weight:600;
+                     padding:2px 4px;border-radius:4px;">5.0</span>
+      </div>
+    </div>
+    <!-- Price + CTA -->
+    <div style="display:flex;align-items:center;gap:10px;">
+      <p style="flex:1;font-size:30px;font-weight:800;color:#111928;margin:0;">$599</p>
+      <button style="background:#42389d;color:#fff;font-size:14px;font-weight:500;
+                     padding:8px 12px;height:36px;border-radius:12px;border:none;cursor:pointer;">
+        Add to cart
+      </button>
+    </div>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => `
@@ -459,6 +490,34 @@ export const CardWithList = {
 Customer list card. Header with "View all" link, then 6 rows: avatar + name/email + amount.
 **Node:** 13561:77786 | Width: 384px | Shadow: shadow-sm (no border in Figma)
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Card with List (384px, shadow-sm, no border) -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 2px 0 rgba(0,0,0,.08);
+            width:384px;padding:32px;display:flex;flex-direction:column;gap:16px;">
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <p style="font-size:18px;font-weight:800;color:#111928;margin:0;">Latest Customers</p>
+    <a href="#" style="font-size:16px;font-weight:500;color:#155dfc;text-decoration:none;">View all</a>
+  </div>
+  <!-- Customer rows -->
+  <div style="display:flex;flex-direction:column;">
+    <!-- Row: repeat for each customer, add 1px #e5e7eb divider between rows -->
+    <div style="display:flex;align-items:center;padding:16px 0;">
+      <div style="display:flex;flex:1;align-items:center;gap:8px;min-width:0;">
+        <img src="…" alt="Neil Sims"
+             style="width:32px;height:32px;border-radius:100px;object-fit:cover;flex-shrink:0;">
+        <div style="display:flex;flex-direction:column;min-width:0;">
+          <span style="font-size:16px;font-weight:600;color:#111928;">Neil Sims</span>
+          <span style="font-size:12px;color:#6b7280;">email@example.com</span>
+        </div>
+      </div>
+      <span style="font-size:16px;font-weight:600;color:#111928;white-space:nowrap;">$367</span>
+    </div>
+    <!-- … repeat for 5 more customers … -->
+  </div>
+</div>`,
       },
     },
   },
@@ -533,6 +592,42 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
 **Approximations:** Check-circle icons are inline SVG (Figma uses raster vectors at \`inset:10%\`).
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Pricing card (384px, shadow-md) -->
+<div style="width:384px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
+            padding:32px;overflow:hidden;">
+  <div style="display:flex;flex-direction:column;gap:28px;align-items:center;">
+    <!-- Plan + price -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <p style="font-size:20px;font-weight:500;color:#6b7280;margin:0;">Standard plan</p>
+      <div style="display:flex;align-items:flex-end;gap:10px;">
+        <span style="font-size:48px;font-weight:800;color:#111928;line-height:48px;">$49</span>
+        <span style="font-size:18px;font-weight:500;color:#6b7280;margin-bottom:2px;">/month</span>
+      </div>
+    </div>
+    <!-- Feature list: enabled (blue check) + disabled (gray check + line-through) -->
+    <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
+      <!-- Enabled item -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- check-circle SVG fill:#155dfc -->
+        <span style="font-size:16px;color:#6b7280;">2 team members</span>
+      </div>
+      <!-- Disabled item -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- check-circle SVG fill:#9ca3af -->
+        <span style="font-size:16px;color:#6b7280;text-decoration:line-through;">Sketch Files</span>
+      </div>
+    </div>
+    <!-- CTA -->
+    <button style="width:100%;background:#42389d;color:#fff;font-size:14px;font-weight:500;
+                   padding:10px 20px;border-radius:12px;border:none;cursor:pointer;">
+      Choose plan
+    </button>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => {
@@ -602,6 +697,39 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
 
 **Approximations:** App-store button icons use SimpleIcons CDN (stable, no TTL).
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- CTA card (790px, shadow-md) -->
+<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
+            padding:32px;overflow:hidden;">
+  <div style="display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center;">
+    <!-- Heading + body -->
+    <p style="font-size:30px;font-weight:700;color:#111928;margin:0;">Work fast from anywhere</p>
+    <p style="font-size:18px;color:#6b7280;line-height:1.5;margin:0;">
+      Stay up to date and move work forward with Flowbite on iOS &amp; Android.</p>
+    <!-- App-store buttons: bg #111928, rounded-8px -->
+    <div style="display:flex;gap:16px;">
+      <div style="display:flex;align-items:center;gap:10px;background:#111928;
+                  padding:12px 16px;border-radius:8px;cursor:pointer;">
+        <img src="…google-play-icon…" alt="Google Play" style="width:38px;height:38px;object-fit:contain;">
+        <div style="display:flex;flex-direction:column;text-align:left;color:#fff;">
+          <span style="font-size:12px;font-weight:400;">Download on the</span>
+          <span style="font-size:18px;font-weight:700;">Google Play</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:#111928;
+                  padding:12px 16px;border-radius:8px;cursor:pointer;">
+        <img src="…apple-logo…" alt="App Store" style="width:38px;height:38px;object-fit:contain;">
+        <div style="display:flex;flex-direction:column;text-align:left;color:#fff;">
+          <span style="font-size:12px;font-weight:400;">Download on the</span>
+          <span style="font-size:18px;font-weight:700;">AppStore</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`,
       },
     },
   },
@@ -677,6 +805,34 @@ Card with simple tab navigation above the content body.
 Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Nav Tabs card (790px, shadow-md) -->
+<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
+  <!-- Tab row: bg #f9fafb, border-bottom 1px #e5e7eb -->
+  <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:16px;">
+    <div style="display:flex;gap:32px;">
+      <!-- Inactive tab: color #6b7280, medium 14px -->
+      <span style="font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;">About</span>
+      <!-- Active tab: color #155dfc (blue/600) -->
+      <span style="font-size:14px;font-weight:500;color:#155dfc;cursor:pointer;">Services</span>
+      <span style="font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;">Facts</span>
+    </div>
+  </div>
+  <!-- Body: padding 32px -->
+  <div style="padding:32px;">
+    <p style="font-size:30px;font-weight:800;color:#111928;margin:0 0 8px;">
+      Powering innovation at 200,000+ companies</p>
+    <p style="font-size:18px;color:#6b7280;line-height:1.5;margin:0 0 12px;">Body copy here.</p>
+    <!-- "Learn more" + chevron-right: color #155dfc -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#" style="font-size:16px;font-weight:500;color:#155dfc;text-decoration:none;">Learn more</a>
+      <!-- chevron-right SVG, stroke #155dfc -->
+    </div>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => `
@@ -736,6 +892,40 @@ Card with a segmented tab navigation (Statistics / Services / FAQ) and a 2×3 st
 Named "Type11" in Figma.
 **Node:** 13561:77668 | Width: 790px | Shadow: shadow-md
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Stats card (790px, shadow-md) -->
+<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
+  <!-- Segmented tab row: 3 equal columns with 1px #e5e7eb vertical dividers -->
+  <div style="display:flex;background:#f9fafb;border-radius:8px 8px 0 0;overflow:hidden;">
+    <!-- Active tab: color #155dfc -->
+    <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid #e5e7eb;">
+      <span style="font-size:14px;font-weight:500;color:#155dfc;">Statistics</span>
+    </div>
+    <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid #e5e7eb;">
+      <span style="font-size:14px;font-weight:500;color:#6b7280;">Services</span>
+    </div>
+    <div style="flex:1;display:flex;justify-content:center;padding:16px;">
+      <span style="font-size:14px;font-weight:500;color:#6b7280;">FAQ</span>
+    </div>
+  </div>
+  <!-- Stats grid: 2 rows × 3 columns, centered text -->
+  <div style="padding:32px;">
+    <div style="display:flex;flex-direction:column;gap:32px;text-align:center;">
+      <div style="display:flex;justify-content:space-between;">
+        <!-- Stat cell: value (30px extrabold #111928) + label (16px regular #6b7280) -->
+        <div style="display:flex;flex-direction:column;flex:1;">
+          <span style="font-size:30px;font-weight:800;color:#111928;">73M+</span>
+          <span style="font-size:16px;color:#6b7280;">Developers</span>
+        </div>
+        <!-- … repeat for 2 more cells … -->
+      </div>
+      <!-- Row 2: 3 more stat cells -->
+    </div>
+  </div>
+</div>`,
       },
     },
   },
@@ -808,6 +998,36 @@ export const TestimonialCard = {
 2×2 grid of testimonial cells, each with a heading, quote, and attributed author.
 **Node:** 13567:76479 | Width: 790px | Shadow: shadow-sm
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Testimonial card (790px, shadow-sm) -->
+<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+            box-shadow:0 1px 2px 0 rgba(0,0,0,.08);overflow:hidden;">
+  <!-- Row 1: 2 cells side by side with 1px vertical divider -->
+  <div style="display:flex;border-radius:8px 8px 0 0;overflow:hidden;">
+    <!-- Cell: padding 32px, centered content -->
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;
+                padding:32px;align-items:center;gap:24px;">
+      <p style="font-size:18px;font-weight:600;color:#111928;text-align:center;margin:0;">
+        Solid foundation for any project</p>
+      <p style="font-size:16px;color:#6b7280;line-height:1.5;text-align:center;margin:0;">
+        "If you care for your time, I hands down would go with this."</p>
+      <!-- Author: 32px avatar circle + name + role -->
+      <div style="display:flex;align-items:center;gap:16px;">
+        <img src="…" alt="Neil Sims"
+             style="width:32px;height:32px;border-radius:100px;border:1px solid #e5e7eb;object-fit:cover;">
+        <div>
+          <span style="font-size:18px;font-weight:600;color:#111928;display:block;">Neil Sims</span>
+          <span style="font-size:14px;font-weight:500;color:#6b7280;">CEO, Flowbite</span>
+        </div>
+      </div>
+    </div>
+    <div style="width:1px;background:#e5e7eb;flex-shrink:0;"></div>
+    <!-- Second cell — same structure … -->
+  </div>
+  <!-- Row 2: border-top 1px #e5e7eb + 2 more cells -->
+</div>`,
       },
     },
   },
@@ -886,6 +1106,37 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
 
 **Approximations:** Question-circle icon is inline SVG. Wallet icons use SimpleIcons CDN (stable). Fortmatic uses a text-badge placeholder.
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Crypto card — Connect wallet (384px, shadow-sm, no border) -->
+<div style="background:#fff;border-radius:8px;box-shadow:0 1px 2px 0 rgba(0,0,0,.08);
+            width:384px;padding:24px;display:flex;flex-direction:column;gap:16px;">
+  <!-- Header -->
+  <div>
+    <p style="font-size:18px;font-weight:600;color:#111928;margin:0 0 10px;">Connect wallet</p>
+    <p style="font-size:14px;color:#6b7280;line-height:1.5;margin:0;">
+      Connect with one of our available wallet providers or create a new one.</p>
+  </div>
+  <!-- Wallet list -->
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <!-- Wallet row: bg #f9fafb, padding 12px, rounded-8px -->
+    <div style="display:flex;align-items:center;gap:12px;background:#f9fafb;
+                padding:12px;border-radius:8px;cursor:pointer;">
+      <img src="…metamask-icon…" alt="MetaMask" style="width:18px;height:17px;object-fit:contain;">
+      <span style="flex:1;font-size:16px;font-weight:700;color:#111928;">MetaMask</span>
+      <!-- "Popular" badge: bg #e5e7eb, rounded-6px, 12px medium #6b7280 -->
+      <span style="background:#e5e7eb;font-size:12px;font-weight:500;color:#6b7280;
+                   padding:2px 10px;border-radius:6px;">Popular</span>
+    </div>
+    <!-- … repeat for 4 more wallets (no Popular badge) … -->
+  </div>
+  <!-- Helper text: question-circle icon + 12px text -->
+  <div style="display:flex;align-items:center;gap:6px;">
+    <!-- question-circle SVG, stroke #6b7280 -->
+    <span style="font-size:12px;color:#6b7280;">Why do I need to connect with my wallet?</span>
+  </div>
+</div>`,
       },
     },
   },
