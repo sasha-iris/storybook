@@ -5,10 +5,15 @@
  * No extras. No speculative additions.
  *
  * Sources:
- * - card-icons.js         → Card / KPI icon badges
+ * - card-icons.js          → Card / KPI icon badges
  * - CardLayouts.stories.js → Inline icons (check-circle, star, chevron, dots, mail)
  * - CardKPI.stories.js     → Trend arrows (up, down, neutral)
  * - Sidebar.stories.js     → Navigation icons
+ * - Badge.stories.js       → clock, x-mark (dismiss)
+ * - Chip.stories.js        → dot (r=3), x-mark (dismiss)
+ * - Tag.stories.js         → dot (r=3), x-mark (dismiss)
+ * - Indicators.stories.js  → check (stroke), dot-solid (r=6), mail-outline, fire-outline
+ * - Skeleton.stories.js    → image-placeholder (landscape SVG)
  */
 
 import { ICON } from './card-icons.js';
@@ -83,6 +88,10 @@ No extras, no speculative additions.
 | Inline card icons | Card/Layouts (check-circle, star, chevron, dots, mail) |
 | Trend icons | Card/KPI (trend up, down, neutral) |
 | Sidebar nav icons | Navigation/Sidebar |
+| Badge icons | Badge (clock, x-mark dismiss) |
+| Chip / Tag icons | Chip, Tag (dot r=3, x-mark dismiss) |
+| Indicators icons | Indicators (check stroke, dot-solid, mail outline, fire outline) |
+| Skeleton icons | Skeleton (image-placeholder landscape) |
         `,
       },
     },
@@ -198,4 +207,108 @@ export const SidebarIcons = {
       `<span style="color:#42389d;">${svg}</span>`,
     ])
   ),
+};
+
+/* ─────────────────────────────────────────────
+   BADGE ICONS  (Badge.stories.js — commit 79ba121)
+───────────────────────────────────────────── */
+
+// Heroicons mini solid 20×20
+const clockPath = 'M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5H10.75V5z';
+const xMarkPath = 'M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z';
+
+const clockSvg = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#42389d" aria-hidden="true"><path fill-rule="evenodd" d="${clockPath}" clip-rule="evenodd"/></svg>`;
+const xMarkSvg = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true"><path fill-rule="evenodd" d="${xMarkPath}" clip-rule="evenodd"/></svg>`;
+
+export const BadgeIcons = {
+  name: 'Badge icons — used in Badge',
+  parameters: {
+    docs: {
+      description: {
+        story: `Heroicons mini (solid, viewBox 0 0 20 20) used in the Badge component.
+\`clock\` — leading icon slot (optional). \`x-mark\` — dismiss button (also used in Chip and Tag).`,
+      },
+    },
+  },
+  render: () => iconGrid([
+    ['clock', clockSvg],
+    ['x-mark (dismiss)', xMarkSvg],
+  ]),
+};
+
+/* ─────────────────────────────────────────────
+   CHIP / TAG ICONS  (Chip.stories.js, Tag.stories.js — commit 383f059)
+───────────────────────────────────────────── */
+
+const dotSmSvg  = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3" fill="#5850ec"/></svg>`;
+
+export const ChipTagIcons = {
+  name: 'Chip / Tag icons — used in Chip, Tag',
+  parameters: {
+    docs: {
+      description: {
+        story: `Icons used in the Chip and Tag components (12px slots).
+\`dot (r=3)\` — left-slot status dot (color-parameterized). \`x-mark\` — same dismiss path as Badge, rendered at 12px.`,
+      },
+    },
+  },
+  render: () => iconGrid([
+    ['dot (r=3)', dotSmSvg],
+    ['x-mark (dismiss)', `<svg width="12" height="12" viewBox="0 0 20 20" fill="#5850ec" aria-hidden="true"><path fill-rule="evenodd" d="${xMarkPath}" clip-rule="evenodd"/></svg>`],
+  ]),
+};
+
+/* ─────────────────────────────────────────────
+   INDICATORS ICONS  (Indicators.stories.js — commit 2c86436)
+───────────────────────────────────────────── */
+
+const checkStrokeSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#155dfc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
+const dotSolidSvg    = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>`;
+const mailOutlineSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>`;
+const fireOutlineSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>`;
+
+export const IndicatorsIcons = {
+  name: 'Indicators icons — used in Indicators',
+  parameters: {
+    docs: {
+      description: {
+        story: `Icons used in the Indicators component.
+\`check\` — stroke 16×16, custom path (icon-type indicator circle). \`dot-solid\` — circle 12×12 r=6 (legend dot, color-parameterized).
+\`mail\` and \`fire\` — Heroicons v2 outline 24×24 (used in "in context" example). Different from the v1 solid mail in Inline Card Icons.`,
+      },
+    },
+  },
+  render: () => iconGrid([
+    ['check (stroke)', checkStrokeSvg],
+    ['dot-solid (r=6)', dotSolidSvg],
+    ['mail (outline v2)', mailOutlineSvg],
+    ['fire (outline v2)', fireOutlineSvg],
+  ]),
+};
+
+/* ─────────────────────────────────────────────
+   SKELETON ICONS  (Skeleton.stories.js — commit 8627768)
+───────────────────────────────────────────── */
+
+const imagePlaceholderSvg = `<svg width="44" height="31" viewBox="0 0 44 31" fill="none" opacity="0.6" aria-hidden="true"><circle cx="7" cy="8" r="4" fill="#6b7280"/><path d="M0 31 L14 12 L27 24 L35 15 L44 31 Z" fill="#6b7280"/></svg>`;
+
+export const SkeletonIcons = {
+  name: 'Skeleton icons — used in Skeleton',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Custom landscape/image placeholder icon rendered inside skeleton image areas. Not from Heroicons — drawn to match the Figma skeleton image placeholder shape.',
+      },
+    },
+  },
+  render: () => `
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:120px;">
+        <div style="width:80px;height:56px;background:#d1d5db;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+          ${imagePlaceholderSvg}
+        </div>
+        <span style="font:11px/1.3 sans-serif;color:#6b7280;text-align:center;">image-placeholder<br>(44×31, custom)</span>
+      </div>
+    </div>
+  `,
 };
