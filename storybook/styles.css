@@ -1368,24 +1368,29 @@ input[type="file"].form-file-input {
    Frame: Breadcrumbs
    ============================================= */
 
+/* Figma 3284:24211 — layoutWrap=NO_WRAP, gap=16 between all children */
 .breadcrumb {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-wrap: nowrap;
+  gap: 0;
   list-style: none;
   font-size: var(--text-sm);
 }
 
 .breadcrumb-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
   color: var(--color-text-secondary);
 }
 
 .breadcrumb-item a {
   /* Figma 3284:24211 Type=Default — link items fill=#101828 (heading) */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: var(--color-text-heading);
   text-decoration: none;
   transition: color 0.15s;
@@ -1619,47 +1624,80 @@ input[type="file"].form-file-input {
    Frame: Pagination
    ============================================= */
 
+/* Figma node 3284:22499 — connected button-group, gap=0, 1px strip padding */
 .pagination {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0;
   list-style: none;
+  padding: 1px;
 }
 
-.page-item {}
+/* Border collapse: offset each li by -1px to merge adjacent borders */
+.page-item {
+  margin-left: -1px;
+}
+.page-item:first-child {
+  margin-left: 0;
+}
 
+/* All buttons: no radius (middle), zero margin (handled on li) */
 .page-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 40px;
   height: 40px;
-  padding: 0 8px;
+  padding: 0 10px;
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   color: var(--color-text-secondary);
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   text-decoration: none;
   cursor: pointer;
+  position: relative;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
   font-family: var(--font-family-base);
   line-height: 1;
+  width: 100%;
 }
-.page-link:hover { background: var(--color-bg-muted); color: var(--color-text-primary); text-decoration: none; }
+/* First button (prev/back): left corners rounded */
+.page-item:first-child .page-link {
+  border-radius: 4px 0 0 4px;
+}
+/* Last button (next/forward): right corners rounded */
+.page-item:last-child .page-link {
+  border-radius: 0 4px 4px 0;
+}
+.page-link:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  z-index: 1;
+}
 
 /* Active page: Figma node 9426:125610 — Type=page, Hover/Selected=Yes */
 .page-item.active .page-link {
   background: var(--color-bg-muted);
   border-color: var(--color-border-default);
   color: #42389d;
+  z-index: 1;
 }
 
-/* Disabled prev/next: Figma — chevron fill:#d1d5db */
+/* Disabled prev/next: Figma — chevron fill:#d1d5db (gray-300, NOT gray-400) */
 .page-item.disabled .page-link {
-  color: var(--color-text-disabled);
+  color: #d1d5db;
   pointer-events: none;
+}
+
+/* Small size: 32×32 buttons */
+.pagination-sm .page-link {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: var(--text-xs);
 }
 
 /* Table pagination — Figma node 9703:152796 */

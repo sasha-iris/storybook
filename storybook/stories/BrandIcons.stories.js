@@ -10,18 +10,18 @@
  * | Group       | Icons                                                          |
  * |-------------|----------------------------------------------------------------|
  * | Social      | Facebook, LinkedIn, Google, YouTube, Snapchat, Pinterest, TikTok |
- * | E-commerce  | Amazon, Shopify ⚠, Google Ads, SPS Commerce, eBay              |
+ * | E-commerce  | Amazon, Shopify, Google Ads, SPS Commerce, eBay                |
  * | Finance     | QuickBooks, PayPal, Plaid, Stripe, NetSuite, Xero ⚠           |
  *
  * ## Approximations
- * - **Shopify**: 50+ individual vector paths with no single composite raster in Figma.
- *   Rendered as a green 'S' badge. Replace with official Shopify CDN asset in production.
+ * - **Amazon**: inline SVG from Figma node 10046:75873 (real icon, dark #343B45 + orange #FF9A00).
+ * - **Shopify**: inline SVG from Figma node 10046:75871 (real multi-path icon with gradients).
  * - **Xero**: complex mask/clip-path assembly in Figma with no single composite raster.
  *   Rendered as a teal circle 'x' placeholder. Replace with official Xero SVG in production.
  *
  * ## QA notes
  * - Icons sourced from cdn.simpleicons.org (stable, no TTL) — no local hosting required.
- * - Approximated icons (Shopify, Xero, SPS, NetSuite) use text/badge placeholders.
+ * - Approximated icons (Xero, SPS, NetSuite) use text/badge placeholders.
  * - Dark variants should work on both #101828 and #1f2937 backgrounds.
  * - Stripe: same raster for original and dark — context bg provides the dark treatment.
  * - NetSuite dark: same vectors as original — dark bg provides the treatment.
@@ -68,7 +68,7 @@ All icons are 48 × 48 px containers. Each has an **original** (colored) and **d
 import {
   facebookOriginal48,
   googleOriginal48,
-  shopifyOriginal48,  // ⚠ approximated
+  shopifyOriginal48,  // Figma node 10046:75871
 } from './brand-assets.js';
 
 // In a story render function:
@@ -157,7 +157,7 @@ Icons marked ⚠ are approximated (Shopify, Xero).
       ${sectionHeading('E-commerce')}
       ${iconRow([
         iconCell(amazonOriginal48(),     'Amazon'),
-        iconCell(shopifyOriginal48(),    'Shopify ⚠'),
+        iconCell(shopifyOriginal48(),    'Shopify'),
         iconCell(googleAdsOriginal48(),  'Google Ads'),
         iconCell(spsOriginal48(),        'SPS Commerce'),
         iconCell(ebayOriginal48(),       'eBay'),
@@ -222,7 +222,7 @@ Stripe and NetSuite use the same raster as original — the dark background prov
                 color:#374151;margin:0;">E-commerce</p>
       ${iconRow([
         iconCell(amazonDark48(),    'Amazon'),
-        iconCell(shopifyDark48(),   'Shopify ⚠'),
+        iconCell(shopifyDark48(),   'Shopify'),
         iconCell(googleAdsDark48(), 'Google Ads'),
         iconCell(spsDark48(),       'SPS Commerce'),
         iconCell(ebayDark48(),      'eBay'),
@@ -366,7 +366,7 @@ E-commerce channel icons: Amazon, Shopify, Google Ads, SPS Commerce, eBay.
         <div style="display:flex;flex-direction:column;gap:16px;">
           ${[
             [amazonOriginal48(),    'Amazon'],
-            [shopifyOriginal48(),   'Shopify ⚠'],
+            [shopifyOriginal48(),   'Shopify'],
             [googleAdsOriginal48(), 'Google Ads'],
             [spsOriginal48(),       'SPS Commerce'],
             [ebayOriginal48(),      'eBay'],
@@ -385,7 +385,7 @@ E-commerce channel icons: Amazon, Shopify, Google Ads, SPS Commerce, eBay.
         <div style="display:flex;flex-direction:column;gap:16px;">
           ${[
             [amazonDark48(),    'Amazon'],
-            [shopifyDark48(),   'Shopify ⚠'],
+            [shopifyDark48(),   'Shopify'],
             [googleAdsDark48(), 'Google Ads'],
             [spsDark48(),       'SPS Commerce'],
             [ebayDark48(),      'eBay'],
@@ -536,7 +536,7 @@ Approximated icons (Shopify, Xero) are labelled ⚠.
         <div style="display:grid;grid-template-columns:repeat(5,60px);gap:16px;">
           ${[
             [amazonOriginal48(),    'AMZ'],
-            [shopifyOriginal48(),   'SHO ⚠'],
+            [shopifyOriginal48(),   'SHO'],
             [googleAdsOriginal48(), 'GAds'],
             [spsOriginal48(),       'SPS'],
             [ebayOriginal48(),      'eBay'],

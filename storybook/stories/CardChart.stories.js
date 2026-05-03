@@ -238,14 +238,16 @@ function cardBarchartVert(dir = 'up') {
 }
 
 // barchart-big (602:24711) — Charts frame [222x58], bars at idx 2,4,9,12 are full height (58px)
+// Figma "top" row: "1st" col = title(18px)+value(36px) = 54px | "Card Body" col = trend(18px) | pill
+// Header must be exactly 54px so: 32(top-pad)+54(header)+40(gap)+58(chart)+16(bot-pad)=200px
 function cardBarchartBig(dir = 'up') {
   return `<div style="${BASE}width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;gap:40px;">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
         <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
-        ${trendBadge(dir)}
         <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
       </div>
+      ${trendBadge(dir)}
       ${PILL}
     </div>
     ${barChartHtml(dir, BARS_BIG, 58)}
