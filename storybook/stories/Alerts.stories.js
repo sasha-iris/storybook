@@ -45,7 +45,7 @@ function renderAlert({ color = 'success', type = 'medium', heading, body, cta })
 
   const ctaHtml = cta ? `
   <div>
-    <button type="button" style="padding:8px 12px;background:${btnBg};color:${btnTextColor};border:none;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">View more</button>
+    <button type="button" class="btn btn-xs" style="background:${btnBg};color:${btnTextColor};border-color:${btnBg};">View more</button>
   </div>` : '';
 
   return `
@@ -54,10 +54,10 @@ function renderAlert({ color = 'success', type = 'medium', heading, body, cta })
     <div style="display:flex;flex-direction:column;gap:6px;">
       <div style="display:flex;align-items:center;gap:8px;">
         ${iconSvg(CHECK_CIRCLE_PATH, 18, textColor)}
-        <span style="flex:1;font-size:14px;font-weight:600;color:${textColor};line-height:1.5;">${heading}</span>
+        <span style="flex:1;font-size:var(--text-sm);font-weight:var(--font-semibold);color:${textColor};line-height:1.5;">${heading}</span>
         <button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, 20, textColor)}</button>
       </div>
-      <p style="margin:0;font-size:14px;font-weight:400;color:${textColor};line-height:1.5;">${body}</p>
+      <p style="margin:0;font-size:var(--text-sm);font-weight:var(--font-normal);color:${textColor};line-height:1.5;">${body}</p>
     </div>${ctaHtml}
   </div>
 </div>`;
@@ -226,10 +226,10 @@ export const AllColors = {
       default: 'Scheduled maintenance is planned for Sunday 02:00–04:00 UTC.',
     };
     return `
-<div style="display:flex;flex-direction:column;gap:16px;padding:24px;background:#f9fafb;">
+<div style="display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--color-bg-default);">
   ${colors.map(c => `
   <div>
-    <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${labels[c]}</div>
+    <div style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${labels[c]}</div>
     ${renderAlert({ color: c, type, heading: labels[c], body: bodies[c], cta })}
   </div>`).join('')}
 </div>`;
@@ -272,10 +272,10 @@ export const AllTypes = {
     const heading = 'Two-factor authentication is now active';
     const body = 'Your account is protected. Sign-in attempts will require a verification code.';
     return `
-<div style="display:flex;flex-direction:column;gap:16px;padding:24px;background:#f3f4f6;">
+<div style="display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--color-bg-muted);">
   ${types.map(t => `
   <div>
-    <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${labels[t]}</div>
+    <div style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${labels[t]}</div>
     ${renderAlert({ color, type: t, heading, body, cta })}
   </div>`).join('')}
 </div>`;

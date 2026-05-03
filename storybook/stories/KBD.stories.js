@@ -38,8 +38,8 @@ function keyWidth(label) {
 
 function arrowKey(dir) {
   const path = ARROW_PATHS[dir];
-  return `<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0;">
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  return `<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0;">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-bg-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="${path}"/>
   </svg>
 </kbd>`;
@@ -57,11 +57,11 @@ function kbd({ label = 'K', size = 'md' }) {
   const h = size === 'sm' ? 22 : 30;
   const wAdjusted = size === 'sm' ? Math.round(w * 0.75) : w;
 
-  return `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:${wAdjusted}px;height:${h}px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-family:inherit;font-size:${fs}px;font-weight:600;color:#1f2a37;white-space:nowrap;box-sizing:border-box;">${label}</kbd>`;
+  return `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:${wAdjusted}px;height:${h}px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-family:inherit;font-size:${fs}px;font-weight:var(--font-semibold);color:var(--color-bg-dark);white-space:nowrap;box-sizing:border-box;">${label}</kbd>`;
 }
 
 function shortcut(keys) {
-  return `<span style="display:inline-flex;align-items:center;gap:4px;">${keys.map(k => kbd({ label: k })).join('')}</span>`;
+  return `<span class="kbd-combo">${keys.map(k => kbd({ label: k })).join('')}</span>`;
 }
 
 export default {
@@ -160,14 +160,14 @@ All 26 letter keys. Width: 29×30px.
         `,
       },
       source: {
-        code: `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">A</kbd>`,
+        code: `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">A</kbd>`,
         language: 'html',
       },
     },
   },
   render: () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    return `<div class="kbd-combo" style="flex-wrap:wrap;">
       ${letters.map(l => kbd({ label: l })).join('\n      ')}
     </div>`;
   },
@@ -201,9 +201,9 @@ Modifier and control keys with Figma-spec widths.
       },
       source: {
         code: `<!-- Modifier combo example -->
-<span style="display:inline-flex;align-items:center;gap:4px;">
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">Shift</kbd>
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">S</kbd>
+<span class="kbd-combo">
+  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">Shift</kbd>
+  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">S</kbd>
 </span>`,
         language: 'html',
       },
@@ -211,7 +211,7 @@ Modifier and control keys with Figma-spec widths.
   },
   render: () => {
     const specials = ['Esc', 'Tab', 'Caps Lock', 'Shift', 'Ctrl', 'Alt', 'Enter', 'Spacebar'];
-    return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    return `<div class="kbd-combo" style="flex-wrap:wrap;">
       ${specials.map(l => kbd({ label: l })).join('\n      ')}
     </div>`;
   },
@@ -236,7 +236,7 @@ export const FunctionKeys = {
   },
   render: () => {
     const fkeys = Array.from({ length: 12 }, (_, i) => `F${i + 1}`);
-    return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    return `<div class="kbd-combo" style="flex-wrap:wrap;">
       ${fkeys.map(l => kbd({ label: l })).join('\n      ')}
     </div>`;
   },
@@ -271,7 +271,7 @@ Arrow keys rendered as SVG vector icons (Figma-exact). Width: 32×30px.
   },
   render: () => {
     const arrows = ['←', '→', '↑', '↓'];
-    return `<div style="display:flex;gap:8px;align-items:center;">
+    return `<div class="kbd-combo">
       ${arrows.map(a => kbd({ label: a })).join('\n      ')}
     </div>`;
   },
@@ -296,9 +296,9 @@ Common keyboard shortcuts as they appear in product UI — multiple \`<kbd>\` el
       },
       source: {
         code: `<!-- Save: Ctrl + S -->
-<span style="display:inline-flex;align-items:center;gap:4px;">
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">Ctrl</kbd>
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">S</kbd>
+<span class="kbd-combo">
+  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">Ctrl</kbd>
+  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">S</kbd>
 </span>`,
         language: 'html',
       },
@@ -320,8 +320,8 @@ Common keyboard shortcuts as they appear in product UI — multiple \`<kbd>\` el
       { label: 'Refresh', keys: ['F5'] },
     ];
     return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
-      ${combos.map(({ label, keys }) => `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;gap:8px;">
-        <span style="font-size:13px;color:#374151;">${label}</span>
+      ${combos.map(({ label, keys }) => `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid var(--color-border-default);border-radius:8px;gap:8px;">
+        <span style="font-size:var(--text-sm);color:var(--color-text-heading);">${label}</span>
         ${shortcut(keys)}
       </div>`).join('\n      ')}
     </div>`;

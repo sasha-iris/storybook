@@ -16,19 +16,19 @@ function iconSvg(path, size, color) {
 }
 
 function dismissBtn(size = 16) {
-  return `<button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, size, '#6b7280')}</button>`;
+  return `<button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, size, 'var(--color-text-secondary)')}</button>`;
 }
 
 // ─── Type renderers ───────────────────────────────────────────────────────────
 
 function bannerDefault({ text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:#f9fafb;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
+<div role="banner" style="width:100%;background:var(--color-bg-default);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
   <div style="display:flex;align-items:center;gap:8px;">
-    <div style="width:24px;height:24px;border-radius:50%;background:#e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-      ${iconSvg(LIGHT_BULB_PATH, 14, '#6b7280')}
+    <div style="width:24px;height:24px;border-radius:50%;background:var(--color-border-default);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+      ${iconSvg(LIGHT_BULB_PATH, 14, 'var(--color-text-secondary)')}
     </div>
-    <span style="font-size:14px;font-weight:400;color:#111928;line-height:1.5;">${text}</span>
+    <span style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-heading);line-height:1.5;">${text}</span>
   </div>
   ${dismissible ? dismissBtn(16) : ''}
 </div>`;
@@ -36,21 +36,21 @@ function bannerDefault({ text, dismissible }) {
 
 function bannerContainerCTA({ text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:#f3f4f6;padding:16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;">
-  <div style="background:#ffffff;border:1px solid #f3f4f6;border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1280px;width:100%;">
+<div role="banner" style="width:100%;background:var(--color-bg-muted);padding:16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;">
+  <div style="background:var(--color-bg-surface);border:1px solid var(--color-bg-muted);border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1280px;width:100%;">
     <div style="display:flex;align-items:center;gap:16px;flex:1;min-width:0;">
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
         <div style="width:24px;height:24px;background:#4208e5;border-radius:4px;display:flex;align-items:center;justify-content:center;">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="5" height="5" rx="1" fill="#fff"/><rect x="8" y="1" width="5" height="5" rx="1" fill="#fff"/><rect x="1" y="8" width="5" height="5" rx="1" fill="#fff"/><rect x="8" y="8" width="5" height="5" rx="1" fill="#fff"/></svg>
         </div>
-        <span style="font-size:14px;font-weight:700;color:#111928;">Smart</span>
+        <span style="font-size:var(--text-sm);font-weight:var(--font-bold);color:var(--color-text-heading);">Smart</span>
       </div>
-      <div style="border-left:1px solid #e5e7eb;padding-left:16px;flex:1;min-width:0;">
-        <span style="font-size:16px;font-weight:400;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">${text}</span>
+      <div style="border-left:1px solid var(--color-border-default);padding-left:16px;flex:1;min-width:0;">
+        <span style="font-size:var(--text-base);font-weight:var(--font-normal);color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">${text}</span>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
-      <button type="button" style="padding:8px 12px;background:#1447e6;color:#ffffff;border:none;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;">Sign up for free</button>
+      <button type="button" class="btn btn-primary btn-xs">Sign up for free</button>
       ${dismissible ? dismissBtn(16) : ''}
     </div>
   </div>
@@ -59,13 +59,13 @@ function bannerContainerCTA({ text, dismissible }) {
 
 function bannerBottom({ text, link, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:#f9fafb;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
+<div role="banner" style="width:100%;background:var(--color-bg-default);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
   <div style="display:flex;align-items:center;gap:24px;flex:1;">
     <div style="display:flex;align-items:center;gap:6px;">
-      ${iconSvg(RECEIPT_TAX_PATH, 16, '#6b7280')}
-      <span style="font-size:16px;font-weight:500;color:#4b5563;">${text}</span>
+      ${iconSvg(RECEIPT_TAX_PATH, 16, 'var(--color-text-secondary)')}
+      <span style="font-size:var(--text-base);font-weight:var(--font-medium);color:#4b5563;">${text}</span>
     </div>
-    <a href="#" style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:#155dfc;text-decoration:none;">
+    <a href="#" style="display:flex;align-items:center;gap:4px;font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;">
       ${link}
       ${iconSvg(ARROW_NARROW_RIGHT, 16, '#155dfc')}
     </a>
@@ -76,17 +76,17 @@ function bannerBottom({ text, link, dismissible }) {
 
 function bannerCTA({ heading, text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:#f9fafb;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;">
+<div role="banner" style="width:100%;background:var(--color-bg-default);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;flex:1;min-width:0;">
     <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;">
-      <span style="font-size:16px;font-weight:600;color:#111928;line-height:1.5;">${heading}</span>
-      <span style="font-size:14px;font-weight:400;color:#6b7280;line-height:1.5;">${text}</span>
+      <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-heading);line-height:1.5;">${heading}</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.5;">${text}</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-      <button type="button" style="padding:8px 12px;background:transparent;color:#1e2939;border:1px solid #d1d5db;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;white-space:nowrap;">
-        ${iconSvg(BOOK_OPEN_PATH, 16, '#1e2939')}Learn more
+      <button type="button" class="btn btn-light btn-xs" style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
+        ${iconSvg(BOOK_OPEN_PATH, 16, 'currentColor')}Learn more
       </button>
-      <button type="button" style="padding:8px 12px;background:#1447e6;color:#ffffff;border:none;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;white-space:nowrap;">
+      <button type="button" class="btn btn-primary btn-xs" style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
         ${iconSvg(ARROW_NARROW_RIGHT, 16, '#ffffff')}Get started
       </button>
     </div>
@@ -97,15 +97,15 @@ function bannerCTA({ heading, text, dismissible }) {
 
 function bannerNewsletter({ text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:#ffffff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;border-bottom:1px solid #f3f4f6;">
+<div role="banner" style="width:100%;background:var(--color-bg-surface);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;border-bottom:1px solid var(--color-bg-muted);">
   <div style="display:flex;align-items:center;gap:32px;flex:1;min-width:0;">
-    <span style="font-size:16px;font-weight:500;color:#6b7280;flex-shrink:0;">${text}</span>
+    <span style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-text-secondary);flex-shrink:0;">${text}</span>
     <div style="display:flex;align-items:flex-end;gap:16px;flex:1;min-width:0;">
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
-        <label style="font-size:14px;font-weight:500;color:#111928;">First name</label>
-        <input type="text" placeholder="e.g. John" style="padding:10px 16px;border:1px solid #d1d5db;border-radius:8px;background:#f9fafb;font-size:14px;color:#111928;font-family:inherit;outline:none;min-width:200px;" />
+        <label style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">First name</label>
+        <input type="text" placeholder="e.g. John" style="padding:10px 16px;border:1px solid var(--color-border-default);border-radius:8px;background:var(--color-bg-default);font-size:var(--text-sm);color:var(--color-text-heading);font-family:inherit;outline:none;min-width:200px;" />
       </div>
-      <button type="button" style="padding:10px 20px;background:#1447e6;color:#ffffff;border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;">Subscribe</button>
+      <button type="button" class="btn btn-primary btn-md" style="white-space:nowrap;flex-shrink:0;">Subscribe</button>
     </div>
   </div>
   ${dismissible ? dismissBtn(20) : ''}
@@ -165,14 +165,12 @@ export default {
     },
   },
   argTypes: {
-    // ── Appearance ──────────────────────────────────────────────────────────
     type: {
       control: 'select',
       options: ['default', 'container-cta', 'bottom', 'cta', 'newsletter'],
       description: `Banner layout pattern.\n\n- \`default\` — icon + message text\n- \`container-cta\` — brand logo + text + CTA (centered card)\n- \`bottom\` — icon/feature label + partner link\n- \`cta\` — heading + description + two action buttons\n- \`newsletter\` — text label + name input + subscribe button`,
       table: { category: 'Appearance', defaultValue: { summary: 'default' } },
     },
-    // ── Content ─────────────────────────────────────────────────────────────
     text: {
       control: 'text',
       description: 'Primary message text. Role varies by type: notification copy (default), marketing tagline (container-cta), feature label (bottom), description (cta), or label (newsletter).',
@@ -188,7 +186,6 @@ export default {
       description: 'Link label for the "bottom" type partner link.',
       table: { category: 'Content', defaultValue: { summary: 'Become a partner' } },
     },
-    // ── State ────────────────────────────────────────────────────────────────
     dismissible: {
       control: 'boolean',
       description: 'Show the dismiss × button. Map to `aria-label="Dismiss"` on the close button. Note: banners are non-dismissible by default per the Notification system guidelines — enable only when the message is non-critical.',
@@ -209,7 +206,7 @@ export default {
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => `<div style="background:#ffffff;padding-bottom:1px;">${banner(args)}</div>`,
+  render: (args) => `<div style="background:var(--color-bg-surface);padding-bottom:1px;">${banner(args)}</div>`,
   parameters: {
     docs: {
       description: {
@@ -273,10 +270,10 @@ export const AllTypes = {
       { type: 'newsletter',    label: 'Newsletter',     args: { text: 'Sign up to our newsletter', dismissible } },
     ];
     return `
-<div style="display:flex;flex-direction:column;gap:2px;background:#e5e7eb;">
+<div style="display:flex;flex-direction:column;gap:2px;background:var(--color-border-default);">
   ${items.map(({ type, label, args }) => `
     <div>
-      <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;padding:8px 20px 4px;background:#f9fafb;">${label}</div>
+      <div style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;padding:8px 20px 4px;background:var(--color-bg-default);">${label}</div>
       ${banner({ type, ...args })}
     </div>`).join('')}
 </div>`;
