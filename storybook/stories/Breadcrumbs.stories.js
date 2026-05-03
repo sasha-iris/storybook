@@ -4,17 +4,18 @@
  * Source: Figma › Iris Library › Breadcrumb component set (node 3284:24211)
  *
  * ## Confirmed variants (light mode only)
- * | Type            | Bg       | Active text | Current text | Separator   | Padding     |
- * |-----------------|----------|-------------|--------------|-------------|-------------|
- * | Default         | none     | #101828     | #4a5565      | #4a5565     | none        |
- * | With background | #f9fafb  | #4a5565     | #4a5565      | #6a7282     | 12px 20px   |
+ * | Type            | CSS wrapper                       | Notes                      |
+ * |-----------------|-----------------------------------|----------------------------|
+ * | Default         | none (just .breadcrumb)           | white bg, no padding       |
+ * | With background | inline bg pill + .breadcrumb      | #f9fafb, r=8px, p=12px 20px |
  *
- * ## Tokens
- * - Font: 14px / fw=500
- * - Gap between items: 16px
- * - Home icon: Heroicons v1 solid home, 20×20
- * - Separator: chevron-right outline, 20×20
- * - Background pill: r=8px, bg #f9fafb
+ * CSS classes used (from styles.css):
+ *   .breadcrumb         — <ol> list container
+ *   .breadcrumb-item    — each <li>
+ *   .breadcrumb-item.active — current page item (last)
+ *   .breadcrumb-sep     — chevron separator inside each non-last item
+ *
+ * No CSS class for the "with-background" pill wrapper — uses inline padding/bg.
  */
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -23,7 +24,7 @@ const homeIcon = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentC
   <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
 </svg>`;
 
-const chevronRight = `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+const chevronRight = `<svg width="16" height="16" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
@@ -49,55 +50,39 @@ function breadcrumb({ type = 'default', showHomeIcon = true, depth = 3, items } 
   const labels = items || PATHS[depth] || PATHS[3];
   const isBg = type === 'with-background';
 
-  // Colors per type
-  const linkColor    = isBg ? '#4a5565' : '#101828';
-  const currentColor = '#4a5565';
-  const sepColor     = isBg ? '#6a7282' : '#4a5565';
-  const iconColor    = isBg ? '#4a5565' : '#101828';
-
   const crumbs = labels.map((label, i) => {
     const isCurrent = i === labels.length - 1;
     const isFirst = i === 0;
-    const color = isCurrent ? currentColor : linkColor;
 
     const icon = (isFirst && showHomeIcon)
-      ? `<span style="flex-shrink:0;color:${iconColor};display:flex;align-items:center;">${homeIcon}</span>`
+      ? `<span style="flex-shrink:0;display:flex;align-items:center;">${homeIcon}</span>`
       : '';
 
-    const text = `<span style="font:500 14px/1.5 inherit;color:${color};white-space:nowrap;">${label}</span>`;
-
-    const link = isCurrent
-      ? `<span aria-current="page" style="display:flex;align-items:center;gap:4px;">${icon}${text}</span>`
-      : `<a href="#" style="display:flex;align-items:center;gap:4px;text-decoration:none;">${icon}${text}</a>`;
-
-    const sep = i < labels.length - 1
-      ? `<span aria-hidden="true" style="flex-shrink:0;color:${sepColor};display:flex;align-items:center;">${chevronRight}</span>`
+    const sep = !isCurrent
+      ? `<span class="breadcrumb-sep" aria-hidden="true">${chevronRight}</span>`
       : '';
 
-    return link + sep;
+    if (isCurrent) {
+      return `<li class="breadcrumb-item active">
+        <span aria-current="page">${icon}${label}</span>
+      </li>`;
+    }
+
+    return `<li class="breadcrumb-item">
+      <a href="#">${icon}${label}</a>
+      ${sep}
+    </li>`;
   });
 
-  const inner = `
-    <nav aria-label="Breadcrumb">
-      <ol style="
-        display:flex;align-items:center;gap:0;
-        list-style:none;margin:0;padding:0;
-        flex-wrap:wrap;
-      ">
-        ${crumbs.map(c => `<li style="display:flex;align-items:center;gap:16px;">${c}</li>`).join('')}
-      </ol>
-    </nav>`;
+  const nav = `<nav aria-label="Breadcrumb">
+    <ol class="breadcrumb">
+      ${crumbs.join('')}
+    </ol>
+  </nav>`;
 
-  if (!isBg) return inner;
+  if (!isBg) return nav;
 
-  return `
-    <div style="
-      display:inline-flex;
-      background:#f9fafb;border-radius:8px;
-      padding:12px 20px;
-    ">
-      ${inner}
-    </div>`;
+  return `<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">${nav}</div>`;
 }
 
 // ─── Default export ───────────────────────────────────────────────────────────
@@ -114,6 +99,8 @@ export default {
 
 Figma source: component set \`3284:24211\`.
 
+CSS classes: \`.breadcrumb\` → \`.breadcrumb-item [.active]\` + \`.breadcrumb-sep\`
+
 **When to use**
 - Pages nested 2 or more levels deep in the site hierarchy
 - Content-heavy apps where users frequently navigate between sections (e-commerce, dashboards, docs)
@@ -129,12 +116,10 @@ Figma source: component set \`3284:24211\`.
 
 The last item is always the current page — it carries \`aria-current="page"\` and is not a link.
 
-**QA checklist**
-- Container: \`<nav aria-label="Breadcrumb">\` wrapping an \`<ol>\`
-- Current item: \`aria-current="page"\` on a \`<span>\`, not an \`<a>\`
-- Separator chevrons: \`aria-hidden="true"\`
-- Default — active links: \`#101828\`, current text: \`#4a5565\`, separator: \`#4a5565\`
-- With background — all text: \`#4a5565\`, separator: \`#6a7282\`, bg: \`#f9fafb\`, r=8px, p=12px 20px
+**Accessibility**
+- Container: \`<nav aria-label="Breadcrumb">\` wrapping an \`<ol class="breadcrumb">\`
+- Current item: \`aria-current="page"\` on a \`<span>\` inside \`.breadcrumb-item.active\`
+- Separator chevrons: \`aria-hidden="true"\` on \`.breadcrumb-sep\`
         `.trim(),
       },
     },
@@ -156,7 +141,7 @@ The last item is always the current page — it carries \`aria-current="page"\` 
     type: {
       control: 'select',
       options: ['default', 'with-background'],
-      description: '`default` — no background, active links `#101828`. `with-background` — `#f9fafb` pill, all text `#4a5565`.',
+      description: '`default` — no background, uses `.breadcrumb` on white bg. `with-background` — wrapped in a `#f9fafb` pill (inline style, no CSS class).',
       table: { category: 'Appearance', defaultValue: { summary: 'default' } },
     },
   },
@@ -182,35 +167,24 @@ export const Interactive = {
           const { type, showHomeIcon, depth } = storyCtx.args;
           const isBg = type === 'with-background';
           const labels = PATHS[depth] || PATHS[3];
-          const linkColor = isBg ? '#4a5565' : '#101928';
-          const currentColor = '#4a5565';
-          const sepColor = isBg ? '#6a7282' : '#4a5565';
-          const wrapOpen = isBg
-            ? `<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">`
-            : '';
+          const wrapOpen = isBg ? '<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">' : '';
           const wrapClose = isBg ? '</div>' : '';
           const items = labels.map((label, i) => {
             const isCurrent = i === labels.length - 1;
             const isFirst = i === 0;
-            const color = isCurrent ? currentColor : linkColor;
-            const iconSnip = (isFirst && showHomeIcon) ? `\n      <!-- home icon 20×20 -->` : '';
+            const iconSnip = (isFirst && showHomeIcon) ? '\n        <!-- home icon 20×20 -->' : '';
             if (isCurrent) {
-              return `    <li style="display:flex;align-items:center;gap:16px;">
-      <span aria-current="page" style="font:500 14px/1.5 inherit;color:${color};">${iconSnip}
-        ${label}
-      </span>
+              return `    <li class="breadcrumb-item active">
+      <span aria-current="page">${iconSnip}${label}</span>
     </li>`;
             }
-            return `    <li style="display:flex;align-items:center;gap:16px;">
-      <a href="#" style="font:500 14px/1.5 inherit;color:${color};text-decoration:none;">${iconSnip}
-        ${label}
-      </a>
-      <span aria-hidden="true" style="color:${sepColor};"><!-- chevron-right --></span>
+            return `    <li class="breadcrumb-item">
+      <a href="#">${iconSnip}${label}</a>
+      <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
     </li>`;
           }).join('\n');
-          return `${wrapOpen}
-<nav aria-label="Breadcrumb">
-  <ol style="display:flex;align-items:center;flex-wrap:wrap;list-style:none;margin:0;padding:0;">
+          return `${wrapOpen}<nav aria-label="Breadcrumb">
+  <ol class="breadcrumb">
 ${items}
   </ol>
 </nav>${wrapClose}`;
@@ -231,33 +205,31 @@ export const Default = {
 Default breadcrumb — Figma: \`Type=Default\` (node \`3284:24211\`).
 
 **✅ Do** — use as the primary breadcrumb style on white or light-gray page backgrounds.
-**✅ Do** — always mark the last item with \`aria-current="page"\` — screen readers announce it as the current location.
+**✅ Do** — always mark the last item \`.breadcrumb-item.active\` + \`aria-current="page"\` — screen readers announce it as the current location.
 **❌ Don't** — make the current (last) item a link — it represents where the user already is.
         `.trim(),
       },
       source: {
         language: 'html',
         code: `<nav aria-label="Breadcrumb">
-  <ol style="display:flex;align-items:center;flex-wrap:wrap;list-style:none;margin:0;padding:0;">
+  <ol class="breadcrumb">
 
-    <li style="display:flex;align-items:center;gap:16px;">
-      <a href="#" style="display:flex;align-items:center;gap:4px;text-decoration:none;">
-        <!-- home icon 20×20, fill #101828 -->
-        <span style="font:500 14px/1.5 inherit;color:#101828;">Home</span>
+    <li class="breadcrumb-item">
+      <a href="#">
+        <!-- home icon 20×20 -->
+        Home
       </a>
-      <span aria-hidden="true" style="color:#4a5565;"><!-- chevron-right --></span>
+      <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
     </li>
 
-    <li style="display:flex;align-items:center;gap:16px;">
-      <a href="#" style="text-decoration:none;">
-        <span style="font:500 14px/1.5 inherit;color:#101828;">E-commerce</span>
-      </a>
-      <span aria-hidden="true" style="color:#4a5565;"><!-- chevron-right --></span>
+    <li class="breadcrumb-item">
+      <a href="#">E-commerce</a>
+      <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
     </li>
 
-    <li>
-      <!-- Current page: no link, aria-current="page" -->
-      <span aria-current="page" style="font:500 14px/1.5 inherit;color:#4a5565;">Products</span>
+    <!-- Current page: .breadcrumb-item.active + aria-current="page" -->
+    <li class="breadcrumb-item active">
+      <span aria-current="page">Products</span>
     </li>
 
   </ol>
@@ -278,7 +250,7 @@ export const WithBackground = {
         story: `
 Breadcrumb with a light pill background — Figma: \`Type=With background\` (node \`3284:24211\`).
 
-Padding: 12px 20px · bg: \`#f9fafb\` · border-radius: 8px.
+The pill is a plain wrapper div with inline styles (padding:12px 20px, background:#f9fafb, border-radius:8px). The inner breadcrumb uses the same \`.breadcrumb\` classes.
 
 **✅ Do** — use when the breadcrumb needs to stand out against a busy or image-based background.
 **❌ Don't** — use on \`#f9fafb\` page backgrounds — the pill will be invisible.
@@ -286,29 +258,21 @@ Padding: 12px 20px · bg: \`#f9fafb\` · border-radius: 8px.
       },
       source: {
         language: 'html',
-        code: `<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">
+        code: `<!-- Pill wrapper — no CSS class, inline styles only -->
+<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">
   <nav aria-label="Breadcrumb">
-    <ol style="display:flex;align-items:center;flex-wrap:wrap;list-style:none;margin:0;padding:0;">
-
-      <li style="display:flex;align-items:center;gap:16px;">
-        <a href="#" style="display:flex;align-items:center;gap:4px;text-decoration:none;">
-          <!-- home icon 20×20, fill #4a5565 -->
-          <span style="font:500 14px/1.5 inherit;color:#4a5565;">Home</span>
-        </a>
-        <span aria-hidden="true" style="color:#6a7282;"><!-- chevron-right --></span>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="#"><!-- home icon --> Home</a>
+        <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
       </li>
-
-      <li style="display:flex;align-items:center;gap:16px;">
-        <a href="#" style="text-decoration:none;">
-          <span style="font:500 14px/1.5 inherit;color:#4a5565;">E-commerce</span>
-        </a>
-        <span aria-hidden="true" style="color:#6a7282;"><!-- chevron-right --></span>
+      <li class="breadcrumb-item">
+        <a href="#">E-commerce</a>
+        <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
       </li>
-
-      <li>
-        <span aria-current="page" style="font:500 14px/1.5 inherit;color:#4a5565;">Products</span>
+      <li class="breadcrumb-item active">
+        <span aria-current="page">Products</span>
       </li>
-
     </ol>
   </nav>
 </div>`,
@@ -331,12 +295,12 @@ export const BothTypes = {
       },
       source: {
         language: 'html',
-        code: `<!-- Default -->
-<nav aria-label="Breadcrumb"><!-- type=default --></nav>
+        code: `<!-- Default: .breadcrumb inside <nav> -->
+<nav aria-label="Breadcrumb"><ol class="breadcrumb"><!-- ... --></ol></nav>
 
-<!-- With background -->
+<!-- With background: pill wrapper + .breadcrumb -->
 <div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">
-  <nav aria-label="Breadcrumb"><!-- type=with-background --></nav>
+  <nav aria-label="Breadcrumb"><ol class="breadcrumb"><!-- ... --></ol></nav>
 </div>`,
       },
     },
@@ -373,14 +337,9 @@ Breadcrumbs at 2, 3, and 4 levels deep. Use the **type** control to switch betwe
       },
       source: {
         language: 'html',
-        code: `<!-- 2 levels -->
-<nav aria-label="Breadcrumb"><!-- Home › Products --></nav>
-
-<!-- 3 levels (Figma default) -->
-<nav aria-label="Breadcrumb"><!-- Home › E-commerce › Products --></nav>
-
-<!-- 4 levels -->
-<nav aria-label="Breadcrumb"><!-- Home › E-commerce › Products › Laptop --></nav>`,
+        code: `<!-- 2 levels: Home › Products -->
+<!-- 3 levels: Home › E-commerce › Products -->
+<!-- 4 levels: Home › E-commerce › Products › Laptop -->`,
       },
     },
   },
@@ -400,26 +359,27 @@ Breadcrumbs at 2, 3, and 4 levels deep. Use the **type** control to switch betwe
 
 export const WithoutHomeIcon = {
   name: 'Without home icon',
+  args: { type: 'default' },
   parameters: {
     controls: { include: ['type'] },
     docs: {
       description: {
         story: `
-Breadcrumb with a text "Home" label instead of the house icon. Use when the icon-only home label is unclear in context.
+Breadcrumb with a text "Home" label instead of the house icon.
 
 **✅ Do** — use the text-only variant when available horizontal space is limited.
         `.trim(),
       },
       source: {
         language: 'html',
-        code: `<!-- First item: text label "Home", no icon -->
-<li>
-  <a href="#" style="font:500 14px/1.5 inherit;color:#101828;text-decoration:none;">Home</a>
+        code: `<!-- First item: text label only, no icon -->
+<li class="breadcrumb-item">
+  <a href="#">Home</a>
+  <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
 </li>`,
       },
     },
   },
-  args: { type: 'default' },
   render: ({ type }) => `
     <div style="display:flex;flex-direction:column;gap:20px;padding:24px;">
       <div>

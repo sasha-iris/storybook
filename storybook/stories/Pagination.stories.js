@@ -6,119 +6,82 @@
  *   Pagination button:  node 9426:125610 (Type=page/back/next × states)
  *   Showing indicator:  node 9703:152796 (Size=Default/Small)
  *
- * ## Button tokens (both sizes)
- * | State    | bg       | border   | text/icon  |
- * |----------|----------|----------|------------|
- * | Default  | #ffffff  | #e5e7eb  | #6b7280    |
- * | Selected | #f3f4f6  | #e5e7eb  | #42389d    |
- * | Disabled | #ffffff  | #e5e7eb  | #d1d5db    |
+ * CSS classes used (from styles.css):
+ *   .pagination — outer <ul> strip
+ *   .page-item  — each <li>
+ *   .page-item.active   — selected page button
+ *   .page-item.disabled — disabled prev/next
+ *   .page-link  — inner <button>
+ *   .pagination-info — "Showing X to Y of Z" text
  *
- * ## Button dimensions
- * | Size    | w × h   | padding      | font        |
- * |---------|---------|--------------|-------------|
- * | Default | 40×40px | 12px 10px    | 14px / 500  |
- * | Small   | 32×32px | 12px 10px    | 14px / 500  |
- *
- * ## Showing indicator
- * | Size    | font  | label color | number color |
- * |---------|-------|-------------|--------------|
- * | Default | 14px  | #374151/400 | #111928/600  |
- * | Small   | 12px  | #374151/400 | #111928/600  |
+ * Size modifier (small = 32×32): no CSS class exists; inline style override on .page-link.
  */
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
-const chevronLeft = (color = '#6b7280') => `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M15 19l-7-7 7-7" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+const chevronLeft = `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
-const chevronRight = (color = '#6b7280') => `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M9 5l7 7-7 7" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+const chevronRight = `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
 // ─── Button builder ───────────────────────────────────────────────────────────
 
-function paginationBtn({ content, selected = false, disabled = false, size = 'default', ariaLabel = '' } = {}) {
-  const dim = size === 'small' ? '32px' : '40px';
-  const bg = selected ? '#f3f4f6' : '#ffffff';
-  const label = ariaLabel ? ` aria-label="${ariaLabel}"` : '';
+function pageItem({ content, active = false, disabled = false, small = false, ariaLabel = '', ariaCurrent = false } = {}) {
+  const liClass = ['page-item', active ? 'active' : '', disabled ? 'disabled' : ''].filter(Boolean).join(' ');
+  const labelAttr = ariaLabel ? ` aria-label="${ariaLabel}"` : '';
   const disabledAttr = disabled ? ' disabled aria-disabled="true"' : '';
-  const cursor = disabled ? 'default' : 'pointer';
-
-  return `<button${label}${disabledAttr} style="
-    width:${dim};height:${dim};
-    background:${bg};border:1px solid #e5e7eb;border-radius:6px;
-    display:flex;align-items:center;justify-content:center;
-    padding:0;cursor:${cursor};flex-shrink:0;
-  ">${content}</button>`;
+  const currentAttr = ariaCurrent ? ' aria-current="page"' : '';
+  const sizeStyle = small ? ' style="min-width:32px;height:32px;"' : '';
+  return `<li class="${liClass}"><button class="page-link"${labelAttr}${disabledAttr}${currentAttr}${sizeStyle}>${content}</button></li>`;
 }
 
-function pageNumBtn({ page, selected = false, disabled = false, size = 'default' } = {}) {
-  const color = disabled ? '#d1d5db' : selected ? '#42389d' : '#6b7280';
-  const label = `aria-label="Page ${page}"${selected ? ' aria-current="page"' : ''}`;
-  const content = `<span style="font:500 14px/1.5 inherit;color:${color};">${page}</span>`;
-  return paginationBtn({ content, selected, disabled, size, ariaLabel: `Page ${page}` });
+function pageNumItem({ page, active = false, disabled = false, small = false } = {}) {
+  return pageItem({ content: page, active, disabled, small, ariaLabel: `Page ${page}`, ariaCurrent: active });
 }
 
-function prevBtn({ disabled = false, selected = false, size = 'default' } = {}) {
-  const color = disabled ? '#d1d5db' : selected ? '#42389d' : '#6b7280';
-  return paginationBtn({ content: chevronLeft(color), disabled, selected, size, ariaLabel: 'Previous page' });
+function prevItem({ disabled = false, small = false } = {}) {
+  return pageItem({ content: chevronLeft, disabled, small, ariaLabel: 'Previous page' });
 }
 
-function nextBtn({ disabled = false, selected = false, size = 'default' } = {}) {
-  const color = disabled ? '#d1d5db' : selected ? '#42389d' : '#6b7280';
-  return paginationBtn({ content: chevronRight(color), disabled, selected, size, ariaLabel: 'Next page' });
+function nextItem({ disabled = false, small = false } = {}) {
+  return pageItem({ content: chevronRight, disabled, small, ariaLabel: 'Next page' });
 }
 
-function ellipsisBtn({ size = 'default' } = {}) {
-  const dim = size === 'small' ? '32px' : '40px';
-  return `<span style="
-    width:${dim};height:${dim};
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  "><span style="font:500 14px/1.5 inherit;color:#6b7280;">…</span></span>`;
+function ellipsisItem({ small = false } = {}) {
+  const sizeStyle = small ? ' style="min-width:32px;height:32px;"' : '';
+  return `<li class="page-item"><span class="page-link" aria-hidden="true"${sizeStyle}>…</span></li>`;
 }
 
 // ─── Pagination strip builder ─────────────────────────────────────────────────
 
-/**
- * Computes which page buttons to render given currentPage and totalPages.
- * Returns an array of: number | 'ellipsis' | 'first' | 'last'
- *
- * Logic (matches Figma):
- * - ≤ 5 pages: show all
- * - > 5 pages: show pages near current, with ellipsis + last page
- */
 function computePages(current, total) {
   if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-  // Show first 3 + ellipsis + last
   return [1, 2, 3, 'ellipsis', total];
 }
 
 /**
- * @param {{
- *   size?: 'default'|'small',
- *   currentPage?: number,
- *   totalPages?: number,
- * }} opts
+ * @param {{ size?: 'default'|'small', currentPage?: number, totalPages?: number }} opts
  */
 function pagination({ size = 'default', currentPage = 1, totalPages = 3 } = {}) {
   const pages = computePages(currentPage, totalPages);
   const isPrevDisabled = currentPage <= 1;
   const isNextDisabled = currentPage >= totalPages;
+  const small = size === 'small';
 
-  const buttons = [
-    prevBtn({ disabled: isPrevDisabled, size }),
+  const items = [
+    prevItem({ disabled: isPrevDisabled, small }),
     ...pages.map(p =>
       p === 'ellipsis'
-        ? ellipsisBtn({ size })
-        : pageNumBtn({ page: p, selected: p === currentPage, size })
+        ? ellipsisItem({ small })
+        : pageNumItem({ page: p, active: p === currentPage, small })
     ),
-    nextBtn({ disabled: isNextDisabled, size }),
+    nextItem({ disabled: isNextDisabled, small }),
   ];
 
-  return `<nav aria-label="Pagination" style="display:inline-flex;align-items:center;gap:2px;">
-    ${buttons.join('\n    ')}
-  </nav>`;
+  return `<nav aria-label="Pagination"><ul class="pagination">${items.join('')}</ul></nav>`;
 }
 
 // ─── Showing indicator builder ────────────────────────────────────────────────
@@ -127,13 +90,9 @@ function pagination({ size = 'default', currentPage = 1, totalPages = 3 } = {}) 
  * @param {{ size?: 'default'|'small', from?: number, to?: number, total?: number }} opts
  */
 function showing({ size = 'default', from = 1, to = 10, total = 100 } = {}) {
-  const fs = size === 'small' ? '12px' : '14px';
-  const label = (text) => `<span style="font:400 ${fs}/1.5 inherit;color:#374151;">${text}</span>`;
-  const num   = (text) => `<span style="font:600 ${fs}/1.5 inherit;color:#111928;">${text}</span>`;
-
-  return `<div style="display:inline-flex;align-items:center;gap:4px;">
-    ${label('Showing')} ${num(from)} ${label('to')} ${num(to)} ${label('of')} ${num(total)}
-  </div>`;
+  const small = size === 'small';
+  const style = small ? ' style="font-size:var(--text-xs);"' : '';
+  return `<p class="pagination-info"${style}>Showing <span>${from}</span> to <span>${to}</span> of <span>${total}</span></p>`;
 }
 
 // ─── Default export ───────────────────────────────────────────────────────────
@@ -153,6 +112,8 @@ Figma sources:
 - Button sub-component: \`9426:125610\`
 - Showing indicator: \`9703:152796\`
 
+CSS classes: \`.pagination\` → \`.page-item [.active|.disabled]\` → \`.page-link\`
+
 **When to use**
 - Tables, search results, or lists with more items than fit on one screen
 - When you need to preserve URL state per page (use \`?page=N\` query params)
@@ -166,15 +127,12 @@ Figma sources:
 **Anatomy**
 \`[← Prev] [1] [2] [3] [… last?] [Next →]\`
 
-The current page has \`aria-current="page"\`. Disabled prev/next have \`disabled\` + \`aria-disabled="true"\`.
+The current page has \`.page-item.active\` + \`aria-current="page"\`. Disabled prev/next have \`.page-item.disabled\` + \`disabled\` attribute.
 
-**QA checklist**
-- Button: 40×40px (default) / 32×32px (small), bg \`#ffffff\`, border \`1px #e5e7eb\`, r=6px
-- Selected: bg \`#f3f4f6\`, text \`#42389d\`
-- Disabled: text/icon \`#d1d5db\`, \`disabled\` attribute set
-- Inactive page text: \`#6b7280\`, 14px/500
-- Ellipsis: non-interactive \`<span>\`, not a button
-- Showing: label \`#374151\`/400, numbers \`#111928\`/600; default 14px, small 12px
+**Accessibility**
+- Each \`.page-link\` button has \`aria-label="Page N"\`
+- Active page button has \`aria-current="page"\`
+- Disabled prev/next have \`disabled\` + \`aria-disabled="true"\`
         `.trim(),
       },
     },
@@ -183,7 +141,7 @@ The current page has \`aria-current="page"\`. Disabled prev/next have \`disabled
     // ── Content ──────────────────────────────────────────────
     currentPage: {
       control: { type: 'number', min: 1, step: 1 },
-      description: 'The currently active page. Renders with bg `#f3f4f6`, text `#42389d`, and `aria-current="page"`.',
+      description: 'The currently active page. Gets `.page-item.active` and `aria-current="page"`.',
       table: { category: 'Content', defaultValue: { summary: 1 } },
     },
     totalPages: {
@@ -195,7 +153,7 @@ The current page has \`aria-current="page"\`. Disabled prev/next have \`disabled
     size: {
       control: 'select',
       options: ['default', 'small'],
-      description: '`default` = 40×40px buttons. `small` = 32×32px buttons. Both use the same colors and font.',
+      description: '`default` = 36×36px buttons (CSS default). `small` = 32×32px (inline size override — no CSS modifier class exists).',
       table: { category: 'Appearance', defaultValue: { summary: 'default' } },
     },
   },
@@ -219,40 +177,40 @@ export const Interactive = {
       source: {
         transform: (_src, storyCtx) => {
           const { size, currentPage, totalPages } = storyCtx.args;
-          const dim = size === 'small' ? '32px' : '40px';
-          return `<nav aria-label="Pagination" style="display:inline-flex;align-items:center;gap:2px;">
+          const small = size === 'small';
+          const sizeAttr = small ? ' style="min-width:32px;height:32px;"' : '';
+          return `<nav aria-label="Pagination">
+  <ul class="pagination">
 
-  <!-- Prev: disabled when currentPage=1 -->
-  <button aria-label="Previous page" ${currentPage <= 1 ? 'disabled aria-disabled="true"' : ''}
-          style="width:${dim};height:${dim};background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <!-- chevron-left — color ${currentPage <= 1 ? '#d1d5db' : '#6b7280'} -->
-  </button>
+    <!-- Prev — disabled when currentPage=1 -->
+    <li class="page-item${currentPage <= 1 ? ' disabled' : ''}">
+      <button class="page-link" aria-label="Previous page"${currentPage <= 1 ? ' disabled aria-disabled="true"' : ''}${sizeAttr}>
+        <!-- chevron-left 20×20 -->
+      </button>
+    </li>
 
-  <!-- Page buttons: selected gets bg:#f3f4f6, color:#42389d, aria-current="page" -->
-  <button aria-label="Page 1" aria-current="page"
-          style="width:${dim};height:${dim};background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;">
-    <span style="font:500 14px/1.5 inherit;color:#42389d;">1</span>
-  </button>
-  <button aria-label="Page 2"
-          style="width:${dim};height:${dim};background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <span style="font:500 14px/1.5 inherit;color:#6b7280;">2</span>
-  </button>
-  ${totalPages > 5 ? `
-  <!-- Ellipsis: non-interactive span -->
-  <span style="width:${dim};height:${dim};display:flex;align-items:center;justify-content:center;">
-    <span style="font:500 14px/1.5 inherit;color:#6b7280;">…</span>
-  </span>
-  <button aria-label="Page ${totalPages}"
-          style="width:${dim};height:${dim};background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <span style="font:500 14px/1.5 inherit;color:#6b7280;">${totalPages}</span>
-  </button>` : ''}
+    <!-- Page buttons — active page gets .page-item.active + aria-current="page" -->
+    <li class="page-item active">
+      <button class="page-link" aria-label="Page 1" aria-current="page"${sizeAttr}>1</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Page 2"${sizeAttr}>2</button>
+    </li>
+    ${totalPages > 5 ? `
+    <!-- Ellipsis — non-interactive <span> -->
+    <li class="page-item"><span class="page-link" aria-hidden="true"${sizeAttr}>…</span></li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Page ${totalPages}"${sizeAttr}>${totalPages}</button>
+    </li>` : ''}
 
-  <!-- Next: disabled when currentPage=totalPages -->
-  <button aria-label="Next page" ${currentPage >= totalPages ? 'disabled aria-disabled="true"' : ''}
-          style="width:${dim};height:${dim};background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <!-- chevron-right — color ${currentPage >= totalPages ? '#d1d5db' : '#6b7280'} -->
-  </button>
+    <!-- Next — disabled when currentPage=totalPages -->
+    <li class="page-item${currentPage >= totalPages ? ' disabled' : ''}">
+      <button class="page-link" aria-label="Next page"${currentPage >= totalPages ? ' disabled aria-disabled="true"' : ''}${sizeAttr}>
+        <!-- chevron-right 20×20 -->
+      </button>
+    </li>
 
+  </ul>
 </nav>`;
         },
       },
@@ -276,32 +234,24 @@ Pagination with ≤ 5 pages — all page numbers shown, no ellipsis. Figma: \`Si
       },
       source: {
         language: 'html',
-        code: `<nav aria-label="Pagination" style="display:inline-flex;align-items:center;gap:2px;">
-  <!-- Prev disabled: currentPage=1 -->
-  <button aria-label="Previous page" disabled aria-disabled="true"
-          style="width:40px;height:40px;background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <!-- chevron-left color #d1d5db -->
-  </button>
-
-  <!-- Page 1: selected -->
-  <button aria-label="Page 1" aria-current="page"
-          style="width:40px;height:40px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;">
-    <span style="font:500 14px/1.5 inherit;color:#42389d;">1</span>
-  </button>
-
-  <!-- Page 2, 3: inactive -->
-  <button aria-label="Page 2" style="width:40px;height:40px;background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <span style="font:500 14px/1.5 inherit;color:#6b7280;">2</span>
-  </button>
-  <button aria-label="Page 3" style="width:40px;height:40px;background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <span style="font:500 14px/1.5 inherit;color:#6b7280;">3</span>
-  </button>
-
-  <!-- Next: active -->
-  <button aria-label="Next page"
-          style="width:40px;height:40px;background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-    <!-- chevron-right color #6b7280 -->
-  </button>
+        code: `<nav aria-label="Pagination">
+  <ul class="pagination">
+    <li class="page-item disabled">
+      <button class="page-link" aria-label="Previous page" disabled aria-disabled="true"><!-- chevron-left --></button>
+    </li>
+    <li class="page-item active">
+      <button class="page-link" aria-label="Page 1" aria-current="page">1</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Page 2">2</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Page 3">3</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Next page"><!-- chevron-right --></button>
+    </li>
+  </ul>
 </nav>`,
       },
     },
@@ -319,35 +269,31 @@ export const ManyPages = {
         story: `
 Pagination with > 5 pages — shows first 3, an ellipsis, and the last page. Figma: \`More pages=Yes\`.
 
-**✅ Do** — use \`…\` as a non-interactive \`<span>\`, not a \`<button>\`.
+**✅ Do** — use a non-interactive \`<span class="page-link">\` for the ellipsis, not a \`<button>\`.
 **❌ Don't** — truncate when ≤ 5 pages fit.
         `.trim(),
       },
       source: {
         language: 'html',
-        code: `<nav aria-label="Pagination" style="display:inline-flex;align-items:center;gap:2px;">
-  <button aria-label="Previous page" disabled aria-disabled="true"
-          style="width:40px;height:40px;..."><!-- chevron-left #d1d5db --></button>
-  <button aria-label="Page 1" aria-current="page"
-          style="width:40px;height:40px;background:#f3f4f6;...">
-    <span style="color:#42389d;">1</span>
-  </button>
-  <button aria-label="Page 2" style="width:40px;height:40px;background:#ffffff;...">
-    <span style="color:#6b7280;">2</span>
-  </button>
-  <button aria-label="Page 3" style="width:40px;height:40px;background:#ffffff;...">
-    <span style="color:#6b7280;">3</span>
-  </button>
+        code: `<nav aria-label="Pagination">
+  <ul class="pagination">
+    <li class="page-item disabled">
+      <button class="page-link" aria-label="Previous page" disabled aria-disabled="true"><!-- chevron-left --></button>
+    </li>
+    <li class="page-item active">
+      <button class="page-link" aria-label="Page 1" aria-current="page">1</button>
+    </li>
+    <li class="page-item"><button class="page-link" aria-label="Page 2">2</button></li>
+    <li class="page-item"><button class="page-link" aria-label="Page 3">3</button></li>
 
-  <!-- Ellipsis: non-interactive -->
-  <span style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
-    <span style="font:500 14px/1.5 inherit;color:#6b7280;">…</span>
-  </span>
+    <!-- Ellipsis: non-interactive -->
+    <li class="page-item"><span class="page-link" aria-hidden="true">…</span></li>
 
-  <button aria-label="Page 100" style="width:40px;height:40px;background:#ffffff;...">
-    <span style="color:#6b7280;">100</span>
-  </button>
-  <button aria-label="Next page" style="width:40px;height:40px;..."><!-- chevron-right #6b7280 --></button>
+    <li class="page-item"><button class="page-link" aria-label="Page 100">100</button></li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Next page"><!-- chevron-right --></button>
+    </li>
+  </ul>
 </nav>`,
       },
     },
@@ -364,22 +310,22 @@ export const BothSizes = {
     controls: { include: ['currentPage', 'totalPages'] },
     docs: {
       description: {
-        story: 'Default (40×40px) and Small (32×32px) side by side. Use **currentPage** and **totalPages** controls to explore states.',
+        story: 'Default (36×36px per CSS) and Small (32×32px inline override) side by side.',
       },
       source: {
         language: 'html',
-        code: `<!-- Default: 40×40px buttons -->
-<nav aria-label="Pagination" style="display:inline-flex;gap:2px;"><!-- ... --></nav>
+        code: `<!-- Default: CSS .page-link size (36×36px) -->
+<nav aria-label="Pagination"><ul class="pagination"><!-- ... --></ul></nav>
 
-<!-- Small: 32×32px buttons -->
-<nav aria-label="Pagination" style="display:inline-flex;gap:2px;"><!-- ... --></nav>`,
+<!-- Small: inline override style="min-width:32px;height:32px;" on each .page-link -->
+<nav aria-label="Pagination"><ul class="pagination"><!-- ... --></ul></nav>`,
       },
     },
   },
   render: ({ currentPage, totalPages }) => `
     <div style="display:flex;flex-direction:column;gap:20px;padding:8px 0;">
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Default (40×40)</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Default (36×36)</div>
         ${pagination({ size: 'default', currentPage, totalPages })}
       </div>
       <div>
@@ -401,38 +347,23 @@ export const ButtonStates = {
         story: `
 All button states from Figma node \`9426:125610\`.
 
-| Type | State | bg | text/icon |
-|---|---|---|---|
-| Page | Default | \`#ffffff\` | \`#6b7280\` |
-| Page | Selected | \`#f3f4f6\` | \`#42389d\` |
-| Page | Disabled | \`#ffffff\` | \`#d1d5db\` |
-| Prev / Next | Default | \`#ffffff\` | \`#6b7280\` |
-| Prev / Next | Hover/Active | \`#f3f4f6\` | \`#42389d\` |
-| Prev / Next | Disabled | \`#ffffff\` | \`#d1d5db\` |
+| CSS class | State | Description |
+|---|---|---|
+| \`.page-item\` | Default | normal page button |
+| \`.page-item.active\` | Selected | current page — primary bg, white text |
+| \`.page-item.disabled\` | Disabled | muted text, no pointer events |
         `.trim(),
       },
       source: {
         language: 'html',
-        code: `<!-- Page — Default -->
-<button aria-label="Page 1"
-        style="width:40px;height:40px;background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-  <span style="font:500 14px/1.5 inherit;color:#6b7280;">1</span>
-</button>
+        code: `<!-- Default -->
+<li class="page-item"><button class="page-link" aria-label="Page 1">1</button></li>
 
-<!-- Page — Selected (aria-current="page") -->
-<button aria-label="Page 1" aria-current="page"
-        style="width:40px;height:40px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;">
-  <span style="font:500 14px/1.5 inherit;color:#42389d;">1</span>
-</button>
+<!-- Active (selected page) -->
+<li class="page-item active"><button class="page-link" aria-label="Page 1" aria-current="page">1</button></li>
 
-<!-- Page — Disabled -->
-<button aria-label="Page 1" disabled aria-disabled="true"
-        style="width:40px;height:40px;background:#ffffff;border:1px solid #e5e7eb;border-radius:6px;">
-  <span style="font:500 14px/1.5 inherit;color:#d1d5db;">1</span>
-</button>
-
-<!-- Prev — Default / Active / Disabled -->
-<!-- Next — Default / Active / Disabled -->`,
+<!-- Disabled -->
+<li class="page-item disabled"><button class="page-link" aria-label="Previous page" disabled aria-disabled="true"><!-- chevron-left --></button></li>`,
       },
     },
   },
@@ -440,20 +371,18 @@ All button states from Figma node \`9426:125610\`.
     const labeled = (label, html) => `
       <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
         <div style="font:700 10px/1 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">${label}</div>
-        ${html}
+        <ul class="pagination">${html}</ul>
       </div>`;
 
     return `
-      <div style="padding:24px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;">
-        ${labeled('Page · Default',   pageNumBtn({ page: 1, selected: false, disabled: false }))}
-        ${labeled('Page · Selected',  pageNumBtn({ page: 1, selected: true,  disabled: false }))}
-        ${labeled('Page · Disabled',  pageNumBtn({ page: 1, selected: false, disabled: true  }))}
-        ${labeled('Prev · Default',   prevBtn({ disabled: false }))}
-        ${labeled('Prev · Active',    prevBtn({ selected: true  }))}
-        ${labeled('Prev · Disabled',  prevBtn({ disabled: true  }))}
-        ${labeled('Next · Default',   nextBtn({ disabled: false }))}
-        ${labeled('Next · Active',    nextBtn({ selected: true  }))}
-        ${labeled('Next · Disabled',  nextBtn({ disabled: true  }))}
+      <div style="padding:24px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;">
+        ${labeled('Page · Default',  pageNumItem({ page: 1, active: false }))}
+        ${labeled('Page · Active',   pageNumItem({ page: 1, active: true  }))}
+        ${labeled('Page · Disabled', pageNumItem({ page: 1, disabled: true }))}
+        ${labeled('Prev · Default',  prevItem({ disabled: false }))}
+        ${labeled('Prev · Disabled', prevItem({ disabled: true  }))}
+        ${labeled('Next · Default',  nextItem({ disabled: false }))}
+        ${labeled('Next · Disabled', nextItem({ disabled: true  }))}
       </div>`;
   },
 };
@@ -468,25 +397,18 @@ export const ShowingIndicator = {
     docs: {
       description: {
         story: `
-"Showing X to Y of Z" indicator — Figma node \`9703:152796\`.
+"Showing X to Y of Z" indicator — Figma node \`9703:152796\`. Uses \`.pagination-info\` class.
 
 Typically placed to the left of the pagination strip to orient users within the result set.
 
-- Default: 14px — label \`#374151\`/400, numbers \`#111928\`/600
-- Small: 12px — same colors
+- Default: \`var(--text-sm)\` (14px) — label color \`var(--color-text-secondary)\`, numbers \`var(--color-text-primary)\` bold
+- Small: inline font-size override to \`var(--text-xs)\` (12px)
         `.trim(),
       },
       source: {
         language: 'html',
-        code: `<!-- Showing indicator — Default size -->
-<div style="display:inline-flex;align-items:center;gap:4px;">
-  <span style="font:400 14px/1.5 inherit;color:#374151;">Showing</span>
-  <span style="font:600 14px/1.5 inherit;color:#111928;">1</span>
-  <span style="font:400 14px/1.5 inherit;color:#374151;">to</span>
-  <span style="font:600 14px/1.5 inherit;color:#111928;">10</span>
-  <span style="font:400 14px/1.5 inherit;color:#374151;">of</span>
-  <span style="font:600 14px/1.5 inherit;color:#111928;">100</span>
-</div>`,
+        code: `<!-- Showing indicator -->
+<p class="pagination-info">Showing <span>1</span> to <span>10</span> of <span>100</span></p>`,
       },
     },
   },
@@ -514,7 +436,7 @@ export const InContext = {
     docs: {
       description: {
         story: `
-Typical table footer: **Showing** indicator on the left, **Pagination** on the right.
+Typical table footer: **Showing** indicator (\`.pagination-info\`) on the left, **Pagination** (\`.pagination\`) on the right.
 
 **✅ Do** — always pair Showing with Pagination so users know their position.
 **✅ Do** — recalculate "Showing X to Y" from currentPage × pageSize.
@@ -522,20 +444,15 @@ Typical table footer: **Showing** indicator on the left, **Pagination** on the r
       },
       source: {
         language: 'html',
-        code: `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;">
+        code: `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;">
   <!-- Showing indicator (left) -->
-  <div style="display:inline-flex;align-items:center;gap:4px;">
-    <span style="font:400 14px/1.5 inherit;color:#374151;">Showing</span>
-    <span style="font:600 14px/1.5 inherit;color:#111928;">1</span>
-    <span style="font:400 14px/1.5 inherit;color:#374151;">to</span>
-    <span style="font:600 14px/1.5 inherit;color:#111928;">10</span>
-    <span style="font:400 14px/1.5 inherit;color:#374151;">of</span>
-    <span style="font:600 14px/1.5 inherit;color:#111928;">100</span>
-  </div>
+  <p class="pagination-info">Showing <span>1</span> to <span>10</span> of <span>100</span></p>
 
   <!-- Pagination (right) -->
-  <nav aria-label="Pagination" style="display:inline-flex;align-items:center;gap:2px;">
-    <!-- prev · pages · next -->
+  <nav aria-label="Pagination">
+    <ul class="pagination">
+      <!-- prev · pages · next -->
+    </ul>
   </nav>
 </div>`,
       },
@@ -547,9 +464,8 @@ Typical table footer: **Showing** indicator on the left, **Pagination** on the r
     const to = Math.min(currentPage * pageSize, totalPages * pageSize);
     const total = totalPages * pageSize;
     return `
-      <div style="border:1px solid #e5e7eb;border-radius:8px;padding:0;overflow:hidden;max-width:700px;">
-        <!-- Placeholder table rows -->
-        <div style="padding:0;">
+      <div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;max-width:700px;">
+        <div>
           ${[1,2,3,4,5].map(i => `
             <div style="display:flex;gap:16px;padding:12px 16px;border-bottom:1px solid #f3f4f6;font:400 14px/1.5 inherit;color:#374151;">
               <span style="flex:2;">Row ${(currentPage-1)*5+i} — example data</span>
@@ -558,7 +474,6 @@ Typical table footer: **Showing** indicator on the left, **Pagination** on the r
             </div>
           `).join('')}
         </div>
-        <!-- Footer -->
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#f9fafb;border-top:1px solid #e5e7eb;">
           ${showing({ size, from, to, total })}
           ${pagination({ size, currentPage, totalPages })}
