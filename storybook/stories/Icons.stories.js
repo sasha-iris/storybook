@@ -94,6 +94,7 @@ No extras, no speculative additions.
 | Indicators icons | Indicators (check stroke, dot-solid, mail outline, fire outline) |
 | Skeleton icons | Skeleton (image-placeholder landscape) |
 | Toast icons | Toast (check solid, check-circle solid, x-circle solid, bell outline, paper-airplane solid, refresh solid) |
+| Alert icons | Alerts re-uses check-circle (solid) from Toast icons and x-mark from Badge/Chip icons |
         `,
       },
     },
