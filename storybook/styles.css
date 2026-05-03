@@ -1385,19 +1385,27 @@ input[type="file"].form-file-input {
 }
 
 .breadcrumb-item a {
-  color: var(--color-text-secondary);
+  /* Figma 3284:24211 Type=Default — link items fill=#101828 (heading) */
+  color: var(--color-text-heading);
   text-decoration: none;
   transition: color 0.15s;
 }
 .breadcrumb-item a:hover { color: var(--color-text-primary); text-decoration: none; }
 
-.breadcrumb-item.active { color: var(--color-text-primary); font-weight: var(--font-medium); }
+/* Figma: active (current page) = fill=#4a5565 (body) — lighter than links */
+.breadcrumb-item.active { color: var(--color-text-body); }
 
 .breadcrumb-sep {
-  color: var(--color-text-disabled);
+  /* Figma: chevron fill=#4a5565 (Default) */
+  color: var(--color-text-body);
   font-size: 12px;
   margin: 0 2px;
 }
+
+/* Figma Type=With background: all items (links + active) = #4a5565, chevron = #6a7282 */
+.breadcrumb-bg .breadcrumb-item a,
+.breadcrumb-bg .breadcrumb-item.active { color: var(--color-text-body); }
+.breadcrumb-bg .breadcrumb-sep { color: var(--color-text-body-subtle); }
 
 
 /* =============================================
@@ -1791,9 +1799,10 @@ input[type="file"].form-file-input {
 }
 .sidebar-item:hover { background: var(--color-bg-muted); color: var(--color-text-primary); text-decoration: none; }
 
+/* Figma 1060:44 — active item fill=#f3f4f6, icon fill=#1f2a37 */
 .sidebar-item.active {
-  background: #EBF5FB;
-  color: var(--color-bg-primary);
+  background: var(--color-bg-muted);
+  color: #1f2a37;
 }
 
 .sidebar-item-icon {
@@ -1802,7 +1811,7 @@ input[type="file"].form-file-input {
   flex-shrink: 0;
   opacity: 0.7;
 }
-.sidebar-item.active .sidebar-item-icon { opacity: 1; }
+.sidebar-item.active .sidebar-item-icon { opacity: 1; color: #1f2a37; }
 
 .sidebar-item-badge {
   margin-left: auto;

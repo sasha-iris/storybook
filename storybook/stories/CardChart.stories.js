@@ -54,10 +54,12 @@ const C_BU    = '#6875F5';
 const C_BU_LT = '#B4C6FC';
 const C_BD_LT = '#F8B4D9';
 
-// ── Bar heights in px from Figma (container = 56px, "full" = 56) ─────────────
-// index 6 is always the lighter-shade bar
-const BARS_STANDARD = [15.5, 16.4, 27.9, 17.2, 56, 25.4, 19.6, 9.0, 29.5, 56, 19.6, 13.9, 25, 36.1];
-const BARS_BIG      = [15.5, 16.4, 27.9, 17.2, 56, 25.4, 19.6, 9.0, 29.5, 56, 19.6, 13.9, 56, 56];
+// ── Bar heights in px from Figma ─────────────────────────────────────────────
+// barchart (602:20796): Charts frame [222x40], max bar = 40px
+// barchart-big (602:24711): Charts frame [222x58], max bar = 58px
+// index 6 is always the lighter-shade bar (#B4C6FC up / #F8B4D9 down)
+const BARS_STANDARD = [15, 16, 27, 17, 40, 25, 19, 8, 29, 40, 19, 13, 25, 36];
+const BARS_BIG      = [15, 16, 58, 17, 58, 25, 19, 8, 29, 58, 19, 13, 58, 36];
 
 // ── Shared SVG icons ─────────────────────────────────────────────────────────
 
@@ -108,16 +110,17 @@ function lineChartSvg(dir) {
   </div>`;
 }
 
-// Bar chart: 14 bars × 3px, heights from Figma, container 56px
-function barChartHtml(dir, heights = BARS_STANDARD) {
+// Bar chart: 14 bars × 3px, heights from Figma
+// Standard (602:20796): container 40px. Big (602:24711): container 58px.
+function barChartHtml(dir, heights = BARS_STANDARD, containerH = 40) {
   const main = dir === 'up' ? C_BU : C_DN;
   const light = dir === 'up' ? C_BU_LT : C_BD_LT;
   const bars = heights.map((h, i) => {
     const col = (i === 6) ? light : main;
-    const ht = h >= 56 ? '100%' : `${h}px`;
+    const ht = h >= containerH ? '100%' : `${h}px`;
     return `<div style="width:3px;height:${ht};background:${col};border-radius:32px;flex-shrink:0;"></div>`;
   }).join('');
-  return `<div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">${bars}</div>`;
+  return `<div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:${containerH}px;flex-shrink:0;">${bars}</div>`;
 }
 
 // Segmented horizontal bar chart — barchart-segm-hor only (602:25133)
@@ -234,7 +237,7 @@ function cardBarchartVert(dir = 'up') {
   </div>`;
 }
 
-// barchart-big — same as barchart but last 2 bars also full height (286×200px)
+// barchart-big (602:24711) — Charts frame [222x58], bars at idx 2,4,9,12 are full height (58px)
 function cardBarchartBig(dir = 'up') {
   return `<div style="${BASE}width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;gap:40px;">
     <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -245,7 +248,7 @@ function cardBarchartBig(dir = 'up') {
       </div>
       ${PILL}
     </div>
-    ${barChartHtml(dir, BARS_BIG)}
+    ${barChartHtml(dir, BARS_BIG, 58)}
   </div>`;
 }
 

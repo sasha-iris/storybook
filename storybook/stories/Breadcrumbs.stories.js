@@ -82,7 +82,15 @@ function breadcrumb({ type = 'default', showHomeIcon = true, depth = 3, items } 
 
   if (!isBg) return nav;
 
-  return `<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">${nav}</div>`;
+  // Figma Type=With background (3284:24211): ALL items = #4a5565, chevron = #6a7282
+  // .breadcrumb-bg class defined in styles.css overrides link/active/sep colors
+  return `<div style="display:inline-flex;background:var(--color-bg-default);border:1px solid var(--color-border-default);border-radius:8px;padding:12px 20px;">
+    <nav aria-label="Breadcrumb" class="breadcrumb-bg">
+      <ol class="breadcrumb">
+        ${crumbs.join('')}
+      </ol>
+    </nav>
+  </div>`;
 }
 
 // ─── Default export ───────────────────────────────────────────────────────────
@@ -258,9 +266,10 @@ The pill is a plain wrapper div with inline styles (padding:12px 20px, backgroun
       },
       source: {
         language: 'html',
-        code: `<!-- Pill wrapper — no CSS class, inline styles only -->
-<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">
-  <nav aria-label="Breadcrumb">
+        code: `<!-- With background: pill wrapper + .breadcrumb-bg modifier -->
+<!-- All items render in #4a5565 (var(--color-text-body)), chevron in #6a7282 -->
+<div style="display:inline-flex;background:var(--color-bg-default);border:1px solid var(--color-border-default);border-radius:8px;padding:12px 20px;">
+  <nav aria-label="Breadcrumb" class="breadcrumb-bg">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <a href="#"><!-- home icon --> Home</a>
