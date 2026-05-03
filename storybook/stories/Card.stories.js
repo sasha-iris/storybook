@@ -311,7 +311,7 @@ export const CardWithButton = {
 Button colour is brand/800 (\`#42389d\`).
 
 \`\`\`html
-<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:24px;max-width:384px;">
+<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;padding:24px;max-width:384px;">
   <h5>Noteworthy technology…</h5>
   <p>Here are the biggest enterprise…</p>
   <button style="background:#42389d;…">Read more →</button>
@@ -320,18 +320,18 @@ Button colour is brand/800 (\`#42389d\`).
       },
       source: {
         language: 'html',
-        code: `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+        code: `<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
      box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
      padding:24px;max-width:384px;">
-  <h5 style="font-size:24px;font-weight:700;color:#111928;line-height:1.3;margin:0 0 12px;">
+  <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;line-height:1.3;margin:0 0 12px;">
     Noteworthy technology acquisitions 2021
   </h5>
-  <p style="font-size:16px;color:#6b7280;line-height:1.6;margin:0 0 20px;">
+  <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0 0 20px;">
     Here are the biggest enterprise technology acquisitions of 2021 so far,
     in reverse chronological order.
   </p>
   <button style="display:inline-flex;align-items:center;gap:8px;
-                 background:#42389d;color:#fff;font-size:14px;font-weight:500;
+                 background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                  border:none;border-radius:12px;padding:10px 20px;cursor:pointer;">
     Read more
     <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
@@ -346,19 +346,19 @@ Button colour is brand/800 (\`#42389d\`).
     },
   },
   render: () => `
-    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
                 box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
                 padding:24px;max-width:384px;">
-      <h5 style="font-size:24px;font-weight:700;color:#111928;
+      <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;
                  line-height:1.3;margin:0 0 12px;">
         Noteworthy technology acquisitions 2021
       </h5>
-      <p style="font-size:16px;color:#6b7280;line-height:1.6;margin:0 0 20px;">
+      <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0 0 20px;">
         Here are the biggest enterprise technology acquisitions of 2021 so far,
         in reverse chronological order.
       </p>
       <button style="display:inline-flex;align-items:center;gap:8px;
-                     background:#42389d;color:#fff;font-size:14px;font-weight:500;
+                     background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                      border:none;border-radius:12px;padding:10px 20px;cursor:pointer;">
         Read more
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
@@ -396,7 +396,7 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
 \`\`\`html
 <div style="…padding:24px;max-width:384px;">
   <!-- icon badge -->
-  <div style="width:40px;height:40px;background:#f9fafb;border-radius:8px;…">…gift svg…</div>
+  <div style="width:40px;height:40px;background:var(--color-bg-default);border-radius:8px;…">…gift svg…</div>
   <h5>Terms of Service</h5>
   <p>Review our full terms…</p>
   <a href="#" style="color:#155dfc;">See our guideline →</a>
@@ -405,12 +405,12 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
       },
       source: {
         language: 'html',
-        code: `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+        code: `<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
      box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
      padding:24px;max-width:384px;">
   <!-- Gift icon (APPROX — Heroicons outline gift) -->
   <div style="display:flex;align-items:center;justify-content:center;
-              width:40px;height:40px;background:#f9fafb;border-radius:8px;margin-bottom:16px;">
+              width:40px;height:40px;background:var(--color-bg-default);border-radius:8px;margin-bottom:16px;">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
          xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M20 12v9H4v-9M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z
@@ -418,15 +418,15 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
             stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
-  <h5 style="font-size:24px;font-weight:700;color:#111928;line-height:1.3;margin:0 0 12px;">
+  <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;line-height:1.3;margin:0 0 12px;">
     Terms of Service
   </h5>
-  <p style="font-size:16px;color:#6b7280;line-height:1.6;margin:0 0 20px;">
+  <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0 0 20px;">
     Review our full terms of service — understand your rights and responsibilities
     when using the Iris platform.
   </p>
   <a href="#" style="display:inline-flex;align-items:center;gap:6px;
-                     color:#155dfc;font-size:14px;font-weight:500;text-decoration:none;">
+                     color:#155dfc;font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
     See our guideline
     <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
          xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -440,12 +440,12 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
     },
   },
   render: () => `
-    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
                 box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
                 padding:24px;max-width:384px;">
       <!-- Gift icon (APPROX — Heroicons outline gift) -->
       <div style="display:flex;align-items:center;justify-content:center;
-                  width:40px;height:40px;background:#f9fafb;border-radius:8px;
+                  width:40px;height:40px;background:var(--color-bg-default);border-radius:8px;
                   margin-bottom:16px;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
              xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -454,16 +454,16 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
                 stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h5 style="font-size:24px;font-weight:700;color:#111928;
+      <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;
                  line-height:1.3;margin:0 0 12px;">
         Terms of Service
       </h5>
-      <p style="font-size:16px;color:#6b7280;line-height:1.6;margin:0 0 20px;">
+      <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0 0 20px;">
         Review our full terms of service — understand your rights and responsibilities
         when using the Iris platform.
       </p>
       <a href="#" style="display:inline-flex;align-items:center;gap:6px;
-                         color:#155dfc;font-size:14px;font-weight:500;text-decoration:none;">
+                         color:#155dfc;font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
         See our guideline
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
              xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -511,17 +511,17 @@ Width: 576 px · Height: 258 px · Image column: 192 px.
       source: {
         language: 'html',
         code: `<div style="display:flex;max-width:576px;height:258px;
-     background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+     background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
      box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
      overflow:hidden;">
   <img src="https://picsum.photos/seed/horizcard/192/258"
        alt="Card image"
        style="width:192px;flex-shrink:0;object-fit:cover;">
   <div style="padding:20px;display:flex;flex-direction:column;justify-content:center;">
-    <h5 style="font-size:24px;font-weight:700;color:#111928;line-height:1.3;margin:0 0 12px;">
+    <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;line-height:1.3;margin:0 0 12px;">
       Noteworthy technology acquisitions 2021
     </h5>
-    <p style="font-size:16px;color:#6b7280;line-height:1.6;margin:0;">
+    <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0;">
       Here are the biggest enterprise technology acquisitions of 2021 so far,
       in reverse chronological order.
     </p>
@@ -532,18 +532,18 @@ Width: 576 px · Height: 258 px · Image column: 192 px.
   },
   render: () => `
     <div style="display:flex;max-width:576px;height:258px;
-                background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+                background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
                 box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
                 overflow:hidden;">
       <img src="https://picsum.photos/seed/horizcard/192/258"
            alt="Card image"
            style="width:192px;flex-shrink:0;object-fit:cover;">
       <div style="padding:20px;display:flex;flex-direction:column;justify-content:center;">
-        <h5 style="font-size:24px;font-weight:700;color:#111928;
+        <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;
                    line-height:1.3;margin:0 0 12px;">
           Noteworthy technology acquisitions 2021
         </h5>
-        <p style="font-size:16px;color:#6b7280;line-height:1.6;margin:0;">
+        <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0;">
           Here are the biggest enterprise technology acquisitions of 2021 so far,
           in reverse chronological order.
         </p>

@@ -197,7 +197,7 @@ function contractedItem({ icon, label, active = false }) {
     return `
       <button title="${label}" aria-label="${label}" aria-current="page" style="
         width:40px;height:40px;margin:0 auto;
-        background:#f3f4f6;border-radius:8px;border:none;
+        background:var(--color-bg-muted);border-radius:8px;border:none;
         display:flex;align-items:center;justify-content:center;
         color:#1f2a37;cursor:pointer;flex-shrink:0;
       ">${icon}</button>`;
@@ -207,7 +207,7 @@ function contractedItem({ icon, label, active = false }) {
       width:60px;height:32px;padding:4px 0;
       background:transparent;border:none;
       display:flex;align-items:center;justify-content:center;
-      color:#6b7280;cursor:pointer;flex-shrink:0;
+      color:var(--color-text-secondary);cursor:pointer;flex-shrink:0;
     ">${icon}</button>`;
 }
 
@@ -438,7 +438,7 @@ export const Default = {
     docs: {
       description: { story: 'Default sidebar state: logo visible, Financial model expanded, Overview active.' },
       source: {
-        code: `<aside style="width:256px;height:100vh;background:#f3f4f6;border-right:1px solid #e5e7eb;">
+        code: `<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">
   <!-- Logo -->
   <!-- Nav items — active: bg:#e5e7eb; color:#42389d; aria-current="page" -->
 </aside>`,
@@ -473,7 +473,7 @@ export const ActiveStates = {
    style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
           border-radius:8px;background:#e5e7eb;width:100%;box-sizing:border-box;text-decoration:none;">
   <!-- icon: 24×24, color #42389d -->
-  <span style="font:500 16px/1.5 'Inter',sans-serif;color:#42389d;">Overview</span>
+  <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#42389d;">Overview</span>
 </a>
 
 <!-- Inactive menu item: no background, text #111928 -->
@@ -481,13 +481,13 @@ export const ActiveStates = {
    style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
           border-radius:8px;width:100%;box-sizing:border-box;text-decoration:none;">
   <!-- icon: 24×24, color #111928 -->
-  <span style="font:500 16px/1.5 'Inter',sans-serif;color:#111928;">Metrics Library</span>
+  <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Metrics Library</span>
 </a>`,
       },
     },
   },
   render: () => `
-    <div style="display:flex;gap:16px;flex-wrap:wrap;padding:16px;background:#f9fafb;">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;padding:16px;background:var(--color-bg-default);">
       ${['overview','metrics','pnl','budget','cohorts','cashflow','financial','help'].map(item => `
         <div>
           <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#9CA3AF;margin:0 0 8px;">${item}</p>
@@ -518,7 +518,7 @@ export const Collapsed = {
             border-radius:8px;cursor:pointer;width:100%;box-sizing:border-box;">
   <div style="display:flex;flex:1;gap:4px;align-items:center;">
     <!-- icon: currency-dollar, 24×24, color #111928 -->
-    <span style="font:500 16px/1.5 'Inter',sans-serif;color:#111928;">Financial model</span>
+    <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Financial model</span>
   </div>
   <!-- chevron-down when collapsed, chevron-up when expanded -->
   <!-- svg chevron-down here -->
@@ -577,7 +577,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
 <!-- Primary — Default -->
 <div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
             border-radius:8px;width:220px;box-sizing:border-box;">
-  <span style="color:#6b7280;"><!-- icon 24×24 --></span>
+  <span style="color:var(--color-text-secondary);"><!-- icon 24×24 --></span>
   <span style="font:500 16px/1.5 Inter,sans-serif;color:#111928;">Label</span>
 </div>
 
@@ -605,7 +605,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
     const labeledItem = (label, html) => `
       <div style="display:flex;flex-direction:column;gap:4px;">
         <div style="font:10px/1 600 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;">${label}</div>
-        <div style="background:#f9fafb;padding:8px;border-radius:8px;">${html}</div>
+        <div style="background:var(--color-bg-default);padding:8px;border-radius:8px;">${html}</div>
       </div>`;
 
     return `
@@ -643,7 +643,7 @@ Both use identical menu item tokens and the same \`#e5e7eb\` right border.
       source: {
         language: 'html',
         code: `<!-- Color=Gray (default) -->
-<aside style="width:256px;background:#f3f4f6;border-right:1px solid #e5e7eb;">...</aside>
+<aside style="width:256px;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">...</aside>
 
 <!-- Color=White -->
 <aside style="width:256px;background:#ffffff;border-right:1px solid #e5e7eb;">...</aside>`,
@@ -653,11 +653,11 @@ Both use identical menu item tokens and the same \`#e5e7eb\` right border.
   render: () => `
     <div style="height:100vh;display:flex;gap:0;">
       <div>
-        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:#6b7280;background:#f9fafb;border-bottom:1px solid #e5e7eb;">Color=Gray · #f3f4f6</div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid #e5e7eb;">Color=Gray · #f3f4f6</div>
         ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'gray' })}
       </div>
       <div>
-        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:#6b7280;background:#f9fafb;border-bottom:1px solid #e5e7eb;">Color=White · #ffffff</div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid #e5e7eb;">Color=White · #ffffff</div>
         ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'white' })}
       </div>
     </div>
@@ -701,7 +701,7 @@ Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
 
     <!-- Active: 40×40 centered, bg #f3f4f6, radius 8px, icon #1f2a37 -->
     <button aria-label="Overview" aria-current="page" title="Overview"
-            style="width:40px;height:40px;margin:0 auto;background:#f3f4f6;
+            style="width:40px;height:40px;margin:0 auto;background:var(--color-bg-muted);
                    border-radius:8px;border:none;display:flex;
                    align-items:center;justify-content:center;color:#1f2a37;cursor:pointer;">
       <!-- chart-pie icon 24×24 -->
@@ -711,7 +711,7 @@ Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
     <button aria-label="Metrics Library" title="Metrics Library"
             style="width:60px;height:32px;background:transparent;border:none;
                    display:flex;align-items:center;justify-content:center;
-                   color:#6b7280;cursor:pointer;">
+                   color:var(--color-text-secondary);cursor:pointer;">
       <!-- document-report icon 24×24 -->
     </button>
 
@@ -752,7 +752,7 @@ export const NoLogo = {
       source: {
         language: 'html',
         code: `<!-- Sidebar without logo: omit the logo div entirely; nav starts at top -->
-<aside style="width:256px;height:100vh;background:#f3f4f6;border-right:1px solid #e5e7eb;
+<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);
               display:flex;flex-direction:column;gap:24px;box-sizing:border-box;">
   <!-- No logo area -->
   <nav style="display:flex;flex-direction:column;gap:8px;padding:24px 8px 0 28px;">
@@ -918,14 +918,14 @@ Shows the expanded sidebar alongside a typical dashboard content area. Use this 
         <div style="font:600 20px/1.4 inherit;color:#111928;">Overview</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
           ${['Monthly revenue', 'Active users', 'New signups'].map((label, i) => `
-            <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;">
-              <div style="font:400 12px/1.5 inherit;color:#6b7280;margin-bottom:4px;">${label}</div>
+            <div style="background:var(--color-bg-default);border:1px solid var(--color-border-default);border-radius:8px;padding:20px;">
+              <div style="font:400 12px/1.5 inherit;color:var(--color-text-secondary);margin-bottom:4px;">${label}</div>
               <div style="font:600 24px/1.2 inherit;color:#111928;">${['$48,200', '12,480', '1,240'][i]}</div>
               <div style="font:400 12px/1.5 inherit;color:#0e9f6e;margin-top:4px;">${['+8.2%', '+4.1%', '+12.5%'][i]} vs last month</div>
             </div>
           `).join('')}
         </div>
-        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;flex:1;">
+        <div style="background:var(--color-bg-default);border:1px solid var(--color-border-default);border-radius:8px;padding:20px;flex:1;">
           <div style="font:600 14px/1.5 inherit;color:#111928;margin-bottom:12px;">Recent activity</div>
           ${[
             ['Q1 Financial Model updated', '2 hours ago'],

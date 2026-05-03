@@ -146,9 +146,9 @@ function tab({ label = 'Tab', state = 'default', counter = false, counterCount =
         border: none;
         border-bottom: 2px solid ${borderColor};
         margin-bottom: -1px;
-        font-family: Inter, ui-sans-serif, sans-serif;
-        font-size: 14px;
-        font-weight: 500;
+        font-family: inherit;
+        font-size: var(--text-sm);
+        font-weight: var(--font-medium);
         color: ${textColor};
         cursor: pointer;
         white-space: nowrap;
@@ -167,8 +167,8 @@ function tab({ label = 'Tab', state = 'default', counter = false, counterCount =
           height: 18px;
           background: ${counterBg};
           color: ${counterText};
-          font-size: 12px;
-          font-weight: 500;
+          font-size: var(--text-xs);
+          font-weight: var(--font-medium);
           border-radius: 4px;
           line-height: 1;
         ">${counterCount}</span>
@@ -184,8 +184,8 @@ function tabBar(tabs) {
       style="
         display: flex;
         align-items: flex-end;
-        background: #ffffff;
-        border-bottom: 1px solid #e5e7eb;
+        background: var(--color-bg-surface);
+        border-bottom: 1px solid var(--color-border-default);
         gap: 0;
       "
     >
@@ -208,14 +208,14 @@ export const Interactive = {
           const textColor   = isActive ? '#42389d' : state === 'hover' ? '#374151' : '#4b5563';
           const counterBg   = isActive ? '#42389d' : '#d1d5db';
           const counterText = isActive ? '#ffffff'  : '#4b5563';
-          return `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid #e5e7eb;">
+          return `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
   <button
     role="tab"
     aria-selected="${isActive}"
-    style="padding:12px 16px;height:45px;font-size:14px;font-weight:500;color:${textColor};border:none;border-bottom:2px solid ${borderColor};margin-bottom:-1px;background:transparent;display:inline-flex;align-items:center;gap:6px;"
+    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);color:${textColor};border:none;border-bottom:2px solid ${borderColor};margin-bottom:-1px;background:transparent;display:inline-flex;align-items:center;gap:6px;"
   >
     ${label}${counter ? `
-    <span style="padding:0 4px;height:18px;min-width:16px;background:${counterBg};color:${counterText};font-size:12px;font-weight:500;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;">${counterCount}</span>` : ''}${dropdown ? `
+    <span style="padding:0 4px;height:18px;min-width:16px;background:${counterBg};color:${counterText};font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;">${counterCount}</span>` : ''}${dropdown ? `
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${textColor}" stroke-width="2"><polyline points="${isActive ? '18 15 12 9 6 15' : '6 9 12 15 18 9'}"/></svg>` : ''}
   </button>
 </div>`;
@@ -254,10 +254,10 @@ All three states from Figma node \`10007:72664\`:
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid #e5e7eb;">
+        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
   <!-- Default -->
   <button role="tab" aria-selected="false"
-    style="padding:12px 16px;height:45px;font-size:14px;font-weight:500;
+    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
            color:#4b5563;border:none;border-bottom:2px solid transparent;
            margin-bottom:-1px;background:transparent;">
     Overview
@@ -265,7 +265,7 @@ All three states from Figma node \`10007:72664\`:
 
   <!-- Hover (applied via :hover in CSS) -->
   <button role="tab" aria-selected="false"
-    style="padding:12px 16px;height:45px;font-size:14px;font-weight:500;
+    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
            color:#374151;border:none;border-bottom:2px solid #d1d5db;
            margin-bottom:-1px;background:transparent;">
     Transactions
@@ -273,7 +273,7 @@ All three states from Figma node \`10007:72664\`:
 
   <!-- Active -->
   <button role="tab" aria-selected="true"
-    style="padding:12px 16px;height:45px;font-size:14px;font-weight:500;
+    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
            color:#42389d;border:none;border-bottom:2px solid #42389d;
            margin-bottom:-1px;background:transparent;">
     Reports
@@ -317,25 +317,25 @@ Badge colours per state (Figma node \`10007:72664\`):
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid #e5e7eb;">
+        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
   <button role="tab" aria-selected="false"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#4b5563;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Inbox
     <span style="padding:0 4px;height:18px;min-width:16px;background:#d1d5db;color:#4b5563;
-                 font-size:12px;font-weight:500;border-radius:4px;
+                 font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
                  display:inline-flex;align-items:center;justify-content:center;">5</span>
   </button>
 
   <!-- Active tab — badge uses brand purple background -->
   <button role="tab" aria-selected="true"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#42389d;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
            border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
     Pending
     <span style="padding:0 4px;height:18px;min-width:16px;background:#42389d;color:#ffffff;
-                 font-size:12px;font-weight:500;border-radius:4px;
+                 font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
                  display:inline-flex;align-items:center;justify-content:center;">12</span>
   </button>
 </div>`,
@@ -375,10 +375,10 @@ Dropdown tabs (Figma \`dropdown=yes\`) indicate that clicking the tab opens a su
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid #e5e7eb;">
+        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
   <button role="tab" aria-selected="false"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#4b5563;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Reports
     <!-- chevron-down when closed -->
@@ -391,7 +391,7 @@ Dropdown tabs (Figma \`dropdown=yes\`) indicate that clicking the tab opens a su
   <!-- Active / open — chevron-up -->
   <button role="tab" aria-selected="true"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#42389d;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
            border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
     Filters
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -433,31 +433,31 @@ transaction lists, team dashboards, or approval queues.
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid #e5e7eb;">
+        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
   <button role="tab" aria-selected="true"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#42389d;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
            border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
     All transactions
   </button>
   <button role="tab" aria-selected="false"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#4b5563;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Pending
     <span style="padding:0 4px;height:18px;min-width:16px;background:#d1d5db;color:#4b5563;
-                 font-size:12px;font-weight:500;border-radius:4px;
+                 font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
                  display:inline-flex;align-items:center;justify-content:center;">8</span>
   </button>
   <button role="tab" aria-selected="false"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#4b5563;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Completed
   </button>
   <button role="tab" aria-selected="false"
     style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:14px;font-weight:500;color:#4b5563;border:none;
+           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Exports
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"

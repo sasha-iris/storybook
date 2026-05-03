@@ -56,7 +56,7 @@ function tag({ label = 'Label', color = 'grey', dismissible = false }) {
        </button>`
     : '';
 
-  return `<span style="display:inline-flex;align-items:center;gap:4px;color:${text};font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;font-family:inherit;">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
+  return `<span style="display:inline-flex;align-items:center;gap:4px;color:${text};font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;font-family:inherit;">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
 }
 
 export default {
@@ -130,7 +130,7 @@ export const Interactive = {
           const dismissPart = a.dismissible
             ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="${dot}" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>\n  </button>`
             : '';
-          return `<span style="display:inline-flex;align-items:center;gap:4px;color:${text};font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+          return `<span style="display:inline-flex;align-items:center;gap:4px;color:${text};font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
   </svg>
@@ -161,19 +161,19 @@ All 9 color themes. Tags have no background — the dot and text carry the color
       },
       source: {
         code: `<!-- Grey (neutral) -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#4a5565;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;color:#4a5565;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <svg width="12" height="12" viewBox="0 0 12 12" fill="#4b5563" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
   <span>Neutral</span>
 </span>
 
 <!-- Green -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#009966;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;color:#009966;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <svg width="12" height="12" viewBox="0 0 12 12" fill="#057a55" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
   <span>Active</span>
 </span>
 
 <!-- Red -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#e7000b;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;color:#e7000b;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <svg width="12" height="12" viewBox="0 0 12 12" fill="#e02424" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
   <span>Failed</span>
 </span>`,
@@ -207,7 +207,7 @@ All 9 themes with a dismiss × button. The × uses the same color as the dot.
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;color:#5850ec;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+        code: `<span style="display:inline-flex;align-items:center;gap:4px;color:#5850ec;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <svg width="12" height="12" viewBox="0 0 12 12" fill="#5850ec" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
   </svg>

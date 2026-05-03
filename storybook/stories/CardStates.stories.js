@@ -242,7 +242,7 @@ const errorBodies = {
       </div>
       <div style="padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;
                   border-radius:var(--radius-md);display:flex;align-items:flex-start;gap:8px;">
-        <span style="color:#991B1B;font-size:14px;flex-shrink:0;margin-top:1px;">✕</span>
+        <span style="color:#991B1B;font-size:var(--text-sm);flex-shrink:0;margin-top:1px;">✕</span>
         <div>
           <div style="font-size:var(--text-xs);font-weight:var(--font-semibold);
                       color:#991B1B;margin-bottom:2px;">Data unavailable</div>
@@ -305,7 +305,7 @@ export const Interactive = {
     <!-- aria-hidden decorative icon: inline SVG, e.g. inbox icon -->
     <div aria-hidden="true" style="margin-bottom:12px; display:flex; justify-content:center;
          color:var(--color-text-fg-disabled);"><!-- inbox SVG here --></div>
-    <div style="font-weight:600; margin-bottom:6px;">No data yet</div>
+    <div style="font-weight:var(--font-semibold); margin-bottom:6px;">No data yet</div>
     <div style="font-size:var(--text-sm); color:var(--color-text-body-subtle);">
       Items will appear here once added.</div>
   </div>
@@ -318,7 +318,7 @@ export const Interactive = {
          style="width:44px;height:44px;border-radius:50%;background:#FEE2E2;
                 display:flex;align-items:center;justify-content:center;
                 color:#991B1B;margin:0 auto 12px;"><!-- warning SVG here --></div>
-    <div style="font-weight:600; margin-bottom:6px;">Failed to load</div>
+    <div style="font-weight:var(--font-semibold); margin-bottom:6px;">Failed to load</div>
     <div style="font-size:var(--text-sm); color:var(--color-text-body-subtle); margin-bottom:16px;">
       Something went wrong. Please try again.</div>
     <button class="btn btn-alternative btn-sm">↻ Retry</button>
@@ -544,7 +544,7 @@ export const Error = {
     <!-- normal KPI header stays visible -->
     <div style="padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;
                 border-radius:var(--radius-md);display:flex;align-items:flex-start;gap:8px;">
-      <span style="color:#991B1B;font-size:14px;flex-shrink:0;margin-top:1px;">✕</span>
+      <span style="color:#991B1B;font-size:var(--text-sm);flex-shrink:0;margin-top:1px;">✕</span>
       <div>
         <div style="font-size:var(--text-xs);font-weight:600;color:#991B1B;margin-bottom:2px;">
           Data unavailable</div>

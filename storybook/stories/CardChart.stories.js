@@ -387,7 +387,7 @@ export const Interactive = {
             ? `<path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>`
             : `<path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd"/>`;
           return `<!-- Card KPI — Linechart / ${direction === 'up' ? 'Upwards' : 'Downwards'} -->
-<div style="background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             width:286px;height:168px;padding:16px;
             display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;">
   <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -441,7 +441,7 @@ export const LinechartUp = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — Linechart (286×168px) -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
             gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
 
@@ -488,7 +488,7 @@ export const LinechartDown = {
         language: 'html',
         code: `<!-- Card KPI — Linechart Downwards: same structure as Linechart Upwards.
      Change trend color to #E74694 (pink) and invert the SVG path direction. -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
             gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
   <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -527,7 +527,7 @@ export const LinechartVertUp = {
         language: 'html',
         code: `<!-- Card KPI — Linechart-vert (286×168px)
      Difference from Linechart: trend badge moves below the value, "Compared to day prior" label added. -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
             gap:4px;position:relative;overflow:hidden;box-sizing:border-box;">
   <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -567,7 +567,7 @@ export const BarchartUp = {
      Layout: header (label + trend + value) at top, bar chart at bottom.
      14 bars × 3px wide, border-radius 32px, aligned to flex-end (bottom).
      Bar color: up=#6875F5, down=#E74694. Index-6 bar is lighter: up=#B4C6FC, down=#F8B4D9. -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
             gap:40px;box-sizing:border-box;">
   <!-- Header -->
@@ -607,7 +607,7 @@ export const BarchartVert = {
         language: 'html',
         code: `<!-- Card KPI — barchart-vert (286×200px)
      Same as barchart but "Compared to day prior" label sits between the value and the bars. -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
             gap:24px;box-sizing:border-box;">
   <div style="display:flex;flex-direction:column;gap:16px;">
@@ -649,7 +649,7 @@ export const BarchartBig = {
         code: `<!-- Card KPI — barchart-big (286×200px)
      Same structure as barchart, but bars at indexes 4, 9, 12, and 13 reach full height (56px).
      All other bar heights differ from standard barchart. -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
             gap:40px;box-sizing:border-box;">
   <!-- Header: label + trend + value -->
@@ -691,7 +691,7 @@ export const BarchartSegmHor = {
      Layout: flex-row. Left: label + 12 segmented columns. Right: trend badge + "Compared to day prior".
      5 segment colors: gray #F2F4F7, green #22C55E, pink #EC4899, sky #33BFFF, blue #1D4ED8.
      Column width: 6px. Gap between columns: 10px. Container height: 50px. -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:449px;height:104px;padding:32px 32px 16px;
             display:flex;flex-direction:row;gap:16px;align-items:flex-end;box-sizing:border-box;">
 
@@ -738,7 +738,7 @@ export const CreditUp = {
         code: `<!-- Card KPI — Credit (286×168px)
      Same shell and header as Linechart. Different SVG path — smoother, credit-card-style wave.
      Trend color: #5850EC (brand/600). No "Compared to day prior" row (same as standard Linechart). -->
-<div style="background:#fff;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
+<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
             width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
             gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
 

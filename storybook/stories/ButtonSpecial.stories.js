@@ -116,7 +116,7 @@ const chartBtn = ({ state = 'default' } = {}) => {
 
 const tableBtn = ({ state = 'default' } = {}) => {
   const stateStyle = state === 'hover'
-    ? 'background:#f3f4f6;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);'
+    ? 'background:var(--color-bg-muted);box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);'
     : '';
   const dis = state === 'disabled' ? ' disabled' : '';
   return `<button class="btn-table"${dis} aria-label="Navigate" style="${stateStyle}">${ARROW_RIGHT(12)}</button>`;
@@ -192,15 +192,15 @@ export const ChartButtonToolbar = {
     },
   },
   render: () => `
-    <div style="display:inline-flex;border:1px solid #e5e7eb;border-radius:8px;
-                padding:4px;gap:2px;background:#fff;">
+    <div style="display:inline-flex;border:1px solid var(--color-border-default);border-radius:8px;
+                padding:4px;gap:2px;background:var(--color-bg-surface);">
       <button class="btn-chart" aria-label="Previous"
         style="transform:scaleX(-1);">${ARROW_RIGHT(16)}</button>
       <button class="btn-chart" style="background:var(--color-bg-tertiary,#f3f4f6);border-radius:9px;"
         aria-label="Next (hovered)">${ARROW_RIGHT(16)}</button>
       <button class="btn-chart" disabled aria-label="Disabled">${ARROW_RIGHT(16)}</button>
     </div>
-    <p style="margin-top:12px;font:11px/1.5 sans-serif;color:#6B7280;">
+    <p style="margin-top:12px;font:11px/1.5 sans-serif;color:var(--color-text-secondary);">
       Default · Hover (simulated) · Disabled — shown in a chart toolbar wrapper
     </p>`,
 };
@@ -255,10 +255,10 @@ export const TableButtonInContext = {
   render: () => `
     <table style="border-collapse:collapse;width:100%;max-width:600px;font-size:14px;">
       <thead>
-        <tr style="border-bottom:2px solid #e5e7eb;">
-          <th style="text-align:left;padding:8px 12px;color:#6B7280;font-weight:500;">Name</th>
-          <th style="text-align:left;padding:8px 12px;color:#6B7280;font-weight:500;">Status</th>
-          <th style="text-align:left;padding:8px 12px;color:#6B7280;font-weight:500;">Amount</th>
+        <tr style="border-bottom:2px solid var(--color-border-default);">
+          <th style="text-align:left;padding:8px 12px;color:var(--color-text-secondary);font-weight:500;">Name</th>
+          <th style="text-align:left;padding:8px 12px;color:var(--color-text-secondary);font-weight:500;">Status</th>
+          <th style="text-align:left;padding:8px 12px;color:var(--color-text-secondary);font-weight:500;">Amount</th>
           <th style="padding:8px 12px;"></th>
         </tr>
       </thead>
@@ -268,7 +268,7 @@ export const TableButtonInContext = {
           { name:'Bob Chen',       status:'Inactive', amount:'$890'   },
           { name:'Carol Williams', status:'Active',   amount:'$2,110' },
         ].map(row => `
-          <tr style="border-bottom:1px solid #f3f4f6;">
+          <tr style="border-bottom:1px solid var(--color-bg-muted);">
             <td style="padding:12px;">${row.name}</td>
             <td style="padding:12px;">${row.status}</td>
             <td style="padding:12px;">${row.amount}</td>
@@ -323,7 +323,7 @@ Both utility button types side-by-side for easy QA comparison.
                   color:#9CA3AF;margin:0 0 10px;">Table Button (node 9287:163857)</p>
         <div style="display:flex;gap:12px;align-items:center;">
           <button class="btn-table" aria-label="Default">${ARROW_RIGHT(12)}</button>
-          <button class="btn-table" style="background:#f3f4f6;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);"
+          <button class="btn-table" style="background:var(--color-bg-muted);box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.05);"
             aria-label="Hover">${ARROW_RIGHT(12)}</button>
           <button class="btn-table" disabled aria-label="Disabled">${ARROW_RIGHT(12)}</button>
           <span style="font:11px/1 sans-serif;color:#9CA3AF;">Default · Hover · Disabled</span>

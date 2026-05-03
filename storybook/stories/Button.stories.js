@@ -345,7 +345,7 @@ Use **size** control to verify states render correctly at all sizes.
     <div style="display:flex;flex-direction:column;gap:12px;">
       ${['primary','dark','green','red','yellow','blue'].map(color => `
         <div style="display:flex;gap:8px;align-items:center;">
-          <span style="width:64px;font:11px/1 sans-serif;color:#6B7280;flex-shrink:0;">${color}</span>
+          <span style="width:64px;font:11px/1 sans-serif;color:var(--color-text-secondary);flex-shrink:0;">${color}</span>
           ${btn({ label: 'Default',          color, size })}
           ${btn({ label: 'Disabled',         color, size, disabled: true })}
           ${btn({ label: 'Outline',          color, size, outline: true })}
@@ -392,17 +392,17 @@ Icon size: 20px for md/lg/xl, 16px for xs/sm.
   render: ({ color, size }) => `
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;gap:8px;align-items:center;">
-        <span style="width:100px;font:11px/1 sans-serif;color:#6B7280;">Left icon</span>
+        <span style="width:100px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Left icon</span>
         ${btn({ label: 'Button', color, size, iconLeft: true })}
         ${btn({ label: 'Button', color, size, iconLeft: true, outline: true })}
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <span style="width:100px;font:11px/1 sans-serif;color:#6B7280;">Right icon</span>
+        <span style="width:100px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Right icon</span>
         ${btn({ label: 'Button', color, size, iconRight: true })}
         ${btn({ label: 'Button', color, size, iconRight: true, outline: true })}
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <span style="width:100px;font:11px/1 sans-serif;color:#6B7280;">Icon only</span>
+        <span style="width:100px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Icon only</span>
         ${btn({ label: 'Action', color, size, iconOnly: true })}
         ${btn({ label: 'Action', color, size, iconOnly: true, outline: true })}
       </div>

@@ -109,7 +109,7 @@ function progressBar({ value = 50, color = 'primary', labelBelow = false } = {})
     <div style="
       position: relative;
       height: 6px;
-      background: #e5e7eb;
+      background: var(--color-border-default);
       border-radius: 2px;
       overflow: hidden;
     ">
@@ -125,10 +125,10 @@ function progressBar({ value = 50, color = 'primary', labelBelow = false } = {})
 
   const label = `
     <div style="
-      font-family: Inter, ui-sans-serif, sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      color: #6b7280;
+      font-family: inherit;
+      font-size: var(--text-xs);
+      font-weight: var(--font-medium);
+      color: var(--color-text-secondary);
       text-align: right;
       line-height: 1.5;
     ">${pct}%</div>`;
@@ -155,10 +155,10 @@ export const Interactive = {
           const { value, color, labelBelow } = ctx.args;
           const fillColor = COLORS[color] ?? COLORS.primary;
           const pct = Math.min(100, Math.max(0, value));
-          const labelHtml = `<div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">${pct}%</div>`;
+          const labelHtml = `<div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">${pct}%</div>`;
           if (labelBelow) {
             return `<div style="width:100%;">
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
   </div>
   ${labelHtml}
@@ -166,7 +166,7 @@ export const Interactive = {
           }
           return `<div style="width:100%;">
   ${labelHtml}
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
   </div>
 </div>`;
@@ -203,24 +203,24 @@ Use the **Value** control to see how width scales across the palette.
       source: {
         code: `<!-- Primary -->
 <div style="width:100%;">
-  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
   </div>
 </div>
 
 <!-- Green -->
 <div style="width:100%;margin-top:16px;">
-  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#31c48d;border-radius:2px;"></div>
   </div>
 </div>
 
 <!-- Orange -->
 <div style="width:100%;margin-top:16px;">
-  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#ff8a4c;border-radius:2px;"></div>
   </div>
 </div>`,
@@ -265,8 +265,8 @@ Use the **Color** control to preview a different fill across all steps.
       source: {
         code: `<div role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
   style="width:100%;">
-  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
   </div>
 </div>`,
@@ -305,10 +305,10 @@ Use in compact layouts (cards, table rows) where space above the track is unavai
       },
       source: {
         code: `<div style="width:100%;">
-  <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
   </div>
-  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;margin-top:6px;">75%</div>
+  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;margin-top:6px;">75%</div>
 </div>`,
         language: 'html',
       },
@@ -336,36 +336,36 @@ This shows how bars at different values and colors sit together with labels and 
         `.trim(),
       },
       source: {
-        code: `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;max-width:480px;">
-  <h4 style="font-size:14px;font-weight:600;color:#111928;margin:0 0 20px;">Resource usage</h4>
+        code: `<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:12px;padding:24px;max-width:480px;">
+  <h4 style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;margin:0 0 20px;">Resource usage</h4>
 
   <div style="display:flex;flex-direction:column;gap:20px;">
     <!-- Storage -->
     <div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7280;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:6px;">
         <span>Storage</span><span>82%</span>
       </div>
-      <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+      <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
         <div style="position:absolute;left:0;top:0;height:100%;width:82%;background:#ff8a4c;border-radius:2px;"></div>
       </div>
     </div>
 
     <!-- API quota -->
     <div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7280;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:6px;">
         <span>API quota</span><span>45%</span>
       </div>
-      <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+      <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
         <div style="position:absolute;left:0;top:0;height:100%;width:45%;background:#5850ec;border-radius:2px;"></div>
       </div>
     </div>
 
     <!-- Compute -->
     <div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7280;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:6px;">
         <span>Compute</span><span>23%</span>
       </div>
-      <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+      <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
         <div style="position:absolute;left:0;top:0;height:100%;width:23%;background:#31c48d;border-radius:2px;"></div>
       </div>
     </div>
@@ -376,8 +376,8 @@ This shows how bars at different values and colors sit together with labels and 
     },
   },
   render: () => `
-    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;max-width:480px;">
-      <h4 style="font-family:Inter,ui-sans-serif,sans-serif;font-size:14px;font-weight:600;
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:12px;padding:24px;max-width:480px;">
+      <h4 style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);
                  color:#111928;margin:0 0 20px 0;">Resource usage</h4>
       <div style="display:flex;flex-direction:column;gap:20px;">
         ${[
@@ -388,11 +388,11 @@ This shows how bars at different values and colors sit together with labels and 
         ].map(({ label, value, color }) => `
           <div>
             <div style="display:flex;justify-content:space-between;
-                        font-family:Inter,ui-sans-serif,sans-serif;
-                        font-size:12px;font-weight:500;color:#6b7280;margin-bottom:6px;">
+                        font-family:inherit;
+                        font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);margin-bottom:6px;">
               <span>${label}</span><span>${value}%</span>
             </div>
-            <div style="position:relative;height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+            <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
               <div style="position:absolute;left:0;top:0;height:100%;width:${value}%;
                           background:${COLORS[color]};border-radius:2px;"></div>
             </div>

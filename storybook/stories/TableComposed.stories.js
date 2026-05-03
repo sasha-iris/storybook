@@ -49,7 +49,7 @@ const lbl = ({
   <div style="display:flex;align-items:center;
               width:${width}px;min-height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
-    <span style="font:${bold ? 600 : 500} 14px/1.5 'Inter',sans-serif;
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:${bold ? 'var(--font-semibold)' : 'var(--font-medium)'};line-height:1.5;
                  color:${color};flex:1 0 0;
                  ${indent ? `padding-left:${indent}px;` : ''}">${text}</span>
   </div>`;
@@ -65,7 +65,7 @@ const cHdr = ({
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               width:${width}px;height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
-    <span style="font:${bold ? 600 : 500} 14px/1.5 'Inter',sans-serif;
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:${bold ? 'var(--font-semibold)' : 'var(--font-medium)'};line-height:1.5;
                  color:${color};flex:1 0 0;">${text}</span>
   </div>`;
 
@@ -79,7 +79,7 @@ const pHdr = ({
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               width:${width}px;height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
-    <span style="font:700 12px/1.5 'Inter',sans-serif;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;
                  color:${color};flex:1 0 0;text-align:right;">${label}</span>
   </div>`;
 
@@ -97,9 +97,9 @@ const val = ({
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               width:${width}px;height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
-    ${(!grey && currency) ? `<span style="font:500 14px/1.5 'Inter',sans-serif;color:${tc};flex-shrink:0;">$</span>` : ''}
+    ${(!grey && currency) ? `<span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${tc};flex-shrink:0;">$</span>` : ''}
     <div style="flex:1 0 0;min-width:1px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:${tc};
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${tc};
                    text-align:right;display:block;white-space:nowrap;">${amount}</span>
     </div>
   </div>`;
@@ -119,7 +119,7 @@ const row = (cells, bg = '#ffffff') => /* html */`
 const tableWrap = (content, { overflow = false } = {}) => /* html */`
   <div style="${overflow ? 'overflow-x:auto;' : ''}">
     <div style="display:inline-flex;flex-direction:column;
-                border:1px solid #e5e7eb;border-radius:8px;
+                border:1px solid var(--color-border-default);border-radius:8px;
                 overflow:hidden;min-width:${overflow ? 'max-content' : '0'};">
       ${content}
     </div>
@@ -221,23 +221,23 @@ Demonstrates Derival (sub-total) and Total rows in context alongside standard De
       source: {
         language: 'html',
         code: `<!-- Financial table shell -->
-<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+<div style="display:inline-flex;flex-direction:column;border:1px solid var(--color-border-default);
             border-radius:8px;overflow:hidden;">
 
   <!-- Header row -->
-  <div style="display:flex;align-items:stretch;background:#fff;">
-    <div style="width:180px;height:38px;padding:8px 16px;background:#f9fafb;..."><!-- corner --></div>
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-surface);">
+    <div style="width:180px;height:38px;padding:8px 16px;background:var(--color-bg-default);..."><!-- corner --></div>
     <div style="width:146px;height:38px;padding:8px 16px;background:#f3faf7;...">Income</div>
     <div style="width:146px;height:38px;padding:8px 16px;background:#fdf2f2;...">Disbursements</div>
-    <div style="width:146px;height:38px;padding:8px 16px;background:#f3f4f6;...">Total</div>
+    <div style="width:146px;height:38px;padding:8px 16px;background:var(--color-bg-muted);...">Total</div>
   </div>
 
   <!-- Default data row -->
-  <div style="display:flex;align-items:stretch;background:#fff;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-surface);">
     <div style="width:180px;height:38px;padding:8px 16px;...">Revenue</div>
     <!-- Income cell — Calculated option, green text -->
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-                width:146px;height:38px;padding:8px 16px;background:#fff;...">
+                width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);...">
       <span style="color:#0e9f6e;">$</span>
       <span style="color:#0e9f6e;">45,231,00</span>
     </div>
@@ -250,7 +250,7 @@ Demonstrates Derival (sub-total) and Total rows in context alongside standard De
   </div>
 
   <!-- Total row (gray bg) -->
-  <div style="display:flex;align-items:stretch;background:#f3f4f6;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-muted);">
     <!-- all cells share #f3f4f6 background -->
   </div>
 </div>`,
@@ -347,13 +347,13 @@ export const FinancialTableRowTypes = {
       source: {
         language: 'html',
         code: `<!-- Financial table — all 4 row types -->
-<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+<div style="display:inline-flex;flex-direction:column;border:1px solid var(--color-border-default);
             border-radius:8px;overflow:hidden;">
 
   <!-- NonCollapsible section header row (#f9fafb) — bold label, no data -->
-  <div style="display:flex;align-items:stretch;background:#f9fafb;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-default);">
     <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
-      <span style="font:600 14px/1.5 'Inter',sans-serif;color:#111928;">Revenue</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);line-height:1.5;color:#111928;">Revenue</span>
     </div>
     <!-- empty value cells -->
   </div>
@@ -361,12 +361,12 @@ export const FinancialTableRowTypes = {
   <!-- Default data row (#ffffff) — standard line item -->
   <div style="display:flex;align-items:stretch;background:#ffffff;">
     <div style="width:220px;height:38px;padding:8px 16px 8px 32px;box-sizing:border-box;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Product sales</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Product sales</span>
     </div>
     <div style="width:146px;height:38px;padding:8px 16px;box-sizing:border-box;
                 display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;">$</span>
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;text-align:right;">32,400,00</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;">$</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;text-align:right;">32,400,00</span>
     </div>
     <!-- … more period columns … -->
   </div>
@@ -374,20 +374,20 @@ export const FinancialTableRowTypes = {
   <!-- Derival sub-total row (#fff8f1) — warm orange tint, bold label -->
   <div style="display:flex;align-items:stretch;background:#fff8f1;">
     <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
-      <span style="font:600 14px/1.5 'Inter',sans-serif;color:#111928;">Revenue sub-total</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);line-height:1.5;color:#111928;">Revenue sub-total</span>
     </div>
     <!-- … -->
   </div>
 
   <!-- Total row (#f3f4f6) — cool gray, Indigo text (#42389d) -->
-  <div style="display:flex;align-items:stretch;background:#f3f4f6;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-muted);">
     <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
-      <span style="font:600 14px/1.5 'Inter',sans-serif;color:#111928;">Net Income</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);line-height:1.5;color:#111928;">Net Income</span>
     </div>
     <div style="width:146px;height:38px;padding:8px 16px;box-sizing:border-box;
                 display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#42389d;">$</span>
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#42389d;text-align:right;">68,331,00</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#42389d;">$</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#42389d;text-align:right;">68,331,00</span>
     </div>
     <!-- … -->
   </div>
@@ -476,17 +476,17 @@ Scroll horizontally on narrow viewports.`,
 
   <!-- 3 ACTUALS period headers -->
   <div style="width:146px;height:38px;padding:8px 16px;background:#cddbfe;...">
-    <span style="font:700 12px/1.5 'Inter',sans-serif;color:#4b5563;text-align:right;">JAN 2024</span>
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;color:#4b5563;text-align:right;">JAN 2024</span>
   </div>
   <!-- ... more ACTUALS cols ... -->
 
   <!-- 3 FORECAST period headers -->
   <div style="width:146px;height:38px;padding:8px 16px;background:#96f7e4;...">
-    <span style="font:700 12px/1.5 'Inter',sans-serif;color:#4b5563;text-align:right;">APR 2024</span>
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;color:#4b5563;text-align:right;">APR 2024</span>
   </div>
 
   <!-- Total column -->
-  <div style="width:146px;height:38px;padding:8px 16px;background:#f3f4f6;...">Total</div>
+  <div style="width:146px;height:38px;padding:8px 16px;background:var(--color-bg-muted);...">Total</div>
 </div>`,
       },
     },
@@ -524,7 +524,7 @@ Scroll horizontally on narrow viewports.`,
 
     return /* html */`
       <div style="padding:24px;overflow-x:auto;">
-        <div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+        <div style="display:inline-flex;flex-direction:column;border:1px solid var(--color-border-default);
                     border-radius:8px;overflow:hidden;min-width:max-content;">
           ${periodHRow}
           <!-- Revenue section -->
@@ -541,7 +541,7 @@ Scroll horizontally on narrow viewports.`,
           <!-- Grand total -->
           ${pr(B.tot, 'Net Income', ['19,831','22,700','25,800','27,900','30,400','32,900','159,531'], { bold: true, tc: '#42389d' })}
         </div>
-        <p style="font:400 12px/1.5 'Inter',sans-serif;color:#9ca3af;margin:8px 0 0;padding:0 0 0 0;">
+        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;padding:0 0 0 0;">
           ACTUALS (Jan–Mar) · FORECAST (Apr–Jun) · scroll horizontally to see all columns
         </p>
       </div>`;
@@ -577,17 +577,17 @@ Use this story as a reference for when each option should appear.`,
       source: {
         language: 'html',
         code: `<!-- Budget vs Actual table — cell option reference -->
-<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+<div style="display:inline-flex;flex-direction:column;border:1px solid var(--color-border-default);
             border-radius:8px;overflow:hidden;">
 
   <!-- Column header row -->
   <div style="display:flex;align-items:stretch;">
-    <div style="width:200px;height:38px;padding:8px 16px;background:#f9fafb;box-sizing:border-box;"></div>
-    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Budget</span>
+    <div style="width:200px;height:38px;padding:8px 16px;background:var(--color-bg-default);box-sizing:border-box;"></div>
+    <div style="width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Budget</span>
     </div>
-    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Actual</span>
+    <div style="width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Actual</span>
     </div>
     <!-- Variance, % Var columns … -->
   </div>
@@ -595,19 +595,19 @@ Use this story as a reference for when each option should appear.`,
   <!-- Default row — Calculated option (positive actual, green) -->
   <div style="display:flex;align-items:stretch;background:#ffffff;">
     <div style="width:200px;height:38px;padding:8px 16px;box-sizing:border-box;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Product sales</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Product sales</span>
     </div>
     <!-- Budget — Default (#111928) -->
-    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;
+    <div style="width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;
                 display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">$</span>
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">32,400,00</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">$</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">32,400,00</span>
     </div>
     <!-- Actual — Calculated (#0e9f6e, positive) -->
-    <div style="width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;
+    <div style="width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;
                 display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;">$</span>
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;text-align:right;">35,100,00</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;">$</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;text-align:right;">35,100,00</span>
     </div>
   </div>
 

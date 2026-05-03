@@ -77,7 +77,7 @@ const pctCell = ({ pct, bg, text, cellBg = '#ffffff' }) => /* html */`
     <div style="display:flex;align-items:center;justify-content:center;
                 width:62px;height:42px;padding:10px;border-radius:4px;
                 background:${bg};box-sizing:border-box;">
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:${text};
+      <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:${text};
                    white-space:nowrap;text-align:center;">${pct}</span>
     </div>
   </div>`;
@@ -101,9 +101,9 @@ const finCell = ({
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               padding:8px 16px;align-self:stretch;background:${bg};
               width:${width}px;flex-shrink:0;box-sizing:border-box;">
-    ${currency ? `<span style="font:500 14px/1.5 'Inter',sans-serif;color:${textCol};flex-shrink:0;">$</span>` : ''}
+    ${currency ? `<span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};flex-shrink:0;">$</span>` : ''}
     <div style="flex:1 0 0;min-width:1px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textCol};
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};
                    text-align:right;display:block;white-space:nowrap;">${amount}</span>
     </div>
   </div>`;
@@ -216,7 +216,7 @@ export const Interactive = {
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
               background:${step.bg};box-sizing:border-box;">
-    <span style="font:600 12px/1.5 'Inter',sans-serif;color:${step.text};white-space:nowrap;">
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:${step.text};white-space:nowrap;">
       ${step.pct}
     </span>
   </div>
@@ -257,22 +257,22 @@ export const PercentBadgeRamp = {
         language: 'html',
         code: `<!-- 60% badge — white text (brand/500) -->
 <div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:#fff;box-sizing:border-box;">
+            padding:8px 4px;background:var(--color-bg-surface);box-sizing:border-box;">
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
               background:#6875f5;box-sizing:border-box;">
-    <span style="font:600 12px/1.5 'Inter',sans-serif;color:#fff;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#fff;
                  white-space:nowrap;text-align:center;">60%</span>
   </div>
 </div>
 
 <!-- 40% badge — dark text (brand/300) -->
 <div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:#fff;box-sizing:border-box;">
+            padding:8px 4px;background:var(--color-bg-surface);box-sizing:border-box;">
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
               background:#b4c6fc;box-sizing:border-box;">
-    <span style="font:600 12px/1.5 'Inter',sans-serif;color:#111928;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#111928;
                  white-space:nowrap;text-align:center;">40%</span>
   </div>
 </div>`,
@@ -282,8 +282,8 @@ export const PercentBadgeRamp = {
   render: () => /* html */`
     <div style="display:flex;flex-direction:column;gap:16px;">
       <div>
-        <p style="font:700 11px/1 'Inter',sans-serif;text-transform:uppercase;
-                  letter-spacing:.12em;color:#6b7280;margin:0 0 8px;
+        <p style="font-family:inherit;font-size:11px;font-weight:var(--font-bold);line-height:1;text-transform:uppercase;
+                  letter-spacing:.12em;color:var(--color-text-secondary);margin:0 0 8px;
                   border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
           On white cell bg (#fff)
         </p>
@@ -293,8 +293,8 @@ export const PercentBadgeRamp = {
         </div>
       </div>
       <div>
-        <p style="font:700 11px/1 'Inter',sans-serif;text-transform:uppercase;
-                  letter-spacing:.12em;color:#6b7280;margin:0 0 8px;
+        <p style="font-family:inherit;font-size:11px;font-weight:var(--font-bold);line-height:1;text-transform:uppercase;
+                  letter-spacing:.12em;color:var(--color-text-secondary);margin:0 0 8px;
                   border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
           On grey cell bg (#f3f4f6)
         </p>
@@ -346,13 +346,13 @@ Scroll horizontally if the viewport is narrow.`,
   <!-- Row header (140px) -->
   <div style="display:flex;align-items:center;padding:8px 16px;
               width:140px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
-    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Feb 2023</span>
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Feb 2023</span>
   </div>
 
   <!-- Count cell (116px) -->
   <div style="display:flex;align-items:center;justify-content:flex-end;
               padding:8px 16px;width:116px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
-    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">1</span>
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">1</span>
   </div>
 
   <!-- Percent badge cell (62×42px badge, px:4px container) -->
@@ -361,7 +361,7 @@ Scroll horizontally if the viewport is narrow.`,
     <div style="display:flex;align-items:center;justify-content:center;
                 width:62px;height:42px;padding:10px;border-radius:4px;
                 background:#362f78;box-sizing:border-box;">
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#ffffff;white-space:nowrap;">100%</span>
+      <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#ffffff;white-space:nowrap;">100%</span>
     </div>
   </div>
   <!-- … more percent cells … -->
@@ -369,13 +369,13 @@ Scroll horizontally if the viewport is narrow.`,
   <!-- Financial cell ($ per user, 140px) -->
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               padding:8px 16px;width:140px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
-    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;flex-shrink:0;">$</span>
-    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">25.00</span>
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">25.00</span>
   </div>
 </div>
 
 <!-- CohortRow — grey (alternate) row state: change background to #f3f4f6, text to #42389d -->
-<div style="display:flex;align-items:stretch;background:#f3f4f6;border-bottom:1px solid #e5e7eb;">
+<div style="display:flex;align-items:stretch;background:var(--color-bg-muted);border-bottom:1px solid #e5e7eb;">
   <!-- same structure, all text color: #42389d, all cell bg: #f3f4f6 -->
   <!-- badge colours are identical — only cell container bg changes -->
 </div>`,
@@ -420,7 +420,7 @@ Scroll horizontally if the viewport is narrow.`,
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
                       padding:8px 16px;background:${rowBg};width:140px;
                       flex-shrink:0;box-sizing:border-box;">
-            <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textCol};flex:1 0 0;">
+            <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};flex:1 0 0;">
               Feb 2023
             </span>
           </div>
@@ -429,7 +429,7 @@ Scroll horizontally if the viewport is narrow.`,
                       padding:8px 16px;background:${rowBg};width:116px;
                       flex-shrink:0;box-sizing:border-box;">
             <div style="flex:1 0 0;min-width:1px;">
-              <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textCol};
+              <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};
                            text-align:right;display:block;">1</span>
             </div>
           </div>
@@ -446,19 +446,19 @@ Scroll horizontally if the viewport is narrow.`,
 
     return /* html */`
       <div style="padding:24px;overflow-x:auto;">
-        <div style="border:1px solid #e5e7eb;border-radius:8px;
+        <div style="border:1px solid var(--color-border-default);border-radius:8px;
                     overflow:hidden;display:inline-flex;flex-direction:column;min-width:max-content;">
           <!-- Column headers row for orientation -->
-          <div style="display:flex;align-items:stretch;background:#f9fafb;
+          <div style="display:flex;align-items:stretch;background:var(--color-bg-default);
                       border-bottom:1px solid #e5e7eb;">
             <div style="width:140px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                         display:flex;align-items:center;">
-              <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+              <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                            letter-spacing:.08em;color:#9ca3af;">Cohort</span>
             </div>
             <div style="width:116px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                         display:flex;align-items:center;justify-content:flex-end;">
-              <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+              <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                            letter-spacing:.08em;color:#9ca3af;">Users</span>
             </div>
             <div style="display:flex;align-items:center;padding:0 4px;">
@@ -468,7 +468,7 @@ Scroll horizontally if the viewport is narrow.`,
                 .map(m => /* html */`
                   <div style="width:70px;flex-shrink:0;padding:8px 4px;box-sizing:border-box;
                               display:flex;align-items:center;justify-content:center;">
-                    <span style="font:600 10px/1 'Inter',sans-serif;text-transform:uppercase;
+                    <span style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                                  letter-spacing:.06em;color:#9ca3af;text-align:center;
                                  white-space:nowrap;">${m}</span>
                   </div>`).join('')}
@@ -483,7 +483,7 @@ Scroll horizontally if the viewport is narrow.`,
             ].map(({ label, w }) => /* html */`
               <div style="width:${w}px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                           display:flex;align-items:center;justify-content:flex-end;">
-                <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+                <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                              letter-spacing:.08em;color:#9ca3af;">${label}</span>
               </div>`).join('')}
           </div>
@@ -494,7 +494,7 @@ Scroll horizontally if the viewport is narrow.`,
           <!-- Second white row (to show alternating pattern) -->
           ${cohortRow(false)}
         </div>
-        <p style="font:400 12px/1.5 'Inter',sans-serif;color:#9ca3af;margin:8px 0 0;">
+        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;">
           White row + grey (alternating) + white row. Scroll horizontally to see all columns.
         </p>
       </div>`;
@@ -546,22 +546,22 @@ fading toward brand/50 as retention drops in later months.`,
       source: {
         language: 'html',
         code: `<!-- Cohort analysis table shell -->
-<div style="display:inline-flex;flex-direction:column;border:1px solid #e5e7eb;
+<div style="display:inline-flex;flex-direction:column;border:1px solid var(--color-border-default);
             border-radius:8px;overflow:hidden;min-width:max-content;">
 
   <!-- Header row -->
-  <div style="display:flex;align-items:stretch;background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-default);border-bottom:1px solid #e5e7eb;">
     <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
-      <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+      <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                    letter-spacing:.08em;color:#9ca3af;">Cohort</span>
     </div>
     <div style="width:116px;padding:8px 16px;box-sizing:border-box;display:flex;justify-content:flex-end;">
-      <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+      <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                    letter-spacing:.08em;color:#9ca3af;">Users</span>
     </div>
     <!-- Month headers (70px each) -->
     <div style="width:70px;padding:8px 4px;box-sizing:border-box;display:flex;justify-content:center;">
-      <span style="font:600 10px/1 'Inter',sans-serif;text-transform:uppercase;
+      <span style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                    letter-spacing:.06em;color:#9ca3af;">Month 1</span>
     </div>
     <!-- … Month 2 … Month 7 … -->
@@ -570,31 +570,31 @@ fading toward brand/50 as retention drops in later months.`,
   <!-- Data row — white (even index) -->
   <div style="display:flex;align-items:stretch;background:#ffffff;border-bottom:1px solid #e5e7eb;">
     <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">Aug 2023</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Aug 2023</span>
     </div>
     <div style="width:116px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">1,240</span>
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">1,240</span>
     </div>
     <!-- 100% badge (brand/900) -->
     <div style="padding:8px 4px;background:#ffffff;box-sizing:border-box;flex-shrink:0;">
       <div style="display:flex;align-items:center;justify-content:center;
                   width:62px;height:42px;border-radius:4px;background:#362f78;">
-        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#ffffff;">100%</span>
+        <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#ffffff;">100%</span>
       </div>
     </div>
     <!-- … remaining months … -->
   </div>
 
   <!-- Data row — grey (odd index): background #f3f4f6, text color #42389d -->
-  <div style="display:flex;align-items:stretch;background:#f3f4f6;border-bottom:1px solid #e5e7eb;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-muted);border-bottom:1px solid #e5e7eb;">
     <!-- same structure — badge colours unchanged, only cell container bg changes -->
   </div>
 
   <!-- Empty cell placeholder (no data yet):
     <div style="padding:8px 4px;background:#ffffff;">
-      <div style="width:62px;height:42px;border-radius:4px;background:#f3f4f6;
+      <div style="width:62px;height:42px;border-radius:4px;background:var(--color-bg-muted);
                   display:flex;align-items:center;justify-content:center;">
-        <span style="font:500 12px/1.5 'Inter',sans-serif;color:#d1d5db;">—</span>
+        <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:#d1d5db;">—</span>
       </div>
     </div>
   -->
@@ -637,29 +637,29 @@ fading toward brand/50 as retention drops in later months.`,
                   padding:8px 4px;background:${cellBg};box-sizing:border-box;flex-shrink:0;">
         <div style="display:flex;align-items:center;justify-content:center;
                     width:62px;height:42px;padding:10px;border-radius:4px;
-                    background:#f3f4f6;box-sizing:border-box;">
-          <span style="font:500 12px/1.5 'Inter',sans-serif;color:#d1d5db;">—</span>
+                    background:var(--color-bg-muted);box-sizing:border-box;">
+          <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:#d1d5db;">—</span>
         </div>
       </div>`;
 
     /* Column header row */
     const headerRow = /* html */`
-      <div style="display:flex;align-items:stretch;background:#f9fafb;
+      <div style="display:flex;align-items:stretch;background:var(--color-bg-default);
                   border-bottom:1px solid #e5e7eb;">
         <div style="width:140px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                     display:flex;align-items:center;">
-          <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+          <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                        letter-spacing:.08em;color:#9ca3af;">Cohort</span>
         </div>
         <div style="width:116px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                     display:flex;align-items:center;justify-content:flex-end;">
-          <span style="font:600 11px/1 'Inter',sans-serif;text-transform:uppercase;
+          <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                        letter-spacing:.08em;color:#9ca3af;">Users</span>
         </div>
         ${MONTHS.map(m => /* html */`
           <div style="width:70px;flex-shrink:0;padding:8px 4px;box-sizing:border-box;
                       display:flex;align-items:center;justify-content:center;">
-            <span style="font:600 10px/1 'Inter',sans-serif;text-transform:uppercase;
+            <span style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                          letter-spacing:.06em;color:#9ca3af;text-align:center;
                          white-space:nowrap;">${m}</span>
           </div>`).join('')}
@@ -676,14 +676,14 @@ fading toward brand/50 as retention drops in later months.`,
                     border-bottom:1px solid #e5e7eb;">
           <div style="display:flex;align-items:center;padding:8px 16px;
                       width:140px;flex-shrink:0;box-sizing:border-box;background:${rowBg};">
-            <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textCol};flex:1 0 0;">
+            <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};flex:1 0 0;">
               ${label}
             </span>
           </div>
           <div style="display:flex;align-items:center;justify-content:flex-end;
                       padding:8px 16px;width:116px;flex-shrink:0;
                       box-sizing:border-box;background:${rowBg};">
-            <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textCol};
+            <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};
                          text-align:right;">${users.toLocaleString('en-US')}</span>
           </div>
           <div style="display:flex;align-items:center;background:${rowBg};">
@@ -698,12 +698,12 @@ fading toward brand/50 as retention drops in later months.`,
 
     return /* html */`
       <div style="padding:24px;overflow-x:auto;">
-        <div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;
+        <div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;
                     display:inline-flex;flex-direction:column;min-width:max-content;">
           ${headerRow}
           ${dataRows}
         </div>
-        <p style="font:400 12px/1.5 'Inter',sans-serif;color:#9ca3af;margin:8px 0 0;">
+        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;">
           7 cohort periods · triangular fill · alternating grey rows ·
           scroll horizontally on narrow viewports
         </p>

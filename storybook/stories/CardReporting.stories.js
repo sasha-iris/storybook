@@ -148,9 +148,9 @@ const channelChips = (active) => active
 /** Recipient email address chips — same in both active and inactive states */
 const recipientChips = () =>
   `<div style="display:flex;flex-wrap:wrap;gap:4px;">
-    <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">namesur@gmail.com</span>
-    <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">name@gmail.com</span>
-    <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">+5</span>
+    <span class="rpt-chip" style="background:var(--color-bg-muted);color:#4a5565;">namesur@gmail.com</span>
+    <span class="rpt-chip" style="background:var(--color-bg-muted);color:#4a5565;">name@gmail.com</span>
+    <span class="rpt-chip" style="background:var(--color-bg-muted);color:#4a5565;">+5</span>
   </div>`;
 
 /**
@@ -172,19 +172,19 @@ const salesChannels = (active) => `
 const ownerSection = (owner) => {
   const label = owner === 'iris'
     ? `${irisMarkImg({ size: 'xs' })}
-       <span style="font-size:14px;font-weight:600;color:#111928;line-height:1.5;
+       <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;line-height:1.5;
                     white-space:nowrap;">Iris Finance</span>`
     : `<span aria-label="Jese Leos avatar"
              style="display:inline-flex;align-items:center;justify-content:center;
-                    width:20px;height:20px;border-radius:100px;border:1px solid #e5e7eb;
-                    background:#f3f4f6;font-size:8px;font-weight:600;color:#374151;
+                    width:20px;height:20px;border-radius:100px;border:1px solid var(--color-border-default);
+                    background:var(--color-bg-muted);font-size:8px;font-weight:600;color:#374151;
                     flex-shrink:0;">JL</span>
-       <span style="font-size:14px;font-weight:600;color:#111928;line-height:1.5;
+       <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;line-height:1.5;
                     white-space:nowrap;">Jese Leos</span>`;
 
   return `
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-      <span style="font-size:12px;font-weight:500;color:#6b7280;line-height:1.5;">Owned by</span>
+      <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;">Owned by</span>
       <div style="display:flex;align-items:center;gap:4px;">${label}</div>
     </div>`;
 };
@@ -213,7 +213,7 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
 
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;">
-              <p style="font-size:18px;font-weight:600;line-height:1.5;color:${titleColor};
+              <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);line-height:1.5;color:${titleColor};
                         margin:0;white-space:nowrap;">Daily Report</p>
               ${hovered ? `<span style="color:${titleColor};display:inline-flex;">${ARROW_RIGHT}</span>` : ''}
             </div>
@@ -228,7 +228,7 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
 
       <!-- ② Details: schedule text + recipient chips -->
       <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;">
-        <p style="font-size:14px;font-weight:400;line-height:1.5;
+        <p style="font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;
                   color:${active ? '#111928' : '#4b5563'};margin:0;">
           ${scheduleText}
         </p>
@@ -308,7 +308,7 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
   <div style="display:flex;gap:12px;align-items:flex-start;">
     <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <p style="font-size:18px;font-weight:600;color:#111928;margin:0;">Daily Report</p>
+        <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:#111928;margin:0;">Daily Report</p>
         <!-- Toggle ON: class rpt-toggle rpt-toggle--on -->
         <span class="rpt-toggle rpt-toggle--on" aria-label="Report enabled">
           <span class="rpt-toggle__pill"></span>
@@ -323,11 +323,11 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
   </div>
   <!-- ② Schedule + recipients -->
   <div style="display:flex;flex-direction:column;gap:12px;">
-    <p style="font-size:14px;color:#111928;margin:0;">Every day at 7am (PST)</p>
+    <p style="font-size:var(--text-sm);color:#111928;margin:0;">Every day at 7am (PST)</p>
     <div style="display:flex;flex-wrap:wrap;gap:4px;">
-      <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">namesur@gmail.com</span>
-      <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">name@gmail.com</span>
-      <span class="rpt-chip" style="background:#f3f4f6;color:#4a5565;">+5</span>
+      <span class="rpt-chip" style="background:var(--color-bg-muted);color:#4a5565;">namesur@gmail.com</span>
+      <span class="rpt-chip" style="background:var(--color-bg-muted);color:#4a5565;">name@gmail.com</span>
+      <span class="rpt-chip" style="background:var(--color-bg-muted);color:#4a5565;">+5</span>
     </div>
   </div>
   <!-- ③ Footer: sales channels + owner -->
@@ -336,10 +336,10 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
     <div style="display:flex;gap:8px;"><!-- shopify badge --><!-- amazon badge (active: yellow) --></div>
     <!-- Owner: Iris Finance -->
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-      <span style="font-size:12px;font-weight:500;color:#6b7280;">Owned by</span>
+      <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);">Owned by</span>
       <div style="display:flex;align-items:center;gap:4px;">
         <!-- Iris Finance logo mark (xs) -->
-        <span style="font-size:14px;font-weight:600;color:#111928;">Iris Finance</span>
+        <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;">Iris Finance</span>
       </div>
     </div>
   </div>
@@ -379,7 +379,7 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <!-- Title: color #42389d on hover (brand/800) -->
-          <p style="font-size:18px;font-weight:600;color:#42389d;margin:0;">Daily Report</p>
+          <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:#42389d;margin:0;">Daily Report</p>
           <!-- Arrow-right icon: only visible on hover -->
           <span style="color:#42389d;display:inline-flex;"><!-- arrow-right SVG --></span>
         </div>
@@ -436,7 +436,7 @@ Inactive state (active=no): report is paused.
   <div style="display:flex;gap:12px;align-items:flex-start;">
     <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <p style="font-size:18px;font-weight:600;color:#111928;margin:0;">Daily Report</p>
+        <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:#111928;margin:0;">Daily Report</p>
         <!-- Toggle OFF: rpt-toggle--off; pill color #d1d5db (gray/300) -->
         <span class="rpt-toggle rpt-toggle--off" aria-label="Report disabled">
           <span class="rpt-toggle__pill"></span>
@@ -450,7 +450,7 @@ Inactive state (active=no): report is paused.
     </div>
   </div>
   <!-- Schedule text changes to paused message; text color #4b5563 (gray/600) -->
-  <p style="font-size:14px;color:#4b5563;margin:0;">
+  <p style="font-size:var(--text-sm);color:#4b5563;margin:0;">
     Right now the report is paused. We'll send it to you at 7am tomorrow morning when you turn it on
   </p>
   <!-- ③ Footer: Amazon bg changes to #e5e7eb (gray/200) when inactive -->
@@ -489,15 +489,15 @@ instead of the Iris Finance logo mark.
         code: `<!-- Card Reporting — User owner: only the owner section changes -->
 <!-- Replace the Iris Finance logo section with: -->
 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-  <span style="font-size:12px;font-weight:500;color:#6b7280;">Owned by</span>
+  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);">Owned by</span>
   <div style="display:flex;align-items:center;gap:4px;">
     <!-- Round avatar: initials circle, 20×20px, border 1px #e5e7eb -->
     <span aria-label="Jese Leos avatar"
           style="display:inline-flex;align-items:center;justify-content:center;
-                 width:20px;height:20px;border-radius:100px;border:1px solid #e5e7eb;
-                 background:#f3f4f6;font-size:8px;font-weight:600;color:#374151;
+                 width:20px;height:20px;border-radius:100px;border:1px solid var(--color-border-default);
+                 background:var(--color-bg-muted);font-size:8px;font-weight:600;color:#374151;
                  flex-shrink:0;">JL</span>
-    <span style="font-size:14px;font-weight:600;color:#111928;white-space:nowrap;">Jese Leos</span>
+    <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;white-space:nowrap;">Jese Leos</span>
   </div>
 </div>`,
       },

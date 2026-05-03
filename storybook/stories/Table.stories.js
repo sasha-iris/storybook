@@ -91,13 +91,13 @@ const dataCell = ({
               width:146px;height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
     ${iconLeft ? `<span style="display:flex;align-items:center;flex-shrink:0;color:${textColor};">${CHECK_ICON}</span>` : ''}
-    ${currency ? `<span style="font:500 14px/1.5 'Inter',sans-serif;color:${textColor};flex-shrink:0;">$</span>` : ''}
+    ${currency ? `<span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};flex-shrink:0;">$</span>` : ''}
     <div style="flex:1 0 0;display:flex;flex-direction:column;align-items:flex-end;
                 justify-content:center;min-width:1px;">
-      <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textColor};
+      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};
                    text-align:right;white-space:nowrap;">${amount}</span>
       ${caption
-        ? `<span style="font:400 12px/1.5 'Inter',sans-serif;color:#6b7280;text-align:right;">${caption}</span>`
+        ? `<span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:var(--color-text-secondary);text-align:right;">${caption}</span>`
         : ''}
     </div>
     ${iconRight ? `<span style="display:flex;align-items:center;flex-shrink:0;color:${textColor};">${CHECK_ICON}</span>` : ''}
@@ -106,12 +106,12 @@ const dataCell = ({
 /** Editable cell in the focused / editing state (editing=true). */
 const editableCell = () => /* html */`
   <div style="display:flex;align-items:center;width:146px;height:38px;
-              background:#ffffff;border:1px solid #e5e7eb;
+              background:var(--color-bg-surface);border:1px solid var(--color-border-default);
               box-sizing:border-box;flex-shrink:0;">
     <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
                 border:1px solid #1c64f2;border-radius:4px;padding:8px 16px;
                 overflow:hidden;box-sizing:border-box;">
-      <span style="flex:1 0 0;font:500 14px/1.5 'Inter',sans-serif;
+      <span style="flex:1 0 0;font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;
                    color:#111928;text-align:right;white-space:nowrap;">500,00|</span>
     </div>
   </div>`;
@@ -128,7 +128,7 @@ const hHeader = ({
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               width:146px;height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
-    <span style="font:${bold ? 600 : 500} 14px/1.5 'Inter',sans-serif;
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:${bold ? 'var(--font-semibold)' : 'var(--font-medium)'};line-height:1.5;
                  color:${color};flex:1 0 0;">${text}</span>
   </div>`;
 
@@ -141,7 +141,7 @@ const vHeader = ({
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
               width:146px;height:38px;padding:8px 16px;background:${bg};
               box-sizing:border-box;flex-shrink:0;">
-    <span style="font:700 12px/1.5 'Inter',sans-serif;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;
                  color:${color};flex:1 0 0;text-align:right;">${label}</span>
   </div>`;
 
@@ -150,12 +150,12 @@ const vHeader = ({
 const rowLabel = (text) =>
   /* html */`<span style="display:inline-flex;align-items:center;justify-content:flex-end;
     width:180px;padding-right:12px;flex-shrink:0;
-    font:500 11px/1.5 'Inter',sans-serif;color:#9ca3af;">${text}</span>`;
+    font-family:inherit;font-size:11px;font-weight:var(--font-medium);line-height:1.5;color:#9ca3af;">${text}</span>`;
 
 const sectionHead = (text) =>
-  /* html */`<p style="font:700 11px/1 'Inter',sans-serif;text-transform:uppercase;
-    letter-spacing:.12em;color:#6b7280;margin:0 0 14px;
-    border-bottom:1px solid #e5e7eb;padding-bottom:7px;">${text}</p>`;
+  /* html */`<p style="font-family:inherit;font-size:11px;font-weight:var(--font-bold);line-height:1;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--color-text-secondary);margin:0 0 14px;
+    border-bottom:1px solid var(--color-border-default);padding-bottom:7px;">${text}</p>`;
 
 /* ── Default export ─────────────────────────────────────────────────────── */
 
@@ -318,8 +318,8 @@ export const Interactive = {
           const bg = cellBg || ROW_BG[rowType] || '#ffffff';
           return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
      width:146px;height:38px;padding:8px 16px;background:${bg};box-sizing:border-box;">
-  ${currency ? `<span style="font:500 14px/1.5 'Inter',sans-serif;color:${textColor};flex-shrink:0;">$</span>` : ''}
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:${textColor};text-align:right;">${amount}</span>
+  ${currency ? `<span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};flex-shrink:0;">$</span>` : ''}
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};text-align:right;">${amount}</span>
 </div>`;
         },
       },
@@ -361,23 +361,23 @@ export const CellOptions = {
         language: 'html',
         code: `<!-- Default option -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;flex-shrink:0;">$</span>
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">500,00</span>
+            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
 </div>
 
 <!-- Blue option — cell bg + text both blue -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
             width:146px;height:38px;padding:8px 16px;background:#ebf5ff;box-sizing:border-box;">
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#1c64f2;flex-shrink:0;">$</span>
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#1c64f2;text-align:right;">500,00</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#1c64f2;flex-shrink:0;">$</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#1c64f2;text-align:right;">500,00</span>
 </div>
 
 <!-- Calculated option -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;flex-shrink:0;">$</span>
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#0e9f6e;text-align:right;">500,00</span>
+            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;flex-shrink:0;">$</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;text-align:right;">500,00</span>
 </div>`,
       },
     },
@@ -433,15 +433,15 @@ export const CellRowTypes = {
       source: {
         code: `<!-- Default row -->
 <div style="background:#ffffff;width:146px;height:38px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;">$</span>
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">500,00</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">$</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
 </div>
 <!-- Derival row -->
 <div style="background:#fff8f1;…">…</div>
 <!-- Total row -->
-<div style="background:#f3f4f6;…">…</div>
+<div style="background:var(--color-bg-muted);…">…</div>
 <!-- Non-collapsible row -->
-<div style="background:#f9fafb;…">…</div>`,
+<div style="background:var(--color-bg-default);…">…</div>`,
         language: 'html',
       },
     },
@@ -493,11 +493,11 @@ export const CellEditing = {
         language: 'html',
         code: `<!-- Editable, editing=true (focused state) -->
 <div style="display:flex;align-items:center;width:146px;height:38px;
-            background:#fff;border:1px solid #e5e7eb;box-sizing:border-box;">
+            background:var(--color-bg-surface);border:1px solid #e5e7eb;box-sizing:border-box;">
   <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
               border:1px solid #1c64f2;border-radius:4px;
               padding:8px 16px;overflow:hidden;box-sizing:border-box;">
-    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">
       500,00|
     </span>
   </div>
@@ -544,12 +544,12 @@ export const CellWithCaption = {
         language: 'html',
         code: `<!-- Cell with caption — Default option -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;flex-shrink:0;">$</span>
+            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
   <div style="flex:1 0 0;display:flex;flex-direction:column;align-items:flex-end;
               justify-content:center;min-width:1px;">
-    <span style="font:500 14px/1.5 'Inter',sans-serif;color:#111928;text-align:right;">500,00</span>
-    <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6b7280;text-align:right;">500,00</span>
+    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:var(--color-text-secondary);text-align:right;">500,00</span>
   </div>
 </div>`,
       },
@@ -601,13 +601,13 @@ Column category (Income / Disbursements / Expand / Union) is communicated throug
         code: `<!-- Income — regular -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
             width:146px;height:38px;padding:8px 16px;background:#f3faf7;box-sizing:border-box;">
-  <span style="font:500 14px/1.5 'Inter',sans-serif;color:#057a55;flex:1 0 0;">Income</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#057a55;flex:1 0 0;">Income</span>
 </div>
 
 <!-- Income — bold -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
             width:146px;height:38px;padding:8px 16px;background:#f3faf7;box-sizing:border-box;">
-  <span style="font:600 14px/1.5 'Inter',sans-serif;color:#057a55;flex:1 0 0;">Income</span>
+  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);line-height:1.5;color:#057a55;flex:1 0 0;">Income</span>
 </div>`,
       },
     },
@@ -676,7 +676,7 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
         code: `<!-- ACTUALS period header -->
 <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
             width:146px;height:38px;padding:8px 16px;background:#cddbfe;box-sizing:border-box;">
-  <span style="font:700 12px/1.5 'Inter',sans-serif;color:#4b5563;
+  <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;color:#4b5563;
                flex:1 0 0;text-align:right;">ACTUALS</span>
 </div>`,
       },
@@ -692,7 +692,7 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
       <div style="display:flex;gap:12px;align-items:flex-end;">
         ${TYPES.map(({ label, bg, color, text }) => /* html */`
           <div>
-            <p style="font:600 10px/1 'Inter',sans-serif;text-transform:uppercase;
+            <p style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                       letter-spacing:.08em;color:#9ca3af;margin:0 0 6px;text-align:center;">
               ${label}
             </p>
@@ -765,18 +765,18 @@ Shown on both \`white\` (default) and \`grey\` (#f3f4f6) cell backgrounds.`,
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
               background:#6875f5;box-sizing:border-box;">
-    <span style="font:600 12px/1.5 'Inter',sans-serif;color:#ffffff;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#ffffff;
                  white-space:nowrap;text-align:center;">60%</span>
   </div>
 </div>
 
 <!-- TableCellPercent — 40% on grey cell bg (white=false) -->
 <div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:#f3f4f6;box-sizing:border-box;">
+            padding:8px 4px;background:var(--color-bg-muted);box-sizing:border-box;">
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
               background:#b4c6fc;box-sizing:border-box;">
-    <span style="font:600 12px/1.5 'Inter',sans-serif;color:#111928;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#111928;
                  white-space:nowrap;text-align:center;">40%</span>
   </div>
 </div>`,
@@ -804,14 +804,14 @@ Shown on both \`white\` (default) and \`grey\` (#f3f4f6) cell backgrounds.`,
         <div style="display:flex;align-items:center;justify-content:center;
                     width:62px;height:42px;padding:10px;border-radius:4px;
                     background:${bg};box-sizing:border-box;">
-          <span style="font:600 12px/1.5 'Inter',sans-serif;color:${text};
+          <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:${text};
                        white-space:nowrap;text-align:center;">${pct}</span>
         </div>
       </div>`;
 
     const row = (cellBg, label) => /* html */`
       <div>
-        <p style="font:600 10px/1 'Inter',sans-serif;text-transform:uppercase;
+        <p style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                   letter-spacing:.08em;color:#9ca3af;margin:0 0 6px;">
           ${label}
         </p>

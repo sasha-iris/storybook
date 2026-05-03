@@ -346,7 +346,7 @@ export const AllTypes = {
   render: () => `
     <div style="display:flex;flex-direction:column;gap:20px;">
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:#6B7280;">Default</span>
+        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Default</span>
         <div class="btn-group">
           <button class="btn">Years</button>
           <button class="btn">Months</button>
@@ -354,21 +354,21 @@ export const AllTypes = {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:#6B7280;">Only Icon</span>
+        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Only Icon</span>
         <div class="btn-group">
           <button class="btn" style="padding:9px;" aria-label="Prev">${CHEVRON_LEFT}</button>
           <button class="btn" style="padding:9px;" aria-label="Next">${CHEVRON_RIGHT}</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:#6B7280;">With stat</span>
+        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">With stat</span>
         <div class="btn-group">
           <button class="btn" style="gap:8px;padding:8px 16px;">${DOWNLOAD_ICON}<span>Download</span></button>
           <button class="btn" style="padding:8px 16px;"><span class="btn-group-stat-count">12k</span></button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:#6B7280;">With dropdown</span>
+        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">With dropdown</span>
         <div class="btn-group">
           <button class="btn" style="padding:8px 16px;">Save changes</button>
           <button class="btn" style="padding:8px 9px;" aria-label="Bookmark">${BOOKMARK_ICON}</button>

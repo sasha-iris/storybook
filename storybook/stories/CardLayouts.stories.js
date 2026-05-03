@@ -60,8 +60,8 @@ const IMG = {
 /* ── Shared shell helpers ─────────────────────────────────── */
 const SHADOW_MD = '0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05)';
 const SHADOW_SM = '0 1px 2px 0 rgba(0,0,0,.08)';
-const CARD_SHELL_MD = `background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:${SHADOW_MD}`;
-const CARD_SHELL_SM = `background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:${SHADOW_SM}`;
+const CARD_SHELL_MD = `background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;box-shadow:${SHADOW_MD}`;
+const CARD_SHELL_SM = `background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;box-shadow:${SHADOW_SM}`;
 
 /* ── Inline SVG helpers ───────────────────────────────────── */
 /* Heroicons check-circle — filled blue (enabled) or gray (disabled) */
@@ -177,25 +177,25 @@ Social profile card. Centred avatar, name, role, and two action buttons.
       },
       source: {
         language: 'html',
-        code: `<div style="width:384px;padding:16px 16px 40px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);">
+        code: `<div style="width:384px;padding:16px 16px 40px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);">
   <!-- Three-dots menu -->
   <div style="display:flex;justify-content:flex-end;padding:10px;">⋯</div>
   <!-- Avatar + Name -->
   <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
     <img src="…" alt="Bonnie Green"
-         style="width:96px;height:96px;border-radius:50%;border:1px solid #e5e7eb;object-fit:cover;
+         style="width:96px;height:96px;border-radius:50%;border:1px solid var(--color-border-default);object-fit:cover;
                 box-shadow:0 4px 6px 0 rgba(0,0,0,.1),0 2px 4px 0 rgba(0,0,0,.05);">
     <div style="text-align:center;">
-      <p style="font-size:20px;font-weight:500;color:#111928;margin:0;">Bonnie Green</p>
-      <p style="font-size:14px;color:#6b7280;margin:0;">Visual Designer</p>
+      <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;margin:0;">Bonnie Green</p>
+      <p style="font-size:var(--text-sm);color:var(--color-text-secondary);margin:0;">Visual Designer</p>
     </div>
   </div>
   <!-- Buttons -->
   <div style="display:flex;gap:12px;justify-content:center;padding-top:24px;">
-    <button style="background:#42389d;color:#fff;font-size:12px;font-weight:500;
+    <button style="background:#42389d;color:#fff;font-size:var(--text-xs);font-weight:var(--font-medium);
                    padding:8px 12px;border-radius:12px;border:none;cursor:pointer;">Add friend</button>
     <button style="background:transparent;border:1px solid #f9fafb;color:#1e2939;
-                   font-size:12px;font-weight:500;padding:8px 12px;border-radius:12px;cursor:pointer;">Message</button>
+                   font-size:var(--text-xs);font-weight:var(--font-medium);padding:8px 12px;border-radius:12px;cursor:pointer;">Message</button>
   </div>
 </div>`,
       },
@@ -210,22 +210,22 @@ Social profile card. Centred avatar, name, role, and two action buttons.
       <!-- Avatar + Name + Role -->
       <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
         <img src="${IMG.bonnieGreen}" alt="Bonnie Green"
-             style="width:96px;height:96px;border-radius:100px;border:1px solid #e5e7eb;
+             style="width:96px;height:96px;border-radius:100px;border:1px solid var(--color-border-default);
                     object-fit:cover;
                     box-shadow:0 4px 6px 0 rgba(0,0,0,.1),0 2px 4px 0 rgba(0,0,0,.05);">
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;">
-          <p style="font-size:20px;font-weight:500;color:#111928;line-height:1.25;margin:0;">Bonnie Green</p>
-          <p style="font-size:14px;font-weight:400;color:#6b7280;line-height:1.5;margin:0;">Visual Designer</p>
+          <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;line-height:1.25;margin:0;">Bonnie Green</p>
+          <p style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.5;margin:0;">Visual Designer</p>
         </div>
       </div>
       <!-- Action buttons -->
       <div style="display:flex;gap:12px;justify-content:center;padding-top:24px;">
-        <button style="background:#42389d;color:#fff;font-size:12px;font-weight:500;line-height:1.5;
+        <button style="background:#42389d;color:#fff;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;
                        padding:8px 12px;border-radius:12px;border:none;cursor:pointer;white-space:nowrap;">
           Add friend
         </button>
         <button style="background:transparent;border:1px solid #f9fafb;color:#1e2939;
-                       font-size:12px;font-weight:500;line-height:1.5;
+                       font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;
                        padding:8px 12px;border-radius:12px;cursor:pointer;white-space:nowrap;">
           Message
         </button>
@@ -272,39 +272,39 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
         language: 'html',
         code: `<div style="width:384px;padding:32px;background:#fff;border-radius:8px;
              box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.1);">
-  <p style="font-size:20px;font-weight:500;color:#111928;margin:0 0 24px;">Sign in to our platform</p>
+  <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;margin:0 0 24px;">Sign in to our platform</p>
   <!-- Email -->
   <div style="margin-bottom:20px;">
-    <label style="display:block;font-size:14px;font-weight:500;color:#6b7280;margin-bottom:8px;">Your email</label>
-    <div style="display:flex;align-items:center;gap:10px;background:#f9fafb;border:1px solid #d1d5db;
+    <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);margin-bottom:8px;">Your email</label>
+    <div style="display:flex;align-items:center;gap:10px;background:var(--color-bg-default);border:1px solid #d1d5db;
                 border-radius:8px;padding:12px 16px;">
       <!-- mail icon -->
-      <span style="color:#6b7280;font-size:14px;">✉</span>
-      <span style="font-size:14px;color:#6b7280;">name@flowbite.com</span>
+      <span style="color:var(--color-text-secondary);font-size:var(--text-sm);">✉</span>
+      <span style="font-size:var(--text-sm);color:var(--color-text-secondary);">name@flowbite.com</span>
     </div>
   </div>
   <!-- Password -->
   <div style="margin-bottom:20px;">
-    <label style="display:block;font-size:14px;font-weight:500;color:#111928;margin-bottom:8px;">Password</label>
-    <div style="background:#f9fafb;border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;">
-      <span style="font-size:14px;color:#6b7280;">••••••••••</span>
+    <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);color:#111928;margin-bottom:8px;">Password</label>
+    <div style="background:var(--color-bg-default);border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;">
+      <span style="font-size:var(--text-sm);color:var(--color-text-secondary);">••••••••••</span>
     </div>
   </div>
   <!-- Checkbox row -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
-    <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+    <label style="display:flex;align-items:center;gap:8px;font-size:var(--text-sm);cursor:pointer;">
       <input type="checkbox" style="width:16px;height:16px;accent-color:#1447e6;">
       Remember me
     </label>
-    <a href="#" style="font-size:14px;color:#155dfc;text-decoration:none;">Lost Password?</a>
+    <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>
   </div>
   <!-- CTA -->
-  <button style="width:100%;background:#1447e6;color:#fff;font-size:14px;font-weight:500;
+  <button style="width:100%;background:#1447e6;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                  padding:10px 20px;border-radius:12px;border:none;cursor:pointer;margin-bottom:16px;">
     Create account
   </button>
-  <p style="font-size:14px;font-weight:500;margin:0;">
-    <span style="color:#6b7280;">Not registered? </span>
+  <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;">
+    <span style="color:var(--color-text-secondary);">Not registered? </span>
     <a href="#" style="color:#155dfc;text-decoration:none;">Create account</a>
   </p>
 </div>`,
@@ -316,7 +316,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
                 box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.1);
                 display:flex;flex-direction:column;gap:24px;">
 
-      <p style="font-size:20px;font-weight:500;color:#111928;line-height:1.5;margin:0;">
+      <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;line-height:1.5;margin:0;">
         Sign in to our platform
       </p>
 
@@ -325,24 +325,24 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 
         <!-- Email field -->
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-size:14px;font-weight:500;color:#6b7280;line-height:1.5;">
+          <label style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;">
             Your email
           </label>
-          <div style="display:flex;align-items:center;gap:10px;background:#f9fafb;
+          <div style="display:flex;align-items:center;gap:10px;background:var(--color-bg-default);
                       border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;">
             ${MAIL_ICON}
-            <span style="font-size:14px;color:#6b7280;line-height:1.25;">name@flowbite.com</span>
+            <span style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.25;">name@flowbite.com</span>
           </div>
         </div>
 
         <!-- Password field -->
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-size:14px;font-weight:500;color:#111928;line-height:1.5;">
+          <label style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#111928;line-height:1.5;">
             Password
           </label>
-          <div style="background:#f9fafb;border:1px solid #d1d5db;border-radius:8px;
+          <div style="background:var(--color-bg-default);border:1px solid #d1d5db;border-radius:8px;
                       padding:12px 16px;">
-            <span style="font-size:14px;color:#6b7280;line-height:1.25;letter-spacing:2px;">••••••••••</span>
+            <span style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.25;letter-spacing:2px;">••••••••••</span>
           </div>
         </div>
       </div>
@@ -350,29 +350,29 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
       <!-- Checkbox row -->
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <div style="width:16px;height:16px;flex-shrink:0;background:#f9fafb;
+          <div style="width:16px;height:16px;flex-shrink:0;background:var(--color-bg-default);
                       border:0.5px solid #d1d5db;border-radius:4px;"></div>
           <div style="display:flex;flex-direction:column;gap:2px;">
-            <span style="font-size:14px;font-weight:500;color:#101828;line-height:1.5;">
+            <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#101828;line-height:1.5;">
               Write label text here
             </span>
-            <span style="font-size:14px;color:#101828;line-height:1.5;">Some text here</span>
+            <span style="font-size:var(--text-sm);color:#101828;line-height:1.5;">Some text here</span>
           </div>
         </label>
-        <a href="#" style="font-size:14px;color:#155dfc;text-decoration:none;white-space:nowrap;">
+        <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;white-space:nowrap;">
           Lost Password?
         </a>
       </div>
 
       <!-- Button + helper -->
       <div style="display:flex;flex-direction:column;gap:16px;">
-        <button style="width:100%;background:#1447e6;color:#fff;font-size:14px;font-weight:500;
+        <button style="width:100%;background:#1447e6;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                        line-height:1.5;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;
                        min-height:41px;">
           Create account
         </button>
-        <p style="font-size:14px;font-weight:500;margin:0;line-height:1.5;">
-          <span style="color:#6b7280;">Not registered?</span>
+        <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;line-height:1.5;">
+          <span style="color:var(--color-text-secondary);">Not registered?</span>
           <a href="#" style="color:#155dfc;text-decoration:none;"> Create account</a>
         </p>
       </div>
@@ -415,7 +415,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
       source: {
         language: 'html',
         code: `<!-- E-commerce card (384px, shadow-md) -->
-<div style="width:384px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="width:384px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
   <!-- Product image -->
   <div style="display:flex;justify-content:center;align-items:center;padding:24px 16px;">
@@ -425,17 +425,17 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
   <div style="display:flex;flex-direction:column;gap:20px;padding:0 20px 20px;">
     <!-- Title + stars -->
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <p style="font-size:20px;font-weight:600;color:#111928;margin:0;">Apple Watch Series 7 GPS</p>
+      <p style="font-size:var(--text-xl);font-weight:var(--font-semibold);color:#111928;margin:0;">Apple Watch Series 7 GPS</p>
       <div style="display:flex;align-items:center;gap:12px;">
         <!-- 5× yellow star SVGs (#FFDF20) -->
-        <span style="background:#155dfc;color:#fff;font-size:12px;font-weight:600;
+        <span style="background:#155dfc;color:#fff;font-size:var(--text-xs);font-weight:var(--font-semibold);
                      padding:2px 4px;border-radius:4px;">5.0</span>
       </div>
     </div>
     <!-- Price + CTA -->
     <div style="display:flex;align-items:center;gap:10px;">
       <p style="flex:1;font-size:30px;font-weight:800;color:#111928;margin:0;">$599</p>
-      <button style="background:#42389d;color:#fff;font-size:14px;font-weight:500;
+      <button style="background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                      padding:8px 12px;height:36px;border-radius:12px;border:none;cursor:pointer;">
         Add to cart
       </button>
@@ -459,12 +459,12 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
 
         <!-- Title + stars -->
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <p style="font-size:20px;font-weight:600;color:#111928;line-height:1.25;margin:0;">
+          <p style="font-size:var(--text-xl);font-weight:var(--font-semibold);color:#111928;line-height:1.25;margin:0;">
             Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport
           </p>
           <div style="display:flex;align-items:center;gap:12px;">
             <div style="display:flex;gap:4px;">${STAR.repeat(5)}</div>
-            <span style="background:#155dfc;color:#fff;font-size:12px;font-weight:600;
+            <span style="background:#155dfc;color:#fff;font-size:var(--text-xs);font-weight:var(--font-semibold);
                          padding:2px 4px;border-radius:4px;line-height:12px;white-space:nowrap;">5.0</span>
           </div>
         </div>
@@ -472,7 +472,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
         <!-- Price + CTA -->
         <div style="display:flex;align-items:center;gap:10px;">
           <p style="flex:1;font-size:30px;font-weight:800;color:#111928;line-height:1.25;margin:0;">$599</p>
-          <button style="background:#42389d;color:#fff;font-size:14px;font-weight:500;
+          <button style="background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                          padding:8px 12px;height:36px;border-radius:12px;border:none;cursor:pointer;
                          white-space:nowrap;line-height:1.5;">
             Add to cart
@@ -522,7 +522,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;">
     <p style="font-size:18px;font-weight:800;color:#111928;margin:0;">Latest Customers</p>
-    <a href="#" style="font-size:16px;font-weight:500;color:#155dfc;text-decoration:none;">View all</a>
+    <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;">View all</a>
   </div>
   <!-- Customer rows -->
   <div style="display:flex;flex-direction:column;">
@@ -532,11 +532,11 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
         <img src="…" alt="Neil Sims"
              style="width:32px;height:32px;border-radius:100px;object-fit:cover;flex-shrink:0;">
         <div style="display:flex;flex-direction:column;min-width:0;">
-          <span style="font-size:16px;font-weight:600;color:#111928;">Neil Sims</span>
-          <span style="font-size:12px;color:#6b7280;">email@example.com</span>
+          <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#111928;">Neil Sims</span>
+          <span style="font-size:var(--text-xs);color:var(--color-text-secondary);">email@example.com</span>
         </div>
       </div>
-      <span style="font-size:16px;font-weight:600;color:#111928;white-space:nowrap;">$367</span>
+      <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#111928;white-space:nowrap;">$367</span>
     </div>
     <!-- … repeat for 5 more customers … -->
   </div>
@@ -562,7 +562,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
         <p style="font-size:18px;font-weight:800;color:#111928;line-height:1.5;margin:0;">
           Latest Customers
         </p>
-        <a href="#" style="font-size:16px;font-weight:500;color:#155dfc;text-decoration:none;
+        <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;
                            white-space:nowrap;">View all</a>
       </div>
 
@@ -575,11 +575,11 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
               <img src="${c.img}" alt="${c.name}"
                    style="width:32px;height:32px;border-radius:100px;object-fit:cover;flex-shrink:0;">
               <div style="display:flex;flex-direction:column;min-width:0;">
-                <span style="font-size:16px;font-weight:600;color:#111928;line-height:1.5;">${c.name}</span>
-                <span style="font-size:12px;color:#6b7280;line-height:1.5;">${c.email}</span>
+                <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#111928;line-height:1.5;">${c.name}</span>
+                <span style="font-size:var(--text-xs);color:var(--color-text-secondary);line-height:1.5;">${c.email}</span>
               </div>
             </div>
-            <span style="font-size:16px;font-weight:600;color:#111928;line-height:1.5;
+            <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:#111928;line-height:1.5;
                          white-space:nowrap;">${c.amount}</span>
           </div>`).join('')}
       </div>
@@ -625,16 +625,16 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
       source: {
         language: 'html',
         code: `<!-- Pricing card (384px, shadow-md) -->
-<div style="width:384px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="width:384px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
             padding:32px;overflow:hidden;">
   <div style="display:flex;flex-direction:column;gap:28px;align-items:center;">
     <!-- Plan + price -->
     <div style="display:flex;flex-direction:column;gap:16px;">
-      <p style="font-size:20px;font-weight:500;color:#6b7280;margin:0;">Standard plan</p>
+      <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:var(--color-text-secondary);margin:0;">Standard plan</p>
       <div style="display:flex;align-items:flex-end;gap:10px;">
         <span style="font-size:48px;font-weight:800;color:#111928;line-height:48px;">$49</span>
-        <span style="font-size:18px;font-weight:500;color:#6b7280;margin-bottom:2px;">/month</span>
+        <span style="font-size:var(--text-lg);font-weight:var(--font-medium);color:var(--color-text-secondary);margin-bottom:2px;">/month</span>
       </div>
     </div>
     <!-- Feature list: enabled (blue check) + disabled (gray check + line-through) -->
@@ -642,16 +642,16 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
       <!-- Enabled item -->
       <div style="display:flex;align-items:center;gap:12px;">
         <!-- check-circle SVG fill:#155dfc -->
-        <span style="font-size:16px;color:#6b7280;">2 team members</span>
+        <span style="font-size:var(--text-base);color:var(--color-text-secondary);">2 team members</span>
       </div>
       <!-- Disabled item -->
       <div style="display:flex;align-items:center;gap:12px;">
         <!-- check-circle SVG fill:#9ca3af -->
-        <span style="font-size:16px;color:#6b7280;text-decoration:line-through;">Sketch Files</span>
+        <span style="font-size:var(--text-base);color:var(--color-text-secondary);text-decoration:line-through;">Sketch Files</span>
       </div>
     </div>
     <!-- CTA -->
-    <button style="width:100%;background:#42389d;color:#fff;font-size:14px;font-weight:500;
+    <button style="width:100%;background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                    padding:10px 20px;border-radius:12px;border:none;cursor:pointer;">
       Choose plan
     </button>
@@ -666,7 +666,7 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
     const listItem = (text, enabled) => `
       <div style="display:flex;align-items:center;gap:12px;padding:2px 0;">
         ${CHECK(enabled)}
-        <span style="font-size:16px;color:#6b7280;line-height:1.5;
+        <span style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.5;
                      ${enabled ? '' : 'text-decoration:line-through;'}">${text}</span>
       </div>`;
     return `
@@ -675,12 +675,12 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
 
         <!-- Plan + price -->
         <div style="display:flex;flex-direction:column;gap:16px;">
-          <p style="font-size:20px;font-weight:500;color:#6b7280;line-height:1.5;margin:0;width:320px;">
+          <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;margin:0;width:320px;">
             Standard plan
           </p>
           <div style="display:flex;align-items:flex-end;gap:10px;width:320px;">
             <span style="font-size:48px;font-weight:800;color:#111928;line-height:48px;white-space:nowrap;">$49</span>
-            <span style="font-size:18px;font-weight:500;color:#6b7280;line-height:1.5;margin-bottom:2px;">/month</span>
+            <span style="font-size:var(--text-lg);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;margin-bottom:2px;">/month</span>
           </div>
         </div>
 
@@ -691,7 +691,7 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
         </div>
 
         <!-- CTA -->
-        <button style="width:100%;background:#42389d;color:#fff;font-size:14px;font-weight:500;
+        <button style="width:100%;background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
                        padding:10px 20px;border-radius:12px;border:none;cursor:pointer;
                        min-height:41px;line-height:1.5;">
           Choose plan
@@ -738,13 +738,13 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
       source: {
         language: 'html',
         code: `<!-- CTA card (790px, shadow-md) -->
-<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
             padding:32px;overflow:hidden;">
   <div style="display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center;">
     <!-- Heading + body -->
     <p style="font-size:30px;font-weight:700;color:#111928;margin:0;">Work fast from anywhere</p>
-    <p style="font-size:18px;color:#6b7280;line-height:1.5;margin:0;">
+    <p style="font-size:18px;color:var(--color-text-secondary);line-height:1.5;margin:0;">
       Stay up to date and move work forward with Flowbite on iOS &amp; Android.</p>
     <!-- App-store buttons: bg #111928, rounded-8px -->
     <div style="display:flex;gap:16px;">
@@ -752,7 +752,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
                   padding:12px 16px;border-radius:8px;cursor:pointer;">
         <img src="…google-play-icon…" alt="Google Play" style="width:38px;height:38px;object-fit:contain;">
         <div style="display:flex;flex-direction:column;text-align:left;color:#fff;">
-          <span style="font-size:12px;font-weight:400;">Download on the</span>
+          <span style="font-size:var(--text-xs);font-weight:400;">Download on the</span>
           <span style="font-size:18px;font-weight:700;">Google Play</span>
         </div>
       </div>
@@ -760,7 +760,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
                   padding:12px 16px;border-radius:8px;cursor:pointer;">
         <img src="…apple-logo…" alt="App Store" style="width:38px;height:38px;object-fit:contain;">
         <div style="display:flex;flex-direction:column;text-align:left;color:#fff;">
-          <span style="font-size:12px;font-weight:400;">Download on the</span>
+          <span style="font-size:var(--text-xs);font-weight:400;">Download on the</span>
           <span style="font-size:18px;font-weight:700;">AppStore</span>
         </div>
       </div>
@@ -779,7 +779,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
           <p style="font-size:30px;font-weight:700;color:#111928;line-height:1.25;margin:0;">
             Work fast from anywhere
           </p>
-          <p style="font-size:18px;font-weight:400;color:#6b7280;line-height:1.5;margin:0;">
+          <p style="font-size:18px;font-weight:400;color:var(--color-text-secondary);line-height:1.5;margin:0;">
             Stay up to date and move work forward with Flowbite on iOS &amp; Android. Download the app today.
           </p>
         </div>
@@ -793,7 +793,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
             <img src="${IMG.googlePlay}" alt="Google Play"
                  style="width:38px;height:38px;object-fit:contain;flex-shrink:0;">
             <div style="display:flex;flex-direction:column;text-align:left;color:#fff;white-space:nowrap;">
-              <span style="font-size:12px;font-weight:400;line-height:12px;">Download on the</span>
+              <span style="font-size:var(--text-xs);font-weight:400;line-height:12px;">Download on the</span>
               <span style="font-size:18px;font-weight:700;line-height:1.25;">Google Play</span>
             </div>
           </div>
@@ -804,7 +804,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
             <img src="${IMG.appleLogo}" alt="App Store"
                  style="width:38px;height:38px;object-fit:contain;flex-shrink:0;">
             <div style="display:flex;flex-direction:column;text-align:left;color:#fff;white-space:nowrap;">
-              <span style="font-size:12px;font-weight:400;line-height:12px;">Download on the</span>
+              <span style="font-size:var(--text-xs);font-weight:400;line-height:12px;">Download on the</span>
               <span style="font-size:18px;font-weight:700;line-height:1.25;">AppStore</span>
             </div>
           </div>
@@ -851,26 +851,26 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
       source: {
         language: 'html',
         code: `<!-- Nav Tabs card (790px, shadow-md) -->
-<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
   <!-- Tab row: bg #f9fafb, border-bottom 1px #e5e7eb -->
-  <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:16px;">
+  <div style="background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);padding:16px;">
     <div style="display:flex;gap:32px;">
       <!-- Inactive tab: color #6b7280, medium 14px -->
-      <span style="font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;">About</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);cursor:pointer;">About</span>
       <!-- Active tab: color #155dfc (blue/600) -->
-      <span style="font-size:14px;font-weight:500;color:#155dfc;cursor:pointer;">Services</span>
-      <span style="font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;">Facts</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;cursor:pointer;">Services</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);cursor:pointer;">Facts</span>
     </div>
   </div>
   <!-- Body: padding 32px -->
   <div style="padding:32px;">
     <p style="font-size:30px;font-weight:800;color:#111928;margin:0 0 8px;">
       Powering innovation at 200,000+ companies</p>
-    <p style="font-size:18px;color:#6b7280;line-height:1.5;margin:0 0 12px;">Body copy here.</p>
+    <p style="font-size:18px;color:var(--color-text-secondary);line-height:1.5;margin:0 0 12px;">Body copy here.</p>
     <!-- "Learn more" + chevron-right: color #155dfc -->
     <div style="display:flex;align-items:center;gap:4px;">
-      <a href="#" style="font-size:16px;font-weight:500;color:#155dfc;text-decoration:none;">Learn more</a>
+      <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;">Learn more</a>
       <!-- chevron-right SVG, stroke #155dfc -->
     </div>
   </div>
@@ -882,11 +882,11 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
     <div style="${CARD_SHELL_MD};width:790px;overflow:hidden;">
 
       <!-- Tab row -->
-      <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:16px;">
+      <div style="background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);padding:16px;">
         <div style="display:flex;gap:32px;">
-          <span style="font-size:14px;font-weight:500;color:#6b7280;line-height:1.5;cursor:pointer;">About</span>
-          <span style="font-size:14px;font-weight:500;color:#155dfc;line-height:1.5;cursor:pointer;">Services</span>
-          <span style="font-size:14px;font-weight:500;color:#6b7280;line-height:1.5;cursor:pointer;">Facts</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;cursor:pointer;">About</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;line-height:1.5;cursor:pointer;">Services</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;cursor:pointer;">Facts</span>
         </div>
       </div>
 
@@ -896,12 +896,12 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
           <p style="font-size:30px;font-weight:800;color:#111928;line-height:1.25;margin:0;">
             Powering innovation &amp; trust at 200,000+ companies worldwide
           </p>
-          <p style="font-size:18px;font-weight:400;color:#6b7280;line-height:1.5;margin:0;">
+          <p style="font-size:18px;font-weight:400;color:var(--color-text-secondary);line-height:1.5;margin:0;">
             Empower Developers, IT Ops, and business teams to collaborate at high velocity.
             Respond to changes and deliver great customer and employee service experiences fast.
           </p>
           <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
-            <a href="#" style="font-size:16px;font-weight:500;color:#155dfc;text-decoration:none;
+            <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;
                                white-space:nowrap;">Learn more</a>
             ${CHEVRON_RIGHT}
           </div>
@@ -945,19 +945,19 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
       source: {
         language: 'html',
         code: `<!-- Stats card (790px, shadow-md) -->
-<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
   <!-- Segmented tab row: 3 equal columns with 1px #e5e7eb vertical dividers -->
-  <div style="display:flex;background:#f9fafb;border-radius:8px 8px 0 0;overflow:hidden;">
+  <div style="display:flex;background:var(--color-bg-default);border-radius:8px 8px 0 0;overflow:hidden;">
     <!-- Active tab: color #155dfc -->
     <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid #e5e7eb;">
-      <span style="font-size:14px;font-weight:500;color:#155dfc;">Statistics</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;">Statistics</span>
     </div>
     <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid #e5e7eb;">
-      <span style="font-size:14px;font-weight:500;color:#6b7280;">Services</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">Services</span>
     </div>
     <div style="flex:1;display:flex;justify-content:center;padding:16px;">
-      <span style="font-size:14px;font-weight:500;color:#6b7280;">FAQ</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">FAQ</span>
     </div>
   </div>
   <!-- Stats grid: 2 rows × 3 columns, centered text -->
@@ -967,7 +967,7 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
         <!-- Stat cell: value (30px extrabold #111928) + label (16px regular #6b7280) -->
         <div style="display:flex;flex-direction:column;flex:1;">
           <span style="font-size:30px;font-weight:800;color:#111928;">73M+</span>
-          <span style="font-size:16px;color:#6b7280;">Developers</span>
+          <span style="font-size:var(--text-base);color:var(--color-text-secondary);">Developers</span>
         </div>
         <!-- … repeat for 2 more cells … -->
       </div>
@@ -990,21 +990,21 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
     const statCell = ({ value, label }) => `
       <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
         <span style="font-size:30px;font-weight:800;color:#111928;line-height:1.25;">${value}</span>
-        <span style="font-size:16px;font-weight:400;color:#6b7280;line-height:1.5;">${label}</span>
+        <span style="font-size:var(--text-base);font-weight:400;color:var(--color-text-secondary);line-height:1.5;">${label}</span>
       </div>`;
     return `
     <div style="${CARD_SHELL_MD};width:790px;overflow:hidden;">
 
       <!-- Segmented tab row -->
-      <div style="display:flex;background:#f9fafb;box-shadow:0 1px 2px 0 rgba(0,0,0,.08);overflow:hidden;border-radius:8px 8px 0 0;">
+      <div style="display:flex;background:var(--color-bg-default);box-shadow:0 1px 2px 0 rgba(0,0,0,.08);overflow:hidden;border-radius:8px 8px 0 0;">
         <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid #e5e7eb;">
-          <span style="font-size:14px;font-weight:500;color:#155dfc;white-space:nowrap;">Statistics</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;white-space:nowrap;">Statistics</span>
         </div>
         <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid #e5e7eb;">
-          <span style="font-size:14px;font-weight:500;color:#6b7280;white-space:nowrap;">Services</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);white-space:nowrap;">Services</span>
         </div>
         <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;">
-          <span style="font-size:14px;font-weight:500;color:#6b7280;white-space:nowrap;">FAQ</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);white-space:nowrap;">FAQ</span>
         </div>
       </div>
 
@@ -1058,7 +1058,7 @@ export const TestimonialCard = {
       source: {
         language: 'html',
         code: `<!-- Testimonial card (790px, shadow-sm) -->
-<div style="width:790px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;
+<div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 1px 2px 0 rgba(0,0,0,.08);overflow:hidden;">
   <!-- Row 1: 2 cells side by side with 1px vertical divider -->
   <div style="display:flex;border-radius:8px 8px 0 0;overflow:hidden;">
@@ -1067,15 +1067,15 @@ export const TestimonialCard = {
                 padding:32px;align-items:center;gap:24px;">
       <p style="font-size:18px;font-weight:600;color:#111928;text-align:center;margin:0;">
         Solid foundation for any project</p>
-      <p style="font-size:16px;color:#6b7280;line-height:1.5;text-align:center;margin:0;">
+      <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.5;text-align:center;margin:0;">
         "If you care for your time, I hands down would go with this."</p>
       <!-- Author: 32px avatar circle + name + role -->
       <div style="display:flex;align-items:center;gap:16px;">
         <img src="…" alt="Neil Sims"
-             style="width:32px;height:32px;border-radius:100px;border:1px solid #e5e7eb;object-fit:cover;">
+             style="width:32px;height:32px;border-radius:100px;border:1px solid var(--color-border-default);object-fit:cover;">
         <div>
           <span style="font-size:18px;font-weight:600;color:#111928;display:block;">Neil Sims</span>
-          <span style="font-size:14px;font-weight:500;color:#6b7280;">CEO, Flowbite</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">CEO, Flowbite</span>
         </div>
       </div>
     </div>
@@ -1101,16 +1101,16 @@ export const TestimonialCard = {
           <div style="display:flex;flex-direction:column;gap:16px;align-items:center;width:100%;">
             <p style="font-size:18px;font-weight:600;color:#111928;line-height:1.25;
                       margin:0;text-align:center;">${t.title}</p>
-            <p style="font-size:16px;font-weight:400;color:#6b7280;line-height:1.5;
+            <p style="font-size:var(--text-base);font-weight:400;color:var(--color-text-secondary);line-height:1.5;
                       margin:0;text-align:center;">${t.quote}</p>
           </div>
           <div style="display:flex;align-items:center;gap:16px;justify-content:center;">
             <img src="${t.img}" alt="${t.name}"
-                 style="width:32px;height:32px;border-radius:100px;border:1px solid #e5e7eb;
+                 style="width:32px;height:32px;border-radius:100px;border:1px solid var(--color-border-default);
                         object-fit:cover;flex-shrink:0;">
             <div style="display:flex;flex-direction:column;gap:4px;white-space:nowrap;">
               <span style="font-size:18px;font-weight:600;color:#111928;line-height:1.25;">${t.name}</span>
-              <span style="font-size:14px;font-weight:500;color:#6b7280;line-height:1.25;">${t.role}</span>
+              <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.25;">${t.role}</span>
             </div>
           </div>
         </div>
@@ -1178,18 +1178,18 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
   <!-- Header -->
   <div>
     <p style="font-size:18px;font-weight:600;color:#111928;margin:0 0 10px;">Connect wallet</p>
-    <p style="font-size:14px;color:#6b7280;line-height:1.5;margin:0;">
+    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5;margin:0;">
       Connect with one of our available wallet providers or create a new one.</p>
   </div>
   <!-- Wallet list -->
   <div style="display:flex;flex-direction:column;gap:12px;">
     <!-- Wallet row: bg #f9fafb, padding 12px, rounded-8px -->
-    <div style="display:flex;align-items:center;gap:12px;background:#f9fafb;
+    <div style="display:flex;align-items:center;gap:12px;background:var(--color-bg-default);
                 padding:12px;border-radius:8px;cursor:pointer;">
       <img src="…metamask-icon…" alt="MetaMask" style="width:18px;height:17px;object-fit:contain;">
-      <span style="flex:1;font-size:16px;font-weight:700;color:#111928;">MetaMask</span>
+      <span style="flex:1;font-size:var(--text-base);font-weight:700;color:#111928;">MetaMask</span>
       <!-- "Popular" badge: bg #e5e7eb, rounded-6px, 12px medium #6b7280 -->
-      <span style="background:#e5e7eb;font-size:12px;font-weight:500;color:#6b7280;
+      <span style="background:#e5e7eb;font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);
                    padding:2px 10px;border-radius:6px;">Popular</span>
     </div>
     <!-- … repeat for 4 more wallets (no Popular badge) … -->
@@ -1197,7 +1197,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
   <!-- Helper text: question-circle icon + 12px text -->
   <div style="display:flex;align-items:center;gap:6px;">
     <!-- question-circle SVG, stroke #6b7280 -->
-    <span style="font-size:12px;color:#6b7280;">Why do I need to connect with my wallet?</span>
+    <span style="font-size:var(--text-xs);color:var(--color-text-secondary);">Why do I need to connect with my wallet?</span>
   </div>
 </div>`,
       },
@@ -1220,7 +1220,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
         <p style="font-size:18px;font-weight:600;color:#111928;line-height:1.5;margin:0;">
           Connect wallet
         </p>
-        <p style="font-size:14px;font-weight:400;color:#6b7280;line-height:1.5;margin:0;">
+        <p style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.5;margin:0;">
           Connect with one of our available wallet providers or create a new one.
         </p>
       </div>
@@ -1231,17 +1231,17 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
         <!-- Wallet list -->
         <div style="display:flex;flex-direction:column;gap:12px;">
           ${wallets.map(w => `
-            <div style="display:flex;align-items:center;gap:12px;background:#f9fafb;
+            <div style="display:flex;align-items:center;gap:12px;background:var(--color-bg-default);
                         padding:12px;border-radius:8px;cursor:pointer;">
               <div style="display:flex;flex:1;align-items:center;gap:12px;min-width:0;">
                 <img src="${w.img}" alt="${w.name}"
                      style="width:${w.w}px;height:${w.h}px;object-fit:contain;flex-shrink:0;">
-                <span style="font-size:16px;font-weight:700;color:#111928;line-height:1.5;">
+                <span style="font-size:var(--text-base);font-weight:700;color:#111928;line-height:1.5;">
                   ${w.name}
                 </span>
               </div>
-              ${w.popular ? `<span style="background:#e5e7eb;font-size:12px;font-weight:500;
-                                         color:#6b7280;padding:2px 10px;border-radius:6px;
+              ${w.popular ? `<span style="background:#e5e7eb;font-size:var(--text-xs);font-weight:var(--font-medium);
+                                         color:var(--color-text-secondary);padding:2px 10px;border-radius:6px;
                                          white-space:nowrap;line-height:1.5;">Popular</span>` : ''}
             </div>`).join('')}
         </div>
@@ -1249,7 +1249,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
         <!-- Helper text -->
         <div style="display:flex;align-items:center;gap:6px;">
           ${QUESTION}
-          <span style="font-size:12px;font-weight:400;color:#6b7280;line-height:1.5;">
+          <span style="font-size:var(--text-xs);font-weight:400;color:var(--color-text-secondary);line-height:1.5;">
             Why do I need to connect with my wallet?
           </span>
         </div>

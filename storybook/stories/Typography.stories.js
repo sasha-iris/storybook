@@ -140,7 +140,7 @@ Tokens map to \`--text-h1\` through \`--text-caption\` in \`styles.css\`.
     },
   },
   render: () => `
-    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden;">
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:12px;overflow:hidden;">
       ${[
         ['H1 — Bold heading',           '--text-h1',      '30px', 700, 'H1/30px - 700'],
         ['H1 — Regular heading',         '--text-h1',      '30px', 400, 'H1/30px - 400'],
@@ -196,7 +196,7 @@ Migration guide:
     },
   },
   render: () => `
-    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden;">
+    <div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:12px;overflow:hidden;">
       ${[
         ['--text-5xl',  '3rem',    '48px', 800,  'The quick brown fox'],
         ['--text-4xl',  '2.25rem', '36px', 700,  'The quick brown fox'],
@@ -264,7 +264,7 @@ strong { font-weight: var(--font-semibold); }`,
         ['--font-bold',      'Bold',      700],
         ['--font-extrabold', 'Extrabold', 800],
       ].map(([cssVar, name, w]) => `
-        <div style="background:#fff;border:1px solid #E5E7EB;border-radius:8px;
+        <div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
                     padding:16px 20px;min-width:130px;">
           <div style="font-family:Inter,sans-serif;font-size:1.5rem;
                       font-weight:var(${cssVar},${w});

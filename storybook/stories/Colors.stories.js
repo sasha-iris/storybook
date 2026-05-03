@@ -92,7 +92,7 @@ const group = (title, swatches) => `
           <div style="height:64px;background:var(${cssVar},${hex});
                       outline:${hex === '#ffffff' ? '1px solid #e5e7eb' : 'none'};
                       outline-offset:-1px;"></div>
-          <div style="padding:8px 10px;background:#fff;">
+          <div style="padding:8px 10px;background:var(--color-bg-surface);">
             <div style="font-size:10px;font-weight:600;color:#101828;
                         margin-bottom:2px;line-height:1.3;">${cssVar}</div>
             <div style="font-family:ui-monospace,monospace;font-size:10px;

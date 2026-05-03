@@ -66,7 +66,7 @@ function chip({ label = 'Label', color = 'light', disabled = false, dot = false,
     </svg>
   </button>`;
 
-  return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;font-family:inherit;${opacity}${cursor}">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
+  return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;font-family:inherit;${opacity}${cursor}">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
 }
 
 export default {
@@ -150,7 +150,7 @@ export const Interactive = {
           const dotPart = a.dot
             ? `\n  <svg width="12" height="12" viewBox="0 0 12 12" fill="${icon}" aria-hidden="true">\n    <circle cx="6" cy="6" r="3"/>\n  </svg>`
             : '';
-          return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">${dotPart}\n  <span>${a.label}</span>\n  <button type="button" aria-label="Remove ${a.label}"${a.disabled ? ' aria-disabled="true"' : ''} style="display:inline-flex;align-items:center;background:none;border:none;cursor:${a.disabled ? 'not-allowed' : 'pointer'};padding:0;">\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="${icon}" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>\n  </button>\n</span>`;
+          return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">${dotPart}\n  <span>${a.label}</span>\n  <button type="button" aria-label="Remove ${a.label}"${a.disabled ? ' aria-disabled="true"' : ''} style="display:inline-flex;align-items:center;background:none;border:none;cursor:${a.disabled ? 'not-allowed' : 'pointer'};padding:0;">\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="${icon}" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>\n  </button>\n</span>`;
         },
       },
     },
@@ -175,7 +175,7 @@ All 10 color themes in default state.
       },
       source: {
         code: `<!-- Light (neutral default) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#f3f4f6;color:#4a5565;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#f3f4f6;color:#4a5565;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <span>Marketing</span>
   <button type="button" aria-label="Remove Marketing" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
     <svg width="12" height="12" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true">
@@ -185,7 +185,7 @@ All 10 color themes in default state.
 </span>
 
 <!-- Indigo -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <span>Design</span>
   <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
     <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true">
@@ -225,7 +225,7 @@ Default, hover, and disabled states for the selected color. Use the **color** co
       },
       source: {
         code: `<!-- Default -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <span>Design</span>
   <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
     <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
@@ -233,7 +233,7 @@ Default, hover, and disabled states for the selected color. Use the **color** co
 </span>
 
 <!-- Disabled -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#b4c6fc;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;cursor:not-allowed;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#b4c6fc;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;cursor:not-allowed;">
   <span>Design</span>
   <button type="button" aria-label="Remove Design" aria-disabled="true" style="background:none;border:none;cursor:not-allowed;padding:0;display:inline-flex;align-items:center;">
     <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
@@ -276,7 +276,7 @@ Chips with an optional leading dot indicator. Useful for category/status chips w
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap;line-height:1.5;">
+        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <svg width="12" height="12" viewBox="0 0 12 12" fill="#f3f4f6" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
   </svg>
