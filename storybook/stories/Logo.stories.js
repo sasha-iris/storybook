@@ -100,18 +100,25 @@ const sizeLabel = (size) =>
 export const MarkOnly = {
   name: 'Mark only — all sizes (light)',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Smart mark only (no wordmark), light mode. Used in constrained slots such as card owner badges and favicons.
 
-\`\`\`js
-irisMarkImg({ size: 'xs' })  // 24px — card badge
-irisMarkImg({ size: 'sm' })  // 32px
-irisMarkImg({ size: 'md' })  // 48px
-irisMarkImg({ size: 'lg' })  // 64px
-\`\`\`
+**✅ Do** — use \`xs\` (24 px) for card owner badges and avatar slots where the wordmark won't fit.
+**✅ Do** — use \`md\` or \`lg\` for standalone splash screens, onboarding headers, and email footers.
+**❌ Don't** — add \`border-radius\` to the surrounding element — the raster already includes the hexagonal shape.
+**❌ Don't** — scale the mark below 24 px — it loses hex detail and the shadow becomes muddy.
         `,
+      },
+      source: {
+        code: `<!-- Mark only — xs (24 px, card badge) -->
+<img src="./assets/iris-mark-xs.svg" height="24" alt="Iris mark" style="display:block;width:auto;">
+
+<!-- Mark only — md (48 px) -->
+<img src="./assets/iris-mark-md.svg" height="48" alt="Iris mark" style="display:block;width:auto;">`,
+        language: 'html',
       },
     },
   },
@@ -140,16 +147,32 @@ irisMarkImg({ size: 'lg' })  // 64px
 export const WithText = {
   name: 'Logo with text — all sizes (light)',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
 Full logo: Smart mark + "Iris" wordmark. Light mode. Used in nav bars, headers, and marketing surfaces.
 
-\`\`\`js
-irisLogo({ size: 'xs' })
-irisLogo({ size: 'md' })
-\`\`\`
+**✅ Do** — use \`sm\` (32 px mark, 24 px text) for top nav bars; \`md\` for page headers and onboarding.
+**✅ Do** — keep text color \`#101828\` (Figma gray/900) on all light surfaces.
+**❌ Don't** — use the full logo in icon-only slots (collapsed sidebars, favicons) — use mark-only instead.
+
+**QA** — Text color: \`#101828\` · Font-weight: 600 · Gaps: xs=8 px, sm=12 px, md=16 px, lg=16 px · Mark and text vertically centered.
         `,
+      },
+      source: {
+        code: `<!-- Full logo — sm (nav bar) -->
+<div style="display:inline-flex;align-items:center;gap:12px;">
+  <img src="./assets/iris-mark-sm.svg" height="32" alt="Iris mark" style="display:block;width:auto;">
+  <span style="font-size:24px;font-weight:600;color:#101828;white-space:nowrap;">Iris</span>
+</div>
+
+<!-- Full logo — md (page header) -->
+<div style="display:inline-flex;align-items:center;gap:16px;">
+  <img src="./assets/iris-mark-md.svg" height="48" alt="Iris mark" style="display:block;width:auto;">
+  <span style="font-size:36px;font-weight:600;color:#101828;white-space:nowrap;">Iris</span>
+</div>`,
+        language: 'html',
       },
     },
   },
@@ -179,20 +202,30 @@ irisLogo({ size: 'md' })
 export const DarkVariants = {
   name: 'Dark variants — sm / md / lg',
   parameters: {
+    controls: { include: [] },
     backgrounds: { default: 'dark' },
     docs: {
       description: {
         story: `
-Dark mode — sm, md, lg on a dark background. xs dark falls back to the light mark (Figma xs dark is a raw vector assembly with no composite raster).
+Dark mode — sm, md, lg on a dark background. \`xs\` dark falls back to the light-mode raster (Figma xs dark is a raw 7-vector assembly with no composite raster — visually identical at 24 px).
 
-\`\`\`js
-irisLogo({ size: 'md', dark: true })
-irisMarkImg({ size: 'lg', dark: true })
-\`\`\`
+**✅ Do** — use dark variants on dark panels, dark sidebars, and dark email headers.
+**✅ Do** — verify no white halo around mark edges on the dark panel (transparent PNG edges matter here).
+**❌ Don't** — use the light logo on dark backgrounds — text \`#101828\` is invisible on dark surfaces.
 
-> **xs note:** \`irisMarkImg({ size: 'xs', dark: true })\` returns the light-mode xs raster as fallback.
-> At 24 px the difference is imperceptible on most dark surfaces.
+**QA** — Dark text color: \`#ffffff\` · Dark marks: dedicated rasters for sm/md/lg · xs dark = xs light raster fallback · No halo artifacts on \`#101828\` dark bg.
         `,
+      },
+      source: {
+        code: `<!-- Dark logo — md (dark nav bar or panel header) -->
+<div style="display:inline-flex;align-items:center;gap:16px;">
+  <img src="./assets/iris-mark-md-dark.svg" height="48" alt="Iris mark" style="display:block;width:auto;">
+  <span style="font-size:36px;font-weight:600;color:#ffffff;white-space:nowrap;">Iris</span>
+</div>
+
+<!-- Dark mark only — sm (icon slot on dark panel) -->
+<img src="./assets/iris-mark-sm-dark.svg" height="32" alt="Iris mark" style="display:block;width:auto;">`,
+        language: 'html',
       },
     },
   },
@@ -215,12 +248,30 @@ irisMarkImg({ size: 'lg', dark: true })
 export const ReferenceGrid = {
   name: 'Reference grid — all sizes × modes',
   parameters: {
+    controls: { include: [] },
     docs: {
       description: {
         story: `
-Full reference grid for design QA: all 4 sizes, mark-only vs full logo, light vs dark.
-Use this story to verify proportions, spacing, and color fidelity across all variants.
+Full QA reference grid: all 4 sizes × mark-only/with-text × light/dark.
+Use this story to verify proportions, spacing, and color fidelity across all variants before a design review or release.
+
+**✅ Do** — use this grid to spot-check mark proportions after any asset update (all sizes should maintain the same hex aspect ratio).
+**❌ Don't** — use this grid in production — it's a QA tool only.
         `,
+      },
+      source: {
+        code: `<!-- Reference: import helpers from brand-assets.js -->
+import { irisMarkImg, irisLogo } from './brand-assets.js';
+
+// Mark only
+irisMarkImg({ size: 'xs' })   // 24 px light
+irisMarkImg({ size: 'md' })   // 48 px light
+irisMarkImg({ size: 'md', dark: true })  // 48 px dark
+
+// Full logo
+irisLogo({ size: 'sm' })             // 32 px + wordmark, light
+irisLogo({ size: 'lg', dark: true }) // 64 px + wordmark, dark`,
+        language: 'js',
       },
     },
   },
