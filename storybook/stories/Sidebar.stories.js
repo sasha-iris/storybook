@@ -3,7 +3,9 @@
  *
  * Source: Figma › Iris Library › Sidebar (node 1057:2041)
  * Light variant:      node 9272:163206 (Type=Default, Color=White/Gray, Icons=True, Logo=True)
- * Contracted variant: node 1060:44    (Type=Contracted, Icons=True, Color=White, Logo=False)
+ * Contracted variant: node 1060:44      (Type=Contracted, Icons=True, Color=White, Logo=False)
+ * Contracted+logo:    node 12688:49221  (Type=Contracted, Icons=True, Color=White, Logo=True)
+ * In-context example: node 17:40413    (full-page layout with sidebar)
  * Menu item:          node 9263:160934
  *
  * ## Variants
@@ -38,7 +40,7 @@
  * - Divider: 1px #e5e7eb full width
  */
 
-import { irisLogo } from './brand-assets.js';
+import { irisLogo, irisMarkImg } from './brand-assets.js';
 
 // ─── Icon helpers (Heroicons v1 solid, 20×20 viewBox) ────────────────────────
 // All fill icons use viewBox="0 0 20 20" — the Heroicons v1 solid convention.
@@ -763,6 +765,180 @@ export const NoLogo = {
   render: () => `
     <div style="height:100vh;display:flex;">
       ${sidebar({ showLogo: false, activeItem: 'overview', financialExpanded: true })}
+    </div>
+  `,
+};
+
+/* ─────────────────────────────────────────────
+   CONTRACTED WITH LOGO — icon-only 60px + Iris mark
+   Figma: node 12688:49221 (Type=Contracted, Icons=True, Color=White, Logo=True)
+───────────────────────────────────────────── */
+
+// ─── Contracted-with-logo builder ────────────────────────────────────────────
+// Identical to contractedSidebar() but adds the 24px Iris mark at the top.
+// Logo frame: 60×24px, centered, padding-top 16px (from Content frame).
+
+function contractedSidebarWithLogo({ activeKey = 'chartPie' } = {}) {
+  const firstMenu = [
+    { key: 'chartPie',      icon: icons.chartPie,      label: 'Overview' },
+    { key: 'documentReport',icon: icons.documentReport, label: 'Metrics Library' },
+    { key: 'shoppingBag',   icon: icons.shoppingBag,   label: 'Orders' },
+    { key: 'inboxIn',       icon: icons.inboxIn,       label: 'Inbox' },
+    { key: 'lockClosed',    icon: icons.lockClosed,    label: 'Security' },
+  ];
+  const secondMenu = [
+    { key: 'clipboardList', icon: icons.clipboardList, label: 'Reports' },
+    { key: 'collection',    icon: icons.collection,    label: 'Collections' },
+    { key: 'support',       icon: icons.support,       label: 'Support' },
+  ];
+  const bottomMenu = [
+    { key: 'adjustments',   icon: icons.adjustments,   label: 'Adjustments' },
+    { key: 'globe',         icon: icons.globe,         label: 'Language' },
+    { key: 'cog',           icon: icons.cog,           label: 'Settings' },
+  ];
+
+  const section = (items, gap, paddingTop = '0', paddingBottom = '0') => `
+    <div style="display:flex;flex-direction:column;gap:${gap}px;padding:${paddingTop}px 0 ${paddingBottom}px;">
+      ${items.map(item => contractedItem({ ...item, active: item.key === activeKey })).join('')}
+    </div>`;
+
+  const sep = () => `<div style="height:1px;background:#e5e7eb;flex-shrink:0;"></div>`;
+
+  return `
+    <div style="
+      width:60px;height:100%;min-height:600px;
+      background:#ffffff;
+      border-right:1px solid #e5e7eb;
+      display:flex;flex-direction:column;
+      padding-top:16px;box-sizing:border-box;
+    ">
+      <!-- Logo: Iris mark xs (24×24px), centered -->
+      <div style="width:60px;height:24px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0;">
+        ${irisMarkImg({ size: 'xs' })}
+      </div>
+
+      ${section(firstMenu, 16, 0, 12)}
+      ${sep()}
+      ${section(secondMenu, 8, 12, 12)}
+      ${sep()}
+      ${section(bottomMenu, 8, 12, 12)}
+    </div>`;
+}
+
+export const ContractedWithLogo = {
+  name: 'Contracted — with logo (60px)',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Contracted sidebar with Iris mark — Figma node \`12688:49221\` (\`Type=Contracted, Icons=True, Color=White, Logo=True\`).
+
+Same 60px width and icon-only layout as the logo-less variant, but adds the **24×24px Iris hexagonal mark** at the top.
+
+Use this variant when the contracted sidebar is the only navigation element on the page and there is no separate top bar to display the brand mark.
+
+**✅ Do** — show the Iris mark when no top bar is present.
+**❌ Don't** — show both the mark here AND a full logo in a top bar — duplicate branding.
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Contracted sidebar with logo mark: 60px wide, white bg -->
+<aside style="width:60px;height:100vh;background:#ffffff;
+              border-right:1px solid #e5e7eb;
+              display:flex;flex-direction:column;
+              padding-top:16px;box-sizing:border-box;">
+
+  <!-- Iris mark xs (24×24px), centered -->
+  <div style="width:60px;height:24px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+    <img src="./assets/iris-mark-xs.svg" height="24" alt="Iris mark" />
+  </div>
+
+  <!-- Nav sections: same structure as logo-less contracted sidebar -->
+  <nav style="display:flex;flex-direction:column;gap:16px;padding-bottom:12px;">
+    <!-- Active icon: 40×40 centered, bg #f3f4f6, r=8px, icon #1f2a37 -->
+    <!-- Inactive icon: 60×32 full-width, transparent, icon #6b7280 -->
+  </nav>
+
+  <div style="height:1px;background:#e5e7eb;"></div>
+  <!-- Second and bottom nav sections... -->
+</aside>`,
+      },
+    },
+  },
+  render: () => `
+    <div style="height:100vh;display:flex;">
+      ${contractedSidebarWithLogo({ activeKey: 'chartPie' })}
+    </div>
+  `,
+};
+
+/* ─────────────────────────────────────────────
+   IN CONTEXT — full-page layout
+   Figma: node 17:40413 (Example frame — sidebar + content)
+───────────────────────────────────────────── */
+export const InContext = {
+  name: 'In context — full page layout',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Full-page layout example — Figma node \`17:40413\`.
+
+Shows the expanded sidebar alongside a typical dashboard content area. Use this to verify the sidebar integrates correctly with the page background and content layout.
+
+**✅ Do** — pair the \`Color=Gray\` sidebar with a white (\`#ffffff\`) page background.
+**❌ Don't** — set the page background to the same \`#f3f4f6\` as the sidebar — they will visually merge.
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Full-page layout -->
+<div style="display:flex;height:100vh;">
+  <!-- Sidebar: 256px, bg #f3f4f6 -->
+  <aside style="width:256px;flex-shrink:0;"><!-- sidebar --></aside>
+
+  <!-- Page content: fills remaining width, white bg -->
+  <main style="flex:1;background:#ffffff;padding:24px;overflow:auto;">
+    <!-- Dashboard content -->
+  </main>
+</div>`,
+      },
+    },
+  },
+  render: () => `
+    <div style="display:flex;height:100vh;background:#ffffff;">
+      ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'gray' })}
+      <main style="
+        flex:1;background:#ffffff;padding:24px;overflow:auto;
+        display:flex;flex-direction:column;gap:16px;
+      ">
+        <div style="font:600 20px/1.4 inherit;color:#111928;">Overview</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          ${['Monthly revenue', 'Active users', 'New signups'].map((label, i) => `
+            <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;">
+              <div style="font:400 12px/1.5 inherit;color:#6b7280;margin-bottom:4px;">${label}</div>
+              <div style="font:600 24px/1.2 inherit;color:#111928;">${['$48,200', '12,480', '1,240'][i]}</div>
+              <div style="font:400 12px/1.5 inherit;color:#0e9f6e;margin-top:4px;">${['+8.2%', '+4.1%', '+12.5%'][i]} vs last month</div>
+            </div>
+          `).join('')}
+        </div>
+        <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;flex:1;">
+          <div style="font:600 14px/1.5 inherit;color:#111928;margin-bottom:12px;">Recent activity</div>
+          ${[
+            ['Q1 Financial Model updated', '2 hours ago'],
+            ['Budget approved', 'Yesterday'],
+            ['New cohort created', '3 days ago'],
+          ].map(([text, time]) => `
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;">
+              <span style="font:400 14px/1.5 inherit;color:#111928;">${text}</span>
+              <span style="font:400 12px/1.5 inherit;color:#9ca3af;">${time}</span>
+            </div>
+          `).join('')}
+        </div>
+      </main>
     </div>
   `,
 };
