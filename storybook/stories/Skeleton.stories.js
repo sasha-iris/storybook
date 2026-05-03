@@ -288,7 +288,7 @@ export const AllTypes = {
 <div style="display:flex;flex-direction:column;gap:32px;padding:24px;background:#f9fafb;">
   ${types.map(type => `
     <div>
-      <div style="font:500 11px/1 system-ui,sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">${labels[type]}</div>
+      <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">${labels[type]}</div>
       ${TYPE_MAP[type]({ animated })}
     </div>`).join('')}
 </div>`;

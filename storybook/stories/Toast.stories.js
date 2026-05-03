@@ -34,14 +34,14 @@ function toastSuccess({ cta, title, description, ctaLabel }) {
   const border = '1px solid #84e1bc';
   if (!cta) {
     return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:system-ui,sans-serif;">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   ${iconBox('#ecfdf5', iconSvg(CHECK_PATH, 20, '#007a55'))}
   <p style="flex:1;margin:0;color:#0e9f6e;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
   ${dismissBtn('#0e9f6e')}
 </div>`;
   }
   return `
-<div style="padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:system-ui,sans-serif;">
+<div style="padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
     ${iconSvg(CHECK_CIRCLE_PATH, 18, '#0e9f6e')}
     <span style="flex:1;font-size:14px;font-weight:600;color:#0e9f6e;">Success</span>
@@ -56,14 +56,14 @@ function toastDanger({ cta, title, description, ctaLabel }) {
   const border = '1px solid #f8b4b4';
   if (!cta) {
     return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:system-ui,sans-serif;">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   ${iconBox('#fde8e8', BELL_SVG('#f05252'))}
   <p style="flex:1;margin:0;color:#f05252;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
   ${dismissBtn('#f05252')}
 </div>`;
   }
   return `
-<div style="padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:system-ui,sans-serif;">
+<div style="padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
     ${iconSvg(X_CIRCLE_PATH, 18, '#e02424')}
     <span style="flex:1;font-size:14px;font-weight:600;color:#e02424;">Attention</span>
@@ -76,7 +76,7 @@ function toastDanger({ cta, title, description, ctaLabel }) {
 
 function toastDefault({ title }) {
   return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:system-ui,sans-serif;">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   ${iconBox('#dbeafe', iconSvg(CHECK_PATH, 20, '#155dfc'))}
   <p style="flex:1;margin:0;color:#6b7280;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
   ${dismissBtn('#9ca3af')}
@@ -85,7 +85,7 @@ function toastDefault({ title }) {
 
 function toastSimple({ title }) {
   return `
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:system-ui,sans-serif;">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   ${iconSvg(PAPER_PLANE_PATH, 24, '#155dfc')}
   <div style="flex:1;border-left:1px solid #e5e7eb;padding-left:12px;">
     <p style="margin:0;color:#6b7280;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
@@ -96,7 +96,7 @@ function toastSimple({ title }) {
 function toastPush({ title, description }) {
   const avatar = `<div style="width:48px;height:48px;border-radius:50%;background:#e5e7eb;border:1px solid #e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:#6b7280;">BG</div>`;
   return `
-<div style="padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:system-ui,sans-serif;">
+<div style="padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
     <span style="font-size:14px;font-weight:600;color:#111928;">New notification</span>
     ${dismissBtn('#9ca3af')}
@@ -116,7 +116,7 @@ function toastInteractive({ title, description, ctaLabel }) {
   const primaryBtn = `<button type="button" style="flex:1;background:#42389d;color:#fff;border:none;border-radius:12px;padding:8px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">${ctaLabel}</button>`;
   const secondaryBtn = `<button type="button" style="flex:1;background:#fff;color:#374151;border:1px solid #e5e7eb;border-radius:12px;padding:8px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">Later</button>`;
   return `
-<div style="padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:system-ui,sans-serif;">
+<div style="padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   <div style="display:flex;gap:12px;align-items:flex-start;">
     ${iconBox('#dbeafe', iconSvg(REFRESH_PATH, 20, '#155dfc'))}
     <div style="flex:1;min-width:0;">
@@ -307,7 +307,7 @@ export const AllTypes = {
 <div style="display:flex;flex-direction:column;gap:16px;padding:32px;background:#f9fafb;">
   ${items.map(({ label, html }) => `
     <div>
-      <div style="font:500 11px/1 system-ui,sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${label}</div>
+      <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${label}</div>
       ${html}
     </div>`).join('')}
 </div>`;

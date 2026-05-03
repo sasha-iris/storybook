@@ -13,7 +13,7 @@ function tooltipBody({ color, title, body }) {
   const bodyColor  = isDark ? '#f3f4f6' : '#6b7280';
   const shadow     = isDark ? '' : 'box-shadow:0 2px 8px rgba(0,0,0,.15);';
   return `
-<div style="background:${bg};border-radius:4px;padding:8px;min-width:100px;max-width:200px;${shadow}font-family:system-ui,sans-serif;">
+<div style="background:${bg};border-radius:4px;padding:8px;min-width:100px;max-width:200px;${shadow}font-family:inherit;">
   <div style="color:${titleColor};font-weight:500;font-size:14px;line-height:20px;margin-bottom:6px;white-space:nowrap;">${title}</div>
   <div style="height:1px;background:${divColor};margin:0 0 6px;"></div>
   <div style="color:${bodyColor};font-weight:400;font-size:12px;line-height:16px;">${body}</div>
@@ -31,7 +31,7 @@ function tooltipArrow({ position, color }) {
   return `<div style="width:0;height:0;flex-shrink:0;${borders[position]}"></div>`;
 }
 
-const TRIGGER = `<button style="padding:6px 16px;background:#155dfc;color:#fff;border:none;border-radius:6px;font:500 13px/20px system-ui,sans-serif;cursor:default;white-space:nowrap;">Show info</button>`;
+const TRIGGER = `<button style="padding:6px 16px;background:#155dfc;color:#fff;border:none;border-radius:6px;font:500 13px/20px inherit;cursor:default;white-space:nowrap;">Show info</button>`;
 
 function tooltip({ color = 'dark', position = 'top', title, body }) {
   const box = tooltipBody({ color, title, body });
@@ -194,7 +194,7 @@ export const AllPositions = {
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px 80px;padding:80px 60px;background:#f9fafb;width:fit-content;">
   ${positions.map(pos => `
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font:500 11px/1 system-ui,sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${labels[pos]}</span>
+      <span style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${labels[pos]}</span>
       ${tooltip({ color, position: pos, ...t })}
     </div>`).join('')}
 </div>`;
@@ -239,11 +239,11 @@ export const BothColors = {
     return `
 <div style="display:flex;gap:80px;padding:80px 60px;align-items:center;justify-content:center;background:#f3f4f6;">
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-    <span style="font:500 11px/1 system-ui,sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Dark</span>
+    <span style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Dark</span>
     ${tooltip({ color: 'dark', position, ...t })}
   </div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-    <span style="font:500 11px/1 system-ui,sans-serif;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">White</span>
+    <span style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">White</span>
     ${tooltip({ color: 'white', position, ...t })}
   </div>
 </div>`;
