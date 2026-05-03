@@ -15,6 +15,7 @@
  * - Indicators.stories.js  → check (stroke), dot-solid (r=6), mail-outline, fire-outline
  * - Skeleton.stories.js    → image-placeholder (landscape SVG)
  * - Toast.stories.js       → check (solid), check-circle (solid), x-circle (solid), bell (outline), paper-airplane (solid), refresh (solid)
+ * - Banner.stories.js      → light-bulb (solid), receipt-tax (solid), arrow-narrow-right (solid), book-open (solid)
  */
 
 import { ICON } from './card-icons.js';
@@ -95,6 +96,7 @@ No extras, no speculative additions.
 | Skeleton icons | Skeleton (image-placeholder landscape) |
 | Toast icons | Toast (check solid, check-circle solid, x-circle solid, bell outline, paper-airplane solid, refresh solid) |
 | Alert icons | Alerts re-uses check-circle (solid) from Toast icons and x-mark from Badge/Chip icons |
+| Banner icons | Banner (light-bulb solid, receipt-tax solid, arrow-narrow-right solid, book-open solid) |
         `,
       },
     },
@@ -330,6 +332,37 @@ function _ts(path, color) {
   return `<svg width="20" height="20" viewBox="0 0 20 20" fill="${color}" aria-hidden="true"><path fill-rule="evenodd" d="${path}" clip-rule="evenodd"/></svg>`;
 }
 const _bellToastSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f05252" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>`;
+
+// ─── Banner icon paths ────────────────────────────────────────────────────────
+
+const _LIGHT_BULB_PATH    = 'M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.997.138-2.004.4-2.947a4.978 4.978 0 00.6-2.053C13 7.343 11.657 6 10 6c-1.657 0-3 1.343-3 3a4.978 4.978 0 00.6 2.053c.262.943.385 1.95.4 2.947h4z';
+const _RECEIPT_TAX_PATH   = 'M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7H17a1 1 0 010 2h-3.434l.498 2.233A1 1 0 0113 12.97V17a1 1 0 11-2 0v-4h-.5a1 1 0 010-2H11V9H9a1 1 0 010-2h2.354L12.033 2.744A1 1 0 0112 2z';
+const _ARROW_NARROW_RIGHT = 'M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z';
+const _BOOK_OPEN_PATH     = 'M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z';
+
+export const BannerIcons = {
+  name: 'Banner icons — used in Banner',
+  parameters: {
+    docs: {
+      description: {
+        story: `Icons used in Banner component variants. All Heroicons v1 solid (viewBox 0 0 20 20).
+
+| Icon | Used in |
+|------|---------|
+| light-bulb | Default banner — icon circle |
+| receipt-tax | Bottom banner — feature label |
+| arrow-narrow-right | Bottom banner — partner link; CTA banner — "Get started" button |
+| book-open | CTA banner — "Learn more" button |`,
+      },
+    },
+  },
+  render: () => iconGrid([
+    ['light-bulb (solid)', _ts(_LIGHT_BULB_PATH, '#6b7280')],
+    ['receipt-tax (solid)', _ts(_RECEIPT_TAX_PATH, '#6b7280')],
+    ['arrow-narrow-right (solid)', _ts(_ARROW_NARROW_RIGHT, '#155dfc')],
+    ['book-open (solid)', _ts(_BOOK_OPEN_PATH, '#1e2939')],
+  ]),
+};
 
 export const ToastIcons = {
   name: 'Toast icons — used in Toast',

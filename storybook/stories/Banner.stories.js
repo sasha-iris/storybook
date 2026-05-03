@@ -1,0 +1,322 @@
+// Figma: Iris Library / Banner — node 248:17595
+// File: ZKtEULdYKaXe5uQl1J6ijI
+// 5 types × 3 breakpoints × 2 dark modes = 30 variants.
+// Light mode only; Desktop breakpoint rendered (responsive notes in docs).
+
+// ─── Icons (Heroicons v1 solid, 20×20 viewBox unless noted) ──────────────────
+
+const LIGHT_BULB_PATH      = 'M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.997.138-2.004.4-2.947a4.978 4.978 0 00.6-2.053C13 7.343 11.657 6 10 6c-1.657 0-3 1.343-3 3a4.978 4.978 0 00.6 2.053c.262.943.385 1.95.4 2.947h4z';
+const RECEIPT_TAX_PATH     = 'M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7H17a1 1 0 010 2h-3.434l.498 2.233A1 1 0 0113 12.97V17a1 1 0 11-2 0v-4h-.5a1 1 0 010-2H11V9H9a1 1 0 010-2h2.354L12.033 2.744A1 1 0 0112 2z';
+const ARROW_NARROW_RIGHT   = 'M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z';
+const BOOK_OPEN_PATH       = 'M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z';
+const X_PATH               = 'M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z';
+
+function iconSvg(path, size, color) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="${color}" aria-hidden="true"><path fill-rule="evenodd" d="${path}" clip-rule="evenodd"/></svg>`;
+}
+
+function dismissBtn(size = 16) {
+  return `<button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, size, '#6b7280')}</button>`;
+}
+
+// ─── Type renderers ───────────────────────────────────────────────────────────
+
+function bannerDefault({ text, dismissible }) {
+  return `
+<div role="banner" style="width:100%;background:#f9fafb;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div style="width:24px;height:24px;border-radius:50%;background:#e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+      ${iconSvg(LIGHT_BULB_PATH, 14, '#6b7280')}
+    </div>
+    <span style="font-size:14px;font-weight:400;color:#111928;line-height:1.5;">${text}</span>
+  </div>
+  ${dismissible ? dismissBtn(16) : ''}
+</div>`;
+}
+
+function bannerContainerCTA({ text, dismissible }) {
+  return `
+<div role="banner" style="width:100%;background:#f3f4f6;padding:16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#ffffff;border:1px solid #f3f4f6;border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1280px;width:100%;">
+    <div style="display:flex;align-items:center;gap:16px;flex:1;min-width:0;">
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <div style="width:24px;height:24px;background:#4208e5;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="5" height="5" rx="1" fill="#fff"/><rect x="8" y="1" width="5" height="5" rx="1" fill="#fff"/><rect x="1" y="8" width="5" height="5" rx="1" fill="#fff"/><rect x="8" y="8" width="5" height="5" rx="1" fill="#fff"/></svg>
+        </div>
+        <span style="font-size:14px;font-weight:700;color:#111928;">Smart</span>
+      </div>
+      <div style="border-left:1px solid #e5e7eb;padding-left:16px;flex:1;min-width:0;">
+        <span style="font-size:16px;font-weight:400;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">${text}</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <button type="button" style="padding:8px 12px;background:#1447e6;color:#ffffff;border:none;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;">Sign up for free</button>
+      ${dismissible ? dismissBtn(16) : ''}
+    </div>
+  </div>
+</div>`;
+}
+
+function bannerBottom({ text, link, dismissible }) {
+  return `
+<div role="banner" style="width:100%;background:#f9fafb;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
+  <div style="display:flex;align-items:center;gap:24px;flex:1;">
+    <div style="display:flex;align-items:center;gap:6px;">
+      ${iconSvg(RECEIPT_TAX_PATH, 16, '#6b7280')}
+      <span style="font-size:16px;font-weight:500;color:#4b5563;">${text}</span>
+    </div>
+    <a href="#" style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:#155dfc;text-decoration:none;">
+      ${link}
+      ${iconSvg(ARROW_NARROW_RIGHT, 16, '#155dfc')}
+    </a>
+  </div>
+  ${dismissible ? dismissBtn(16) : ''}
+</div>`;
+}
+
+function bannerCTA({ heading, text, dismissible }) {
+  return `
+<div role="banner" style="width:100%;background:#f9fafb;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;flex:1;min-width:0;">
+    <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;">
+      <span style="font-size:16px;font-weight:600;color:#111928;line-height:1.5;">${heading}</span>
+      <span style="font-size:14px;font-weight:400;color:#6b7280;line-height:1.5;">${text}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <button type="button" style="padding:8px 12px;background:transparent;color:#1e2939;border:1px solid #d1d5db;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;white-space:nowrap;">
+        ${iconSvg(BOOK_OPEN_PATH, 16, '#1e2939')}Learn more
+      </button>
+      <button type="button" style="padding:8px 12px;background:#1447e6;color:#ffffff;border:none;border-radius:12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;white-space:nowrap;">
+        ${iconSvg(ARROW_NARROW_RIGHT, 16, '#ffffff')}Get started
+      </button>
+    </div>
+  </div>
+  ${dismissible ? dismissBtn(16) : ''}
+</div>`;
+}
+
+function bannerNewsletter({ text, dismissible }) {
+  return `
+<div role="banner" style="width:100%;background:#ffffff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;border-bottom:1px solid #f3f4f6;">
+  <div style="display:flex;align-items:center;gap:32px;flex:1;min-width:0;">
+    <span style="font-size:16px;font-weight:500;color:#6b7280;flex-shrink:0;">${text}</span>
+    <div style="display:flex;align-items:flex-end;gap:16px;flex:1;min-width:0;">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+        <label style="font-size:14px;font-weight:500;color:#111928;">First name</label>
+        <input type="text" placeholder="e.g. John" style="padding:10px 16px;border:1px solid #d1d5db;border-radius:8px;background:#f9fafb;font-size:14px;color:#111928;font-family:inherit;outline:none;min-width:200px;" />
+      </div>
+      <button type="button" style="padding:10px 20px;background:#1447e6;color:#ffffff;border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;">Subscribe</button>
+    </div>
+  </div>
+  ${dismissible ? dismissBtn(20) : ''}
+</div>`;
+}
+
+const TYPE_MAP = {
+  'default':        bannerDefault,
+  'container-cta':  bannerContainerCTA,
+  'bottom':         bannerBottom,
+  'cta':            bannerCTA,
+  'newsletter':     bannerNewsletter,
+};
+
+function banner(args) {
+  return (TYPE_MAP[args.type] || bannerDefault)(args);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default {
+  title: 'Iris Library/Banner',
+  tags: ['autodocs', 'stable'],
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: `
+**Banner** displays a prominent, persistent message at the top (or bottom) of the screen for site-wide or contextually critical information.
+
+**When to use**
+- Communicating site-wide outages, maintenance windows, or planned downtime
+- Promoting a time-sensitive offer or product update to all users
+- Collecting newsletter signups inline at the top of a page
+- Surfacing a partner/referral opportunity contextually
+
+**When NOT to use**
+- Single-action confirmations or errors → use an **Alert** or **Toast**
+- Decisions that require user input → use a **Modal Dialog**
+- Short ephemeral feedback → use a **Toast** (auto-dismisses in ≥ 5 s)
+
+**Anatomy**
+\`[icon] [text] [optional CTA] [optional dismiss ×]\`
+
+**Types**
+- \`default\` — lightbulb icon + message text; general-purpose notification bar
+- \`container-cta\` — brand logo + description + primary CTA button; marketing/promotional
+- \`bottom\` — feature highlight + partner link; persistent awareness strip
+- \`cta\` — heading + description + two action buttons; high-intent conversion
+- \`newsletter\` — inline name input + subscribe button; lead capture
+
+**Responsiveness** — At tablet/mobile breakpoints the layout stacks vertically and buttons become full-width. The banner always spans 100% of the viewport width.
+
+**Accessibility** — Use \`role="banner"\` on the root element (only once per page — it maps to the HTML \`<header>\` landmark). Dismiss buttons require \`aria-label="Dismiss"\`. Banners should not use \`role="alert"\` — they are persistent, not time-sensitive.
+        `,
+      },
+    },
+  },
+  argTypes: {
+    // ── Appearance ──────────────────────────────────────────────────────────
+    type: {
+      control: 'select',
+      options: ['default', 'container-cta', 'bottom', 'cta', 'newsletter'],
+      description: `Banner layout pattern.\n\n- \`default\` — icon + message text\n- \`container-cta\` — brand logo + text + CTA (centered card)\n- \`bottom\` — icon/feature label + partner link\n- \`cta\` — heading + description + two action buttons\n- \`newsletter\` — text label + name input + subscribe button`,
+      table: { category: 'Appearance', defaultValue: { summary: 'default' } },
+    },
+    // ── Content ─────────────────────────────────────────────────────────────
+    text: {
+      control: 'text',
+      description: 'Primary message text. Role varies by type: notification copy (default), marketing tagline (container-cta), feature label (bottom), description (cta), or label (newsletter).',
+      table: { category: 'Content', defaultValue: { summary: 'New brand identity has been launched for our Flowbite library.' } },
+    },
+    heading: {
+      control: 'text',
+      description: 'Bold heading shown above the description. **Only used by the `cta` type.**',
+      table: { category: 'Content', defaultValue: { summary: 'Integration is the key' } },
+    },
+    link: {
+      control: 'text',
+      description: 'Link label for the "bottom" type partner link.',
+      table: { category: 'Content', defaultValue: { summary: 'Become a partner' } },
+    },
+    // ── State ────────────────────────────────────────────────────────────────
+    dismissible: {
+      control: 'boolean',
+      description: 'Show the dismiss × button. Map to `aria-label="Dismiss"` on the close button. Note: banners are non-dismissible by default per the Notification system guidelines — enable only when the message is non-critical.',
+      table: { category: 'State', defaultValue: { summary: true } },
+    },
+  },
+  args: {
+    type:        'default',
+    text:        'New brand identity has been launched for our Flowbite library.',
+    heading:     'Integration is the key',
+    link:        'Become a partner',
+    dismissible: true,
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. Interactive
+
+export const Interactive = {
+  name: 'Interactive (Controls)',
+  render: (args) => `<div style="background:#ffffff;padding-bottom:1px;">${banner(args)}</div>`,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use **Controls** to switch banner type, edit text content, and toggle the dismiss button.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const { type, dismissible } = ctx.args;
+          return `<!-- Banner: ${type}${dismissible ? ' / dismissible' : ''} -->
+<div role="banner" class="banner banner--${type}">
+  <!-- icon / logo / text / CTA per type -->
+  ${dismissible ? '<button class="banner__dismiss" aria-label="Dismiss"><!-- × --></button>' : ''}
+</div>`;
+        },
+      },
+    },
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. All Types
+
+export const AllTypes = {
+  name: 'All types',
+  args: { dismissible: true },
+  parameters: {
+    controls: { include: ['dismissible'] },
+    docs: {
+      description: {
+        story: `All five banner layout types stacked for comparison. Toggle **dismissible** to preview the non-dismissible state across all types.
+
+**✅ Do** — match the banner type to the communication goal: \`default\` for announcements, \`cta\` for conversion, \`newsletter\` for lead capture.
+**❌ Don't** — stack multiple banners on the same page — one banner at a time per the Notification system guidelines.
+**❌ Don't** — use \`cta\` for low-priority informational messages — the two-button layout implies a required decision.`,
+      },
+      source: {
+        code: `<!-- Default notification banner -->
+<div role="banner" class="banner banner--default"> … </div>
+
+<!-- Container CTA (centered card) -->
+<div role="banner" class="banner banner--container-cta"> … </div>
+
+<!-- Bottom awareness strip -->
+<div role="banner" class="banner banner--bottom"> … </div>
+
+<!-- CTA with two action buttons -->
+<div role="banner" class="banner banner--cta"> … </div>
+
+<!-- Newsletter signup -->
+<div role="banner" class="banner banner--newsletter"> … </div>`,
+        language: 'html',
+      },
+    },
+  },
+  render: ({ dismissible }) => {
+    const items = [
+      { type: 'default',       label: 'Default',        args: { text: 'New brand identity has been launched for our Flowbite library.', dismissible } },
+      { type: 'container-cta', label: 'Container CTA',  args: { text: 'Build websites even faster with components on top of Tailwind CSS.', dismissible } },
+      { type: 'bottom',        label: 'Bottom',         args: { text: 'Get 2% pricing commission', link: 'Become a partner', dismissible } },
+      { type: 'cta',           label: 'CTA',            args: { heading: 'Integration is the key', text: 'You can integrate Flowbite with many tools to make your workflow smoother.', dismissible } },
+      { type: 'newsletter',    label: 'Newsletter',     args: { text: 'Sign up to our newsletter', dismissible } },
+    ];
+    return `
+<div style="display:flex;flex-direction:column;gap:2px;background:#e5e7eb;">
+  ${items.map(({ type, label, args }) => `
+    <div>
+      <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;padding:8px 20px 4px;background:#f9fafb;">${label}</div>
+      ${banner({ type, ...args })}
+    </div>`).join('')}
+</div>`;
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. Non-dismissible
+
+export const NonDismissible = {
+  name: 'Non-dismissible',
+  args: { type: 'default', dismissible: false },
+  parameters: {
+    controls: { include: ['type'] },
+    docs: {
+      description: {
+        story: `Banner without the dismiss button — the default per Notification system guidelines. Switch **type** to preview all layouts without dismiss controls.
+
+**✅ Do** — use non-dismissible banners for critical outages or mandatory notices that must remain visible.
+**✅ Do** — add a dismiss button only for promotional or low-urgency banners where missing the message is acceptable.
+**❌ Don't** — hide the dismiss on marketing banners — it frustrates users who have already seen the message.`,
+      },
+      source: {
+        code: `<!-- Non-dismissible: omit the × button entirely -->
+<div role="banner" class="banner banner--default">
+  <div class="banner__icon-text">
+    <svg class="banner__icon" aria-hidden="true"><!-- lightbulb --></svg>
+    <span class="banner__text">New brand identity has been launched for our Flowbite library.</span>
+  </div>
+  <!-- no dismiss button -->
+</div>`,
+        language: 'html',
+      },
+    },
+  },
+  render: ({ type }) => banner({
+    type,
+    dismissible: false,
+    text:    'New brand identity has been launched for our Flowbite library.',
+    heading: 'Integration is the key',
+    link:    'Become a partner',
+  }),
+};
