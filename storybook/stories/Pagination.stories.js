@@ -2,9 +2,13 @@
  * Iris Library — Pagination
  *
  * Sources:
+ *   Pagination frame:   node 3284:22497  (contains strip + button + showing component sets)
  *   Pagination strip:   node 3284:22499  (Size=Default/Small × More pages=No/Yes)
- *   Pagination button:  node 9426:125610 (Type=page/back/next × states)
+ *   Pagination button:  node 9426:125610 (Type=page/back/next × Hover/Selected × Disabled)
  *   Showing indicator:  node 9703:152796 (Size=Default/Small)
+ *
+ * Figma active state: bg=#f3f4f6 border=#e5e7eb color=#42389d (NOT blue fill)
+ * Figma button size:  Default=40×40px, Small=32×32px
  *
  * CSS classes used (from styles.css):
  *   .pagination — outer <ul> strip
@@ -52,7 +56,7 @@ function nextItem({ disabled = false, small = false } = {}) {
 
 function ellipsisItem({ small = false } = {}) {
   const sizeStyle = small ? ' style="min-width:32px;height:32px;"' : '';
-  return `<li class="page-item"><span class="page-link" aria-hidden="true"${sizeStyle}>…</span></li>`;
+  return `<li class="page-item"><span class="page-link" aria-hidden="true"${sizeStyle}>...</span></li>`;
 }
 
 // ─── Pagination strip builder ─────────────────────────────────────────────────
@@ -91,8 +95,8 @@ function pagination({ size = 'default', currentPage = 1, totalPages = 3 } = {}) 
  */
 function showing({ size = 'default', from = 1, to = 10, total = 100 } = {}) {
   const small = size === 'small';
-  const style = small ? ' style="font-size:var(--text-xs);"' : '';
-  return `<p class="pagination-info"${style}>Showing <span>${from}</span> to <span>${to}</span> of <span>${total}</span></p>`;
+  const cls = small ? 'pagination-info pagination-info-sm' : 'pagination-info';
+  return `<p class="${cls}">Showing <span>${from}</span> to <span>${to}</span> of <span>${total}</span></p>`;
 }
 
 // ─── Default export ───────────────────────────────────────────────────────────
@@ -374,14 +378,19 @@ All button states from Figma node \`9426:125610\`.
         <ul class="pagination">${html}</ul>
       </div>`;
 
+    // Selected prev/next: Figma Type=back/next, Hover/Selected=Yes → .page-item.active → bg:#f3f4f6, chevron color:#42389d
+    const prevSelected = `<li class="page-item active"><button class="page-link" aria-label="Previous page">${chevronLeft}</button></li>`;
+    const nextSelected = `<li class="page-item active"><button class="page-link" aria-label="Next page">${chevronRight}</button></li>`;
     return `
       <div style="padding:24px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;">
         ${labeled('Page · Default',  pageNumItem({ page: 1, active: false }))}
         ${labeled('Page · Active',   pageNumItem({ page: 1, active: true  }))}
         ${labeled('Page · Disabled', pageNumItem({ page: 1, disabled: true }))}
         ${labeled('Prev · Default',  prevItem({ disabled: false }))}
+        ${labeled('Prev · Selected', prevSelected)}
         ${labeled('Prev · Disabled', prevItem({ disabled: true  }))}
         ${labeled('Next · Default',  nextItem({ disabled: false }))}
+        ${labeled('Next · Selected', nextSelected)}
         ${labeled('Next · Disabled', nextItem({ disabled: true  }))}
       </div>`;
   },

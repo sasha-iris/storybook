@@ -1624,10 +1624,11 @@ input[type="file"].form-file-input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  height: 36px;
+  min-width: 40px;
+  height: 40px;
   padding: 0 8px;
   font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   color: var(--color-text-secondary);
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border-default);
@@ -1640,23 +1641,27 @@ input[type="file"].form-file-input {
 }
 .page-link:hover { background: var(--color-bg-muted); color: var(--color-text-primary); text-decoration: none; }
 
+/* Active page: Figma node 9426:125610 — Type=page, Hover/Selected=Yes */
 .page-item.active .page-link {
-  background: var(--color-bg-primary);
-  border-color: var(--color-bg-primary);
-  color: #fff;
+  background: var(--color-bg-muted);
+  border-color: var(--color-border-default);
+  color: #42389d;
 }
 
+/* Disabled prev/next: Figma — chevron fill:#d1d5db */
 .page-item.disabled .page-link {
   color: var(--color-text-disabled);
   pointer-events: none;
 }
 
-/* Table pagination */
+/* Table pagination — Figma node 9703:152796 */
+/* "Showing/to/of" = #374151 fw=400; numbers = #111928 fw=600 */
 .pagination-info {
   font-size: var(--text-sm);
-  color: var(--color-text-secondary);
+  color: #374151;
 }
 .pagination-info span { font-weight: var(--font-semibold); color: var(--color-text-primary); }
+.pagination-info.pagination-info-sm { font-size: var(--text-xs); }
 
 
 /* =============================================

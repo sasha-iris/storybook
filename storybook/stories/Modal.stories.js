@@ -1,83 +1,260 @@
 /**
  * Iris Library — Modal Dialog
  *
- * Source: Figma › Iris Library › Notification system (node 9929:153267)
- * Modal instances: three confirmed variants
- *   - Destructive: "Uninvite user"       — Cancel + btn-red confirm
- *   - Confirmation: "Activate user"      — Cancel + btn-purple confirm
- *   - Warning: "Unsaved changes"         — No + btn-red Yes + btn-purple Save
+ * Source: Figma › Iris Library — node 3284:23643
+ * Component set variants:
+ *   Type:      Info · Pop-up · With forms · Crypto wallet
+ *   Size:      SM · Default · LG · XL
+ *   Dark mode: False · True
+ *   Device:    Desktop · Mobile
  *
- * CSS classes used (from styles.css):
- *   .modal-dialog   — dialog container (max-width:512px, bg surface, r=xl)
- *   .modal-header   — header with title + close button
- *   .modal-title    — heading text (lg, semibold)
- *   .modal-close    — close × button
- *   .modal-body     — body content area
- *   .modal-footer   — footer with action buttons
- *   .btn .btn-outline-gray .btn-md  — cancel / secondary button
- *   .btn .btn-red .btn-md           — destructive confirm button
- *   .btn .btn-purple .btn-md        — positive confirm button
+ * Named styles confirmed from Figma:
+ *   Info        — "Terms of Service" info modal, scrollable body, single "I accept" button
+ *   Pop-up      — delete confirmation: icon + question + Yes/No buttons (no header title)
+ *   With forms  — sign-in form: email + password + "Create account" (no header title)
+ *   Crypto wallet — wallet provider list: MetaMask, Coinbase, Opera, WalletConnect, Fortmatic
  *
- * Note: .modal-backdrop uses position:fixed — not suitable for story layout.
- * Stories use a relative dark wrapper to simulate the overlay instead.
+ * CSS classes used (styles.css):
+ *   .modal-backdrop   — fixed overlay (position:fixed; use relative wrapper in stories)
+ *   .modal-dialog     — container (max-width:512px) + .modal-dialog-sm/lg/xl for sizes
+ *   .modal-header     — header row (title + close) with border-bottom
+ *   .modal-title      — heading 18px/600
+ *   .modal-close      — × button (top-right)
+ *   .modal-body       — body padding + 14px secondary text
+ *   .modal-footer     — footer row (buttons) with border-top
+ *   .form-group       — form field wrapper
+ *   .form-label       — field label
+ *   .form-input       — input field
+ *   .form-helper      — helper text below input
+ *   .btn .btn-primary .btn-md   — blue "I accept" / "Create account"
+ *   .btn .btn-red .btn-md       — red "Yes, I'm sure"
+ *   .btn .btn-alternative .btn-md — secondary "No, cancel"
  */
 
-// ─── Close icon ──────────────────────────────────────────────────────────────
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
 const closeIcon = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
 </svg>`;
 
-// ─── Builder ─────────────────────────────────────────────────────────────────
+const exclamationIcon = `<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="21" cy="21" r="21" fill="#FEF3C7"/>
+  <path d="M21 11v12" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="21" cy="28.5" r="1.5" fill="#D97706"/>
+</svg>`;
 
-/**
- * @param {{
- *   title: string,
- *   body: string,
- *   cancelLabel: string,
- *   confirmLabel: string,
- *   confirmColor: 'red'|'purple',
- *   thirdLabel?: string,
- *   showOverlay?: boolean
- * }} opts
- */
-function modal({
-  title = 'Dialog title',
-  body = 'Are you sure you want to continue?',
-  cancelLabel = 'Cancel',
-  confirmLabel = 'Confirm',
-  confirmColor = 'red',
-  thirdLabel = '',
-  showOverlay = true,
-} = {}) {
-  const confirmClass = confirmColor === 'red' ? 'btn btn-red btn-md' : 'btn btn-purple btn-md';
-  const thirdBtn = thirdLabel
-    ? `<button class="btn btn-purple btn-md">${thirdLabel}</button>`
-    : '';
+const mailIcon = `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M2 4h16v12H2V4zm0 0l8 7 8-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
 
-  const dialog = `<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
-    <div class="modal-header">
-      <h2 class="modal-title" id="modal-title">${title}</h2>
-      <button class="modal-close" aria-label="Close dialog">${closeIcon}</button>
-    </div>
-    <div class="modal-body">
-      <p>${body}</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline-gray btn-md">${cancelLabel}</button>
-      <button class="${confirmClass}">${confirmLabel}</button>
-      ${thirdBtn}
-    </div>
-  </div>`;
+const lockIcon = `<svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="3" y="9" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`;
 
-  if (!showOverlay) return dialog;
+const questionIcon = `<svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M10 13v1M10 7a2 2 0 012 2c0 1.1-.9 1.7-1.5 2.2-.5.4-.5.6-.5.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`;
 
-  return `<div style="
-    position:relative;width:100%;min-height:340px;
-    background:rgba(17,25,40,0.85);
-    display:flex;align-items:center;justify-content:center;
-    padding:40px;box-sizing:border-box;">
+// ─── Dark-mode token helpers ──────────────────────────────────────────────────
+
+function darkTokens(dark) {
+  return dark
+    ? {
+        bg:        '#374151',
+        title:     '#ffffff',
+        body:      '#9ca3af',
+        border:    '#4b5563',
+        closeClr:  '#9ca3af',
+        walletRow: '#4b5563',
+        badgeBg:   '#374151',
+        badgeClr:  '#9ca3af',
+      }
+    : {
+        bg:        'var(--color-bg-surface)',
+        title:     'var(--color-text-primary)',
+        body:      'var(--color-text-secondary)',
+        border:    'var(--color-border-default)',
+        closeClr:  'var(--color-text-secondary)',
+        walletRow: 'var(--color-bg-default)',
+        badgeBg:   'var(--color-bg-muted)',
+        badgeClr:  'var(--color-text-secondary)',
+      };
+}
+
+function sizeClass(size) {
+  if (size === 'sm')  return ' modal-dialog-sm';
+  if (size === 'lg')  return ' modal-dialog-lg';
+  if (size === 'xl')  return ' modal-dialog-xl';
+  return '';
+}
+
+// ─── Overlay wrapper ──────────────────────────────────────────────────────────
+
+function withOverlay(dialog, show = true) {
+  if (!show) return dialog;
+  return `<div style="position:relative;width:100%;min-height:420px;
+    background:rgba(17,25,40,0.82);display:flex;align-items:center;
+    justify-content:center;padding:40px;box-sizing:border-box;">
     ${dialog}
   </div>`;
+}
+
+// ─── Type=Info ────────────────────────────────────────────────────────────────
+// Figma: header title + ×, scrollable body paragraphs, single blue "I accept" footer
+
+function modalInfo({ size = 'default', darkMode = false, showOverlay = true } = {}) {
+  const t = darkTokens(darkMode);
+  const dialog = `
+<div role="dialog" aria-modal="true" aria-labelledby="modal-title"
+     class="modal-dialog${sizeClass(size)}"
+     style="background:${t.bg};">
+  <div class="modal-header" style="border-color:${t.border};">
+    <h2 class="modal-title" id="modal-title" style="color:${t.title};">Terms of Service</h2>
+    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+  </div>
+  <div class="modal-body" style="color:${t.body};font-size:var(--text-base);line-height:1.7;">
+    <p style="margin:0 0 12px;">The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.</p>
+    <p style="margin:0;">With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
+  </div>
+  <div class="modal-footer" style="border-color:${t.border};">
+    <button class="btn btn-primary btn-md">I accept</button>
+  </div>
+</div>`;
+  return withOverlay(dialog, showOverlay);
+}
+
+// ─── Type=Pop-up ──────────────────────────────────────────────────────────────
+// Figma: header has ONLY × (no title, no border), centered icon + question in body,
+//        red "Yes, I'm sure" + alternative "No, cancel" in footer
+
+function modalPopUp({ size = 'sm', darkMode = false, showOverlay = true } = {}) {
+  const t = darkTokens(darkMode);
+  const dialog = `
+<div role="dialog" aria-modal="true" aria-labelledby="popup-title"
+     class="modal-dialog${sizeClass(size)}"
+     style="background:${t.bg};">
+  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;padding-bottom:8px;">
+    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+  </div>
+  <div class="modal-body" style="text-align:center;padding-top:0;color:${t.body};">
+    <div style="display:flex;justify-content:center;margin-bottom:16px;">${exclamationIcon}</div>
+    <p id="popup-title" style="margin:0;font-size:var(--text-base);line-height:1.6;color:${t.body};">Are you sure you want to delete this product?</p>
+  </div>
+  <div class="modal-footer" style="border-color:${t.border};justify-content:center;gap:12px;">
+    <button class="btn btn-red btn-md">Yes, I'm sure</button>
+    <button class="btn btn-alternative btn-md">No, cancel</button>
+  </div>
+</div>`;
+  return withOverlay(dialog, showOverlay);
+}
+
+// ─── Type=With forms ──────────────────────────────────────────────────────────
+// Figma: header has ONLY × (no title, no border), form fields in body (no separate footer)
+
+function modalWithForms({ size = 'sm', darkMode = false, showOverlay = true } = {}) {
+  const t = darkTokens(darkMode);
+  const dialog = `
+<div role="dialog" aria-modal="true" aria-labelledby="form-modal-title"
+     class="modal-dialog${sizeClass(size)}"
+     style="background:${t.bg};">
+  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;padding-bottom:8px;">
+    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+  </div>
+  <div class="modal-body" style="padding-top:4px;">
+    <h3 id="form-modal-title" style="font-size:var(--text-xl);font-weight:var(--font-semibold);
+         color:${t.title};margin:0 0 20px;line-height:1.4;">Sign in to our platform</h3>
+
+    <div class="form-group">
+      <label class="form-label" style="color:${t.body};">Your email</label>
+      <div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:${t.body};">${mailIcon}</span>
+        <input class="form-input" type="email" placeholder="name@flowbite.com"
+               style="padding-left:36px;background:${darkMode ? '#4b5563' : 'var(--color-bg-default)'};
+                      color:${t.body};border-color:${t.border};">
+      </div>
+      <span class="form-helper" style="color:${t.body};">We'll never share your details. See our Privacy Policy.</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" style="color:${t.title};">Password</label>
+      <div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:${t.body};">${lockIcon}</span>
+        <input class="form-input" type="password" placeholder="••••••••••"
+               style="padding-left:36px;background:${darkMode ? '#4b5563' : 'var(--color-bg-default)'};
+                      color:${t.body};border-color:${t.border};">
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;font-size:var(--text-sm);color:${t.title};cursor:pointer;">
+        <input type="checkbox" style="width:16px;height:16px;accent-color:#1447e6;flex-shrink:0;">
+        Remember me
+      </label>
+      <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>
+    </div>
+
+    <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;margin-bottom:12px;">
+      Create account
+    </button>
+    <p style="text-align:center;font-size:var(--text-sm);margin:0;">
+      <a href="#" style="color:#155dfc;font-weight:var(--font-medium);text-decoration:none;">Not registered? Create account</a>
+    </p>
+  </div>
+</div>`;
+  return withOverlay(dialog, showOverlay);
+}
+
+// ─── Type=Crypto wallet ───────────────────────────────────────────────────────
+// Figma: header title "Connect wallet" + ×, wallet list, helper text, "I accept" footer
+
+function modalCryptoWallet({ size = 'sm', darkMode = false, showOverlay = true } = {}) {
+  const t = darkTokens(darkMode);
+
+  const wallets = [
+    { name: 'MetaMask',       badge: 'Popular', icon: '🦊' },
+    { name: 'Coinbase Wallet', badge: '',       icon: '🔵' },
+    { name: 'Opera Wallet',    badge: '',       icon: '🔴' },
+    { name: 'WalletConnect',   badge: '',       icon: '🔷' },
+    { name: 'Fortmatic',       badge: '',       icon: '🟣' },
+  ];
+
+  const walletRows = wallets.map(w => `
+    <div style="display:flex;align-items:center;justify-content:space-between;
+                padding:12px 16px;background:${t.walletRow};border-radius:var(--radius-md);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:22px;line-height:1;">${w.icon}</span>
+        <span style="font-size:var(--text-base);font-weight:var(--font-bold);color:${t.title};">${w.name}</span>
+      </div>
+      ${w.badge ? `<span style="font-size:var(--text-xs);font-weight:var(--font-medium);
+        background:${t.badgeBg};color:${t.badgeClr};
+        padding:2px 8px;border-radius:var(--radius-full);">${w.badge}</span>` : ''}
+    </div>`).join('');
+
+  const dialog = `
+<div role="dialog" aria-modal="true" aria-labelledby="wallet-title"
+     class="modal-dialog${sizeClass(size)}"
+     style="background:${t.bg};">
+  <div class="modal-header" style="border-color:${t.border};">
+    <h2 class="modal-title" id="wallet-title" style="color:${t.title};">Connect wallet</h2>
+    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+  </div>
+  <div class="modal-body">
+    <p style="margin:0 0 16px;font-size:var(--text-sm);color:${t.body};line-height:1.6;">
+      Connect with one of our available wallet providers or create a new one.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">${walletRows}</div>
+    <div style="display:flex;align-items:center;gap:6px;color:${t.body};font-size:var(--text-xs);">
+      <span style="flex-shrink:0;color:${t.body};">${questionIcon}</span>
+      Why do I need to connect with my wallet?
+    </div>
+  </div>
+  <div class="modal-footer" style="border-color:${t.border};">
+    <button class="btn btn-primary btn-md">I accept</button>
+  </div>
+</div>`;
+  return withOverlay(dialog, showOverlay);
 }
 
 // ─── Default export ───────────────────────────────────────────────────────────
@@ -92,60 +269,60 @@ export default {
         component: `
 **Modal Dialog** — a layer above the page that requires user interaction before continuing.
 
-Figma source: \`9929:153267\` (Notification system frame, Modal instances).
+Figma source: \`3284:23643\` (Modal component set).
 
 CSS classes: \`.modal-dialog\` → \`.modal-header\` + \`.modal-title\` + \`.modal-close\` + \`.modal-body\` + \`.modal-footer\`
 
 **When to use**
-- Confirming a destructive action (delete, remove, uninvite)
-- Confirming a permission change (activate, grant access)
-- Warning about unsaved work before navigation
-- Any action that is hard or impossible to undo
+- Displaying legal or consent content (Terms of Service, Privacy Policy) before proceeding
+- Confirming a destructive action (delete, remove) — use the Pop-up type
+- Collecting authentication data inline — use the With forms type
+- Selecting a third-party integration provider — use the Crypto wallet type
 
 **When NOT to use**
 - Simple success/error feedback → use an Alert or Toast instead
-- Complex multi-step forms → use a dedicated page or side panel
+- Complex multi-step flows → use a dedicated page or side panel
 - Non-blocking information → use an inline Banner
 
 **Anatomy**
-\`[.modal-header: .modal-title + .modal-close] / [.modal-body] / [.modal-footer: cancel + confirm]\`
+\`[.modal-header: .modal-title + .modal-close] / [.modal-body] / [.modal-footer]\`
+
+Pop-up and With forms types have no \`.modal-title\` in the header — only the close button.
+
+**Sizes** (via modifier class on \`.modal-dialog\`)
+| Class | Max-width | Figma |
+|---|---|---|
+| *(default)* | 512px | Size=Default |
+| \`.modal-dialog-sm\` | 320px | Size=SM |
+| \`.modal-dialog-lg\` | 720px | Size=LG |
+| \`.modal-dialog-xl\` | 1024px | Size=XL |
 
 **Accessibility**
-- Dialog: \`role="dialog"\`, \`aria-modal="true"\`, \`aria-labelledby\` pointing to \`.modal-title\`
-- Close button: \`.modal-close\` with \`aria-label="Close dialog"\`
+- \`role="dialog"\`, \`aria-modal="true"\`, \`aria-labelledby\` on every dialog
+- Close button: \`aria-label="Close dialog"\`
 - Keyboard: Escape closes; Tab cycles within the dialog (trap focus in JS)
         `.trim(),
       },
     },
   },
   argTypes: {
-    // ── Content ──────────────────────────────────────────────
-    title: {
-      control: 'text',
-      description: 'Dialog heading text. Referenced via `aria-labelledby` on the dialog element.',
-      table: { category: 'Content', defaultValue: { summary: 'Uninvite user' } },
-    },
-    body: {
-      control: 'text',
-      description: 'Body copy — explains the action and its consequences.',
-      table: { category: 'Content', defaultValue: { summary: 'Are you sure?' } },
-    },
-    cancelLabel: {
-      control: 'text',
-      description: 'Label for the cancel / secondary button (`.btn.btn-outline-gray.btn-md`).',
-      table: { category: 'Content', defaultValue: { summary: 'Cancel' } },
-    },
-    confirmLabel: {
-      control: 'text',
-      description: 'Label for the primary confirm button.',
-      table: { category: 'Content', defaultValue: { summary: 'Uninvite' } },
-    },
     // ── Appearance ───────────────────────────────────────────
-    confirmColor: {
+    type: {
       control: 'select',
-      options: ['red', 'purple'],
-      description: '`red` → `.btn-red` for destructive actions; `purple` → `.btn-purple` for confirmations.',
-      table: { category: 'Appearance', defaultValue: { summary: 'red' } },
+      options: ['info', 'popup', 'forms', 'wallet'],
+      description: 'Modal type matching Figma variants: `info` (Terms of Service), `popup` (delete confirm), `forms` (sign-in), `wallet` (crypto wallet).',
+      table: { category: 'Appearance', defaultValue: { summary: 'info' } },
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'default', 'lg', 'xl'],
+      description: '`sm`=320px · `default`=512px · `lg`=720px · `xl`=1024px. Applied via `.modal-dialog-{size}` modifier class.',
+      table: { category: 'Appearance', defaultValue: { summary: 'default' } },
+    },
+    darkMode: {
+      control: 'boolean',
+      description: 'Dark mode variant — Figma `Dark mode=True`. Applies dark background and inverted text tokens.',
+      table: { category: 'Appearance', defaultValue: { summary: false } },
     },
     // ── State ────────────────────────────────────────────────
     showOverlay: {
@@ -155,11 +332,9 @@ CSS classes: \`.modal-dialog\` → \`.modal-header\` + \`.modal-title\` + \`.mod
     },
   },
   args: {
-    title: 'Uninvite user',
-    body: 'User will be removed from the list and invitation link will be invalidated. Are you sure you want to uninvite user@company.com?',
-    cancelLabel: 'Cancel',
-    confirmLabel: 'Uninvite',
-    confirmColor: 'red',
+    type: 'info',
+    size: 'default',
+    darkMode: false,
     showOverlay: true,
   },
 };
@@ -168,35 +343,88 @@ CSS classes: \`.modal-dialog\` → \`.modal-header\` + \`.modal-title\` + \`.mod
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => modal(args),
+  render: ({ type, size, darkMode, showOverlay }) => {
+    if (type === 'popup')  return modalPopUp({ size, darkMode, showOverlay });
+    if (type === 'forms')  return modalWithForms({ size, darkMode, showOverlay });
+    if (type === 'wallet') return modalCryptoWallet({ size, darkMode, showOverlay });
+    return modalInfo({ size, darkMode, showOverlay });
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Use **Controls** to configure any modal combination: title, body, button labels, and confirm color.',
+        story: 'Use **Controls** to switch between all 4 modal types, all 4 sizes, and light/dark mode.',
       },
       source: {
-        transform: (_src, storyCtx) => {
-          const { title, body, cancelLabel, confirmLabel, confirmColor } = storyCtx.args;
-          const confirmClass = confirmColor === 'red' ? 'btn btn-red btn-md' : 'btn btn-purple btn-md';
-          return `<!-- Dark overlay (position:fixed in production, relative wrapper in stories) -->
+        transform: (_src, ctx) => {
+          const { type, size } = ctx.args;
+          const sc = size === 'sm' ? ' modal-dialog-sm' : size === 'lg' ? ' modal-dialog-lg' : size === 'xl' ? ' modal-dialog-xl' : '';
+          if (type === 'popup') return `<!-- Pop-up: no title in header, icon + question in body -->
 <div class="modal-backdrop">
-
-  <div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
-
-    <div class="modal-header">
-      <h2 class="modal-title" id="modal-title">${title}</h2>
+  <div role="dialog" aria-modal="true" aria-labelledby="popup-title" class="modal-dialog${sc}">
+    <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
       <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
     </div>
-
+    <div class="modal-body" style="text-align:center;">
+      <!-- exclamation-circle icon 42×42 -->
+      <p id="popup-title">Are you sure you want to delete this product?</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-red btn-md">Yes, I'm sure</button>
+      <button class="btn btn-alternative btn-md">No, cancel</button>
+    </div>
+  </div>
+</div>`;
+          if (type === 'forms') return `<!-- With forms: no title in header, form in body -->
+<div class="modal-backdrop">
+  <div role="dialog" aria-modal="true" aria-labelledby="form-modal-title" class="modal-dialog${sc}">
+    <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
+      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
+    </div>
     <div class="modal-body">
-      <p>${body}</p>
+      <h3 id="form-modal-title">Sign in to our platform</h3>
+      <div class="form-group">
+        <label class="form-label">Your email</label>
+        <input class="form-input" type="email" placeholder="name@flowbite.com">
+        <span class="form-helper">We'll never share your details.</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••••">
+      </div>
+      <button class="btn btn-primary btn-md" style="width:100%;">Create account</button>
     </div>
-
+  </div>
+</div>`;
+          if (type === 'wallet') return `<!-- Crypto wallet: title header + wallet list body -->
+<div class="modal-backdrop">
+  <div role="dialog" aria-modal="true" aria-labelledby="wallet-title" class="modal-dialog${sc}">
+    <div class="modal-header">
+      <h2 class="modal-title" id="wallet-title">Connect wallet</h2>
+      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
+    </div>
+    <div class="modal-body">
+      <p>Connect with one of our available wallet providers or create a new one.</p>
+      <!-- wallet list items -->
+    </div>
     <div class="modal-footer">
-      <button class="btn btn-outline-gray btn-md">${cancelLabel}</button>
-      <button class="${confirmClass}">${confirmLabel}</button>
+      <button class="btn btn-primary btn-md">I accept</button>
     </div>
-
+  </div>
+</div>`;
+          return `<!-- Info: title header + scrollable body paragraphs + single button footer -->
+<div class="modal-backdrop">
+  <div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog${sc}">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Terms of Service</h2>
+      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
+    </div>
+    <div class="modal-body">
+      <p>The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25...</p>
+      <p>With less than a month to go before the European Union enacts new consumer privacy laws...</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary btn-md">I accept</button>
+    </div>
   </div>
 </div>`;
         },
@@ -205,174 +433,336 @@ export const Interactive = {
   },
 };
 
-// ─── Destructive ─────────────────────────────────────────────────────────────
+// ─── Info ─────────────────────────────────────────────────────────────────────
 
-export const Destructive = {
-  name: 'Destructive — uninvite user',
-  parameters: {
-    docs: {
-      description: {
-        story: `
-Destructive confirmation — Figma: Modal \`9929:153267\` variant 1.
-
-Uses \`.btn-red\` for the confirm button to signal irreversibility.
-
-**✅ Do** — use \`.btn-red\` for irreversible destructive actions (delete, remove, uninvite).
-**✅ Do** — clearly state the consequence in the body text.
-**❌ Don't** — use a destructive modal for reversible actions. Prefer an inline confirm instead.
-**❌ Don't** — label the confirm button just "Yes" — use the specific action verb ("Uninvite", "Delete").
-        `.trim(),
-      },
-      source: {
-        language: 'html',
-        code: `<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
-  <div class="modal-header">
-    <h2 class="modal-title" id="modal-title">Uninvite user</h2>
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
-  </div>
-  <div class="modal-body">
-    <p>User will be removed from the list and invitation link will be invalidated.
-    Are you sure you want to uninvite user@company.com?</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-outline-gray btn-md">Cancel</button>
-    <button class="btn btn-red btn-md">Uninvite</button>
-  </div>
-</div>`,
-      },
-    },
-  },
-  render: () => modal({
-    title: 'Uninvite user',
-    body: 'User will be removed from the list and invitation link will be invalidated. Are you sure you want to uninvite user@company.com?',
-    cancelLabel: 'Cancel',
-    confirmLabel: 'Uninvite',
-    confirmColor: 'red',
-  }),
-};
-
-// ─── Confirmation ─────────────────────────────────────────────────────────────
-
-export const Confirmation = {
-  name: 'Confirmation — activate user',
-  parameters: {
-    docs: {
-      description: {
-        story: `
-Confirmation modal — Figma: Modal \`9929:153267\` variant 2.
-
-Uses \`.btn-purple\` for positive confirmations (granting permissions, activating users).
-
-**✅ Do** — use \`.btn-purple\` for permission grants and positive confirmations.
-**❌ Don't** — use \`.btn-red\` for positive/additive actions — red signals danger.
-        `.trim(),
-      },
-      source: {
-        language: 'html',
-        code: `<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
-  <div class="modal-header">
-    <h2 class="modal-title" id="modal-title">Activate user</h2>
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
-  </div>
-  <div class="modal-body">
-    <p>User will receive access to all granted permissions.
-    Are you sure you want to activate user@company.com?</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-outline-gray btn-md">Cancel</button>
-    <button class="btn btn-purple btn-md">Activate</button>
-  </div>
-</div>`,
-      },
-    },
-  },
-  render: () => modal({
-    title: 'Activate user',
-    body: 'User will receive access to all granted permissions. Are you sure you want to activate user@company.com?',
-    cancelLabel: 'Cancel',
-    confirmLabel: 'Activate',
-    confirmColor: 'purple',
-  }),
-};
-
-// ─── Warning (3 buttons) ─────────────────────────────────────────────────────
-
-export const Warning = {
-  name: 'Warning — unsaved changes (3 buttons)',
-  parameters: {
-    docs: {
-      description: {
-        story: `
-Three-button warning modal — Figma: Modal \`9929:153267\` variant 3.
-
-Used when the user is about to navigate away with unsaved work. Offers three choices:
-"No" (stay), "Yes" (discard — \`.btn-red\`), "Save" (save and proceed — \`.btn-purple\`).
-
-**✅ Do** — offer "Save & proceed" as the safest default action.
-**❌ Don't** — use 3-button modals for simple yes/no decisions — it adds cognitive load.
-        `.trim(),
-      },
-      source: {
-        language: 'html',
-        code: `<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
-  <div class="modal-header">
-    <h2 class="modal-title" id="modal-title">You have unsaved changes</h2>
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
-  </div>
-  <div class="modal-body">
-    <p>If you proceed, the changes will be lost.
-    Are you sure you want to proceed without saving?</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-outline-gray btn-md">No</button>
-    <button class="btn btn-red btn-md">Yes</button>
-    <button class="btn btn-purple btn-md">Save</button>
-  </div>
-</div>`,
-      },
-    },
-  },
-  render: () => modal({
-    title: 'You have unsaved changes',
-    body: 'If you proceed, the changes will be lost. Are you sure you want to proceed without saving?',
-    cancelLabel: 'No',
-    confirmLabel: 'Yes',
-    confirmColor: 'red',
-    thirdLabel: 'Save',
-  }),
-};
-
-// ─── All variants ─────────────────────────────────────────────────────────────
-
-export const AllVariants = {
-  name: 'All variants',
+export const Info = {
+  name: 'Info — Terms of Service',
   parameters: {
     controls: { include: [] },
     docs: {
       description: {
-        story: 'All three modal variants side-by-side: destructive (`.btn-red`), confirmation (`.btn-purple`), and warning (3 buttons).',
+        story: `
+Informational modal — Figma: \`Type=Info\`. Presents legal or consent content before a user can proceed.
+
+**✅ Do** — use a single primary action button ("I accept", "Got it") — never put Cancel here.
+**✅ Do** — make the body scrollable when content is long — \`max-height: 90vh\` is set on \`.modal-dialog\`.
+**❌ Don't** — use this type for destructive confirmations — use **Pop-up** instead.
+**❌ Don't** — omit \`aria-labelledby\` pointing to \`.modal-title\`.
+        `.trim(),
       },
       source: {
         language: 'html',
-        code: `<!-- Destructive: .btn-outline-gray + .btn-red -->
-<!-- Confirmation: .btn-outline-gray + .btn-purple -->
-<!-- Warning: .btn-outline-gray + .btn-red + .btn-purple -->`,
+        code: `<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
+  <div class="modal-header">
+    <h2 class="modal-title" id="modal-title">Terms of Service</h2>
+    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+  </div>
+  <div class="modal-body">
+    <p>The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union.</p>
+    <p>With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-md">I accept</button>
+  </div>
+</div>`,
+      },
+    },
+  },
+  render: () => modalInfo({ size: 'default', darkMode: false }),
+};
+
+// ─── Pop-up ───────────────────────────────────────────────────────────────────
+
+export const PopUp = {
+  name: 'Pop-up — delete confirmation',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Destructive confirmation modal — Figma: \`Type=Pop-up\`. No title in header; body centers a warning icon + question; footer has two actions.
+
+**✅ Do** — use \`.btn-red\` for the destructive action; \`.btn-alternative\` for dismiss.
+**✅ Do** — use the warning icon (exclamation-circle) to signal danger.
+**❌ Don't** — add a title to the header in this type — the Figma spec omits it intentionally.
+**❌ Don't** — label the confirm button just "Yes" — use the specific action verb ("Yes, I'm sure", "Delete it").
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<div role="dialog" aria-modal="true" aria-labelledby="popup-title" class="modal-dialog modal-dialog-sm">
+  <!-- Header: close button only, no title, no border -->
+  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
+    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+  </div>
+  <div class="modal-body" style="text-align:center;">
+    <!-- exclamation-circle icon 42×42 -->
+    <p id="popup-title">Are you sure you want to delete this product?</p>
+  </div>
+  <div class="modal-footer" style="justify-content:center;">
+    <button class="btn btn-red btn-md">Yes, I'm sure</button>
+    <button class="btn btn-alternative btn-md">No, cancel</button>
+  </div>
+</div>`,
+      },
+    },
+  },
+  render: () => modalPopUp({ size: 'sm', darkMode: false }),
+};
+
+// ─── With forms ───────────────────────────────────────────────────────────────
+
+export const WithForms = {
+  name: 'With forms — sign in',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Form modal — Figma: \`Type=With forms\`. No title in header; form fields and heading inside the body.
+
+Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from \`styles.css\`.
+
+**✅ Do** — include \`aria-labelledby\` pointing to the inline heading inside \`.modal-body\`.
+**✅ Do** — set \`type="email"\` and \`type="password"\` for native browser validation.
+**❌ Don't** — add a \`.modal-footer\` — the submit button lives inside \`.modal-body\` for this type.
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<div role="dialog" aria-modal="true" aria-labelledby="form-modal-title" class="modal-dialog modal-dialog-sm">
+  <!-- Header: close button only, no title, no border -->
+  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
+    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+  </div>
+  <div class="modal-body">
+    <h3 id="form-modal-title">Sign in to our platform</h3>
+
+    <div class="form-group">
+      <label class="form-label">Your email</label>
+      <input class="form-input" type="email" placeholder="name@flowbite.com">
+      <span class="form-helper">We'll never share your details. See our Privacy Policy.</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" placeholder="••••••••••">
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox"> Remember me
+      </label>
+      <a href="#" style="color:#155dfc;">Lost Password?</a>
+    </div>
+
+    <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">Create account</button>
+    <p style="text-align:center;margin-top:12px;">
+      <a href="#" style="color:#155dfc;">Not registered? Create account</a>
+    </p>
+  </div>
+</div>`,
+      },
+    },
+  },
+  render: () => modalWithForms({ size: 'sm', darkMode: false }),
+};
+
+// ─── Crypto wallet ────────────────────────────────────────────────────────────
+
+export const CryptoWallet = {
+  name: 'Crypto wallet — connect wallet',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Wallet selection modal — Figma: \`Type=Crypto wallet\`. Title in header; wallet list with optional badge; single "I accept" footer.
+
+**✅ Do** — use background \`var(--color-bg-default)\` for wallet list rows.
+**✅ Do** — show the "Popular" badge on the most common wallet provider.
+**❌ Don't** — use this pattern for non-wallet provider selection — use a standard list or radio group.
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<div role="dialog" aria-modal="true" aria-labelledby="wallet-title" class="modal-dialog modal-dialog-sm">
+  <div class="modal-header">
+    <h2 class="modal-title" id="wallet-title">Connect wallet</h2>
+    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+  </div>
+  <div class="modal-body">
+    <p>Connect with one of our available wallet providers or create a new one.</p>
+
+    <!-- Wallet list -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin:16px 0;">
+      <!-- Item with badge -->
+      <div style="display:flex;align-items:center;justify-content:space-between;
+                  padding:12px 16px;background:var(--color-bg-default);border-radius:var(--radius-md);">
+        <!-- wallet icon + name -->
+        <span style="font-size:var(--text-base);font-weight:var(--font-bold);">MetaMask</span>
+        <span style="font-size:var(--text-xs);background:var(--color-bg-muted);padding:2px 8px;
+                     border-radius:var(--radius-full);">Popular</span>
+      </div>
+      <!-- More items... -->
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-md">I accept</button>
+  </div>
+</div>`,
+      },
+    },
+  },
+  render: () => modalCryptoWallet({ size: 'sm', darkMode: false }),
+};
+
+// ─── Dark mode ────────────────────────────────────────────────────────────────
+
+export const DarkMode = {
+  name: 'Dark mode — all types',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+All 4 modal types in dark mode — Figma: \`Dark mode=True\`.
+
+Dark mode tokens: \`bg:#374151\`, \`title:#ffffff\`, \`body:#9ca3af\`, \`separator:#4b5563\`.
+
+**✅ Do** — apply dark tokens consistently to header, body, and footer.
+**❌ Don't** — mix light and dark tokens within the same modal instance.
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Dark mode: inline style overrides for bg, text, and border colors -->
+<div class="modal-dialog" style="background:#374151;">
+  <div class="modal-header" style="border-color:#4b5563;">
+    <h2 class="modal-title" style="color:#ffffff;">Terms of Service</h2>
+    <button class="modal-close" style="color:#9ca3af;"><!-- × --></button>
+  </div>
+  <div class="modal-body" style="color:#9ca3af;">...</div>
+  <div class="modal-footer" style="border-color:#4b5563;">
+    <button class="btn btn-primary btn-md">I accept</button>
+  </div>
+</div>`,
       },
     },
   },
   render: () => `
-    <div style="display:flex;gap:24px;flex-wrap:wrap;padding:32px;background:#374151;min-height:300px;align-items:flex-start;">
+    <div style="display:flex;flex-wrap:wrap;gap:24px;padding:32px;
+                background:rgba(17,25,40,0.9);justify-content:center;">
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Destructive</div>
-        ${modal({ title: 'Uninvite user', body: 'User will be removed from the list and invitation link will be invalidated.', cancelLabel: 'Cancel', confirmLabel: 'Uninvite', confirmColor: 'red', showOverlay: false })}
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Info</div>
+        ${modalInfo({ size: 'sm', darkMode: true, showOverlay: false })}
       </div>
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Confirmation</div>
-        ${modal({ title: 'Activate user', body: 'User will receive access to all granted permissions.', cancelLabel: 'Cancel', confirmLabel: 'Activate', confirmColor: 'purple', showOverlay: false })}
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Pop-up</div>
+        ${modalPopUp({ size: 'sm', darkMode: true, showOverlay: false })}
       </div>
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Warning (3 buttons)</div>
-        ${modal({ title: 'You have unsaved changes', body: 'If you proceed, the changes will be lost. Are you sure you want to proceed without saving?', cancelLabel: 'No', confirmLabel: 'Yes', confirmColor: 'red', thirdLabel: 'Save', showOverlay: false })}
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">With forms</div>
+        ${modalWithForms({ size: 'sm', darkMode: true, showOverlay: false })}
+      </div>
+      <div>
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Crypto wallet</div>
+        ${modalCryptoWallet({ size: 'sm', darkMode: true, showOverlay: false })}
+      </div>
+    </div>
+  `,
+};
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+export const Sizes = {
+  name: 'Sizes — SM / Default / LG / XL',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+All four size variants — Figma: \`Size=SM/Default/LG/XL\`. All use the Info type.
+
+| Size | Class | Max-width |
+|---|---|---|
+| SM | \`.modal-dialog-sm\` | 320px |
+| Default | *(none)* | 512px |
+| LG | \`.modal-dialog-lg\` | 720px |
+| XL | \`.modal-dialog-xl\` | 1024px |
+        `.trim(),
+      },
+      source: {
+        language: 'html',
+        code: `<div class="modal-dialog modal-dialog-sm">...</div>    <!-- 320px -->
+<div class="modal-dialog">...</div>               <!-- 512px (default) -->
+<div class="modal-dialog modal-dialog-lg">...</div>  <!-- 720px -->
+<div class="modal-dialog modal-dialog-xl">...</div>  <!-- 1024px -->`,
+      },
+    },
+  },
+  render: () => `
+    <div style="display:flex;flex-direction:column;gap:24px;padding:32px;background:#374151;">
+      ${[
+        ['SM · 320px',      modalInfo({ size: 'sm',      darkMode: false, showOverlay: false })],
+        ['Default · 512px', modalInfo({ size: 'default', darkMode: false, showOverlay: false })],
+        ['LG · 720px',      modalInfo({ size: 'lg',      darkMode: false, showOverlay: false })],
+        ['XL · 1024px',     modalInfo({ size: 'xl',      darkMode: false, showOverlay: false })],
+      ].map(([label, html]) => `
+        <div>
+          <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${label}</div>
+          ${html}
+        </div>`).join('')}
+    </div>
+  `,
+};
+
+// ─── All types ────────────────────────────────────────────────────────────────
+
+export const AllTypes = {
+  name: 'All types — light mode',
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: 'All 4 modal types side-by-side in light mode: Info, Pop-up, With forms, Crypto wallet.',
+      },
+      source: {
+        language: 'html',
+        code: `<!-- Info: .modal-dialog (default) + title + body paragraphs + single button -->
+<!-- Pop-up: .modal-dialog-sm + no title + icon + two buttons -->
+<!-- With forms: .modal-dialog-sm + no title + form fields + submit in body -->
+<!-- Crypto wallet: .modal-dialog-sm + title + wallet list + single button -->`,
+      },
+    },
+  },
+  render: () => `
+    <div style="display:flex;flex-wrap:wrap;gap:24px;padding:32px;
+                background:rgba(17,25,40,0.82);justify-content:center;">
+      <div>
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Info</div>
+        ${modalInfo({ size: 'sm', darkMode: false, showOverlay: false })}
+      </div>
+      <div>
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Pop-up</div>
+        ${modalPopUp({ size: 'sm', darkMode: false, showOverlay: false })}
+      </div>
+      <div>
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">With forms</div>
+        ${modalWithForms({ size: 'sm', darkMode: false, showOverlay: false })}
+      </div>
+      <div>
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+                    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Crypto wallet</div>
+        ${modalCryptoWallet({ size: 'sm', darkMode: false, showOverlay: false })}
       </div>
     </div>
   `,
