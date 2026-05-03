@@ -44,12 +44,12 @@ function dotIndicator({ label = 'Indicator text', dotColor = '#155dfc' }) {
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
     <circle cx="6" cy="6" r="6" fill="${dotColor}"/>
   </svg>
-  <span style="font-size:14px;font-weight:500;color:#111928;line-height:1;">${label}</span>
+  <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);line-height:1;">${label}</span>
 </span>`;
 }
 
 function countIndicator({ count = 1 }) {
-  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:14px;font-weight:500;color:#ffffff;line-height:1;" aria-label="${count} notifications">${count}</span>`;
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;line-height:1;" aria-label="${count} notifications">${count}</span>`;
 }
 
 function iconIndicator() {
@@ -68,7 +68,7 @@ function badgeIndicator({ label = 'Available', variant = 'available' }) {
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
     <circle cx="6" cy="6" r="6" fill="${dot}"/>
   </svg>
-  <span style="font-size:12px;font-weight:500;color:${text};line-height:1;white-space:nowrap;">${label}</span>
+  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:${text};line-height:1;white-space:nowrap;">${label}</span>
 </span>`;
 }
 
@@ -95,7 +95,7 @@ Small visual signals that communicate status, count, or progress — without tak
 
 **Anatomy**
 Five distinct types — all light mode only:
-- \`Dot\` — 12×12 dot + label (14px/500). Used for chart legends and status rows.
+- \`Dot\` — 12×12 dot + label (var(--text-sm)/var(--font-medium)). Used for chart legends and status rows.
 - \`Count\` — 24×24 red circle with a number. Overlaid on buttons or nav items.
 - \`Icon\` — 24×24 blue circle with a check mark. Marks a completed step.
 - \`Stepper\` — 24×24 outer ring (#bedbff) with 12×12 inner dot (#155dfc). Active/pending step in a stepper.
@@ -170,11 +170,11 @@ export const Interactive = {
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
     <circle cx="6" cy="6" r="6" fill="${dotColor}"/>
   </svg>
-  <span style="font-size:14px;font-weight:500;color:#111928;line-height:1;">${label}</span>
+  <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);line-height:1;">${label}</span>
 </span>`;
           }
           if (type === 'count') {
-            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:14px;font-weight:500;color:#ffffff;line-height:1;" aria-label="${count} notifications">${count}</span>`;
+            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;line-height:1;" aria-label="${count} notifications">${count}</span>`;
           }
           if (type === 'icon') {
             return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Completed">
@@ -194,7 +194,7 @@ export const Interactive = {
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
     <circle cx="6" cy="6" r="6" fill="${bv.dot}"/>
   </svg>
-  <span style="font-size:12px;font-weight:500;color:${bv.text};line-height:1;white-space:nowrap;">${label}</span>
+  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:${bv.text};line-height:1;white-space:nowrap;">${label}</span>
 </span>`;
         },
       },
@@ -230,16 +230,16 @@ All 5 indicator types side by side.
         code: `<!-- Dot (legend) -->
 <span style="display:inline-flex;align-items:center;gap:4px;">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>
-  <span style="font-size:14px;font-weight:500;color:#111928;">Revenue</span>
+  <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
 </span>
 
 <!-- Count -->
-<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:14px;font-weight:500;color:#ffffff;" aria-label="3 notifications">3</span>
+<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;" aria-label="3 notifications">3</span>
 
 <!-- Badge: available -->
 <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#def7ec;" role="status">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#0e9f6e"/></svg>
-  <span style="font-size:12px;font-weight:500;color:#03543f;">Available</span>
+  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#03543f;">Available</span>
 </span>`,
         language: 'html',
       },
@@ -247,23 +247,23 @@ All 5 indicator types side by side.
   },
   render: () => `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:24px;">
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Dot</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Dot</span>
       ${dotIndicator({ label: 'Revenue', dotColor: '#155dfc' })}
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Count</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Count</span>
       ${countIndicator({ count: 3 })}
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Icon</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Icon</span>
       ${iconIndicator()}
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Stepper</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Stepper</span>
       ${stepperIndicator()}
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;">Badge</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Badge</span>
       ${badgeIndicator({ label: 'Available', variant: 'available' })}
     </div>
   </div>`,
@@ -289,7 +289,7 @@ The 4 standard chart legend colors from Figma. Use these dots to label series in
       source: {
         code: `<span style="display:inline-flex;align-items:center;gap:4px;">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>
-  <span style="font-size:14px;font-weight:500;color:#111928;">Revenue</span>
+  <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
 </span>`,
         language: 'html',
       },
@@ -326,13 +326,13 @@ Two badge indicator variants for user availability status (from Figma node 110:2
         code: `<!-- Available -->
 <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#def7ec;" role="status">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#0e9f6e"/></svg>
-  <span style="font-size:12px;font-weight:500;color:#03543f;">Available</span>
+  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#03543f;">Available</span>
 </span>
 
 <!-- Unavailable -->
 <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#fde8e8;" role="status">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#f05252"/></svg>
-  <span style="font-size:12px;font-weight:500;color:#9b1c1c;">Unavailable</span>
+  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#9b1c1c;">Unavailable</span>
 </span>`,
         language: 'html',
       },
@@ -363,10 +363,10 @@ Count indicator overlaid on a button — the pattern from Figma node 110:22652.
       },
       source: {
         code: `<div style="position:relative;display:inline-flex;">
-  <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#42389d;border:none;border-radius:12px;font-size:14px;font-weight:500;color:#ffffff;cursor:pointer;">
+  <button type="button" class="btn btn-primary btn-md">
     Messages
   </button>
-  <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:14px;font-weight:500;color:#ffffff;padding:0 4px;" aria-label="8 unread messages">8</span>
+  <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-xs);font-weight:var(--font-medium);color:#ffffff;padding:0 4px;" aria-label="8 unread messages">8</span>
 </div>`,
         language: 'html',
       },
@@ -374,12 +374,12 @@ Count indicator overlaid on a button — the pattern from Figma node 110:22652.
   },
   render: () => `<div style="padding:16px;display:inline-flex;">
     <div style="position:relative;display:inline-flex;">
-      <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#42389d;border:none;border-radius:12px;font-size:14px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">
+      <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#42389d;border:none;border-radius:12px;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;cursor:pointer;font-family:inherit;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
         Messages
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>
       </button>
-      <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:12px;font-weight:500;color:#ffffff;padding:0 4px;" aria-label="8 unread messages">8</span>
+      <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-xs);font-weight:var(--font-medium);color:#ffffff;padding:0 4px;" aria-label="8 unread messages">8</span>
     </div>
   </div>`,
 };
@@ -402,12 +402,12 @@ Badge indicators used as status labels in a customer list — the "Badge indicat
         `,
       },
       source: {
-        code: `<div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        code: `<div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;">
-    <span style="font-size:14px;color:#111928;font-weight:500;">Sarah Johnson</span>
+    <span style="font-size:var(--text-sm);color:var(--color-text-heading);font-weight:var(--font-medium);">Sarah Johnson</span>
     <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#def7ec;" role="status">
       <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#0e9f6e"/></svg>
-      <span style="font-size:12px;font-weight:500;color:#03543f;">Available</span>
+      <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#03543f;">Available</span>
     </span>
   </div>
 </div>`,
@@ -426,23 +426,23 @@ Badge indicators used as status labels in a customer list — the "Badge indicat
     const avatar = (name) => {
       const initials = name.split(' ').map(w => w[0]).join('');
       const hue = name.charCodeAt(0) * 37 % 360;
-      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:hsl(${hue},60%,85%);font-size:12px;font-weight:600;color:hsl(${hue},40%,30%);flex-shrink:0;">${initials}</span>`;
+      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:hsl(${hue},60%,85%);font-size:var(--text-xs);font-weight:var(--font-semibold);color:hsl(${hue},40%,30%);flex-shrink:0;">${initials}</span>`;
     };
 
-    const rows = customers.map(c => `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f3f4f6;">
+    const rows = customers.map(c => `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--color-bg-muted);">
       <div style="display:flex;align-items:center;gap:10px;">
         ${avatar(c.name)}
         <div>
-          <div style="font-size:14px;font-weight:500;color:#111928;">${c.name}</div>
-          <div style="font-size:12px;color:#6b7280;">${c.role}</div>
+          <div style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">${c.name}</div>
+          <div style="font-size:var(--text-xs);color:var(--color-text-secondary);">${c.role}</div>
         </div>
       </div>
       ${badgeIndicator({ label: c.variant === 'available' ? 'Available' : 'Unavailable', variant: c.variant })}
     </div>`).join('');
 
-    return `<div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;max-width:480px;">
-      <div style="padding:12px 16px;border-bottom:1px solid #e5e7eb;background:#f9fafb;">
-        <span style="font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.05em;">Support Team</span>
+    return `<div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;max-width:480px;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--color-border-default);background:var(--color-bg-default);">
+        <span style="font-size:13px;font-weight:var(--font-semibold);color:#374151;text-transform:uppercase;letter-spacing:.05em;">Support Team</span>
       </div>
       ${rows}
     </div>`;
@@ -472,12 +472,12 @@ Stepper indicators used in a multi-step progress bar — the "Stepper" example f
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Step 1: Completed">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>
   </span>
-  <span style="flex:1;height:1px;background:#e5e7eb;"></span>
+  <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Active step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-current="step" aria-label="Step 2: Current">
     <span style="width:12px;height:12px;border-radius:50%;background:#155dfc;display:block;"></span>
   </span>
-  <span style="flex:1;height:1px;background:#e5e7eb;"></span>
+  <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Pending step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-label="Step 3: Pending">
     <span style="width:12px;height:12px;border-radius:50%;background:#155dfc;display:block;"></span>
@@ -502,11 +502,11 @@ Stepper indicators used in a multi-step progress bar — the "Stepper" example f
     const stepItems = steps.map((s, i) => `
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;">
         <div style="display:flex;align-items:center;width:100%;">
-          ${i > 0 ? '<span style="flex:1;height:1px;background:#e5e7eb;"></span>' : '<span style="flex:1;"></span>'}
+          ${i > 0 ? '<span style="flex:1;height:1px;background:var(--color-border-default);"></span>' : '<span style="flex:1;"></span>'}
           ${stepIcon(s.state)}
-          ${i < steps.length - 1 ? '<span style="flex:1;height:1px;background:#e5e7eb;"></span>' : '<span style="flex:1;"></span>'}
+          ${i < steps.length - 1 ? '<span style="flex:1;height:1px;background:var(--color-border-default);"></span>' : '<span style="flex:1;"></span>'}
         </div>
-        <span style="font-size:12px;font-weight:${s.state === 'active' ? 600 : 400};color:${s.state === 'active' ? '#111928' : '#6b7280'};white-space:nowrap;">${s.label}</span>
+        <span style="font-size:var(--text-xs);font-weight:${s.state === 'active' ? 'var(--font-semibold)' : 'var(--font-normal)'};color:${s.state === 'active' ? 'var(--color-text-heading)' : 'var(--color-text-secondary)'};white-space:nowrap;">${s.label}</span>
       </div>`).join('');
 
     return `<div style="max-width:480px;padding:16px;">

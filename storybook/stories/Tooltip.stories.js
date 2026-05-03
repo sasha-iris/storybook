@@ -7,21 +7,21 @@
 
 function tooltipBody({ color, title, body }) {
   const isDark = color === 'dark';
-  const bg         = isDark ? '#1f2a37' : '#ffffff';
-  const titleColor = isDark ? '#ffffff' : '#111928';
-  const divColor   = isDark ? '#4b5563' : '#e5e7eb';
-  const bodyColor  = isDark ? '#f3f4f6' : '#6b7280';
+  const bg         = isDark ? 'var(--color-bg-dark)' : 'var(--color-bg-surface)';
+  const titleColor = isDark ? '#ffffff' : 'var(--color-text-heading)';
+  const divColor   = isDark ? '#4b5563' : 'var(--color-border-default)';
+  const bodyColor  = isDark ? 'var(--color-bg-muted)' : 'var(--color-text-secondary)';
   const shadow     = isDark ? '' : 'box-shadow:0 2px 8px rgba(0,0,0,.15);';
   return `
 <div style="background:${bg};border-radius:4px;padding:8px;min-width:100px;max-width:200px;${shadow}font-family:inherit;">
-  <div style="color:${titleColor};font-weight:500;font-size:14px;line-height:20px;margin-bottom:6px;white-space:nowrap;">${title}</div>
+  <div style="color:${titleColor};font-weight:var(--font-medium);font-size:var(--text-sm);line-height:20px;margin-bottom:6px;white-space:nowrap;">${title}</div>
   <div style="height:1px;background:${divColor};margin:0 0 6px;"></div>
-  <div style="color:${bodyColor};font-weight:400;font-size:12px;line-height:16px;">${body}</div>
+  <div style="color:${bodyColor};font-weight:var(--font-normal);font-size:var(--text-xs);line-height:16px;">${body}</div>
 </div>`;
 }
 
 function tooltipArrow({ position, color }) {
-  const fill = color === 'dark' ? '#1f2a37' : '#ffffff';
+  const fill = color === 'dark' ? 'var(--color-bg-dark)' : 'var(--color-bg-surface)';
   const borders = {
     top:    `border-left:17px solid transparent;border-right:17px solid transparent;border-top:8px solid ${fill}`,
     bottom: `border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:8px solid ${fill}`,
@@ -31,7 +31,7 @@ function tooltipArrow({ position, color }) {
   return `<div style="width:0;height:0;flex-shrink:0;${borders[position]}"></div>`;
 }
 
-const TRIGGER = `<button style="padding:6px 16px;background:#155dfc;color:#fff;border:none;border-radius:6px;font:500 13px/20px inherit;cursor:default;white-space:nowrap;">Show info</button>`;
+const TRIGGER = `<button class="btn btn-primary btn-sm" style="cursor:default;white-space:nowrap;">Show info</button>`;
 
 function tooltip({ color = 'dark', position = 'top', title, body }) {
   const box = tooltipBody({ color, title, body });
@@ -79,22 +79,20 @@ export default {
     },
   },
   argTypes: {
-    // ── Content ─────────────────────────────────────────────────────────────
     title: {
       control: 'text',
-      description: 'Short label rendered at 500/14px. Keep to one line — overflow is not handled.',
+      description: 'Short label rendered at var(--font-medium)/var(--text-sm). Keep to one line — overflow is not handled.',
       table: { category: 'Content', defaultValue: { summary: 'More information' } },
     },
     body: {
       control: 'text',
-      description: 'Supporting description at 400/12px. Keep to 1–2 sentences maximum.',
+      description: 'Supporting description at var(--font-normal)/var(--text-xs). Keep to 1–2 sentences maximum.',
       table: { category: 'Content', defaultValue: { summary: 'Descriptive text…' } },
     },
-    // ── Appearance ───────────────────────────────────────────────────────────
     color: {
       control: 'select',
       options: ['dark', 'white'],
-      description: `Color theme. \`dark\` — bg \`#1f2a37\`, text \`#ffffff\`/\`#f3f4f6\`. \`white\` — bg \`#ffffff\`, text \`#111928\`/\`#6b7280\` with a drop shadow. Choose \`white\` on dark-background surfaces.`,
+      description: `Color theme. \`dark\` — bg \`var(--color-bg-dark)\`, text white/\`var(--color-bg-muted)\`. \`white\` — bg \`var(--color-bg-surface)\`, text \`var(--color-text-heading)\`/\`var(--color-text-secondary)\` with a drop shadow.`,
       table: { category: 'Appearance', defaultValue: { summary: 'dark' } },
     },
     position: {
@@ -130,12 +128,12 @@ export const Interactive = {
         transform: (_src, ctx) => {
           const { color, position, title, body } = ctx.args;
           return `<!-- Tooltip: ${color} / ${position} -->
-<div class="tooltip-wrapper tooltip--${position}" data-tooltip>
-  <button class="btn btn-primary" aria-describedby="tip-1">Show info</button>
-  <div class="tooltip tooltip--${color}" role="tooltip" id="tip-1">
-    <strong class="tooltip__title">${title}</strong>
-    <div class="tooltip__divider"></div>
-    <p class="tooltip__body">${body}</p>
+<div class="tooltip-wrap tooltip-${position}" data-tooltip>
+  <button class="btn btn-primary btn-sm" aria-describedby="tip-1">Show info</button>
+  <div class="tooltip-bubble tooltip-${color}" role="tooltip" id="tip-1">
+    <strong style="font-weight:var(--font-medium);font-size:var(--text-sm);">${title}</strong>
+    <div style="height:1px;background:var(--color-border-default);margin:6px 0;"></div>
+    <p style="font-size:var(--text-xs);color:var(--color-text-secondary);">${body}</p>
   </div>
 </div>`;
         },
@@ -160,27 +158,27 @@ export const AllPositions = {
       },
       source: {
         code: `<!-- Top -->
-<div class="tooltip-wrapper tooltip--top" data-tooltip>
-  <button aria-describedby="tip-top">Trigger</button>
-  <div class="tooltip tooltip--dark" role="tooltip" id="tip-top"> … </div>
+<div class="tooltip-wrap tooltip-top" data-tooltip>
+  <button class="btn btn-primary btn-sm" aria-describedby="tip-top">Trigger</button>
+  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-top"> … </div>
 </div>
 
 <!-- Right -->
-<div class="tooltip-wrapper tooltip--right" data-tooltip>
-  <button aria-describedby="tip-right">Trigger</button>
-  <div class="tooltip tooltip--dark" role="tooltip" id="tip-right"> … </div>
+<div class="tooltip-wrap tooltip-right" data-tooltip>
+  <button class="btn btn-primary btn-sm" aria-describedby="tip-right">Trigger</button>
+  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-right"> … </div>
 </div>
 
 <!-- Bottom -->
-<div class="tooltip-wrapper tooltip--bottom" data-tooltip>
-  <button aria-describedby="tip-bottom">Trigger</button>
-  <div class="tooltip tooltip--dark" role="tooltip" id="tip-bottom"> … </div>
+<div class="tooltip-wrap tooltip-bottom" data-tooltip>
+  <button class="btn btn-primary btn-sm" aria-describedby="tip-bottom">Trigger</button>
+  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-bottom"> … </div>
 </div>
 
 <!-- Left -->
-<div class="tooltip-wrapper tooltip--left" data-tooltip>
-  <button aria-describedby="tip-left">Trigger</button>
-  <div class="tooltip tooltip--dark" role="tooltip" id="tip-left"> … </div>
+<div class="tooltip-wrap tooltip-left" data-tooltip>
+  <button class="btn btn-primary btn-sm" aria-describedby="tip-left">Trigger</button>
+  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-left"> … </div>
 </div>`,
         language: 'html',
       },
@@ -191,10 +189,10 @@ export const AllPositions = {
     const positions = ['top', 'right', 'bottom', 'left'];
     const labels    = { top: 'Top', right: 'Right', bottom: 'Bottom', left: 'Left' };
     return `
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:64px 80px;padding:80px 60px;background:#f9fafb;width:fit-content;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:64px 80px;padding:80px 60px;background:var(--color-bg-default);width:fit-content;">
   ${positions.map(pos => `
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <span style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${labels[pos]}</span>
+      <span style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">${labels[pos]}</span>
       ${tooltip({ color, position: pos, ...t })}
     </div>`).join('')}
 </div>`;
@@ -218,17 +216,17 @@ export const BothColors = {
       },
       source: {
         code: `<!-- Dark tooltip -->
-<div class="tooltip tooltip--dark" role="tooltip">
-  <strong class="tooltip__title">More information</strong>
-  <div class="tooltip__divider"></div>
-  <p class="tooltip__body">The user wants to find a specific page or site.</p>
+<div class="tooltip-bubble tooltip-dark" role="tooltip">
+  <strong style="font-weight:var(--font-medium);font-size:var(--text-sm);color:#ffffff;">More information</strong>
+  <div style="height:1px;background:#4b5563;margin:6px 0;"></div>
+  <p style="font-size:var(--text-xs);color:var(--color-bg-muted);">The user wants to find a specific page or site.</p>
 </div>
 
 <!-- White tooltip -->
-<div class="tooltip tooltip--white" role="tooltip">
-  <strong class="tooltip__title">More information</strong>
-  <div class="tooltip__divider"></div>
-  <p class="tooltip__body">The user wants to find a specific page or site.</p>
+<div class="tooltip-bubble tooltip-light" role="tooltip">
+  <strong style="font-weight:var(--font-medium);font-size:var(--text-sm);color:var(--color-text-heading);">More information</strong>
+  <div style="height:1px;background:var(--color-border-default);margin:6px 0;"></div>
+  <p style="font-size:var(--text-xs);color:var(--color-text-secondary);">The user wants to find a specific page or site.</p>
 </div>`,
         language: 'html',
       },
@@ -237,13 +235,13 @@ export const BothColors = {
   render: ({ position }) => {
     const t = { title: 'More information', body: 'The user wants to find a specific page or site.' };
     return `
-<div style="display:flex;gap:80px;padding:80px 60px;align-items:center;justify-content:center;background:#f3f4f6;">
+<div style="display:flex;gap:80px;padding:80px 60px;align-items:center;justify-content:center;background:var(--color-bg-muted);">
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-    <span style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Dark</span>
+    <span style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Dark</span>
     ${tooltip({ color: 'dark', position, ...t })}
   </div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-    <span style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">White</span>
+    <span style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">White</span>
     ${tooltip({ color: 'white', position, ...t })}
   </div>
 </div>`;

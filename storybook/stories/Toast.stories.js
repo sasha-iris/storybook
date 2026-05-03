@@ -24,9 +24,6 @@ function iconBox(bg, inner) {
 function dismissBtn(color, size = 18) {
   return `<button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, size, color)}</button>`;
 }
-function ctaBtn(bg, label) {
-  return `<button type="button" style="background:${bg};color:#fff;border:none;border-radius:12px;padding:8px 12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;">${label}</button>`;
-}
 
 // ─── Type renderers ───────────────────────────────────────────────────────────
 
@@ -34,21 +31,21 @@ function toastSuccess({ cta, title, description, ctaLabel }) {
   const border = '1px solid #84e1bc';
   if (!cta) {
     return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   ${iconBox('#ecfdf5', iconSvg(CHECK_PATH, 20, '#007a55'))}
-  <p style="flex:1;margin:0;color:#0e9f6e;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
+  <p style="flex:1;margin:0;color:#0e9f6e;font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
   ${dismissBtn('#0e9f6e')}
 </div>`;
   }
   return `
-<div style="padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div style="padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
     ${iconSvg(CHECK_CIRCLE_PATH, 18, '#0e9f6e')}
-    <span style="flex:1;font-size:14px;font-weight:600;color:#0e9f6e;">Success</span>
+    <span style="flex:1;font-size:var(--text-sm);font-weight:var(--font-semibold);color:#0e9f6e;">Success</span>
     ${dismissBtn('#0e9f6e', 20)}
   </div>
-  <p style="margin:0 0 12px;color:#0e9f6e;font-size:14px;font-weight:400;line-height:1.5;">${description}</p>
-  ${ctaBtn('#007a55', ctaLabel)}
+  <p style="margin:0 0 12px;color:#0e9f6e;font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${description}</p>
+  <button type="button" class="btn btn-green btn-xs">${ctaLabel}</button>
 </div>`;
 }
 
@@ -56,73 +53,74 @@ function toastDanger({ cta, title, description, ctaLabel }) {
   const border = '1px solid #f8b4b4';
   if (!cta) {
     return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   ${iconBox('#fde8e8', BELL_SVG('#f05252'))}
-  <p style="flex:1;margin:0;color:#f05252;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
+  <p style="flex:1;margin:0;color:#f05252;font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
   ${dismissBtn('#f05252')}
 </div>`;
   }
   return `
-<div style="padding:16px;background:#fff;border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div style="padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
     ${iconSvg(X_CIRCLE_PATH, 18, '#e02424')}
-    <span style="flex:1;font-size:14px;font-weight:600;color:#e02424;">Attention</span>
+    <span style="flex:1;font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-danger);">Attention</span>
     ${dismissBtn('#e02424', 20)}
   </div>
-  <p style="margin:0 0 12px;color:#e02424;font-size:14px;font-weight:400;line-height:1.5;">${description}</p>
-  ${ctaBtn('#c10007', ctaLabel)}
+  <p style="margin:0 0 12px;color:var(--color-danger);font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${description}</p>
+  <button type="button" class="btn btn-red btn-xs">${ctaLabel}</button>
 </div>`;
 }
 
 function toastDefault({ title }) {
   return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--color-bg-surface);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   ${iconBox('#dbeafe', iconSvg(CHECK_PATH, 20, '#155dfc'))}
-  <p style="flex:1;margin:0;color:#6b7280;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
+  <p style="flex:1;margin:0;color:var(--color-text-secondary);font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
   ${dismissBtn('#9ca3af')}
 </div>`;
 }
 
 function toastSimple({ title }) {
   return `
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-bg-surface);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   ${iconSvg(PAPER_PLANE_PATH, 24, '#155dfc')}
-  <div style="flex:1;border-left:1px solid #e5e7eb;padding-left:12px;">
-    <p style="margin:0;color:#6b7280;font-size:14px;font-weight:400;line-height:1.5;">${title}</p>
+  <div style="flex:1;border-left:1px solid var(--color-border-default);padding-left:12px;">
+    <p style="margin:0;color:var(--color-text-secondary);font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
   </div>
 </div>`;
 }
 
 function toastPush({ title, description }) {
-  const avatar = `<div style="width:48px;height:48px;border-radius:50%;background:#e5e7eb;border:1px solid #e5e7eb;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:#6b7280;">BG</div>`;
+  const avatar = `<div style="width:48px;height:48px;border-radius:50%;background:var(--color-bg-muted);border:1px solid var(--color-border-default);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-secondary);">BG</div>`;
   return `
-<div style="padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div style="padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-    <span style="font-size:14px;font-weight:600;color:#111928;">New notification</span>
+    <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-text-heading);">New notification</span>
     ${dismissBtn('#9ca3af')}
   </div>
   <div style="display:flex;gap:12px;align-items:flex-start;">
     ${avatar}
     <div style="flex:1;min-width:0;">
-      <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111928;">${title}</p>
-      <p style="margin:0 0 4px;font-size:14px;font-weight:400;color:#6b7280;line-height:1.4;">${description}</p>
-      <p style="margin:0;font-size:12px;font-weight:500;color:#155dfc;">a few seconds ago</p>
+      <p style="margin:0 0 2px;font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-text-heading);">${title}</p>
+      <p style="margin:0 0 4px;font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.4;">${description}</p>
+      <p style="margin:0;font-size:var(--text-xs);font-weight:var(--font-medium);color:#155dfc;">a few seconds ago</p>
     </div>
   </div>
 </div>`;
 }
 
 function toastInteractive({ title, description, ctaLabel }) {
-  const primaryBtn = `<button type="button" style="flex:1;background:#42389d;color:#fff;border:none;border-radius:12px;padding:8px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">${ctaLabel}</button>`;
-  const secondaryBtn = `<button type="button" style="flex:1;background:#fff;color:#374151;border:1px solid #e5e7eb;border-radius:12px;padding:8px 0;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;">Later</button>`;
   return `
-<div style="padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div style="padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
   <div style="display:flex;gap:12px;align-items:flex-start;">
     ${iconBox('#dbeafe', iconSvg(REFRESH_PATH, 20, '#155dfc'))}
     <div style="flex:1;min-width:0;">
-      <p style="margin:0 0 2px;font-size:14px;font-weight:600;color:#111928;">${title}</p>
-      <p style="margin:0 0 12px;font-size:14px;font-weight:400;color:#6b7280;line-height:1.4;">${description}</p>
-      <div style="display:flex;gap:8px;">${primaryBtn}${secondaryBtn}</div>
+      <p style="margin:0 0 2px;font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-text-heading);">${title}</p>
+      <p style="margin:0 0 12px;font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.4;">${description}</p>
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn btn-primary btn-xs" style="flex:1;">${ctaLabel}</button>
+        <button type="button" class="btn btn-light btn-xs" style="flex:1;">Later</button>
+      </div>
     </div>
     ${dismissBtn('#9ca3af')}
   </div>
@@ -182,7 +180,6 @@ The \`cta\` flag switches from the compact single-line layout to the expanded la
     },
   },
   argTypes: {
-    // ── Content ──────────────────────────────────────────────────────────────
     title: {
       control: 'text',
       description: 'Primary message. For `push` and `interactive` types this is the sender name or notification headline.',
@@ -198,14 +195,12 @@ The \`cta\` flag switches from the compact single-line layout to the expanded la
       description: 'Action button label. Shown only when `cta` is true (or always for `interactive` type).',
       table: { category: 'Content', defaultValue: { summary: 'Take action' } },
     },
-    // ── Appearance ───────────────────────────────────────────────────────────
     type: {
       control: 'select',
       options: ['success', 'danger', 'default', 'simple', 'push', 'interactive'],
       description: 'Visual theme and layout. Determines color, icon, border, and structure.',
       table: { category: 'Appearance', defaultValue: { summary: 'success' } },
     },
-    // ── State ────────────────────────────────────────────────────────────────
     cta: {
       control: 'boolean',
       description: 'Expands `success` and `danger` toasts to show a title row, body text, and action button. Has no effect on `default`, `simple`, `push`, or `interactive` types.',
@@ -236,12 +231,12 @@ export const Interactive = {
           const { type, cta, title, description, ctaLabel } = ctx.args;
           const ctaAttr = cta ? ` data-cta="true"` : '';
           const descLine = cta || ['push','interactive'].includes(type)
-            ? `\n  <p class="toast__body">${description}</p>` : '';
+            ? `\n  <p class="toast-message">${description}</p>` : '';
           const btnLine = (cta || type === 'interactive')
-            ? `\n  <button class="toast__cta">${ctaLabel}</button>` : '';
+            ? `\n  <button class="btn btn-primary btn-xs">${ctaLabel}</button>` : '';
           return `<div class="toast toast--${type}"${ctaAttr} role="status" aria-live="polite">
-  <p class="toast__title">${title}</p>${descLine}${btnLine}
-  <button class="toast__dismiss" aria-label="Dismiss notification">×</button>
+  <p class="toast-title">${title}</p>${descLine}${btnLine}
+  <button class="toast-close" aria-label="Dismiss notification">×</button>
 </div>`;
         },
       },
@@ -267,16 +262,16 @@ export const AllTypes = {
       source: {
         code: `<!-- Success -->
 <div class="toast toast--success" role="status" aria-live="polite">
-  <div class="toast__icon-box"><!-- check icon --></div>
-  <p class="toast__title">File saved successfully.</p>
-  <button class="toast__dismiss" aria-label="Dismiss">×</button>
+  <div class="toast-icon toast-icon-success"><!-- check icon --></div>
+  <p class="toast-title">File saved successfully.</p>
+  <button class="toast-close" aria-label="Dismiss">×</button>
 </div>
 
 <!-- Danger -->
 <div class="toast toast--danger" role="alert" aria-live="assertive">
-  <div class="toast__icon-box"><!-- bell icon --></div>
-  <p class="toast__title">The file was permanently deleted.</p>
-  <button class="toast__dismiss" aria-label="Dismiss">×</button>
+  <div class="toast-icon toast-icon-danger"><!-- bell icon --></div>
+  <p class="toast-title">The file was permanently deleted.</p>
+  <button class="toast-close" aria-label="Dismiss">×</button>
 </div>
 
 <!-- Default -->
@@ -304,10 +299,10 @@ export const AllTypes = {
       { label: 'Interactive', html: toastInteractive({ title: 'Software update available', description: 'Version 3.1 is ready to install. Restart to apply.', ctaLabel: 'Update now' }) },
     ];
     return `
-<div style="display:flex;flex-direction:column;gap:16px;padding:32px;background:#f9fafb;">
+<div style="display:flex;flex-direction:column;gap:16px;padding:32px;background:var(--color-bg-default);">
   ${items.map(({ label, html }) => `
     <div>
-      <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${label}</div>
+      <div style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${label}</div>
       ${html}
     </div>`).join('')}
 </div>`;
@@ -332,24 +327,24 @@ export const WithCTA = {
       source: {
         code: `<!-- Success with CTA -->
 <div class="toast toast--success toast--expanded" role="status" aria-live="polite">
-  <div class="toast__title-row">
+  <div class="toast-title-row">
     <!-- check-circle icon -->
-    <strong class="toast__heading">Success</strong>
-    <button class="toast__dismiss" aria-label="Dismiss">×</button>
+    <strong class="toast-title">Success</strong>
+    <button class="toast-close" aria-label="Dismiss">×</button>
   </div>
-  <p class="toast__body">Your changes have been saved and are now visible to all collaborators.</p>
-  <button class="toast__cta">View file</button>
+  <p class="toast-message">Your changes have been saved and are now visible to all collaborators.</p>
+  <button class="btn btn-green btn-xs">View file</button>
 </div>
 
 <!-- Danger with CTA -->
 <div class="toast toast--danger toast--expanded" role="alert" aria-live="assertive">
-  <div class="toast__title-row">
+  <div class="toast-title-row">
     <!-- x-circle icon -->
-    <strong class="toast__heading">Attention</strong>
-    <button class="toast__dismiss" aria-label="Dismiss">×</button>
+    <strong class="toast-title">Attention</strong>
+    <button class="toast-close" aria-label="Dismiss">×</button>
   </div>
-  <p class="toast__body">Oh snap! Something went wrong. Your changes could not be saved.</p>
-  <button class="toast__cta">Undo action</button>
+  <p class="toast-message">Oh snap! Something went wrong. Your changes could not be saved.</p>
+  <button class="btn btn-red btn-xs">Undo action</button>
 </div>`,
         language: 'html',
       },

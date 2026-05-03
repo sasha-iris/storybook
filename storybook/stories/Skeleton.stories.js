@@ -18,7 +18,7 @@ function ac(animated) { return animated ? 'sk-a' : ''; }
 function skCardImage({ animated }) {
   const a = ac(animated);
   return `
-<div style="width:384px;padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
+<div style="width:384px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div class="sk-d ${a}" style="height:95px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;">
     ${IMAGE_ICON}
   </div>
@@ -44,7 +44,7 @@ function skCardImage({ animated }) {
 function skImageText({ animated }) {
   const a = ac(animated);
   return `
-<div style="width:600px;padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);display:flex;gap:24px;align-items:flex-start;">
+<div style="width:600px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);display:flex;gap:24px;align-items:flex-start;">
   <div class="sk-d ${a}" style="width:224px;height:148px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
     ${IMAGE_ICON}
   </div>
@@ -63,7 +63,7 @@ function skImageText({ animated }) {
 function skText({ animated }) {
   const a = ac(animated);
   return `
-<div style="width:640px;padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
+<div style="width:640px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="margin-bottom:14px;">
     <div class="sk-d ${a}" style="width:396px;height:9px;border-radius:15px;margin-bottom:8px;"></div>
     <div class="sk-d ${a}" style="width:246px;height:9px;border-radius:15px;"></div>
@@ -83,7 +83,7 @@ function skList({ animated }) {
   const nameWidths = [70, 85, 76, 92, 68];
   const roleWidths = [50, 62, 55, 48, 60];
   const rows = nameWidths.map((nw, i) => `
-    <div style="display:flex;align-items:center;justify-content:space-between;height:40px;${i < 4 ? 'border-bottom:1px solid #f3f4f6;' : ''}">
+    <div style="display:flex;align-items:center;justify-content:space-between;height:40px;${i < 4 ? 'border-bottom:1px solid var(--color-bg-muted);' : ''}">
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="sk ${a}" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
         <div>
@@ -94,7 +94,7 @@ function skList({ animated }) {
       <div class="sk ${a}" style="width:20px;height:5px;border-radius:4px;"></div>
     </div>`).join('');
   return `
-<div style="width:300px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:0 16px;">
+<div style="width:300px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:0 16px;">
   ${rows}
 </div>`;
 }
@@ -103,7 +103,7 @@ function skSimpleText({ animated }) {
   const a = ac(animated);
   // From Figma: 7 rows at 8px. Most are #d1d5db; middle cells in 3-col rows are #e5e7eb.
   return `
-<div style="width:640px;padding:16px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
+<div style="width:640px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="display:flex;flex-direction:column;gap:16px;">
     <div class="sk-d ${a}" style="height:8px;border-radius:6px;"></div>
     <div class="sk-d ${a}" style="height:8px;border-radius:6px;width:371px;"></div>
@@ -131,7 +131,7 @@ function skWidget({ animated }) {
     `<div class="sk ${a}" style="width:17px;height:229px;border-radius:2px;"></div>`
   ).join('');
   return `
-<div style="width:300px;padding:16px;background:#fff;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
+<div style="width:300px;padding:16px;background:var(--color-bg-surface);border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="margin-bottom:16px;">
     <div class="sk-d ${a}" style="width:119px;height:8px;border-radius:2px;margin-bottom:6px;"></div>
     <div class="sk ${a}" style="width:79px;height:6px;border-radius:2px;"></div>
@@ -285,10 +285,10 @@ export const AllTypes = {
       'widget':      'Widget',
     };
     return STYLES + `
-<div style="display:flex;flex-direction:column;gap:32px;padding:24px;background:#f9fafb;">
+<div style="display:flex;flex-direction:column;gap:32px;padding:24px;background:var(--color-bg-default);">
   ${types.map(type => `
     <div>
-      <div style="font:500 11px/1 inherit;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">${labels[type]}</div>
+      <div style="font:var(--font-medium) 11px/1 inherit;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">${labels[type]}</div>
       ${TYPE_MAP[type]({ animated })}
     </div>`).join('')}
 </div>`;
