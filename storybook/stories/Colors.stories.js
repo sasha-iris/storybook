@@ -52,6 +52,26 @@ via \`var(--color-<group>-<name>)\`.
 **Naming convention**
 \`--color-{group}-{semantic?}-{shade?}\`
 Examples: \`--color-text-fg-brand\`, \`--color-bg-success-soft\`, \`--color-border-danger\`
+
+---
+
+> ⚠️ **Important for developers — token coverage gap**
+>
+> This page documents the **primitive token layer** (text / bg / border variables from the Figma Primitives frame).
+> Component families — Badge, Chip, Tag, Tabs, Progress Bar, and others — are built directly from
+> **Figma component nodes** and use additional hex values that are not yet mapped to CSS custom properties.
+>
+> **What this means in practice:**
+> - Component source snippets in this Storybook show raw hex values (e.g. \`#5850ec\`, \`#e7000b\`).
+>   These are Figma-exact and visually correct, but they bypass the token layer.
+> - Until a full token audit maps every component color to a \`--color-*\` variable,
+>   raw hex values in components should be treated as **provisional** — do not copy them into new work without checking against this page first.
+>
+> **Action required (design + engineering):**
+> Audit each component family against this token page and replace raw hex values with the corresponding
+> \`--color-*\` CSS variable. Tracked as a known debt item.
+>
+> **Affected families (as of May 2026):** Badge · Chip · Tag · Button · Tabs · Progress Bar
         `.trim(),
       },
     },
