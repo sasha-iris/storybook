@@ -14,6 +14,7 @@
  * - Tag.stories.js         → dot (r=3), x-mark (dismiss)
  * - Indicators.stories.js  → check (stroke), dot-solid (r=6), mail-outline, fire-outline
  * - Skeleton.stories.js    → image-placeholder (landscape SVG)
+ * - Toast.stories.js       → check (solid), check-circle (solid), x-circle (solid), bell (outline), paper-airplane (solid), refresh (solid)
  */
 
 import { ICON } from './card-icons.js';
@@ -92,6 +93,7 @@ No extras, no speculative additions.
 | Chip / Tag icons | Chip, Tag (dot r=3, x-mark dismiss) |
 | Indicators icons | Indicators (check stroke, dot-solid, mail outline, fire outline) |
 | Skeleton icons | Skeleton (image-placeholder landscape) |
+| Toast icons | Toast (check solid, check-circle solid, x-circle solid, bell outline, paper-airplane solid, refresh solid) |
         `,
       },
     },
@@ -311,4 +313,47 @@ export const SkeletonIcons = {
       </div>
     </div>
   `,
+};
+
+/* ─────────────────────────────────────────────
+   TOAST ICONS  (Toast.stories.js — node 3338:16753)
+───────────────────────────────────────────── */
+
+const _CHECK_PATH        = 'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z';
+const _CHECK_CIRCLE_PATH = 'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z';
+const _X_CIRCLE_PATH     = 'M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z';
+const _PAPER_PLANE_PATH  = 'M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z';
+const _REFRESH_PATH      = 'M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z';
+
+function _ts(path, color) {
+  return `<svg width="20" height="20" viewBox="0 0 20 20" fill="${color}" aria-hidden="true"><path fill-rule="evenodd" d="${path}" clip-rule="evenodd"/></svg>`;
+}
+const _bellToastSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f05252" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>`;
+
+export const ToastIcons = {
+  name: 'Toast icons — used in Toast',
+  parameters: {
+    docs: {
+      description: {
+        story: `Icons used in Toast component variants. All solid icons are Heroicons v1 (viewBox 0 0 20 20). Bell is Heroicons v1 outline (viewBox 0 0 24 24, displayed at 20px).
+
+| Icon | Used in |
+|------|---------|
+| check | Success icon box, Default icon box |
+| check-circle | Success (CTA) title row |
+| x-circle | Danger (CTA) title row |
+| bell (outline) | Danger icon box |
+| paper-airplane | Simple toast |
+| refresh | Interactive toast icon box |`,
+      },
+    },
+  },
+  render: () => iconGrid([
+    ['check (solid)', _ts(_CHECK_PATH, '#007a55')],
+    ['check-circle (solid)', _ts(_CHECK_CIRCLE_PATH, '#0e9f6e')],
+    ['x-circle (solid)', _ts(_X_CIRCLE_PATH, '#e02424')],
+    ['bell (outline)', _bellToastSvg],
+    ['paper-airplane (solid)', _ts(_PAPER_PLANE_PATH, '#155dfc')],
+    ['refresh (solid)', _ts(_REFRESH_PATH, '#155dfc')],
+  ]),
 };
