@@ -5,8 +5,6 @@
  * File key: ZKtEULdYKaXe5uQl1J6ijI
  */
 
-import { iris as irisLogo } from './brand-assets.js';
-
 /* ── Inline SVG icons ────────────────────────────────────────── */
 const CHEVRON_RIGHT  = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>`;
 const CHEVRON_DOWN   = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>`;
@@ -593,6 +591,56 @@ Complete menu panels from Figma node **3283:21147**.
 ✅ Toggle and Checkbox menus reuse \`.iris-toggle\` / \`.iris-checkbox\` from the Controls component
         `,
       },
+      source: {
+        language: 'html',
+        code: `<!-- Default menu (search + sections + footer) -->
+<div class="dropdown-menu" style="width:224px;">
+  <div class="dropdown-search">
+    <div class="dropdown-search-input">
+      <!-- search icon -->
+      <span class="dropdown-search-input__text">Search</span>
+      <span class="dropdown-search-input__value">Regular Select</span>
+    </div>
+  </div>
+  <div class="dropdown-label">ACTIONS <span class="dropdown-count">5</span></div>
+  <button class="dropdown-item">
+    <span class="dropdown-item__icon"><!-- icon --></span>
+    <span class="dropdown-item__text">First Action</span>
+  </button>
+  <hr class="dropdown-divider">
+  <button class="dropdown-item danger">
+    <span class="dropdown-item__text">Sign Out</span>
+  </button>
+</div>
+
+<!-- Checkbox filter menu -->
+<div class="dropdown-menu" style="width:280px;">
+  <div class="dropdown-label">FILTER BY STATUS</div>
+  <label style="display:flex;gap:8px;padding:8px 16px;cursor:pointer;">
+    <span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
+    <span class="iris-control__label">Active reports</span>
+  </label>
+</div>
+
+<!-- Toggle settings menu -->
+<div class="dropdown-menu" style="width:260px;">
+  <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+    <span>Enable notifications</span>
+    <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true">
+      <span class="iris-toggle__thumb"></span>
+    </span>
+  </div>
+</div>
+
+<!-- App dropdown (2-col icon grid) -->
+<div class="dropdown-menu" style="width:256px;">
+  <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+    <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;">
+      <!-- shopping-bag icon --> Sales
+    </button>
+  </div>
+</div>`,
+      },
     },
   },
   render: () => {
@@ -637,6 +685,32 @@ Header: 16px/500 on gray/50 bg. Each row: 44×44 avatar + message body + blue ti
 ✅ Use for bell-icon notification feeds — up to ~5 items, then truncate with "View all"
 ❌ Do not use for action menus — use the Default type instead
         `,
+      },
+      source: {
+        language: 'html',
+        code: `<div class="dropdown-menu" style="width:384px;">
+
+  <!-- Header -->
+  <div style="background:var(--color-bg-default);padding:8px 12px;">
+    <span style="font-size:var(--text-base);font-weight:500;">Notifications</span>
+  </div>
+
+  <!-- Notification row -->
+  <div class="dropdown-notification">
+    <span class="dropdown-notification__avatar">JL</span>
+    <div class="dropdown-notification__body">
+      <span class="dropdown-notification__msg">Jese Leos: "Hey, what's up?"</span>
+      <span class="dropdown-notification__time">a few moments ago</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="padding:8px 12px;display:flex;align-items:center;gap:8px;">
+    <!-- eye icon -->
+    <span style="font-size:var(--text-sm);font-weight:500;">View all</span>
+  </div>
+
+</div>`,
       },
     },
   },
