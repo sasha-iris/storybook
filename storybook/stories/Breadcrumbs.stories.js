@@ -54,9 +54,7 @@ function breadcrumb({ type = 'default', showHomeIcon = true, depth = 3, items } 
     const isCurrent = i === labels.length - 1;
     const isFirst = i === 0;
 
-    const icon = (isFirst && showHomeIcon)
-      ? `<span style="flex-shrink:0;display:flex;align-items:center;">${homeIcon}</span>`
-      : '';
+    const icon = (isFirst && showHomeIcon) ? homeIcon : '';
 
     const sep = !isCurrent
       ? `<span class="breadcrumb-sep" aria-hidden="true">${chevronRight}</span>`

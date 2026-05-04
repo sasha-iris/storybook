@@ -260,7 +260,7 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use **active**, **hovered**, and **owner** Controls to preview all state combinations. Toggle `active` to see the paused state; toggle `hovered` to preview the hover treatment.',
+        story: 'Use **active**, **hovered**, and **owner** Controls to preview all state combinations. Toggle `active` to see the paused state; toggle `hovered` to preview the hover treatment. You can also **click the toggle** inside the card to switch it on/off directly.',
       },
       source: {
         transform: (_src, storyCtx) => {
@@ -275,6 +275,26 @@ export const Interactive = {
     },
   },
   render: (args) => reportingCard(args),
+  play: async ({ canvasElement }) => {
+    // Clean up previous listener to prevent duplicates on args re-render
+    if (canvasElement._reportingToggleHandler) {
+      canvasElement.removeEventListener('click', canvasElement._reportingToggleHandler);
+    }
+    canvasElement._reportingToggleHandler = (e) => {
+      const tog = e.target.closest('.iris-toggle');
+      if (!tog) return;
+      const isOn = tog.classList.contains('iris-toggle--on');
+      const nowOn = !isOn;
+      tog.classList.toggle('iris-toggle--on', nowOn);
+      tog.classList.toggle('iris-toggle--off', !nowOn);
+      tog.setAttribute('aria-checked', String(nowOn));
+      tog.setAttribute('aria-label', `Report ${nowOn ? 'enabled' : 'disabled'}`);
+      // Reflect inactive state on the card container
+      const card = tog.closest('.card-reporting');
+      if (card) card.classList.toggle('card-reporting--inactive', !nowOn);
+    };
+    canvasElement.addEventListener('click', canvasElement._reportingToggleHandler);
+  },
 };
 
 /**
