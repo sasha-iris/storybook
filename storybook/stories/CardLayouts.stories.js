@@ -293,7 +293,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
   <!-- Checkbox row -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
     <label style="display:flex;align-items:center;gap:8px;font-size:var(--text-sm);cursor:pointer;">
-      <input type="checkbox" style="width:16px;height:16px;accent-color:#1447e6;">
+      <span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
       Remember me
     </label>
     <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>

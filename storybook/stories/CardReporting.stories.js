@@ -134,8 +134,8 @@ const ARROW_RIGHT = `<svg width="20" height="20" viewBox="0 0 20 20" fill="curre
 /* ── Sub-component helpers ──────────────────────────────────── */
 
 const toggle = (on) =>
-  `<span class="rpt-toggle rpt-toggle--${on ? 'on' : 'off'}" aria-label="Report ${on ? 'enabled' : 'disabled'}">
-    <span class="rpt-toggle__pill"></span>
+  `<span class="iris-toggle iris-toggle--${on ? 'on' : 'off'}" role="switch" aria-checked="${on}" aria-label="Report ${on ? 'enabled' : 'disabled'}">
+    <span class="iris-toggle__thumb"></span>
   </span>`;
 
 /** Channel chips: colored (active) or muted gray (inactive) */
@@ -309,9 +309,9 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
     <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:#111928;margin:0;">Daily Report</p>
-        <!-- Toggle ON: class rpt-toggle rpt-toggle--on -->
-        <span class="rpt-toggle rpt-toggle--on" aria-label="Report enabled">
-          <span class="rpt-toggle__pill"></span>
+        <!-- Toggle ON: class iris-toggle iris-toggle--on -->
+        <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" aria-label="Report enabled">
+          <span class="iris-toggle__thumb"></span>
         </span>
       </div>
       <!-- Channel chips (active: colored) -->
@@ -383,8 +383,8 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
           <!-- Arrow-right icon: only visible on hover -->
           <span style="color:#42389d;display:inline-flex;"><!-- arrow-right SVG --></span>
         </div>
-        <span class="rpt-toggle rpt-toggle--on" aria-label="Report enabled">
-          <span class="rpt-toggle__pill"></span>
+        <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" aria-label="Report enabled">
+          <span class="iris-toggle__thumb"></span>
         </span>
       </div>
       <div style="display:flex;gap:4px;">
@@ -437,9 +437,9 @@ Inactive state (active=no): report is paused.
     <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:#111928;margin:0;">Daily Report</p>
-        <!-- Toggle OFF: rpt-toggle--off; pill color #d1d5db (gray/300) -->
-        <span class="rpt-toggle rpt-toggle--off" aria-label="Report disabled">
-          <span class="rpt-toggle__pill"></span>
+        <!-- Toggle OFF: iris-toggle--off; thumb color white, track gray/300 -->
+        <span class="iris-toggle iris-toggle--off" role="switch" aria-checked="false" aria-label="Report disabled">
+          <span class="iris-toggle__thumb"></span>
         </span>
       </div>
       <!-- Chips: muted (gray/100 bg + gray text when inactive) -->
