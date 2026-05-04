@@ -236,6 +236,11 @@
   --color-ctrl-danger-label:         #c81e1e; /* destructive label + sublabel text       */
   --color-ctrl-danger-helper:        #fb2c36; /* destructive helper text                 */
   --color-ctrl-danger-disabled-text: #ffa2a2; /* disabled + destructive text             */
+
+  /* ── Dropdown ────────────────────────────────────────────── */
+  /* Source: Figma 9456:150381 / 3283:21147 / 3283:21134       */
+  --color-dropdown-icon-danger:       #f05252; /* red/500 — destructive item icon         */
+  --color-dropdown-disabled-selected: #b4c6fc; /* indigo/300 — disabled selected item    */
 }
 
 /* ── BASE ───────────────────────────────────── */
@@ -1511,61 +1516,279 @@ input[type="file"].form-file-input {
    Frames: Dropdowns · Dropdown menus
    ============================================= */
 
+/* =============================================================
+   DROPDOWN
+   Figma: 9456:150381 (item) · 3283:21147 (menu) · 3283:21134 (trigger)
+   ============================================================= */
+
+/* ── Container ─────────────────────────────────────────────── */
 .dropdown { position: relative; display: inline-block; }
 
+/* ── Menu panel ─────────────────────────────────────────────── */
+/* Figma: bg=#ffffff, radius=8px, no explicit border            */
 .dropdown-menu {
+  min-width: 224px;
+  background: var(--color-bg-surface);   /* #ffffff */
+  border-radius: var(--radius-md);       /* 8px */
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  overflow: hidden;
+  list-style: none;
+}
+/* Position helpers — add when inside a .dropdown wrapper */
+.dropdown-menu--absolute {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   z-index: 50;
-  min-width: 180px;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  padding: 6px 0;
-  list-style: none;
+}
+.dropdown-menu-right,
+.dropdown-menu--right { left: auto; right: 0; }
+
+/* Dark mode — Figma bg=#374151 (gray-700) */
+.dropdown-menu--dark { background: #374151; }
+
+/* ── Section label ───────────────────────────────────────────── */
+/* Figma: pad=4/16/0/16, fs=12/700, color=#9ca3af, UPPERCASE    */
+.dropdown-label,
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px 0;
+  font-size: var(--text-xs);           /* 12px */
+  font-weight: var(--font-bold);       /* 700  */
+  line-height: 1.5;
+  color: var(--color-text-disabled);   /* #9ca3af */
+  text-transform: uppercase;
 }
 
-.dropdown-menu-right { left: auto; right: 0; }
+/* Count chip inside label (e.g. "24") */
+.dropdown-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);    /* 4px */
+  background: var(--color-bg-muted);  /* #f3f4f6 */
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-body);      /* #4a5565 */
+  text-transform: none;
+}
 
+/* ── Divider ─────────────────────────────────────────────────── */
+/* Figma: 1px solid #e5e7eb, no margin                          */
+.dropdown-divider {
+  height: 1px;
+  background: var(--color-border-base); /* #e5e7eb */
+  border: none;
+  margin: 0;
+}
+.dropdown-menu--dark .dropdown-divider { background: #4b5563; }
+
+/* ── List item ───────────────────────────────────────────────── */
+/* Figma 9456:150381 — h=37px, pad=8/16, gap=12                 */
 .dropdown-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 8px 16px;
-  font-size: var(--text-sm);
-  color: var(--color-text-primary);
+  font-size: var(--text-sm);           /* 14px */
+  font-weight: var(--font-normal);     /* 400  */
+  line-height: 1.5;
+  color: var(--color-text-heading);    /* #101828 */
   text-decoration: none;
   cursor: pointer;
   background: transparent;
   border: none;
   width: 100%;
   text-align: left;
-  font-family: var(--font-family-base);
+  font-family: inherit;
   transition: background 0.1s;
 }
-.dropdown-item:hover { background: var(--color-bg-muted); text-decoration: none; }
-.dropdown-item.active { background: var(--color-bg-muted); font-weight: var(--font-medium); }
-.dropdown-item.danger { color: var(--color-danger); }
-.dropdown-item.danger:hover { background: #FEF2F2; }
+/* Sub-elements */
+.dropdown-item__icon,
+.dropdown-item__chevron { flex-shrink: 0; color: var(--color-text-secondary); } /* #6b7280 */
+.dropdown-item__text    { flex: 1; min-width: 0; }
+
+/* Hover — default: bg gray/100, radius 6px */
+.dropdown-item:hover {
+  background: var(--color-bg-muted);  /* #f3f4f6 */
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+/* Selected (active) — text brand/800, icon brand/600 */
+.dropdown-item.active { color: var(--btn-primary-bg); }            /* #42389d */
+.dropdown-item.active .dropdown-item__icon { color: var(--color-bg-brand); } /* #5145cd */
+.dropdown-item.active:hover {
+  background: var(--color-bg-muted);
+  border-radius: 6px;
+  color: var(--btn-primary-hover);    /* #362f78 */
+}
+.dropdown-item.active:hover .dropdown-item__icon { color: var(--btn-primary-bg); } /* #42389d */
+
+/* Destructive — text danger/700, icon red/500 */
+.dropdown-item.danger { color: var(--color-text-fg-danger); }      /* #c70036 */
+.dropdown-item.danger .dropdown-item__icon { color: var(--color-dropdown-icon-danger); } /* #f05252 */
+.dropdown-item.danger:hover {
+  background: var(--color-bg-muted);
+  border-radius: 6px;
+  color: var(--color-text-fg-danger-strong); /* #8b0836 */
+}
+.dropdown-item.danger:hover .dropdown-item__icon { color: var(--color-danger); } /* #e02424 */
+
+/* Disabled */
 .dropdown-item:disabled,
-.dropdown-item[aria-disabled="true"] { color: var(--color-text-disabled); pointer-events: none; }
-
-.dropdown-divider {
-  height: 1px;
-  background: var(--color-border-default);
-  margin: 6px 0;
+.dropdown-item[aria-disabled="true"] {
+  color: var(--color-text-body);      /* #4a5565 */
+  pointer-events: none;
+  cursor: default;
+}
+.dropdown-item:disabled .dropdown-item__icon,
+.dropdown-item[aria-disabled="true"] .dropdown-item__icon { color: var(--color-ctrl-off); } /* #d1d5db */
+/* Disabled + selected */
+.dropdown-item.active[aria-disabled="true"],
+.dropdown-item.active[aria-disabled="true"] .dropdown-item__icon {
+  color: var(--color-dropdown-disabled-selected); /* #b4c6fc */
 }
 
-.dropdown-header {
-  padding: 8px 16px 4px;
-  font-size: var(--text-xs);
-  font-weight: var(--font-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-disabled);
+/* Dark mode items — text #d1d5db */
+.dropdown-menu--dark .dropdown-item { color: #d1d5db; }
+.dropdown-menu--dark .dropdown-item .dropdown-item__icon { color: #d1d5db; }
+.dropdown-menu--dark .dropdown-item:hover { background: rgba(255,255,255,.06); }
+.dropdown-menu--dark .dropdown-item.danger { color: #f05252; }
+
+/* ── Search input row ────────────────────────────────────────── */
+/* Figma: pad=12/16/4/16, input 40px, bg=#f9fafb border=#d1d5db */
+.dropdown-search { padding: 12px 16px 4px; }
+.dropdown-search-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--color-bg-default);     /* #f9fafb */
+  border: 1px solid var(--color-ctrl-off); /* #d1d5db */
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  cursor: text;
 }
+.dropdown-search-input__icon   { flex-shrink: 0; color: var(--color-text-secondary); }
+.dropdown-search-input__text   { flex: 1; font-size: var(--text-sm); color: var(--color-text-secondary); }
+.dropdown-search-input__value  { color: var(--color-text-heading); }
+.dropdown-search-input__chevron { flex-shrink: 0; color: var(--color-text-secondary); }
+
+/* ── User profile header ─────────────────────────────────────── */
+/* Figma: pad=12/16, gap=10, avatar=32×32, name=14/600, email=12/400 */
+.dropdown-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.dropdown-profile__avatar {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-base);
+  background: var(--color-bg-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: var(--font-medium);
+  color: var(--color-text-heading);
+  flex-shrink: 0;
+}
+.dropdown-profile__name {
+  font-size: var(--text-sm); font-weight: var(--font-semibold);
+  color: var(--color-bg-dark-strong); line-height: 1.5; /* #101828 */
+}
+.dropdown-profile__email {
+  font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5;
+}
+
+/* ── Avatar item (scrolling dropdown) ────────────────────────── */
+/* Figma: 24×24 avatar + name + date, gap=10, height=24         */
+.dropdown-avatar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 0; cursor: pointer;
+}
+.dropdown-avatar-item__avatar {
+  width: 24px; height: 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-base);
+  background: var(--color-bg-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: var(--font-medium);
+  color: var(--color-text-heading); flex-shrink: 0;
+}
+.dropdown-avatar-item__name {
+  font-size: var(--text-sm); font-weight: var(--font-normal);
+  color: var(--color-text-heading); line-height: 1;
+}
+.dropdown-avatar-item__sub {
+  font-size: var(--text-xs); color: var(--color-text-secondary);
+}
+
+/* CTA row at bottom of scrolling dropdown */
+.dropdown-cta {
+  display: flex; align-items: center; gap: 4px;
+  padding: 10px 12px 9px;
+  background: var(--color-bg-default);
+  font-size: var(--text-sm); font-weight: var(--font-medium);
+  color: var(--color-text-fg-brand); /* #1447e6 */
+  cursor: pointer;
+}
+
+/* ── Notification item ────────────────────────────────────────── */
+/* Figma: gap=12, avatar=44×44, msg=14/400 gray/500, time=12 blue */
+.dropdown-notification {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--color-border-base);
+}
+.dropdown-notification:last-of-type { border-bottom: none; }
+.dropdown-notification__avatar {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-base);
+  background: var(--color-bg-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: var(--font-semibold);
+  color: var(--color-text-heading); flex-shrink: 0;
+}
+.dropdown-notification__body { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.dropdown-notification__msg  { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; }
+.dropdown-notification__time { font-size: var(--text-xs); color: #155dfc; }
+
+/* ── Trigger buttons ─────────────────────────────────────────── */
+/* Figma 3283:21134: bg=brand/900 (#362f78), ring=indigo/200    */
+.dropdown-trigger {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--btn-primary-hover);        /* #362f78 brand/900 */
+  border: 3px solid var(--color-ctrl-disabled-on); /* #cddbfe ring   */
+  border-radius: var(--radius-lg);             /* 12px */
+  font-size: var(--text-sm); font-weight: var(--font-medium);
+  color: var(--color-text-inverse);            /* #ffffff */
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.dropdown-trigger:hover { background: var(--btn-primary-bg); } /* #42389d on hover */
+/* Icon-only trigger (circle) */
+.dropdown-trigger--icon { padding: 10px; border-radius: var(--radius-full); }
+/* Small variant for inside-menu footer buttons */
+.dropdown-trigger--sm {
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-xs); font-weight: var(--font-medium);
+  border-width: 1px;
+}
+/* Outline (secondary) trigger */
+.dropdown-trigger--outline {
+  background: transparent;
+  border-color: var(--color-border-base); /* #e5e7eb */
+  color: var(--color-bg-dark);            /* #1e2939 */
+}
+.dropdown-trigger--outline:hover { background: var(--color-bg-muted); }
 
 
 /* =============================================
