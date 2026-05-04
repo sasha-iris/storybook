@@ -8,17 +8,24 @@
 import { iris as irisLogo } from './brand-assets.js';
 
 /* ── Inline SVG icons ────────────────────────────────────────── */
-const CHEVRON_RIGHT = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>`;
-const CHEVRON_DOWN  = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>`;
-const USER_ADD      = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/></svg>`;
-const SEARCH_ICON   = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>`;
-const LOGOUT        = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h6a1 1 0 000-2H4V5h5a1 1 0 000-2H3zm9.707 4.293a1 1 0 00-1.414 1.414L12.586 10l-1.293 1.293a1 1 0 101.414 1.414l2-2a1 1 0 000-1.414l-2-2z" clip-rule="evenodd"/><path d="M7 9a1 1 0 000 2h6a1 1 0 000-2H7z"/></svg>`;
-const INFO_ICON     = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>`;
-const PENCIL        = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>`;
-const INBOX         = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"/><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/></svg>`;
-const FIRE          = `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg>`;
-const PLUS          = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>`;
-const EYE           = `<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>`;
+const CHEVRON_RIGHT  = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>`;
+const CHEVRON_DOWN   = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>`;
+const USER_ADD       = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/></svg>`;
+const SEARCH_ICON    = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>`;
+const LOGOUT         = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h6a1 1 0 000-2H4V5h5a1 1 0 000-2H3zm9.707 4.293a1 1 0 00-1.414 1.414L12.586 10l-1.293 1.293a1 1 0 101.414 1.414l2-2a1 1 0 000-1.414l-2-2z" clip-rule="evenodd"/><path d="M7 9a1 1 0 000 2h6a1 1 0 000-2H7z"/></svg>`;
+const INFO_ICON      = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>`;
+const PENCIL         = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>`;
+const INBOX          = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"/><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/></svg>`;
+const FIRE           = `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg>`;
+const PLUS           = `<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>`;
+const EYE            = `<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>`;
+const SHOPPING_BAG   = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>`;
+const USER_GROUP     = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>`;
+const USER_CIRCLE    = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/></svg>`;
+const COG            = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>`;
+const ARCHIVE        = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/><path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>`;
+const CURRENCY       = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>`;
+const DOCUMENT       = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>`;
 
 /* ── Primitive builders ──────────────────────────────────────── */
 
@@ -205,7 +212,127 @@ const darkMenu = () => menu(`
   </button>
 `, { dark: true });
 
-const menuMap = { default: defaultMenu, checkbox: checkboxMenu, toggle: toggleMenu, radio: radioMenu, profile: profileMenu, notification: notificationMenu, scrolling: scrollingMenu, dark: darkMenu };
+// Type=Helper text — checkbox list where each item has a label + helper text below
+const helperTextMenu = () => menu(`
+  ${section({
+    label: 'FILTER BY TYPE', count: 2,
+    items: [
+      { label: 'Analytics reports', helper: 'Charts, funnels, and cohorts', checked: true },
+      { label: 'Data exports',      helper: 'CSV and JSON downloads',       checked: true },
+      { label: 'Scheduled emails',  helper: 'Daily and weekly digests',     checked: false },
+    ].map(({ label, helper, checked }) => `
+      <label style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
+        <span style="margin-top:2px;flex-shrink:0;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
+        <span style="display:flex;flex-direction:column;gap:2px;">
+          <span style="font-size:14px;font-weight:500;color:#101828;">${label}</span>
+          <span style="font-size:12px;font-weight:400;color:#6b7280;">${helper}</span>
+        </span>
+      </label>`).join(''),
+  })}
+`, { width: 280 });
+
+// Type=Radio & Helper text — radio buttons with label + helper text
+const radioWithHelperMenu = () => menu(`
+  <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+    ${[
+      { label: 'Last 7 days',  helper: 'From today',           checked: false },
+      { label: 'Last 30 days', helper: 'From today',           checked: true  },
+      { label: 'Last 90 days', helper: 'Quarterly view',       checked: false },
+      { label: 'Custom range', helper: 'Pick start and end',   checked: false },
+    ].map(({ label, helper, checked }) => `
+    <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;">
+      <span style="margin-top:2px;flex-shrink:0;"><span class="iris-radio${checked ? ' iris-radio--checked' : ''}" role="radio" aria-checked="${checked}"></span></span>
+      <span style="display:flex;flex-direction:column;gap:2px;">
+        <span style="font-size:14px;font-weight:500;color:#101828;">${label}</span>
+        <span style="font-size:12px;font-weight:400;color:#6b7280;">${helper}</span>
+      </span>
+    </label>`).join('')}
+  </div>
+`, { width: 240 });
+
+// Type=User Select — short avatar list (Figma: 2-3 users, name 14px/600 + joined subtitle)
+const userSelectMenu = () => menu(`
+  <div style="padding:12px 16px 4px;display:flex;flex-direction:column;gap:8px;">
+    ${[
+      { initials: 'JL', name: 'Jese Leos',    sub: 'Joined August 2014' },
+      { initials: 'BG', name: 'Bonnie Green',  sub: 'Joined August 2014' },
+      { initials: 'RB', name: 'Robert Brown',  sub: 'Joined June 2021'   },
+    ].map(({ initials, name, sub }) => `
+    <div class="dropdown-avatar-item">
+      <span class="dropdown-avatar-item__avatar">${initials}</span>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:#111928;">${name}</div>
+        <div style="font-size:12px;font-weight:400;color:#6b7280;">${sub}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="dropdown-cta" style="margin:4px 0 0;">${USER_ADD} Add new user</div>
+`, { width: 200 });
+
+// Type=App dropdown — 2-column grid of icon + label app nav links
+const appDropdownMenu = () => {
+  const apps = [
+    { icon: SHOPPING_BAG, label: 'Sales',    active: false },
+    { icon: USER_GROUP,   label: 'Users',    active: false },
+    { icon: INBOX,        label: 'Inbox',    active: false },
+    { icon: USER_CIRCLE,  label: 'Profile',  active: false },
+    { icon: COG,          label: 'Settings', active: true  },
+    { icon: ARCHIVE,      label: 'Products', active: false },
+    { icon: CURRENCY,     label: 'Pricing',  active: false },
+    { icon: DOCUMENT,     label: 'Billing',  active: false },
+    { icon: LOGOUT,       label: 'Logout',   active: false },
+  ];
+  return menu(`
+  <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+    ${apps.map(({ icon, label, active }) => `
+    <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;background:${active ? '#f3f4f6' : 'transparent'};border:none;cursor:pointer;color:#374151;font-size:14px;font-weight:400;font-family:inherit;text-align:left;">
+      <span style="color:#9ca3af;flex-shrink:0;">${icon}</span>
+      ${label}
+    </button>`).join('')}
+  </div>
+`, { width: 256 });
+};
+
+// Type=Dropdown with search — search input + checkbox items with helper text
+const withSearchMenu = () => menu(`
+  <div style="padding:12px 16px 8px;">
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f9fafb;border:1px solid #d1d5db;border-radius:8px;">
+      <span style="color:#9ca3af;flex-shrink:0;">${SEARCH_ICON}</span>
+      <span style="font-size:14px;color:#9ca3af;font-family:inherit;">Search members…</span>
+    </div>
+  </div>
+  ${section({
+    label: 'TEAM MEMBERS',
+    items: [
+      { label: 'Jese Leos',    helper: 'jese@example.com',   checked: true  },
+      { label: 'Bonnie Green', helper: 'bonnie@example.com', checked: false },
+      { label: 'Joseph McFall', helper: 'joseph@example.com', checked: true },
+    ].map(({ label, helper, checked }) => `
+      <label style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
+        <span style="margin-top:2px;flex-shrink:0;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
+        <span style="display:flex;flex-direction:column;gap:2px;">
+          <span style="font-size:14px;font-weight:500;color:#101828;">${label}</span>
+          <span style="font-size:12px;font-weight:400;color:#6b7280;">${helper}</span>
+        </span>
+      </label>`).join(''),
+  })}
+`, { width: 280 });
+
+const menuMap = {
+  default: defaultMenu,
+  checkbox: checkboxMenu,
+  helperText: helperTextMenu,
+  toggle: toggleMenu,
+  radio: radioMenu,
+  radioWithHelper: radioWithHelperMenu,
+  userSelect: userSelectMenu,
+  appDropdown: appDropdownMenu,
+  withSearch: withSearchMenu,
+  profile: profileMenu,
+  notification: notificationMenu,
+  scrolling: scrollingMenu,
+  dark: darkMenu,
+};
 
 /* ── Default export ──────────────────────────────────────────── */
 
@@ -243,7 +370,7 @@ a list item, a menu panel, and a trigger button.
   argTypes: {
     menuType: {
       name: 'Menu type',
-      control: { type: 'select', options: Object.keys(menuMap) },
+      control: { type: 'select', options: ['default','checkbox','helperText','toggle','radio','radioWithHelper','userSelect','appDropdown','withSearch','profile','notification','scrolling','dark'] },
       description: 'Which menu variant to preview. Each type demonstrates a different Figma component.',
       table: { category: 'Appearance', defaultValue: { summary: 'default' } },
     },
@@ -287,7 +414,7 @@ export const Interactive = {
         story: `
 Use **Menu type** to switch between all Figma menu variants. Use **Icon-only trigger** to preview the circular button.
 
-✅ Change menu type to see: Default · Checkbox filter · Toggle settings · Radio selection · User profile · Notifications · Scrolling user list · Dark mode
+✅ Change menu type to see: Default · Checkbox · Helper text · Toggle · Radio · Radio + helper · User select · App dropdown · With search · User profile · Notifications · Scrolling list · Dark mode
 ❌ Do not nest dropdowns more than 1 level deep
         `,
       },
@@ -344,7 +471,7 @@ Use **Menu type** to switch between all Figma menu variants. Use **Icon-only tri
 export const ListItemsGallery = {
   name: 'List Items — all states',
   parameters: {
-    controls: { disable: true },
+    controls: { include: [] },
     docs: {
       description: {
         story: `
@@ -441,7 +568,7 @@ All 9 variants from Figma node **9456:150381**.
 export const MenusGallery = {
   name: 'Menus — all types',
   parameters: {
-    controls: { disable: true },
+    controls: { include: [] },
     docs: {
       description: {
         story: `
@@ -449,10 +576,15 @@ Complete menu panels from Figma node **3283:21147**.
 
 | Type | Width | Figma name |
 |------|-------|-----------|
-| Default | 224px | Type=Default (with search, sections, footer buttons) |
-| Checkbox filter | 280px | Type=Checkbox (uses .iris-checkbox + .iris-control) |
-| Toggle settings | 260px | Type=Toggle switch (uses .iris-toggle) |
+| Default | 224px | Type=Default (search + sections + footer) |
+| Checkbox filter | 280px | Type=Checkbox (.iris-checkbox + helper text) |
+| Helper text | 280px | Type=Helper text (checkbox + label + helper) |
+| Toggle settings | 260px | Type=Toggle switch (.iris-toggle) |
 | Radio selection | 224px | Type=Radio |
+| Radio + helper text | 240px | Type=Radio & Helper text |
+| User select | 200px | Type=User Select (short avatar list) |
+| App dropdown | 256px | Type=App dropdown (2-col icon grid) |
+| With search | 280px | Type=Dropdown with search (input + checkboxes) |
 | User profile | 224px | Type=Dropdown header |
 | Notifications | 384px | Type=Notification |
 | Scrolling list | 180px | Type=Dropdown with scrolling |
@@ -463,16 +595,30 @@ Complete menu panels from Figma node **3283:21147**.
       },
     },
   },
-  render: () => `
+  render: () => {
+    const entries = [
+      ['Default',           defaultMenu()],
+      ['Checkbox filter',   checkboxMenu()],
+      ['Helper text',       helperTextMenu()],
+      ['Toggle settings',   toggleMenu()],
+      ['Radio selection',   radioMenu()],
+      ['Radio + helper',    radioWithHelperMenu()],
+      ['User select',       userSelectMenu()],
+      ['App dropdown',      appDropdownMenu()],
+      ['With search',       withSearchMenu()],
+      ['User profile',      profileMenu()],
+      ['Scrolling list',    scrollingMenu()],
+      ['Dark mode',         darkMenu()],
+    ];
+    return `
 <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;">
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Default</p>${defaultMenu()}</div>
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Checkbox filter</p>${checkboxMenu()}</div>
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Toggle settings</p>${toggleMenu()}</div>
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Radio selection</p>${radioMenu()}</div>
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">User profile</p>${profileMenu()}</div>
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Scrolling list</p>${scrollingMenu()}</div>
-  <div><p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">Dark mode</p>${darkMenu()}</div>
-</div>`,
+  ${entries.map(([label, html]) => `
+  <div>
+    <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">${label}</p>
+    ${html}
+  </div>`).join('')}
+</div>`;
+  },
 };
 
 /* ── Notification menu (standalone, full width) ──────────────── */
@@ -480,7 +626,7 @@ Complete menu panels from Figma node **3283:21147**.
 export const NotificationMenu = {
   name: 'Notification panel',
   parameters: {
-    controls: { disable: true },
+    controls: { include: [] },
     docs: {
       description: {
         story: `
@@ -502,7 +648,7 @@ Header: 16px/500 on gray/50 bg. Each row: 44×44 avatar + message body + blue ti
 export const TriggersGallery = {
   name: 'Triggers — all variants',
   parameters: {
-    controls: { disable: true },
+    controls: { include: [] },
     docs: {
       description: {
         story: `
