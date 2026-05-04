@@ -55,11 +55,15 @@ const C_BU_LT = '#B4C6FC';
 const C_BD_LT = '#F8B4D9';
 
 // ── Bar heights in px from Figma ─────────────────────────────────────────────
-// barchart (602:20796): Charts frame [222x40], max bar = 40px
-// barchart-big (602:24711): Charts frame [222x58], max bar = 58px
-// index 6 is always the lighter-shade bar (#B4C6FC up / #F8B4D9 down)
-const BARS_STANDARD = [15, 16, 27, 17, 40, 25, 19, 8, 29, 40, 19, 13, 25, 36];
-const BARS_BIG      = [15, 16, 58, 17, 58, 25, 19, 8, 29, 58, 19, 13, 58, 36];
+// barchart (602:20796 up / 602:20845 down): Charts frame [222x40]
+// barchart-vert (602:23611): Charts frame [222x40], bar 13 = 40 (full)
+// barchart-big (602:24711): Charts frame [222x58], bars 2,4,9,12 = 58 (full)
+// Index 6 is always the lighter-shade bar (#B4C6FC up / #F8B4D9 down)
+// UP and DOWN differ at positions 12-13; VERT differs from UP at position 13
+const BARS_UP   = [15.54, 16.36, 27.86, 17.18, 40, 25.39, 19.64, 8.96, 29.5, 40, 19.64, 13.89, 25, 36.07];
+const BARS_DN   = [15.54, 16.36, 27.86, 17.18, 40, 25.39, 19.64, 8.96, 29.5, 40, 19.64, 13.89, 36.07, 20];
+const BARS_VERT = [15.54, 16.36, 27.86, 17.18, 40, 25.39, 19.64, 8.96, 29.5, 40, 19.64, 13.89, 25, 40];
+const BARS_BIG  = [15.54, 16.36, 58,    17.18, 58, 25.39, 19.64, 8.96, 29.5, 58, 19.64, 13.89, 58, 36.07];
 
 // ── Shared SVG icons ─────────────────────────────────────────────────────────
 
@@ -87,32 +91,42 @@ const F = (spec) => `font:${spec} 'Inter',sans-serif;`;
 function trendBadge(dir) {
   const c = dir === 'up' ? C_UP : C_DN;
   const icon = dir === 'up' ? iconTrendUp(c) : iconTrendDown(c);
-  const pct = dir === 'up' ? '+12.5%' : '−8.3%';
+  const pct = dir === 'up' ? '+12.5%' : '-23.17%';
   return `<div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
     ${icon}
     <span style="${F('600 12px/1.5')}color:${c};white-space:nowrap;">${pct}</span>
   </div>`;
 }
 
-// Line chart: 69px flush to card bottom, absolute position
-// SVG approximates Figma raster — smooth wave trending up or down
+// Exact SVG paths exported from Figma — Charts frame nodes 602:20777 (up) / 602:20749 (down)
+// Up fill: gradient #E5E7EB → white. Down fill: gradient white→transparent.
+// Both share the same bumpy stroke shape; direction is conveyed by color + trend badge.
 function lineChartSvg(dir) {
-  const c = dir === 'up' ? C_UP : C_DN;
-  const path = dir === 'up'
-    ? 'M0,60 C30,55 55,64 85,48 C115,32 138,42 165,26 C192,10 210,20 238,10 C258,4 272,8 286,3'
-    : 'M0,3 C28,8 50,2 80,18 C110,34 130,24 158,40 C186,56 205,46 232,58 C255,64 270,58 286,65';
-  const area = `${path} L286,70 L0,70 Z`;
+  const strokeColor = dir === 'up' ? C_UP : C_DN;
+
+  // Fill areas differ at the right-side clip y-coordinate (V1.42073 up vs V24.561 down)
+  const FILL_UP = 'M12.7111 29.6097C6.35555 29.6097 6.35556 19.5123 0 19.5122V62C0 66.4183 3.58173 70 8 70H278C282.418 70 286 66.4279 286 62.0096V1.42073C278.056 1.42073 279.644 12.7805 273.289 12.7805C266.933 12.7805 266.933 19.5122 260.578 19.5122C254.222 19.5122 254.222 12.7805 247.867 12.7805C241.511 12.7805 240.717 24.561 235.156 24.561C229.594 24.561 228.8 6.04878 222.444 6.04878C216.089 6.04878 216.089 0.99999 209.733 1C203.378 1.00001 197.022 9.41466 190.667 9.41466C184.311 9.41466 184.311 4.36591 177.956 4.36588C171.6 4.36586 169.716 8.77907 165.244 12.7805C159.175 18.2123 158.889 29.6098 152.533 29.6098C146.178 29.6097 146.178 19.5122 139.822 19.5122C133.467 19.5122 133.467 11.0976 127.111 11.0976C120.756 11.0976 120.756 9.41463 114.4 9.41463C108.044 9.41463 108.044 24.1402 101.689 24.1402C95.3334 24.1402 95.3333 14.4634 88.9778 14.4634C82.6222 14.4634 82.6222 29.6097 76.2667 29.6098C69.9111 29.6098 69.9111 26.6646 63.5555 26.6646C57.2 26.6646 57.2 24.561 50.8444 24.561C44.4889 24.561 44.4889 32.9756 38.1333 32.9756C31.7778 32.9756 31.7778 41.3902 25.4222 41.3902C19.0667 41.3902 19.0667 29.6097 12.7111 29.6097Z';
+  const FILL_DN = 'M12.7111 29.6097C6.35555 29.6097 6.35556 19.5123 0 19.5122V62C0 66.4183 3.58173 70 8 70H278C282.418 70 286 66.4279 286 62.0096V24.561C278.056 24.561 279.644 12.7805 273.289 12.7805C266.933 12.7805 266.933 19.5122 260.578 19.5122C254.222 19.5122 254.222 12.7805 247.867 12.7805C241.511 12.7805 240.717 24.561 235.156 24.561C229.594 24.561 228.8 6.04878 222.444 6.04878C216.089 6.04878 216.089 0.99999 209.733 1C203.378 1.00001 197.022 9.41466 190.667 9.41466C184.311 9.41466 184.311 4.36591 177.956 4.36588C171.6 4.36586 169.716 8.77907 165.244 12.7805C159.175 18.2123 158.889 29.6098 152.533 29.6098C146.178 29.6097 146.178 19.5122 139.822 19.5122C133.467 19.5122 133.467 11.0976 127.111 11.0976C120.756 11.0976 120.756 9.41463 114.4 9.41463C108.044 9.41463 108.044 24.1402 101.689 24.1402C95.3334 24.1402 95.3333 14.4634 88.9778 14.4634C82.6222 14.4634 82.6222 29.6097 76.2667 29.6098C69.9111 29.6098 69.9111 26.6646 63.5555 26.6646C57.2 26.6646 57.2 24.561 50.8444 24.561C44.4889 24.561 44.4889 32.9756 38.1333 32.9756C31.7778 32.9756 31.7778 41.3902 25.4222 41.3902C19.0667 41.3902 19.0667 29.6097 12.7111 29.6097Z';
+  const STROKE_UP = 'M0 19.7917C6.35556 19.7917 6.35555 30.0417 12.7111 30.0417C19.0667 30.0417 19.0667 42 25.4222 42C31.7778 42 31.7778 33.4584 38.1333 33.4584C44.4889 33.4584 44.4889 24.9167 50.8444 24.9167C57.2 24.9167 57.2 27.0521 63.5555 27.0521C69.9111 27.0521 69.9111 30.0417 76.2667 30.0417C82.6222 30.0417 82.6222 14.6667 88.9778 14.6667C95.3333 14.6667 95.3334 24.4896 101.689 24.4896C108.044 24.4896 108.044 9.54167 114.4 9.54167C120.756 9.54167 120.756 11.25 127.111 11.25C133.467 11.25 133.467 19.7917 139.822 19.7917C146.178 19.7917 146.178 30.0417 152.533 30.0417C158.889 30.0417 159.175 18.4721 165.244 12.9583C169.716 8.89652 171.6 4.41667 177.956 4.4167C184.311 4.41673 184.311 9.5417 190.667 9.5417C197.022 9.5417 203.378 1.00001 209.733 1C216.089 0.99999 216.089 6.125 222.444 6.125C228.8 6.125 229.594 24.9167 235.156 24.9167C240.717 24.9167 241.511 12.9583 247.867 12.9583C254.222 12.9583 254.222 19.7917 260.578 19.7917C266.933 19.7917 266.933 12.9583 273.289 12.9583C279.644 12.9583 278.056 1.42708 286 1.42708';
+  const STROKE_DN = 'M0 19.7917C6.35556 19.7917 6.35555 30.0417 12.7111 30.0417C19.0667 30.0417 19.0667 42 25.4222 42C31.7778 42 31.7778 33.4584 38.1333 33.4584C44.4889 33.4584 44.4889 24.9167 50.8444 24.9167C57.2 24.9167 57.2 27.0521 63.5555 27.0521C69.9111 27.0521 69.9111 30.0417 76.2667 30.0417C82.6222 30.0417 82.6222 14.6667 88.9778 14.6667C95.3333 14.6667 95.3334 24.4896 101.689 24.4896C108.044 24.4896 108.044 9.54167 114.4 9.54167C120.756 9.54167 120.756 11.25 127.111 11.25C133.467 11.25 133.467 19.7917 139.822 19.7917C146.178 19.7917 146.178 30.0417 152.533 30.0417C158.889 30.0417 159.175 18.4721 165.244 12.9583C169.716 8.89652 171.6 4.41667 177.956 4.4167C184.311 4.41673 184.311 9.5417 190.667 9.5417C197.022 9.5417 203.378 1.00001 209.733 1C216.089 0.99999 216.089 6.125 222.444 6.125C228.8 6.125 229.594 24.9167 235.156 24.9167C240.717 24.9167 241.511 12.9583 247.867 12.9583C254.222 12.9583 254.222 19.7917 260.578 19.7917C266.933 19.7917 266.933 12.9583 273.289 12.9583C279.644 12.9583 278.056 24.9167 286 24.9167';
+
+  const gradId = `lc-grad-${dir}`;
+  const gradDef = dir === 'up'
+    ? `<linearGradient id="${gradId}" x1="143" y1="1" x2="143" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#E5E7EB"/><stop offset="1" stop-color="white"/></linearGradient>`
+    : `<linearGradient id="${gradId}" x1="143" y1="1" x2="143" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0.6"/><stop offset="1" stop-color="#B0B0B0" stop-opacity="0"/></linearGradient>`;
+
   return `<div style="position:absolute;bottom:0;left:0;right:0;">
-    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="${area}" fill="${c}" opacity="0.12"/>
-      <path d="${path}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>${gradDef}</defs>
+      <path d="${dir === 'up' ? FILL_UP : FILL_DN}" fill="url(#${gradId})"/>
+      <path d="${dir === 'up' ? STROKE_UP : STROKE_DN}" stroke="${strokeColor}" stroke-width="2"/>
     </svg>
   </div>`;
 }
 
 // Bar chart: 14 bars × 3px, heights from Figma
-// Standard (602:20796): container 40px. Big (602:24711): container 58px.
-function barChartHtml(dir, heights = BARS_STANDARD, containerH = 40) {
+// Standard (602:20796 up / 602:20845 down): container 40px. Big (602:24711): container 58px.
+function barChartHtml(dir, heights, containerH = 40) {
   const main = dir === 'up' ? C_BU : C_DN;
   const light = dir === 'up' ? C_BU_LT : C_BD_LT;
   const bars = heights.map((h, i) => {
@@ -126,7 +140,7 @@ function barChartHtml(dir, heights = BARS_STANDARD, containerH = 40) {
 // Segmented horizontal bar chart — barchart-segm-hor only (602:25133)
 // 12 columns × 6px, gap 10px, 50px tall container
 // Segment colors: gray #F2F4F7, green #22C55E, pink #EC4899, sky #33BFFF, blue #1D4ED8
-const SEGM_COLORS = ['#F2F4F7', '#22C55E', '#EC4899', '#33BFFF', '#1D4ED8'];
+const SEGM_COLORS = ['#F2F4F7', '#22C55E', '#EC4899', '#33BEFF', '#1D4ED8'];
 const SEGM_DATA = [
   [16, 3, 7, 9, 6],
   [4,  3, 9, 4, 15],
@@ -207,7 +221,7 @@ function cardBarchart(dir) {
       </div>
       ${PILL}
     </div>
-    ${barChartHtml(dir)}
+    ${barChartHtml(dir, dir === 'up' ? BARS_UP : BARS_DN)}
   </div>`;
 }
 
@@ -233,7 +247,7 @@ function cardBarchartVert(dir = 'up') {
         </div>
       </div>
     </div>
-    ${barChartHtml(dir)}
+    ${barChartHtml(dir, BARS_VERT)}
   </div>`;
 }
 
@@ -254,6 +268,7 @@ function cardBarchartBig(dir = 'up') {
   </div>`;
 }
 
+
 // barchart-segm-hor — wide horizontal card: segmented chart left, value right (449×104px)
 function cardBarchartSegmHor() {
   return `<div style="${BASE}width:449px;height:104px;padding:32px 32px 16px;display:flex;flex-direction:row;gap:16px;align-items:flex-end;">
@@ -269,12 +284,13 @@ function cardBarchartSegmHor() {
   </div>`;
 }
 
-// Credit — same shell as Linechart, different chart curve (286×168px)
+// Credit (602:23265) — mostly flat line with a sharp V-dip at centre (286×168px, Charts 286×69px)
+// Exact SVG from Figma: 2 fill layers + 1 stroke. Dip goes from y≈18.8 down to y≈60.5 at x≈152.
 function cardCredit() {
-  const c = C_UP;
-  // Credit uses a smoother, credit-card-style wave (different shape from standard linechart)
-  const path = 'M0,40 C40,42 60,28 100,32 C140,36 155,20 190,24 C220,28 240,18 286,8';
-  const area = `${path} L286,70 L0,70 Z`;
+  const FILL1 = 'M12.7111 18.5122L0 18.5122V61C0 65.4183 3.58173 69 8 69H278C282.418 69 286 65.4265 286 61.0082V18.5121C278.056 18.5121 279.644 23.561 273.289 23.561C266.933 23.561 266.933 18.5122 260.578 18.5122H247.867C241.511 18.5122 240.717 23.5609 235.156 23.561C229.594 23.561 228.8 35.5001 222.444 35.5001C216.089 35.5001 216.089 18.5122 209.733 18.5122L190.667 18.5122L177.956 18.5122C171.6 18.5122 169.5 17 165.244 18.5122C160.989 20.0243 158.889 60 152.533 60C146.178 60 146.178 18.5122 139.822 18.5122L127.111 18.5122L114.4 18.5122C108.044 18.5122 108.044 23.1402 101.689 23.1402C95.3334 23.1402 95.3333 18.5122 88.9778 18.5122C82.6222 18.5122 82.6222 28.6097 76.2667 28.6097C69.9111 28.6098 69.9111 18.5122 63.5555 18.5122C57.2 18.5122 57.2 23.561 50.8444 23.561C44.4889 23.561 44.4889 18.5122 38.1333 18.5122L25.4222 18.5122H12.7111Z';
+  const FILL2 = 'M38.1333 18.5122L29.095 18.5122L127.111 18.5122H165.244C169.482 17.0063 171.583 18.4996 177.876 18.5121L190.667 18.5122H247.867H260.578L286 18.5121C278.056 18.5121 279.644 23.5609 273.289 23.5609C266.933 23.5609 266.933 18.5122 260.578 18.5122H247.867C241.511 18.5122 240.717 23.5609 235.156 23.5609C229.594 23.561 228.8 35.5001 222.444 35.5001C216.089 35.5001 216.089 18.5122 209.733 18.5122L190.667 18.5122L177.956 18.5122C177.929 18.5122 177.903 18.5122 177.876 18.5121L165.244 18.5122C160.989 20.0243 158.889 60 152.533 60C146.178 60 146.178 18.5122 139.822 18.5122L127.111 18.5122L114.4 18.5122C108.044 18.5122 108.044 23.1402 101.689 23.1402C95.3334 23.1402 95.3333 18.5122 88.9778 18.5122C82.6222 18.5122 82.6222 28.6097 76.2667 28.6097C69.9111 28.6098 69.9111 18.5122 63.5555 18.5122C57.2 18.5122 57.2 23.561 50.8444 23.561C44.4889 23.561 44.4889 18.5122 38.1333 18.5122Z';
+  const STROKE = 'M0 18.7918C6.35556 18.7918 6.35555 18.7918 12.7111 18.7918C19.0667 18.7918 19.0667 18.7918 25.4222 18.7918C31.7778 18.7918 31.7778 18.7918 38.1333 18.7918C44.4889 18.7918 44.4889 23.9168 50.8444 23.9168C57.2 23.9168 57.2 18.7918 63.5555 18.7918C69.9111 18.7918 69.9111 29.0418 76.2667 29.0418C82.6222 29.0418 82.6222 18.7918 88.9778 18.7918C95.3333 18.7917 95.3334 23.4897 101.689 23.4897C108.044 23.4897 108.044 18.7918 114.4 18.7918C120.756 18.7918 120.756 18.7918 127.111 18.7918C133.467 18.7918 133.467 18.7918 139.822 18.7918C146.178 18.7918 146.178 60.5002 152.533 60.5002C158.889 60.5002 161.489 18.7918 165.244 18.7918C169 18.7918 171.6 18.7917 177.956 18.7918C184.311 18.7918 184.311 18.7918 190.667 18.7918C197.022 18.7918 203.378 18.7919 209.733 18.7918C216.089 18.7918 216.089 35.5002 222.444 35.5002C228.8 35.5002 229.594 23.9168 235.156 23.9168C240.717 23.9167 241.511 18.7918 247.867 18.7918C254.222 18.7918 254.222 18.7918 260.578 18.7918C266.933 18.7918 266.933 23.9168 273.289 23.9168C279.644 23.9168 278.056 18.7918 286 18.7918';
+
   return `<div style="${BASE}width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
@@ -285,9 +301,20 @@ function cardCredit() {
       ${PILL}
     </div>
     <div style="position:absolute;bottom:0;left:0;right:0;">
-      <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="${area}" fill="${c}" opacity="0.12"/>
-        <path d="${path}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg style="width:100%;height:69px;display:block;" viewBox="0 0 286 69" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="credit-grad1" x1="143" y1="0" x2="143" y2="69" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#E5E7EB"/>
+            <stop offset="1" stop-color="white"/>
+          </linearGradient>
+          <linearGradient id="credit-grad2" x1="143" y1="18" x2="143" y2="60" gradientUnits="userSpaceOnUse">
+            <stop stop-color="white"/>
+            <stop offset="1"/>
+          </linearGradient>
+        </defs>
+        <path d="${FILL1}" fill="url(#credit-grad1)"/>
+        <path d="${FILL2}" fill="url(#credit-grad2)"/>
+        <path d="${STROKE}" stroke="${C_UP}" stroke-width="2"/>
       </svg>
     </div>
   </div>`;
