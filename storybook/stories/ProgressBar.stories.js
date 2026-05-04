@@ -105,36 +105,17 @@ function progressBar({ value = 50, color = 'primary', labelBelow = false } = {})
   const fillColor = COLORS[color] ?? COLORS.primary;
   const pct = Math.min(100, Math.max(0, value));
 
+  // .progress provides: overflow:hidden, width:100% — override height/bg/radius for Figma spec
   const track = `
-    <div style="
-      position: relative;
-      height: 6px;
-      background: var(--color-border-default);
-      border-radius: 2px;
-      overflow: hidden;
-    ">
-      <div style="
-        position: absolute;
-        left: 0; top: 0;
-        height: 100%;
-        width: ${pct}%;
-        background: ${fillColor};
-        border-radius: 2px;
-      "></div>
+    <div class="progress" style="height:6px;background:var(--color-border-default);border-radius:2px;">
+      <div class="progress-bar" style="width:${pct}%;background:${fillColor};border-radius:2px;"></div>
     </div>`;
 
   const label = `
-    <div style="
-      font-family: inherit;
-      font-size: var(--text-xs);
-      font-weight: var(--font-medium);
-      color: var(--color-text-secondary);
-      text-align: right;
-      line-height: 1.5;
-    ">${pct}%</div>`;
+    <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;line-height:1.5;">${pct}%</div>`;
 
   return `
-    <div style="width: 100%;">
+    <div style="width:100%;">
       ${labelBelow ? '' : label}
       ${labelBelow ? '' : '<div style="height:6px;"></div>'}
       ${track}

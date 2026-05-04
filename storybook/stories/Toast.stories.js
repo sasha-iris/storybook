@@ -21,71 +21,66 @@ function iconSvg(path, size, color) {
 function iconBox(bg, inner) {
   return `<div style="width:32px;height:32px;background:${bg};border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">${inner}</div>`;
 }
-function dismissBtn(color, size = 18) {
-  return `<button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, size, color)}</button>`;
-}
 
 // ─── Type renderers ───────────────────────────────────────────────────────────
 
 function toastSuccess({ cta, title, description, ctaLabel }) {
-  const border = '1px solid #84e1bc';
   if (!cta) {
     return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div class="toast" style="border-color:#84e1bc;">
   ${iconBox('#ecfdf5', iconSvg(CHECK_PATH, 20, '#007a55'))}
-  <p style="flex:1;margin:0;color:#0e9f6e;font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
-  ${dismissBtn('#0e9f6e')}
+  <p class="toast-body" style="margin:0;color:#0e9f6e;">${title}</p>
+  <button type="button" class="toast-close" style="color:#0e9f6e;" aria-label="Dismiss">×</button>
 </div>`;
   }
   return `
-<div style="padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div class="toast" style="border-color:#84e1bc;flex-direction:column;align-items:stretch;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
     ${iconSvg(CHECK_CIRCLE_PATH, 18, '#0e9f6e')}
-    <span style="flex:1;font-size:var(--text-sm);font-weight:var(--font-semibold);color:#0e9f6e;">Success</span>
-    ${dismissBtn('#0e9f6e', 20)}
+    <span class="toast-title" style="flex:1;color:#0e9f6e;">Success</span>
+    <button type="button" class="toast-close" style="color:#0e9f6e;" aria-label="Dismiss">×</button>
   </div>
-  <p style="margin:0 0 12px;color:#0e9f6e;font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${description}</p>
+  <p class="toast-message" style="margin:0 0 12px;color:#0e9f6e;">${description}</p>
   <button type="button" class="btn btn-green btn-xs">${ctaLabel}</button>
 </div>`;
 }
 
 function toastDanger({ cta, title, description, ctaLabel }) {
-  const border = '1px solid #f8b4b4';
   if (!cta) {
     return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div class="toast" style="border-color:#f8b4b4;">
   ${iconBox('#fde8e8', BELL_SVG('#f05252'))}
-  <p style="flex:1;margin:0;color:#f05252;font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
-  ${dismissBtn('#f05252')}
+  <p class="toast-body" style="margin:0;color:#f05252;">${title}</p>
+  <button type="button" class="toast-close" style="color:#f05252;" aria-label="Dismiss">×</button>
 </div>`;
   }
   return `
-<div style="padding:16px;background:var(--color-bg-surface);border:${border};border-radius:6px;max-width:640px;font-family:inherit;">
+<div class="toast" style="border-color:#f8b4b4;flex-direction:column;align-items:stretch;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
     ${iconSvg(X_CIRCLE_PATH, 18, '#e02424')}
-    <span style="flex:1;font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-danger);">Attention</span>
-    ${dismissBtn('#e02424', 20)}
+    <span class="toast-title" style="flex:1;color:var(--color-danger);">Attention</span>
+    <button type="button" class="toast-close" style="color:#e02424;" aria-label="Dismiss">×</button>
   </div>
-  <p style="margin:0 0 12px;color:var(--color-danger);font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${description}</p>
+  <p class="toast-message" style="margin:0 0 12px;color:var(--color-danger);">${description}</p>
   <button type="button" class="btn btn-red btn-xs">${ctaLabel}</button>
 </div>`;
 }
 
 function toastDefault({ title }) {
   return `
-<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--color-bg-surface);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div class="toast">
   ${iconBox('#dbeafe', iconSvg(CHECK_PATH, 20, '#155dfc'))}
-  <p style="flex:1;margin:0;color:var(--color-text-secondary);font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
-  ${dismissBtn('#9ca3af')}
+  <p class="toast-body" style="margin:0;">${title}</p>
+  <button type="button" class="toast-close" aria-label="Dismiss">×</button>
 </div>`;
 }
 
 function toastSimple({ title }) {
   return `
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-bg-surface);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div class="toast">
   ${iconSvg(PAPER_PLANE_PATH, 24, '#155dfc')}
-  <div style="flex:1;border-left:1px solid var(--color-border-default);padding-left:12px;">
-    <p style="margin:0;color:var(--color-text-secondary);font-size:var(--text-sm);font-weight:var(--font-normal);line-height:1.5;">${title}</p>
+  <div class="toast-body" style="border-left:1px solid var(--color-border-default);padding-left:12px;">
+    <p style="margin:0;">${title}</p>
   </div>
 </div>`;
 }
@@ -93,16 +88,16 @@ function toastSimple({ title }) {
 function toastPush({ title, description }) {
   const avatar = `<div style="width:48px;height:48px;border-radius:50%;background:var(--color-bg-muted);border:1px solid var(--color-border-default);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-secondary);">BG</div>`;
   return `
-<div style="padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div class="toast" style="flex-direction:column;align-items:stretch;">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-    <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-text-heading);">New notification</span>
-    ${dismissBtn('#9ca3af')}
+    <span class="toast-title">New notification</span>
+    <button type="button" class="toast-close" aria-label="Dismiss">×</button>
   </div>
   <div style="display:flex;gap:12px;align-items:flex-start;">
     ${avatar}
-    <div style="flex:1;min-width:0;">
-      <p style="margin:0 0 2px;font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-text-heading);">${title}</p>
-      <p style="margin:0 0 4px;font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.4;">${description}</p>
+    <div class="toast-body" style="min-width:0;">
+      <p class="toast-title" style="margin:0 0 2px;">${title}</p>
+      <p class="toast-message" style="margin:0 0 4px;line-height:1.4;">${description}</p>
       <p style="margin:0;font-size:var(--text-xs);font-weight:var(--font-medium);color:#155dfc;">a few seconds ago</p>
     </div>
   </div>
@@ -111,18 +106,18 @@ function toastPush({ title, description }) {
 
 function toastInteractive({ title, description, ctaLabel }) {
   return `
-<div style="padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);max-width:320px;font-family:inherit;">
+<div class="toast" style="flex-direction:column;align-items:stretch;">
   <div style="display:flex;gap:12px;align-items:flex-start;">
     ${iconBox('#dbeafe', iconSvg(REFRESH_PATH, 20, '#155dfc'))}
-    <div style="flex:1;min-width:0;">
-      <p style="margin:0 0 2px;font-size:var(--text-sm);font-weight:var(--font-semibold);color:var(--color-text-heading);">${title}</p>
-      <p style="margin:0 0 12px;font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.4;">${description}</p>
+    <div class="toast-body" style="min-width:0;">
+      <p class="toast-title" style="margin:0 0 2px;">${title}</p>
+      <p class="toast-message" style="margin:0 0 12px;line-height:1.4;">${description}</p>
       <div style="display:flex;gap:8px;">
         <button type="button" class="btn btn-primary btn-xs" style="flex:1;">${ctaLabel}</button>
         <button type="button" class="btn btn-light btn-xs" style="flex:1;">Later</button>
       </div>
     </div>
-    ${dismissBtn('#9ca3af')}
+    <button type="button" class="toast-close" aria-label="Dismiss">×</button>
   </div>
 </div>`;
 }

@@ -3,95 +3,108 @@
 // Light mode only (Dark Version variants not implemented per project rules).
 // 6 layout types: Card + Image, Image + Text, Text, List, Simple text, Widget.
 
-const STYLES = `<style>
-@keyframes sk-shimmer{0%{background-position:-800px 0}100%{background-position:800px 0}}
-.sk{background:#e5e7eb}
-.sk-d{background:#d1d5db}
-.sk-a.sk{background:linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);background-size:1600px 100%;animation:sk-shimmer 1.5s linear infinite}
-.sk-a.sk-d{background:linear-gradient(90deg,#d1d5db 25%,#f3f4f6 50%,#d1d5db 75%);background-size:1600px 100%;animation:sk-shimmer 1.5s linear infinite}
-</style>`;
-
 const IMAGE_ICON = `<svg width="44" height="31" viewBox="0 0 44 31" fill="none" opacity="0.35"><circle cx="7" cy="8" r="4" fill="#6b7280"/><path d="M0 31 L14 12 L27 24 L35 15 L44 31 Z" fill="#6b7280"/></svg>`;
 
-function ac(animated) { return animated ? 'sk-a' : ''; }
+// .skeleton       = lighter placeholder (#E5E7EB + pulse animation) — body text, avatars
+// .skeleton-image = image placeholder (same bg, rounded-md)
+// .skeleton-avatar = circular placeholder
+// Darker headings/image areas: .skeleton + inline style override for background:#d1d5db
+// animated=false: disable animation via inline style="animation:none;"
+
+// Build the style string for a skeleton block — merges optional extras
+function sk(animated, extra = '') {
+  const anim = animated ? '' : 'animation:none;';
+  return `class="skeleton" style="${anim}${extra}"`;
+}
+// Darker variant (headings, image frames)
+function skd(animated, extra = '') {
+  const anim = animated ? '' : 'animation:none;';
+  return `class="skeleton" style="background:#d1d5db;${anim}${extra}"`;
+}
+// Avatar placeholder (circle)
+function ska(animated, extra = '') {
+  const anim = animated ? '' : 'animation:none;';
+  return `class="skeleton-avatar" style="${anim}${extra}"`;
+}
+// Image placeholder (rounded rect)
+function ski(animated, extra = '') {
+  const anim = animated ? '' : 'animation:none;';
+  return `class="skeleton-image" style="background:#d1d5db;${anim}${extra}"`;
+}
 
 function skCardImage({ animated }) {
-  const a = ac(animated);
   return `
 <div style="width:384px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
-  <div class="sk-d ${a}" style="height:95px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;">
+  <div ${ski(animated, 'height:95px;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;')}>
     ${IMAGE_ICON}
   </div>
   <div style="margin-bottom:14px;">
-    <div class="sk-d ${a}" style="height:8px;border-radius:20px;margin-bottom:10px;"></div>
+    <div ${skd(animated, 'height:8px;border-radius:20px;margin-bottom:10px;')}></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="sk ${a}" style="height:8px;border-radius:12px;"></div>
-      <div class="sk ${a}" style="height:8px;border-radius:12px;width:88%;"></div>
-      <div class="sk ${a}" style="height:8px;border-radius:12px;width:75%;"></div>
-      <div class="sk ${a}" style="height:8px;border-radius:12px;width:60%;"></div>
+      <div ${sk(animated, 'height:8px;border-radius:12px;')}></div>
+      <div ${sk(animated, 'height:8px;border-radius:12px;width:88%;')}></div>
+      <div ${sk(animated, 'height:8px;border-radius:12px;width:75%;')}></div>
+      <div ${sk(animated, 'height:8px;border-radius:12px;width:60%;')}></div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <div class="sk ${a}" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;"></div>
+    <div ${ska(animated, 'width:26px;height:26px;flex-shrink:0;')}></div>
     <div>
-      <div class="sk ${a}" style="width:69px;height:8px;border-radius:6px;margin-bottom:4px;"></div>
-      <div class="sk ${a}" style="width:90px;height:6px;border-radius:6px;"></div>
+      <div ${sk(animated, 'width:69px;height:8px;border-radius:6px;margin-bottom:4px;')}></div>
+      <div ${sk(animated, 'width:90px;height:6px;border-radius:6px;')}></div>
     </div>
   </div>
 </div>`;
 }
 
 function skImageText({ animated }) {
-  const a = ac(animated);
   return `
 <div style="width:600px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);display:flex;gap:24px;align-items:flex-start;">
-  <div class="sk-d ${a}" style="width:224px;height:148px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+  <div ${ski(animated, 'width:224px;height:148px;flex-shrink:0;display:flex;align-items:center;justify-content:center;')}>
     ${IMAGE_ICON}
   </div>
   <div style="flex:1;">
-    <div class="sk ${a}" style="width:147px;height:9px;border-radius:15px;margin-bottom:14px;"></div>
+    <div ${sk(animated, 'width:147px;height:9px;border-radius:15px;margin-bottom:14px;')}></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="sk ${a}" style="height:6px;border-radius:12px;width:88%;"></div>
-      <div class="sk ${a}" style="height:6px;border-radius:12px;width:100%;"></div>
-      <div class="sk ${a}" style="height:6px;border-radius:12px;width:74%;"></div>
-      <div class="sk ${a}" style="height:6px;border-radius:12px;width:39%;"></div>
+      <div ${sk(animated, 'height:6px;border-radius:12px;width:88%;')}></div>
+      <div ${sk(animated, 'height:6px;border-radius:12px;width:100%;')}></div>
+      <div ${sk(animated, 'height:6px;border-radius:12px;width:74%;')}></div>
+      <div ${sk(animated, 'height:6px;border-radius:12px;width:39%;')}></div>
     </div>
   </div>
 </div>`;
 }
 
 function skText({ animated }) {
-  const a = ac(animated);
   return `
 <div style="width:640px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="margin-bottom:14px;">
-    <div class="sk-d ${a}" style="width:396px;height:9px;border-radius:15px;margin-bottom:8px;"></div>
-    <div class="sk-d ${a}" style="width:246px;height:9px;border-radius:15px;"></div>
+    <div ${skd(animated, 'width:396px;height:9px;border-radius:15px;margin-bottom:8px;')}></div>
+    <div ${skd(animated, 'width:246px;height:9px;border-radius:15px;')}></div>
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:6px;">
-      <div class="sk ${a}" style="width:16px;height:16px;border-radius:50%;flex-shrink:0;"></div>
-      <div class="sk ${a}" style="width:54px;height:5px;border-radius:6px;"></div>
+      <div ${ska(animated, 'width:16px;height:16px;flex-shrink:0;')}></div>
+      <div ${sk(animated, 'width:54px;height:5px;border-radius:6px;')}></div>
     </div>
-    <div class="sk ${a}" style="width:38px;height:4px;border-radius:6px;"></div>
+    <div ${sk(animated, 'width:38px;height:4px;border-radius:6px;')}></div>
   </div>
 </div>`;
 }
 
 function skList({ animated }) {
-  const a = ac(animated);
   const nameWidths = [70, 85, 76, 92, 68];
   const roleWidths = [50, 62, 55, 48, 60];
   const rows = nameWidths.map((nw, i) => `
     <div style="display:flex;align-items:center;justify-content:space-between;height:40px;${i < 4 ? 'border-bottom:1px solid var(--color-bg-muted);' : ''}">
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="sk ${a}" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
+        <div ${ska(animated, 'width:32px;height:32px;flex-shrink:0;')}></div>
         <div>
-          <div class="sk-d ${a}" style="width:${nw}px;height:8px;border-radius:6px;margin-bottom:4px;"></div>
-          <div class="sk ${a}" style="width:${roleWidths[i]}px;height:6px;border-radius:6px;"></div>
+          <div ${skd(animated, `width:${nw}px;height:8px;border-radius:6px;margin-bottom:4px;`)}></div>
+          <div ${sk(animated, `width:${roleWidths[i]}px;height:6px;border-radius:6px;`)}></div>
         </div>
       </div>
-      <div class="sk ${a}" style="width:20px;height:5px;border-radius:4px;"></div>
+      <div ${sk(animated, 'width:20px;height:5px;border-radius:4px;')}></div>
     </div>`).join('');
   return `
 <div style="width:300px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);padding:0 16px;">
@@ -100,41 +113,39 @@ function skList({ animated }) {
 }
 
 function skSimpleText({ animated }) {
-  const a = ac(animated);
   // From Figma: 7 rows at 8px. Most are #d1d5db; middle cells in 3-col rows are #e5e7eb.
   return `
 <div style="width:640px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="display:flex;flex-direction:column;gap:16px;">
-    <div class="sk-d ${a}" style="height:8px;border-radius:6px;"></div>
-    <div class="sk-d ${a}" style="height:8px;border-radius:6px;width:371px;"></div>
+    <div ${skd(animated, 'height:8px;border-radius:6px;')}></div>
+    <div ${skd(animated, 'height:8px;border-radius:6px;width:371px;')}></div>
     <div style="display:flex;gap:8px;">
-      <div class="sk-d ${a}" style="flex:1;height:8px;border-radius:6px;"></div>
-      <div class="sk ${a}" style="flex:1;height:8px;border-radius:6px;"></div>
-      <div class="sk-d ${a}" style="flex:1;height:8px;border-radius:6px;"></div>
+      <div ${skd(animated, 'flex:1;height:8px;border-radius:6px;')}></div>
+      <div ${sk(animated, 'flex:1;height:8px;border-radius:6px;')}></div>
+      <div ${skd(animated, 'flex:1;height:8px;border-radius:6px;')}></div>
     </div>
-    <div class="sk-d ${a}" style="height:8px;border-radius:6px;width:610px;"></div>
-    <div class="sk-d ${a}" style="height:8px;border-radius:6px;width:432px;"></div>
+    <div ${skd(animated, 'height:8px;border-radius:6px;width:610px;')}></div>
+    <div ${skd(animated, 'height:8px;border-radius:6px;width:432px;')}></div>
     <div style="display:flex;gap:8px;">
-      <div class="sk-d ${a}" style="flex:1;height:8px;border-radius:6px;"></div>
-      <div class="sk ${a}" style="flex:1;height:8px;border-radius:6px;"></div>
-      <div class="sk-d ${a}" style="flex:1;height:8px;border-radius:6px;"></div>
+      <div ${skd(animated, 'flex:1;height:8px;border-radius:6px;')}></div>
+      <div ${sk(animated, 'flex:1;height:8px;border-radius:6px;')}></div>
+      <div ${skd(animated, 'flex:1;height:8px;border-radius:6px;')}></div>
     </div>
-    <div class="sk-d ${a}" style="height:8px;border-radius:6px;width:294px;"></div>
+    <div ${skd(animated, 'height:8px;border-radius:6px;width:294px;')}></div>
   </div>
 </div>`;
 }
 
 function skWidget({ animated }) {
-  const a = ac(animated);
   // From Figma: 7 bars × 17.7px wide × 229px tall, fill=#e5e7eb, gap ~24px
   const bars = Array(7).fill(null).map(() =>
-    `<div class="sk ${a}" style="width:17px;height:229px;border-radius:2px;"></div>`
+    `<div ${sk(animated, 'width:17px;height:229px;border-radius:2px;')}></div>`
   ).join('');
   return `
 <div style="width:300px;padding:16px;background:var(--color-bg-surface);border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="margin-bottom:16px;">
-    <div class="sk-d ${a}" style="width:119px;height:8px;border-radius:2px;margin-bottom:6px;"></div>
-    <div class="sk ${a}" style="width:79px;height:6px;border-radius:2px;"></div>
+    <div ${skd(animated, 'width:119px;height:8px;border-radius:2px;')}></div>
+    <div ${sk(animated, 'width:79px;height:6px;border-radius:2px;margin-top:6px;')}></div>
   </div>
   <div style="display:flex;gap:24px;align-items:flex-end;">
     ${bars}
@@ -153,7 +164,7 @@ const TYPE_MAP = {
 
 function skeleton(args) {
   const fn = TYPE_MAP[args.type] || skCardImage;
-  return STYLES + fn(args);
+  return fn(args);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -284,7 +295,7 @@ export const AllTypes = {
       'simple-text': 'Simple text',
       'widget':      'Widget',
     };
-    return STYLES + `
+    return `
 <div style="display:flex;flex-direction:column;gap:32px;padding:24px;background:var(--color-bg-default);">
   ${types.map(type => `
     <div>

@@ -13,53 +13,65 @@ function iconSvg(path, size, color) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="${color}" aria-hidden="true"><path fill-rule="evenodd" d="${path}" clip-rule="evenodd"/></svg>`;
 }
 
-// ─── Color tokens ─────────────────────────────────────────────────────────────
+// ─── Color tokens (used only for dark/light type overrides) ──────────────────
 
 const COLOR_MAP = {
-  success: { mediumBg: '#f3faf7', darkBg: '#046c4e', accent: '#046c4e' },
-  danger:  { mediumBg: '#fdf2f2', darkBg: '#c81e1e', accent: '#c81e1e' },
-  info:    { mediumBg: '#eff6ff', darkBg: '#1447e6', accent: '#1447e6' },
-  warning: { mediumBg: '#fff8f1', darkBg: '#d03801', accent: '#d03801' },
-  default: { mediumBg: '#f3f4f6', darkBg: '#1f2a37', accent: '#1f2a37' },
+  success: { darkBg: '#046c4e', accent: '#046c4e' },
+  danger:  { darkBg: '#c81e1e', accent: '#c81e1e' },
+  info:    { darkBg: '#1447e6', accent: '#1447e6' },
+  warning: { darkBg: '#d03801', accent: '#d03801' },
+  default: { darkBg: '#1f2a37', accent: '#1f2a37' },
 };
 
-const SHADOW = '0 1px 2px -1px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.1)';
+// CSS color class map: story color name → .alert-{cssColor}
+const CSS_COLOR = {
+  success: 'success',
+  danger:  'danger',
+  info:    'info',
+  warning: 'warning',
+  default: 'dark',
+};
 
 // ─── Alert renderer ───────────────────────────────────────────────────────────
 
 function renderAlert({ color = 'success', type = 'medium', heading, body, cta }) {
   const tok = COLOR_MAP[color];
-  let bg, textColor, btnBg, btnTextColor;
+  const cssColor = CSS_COLOR[color] || 'dark';
 
+  // Build class + inline style per type
+  let alertClass, alertStyle;
   if (type === 'dark') {
-    bg           = tok.darkBg;
-    textColor    = '#ffffff';
-    btnBg        = '#ffffff';
-    btnTextColor = tok.accent;
+    // No CSS class covers the dark (solid-bg) variant — full inline override
+    alertClass = 'alert';
+    alertStyle = ` style="background:${tok.darkBg};color:#ffffff;border-color:${tok.darkBg};max-width:640px;"`;
+  } else if (type === 'light') {
+    // CSS color class sets text/border; override background to white
+    alertClass = `alert alert-${cssColor}`;
+    alertStyle = ` style="background:#ffffff;max-width:640px;"`;
   } else {
-    bg           = type === 'medium' ? tok.mediumBg : '#ffffff';
-    textColor    = tok.accent;
-    btnBg        = tok.accent;
-    btnTextColor = '#ffffff';
+    // medium — CSS class handles bg, color, border entirely
+    alertClass = `alert alert-${cssColor}`;
+    alertStyle = ` style="max-width:640px;"`;
   }
 
+  // CTA button: dark type needs inverted colors
+  const btnStyle = type === 'dark'
+    ? ` style="background:#ffffff;color:${tok.accent};border-color:#ffffff;"`
+    : '';
   const ctaHtml = cta ? `
-  <div>
-    <button type="button" class="btn btn-xs" style="background:${btnBg};color:${btnTextColor};border-color:${btnBg};">View more</button>
+  <div style="margin-top:8px;">
+    <button type="button" class="btn btn-xs"${btnStyle}>View more</button>
   </div>` : '';
 
   return `
-<div role="alert" style="padding:16px;border-radius:6px;box-shadow:${SHADOW};background:${bg};max-width:640px;">
-  <div style="display:flex;flex-direction:column;gap:12px;">
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        ${iconSvg(CHECK_CIRCLE_PATH, 18, textColor)}
-        <span style="flex:1;font-size:var(--text-sm);font-weight:var(--font-semibold);color:${textColor};line-height:1.5;">${heading}</span>
-        <button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, 20, textColor)}</button>
-      </div>
-      <p style="margin:0;font-size:var(--text-sm);font-weight:var(--font-normal);color:${textColor};line-height:1.5;">${body}</p>
-    </div>${ctaHtml}
+<div role="alert" class="${alertClass}"${alertStyle}>
+  <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${CHECK_CIRCLE_PATH}" clip-rule="evenodd"/></svg>
+  <div class="alert-body">
+    <div class="alert-title">${heading}</div>
+    <p style="margin:0;">${body}</p>
+    ${ctaHtml}
   </div>
+  <button type="button" class="alert-dismiss" aria-label="Dismiss">×</button>
 </div>`;
 }
 

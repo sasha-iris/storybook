@@ -141,29 +141,27 @@ const icons = {
 
 // ─── Building blocks ─────────────────────────────────────────────────────────
 
-const menuItemStyles = {
-  base: `
-    display:flex; align-items:center; gap:4px;
-    height:40px; padding:6px 8px; border-radius:8px;
-    cursor:pointer; width:100%; box-sizing:border-box;
-    text-decoration:none;
-  `,
-  active: 'background:#e5e7eb;',
-  hover: 'background:transparent;',
-};
+// Figma-specific sidebar item values that differ from .sidebar-item CSS defaults:
+//   padding: 6px 8px (CSS: 9px 16px)
+//   gap: 4px (CSS: 10px)
+//   border-radius: 8px (CSS: 0)
+//   height: 40px (not in CSS)
+//   active color: #42389d (CSS: #1f2a37)
+// Use .sidebar-item/.sidebar-item.active for structural base; inline overrides for Figma values.
+
+const ITEM_OVERRIDE = 'padding:6px 8px;gap:4px;border-radius:8px;height:40px;box-sizing:border-box;';
 
 function menuItem({ icon, label, active = false, expandable = false, expanded = false, color = '#111928' }) {
   const activeColor = '#42389d';
   const textColor = active ? activeColor : color;
-  const bg = active ? 'background:#e5e7eb;' : '';
-  // Chevron stroke is always #1f2a37 per Figma (node 9263:160845) — not textColor
+  // Chevron stroke is always #1f2a37 per Figma (node 9263:160845)
   const chevronColor = '#1f2a37';
 
   return `
-    <div style="${menuItemStyles.base}${bg}">
+    <div class="sidebar-item${active ? ' active' : ''}" style="${ITEM_OVERRIDE}color:${textColor};">
       <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
-        ${icon ? `<span style="flex-shrink:0;width:24px;height:24px;color:${textColor};display:flex;align-items:center;">${icon}</span>` : ''}
-        <span style="font:500 16px/1.5 var(--font-family-base,Inter,sans-serif);color:${textColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
+        ${icon ? `<span class="sidebar-item-icon" style="width:24px;height:24px;display:flex;align-items:center;color:${textColor};">${icon}</span>` : ''}
+        <span style="font:500 16px/1.5 inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
       </div>
       ${expandable ? `<span style="flex-shrink:0;color:${chevronColor};">${expanded ? icons.chevronUp : icons.chevronDown}</span>` : ''}
     </div>
@@ -172,18 +170,17 @@ function menuItem({ icon, label, active = false, expandable = false, expanded = 
 
 function subItem({ label, active = false }) {
   const textColor = active ? '#42389d' : '#111928';
-  const bg = active ? 'background:#e5e7eb;border-radius:8px;' : '';
   return `
     <div style="padding-left:28px;">
-      <div style="${menuItemStyles.base}${bg}">
-        <span style="font:500 16px/1.5 var(--font-family-base,Inter,sans-serif);color:${textColor};">${label}</span>
+      <div class="sidebar-item${active ? ' active' : ''}" style="${ITEM_OVERRIDE}color:${textColor};">
+        <span style="font:500 16px/1.5 inherit;">${label}</span>
       </div>
     </div>
   `;
 }
 
 function divider() {
-  return `<div style="padding:4px 0;width:100%;"><div style="height:1px;background:#e5e7eb;width:100%;"></div></div>`;
+  return `<div style="padding:4px 0;width:100%;"><div style="height:1px;background:var(--color-border-default);width:100%;"></div></div>`;
 }
 
 // ─── Contracted sidebar builder ──────────────────────────────────────────────
