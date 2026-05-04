@@ -1429,27 +1429,36 @@ input[type="file"].form-file-input {
   border-top: 1px solid var(--color-border-default);
 }
 
+/* Figma 2370:20939 — "Text & Icon" frame: pad=20px all sides, 56px button height */
 .accordion-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 16px 20px;
+  padding: 20px;
   background: var(--color-bg-surface);
   border: none;
   cursor: pointer;
   font-family: var(--font-family-base);
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
-  color: var(--color-text-primary);
+  /* Closed state: secondary #6b7280 */
+  color: var(--color-text-secondary);
   text-align: left;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 .accordion-header:hover { background: var(--color-bg-muted); }
 
+/* Open state: bg=#f3f4f6 (muted), text=#111928 (primary) */
+.accordion-item.open .accordion-header {
+  background: var(--color-bg-muted);
+  color: var(--color-text-heading);
+}
+
+/* Figma chevron: 16×16 */
 .accordion-chevron {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   color: var(--color-text-secondary);
   flex-shrink: 0;
   transition: transform 0.2s;
@@ -1457,8 +1466,9 @@ input[type="file"].form-file-input {
 
 .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
 
+/* Figma body: pad=20px all sides, fill=#ffffff (surface) */
 .accordion-body {
-  padding: 0 20px 16px;
+  padding: 20px;
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   line-height: 1.6;
