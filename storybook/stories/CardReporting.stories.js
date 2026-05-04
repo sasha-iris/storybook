@@ -32,7 +32,7 @@
  * - Channel chip icons (mail, slack) use fill="currentColor" → color follows chip bg
  *
  * ## Approximations
- * - Shopify channel icon: green 'S' badge — 50+ vector paths in Figma, no single composite raster.
+ * - Shopify channel icon: real Figma SVG (node 10046:75871), flat green at 24px.
  *   See `shopifyBadge24` in brand-assets.js.
  * - Amazon channel icon: real Figma asset (Group13 composite) via `amazonBadge24()` from brand-assets.js.
  * - Iris Finance owner mark: real Figma asset (xs Smart mark) via `irisMarkImg({ size:'xs' })` from brand-assets.js.
@@ -155,8 +155,8 @@ const recipientChips = () =>
 
 /**
  * Sales channel icon badges.
- * Shopify: `shopifyBadge24` — APPROXIMATED green 'S' badge (50+ Figma vectors, no composite).
- * Amazon: `amazonBadge24(active)` — real Figma asset (Group13); yellow bg when active, gray when not.
+ * Shopify: `shopifyBadge24` — real Figma SVG (node 10046:75871), flat-color at 24px.
+ * Amazon: `amazonBadge24(active)` — real Figma SVG (node 10046:75873); yellow bg active, gray inactive.
  */
 const salesChannels = (active) => `
   <div style="display:flex;gap:8px;align-items:center;">
