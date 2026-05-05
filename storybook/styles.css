@@ -1677,8 +1677,8 @@ input[type="file"].form-file-input {
   cursor: text;
 }
 .dropdown-search-input__icon   { flex-shrink: 0; color: var(--color-text-secondary); }
-.dropdown-search-input__text   { flex: 1; font-size: var(--text-sm); color: var(--color-text-secondary); }
-.dropdown-search-input__value  { color: var(--color-text-heading); }
+.dropdown-search-input__text   { flex-shrink: 0; white-space: nowrap; font-size: var(--text-sm); color: var(--color-text-secondary); }
+.dropdown-search-input__value  { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-heading); }
 .dropdown-search-input__chevron { flex-shrink: 0; color: var(--color-text-secondary); }
 
 /* ── User profile header ─────────────────────────────────────── */

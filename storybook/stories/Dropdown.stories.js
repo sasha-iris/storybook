@@ -54,7 +54,7 @@ const searchRow = (placeholder = 'Search', value = 'Regular Select') => `
   <div class="dropdown-search-input">
     <span class="dropdown-search-input__icon">${SEARCH_ICON}</span>
     <span class="dropdown-search-input__text">${placeholder}</span>
-    <span class="dropdown-search-input__value" style="flex:1;color:var(--color-text-heading);">${value}</span>
+    <span class="dropdown-search-input__value">${value}</span>
     <span class="dropdown-search-input__chevron">${CHEVRON_DOWN}</span>
   </div>
 </div>`;
