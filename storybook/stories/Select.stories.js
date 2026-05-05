@@ -40,7 +40,7 @@ function selectInput(args) {
   const border = isError ? C.borderError : isHovered ? C.borderHover : isDisabled ? C.borderDisabled : C.borderDef;
   const textColor = isDisabled ? C.valueDisabled : isError ? C.errorText : C.value;
   const chevronColor = isDisabled ? C.borderDisabled : C.chevron;
-  const checkColor = isDisabled ? C.borderDisabled : isError ? '#f98080' : C.chevron;
+  const checkColor = isDisabled ? C.borderDisabled : C.chevron;
   const opacity = isDisabled ? '0.7' : '1';
 
   // With-label variant has a row above the input
@@ -221,7 +221,7 @@ export const AllStates = {
       { state: 'default',  label: 'Default',  value: 'English (UK)' },
       { state: 'hovered',  label: 'Hovered',  value: 'English (UK)' },
       { state: 'disabled', label: 'Disabled', value: 'English (UK)' },
-      { state: 'error',    label: 'Error',    value: 'Regular Select' },
+      { state: 'error',    label: 'Error',    value: 'English (UK)' },
     ];
     return `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:800px;font-family:inherit;">
       ${states.map(s => `<div>
