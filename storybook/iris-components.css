@@ -1,0 +1,2586 @@
+/* =============================================================
+   Iris Library — Component CSS
+   Paste this file into your Lovable project (Settings → Custom CSS)
+   Also add iris-tokens.css (design tokens / CSS variables)
+   Font: Inter — add to your <head>:
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+   ============================================================= */
+
+/* ── BASE ───────────────────────────────────── */
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--text-base);
+  font-weight: var(--font-normal);
+  color: var(--color-text-primary);
+  background: var(--color-bg-default);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--color-text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+
+/* --- Size variants (Iris naming) --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);   /* 12px — Figma border/border-radius/rounded-xl */
+  font-family: var(--font-family-base);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.5;                  /* Figma Body tokens all use 1.5 */
+}
+.btn:focus-visible {
+  outline: 2px solid var(--btn-primary-bg);
+  outline-offset: 2px;
+}
+
+/* Sizes — Figma-exact (Buttons frame, base size = 40 h / 20px x-pad / 10px y-pad)
+   Figma names: xs(34h) · sm(36h) · base(40h) · l(48h) · xl(52h)
+   Story mapping: xs→xs  sm→sm  md→base  lg→l  xl→xl              */
+.btn-xs  { font-size: var(--text-xs);   padding: 8px 12px;  }  /* h≈34px */
+.btn-sm  { font-size: var(--text-sm);   padding: 8px 12px;  }  /* h=36px */
+.btn-md  { font-size: var(--text-sm);   padding: 10px 20px; }  /* h=40px — Figma "base" */
+.btn-lg  { font-size: var(--text-base); padding: 12px 20px; }  /* h=48px — Figma "l"   */
+.btn-xl  { font-size: var(--text-base); padding: 14px 24px; }  /* h=52px */
+
+/* Variants — Figma-exact colors (Buttons page, base/Default state)
+   Primary = colors/brand/800 (#42389d, purple) — NOT the legacy blue #1C64F2 */
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: #fff;
+  border-color: var(--btn-primary-bg);
+}
+.btn-primary:hover {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+  text-decoration: none;
+  color: #fff;
+}
+
+.btn-alternative {
+  background: #fff;
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+}
+.btn-alternative:hover {
+  background: var(--color-bg-muted);
+  text-decoration: none;
+}
+
+.btn-dark {
+  background: var(--color-bg-dark);   /* #1e2939 — Figma colors/border/border-dark */
+  color: #fff;
+  border-color: var(--color-bg-dark);
+}
+.btn-dark:hover {
+  background: var(--btn-dark-hover);  /* #111928 */
+  text-decoration: none;
+  color: #fff;
+}
+
+.btn-light {
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+}
+.btn-light:hover {
+  background: #E5E7EB;
+  text-decoration: none;
+}
+
+/* Green — Figma colors/emerald/700 = #007a55 (= --color-text-fg-success) */
+.btn-green {
+  background: var(--btn-green-bg);
+  color: #fff;
+  border-color: var(--btn-green-bg);
+}
+.btn-green:hover { background: var(--btn-green-hover); border-color: var(--btn-green-hover); text-decoration: none; color: #fff; }
+
+/* Red — Figma colors/red/700 = #c10007 */
+.btn-red {
+  background: var(--btn-red-bg);
+  color: #fff;
+  border-color: var(--btn-red-bg);
+}
+.btn-red:hover { background: var(--btn-red-hover); border-color: var(--btn-red-hover); text-decoration: none; color: #fff; }
+
+/* Yellow — Figma name "Yellow"; actual token = colors/orange/600 (#d03801) */
+.btn-yellow {
+  background: var(--btn-yellow-bg);
+  color: #fff;
+  border-color: var(--btn-yellow-bg);
+}
+.btn-yellow:hover { background: var(--btn-yellow-hover); border-color: var(--btn-yellow-hover); text-decoration: none; color: #fff; }
+
+/* Purple — legacy, not in current Figma Buttons page; kept for backward compat */
+.btn-purple {
+  background: #7E3AF2;
+  color: #fff;
+  border-color: #7E3AF2;
+}
+.btn-purple:hover { background: #6C2BD9; text-decoration: none; color: #fff; }
+
+/* Blue — Figma colors/blue/700 (#1447e6); new in this pass */
+.btn-blue {
+  background: var(--btn-blue-bg);
+  color: #fff;
+  border-color: var(--btn-blue-bg);
+}
+.btn-blue:hover { background: var(--btn-blue-hover); border-color: var(--btn-blue-hover); text-decoration: none; color: #fff; }
+
+/* Gray — Figma "Gray" = light surface button; new in this pass */
+.btn-gray {
+  background: var(--btn-gray-bg);
+  color: var(--btn-gray-text);
+  border-color: var(--btn-gray-border);
+}
+.btn-gray:hover { background: var(--btn-gray-hover-bg); border-color: var(--btn-gray-border); text-decoration: none; }
+
+/* Outline variants — Figma-exact (border + matching text color, no fill) */
+.btn-outline-primary {
+  background: transparent;
+  color: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+}
+.btn-outline-primary:hover {
+  background: var(--btn-primary-bg);
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-outline-dark {
+  background: transparent;
+  color: var(--color-bg-dark);
+  border-color: var(--color-bg-dark);
+}
+.btn-outline-dark:hover {
+  background: var(--color-bg-dark);
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-outline-green {
+  background: transparent;
+  color: var(--btn-green-bg);
+  border-color: var(--btn-green-bg);
+}
+.btn-outline-green:hover { background: var(--btn-green-bg); color: #fff; text-decoration: none; }
+
+.btn-outline-red {
+  background: transparent;
+  color: var(--btn-red-bg);
+  border-color: var(--btn-red-bg);
+}
+.btn-outline-red:hover { background: var(--btn-red-bg); color: #fff; text-decoration: none; }
+
+/* Yellow/Blue/Gray outlines — new in this pass */
+.btn-outline-yellow {
+  background: transparent;
+  color: var(--btn-yellow-bg);
+  border-color: var(--btn-yellow-bg);
+}
+.btn-outline-yellow:hover { background: var(--btn-yellow-bg); color: #fff; text-decoration: none; }
+
+.btn-outline-blue {
+  background: transparent;
+  color: var(--btn-blue-bg);
+  border-color: var(--btn-blue-bg);
+}
+.btn-outline-blue:hover { background: var(--btn-blue-bg); color: #fff; text-decoration: none; }
+
+.btn-outline-gray {
+  background: transparent;
+  color: var(--btn-gray-text);
+  border-color: var(--btn-gray-border);
+}
+.btn-outline-gray:hover { background: var(--btn-gray-hover-bg); text-decoration: none; }
+
+/* Pill shape */
+.btn-pill { border-radius: var(--radius-full); }
+
+/* Disabled */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Icon-only buttons (Figma: Icon only=True) ──────────────────
+   Same bg/colors as solid variants, square, just swap padding    */
+.btn-icon { padding: 0; aspect-ratio: 1; }
+.btn-icon.btn-xs  { width: 34px; height: 34px; }
+.btn-icon.btn-sm  { width: 36px; height: 36px; }
+.btn-icon.btn-md  { width: 40px; height: 40px; }
+.btn-icon.btn-lg  { width: 48px; height: 48px; }
+.btn-icon.btn-xl  { width: 52px; height: 52px; }
+
+/* ── Button Group (Figma: Group Buttons) ────────────────────────
+   Horizontally joined segmented controls                         */
+.btn-group {
+  display: inline-flex;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.btn-group .btn {
+  border-radius: 0;
+  border-right-width: 0;
+  background: var(--color-bg-white);
+  color: var(--color-text-heading);
+  border-color: var(--color-border-base);
+  font-size: var(--text-sm);
+  padding: 8px 16px;
+}
+.btn-group .btn:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+.btn-group .btn:last-child  {
+  border-right-width: 1px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+.btn-group .btn:hover,
+.btn-group .btn.active {
+  background: var(--color-bg-tertiary);
+  text-decoration: none;
+  color: var(--color-text-heading);
+}
+/* stat variant — right slot shows a count badge */
+.btn-group-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-group-stat-count {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-body-subtle);
+}
+
+/* ── Social Buttons (Figma: Social buttons) ─────────────────────
+   Sign-in with <Provider> — dark/white × outline/solid           */
+.btn-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;          /* Figma uses 8px, not 12px          */
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  line-height: 1.5;
+}
+.btn-social-dark {
+  background: #111928;
+  color: #fff;
+  border: 1px solid transparent;
+}
+.btn-social-dark-outline {
+  background: transparent;
+  color: #111928;
+  border: 1px solid var(--color-border-base);
+}
+.btn-social-white {
+  background: #fff;
+  color: #111928;
+  border: 1px solid transparent;
+}
+.btn-social-white-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+/* Sizes */
+.btn-social.btn-xs   { font-size: 12px; padding: 8px 12px; }
+.btn-social.btn-sm   { font-size: 14px; padding: 8px 12px; }
+.btn-social.btn-md   { font-size: 14px; padding: 10px 20px; }
+.btn-social.btn-lg   { font-size: 16px; padding: 12px 24px; }
+
+/* ── Link Buttons (Figma: Link) ─────────────────────────────────
+   Text-only, two weights (semibold / medium), no background      */
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  line-height: 1.5;
+  padding: 0;
+  font-family: var(--font-family-base);
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+/* Semibold (Figma type=Semibold) — brand color */
+.btn-link-semibold {
+  font-weight: 600;
+  color: #42389d;
+}
+.btn-link-semibold:hover {
+  color: #362f78;
+  border-bottom-color: #362f78;
+  text-decoration: none;
+}
+/* Medium (Figma type=Medium) — subtle gray */
+.btn-link-medium {
+  font-weight: 500;
+  color: var(--color-text-body-subtle);  /* #6a7282 */
+}
+.btn-link-medium:hover {
+  color: #362f78;
+  border-bottom-color: #362f78;
+  text-decoration: none;
+}
+/* Sizes */
+.btn-link.btn-xs  { font-size: 12px; }
+.btn-link.btn-sm  { font-size: 14px; }
+.btn-link.btn-md  { font-size: 16px; }
+
+/* ── Chart Button (Figma: node 9705:152804) ─────────────────────
+   Compact icon-only button used inside chart/table toolbars      */
+.btn-chart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #374151;                    /* Figma old-colors/gray/700 */
+  transition: background 0.15s;
+}
+.btn-chart:hover    { background: var(--color-bg-tertiary); border-radius: 9px; }
+.btn-chart:disabled { color: #D1D5DB; border-radius: 9px; cursor: not-allowed; }
+
+/* ── Table Button (Figma: node 9287:163857) ─────────────────────
+   Icon-only button with border/shadow, used in table row actions */
+.btn-table {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 8px;
+  border-radius: 6px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-base);
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.1), 0px 1px 2px -1px rgba(0,0,0,0.1);
+  cursor: pointer;
+  color: var(--color-text-heading);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.btn-table:hover {
+  background: var(--color-bg-tertiary);
+  box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1), 0px 4px 6px rgba(0,0,0,0.05);
+}
+.btn-table:disabled {
+  background: var(--color-bg-tertiary);
+  color: #D1D5DB;                    /* Figma old-colors/gray/300 — keeps shadow-sm */
+  cursor: not-allowed;
+  pointer-events: none;
+  /* shadow-sm intentionally kept — Figma disabled state matches Default shadow */
+}
+
+/* ── SECTION 4: FORMS ───────────────────────── */
+/* Matches Figma page: ---- Forms
+   Frames: Input Field, Textarea input, Select Input,
+           File input, Range Sliders, Floating labels */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.form-group:last-child { margin-bottom: 0; }
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+}
+
+.form-helper {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Input Field — matches Iris "Input Field" frame */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(118, 169, 250, 0.35);
+}
+
+/* Input sizes — matching [T] sizes */
+.form-input-sm { padding: 7px 10px; font-size: var(--text-xs); }
+.form-input-lg { padding: 13px 16px; font-size: var(--text-base); }
+
+/* Select — matches Iris "Select Input" frame */
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* Textarea — matches Iris "Textarea input" frame */
+.form-textarea { resize: vertical; min-height: 96px; }
+
+/* File input — matches Iris "File input" frame */
+.form-file-label {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+}
+
+.form-file-btn {
+  padding: 10px 16px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-default);
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.form-file-placeholder {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: var(--text-sm);
+  color: var(--color-text-disabled);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+input[type="file"].form-file-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Range slider — matches Iris "Range Sliders" frame */
+.form-range {
+  width: 100%;
+  height: 6px;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--color-bg-primary);
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.form-range::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--color-bg-primary);
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+/* Checkbox & Radio */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-check-input {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  accent-color: var(--color-bg-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.form-check-input[type="radio"] { border-radius: 50%; }
+
+.form-check-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+/* Toggle / Switch */
+.form-toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.form-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.form-toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--color-border-default);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form-toggle-track::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.form-toggle input:checked + .form-toggle-track {
+  background: var(--color-bg-primary);
+}
+
+.form-toggle input:checked + .form-toggle-track::after {
+  transform: translateX(20px);
+}
+
+/* Validation states */
+.form-input.is-success,
+.form-select.is-success,
+.form-textarea.is-success {
+  border-color: #0E9F6E;
+}
+.form-input.is-error,
+.form-select.is-error,
+.form-textarea.is-error {
+  border-color: var(--color-danger);
+  background: #FFF5F5;
+}
+.form-feedback-error { font-size: var(--text-xs); color: var(--color-danger); margin-top: 4px; }
+.form-feedback-success { font-size: var(--text-xs); color: #0E9F6E; margin-top: 4px; }
+
+/* Search input — matches Iris "Search input" frame */
+.form-search-wrap {
+  position: relative;
+}
+.form-search-wrap .form-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+.form-search-wrap .form-input { padding-left: 38px; }
+
+/* Floating labels — matches Iris "Floating labels" frame */
+.form-floating {
+  position: relative;
+}
+.form-floating .form-input,
+.form-floating .form-select,
+.form-floating .form-textarea {
+  padding-top: 20px;
+  padding-bottom: 6px;
+}
+.form-floating .form-float-label {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  transition: top 0.15s, font-size 0.15s, color 0.15s;
+}
+.form-floating .form-input:focus ~ .form-float-label,
+.form-floating .form-input:not(:placeholder-shown) ~ .form-float-label {
+  top: 5px;
+  font-size: 10px;
+  color: var(--color-text-link);
+}
+
+
+
+/* =============================================
+   ALERT
+   Source: Figma › ---- Alerts
+   Frames: Alerts · Notification system
+   ============================================= */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  border: 1px solid transparent;
+}
+
+.alert-icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; }
+
+.alert-title {
+  font-weight: var(--font-semibold);
+  margin-bottom: 4px;
+  font-size: var(--text-sm);
+}
+
+.alert-body { flex: 1; }
+
+.alert-dismiss {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  padding: 2px;
+  line-height: 1;
+  font-size: 18px;
+  margin-left: auto;
+}
+.alert-dismiss:hover { opacity: 1; }
+
+/* Variants */
+.alert-info    { background: #EBF5FB; color: #1E40AF; border-color: #BFDBFE; }
+.alert-success { background: #F0FDF4; color: #166534; border-color: #BBF7D0; }
+.alert-warning { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
+.alert-danger  { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+.alert-dark    { background: #F9FAFB; color: #1F2A37; border-color: #E5E7EB; }
+
+
+/* =============================================
+   AVATAR
+   Source: Figma › 🧑🏻 Avatars
+   Frame: Avatars
+   ============================================= */
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #E5E7EB;
+  color: #6B7280;
+  font-weight: var(--font-semibold);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Sizes */
+.avatar-xs { width: 24px;  height: 24px;  font-size: 9px;  }
+.avatar-sm { width: 32px;  height: 32px;  font-size: 11px; }
+.avatar-md { width: 40px;  height: 40px;  font-size: 14px; }
+.avatar-lg { width: 56px;  height: 56px;  font-size: 18px; }
+.avatar-xl { width: 80px;  height: 80px;  font-size: 24px; }
+
+/* Rounded square */
+.avatar-rounded { border-radius: var(--radius-md); }
+
+/* Status indicator */
+.avatar-wrap { position: relative; display: inline-block; }
+.avatar-status {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.avatar-status-online  { background: #0E9F6E; }
+.avatar-status-away    { background: #C27803; }
+.avatar-status-busy    { background: #E02424; }
+.avatar-status-offline { background: #9CA3AF; }
+
+/* Stacked group */
+.avatar-group {
+  display: flex;
+  align-items: center;
+}
+.avatar-group .avatar {
+  border: 2px solid #fff;
+  margin-left: -8px;
+}
+.avatar-group .avatar:first-child { margin-left: 0; }
+
+.avatar-group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: var(--font-semibold);
+  color: #1F2A37;
+  background: #E5E7EB;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  margin-left: -8px;
+  width: 40px;
+  height: 40px;
+}
+
+
+/* =============================================
+   BADGE
+   Source: Figma › ---- Badges
+   Frame: Badges & Progress Bars
+   ============================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  line-height: 1.5;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.badge-lg { font-size: var(--text-sm); padding: 4px 12px; }
+
+/* Color variants */
+.badge-default  { background: #E5E7EB; color: #374151; }
+.badge-dark     { background: #374151; color: #fff; }
+.badge-primary  { background: #DBEAFE; color: #1E40AF; }
+.badge-red      { background: #FEE2E2; color: #991B1B; }
+.badge-green    { background: #D1FAE5; color: #065F46; }
+.badge-yellow   { background: #FEF3C7; color: #92400E; }
+.badge-indigo   { background: #E0E7FF; color: #3730A3; }
+.badge-purple   { background: #EDE9FE; color: #5B21B6; }
+.badge-pink     { background: #FCE7F3; color: #9D174D; }
+
+/* Bordered variants */
+.badge-outline-default  { background: transparent; border-color: #374151; color: #374151; }
+.badge-outline-primary  { background: transparent; border-color: #1C64F2; color: #1C64F2; }
+.badge-outline-red      { background: transparent; border-color: #E02424; color: #E02424; }
+.badge-outline-green    { background: transparent; border-color: #057A55; color: #057A55; }
+.badge-outline-yellow   { background: transparent; border-color: #C27803; color: #C27803; }
+.badge-outline-purple   { background: transparent; border-color: #7E3AF2; color: #7E3AF2; }
+
+
+/* =============================================
+   BREADCRUMB
+   Source: Figma › ---- Breadcrumbs
+   Frame: Breadcrumbs
+   ============================================= */
+
+/* Figma 3284:24211 — layoutWrap=NO_WRAP, gap=16 between all children */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.breadcrumb-item a {
+  /* Figma 3284:24211 Type=Default — link items fill=#101828 (heading) */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text-heading);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.breadcrumb-item a:hover { color: var(--color-text-primary); text-decoration: none; }
+
+/* Figma: active (current page) = fill=#4a5565 (body) — lighter than links */
+.breadcrumb-item.active { color: var(--color-text-body); }
+
+.breadcrumb-sep {
+  /* Figma: chevron fill=#4a5565 (Default) */
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-body);
+  font-size: 12px;
+  margin: 0 2px;
+}
+
+/* Figma Type=With background: all items (links + active) = #4a5565, chevron = #6a7282 */
+.breadcrumb-bg .breadcrumb-item a,
+.breadcrumb-bg .breadcrumb-item.active { color: var(--color-text-body); }
+.breadcrumb-bg .breadcrumb-sep { color: var(--color-text-body-subtle); }
+
+
+/* =============================================
+   ACCORDION
+   Source: Figma › ---- Accordions
+   Frame: Accordions
+   ============================================= */
+
+.accordion {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.accordion-item + .accordion-item {
+  border-top: 1px solid var(--color-border-default);
+}
+
+/* Figma 2370:20939 — "Text & Icon" frame: pad=20px all sides, 56px button height */
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+  background: var(--color-bg-surface);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  /* Closed state: secondary #6b7280 */
+  color: var(--color-text-secondary);
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.accordion-header:hover { background: var(--color-bg-muted); }
+
+/* Open state: bg=#f3f4f6 (muted), text=#111928 (primary) */
+.accordion-item.open .accordion-header {
+  background: var(--color-bg-muted);
+  color: var(--color-text-heading);
+}
+
+/* Figma chevron: 16×16 */
+.accordion-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+
+/* Figma body: pad=20px all sides, fill=#ffffff (surface) */
+.accordion-body {
+  padding: 20px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  background: var(--color-bg-surface);
+  display: none;
+}
+
+.accordion-item.open .accordion-body { display: block; }
+
+/* Flush variant — no outer border */
+.accordion-flush {
+  border: none;
+  border-radius: 0;
+}
+.accordion-flush .accordion-item {
+  border-left: none;
+  border-right: none;
+}
+.accordion-flush .accordion-item:first-child { border-top: none; }
+
+
+/* =============================================
+   DROPDOWN
+   Source: Figma › ---- Dropdowns
+   Frames: Dropdowns · Dropdown menus
+   ============================================= */
+
+/* =============================================================
+   DROPDOWN
+   Figma: 9456:150381 (item) · 3283:21147 (menu) · 3283:21134 (trigger)
+   ============================================================= */
+
+/* ── Container ─────────────────────────────────────────────── */
+.dropdown { position: relative; display: inline-block; }
+
+/* ── Menu panel ─────────────────────────────────────────────── */
+/* Figma: bg=#ffffff, radius=8px, no explicit border            */
+.dropdown-menu {
+  min-width: 224px;
+  background: var(--color-bg-surface);   /* #ffffff */
+  border-radius: var(--radius-md);       /* 8px */
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  overflow: hidden;
+  list-style: none;
+}
+/* Position helpers — add when inside a .dropdown wrapper */
+.dropdown-menu--absolute {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+}
+.dropdown-menu-right,
+.dropdown-menu--right { left: auto; right: 0; }
+
+/* Dark mode — Figma bg=#374151 (gray-700) */
+.dropdown-menu--dark { background: #374151; }
+
+/* ── Section label ───────────────────────────────────────────── */
+/* Figma: pad=4/16/0/16, fs=12/700, color=#9ca3af, UPPERCASE    */
+.dropdown-label,
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px 0;
+  font-size: var(--text-xs);           /* 12px */
+  font-weight: var(--font-bold);       /* 700  */
+  line-height: 1.5;
+  color: var(--color-text-disabled);   /* #9ca3af */
+  text-transform: uppercase;
+}
+
+/* Count chip inside label (e.g. "24") */
+.dropdown-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);    /* 4px */
+  background: var(--color-bg-muted);  /* #f3f4f6 */
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-body);      /* #4a5565 */
+  text-transform: none;
+}
+
+/* ── Divider ─────────────────────────────────────────────────── */
+/* Figma: 1px solid #e5e7eb, no margin                          */
+.dropdown-divider {
+  height: 1px;
+  background: var(--color-border-base); /* #e5e7eb */
+  border: none;
+  margin: 0;
+}
+.dropdown-menu--dark .dropdown-divider { background: #4b5563; }
+
+/* ── List item ───────────────────────────────────────────────── */
+/* Figma 9456:150381 — h=37px, pad=8/16, gap=12                 */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  font-size: var(--text-sm);           /* 14px */
+  font-weight: var(--font-normal);     /* 400  */
+  line-height: 1.5;
+  color: var(--color-text-heading);    /* #101828 */
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.1s;
+}
+/* Sub-elements */
+.dropdown-item__icon,
+.dropdown-item__chevron { flex-shrink: 0; color: var(--color-text-secondary); } /* #6b7280 */
+.dropdown-item__text    { flex: 1; min-width: 0; }
+
+/* Hover — default: bg gray/100, radius 6px */
+.dropdown-item:hover {
+  background: var(--color-bg-muted);  /* #f3f4f6 */
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+/* Selected (active) — text brand/800, icon brand/600 */
+.dropdown-item.active { color: var(--btn-primary-bg); }            /* #42389d */
+.dropdown-item.active .dropdown-item__icon { color: var(--color-bg-brand); } /* #5145cd */
+.dropdown-item.active:hover {
+  background: var(--color-bg-muted);
+  border-radius: 6px;
+  color: var(--btn-primary-hover);    /* #362f78 */
+}
+.dropdown-item.active:hover .dropdown-item__icon { color: var(--btn-primary-bg); } /* #42389d */
+
+/* Destructive — text danger/700, icon red/500 */
+.dropdown-item.danger { color: var(--color-text-fg-danger); }      /* #c70036 */
+.dropdown-item.danger .dropdown-item__icon { color: var(--color-dropdown-icon-danger); } /* #f05252 */
+.dropdown-item.danger:hover {
+  background: var(--color-bg-muted);
+  border-radius: 6px;
+  color: var(--color-text-fg-danger-strong); /* #8b0836 */
+}
+.dropdown-item.danger:hover .dropdown-item__icon { color: var(--color-danger); } /* #e02424 */
+
+/* Disabled */
+.dropdown-item:disabled,
+.dropdown-item[aria-disabled="true"] {
+  color: var(--color-text-body);      /* #4a5565 */
+  pointer-events: none;
+  cursor: default;
+}
+.dropdown-item:disabled .dropdown-item__icon,
+.dropdown-item[aria-disabled="true"] .dropdown-item__icon { color: var(--color-ctrl-off); } /* #d1d5db */
+/* Disabled + selected */
+.dropdown-item.active[aria-disabled="true"],
+.dropdown-item.active[aria-disabled="true"] .dropdown-item__icon {
+  color: var(--color-dropdown-disabled-selected); /* #b4c6fc */
+}
+
+/* Dark mode items — text #d1d5db */
+.dropdown-menu--dark .dropdown-item { color: #d1d5db; }
+.dropdown-menu--dark .dropdown-item .dropdown-item__icon { color: #d1d5db; }
+.dropdown-menu--dark .dropdown-item:hover { background: rgba(255,255,255,.06); }
+.dropdown-menu--dark .dropdown-item.danger { color: #f05252; }
+
+/* ── Search input row ────────────────────────────────────────── */
+/* Figma: pad=12/16/4/16, input 40px, bg=#f9fafb border=#d1d5db */
+.dropdown-search { padding: 12px 16px 4px; }
+.dropdown-search-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--color-bg-default);     /* #f9fafb */
+  border: 1px solid var(--color-ctrl-off); /* #d1d5db */
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  cursor: text;
+}
+.dropdown-search-input__icon   { flex-shrink: 0; color: var(--color-text-secondary); }
+.dropdown-search-input__text   { flex: 1; font-size: var(--text-sm); color: var(--color-text-secondary); }
+.dropdown-search-input__value  { color: var(--color-text-heading); }
+.dropdown-search-input__chevron { flex-shrink: 0; color: var(--color-text-secondary); }
+
+/* ── User profile header ─────────────────────────────────────── */
+/* Figma: pad=12/16, gap=10, avatar=32×32, name=14/600, email=12/400 */
+.dropdown-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.dropdown-profile__avatar {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-base);
+  background: var(--color-bg-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: var(--font-medium);
+  color: var(--color-text-heading);
+  flex-shrink: 0;
+}
+.dropdown-profile__name {
+  font-size: var(--text-sm); font-weight: var(--font-semibold);
+  color: var(--color-bg-dark-strong); line-height: 1.5; /* #101828 */
+}
+.dropdown-profile__email {
+  font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.5;
+}
+
+/* ── Avatar item (scrolling dropdown) ────────────────────────── */
+/* Figma: 24×24 avatar + name + date, gap=10, height=24         */
+.dropdown-avatar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 0; cursor: pointer;
+}
+.dropdown-avatar-item__avatar {
+  width: 24px; height: 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-base);
+  background: var(--color-bg-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: var(--font-medium);
+  color: var(--color-text-heading); flex-shrink: 0;
+}
+.dropdown-avatar-item__name {
+  font-size: var(--text-sm); font-weight: var(--font-normal);
+  color: var(--color-text-heading); line-height: 1;
+}
+.dropdown-avatar-item__sub {
+  font-size: var(--text-xs); color: var(--color-text-secondary);
+}
+
+/* CTA row at bottom of scrolling dropdown */
+.dropdown-cta {
+  display: flex; align-items: center; gap: 4px;
+  padding: 10px 12px 9px;
+  background: var(--color-bg-default);
+  font-size: var(--text-sm); font-weight: var(--font-medium);
+  color: var(--color-text-fg-brand); /* #1447e6 */
+  cursor: pointer;
+}
+
+/* ── Notification item ────────────────────────────────────────── */
+/* Figma: gap=12, avatar=44×44, msg=14/400 gray/500, time=12 blue */
+.dropdown-notification {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--color-border-base);
+}
+.dropdown-notification:last-of-type { border-bottom: none; }
+.dropdown-notification__avatar {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-base);
+  background: var(--color-bg-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: var(--font-semibold);
+  color: var(--color-text-heading); flex-shrink: 0;
+}
+.dropdown-notification__body { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.dropdown-notification__msg  { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; }
+.dropdown-notification__time { font-size: var(--text-xs); color: #155dfc; }
+
+/* ── Trigger buttons ─────────────────────────────────────────── */
+/* Figma 3283:21134: bg=brand/900 (#362f78), ring=indigo/200    */
+.dropdown-trigger {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: var(--btn-primary-hover);        /* #362f78 brand/900 */
+  border: 3px solid var(--color-ctrl-disabled-on); /* #cddbfe ring   */
+  border-radius: var(--radius-lg);             /* 12px */
+  font-size: var(--text-sm); font-weight: var(--font-medium);
+  color: var(--color-text-inverse);            /* #ffffff */
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.dropdown-trigger:hover { background: var(--btn-primary-bg); } /* #42389d on hover */
+/* Icon-only trigger (circle) */
+.dropdown-trigger--icon { padding: 10px; border-radius: var(--radius-full); }
+/* Small variant for inside-menu footer buttons */
+.dropdown-trigger--sm {
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-xs); font-weight: var(--font-medium);
+  border-width: 1px;
+}
+/* Outline (secondary) trigger */
+.dropdown-trigger--outline {
+  background: transparent;
+  border-color: var(--color-border-base); /* #e5e7eb */
+  color: var(--color-bg-dark);            /* #1e2939 */
+}
+.dropdown-trigger--outline:hover { background: var(--color-bg-muted); }
+
+
+/* =============================================
+   MODAL
+   Source: Figma › ---- Modals
+   Frames: Modals · Modal
+   ============================================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-dialog {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 512px;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.modal-dialog-sm { max-width: 320px; }
+.modal-dialog-lg { max-width: 720px; }
+.modal-dialog-xl { max-width: 1024px; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.modal-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.modal-close:hover { color: var(--color-text-primary); background: var(--color-bg-muted); }
+
+.modal-body {
+  padding: 20px 24px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--color-border-default);
+}
+
+
+/* =============================================
+   PAGINATION
+   Source: Figma › ---- Pagination
+   Frame: Pagination
+   ============================================= */
+
+/* Figma node 3284:22499 — connected button-group, gap=0, 1px strip padding */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  list-style: none;
+  padding: 1px;
+}
+
+/* Border collapse: offset each li by -1px to merge adjacent borders */
+.page-item {
+  margin-left: -1px;
+}
+.page-item:first-child {
+  margin-left: 0;
+}
+
+/* All buttons: no radius (middle), zero margin (handled on li) */
+.page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: 0;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: var(--font-family-base);
+  line-height: 1;
+  width: 100%;
+}
+/* First button (prev/back): left corners rounded */
+.page-item:first-child .page-link {
+  border-radius: 4px 0 0 4px;
+}
+/* Last button (next/forward): right corners rounded */
+.page-item:last-child .page-link {
+  border-radius: 0 4px 4px 0;
+}
+.page-link:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  z-index: 1;
+}
+
+/* Active page: Figma node 9426:125610 — Type=page, Hover/Selected=Yes */
+.page-item.active .page-link {
+  background: var(--color-bg-muted);
+  border-color: var(--color-border-default);
+  color: #42389d;
+  z-index: 1;
+}
+
+/* Disabled prev/next: Figma — chevron fill:#d1d5db (gray-300, NOT gray-400) */
+.page-item.disabled .page-link {
+  color: #d1d5db;
+  pointer-events: none;
+}
+
+/* Small size: 32×32 buttons */
+.pagination-sm .page-link {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: var(--text-xs);
+}
+
+/* Table pagination — Figma node 9703:152796 */
+/* "Showing/to/of" = #374151 fw=400; numbers = #111928 fw=600 */
+.pagination-info {
+  font-size: var(--text-sm);
+  color: #374151;
+}
+.pagination-info span { font-weight: var(--font-semibold); color: var(--color-text-primary); }
+.pagination-info.pagination-info-sm { font-size: var(--text-xs); }
+
+
+/* =============================================
+   PROGRESS BAR
+   Source: Figma › ---- Progress Bars
+   Frame: Progress Bars
+   ============================================= */
+
+.progress {
+  height: 8px;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  width: 100%;
+}
+
+.progress-sm { height: 4px; }
+.progress-lg { height: 12px; }
+.progress-xl { height: 20px; }
+
+.progress-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-primary);
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-bar-default { background: var(--color-bg-primary); }
+.progress-bar-green   { background: #0E9F6E; }
+.progress-bar-red     { background: #E02424; }
+.progress-bar-yellow  { background: #C27803; }
+.progress-bar-purple  { background: #7E3AF2; }
+.progress-bar-dark    { background: #1F2A37; }
+
+.progress-label {
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  color: #fff;
+  white-space: nowrap;
+  padding: 0 6px;
+}
+
+.progress-outside-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+}
+
+
+/* =============================================
+   SIDEBAR
+   Source: Figma › ---- Sidebar
+   Frames: left-side-menu · Example
+   ============================================= */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 256px;
+  height: 100%;
+  min-height: 480px;
+  background: var(--color-bg-surface);
+  border-right: 1px solid var(--color-border-default);
+  padding: 16px 0;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px 20px;
+  border-bottom: 1px solid var(--color-border-default);
+  margin-bottom: 12px;
+}
+
+.sidebar-logo-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.sidebar-logo-name {
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.sidebar-section {
+  margin-bottom: 4px;
+}
+
+.sidebar-section-label {
+  padding: 10px 16px 4px;
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-disabled);
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-family-base);
+}
+.sidebar-item:hover { background: var(--color-bg-muted); color: var(--color-text-primary); text-decoration: none; }
+
+/* Figma 1060:44 — active item fill=#f3f4f6, icon fill=#1f2a37 */
+.sidebar-item.active {
+  background: var(--color-bg-muted);
+  color: #1f2a37;
+}
+
+.sidebar-item-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.sidebar-item.active .sidebar-item-icon { opacity: 1; color: #1f2a37; }
+
+.sidebar-item-badge {
+  margin-left: auto;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 16px 0;
+  border-top: 1px solid var(--color-border-default);
+}
+
+
+/* =============================================
+   SKELETON
+   Source: Figma › ---- Skeleton
+   Frame: Skeleton
+   ============================================= */
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.skeleton {
+  background: #E5E7EB;
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-text {
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: #E5E7EB;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-avatar {
+  border-radius: 50%;
+  background: #E5E7EB;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-image {
+  border-radius: var(--radius-md);
+  background: #E5E7EB;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* Utility widths for skeleton lines */
+.skeleton-w-full   { width: 100%; }
+.skeleton-w-3-4    { width: 75%;  }
+.skeleton-w-1-2    { width: 50%;  }
+.skeleton-w-1-3    { width: 33%;  }
+.skeleton-w-2-3    { width: 67%;  }
+
+
+/* =============================================
+   STEPPER
+   Source: Figma › ---- Stepper
+   Frames: Stepper · Stepper Navigation
+   ============================================= */
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+}
+
+.stepper-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+/* connector line */
+.stepper-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--color-border-default);
+  z-index: 0;
+}
+.stepper-item.completed:not(:last-child)::after { background: var(--color-bg-primary); }
+
+.stepper-icon {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  border: 2px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.stepper-item.active    .stepper-icon { border-color: var(--color-bg-primary); color: var(--color-bg-primary); }
+.stepper-item.completed .stepper-icon { border-color: var(--color-bg-primary); background: var(--color-bg-primary); color: #fff; }
+
+.stepper-label {
+  margin-top: 8px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.stepper-item.active    .stepper-label { color: var(--color-bg-primary); font-weight: var(--font-semibold); }
+.stepper-item.completed .stepper-label { color: var(--color-text-primary); }
+
+/* Vertical stepper */
+.stepper-vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.stepper-vertical .stepper-item {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  flex: unset;
+  width: 100%;
+  padding-bottom: 24px;
+  position: relative;
+}
+.stepper-vertical .stepper-item:not(:last-child)::after {
+  top: 36px;
+  left: 17px;
+  width: 2px;
+  height: calc(100% - 36px);
+}
+.stepper-vertical .stepper-label { margin-top: 6px; text-align: left; }
+.stepper-vertical .stepper-content {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+
+/* =============================================
+   TOAST
+   Source: Figma › ---- Toasts
+   Frames: Toast (both)
+   ============================================= */
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  min-width: 288px;
+  max-width: 380px;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: var(--font-bold);
+  color: #fff;
+  margin-top: 1px;
+}
+
+.toast-icon-success { background: #0E9F6E; }
+.toast-icon-danger  { background: #E02424; }
+.toast-icon-warning { background: #C27803; }
+.toast-icon-info    { background: #1C64F2; }
+.toast-icon-fire    { background: #FF5A1F; }
+
+.toast-body { flex: 1; }
+
+.toast-title {
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.toast-message { color: var(--color-text-secondary); }
+
+.toast-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 2px;
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.toast-close:hover { color: var(--color-text-primary); }
+
+/* Toast stack */
+.toast-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+
+/* =============================================
+   TOOLTIP
+   Source: Figma › ---- Tooltips
+   Frame: Tooltips
+   ============================================= */
+
+.tooltip-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-bubble {
+  position: absolute;
+  z-index: 60;
+  background: #1F2A37;
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Positions */
+.tooltip-top    { bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); }
+.tooltip-bottom { top:    calc(100% + 6px); left: 50%; transform: translateX(-50%); }
+.tooltip-left   { right:  calc(100% + 6px); top:  50%; transform: translateY(-50%); }
+.tooltip-right  { left:   calc(100% + 6px); top:  50%; transform: translateY(-50%); }
+
+/* Arrow */
+.tooltip-bubble::after {
+  content: '';
+  position: absolute;
+  border: 5px solid transparent;
+}
+.tooltip-top::after    { top:100%;  left:50%; transform:translateX(-50%); border-top-color:   #1F2A37; }
+.tooltip-bottom::after { bottom:100%; left:50%; transform:translateX(-50%); border-bottom-color:#1F2A37; }
+.tooltip-left::after   { left:100%; top:50%; transform:translateY(-50%);  border-left-color:  #1F2A37; }
+.tooltip-right::after  { right:100%; top:50%; transform:translateY(-50%); border-right-color: #1F2A37; }
+
+/* Light variant */
+.tooltip-light {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-default);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.tooltip-light.tooltip-top::after    { border-top-color:    #fff; }
+.tooltip-light.tooltip-bottom::after { border-bottom-color: #fff; }
+
+
+/* =============================================
+   LIST GROUP
+   Source: Figma › ---- List Group
+   Frame: List Group
+   ============================================= */
+
+.list-group {
+  list-style: none;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border-default);
+  text-decoration: none;
+  transition: background 0.1s;
+}
+
+.list-group-item:last-child { border-bottom: none; }
+
+.list-group-item.active {
+  background: var(--color-bg-primary);
+  color: #fff;
+  border-color: var(--color-bg-primary);
+}
+
+.list-group-item.disabled { color: var(--color-text-disabled); pointer-events: none; }
+
+/* Clickable */
+a.list-group-item:hover,
+button.list-group-item:hover { background: var(--color-bg-muted); text-decoration: none; }
+a.list-group-item.active:hover,
+button.list-group-item.active:hover { background: var(--color-bg-primary-hover); }
+
+.list-group-item-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+}
+
+
+/* =============================================
+   KBD (Keyboard)
+   Source: Figma › ---- KBD
+   Frame: KBD
+   ============================================= */
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 0 0 #D1D5DB;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Dark variant */
+kbd.kbd-dark {
+  background: #374151;
+  color: #F9FAFB;
+  border-color: #374151;
+  box-shadow: 0 2px 0 0 #1F2A37;
+}
+
+/* Key combo */
+.kbd-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kbd-sep {
+  font-size: var(--text-xs);
+  color: var(--color-text-disabled);
+}
+
+
+/* =============================================
+   INDICATOR
+   Source: Figma › ---- Indicators
+   Frames: Indicators · Examples
+   ============================================= */
+
+.indicator {
+  position: relative;
+  display: inline-flex;
+}
+
+.indicator-item {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Positions */
+.indicator-top-right    { top: -4px;  right: -4px;  }
+.indicator-top-left     { top: -4px;  left: -4px;   }
+.indicator-bottom-right { bottom: -4px; right: -4px; }
+.indicator-bottom-left  { bottom: -4px; left: -4px;  }
+
+/* Dot (status-only) */
+.indicator-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: var(--color-bg-primary);
+}
+.indicator-dot-red    { background: #E02424; }
+.indicator-dot-green  { background: #0E9F6E; }
+.indicator-dot-yellow { background: #C27803; }
+.indicator-dot-gray   { background: #9CA3AF; }
+
+/* Badge on indicator */
+.indicator-badge {
+  font-size: 9px;
+  font-weight: var(--font-bold);
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-danger);
+  color: #fff;
+  border: 2px solid #fff;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+
+/* =============================================
+   CARD — Extended tokens
+   Source: Figma › ---- Cards
+   Frames: Cards (13559:76419) · Live Example
+   ============================================= */
+
+/* ── Card shell (canonical structure) ────────── */
+/*
+  .card
+    .card-header         — title row + optional controls
+    .card-body           — main content area
+    .card-footer         — optional action row / legend
+
+  Distinguishing rules:
+  - KPI card:    hero is a .card-stat-value (large number); single metric focus
+  - Metric card: .card-stat-value + .card-sparkline (mini SVG); value + trend in same card
+  - Chart card:  .card-chart-area (full-height SVG/placeholder); period controls; legend
+  - Content card:.card-body has body text + optional image; no numeric hero
+*/
+
+.card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-base);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  gap: 8px;
+}
+
+.card-header-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-heading);
+}
+
+.card-header-sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-body-subtle);
+  margin-top: 2px;
+}
+
+.card-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.card-body {
+  padding: 0 20px 16px;
+}
+
+.card-body-padded {
+  padding: 16px 20px;
+}
+
+.card-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border-base);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ── KPI / stat values ───────────────────────── */
+
+.card-stat-value {
+  font-size: 2rem;        /* 32px */
+  font-weight: var(--font-bold);
+  color: var(--color-text-heading);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.card-stat-value-lg {
+  font-size: 2.5rem;      /* 40px */
+  font-weight: var(--font-extrabold);
+  color: var(--color-text-heading);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.card-stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-body-subtle);
+  font-weight: var(--font-normal);
+  margin-top: 2px;
+}
+
+/* ── Trend indicator ─────────────────────────── */
+/*
+  Used in: KPI, Metric, and Chart cards.
+  Structure: <span class="card-trend card-trend-up">↑ 12.5% vs last month</span>
+  - trend-up:      green — metric improved
+  - trend-down:    red   — metric declined
+  - trend-neutral: gray  — no change or N/A
+*/
+
+.card-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  margin-top: 6px;
+}
+
+.card-trend-arrow {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.card-trend-up      { color: var(--color-text-fg-success); }
+.card-trend-down    { color: var(--color-text-fg-danger); }
+.card-trend-neutral { color: var(--color-text-body-subtle); }
+
+.card-trend-context {
+  font-size: var(--text-xs);
+  color: var(--color-text-body-subtle);
+  font-weight: var(--font-normal);
+}
+
+/* ── Sparkline area ──────────────────────────── */
+/*
+  Metric card only. Inline SVG trend line — no external lib needed.
+  Use width:100% on the <svg> element.
+*/
+
+.card-sparkline {
+  width: 100%;
+  height: 48px;
+  margin-top: 12px;
+}
+
+/* ── Chart area ──────────────────────────────── */
+/*
+  Chart card. Larger area for bar/line/donut.
+  Differs from sparkline: has axis labels, period controls, legend.
+*/
+
+.card-chart-area {
+  width: 100%;
+  overflow: hidden;
+}
+
+.card-period-select {
+  display: inline-flex;
+  border: 1px solid var(--color-border-base);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.card-period-btn {
+  padding: 5px 10px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-body-subtle);
+  background: var(--color-bg-white);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  transition: background 0.1s, color 0.1s;
+  border-right: 1px solid var(--color-border-base);
+}
+.card-period-btn:last-child { border-right: none; }
+.card-period-btn.active {
+  background: var(--color-bg-dark);
+  color: #fff;
+}
+
+/* ── Legend ──────────────────────────────────── */
+/*
+  Used in chart cards to identify data series.
+  Placed in .card-footer or below .card-chart-area.
+*/
+
+.card-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.card-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--color-text-body-subtle);
+}
+
+.card-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.card-legend-line {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Card tabs ───────────────────────────────── */
+/*
+  Used in tabbed card variant.
+  .card-tabs lives inside .card-header as the control element.
+*/
+
+.card-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-base);
+  padding: 0 20px;
+  gap: 0;
+}
+
+.card-tab {
+  padding: 12px 16px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-body-subtle);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family-base);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.card-tab:hover { color: var(--color-text-heading); }
+.card-tab.active {
+  color: var(--color-bg-primary);
+  border-bottom-color: var(--color-bg-primary);
+}
+
+/* ── Card icon badge ─────────────────────────── */
+/*
+  Icon box in KPI and feature cards.
+  Sizing matches the 36×36px grid observed in library.
+*/
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.card-icon-blue   { background: var(--color-bg-brand-soft); color: #1E40AF; }
+.card-icon-green  { background: #D1FAE5; color: #065F46; }
+.card-icon-red    { background: #FEE2E2; color: #991B1B; }
+.card-icon-yellow { background: #FEF3C7; color: #92400E; }
+.card-icon-purple { background: #EDE9FE; color: #5B21B6; }
+.card-icon-dark   { background: var(--color-bg-dark); color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Reporting Card  (Figma node 10046:76406)
+   ─────────────────────────────────────────────────────────────────
+   Scheduled-report card used in the Iris Finance reporting dashboard.
+   NOT the same as .card — intentional differences:
+     - No visible base border (1px transparent)
+     - Uses shadow-sm for visual containment instead of border
+     - radius 12px (--radius-lg), not --radius-xl
+     - Fixed flex-column layout: 16px padding, 12px gap, 230px min-height
+   ═══════════════════════════════════════════════════════════════════ */
+
+.card-reporting {
+  background: var(--color-bg-white);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: 0px 1px 3px rgba(0,0,0,.1), 0px 1px 2px -1px rgba(0,0,0,.1); /* shadow-sm */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  min-height: 230px;
+  width: 362px;
+}
+
+/* Hover state — brand/500 border + shadow-md */
+.card-reporting--hovered {
+  border-color: #6875f5;  /* colors/brand/500 */
+  box-shadow: 0px 4px 6px rgba(0,0,0,.1), 0px 2px 4px rgba(0,0,0,.05); /* shadow-md */
+}
+
+/* Inactive (active=no) — gray/50 background */
+.card-reporting--inactive {
+  background: #f9fafb; /* old-colors/gray/50 */
+}
+
+/* ── Toggle switch ──────────────────────────────────────────── */
+/* 28×16px pill with a 12px white knob. */
+.rpt-toggle {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 100px;
+  padding: 2px;
+  width: 28px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.rpt-toggle--on  { background: var(--btn-primary-bg);  justify-content: flex-end;   } /* brand/800 */
+.rpt-toggle--off { background: var(--color-ctrl-off); justify-content: flex-start; } /* gray/300 */
+
+.rpt-toggle__pill {
+  width: 12px;
+  height: 12px;
+  border-radius: 100px;
+  background: #fff;
+  box-shadow: 0px 1px 3px rgba(0,0,0,.1), 0px 1px 2px -1px rgba(0,0,0,.1);
+  flex-shrink: 0;
+}
+
+/* ── Channel chips (E-mail, Slack) ──────────────────────────── */
+/* Colored pill badges showing delivery channel + icon. */
+.rpt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);   /* 4px */
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.rpt-chip--email { background: #e60076; color: #fff; } /* pink/600 */
+.rpt-chip--slack { background: #9810fa; color: #fff; } /* purple/600 */
+.rpt-chip--muted { background: #f3f4f6; color: #4a5565; } /* gray/100 — inactive state */
+
+/* =============================================================
+   CONTROLS — Toggle · Checkbox · Radio
+   Figma: 9462:787 (Checkbox) · 9479:135603 (toggle) ·
+          9675:152295 (Radiobutton) · 84:21156 (Controls wrapper)
+   ============================================================= */
+
+/* ── Iris Toggle ─────────────────────────────────────────────── */
+/* 28×16 px pill with 12 px white thumb. Identical geometry to   */
+/* .rpt-toggle; extends it with all Figma variants.              */
+.iris-toggle {
+  display: inline-flex;
+  align-items: center;
+  width: 28px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  padding: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+/* Default ON (brand/800) */
+.iris-toggle--on  { background: var(--btn-primary-bg);  justify-content: flex-end;   }
+/* Default OFF (gray/300) */
+.iris-toggle--off { background: var(--color-ctrl-off);  justify-content: flex-start; }
+
+/* Hover — normal */
+.iris-toggle--on:hover  { background: var(--btn-primary-hover);    }
+.iris-toggle--off:hover { background: var(--color-ctrl-off-hover); }
+
+/* Destructive ON / OFF */
+.iris-toggle--destructive.iris-toggle--on,
+.iris-toggle--destructive.iris-toggle--off { background: var(--color-ctrl-danger); }
+/* Destructive hover */
+.iris-toggle--destructive.iris-toggle--on:hover,
+.iris-toggle--destructive.iris-toggle--off:hover { background: var(--color-ctrl-danger-hover); }
+
+/* Disabled — normal ON */
+.iris-toggle--disabled.iris-toggle--on  {
+  background: var(--color-ctrl-disabled-on);
+  pointer-events: none;
+}
+/* Disabled — normal OFF */
+.iris-toggle--disabled.iris-toggle--off {
+  background: var(--color-ctrl-off-disabled);
+  pointer-events: none;
+}
+/* Disabled — destructive (ON or OFF same color) */
+.iris-toggle--disabled.iris-toggle--destructive.iris-toggle--on,
+.iris-toggle--disabled.iris-toggle--destructive.iris-toggle--off {
+  background: var(--color-ctrl-disabled-danger);
+}
+
+/* Thumb (white circle) */
+.iris-toggle__thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1);
+  flex-shrink: 0;
+}
+
+/* ── Iris Checkbox ────────────────────────────────────────────── */
+/* 16×16 px, border-radius 4 px. Span-based for full visual control. */
+.iris-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--color-ctrl-off);
+  background: var(--color-bg-default);
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+/* Checked — brand fill + white checkmark */
+.iris-checkbox--checked {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+}
+.iris-checkbox--checked::after {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2 7.5L5.5 11L12 4' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+/* Intermediate — brand fill + white minus bar */
+.iris-checkbox--intermediate {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+}
+.iris-checkbox--intermediate::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 2px;
+  background: var(--color-bg-surface);
+  border-radius: 1px;
+}
+
+/* Hover — unchecked */
+.iris-checkbox:hover:not(.iris-checkbox--checked):not(.iris-checkbox--intermediate):not(.iris-checkbox--disabled) {
+  border-color: var(--color-ctrl-off-hover);
+}
+/* Hover — checked / intermediate */
+.iris-checkbox--checked:hover:not(.iris-checkbox--disabled),
+.iris-checkbox--intermediate:hover:not(.iris-checkbox--disabled) {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+}
+
+/* Destructive — unchecked border */
+.iris-checkbox--destructive {
+  border-color: var(--color-ctrl-danger-strong);
+}
+/* Destructive — unchecked hover */
+.iris-checkbox--destructive:hover:not(.iris-checkbox--checked):not(.iris-checkbox--intermediate):not(.iris-checkbox--disabled) {
+  border-color: var(--color-ctrl-danger-hover);
+}
+/* Destructive — checked / intermediate fill */
+.iris-checkbox--destructive.iris-checkbox--checked,
+.iris-checkbox--destructive.iris-checkbox--intermediate {
+  background: var(--color-ctrl-danger-strong);
+  border-color: var(--color-ctrl-danger-strong);
+}
+/* Destructive — checked hover */
+.iris-checkbox--destructive.iris-checkbox--checked:hover:not(.iris-checkbox--disabled),
+.iris-checkbox--destructive.iris-checkbox--intermediate:hover:not(.iris-checkbox--disabled) {
+  background: var(--color-ctrl-danger-hover);
+  border-color: var(--color-ctrl-danger-hover);
+}
+
+/* Disabled — unchecked */
+.iris-checkbox--disabled {
+  pointer-events: none;
+  border-color: var(--color-ctrl-off-disabled);
+  background: var(--color-bg-default);
+}
+/* Disabled — checked / intermediate */
+.iris-checkbox--disabled.iris-checkbox--checked,
+.iris-checkbox--disabled.iris-checkbox--intermediate {
+  background: var(--color-ctrl-disabled-on);
+  border-color: var(--color-ctrl-disabled-on);
+}
+/* Disabled — destructive unchecked */
+.iris-checkbox--disabled.iris-checkbox--destructive {
+  border-color: var(--color-ctrl-disabled-danger);
+}
+/* Disabled — destructive checked */
+.iris-checkbox--disabled.iris-checkbox--destructive.iris-checkbox--checked,
+.iris-checkbox--disabled.iris-checkbox--destructive.iris-checkbox--intermediate {
+  background: var(--color-ctrl-disabled-danger);
+  border-color: var(--color-ctrl-disabled-danger);
+}
+
+/* ── Iris Radio ───────────────────────────────────────────────── */
+/* 16×16 px full circle. Same state logic as Checkbox. */
+.iris-radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-ctrl-off);
+  background: var(--color-bg-default);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+/* Selected */
+.iris-radio--checked {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+}
+/* White dot inside selected radio */
+.iris-radio--checked::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+}
+
+/* Hover — unselected */
+.iris-radio:hover:not(.iris-radio--checked):not(.iris-radio--disabled) {
+  border-color: var(--color-ctrl-off-hover);
+}
+/* Hover — selected */
+.iris-radio--checked:hover:not(.iris-radio--disabled) {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+}
+
+/* Destructive — unselected */
+.iris-radio--destructive { border-color: var(--color-ctrl-danger); }
+.iris-radio--destructive:hover:not(.iris-radio--checked):not(.iris-radio--disabled) {
+  border-color: var(--color-ctrl-danger-hover);
+}
+/* Destructive — selected */
+.iris-radio--destructive.iris-radio--checked {
+  background: var(--color-ctrl-danger);
+  border-color: var(--color-ctrl-danger);
+}
+.iris-radio--destructive.iris-radio--checked:hover:not(.iris-radio--disabled) {
+  background: var(--color-ctrl-danger-hover);
+  border-color: var(--color-ctrl-danger-hover);
+}
+
+/* Disabled — unselected */
+.iris-radio--disabled {
+  pointer-events: none;
+  border-color: var(--color-ctrl-off-disabled);
+}
+/* Disabled — selected */
+.iris-radio--disabled.iris-radio--checked {
+  background: var(--color-ctrl-disabled-on);
+  border-color: var(--color-ctrl-disabled-on);
+}
+/* Disabled — destructive unselected */
+.iris-radio--disabled.iris-radio--destructive { border-color: var(--color-ctrl-disabled-danger); }
+/* Disabled — destructive selected */
+.iris-radio--disabled.iris-radio--destructive.iris-radio--checked {
+  background: var(--color-ctrl-disabled-danger);
+  border-color: var(--color-ctrl-disabled-danger);
+}
+
+/* ── Iris Control (wrapper: control + label + helper text) ────── */
+/* Full-width control row: [check] [label · helper]               */
+.iris-control {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+.iris-control__check {
+  flex-shrink: 0;
+  margin-top: 2px; /* align 16 px control with first text line (21 px cap-height) */
+}
+.iris-control__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.iris-control__label {
+  font-size: var(--text-sm);        /* 14px */
+  font-weight: var(--font-medium);  /* 500  */
+  line-height: 1.5;
+  color: var(--color-text-heading);
+}
+.iris-control__helper {
+  font-size: var(--text-xs);        /* 12px */
+  font-weight: var(--font-normal);  /* 400  */
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* Destructive state — label + helper turn red */
+.iris-control--destructive .iris-control__label  { color: var(--color-ctrl-danger-label);  }
+.iris-control--destructive .iris-control__helper { color: var(--color-ctrl-danger-helper); }
+
+/* Disabled state — label + helper go to gray/300 */
+.iris-control--disabled .iris-control__label,
+.iris-control--disabled .iris-control__helper { color: var(--color-ctrl-off); }
+
+/* Disabled + destructive — muted red */
+.iris-control--destructive.iris-control--disabled .iris-control__label,
+.iris-control--destructive.iris-control--disabled .iris-control__helper {
+  color: var(--color-ctrl-danger-disabled-text);
+}

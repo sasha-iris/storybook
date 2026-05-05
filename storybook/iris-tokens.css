@@ -1,0 +1,235 @@
+/* =============================================================
+   Iris Library — Design Tokens
+   Paste this into Lovable → Settings → Custom CSS (tokens only)
+   Or add as the first import before iris-components.css
+
+   Font: Inter — also add to your index.html <head>:
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+   ============================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── PRIMITIVES: Color Tokens ───────────────── */
+/* Mapped from Figma: ◐ Primitives page
+   Text color variables / Background color variables / Border color variables */
+:root {
+  /* Text */
+  --color-text-primary:    #111827; /* gray-900 */
+  --color-text-secondary:  #6B7280; /* gray-500 */
+  --color-text-disabled:   #9CA3AF; /* gray-400 */
+  --color-text-inverse:    #FFFFFF;
+  --color-text-link:       #1C64F2; /* blue-700 */
+
+  /* Background */
+  --color-bg-default:      #F9FAFB; /* gray-50  */
+  --color-bg-surface:      #FFFFFF;
+  --color-bg-muted:        #F3F4F6; /* gray-100 */
+  --color-bg-primary:      #1C64F2; /* blue-700 */
+  --color-bg-primary-hover:#1A56DB; /* blue-800 */
+  --color-bg-dark:         #1F2A37; /* gray-800 */
+
+  /* Border */
+  --color-border-default:  #E5E7EB; /* gray-200 */
+  --color-border-focus:    #76A9FA; /* blue-300 */
+  --color-border-error:    #F98080; /* red-300   */
+
+  /* Semantic */
+  --color-primary:         #1C64F2;
+  --color-success:         #0E9F6E;
+  --color-warning:         #C27803;
+  --color-danger:          #E02424;
+  --color-info:            #1C64F2;
+
+  /* ── PRIMITIVES: Typography Tokens ───────── */
+  /* Mapped from Figma: [T] sizes + [T] weight frames */
+  --font-family-base:      'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --text-xs:   0.75rem;   /* 12px */
+  --text-sm:   0.875rem;  /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg:   1.125rem;  /* 18px */
+  --text-xl:   1.25rem;   /* 20px */
+  --text-2xl:  1.5rem;    /* 24px */
+  --text-3xl:  1.875rem;  /* 30px */
+  --text-4xl:  2.25rem;   /* 36px */
+  --text-5xl:  3rem;      /* 48px */
+
+  --font-light:    300;
+  --font-normal:   400;
+  --font-medium:   500;
+  --font-semibold: 600;
+  --font-bold:     700;
+  --font-extrabold:800;
+
+  /* ── Spacing & Radii ─────────────────────── */
+  --radius-sm:  0.25rem;  /* 4px  */
+  --radius-md:  0.5rem;   /* 8px  */
+  --radius-lg:  0.75rem;  /* 12px */
+  --radius-xl:  1rem;     /* 16px */
+  --radius-full:9999px;
+
+  /* ── Iris Library — KPI primitives ──────────── */
+  /* Source: Figma ZKtEULdYKaXe5uQl1J6ijI         */
+  /* Resolved via get_variable_defs on nodes       */
+  /* 602:20752 (barchart-vert) and 602:25133       */
+  /* (barchart-segm-hor). old-colors namespace.    */
+  --iris-gray-900:   #111928;   /* old-colors/gray/900  — label/value text    */
+  --iris-gray-800:   #1F2A37;   /* old-colors/gray/800  — icon stroke         */
+  --iris-gray-500:   #6B7280;   /* old-colors/gray/500  — muted/compare text  */
+  --iris-gray-300:   #D1D5DB;   /* old-colors/gray/300  — icon button bg      */
+  --iris-brand-600:  #5850EC;   /* old-colors/brand/600 — trend-up accent     */
+  --iris-brand-500:  #6875F5;   /* old-colors/brand/500 — bar/line chart      */
+  --iris-brand-300:  #B4C6FC;   /* old-colors/brand/300 — muted bar (idx 6)   */
+  --iris-pink-500:   #E74694;   /* old-colors/pink/500  — trend-down / down   */
+  --iris-pink-300:   #F8B4D9;   /* old-colors/pink/300  — muted down bar      */
+  /* Derived: brand/500 and pink/500 at 12 % opacity (linechart fill zones)  */
+  --iris-brand-fill: rgba(104,117,245,0.12);
+  --iris-pink-fill:  rgba(231,70,148,0.12);
+  /* Segmented chart column colours (Figma node 602:25133) */
+  --iris-seg-gray:   #F2F4F7;   /* Gray/30      */
+  --iris-seg-green:  #22C55E;   /* Green/500    */
+  --iris-seg-pink:   #EC4899;   /* Pink/500     */
+  --iris-seg-sky:    #33BFFF;   /* Sky/500      */
+  --iris-seg-blue:   #1D4ED8;   /* Primary/700  */
+  /* shadow-sm from Figma (DROP_SHADOW #00000014 offset(0,1) r:2) */
+  --iris-shadow-sm:  0px 1px 2px rgba(0,0,0,0.08);
+
+  /* ── Figma light-mode primitives (◐ Primitives page) ── */
+  /* Source: ZKtEULdYKaXe5uQl1J6ijI · "Light" frames       */
+  /* Extracted via figma-remote get_design_context          */
+
+  /* Text color variables */
+  --color-text-white:            #ffffff;
+  --color-text-black:            #101828;
+  --color-text-heading:          #101828;
+  --color-text-body:             #4a5565;
+  --color-text-body-subtle:      #6a7282;
+  --color-text-fg-brand-subtle:  #bedbff;
+  --color-text-fg-brand:         #1447e6;
+  --color-text-fg-brand-strong:  #1c398e;
+  --color-text-fg-success:       #007a55;
+  --color-text-fg-success-strong:#004f3b;
+  --color-text-fg-danger:        #c70036;
+  --color-text-fg-danger-strong: #8b0836;
+  --color-text-fg-warning-subtle:#d03801;
+  --color-text-fg-warning:       #771d1d;
+  --color-text-fg-yellow:        #fdc700;
+  --color-text-fg-info:          #1c398e;
+  --color-text-fg-disabled:      #99a1af;
+  --color-text-fg-purple:        #9810fa;
+  --color-text-fg-cyan:          #0092b8;
+  --color-text-fg-indigo:        #4f39f6;
+  --color-text-fg-pink:          #e60076;
+  --color-text-fg-lime:          #5ea500;
+
+  /* Background color variables */
+  --color-bg-white:              #ffffff;
+  --color-bg-primary-soft:       #ffffff;
+  --color-bg-secondary-soft:     #f9fafb;
+  --color-bg-secondary:          #f9fafb;
+  --color-bg-tertiary-soft:      #f3f4f6;
+  --color-bg-tertiary:           #f3f4f6;
+  --color-bg-quaternary:         #e5e7eb;
+  --color-bg-gray:               #d1d5dc;
+  --color-bg-brand-softer:       #eef6ff;
+  --color-bg-brand-soft:         #dbeafe;
+  --color-bg-brand-medium:       #bedbff;
+  --color-bg-brand:              #5145cd;
+  --color-bg-brand-strong:       #193cb8;
+  --color-bg-success-soft:       #ecfdf5;
+  --color-bg-success-medium:     #d0fae5;
+  --color-bg-success:            #007a55;
+  --color-bg-success-strong:     #006045;
+  --color-bg-danger-soft:        #fef0f2;
+  --color-bg-danger-medium:      #ffe4e6;
+  --color-bg-danger:             #c70036;
+  --color-bg-danger-strong:      #a50036;
+  --color-bg-warning-soft:       #fff8f1;
+  --color-bg-warning-medium:     #feecdc;
+  --color-bg-warning:            #ff5a1f;
+  --color-bg-warning-strong:     #b43403;
+  --color-bg-dark-strong:        #101828;
+  --color-bg-dark:               #1e2939;
+  --color-bg-disabled:           #f3f4f6;
+  --color-bg-purple:             #ad46ff;
+  --color-bg-sky:                #00a6f4;
+  --color-bg-teal:               #009689;
+  --color-bg-pink:               #e60076;
+  --color-bg-cyan:               #00b8db;
+  --color-bg-fuchsia:            #c800de;
+  --color-bg-indigo:             #4f39f6;
+  --color-bg-orange:             #ff8a4c;
+
+  /* Border color variables */
+  --color-border-dark:           #4a5565;
+  --color-border-muted:          #f9fafb;
+  --color-border-light-subtle:   #f3f4f6;
+  --color-border-light:          #f3f4f6;
+  --color-border-base-soft:      #e5e7eb;
+  --color-border-base:           #e5e7eb;
+  --color-border-success-subtle: #a4f4cf;
+  --color-border-success:        #007a55;
+  --color-border-danger-subtle:  #ffccd3;
+  --color-border-danger:         #c70036;
+  --color-border-warning-subtle: #fcd9bd;
+  --color-border-warning:        #d03801;
+  --color-border-brand-subtle:   #bedbff;
+  --color-border-brand-light:    #5850ec;
+  --color-border-brand:          #5145cd;
+  --color-border-purple:         #ad46ff;
+  --color-border-orange:         #ff8a4c;
+  --color-border-dark-subtle:    #1e2939;
+
+  /* Typography scale — Figma Primitives page (H1–Caption) */
+  --text-h1:      1.875rem; /* 30px · weight 700 */
+  --text-h2:      1.5rem;   /* 24px · weight 400 */
+  --text-h3:      1.25rem;  /* 20px · weight 400 */
+  --text-h4:      1.125rem; /* 18px · weight 400 */
+  --text-body-1:  1rem;     /* 16px · weight 400 */
+  --text-body-2:  0.875rem; /* 14px · weight 400 */
+  --text-caption: 0.75rem;  /* 12px · weight 400 */
+  --leading-base: 1.5;
+
+  /* ── Button color tokens (source: Figma › Buttons page) ──────── */
+  /* Primary (colors/brand/800 — purple, NOT the legacy blue)       */
+  --btn-primary-bg:      #42389d;
+  --btn-primary-hover:   #362f78;  /* colors/brand/900               */
+  /* Dark                                                             */
+  --btn-dark-hover:      #111928;
+  /* Green  → matches --color-text-fg-success                        */
+  --btn-green-bg:        #007a55;  /* colors/emerald/700              */
+  --btn-green-hover:     #005e3e;
+  /* Red   (Figma red/700, distinct from legacy --color-danger)       */
+  --btn-red-bg:          #c10007;
+  --btn-red-hover:       #a30006;
+  /* Yellow  (Figma names it "Yellow"; token = orange/600)            */
+  --btn-yellow-bg:       #d03801;
+  --btn-yellow-hover:    #b43100;
+  /* Blue   (colors/blue/700)                                         */
+  --btn-blue-bg:         #1447e6;
+  --btn-blue-hover:      #0f3bc0;
+  /* Gray   (bg = colors/background/bg-secondary-medium = #f9fafb)   */
+  --btn-gray-bg:         #f9fafb;  /* = --color-bg-secondary          */
+  --btn-gray-text:       #1e2939;  /* = --color-bg-dark               */
+  --btn-gray-border:     #e5e7eb;  /* = --color-border-base           */
+  --btn-gray-hover-bg:   #f3f4f6;  /* = --color-bg-tertiary           */
+
+  /* ── Controls: Toggle, Checkbox, Radio ──────────────────────── */
+  /* Source: Figma 9462:787 (Checkbox) · 9479:135603 (toggle) ·   */
+  /*         9675:152295 (Radiobutton) · 84:21156 (Controls)       */
+  --color-ctrl-off:                  #d1d5db; /* gray/300 — toggle OFF, unchecked border */
+  --color-ctrl-off-hover:            #9ca3af; /* gray/400 — unchecked hover              */
+  --color-ctrl-off-disabled:         #e5e7eb; /* gray/200 — disabled unchecked border    */
+  --color-ctrl-danger:               #c81e1e; /* red/700  — destructive toggle + radio   */
+  --color-ctrl-danger-strong:        #c10007; /* red/700  — destructive checkbox         */
+  --color-ctrl-danger-hover:         #9f0712; /* red/900  — destructive hover            */
+  --color-ctrl-disabled-on:          #cddbfe; /* indigo/200 — disabled checked (brand)  */
+  --color-ctrl-disabled-danger:      #ffc9c9; /* red/200  — disabled checked (danger)   */
+  --color-ctrl-danger-label:         #c81e1e; /* destructive label + sublabel text       */
+  --color-ctrl-danger-helper:        #fb2c36; /* destructive helper text                 */
+  --color-ctrl-danger-disabled-text: #ffa2a2; /* disabled + destructive text             */
+
+  /* ── Dropdown ────────────────────────────────────────────── */
+  /* Source: Figma 9456:150381 / 3283:21147 / 3283:21134       */
+  --color-dropdown-icon-danger:       #f05252; /* red/500 — destructive item icon         */
+  --color-dropdown-disabled-selected: #b4c6fc; /* indigo/300 — disabled selected item    */
+}
