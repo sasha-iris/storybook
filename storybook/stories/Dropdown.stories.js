@@ -219,12 +219,9 @@ const helperTextMenu = () => menu(`
       { label: 'Data exports',      helper: 'CSV and JSON downloads',       checked: true },
       { label: 'Scheduled emails',  helper: 'Daily and weekly digests',     checked: false },
     ].map(({ label, helper, checked }) => `
-      <label style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
-        <span style="margin-top:2px;flex-shrink:0;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
-        <span style="display:flex;flex-direction:column;gap:2px;">
-          <span style="font-size:14px;font-weight:500;color:#101828;">${label}</span>
-          <span style="font-size:12px;font-weight:400;color:#6b7280;">${helper}</span>
-        </span>
+      <label class="iris-control" style="padding:8px 16px;width:100%;">
+        <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
+        <span class="iris-control__body"><span class="iris-control__label">${label}</span><span class="iris-control__helper">${helper}</span></span>
       </label>`).join(''),
   })}
 `, { width: 280 });
@@ -238,12 +235,9 @@ const radioWithHelperMenu = () => menu(`
       { label: 'Last 90 days', helper: 'Quarterly view',       checked: false },
       { label: 'Custom range', helper: 'Pick start and end',   checked: false },
     ].map(({ label, helper, checked }) => `
-    <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;">
-      <span style="margin-top:2px;flex-shrink:0;"><span class="iris-radio${checked ? ' iris-radio--checked' : ''}" role="radio" aria-checked="${checked}"></span></span>
-      <span style="display:flex;flex-direction:column;gap:2px;">
-        <span style="font-size:14px;font-weight:500;color:#101828;">${label}</span>
-        <span style="font-size:12px;font-weight:400;color:#6b7280;">${helper}</span>
-      </span>
+    <label class="iris-control">
+      <span class="iris-control__check" style="margin-top:2px;"><span class="iris-radio${checked ? ' iris-radio--checked' : ''}" role="radio" aria-checked="${checked}"></span></span>
+      <span class="iris-control__body"><span class="iris-control__label">${label}</span><span class="iris-control__helper">${helper}</span></span>
     </label>`).join('')}
   </div>
 `, { width: 240 });
@@ -294,9 +288,9 @@ const appDropdownMenu = () => {
 // Type=Dropdown with search — search input + checkbox items with helper text
 const withSearchMenu = () => menu(`
   <div style="padding:12px 16px 8px;">
-    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#f9fafb;border:1px solid #d1d5db;border-radius:8px;">
-      <span style="color:#9ca3af;flex-shrink:0;">${SEARCH_ICON}</span>
-      <span style="font-size:14px;color:#9ca3af;font-family:inherit;">Search members…</span>
+    <div class="dropdown-search-input">
+      <span class="dropdown-search-input__icon">${SEARCH_ICON}</span>
+      <span class="dropdown-search-input__text">Search members…</span>
     </div>
   </div>
   ${section({
@@ -306,12 +300,9 @@ const withSearchMenu = () => menu(`
       { label: 'Bonnie Green', helper: 'bonnie@example.com', checked: false },
       { label: 'Joseph McFall', helper: 'joseph@example.com', checked: true },
     ].map(({ label, helper, checked }) => `
-      <label style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
-        <span style="margin-top:2px;flex-shrink:0;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
-        <span style="display:flex;flex-direction:column;gap:2px;">
-          <span style="font-size:14px;font-weight:500;color:#101828;">${label}</span>
-          <span style="font-size:12px;font-weight:400;color:#6b7280;">${helper}</span>
-        </span>
+      <label class="iris-control" style="padding:8px 16px;width:100%;">
+        <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
+        <span class="iris-control__body"><span class="iris-control__label">${label}</span><span class="iris-control__helper">${helper}</span></span>
       </label>`).join(''),
   })}
 `, { width: 280 });
