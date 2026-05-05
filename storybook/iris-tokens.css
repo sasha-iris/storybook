@@ -1,16 +1,15 @@
 /* =============================================================
    Iris Library — Design Tokens
-   Paste this into Lovable → Settings → Custom CSS (tokens only)
-   Or add as the first import before iris-components.css
+   Usage in Lovable → Settings → Custom CSS:
+     Paste iris-tokens.css first, then iris-components.css.
+     Or paste iris-design-system.css (combined single file).
 
-   Font: Inter — also add to your index.html <head>:
-   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+   Font: also add to index.html <head>:
+   <link rel="stylesheet"
+     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
    ============================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* ── PRIMITIVES: Color Tokens ───────────────── */
-/* Mapped from Figma: ◐ Primitives page
-   Text color variables / Background color variables / Border color variables */
 :root {
   /* Text */
   --color-text-primary:    #111827; /* gray-900 */
