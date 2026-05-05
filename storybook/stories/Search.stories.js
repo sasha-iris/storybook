@@ -9,8 +9,6 @@ const C = {
   value:        '#111928',
   selectBg:     '#f3f4f6',
   btnPurple:    '#42389d',
-  btnBlue:      '#1447e6',
-  btnFocus:     '#155dfc',
   btnText:      '#111928',
 };
 
@@ -19,8 +17,6 @@ const icnSearch = (c='#ffffff', size=20) =>
   `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none"><path d="M17.5 17.5 13.5 13.5M15 9a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const icnChevronDown = (c='#111928', size=20) =>
   `<svg width="${size}" height="${size}" viewBox="0 0 20 20" fill="none"><path d="m5 7.5 5 5 5-5" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const icnMic = (c='#6b7280') =>
-  `<svg width="13" height="16" viewBox="0 0 13 16" fill="none"><rect x="3" y="1" width="7" height="10" rx="3.5" stroke="${c}" stroke-width="1.5"/><path d="M1 8.5A5.5 5.5 0 0 0 12 8.5M6.5 14v-2" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const icnFlag = () =>
   `<svg width="14" height="12" viewBox="0 0 14 12" fill="none"><rect width="14" height="4" y="0" fill="#B22334"/><rect width="14" height="4" y="4" fill="#FFFFFF"/><rect width="14" height="4" y="8" fill="#B22334"/><rect x="0" y="0" width="6" height="8" fill="#3C3B6E"/></svg>`;
 
@@ -37,13 +33,6 @@ function inputBox({ placeholder = 'Search', width = '100%', leftIcon = false, ri
 function iconBtn(bg, size = 42) {
   return `<button style="width:${size}px;height:${size}px;background:${bg};border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     ${icnSearch('#ffffff', 20)}
-  </button>`;
-}
-
-function labelBtn(text, bg, h = 42) {
-  return `<button style="height:${h}px;padding:0 16px;background:${bg};border:none;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;">
-    ${icnSearch('#ffffff', 16)}
-    <span style="font-size:14px;font-weight:500;color:#ffffff;font-family:inherit;">${text}</span>
   </button>`;
 }
 
@@ -69,12 +58,6 @@ const TYPES = {
       ${iconBtn(C.btnPurple)}
     </div>`,
 
-  '2-icons-btn': () =>
-    `<div style="display:flex;align-items:center;gap:0;overflow:hidden;border:1px solid ${C.border};border-radius:8px;}">
-      ${inputBox({ placeholder: 'Search Mockups, Logos ...', leftIcon: true, rightIcon: true })}
-      ${labelBtn('Search', C.btnBlue)}
-    </div>`,
-
   'input-flag': () =>
     `<div style="display:flex;align-items:center;height:42px;padding:0 12px;background:${C.inputBg};border:1px solid ${C.border};border-radius:8px;gap:8px;box-sizing:border-box;">
       <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
@@ -95,22 +78,13 @@ const TYPES = {
       </button>
     </div>`,
 
-  'dropdown-btn': () =>
-    `<div style="display:flex;overflow:hidden;border:1px solid ${C.border};border-radius:8px;}">
-      ${selectBtn('http + https')}
-      ${inputBox({ placeholder: 'Domain or URL' })}
-      ${selectBtn('Subdomains')}
-      ${iconBtn(C.btnFocus)}
-    </div>`,
 };
 
 const TYPE_LABELS = {
   'input-select-btn': 'Input + Select + Button',
   'input-btn':        'Input + Button',
-  '2-icons-btn':      '2 Icons + Button',
   'input-flag':       'Input + Flag',
   'btn-inside':       'Input & Button inside form',
-  'dropdown-btn':     'Input + Dropdown + Button',
 };
 
 // ─── Default export ────────────────────────────────────────────────────────────
@@ -124,10 +98,9 @@ export default {
 **Search** provides 6 composite search input patterns, each combining an input field with buttons, selects, or flags in a single visual unit.
 
 **When to use**
-- Site-wide search (Input + Button, 2 Icons + Button)
+- Site-wide search (Input + Button)
 - Category-filtered search (Input + Select + Button)
 - Location/country search (Input + Flag)
-- URL / domain filter (Input + Dropdown + Button)
 - Embedded in a card or modal (Button inside form)
 
 **When NOT to use**
@@ -209,14 +182,6 @@ export const AllTypes = {
   </button>
   <input class="flex-1 px-3 bg-gray-50 text-sm text-gray-400" placeholder="Search Mockups, Logos…" />
   <button class="w-[42px] bg-[#42389d]"><svg>…search icon…</svg></button>
-</div>
-
-<!-- Input + Dropdown + Button -->
-<div class="flex overflow-hidden rounded-lg border border-gray-300">
-  <button class="px-3 bg-gray-100 border-r border-gray-300">http + https ↓</button>
-  <input class="flex-1 px-3 bg-gray-50 text-sm" placeholder="Domain or URL" />
-  <button class="px-3 bg-gray-100 border-l border-gray-300">Subdomains ↓</button>
-  <button class="w-[42px] bg-[#155dfc]"><svg>…search…</svg></button>
 </div>`,
       },
     },
