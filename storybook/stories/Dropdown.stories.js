@@ -766,7 +766,7 @@ Trigger bg: brand/900 \`#362f78\` Â· ring: indigo/200 \`#cddbfe\` (3px border) Â
   <div>
     <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">With dark menu</p>
     <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start;">
-      <button class="dropdown-trigger">${CHEVRON_DOWN} Menu ${FIRE}</button>
+      <button class="dropdown-trigger">${CHEVRON_DOWN} Menu ${CHEVRON_DOWN}</button>
       ${darkMenu()}
     </div>
   </div>

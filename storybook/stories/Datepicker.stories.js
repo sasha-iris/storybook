@@ -570,40 +570,6 @@ export const AllTypesLight = {
   },
 };
 
-// ─── Gallery: All types (dark) ────────────────────────────────────────────────
-export const AllTypesDark = {
-  name: 'All types — dark',
-  args: { dark: true },
-  parameters: {
-    controls: { include: ['dark'] },
-    backgrounds: { default: 'dark' },
-    docs: {
-      description: {
-        story: 'Same 6 types in dark theme (`#374151` card background). Use in dark-mode dashboards or modals that render on dark surfaces.',
-      },
-      source: {
-        code: `<!-- Dark mode datepicker -->
-<div class="datepicker-input datepicker-input--dark" style="height:42px;background:#374151;border-color:#4b5563;">
-  <!-- calendar icon (#9ca3af) + placeholder -->
-</div>`,
-      },
-    },
-  },
-  render: ({ dark }) => {
-    const types = [
-      simpleCalendar({ dark, size: 'default' }),
-      rangeCalendarSimple({ dark }),
-      monthPicker({ dark }),
-      yearPicker({ dark }),
-      dobPicker({ dark }),
-      tabPicker({ dark }),
-    ];
-    return `<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;padding:24px;background:#1f2937;border-radius:8px;font-family:inherit;">
-      ${types.map(t => `<div>${t}</div>`).join('')}
-    </div>`;
-  },
-};
-
 // ─── Gallery: Input sizes ─────────────────────────────────────────────────────
 export const InputSizes = {
   name: 'Input sizes',

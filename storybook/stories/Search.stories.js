@@ -27,7 +27,7 @@ const icnFlag = () =>
 // ─── Search builder helpers ───────────────────────────────────────────────────
 function inputBox({ placeholder = 'Search', width = '100%', leftIcon = false, rightIcon = false }) {
   return `<div style="display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;
-    background:${C.inputBg};border:1px solid ${C.border};flex:1;min-width:0;box-sizing:border-box;">
+    background:${C.inputBg};flex:1;min-width:0;box-sizing:border-box;">
     ${leftIcon ? `<span style="flex-shrink:0;display:flex;">${icnSearch(C.placeholder, 18)}</span>` : ''}
     <span style="flex:1;font-size:14px;color:${C.placeholder};font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${placeholder}</span>
     ${rightIcon ? `<span style="flex-shrink:0;display:flex;">${icnMic()}</span>` : ''}
