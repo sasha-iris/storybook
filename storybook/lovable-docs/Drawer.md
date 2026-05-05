@@ -1,33 +1,24 @@
-# #111928
+# Drawer
 
 **Drawer** (also called a side sheet or flyout) slides in from the edge of the screen to reveal supplementary content without navigating away from the current page.
 
 > ⚠️ **Status: hidden — design story usage unconfirmed.** This component is committed for reference. It is not shown in the sidebar until it is used in active design stories.
 
 **Types confirmed in Figma (node 13261:81153)**
-- \
+- Side drawer (slides in from right)
+- Bottom sheet (slides up from bottom)
 
 ## Variants
 
-- All types
+- Side drawer (right)
+- Bottom sheet
 
 ## CSS classes
 
+Drawer has no dedicated CSS class — it uses inline positioning. Combine with `.modal-backdrop` for the overlay.
+
 ```
-.alert
-.alert-body
-.alert-icon
-.alert-info
-.alert-title
-.btn
-.btn-md
-.btn-outline-gray
-.btn-primary
-.form-group
-.form-helper
-.form-input
-.form-label
-.form-textarea
+.modal-backdrop
 ```
 
 ## HTML examples

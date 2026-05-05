@@ -1,4 +1,4 @@
-# #ffffff
+# Datepicker
 
 **Datepicker** lets users select a single date, a date range, or a partial date (month/year/date-of-birth). It renders as an input trigger that opens a dropdown calendar panel.
 

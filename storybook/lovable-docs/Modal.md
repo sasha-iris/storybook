@@ -1,4 +1,4 @@
-# #ffffff
+# Modal
 
 **Modal Dialog** — a layer above the page that requires user interaction before continuing.
 

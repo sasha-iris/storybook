@@ -1,4 +1,4 @@
-# Can I use FlowBite in open-source projects?
+# Accordion
 
 **Accordion** progressively discloses content — items can be expanded to reveal more detail, keeping the page compact.
 
