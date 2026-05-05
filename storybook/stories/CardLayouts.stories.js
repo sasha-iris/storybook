@@ -274,21 +274,18 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
              box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.1);">
   <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;margin:0 0 24px;">Sign in to our platform</p>
   <!-- Email -->
-  <div style="margin-bottom:20px;">
-    <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);margin-bottom:8px;">Your email</label>
-    <div style="display:flex;align-items:center;gap:10px;background:var(--color-bg-default);border:1px solid #d1d5db;
-                border-radius:8px;padding:12px 16px;">
+  <div class="form-group">
+    <label class="form-label">Your email</label>
+    <div style="position:relative;">
       <!-- mail icon -->
-      <span style="color:var(--color-text-secondary);font-size:var(--text-sm);">✉</span>
-      <span style="font-size:var(--text-sm);color:var(--color-text-secondary);">name@flowbite.com</span>
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--color-text-secondary);">✉</span>
+      <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:36px;">
     </div>
   </div>
   <!-- Password -->
-  <div style="margin-bottom:20px;">
-    <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);color:#111928;margin-bottom:8px;">Password</label>
-    <div style="background:var(--color-bg-default);border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;">
-      <span style="font-size:var(--text-sm);color:var(--color-text-secondary);">••••••••••</span>
-    </div>
+  <div class="form-group">
+    <label class="form-label">Password</label>
+    <input class="form-input" type="password" placeholder="••••••••••">
   </div>
   <!-- Checkbox row -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
@@ -299,8 +296,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
     <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>
   </div>
   <!-- CTA -->
-  <button style="width:100%;background:#1447e6;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
-                 padding:10px 20px;border-radius:12px;border:none;cursor:pointer;margin-bottom:16px;">
+  <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;margin-bottom:16px;">
     Create account
   </button>
   <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;">
@@ -324,40 +320,26 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
       <div style="display:flex;flex-direction:column;gap:20px;">
 
         <!-- Email field -->
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;">
-            Your email
-          </label>
-          <div style="display:flex;align-items:center;gap:10px;background:var(--color-bg-default);
-                      border:1px solid #d1d5db;border-radius:8px;padding:12px 16px;">
-            ${MAIL_ICON}
-            <span style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.25;">name@flowbite.com</span>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Your email</label>
+          <div style="position:relative;">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--color-text-secondary);">${MAIL_ICON}</span>
+            <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:36px;">
           </div>
         </div>
 
         <!-- Password field -->
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#111928;line-height:1.5;">
-            Password
-          </label>
-          <div style="background:var(--color-bg-default);border:1px solid #d1d5db;border-radius:8px;
-                      padding:12px 16px;">
-            <span style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.25;letter-spacing:2px;">••••••••••</span>
-          </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="••••••••••">
         </div>
       </div>
 
       <!-- Checkbox row -->
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <div style="width:16px;height:16px;flex-shrink:0;background:var(--color-bg-default);
-                      border:0.5px solid #d1d5db;border-radius:4px;"></div>
-          <div style="display:flex;flex-direction:column;gap:2px;">
-            <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#101828;line-height:1.5;">
-              Write label text here
-            </span>
-            <span style="font-size:var(--text-sm);color:#101828;line-height:1.5;">Some text here</span>
-          </div>
+          <span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#101828;">Remember me</span>
         </label>
         <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;white-space:nowrap;">
           Lost Password?
@@ -366,9 +348,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 
       <!-- Button + helper -->
       <div style="display:flex;flex-direction:column;gap:16px;">
-        <button style="width:100%;background:#1447e6;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
-                       line-height:1.5;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;
-                       min-height:41px;">
+        <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">
           Create account
         </button>
         <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;line-height:1.5;">

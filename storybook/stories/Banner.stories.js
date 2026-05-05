@@ -102,8 +102,8 @@ function bannerNewsletter({ text, dismissible }) {
     <span style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-text-secondary);flex-shrink:0;">${text}</span>
     <div style="display:flex;align-items:flex-end;gap:16px;flex:1;min-width:0;">
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
-        <label style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">First name</label>
-        <input type="text" placeholder="e.g. John" style="padding:10px 16px;border:1px solid var(--color-border-default);border-radius:8px;background:var(--color-bg-default);font-size:var(--text-sm);color:var(--color-text-heading);font-family:inherit;outline:none;min-width:200px;" />
+        <label class="form-label" style="margin-bottom:0;">First name</label>
+        <input type="text" class="form-input" placeholder="e.g. John" style="min-width:200px;" />
       </div>
       <button type="button" class="btn btn-primary btn-md" style="white-space:nowrap;flex-shrink:0;">Subscribe</button>
     </div>

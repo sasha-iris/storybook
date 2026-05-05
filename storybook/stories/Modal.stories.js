@@ -189,7 +189,7 @@ function modalWithForms({ size = 'sm', darkMode = false, showOverlay = true } = 
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
       <label style="display:flex;align-items:center;gap:8px;font-size:var(--text-sm);color:${t.title};cursor:pointer;">
-        <input type="checkbox" style="width:16px;height:16px;accent-color:#1447e6;flex-shrink:0;">
+        <span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
         Remember me
       </label>
       <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>
