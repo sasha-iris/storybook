@@ -279,7 +279,12 @@ Focus: `outline: 2px solid #42389d; outline-offset: 2px`
 - `.btn-pill` — `border-radius: 9999px`
 - `[disabled]` — `opacity: 0.5; cursor: not-allowed`
 - `.btn-link` — text link, no border/bg
-- `.btn-group` — horizontal group container
+- `.btn-group` — horizontal group container (segmented control)
+- `.btn-group .btn` — inactive segment: `background:#ffffff; color:#111928; border:1px solid #e5e7eb; font-size:14px; padding:8px 16px`
+- `.btn-group .btn.active` — active segment: `background:#f3f4f6; color:#101828; font-weight:600` — **GRAY background, dark text. NOT purple. NOT btn-primary.**
+- `.btn-group .btn:hover` — same as active: `background:#f3f4f6`
+
+⚠️ **btn-group active ≠ btn-primary.** Active segment is `#f3f4f6` gray + `#101828` dark text. Purple (`#42389d`) is NEVER used as active background in btn-group.
 
 ### HTML examples
 
@@ -317,11 +322,17 @@ Focus: `outline: 2px solid #42389d; outline-offset: 2px`
 <!-- Disabled -->
 <button class="btn btn-primary btn-md" disabled>Disabled</button>
 
-<!-- Group -->
+<!-- Segmented control (btn-group) — CORRECT active state -->
+<!--
+  Active segment:   background:#f3f4f6  color:#101828  font-weight:600
+  Inactive segment: background:#ffffff  color:#111928  border:1px solid #e5e7eb
+  Container:        border-radius:12px  overflow:hidden
+  Active is GRAY, NOT purple. Do not use #42389d as active bg.
+-->
 <div class="btn-group">
-  <button class="btn">Years</button>
-  <button class="btn">Months</button>
-  <button class="btn active">Days</button>
+  <button class="btn" style="background:#ffffff;color:#111928;border:1px solid #e5e7eb;font-size:14px;padding:8px 16px;">Years</button>
+  <button class="btn" style="background:#ffffff;color:#111928;border:1px solid #e5e7eb;border-left:none;font-size:14px;padding:8px 16px;">Months</button>
+  <button class="btn active" style="background:#f3f4f6;color:#101828;font-weight:600;border:1px solid #e5e7eb;border-left:none;font-size:14px;padding:8px 16px;">Days</button>
 </div>
 ```
 
