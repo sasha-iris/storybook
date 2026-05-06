@@ -35,14 +35,9 @@
  * 3. Percent cells: retention % badges — each 70px wide container
  * 4. Financial cells: $ per user, count, $ total, multiplier, $ amount, $ amount
  *
- * ## Row states
- * | State | Row bg    | Text       |
- * |-------|-----------|------------|
- * | White | #ffffff   | #111928    |
- * | Grey  | #f3f4f6   | #42389d    |
- *
- * Grey row: header, count, and all financial text change to brand/800 (#42389d).
- * Badge colours are identical on both row states — only the cell container bg changes.
+ * ## Row background
+ * All rows: #ffffff. No zebra striping — the heatmap color ramp provides
+ * sufficient visual structure. Zebra conflicts with light heatmap bands.
  */
 
 /* ── Percent ramp definition ────────────────────────────────────────────── */
@@ -125,7 +120,6 @@ Figma nodes: TableCellPercent \`9372:85\` · CohortRow \`9387:1751\`
 **When to use**
 - Retention analysis tables where each cell shows a percentage value on a brand heat-map
 - Cohort rows in financial dashboards (budget, P&L, subscriber cohorts)
-- Alternating white/grey row pattern for readability in dense data grids
 
 **When NOT to use**
 - Standard numeric tables without heatmap semantics → use Table/Cells
@@ -152,14 +146,11 @@ Each row contains left → right:
 3. **Percent cells** — retention % badges (70px each, badge 62×42px)
 4. **Financial cells** — various widths (82–140px)
 
-### Row states
+### Row background
 
-| State | Row bg | All text |
-|---|---|---|
-| White | \`#ffffff\` | \`#111928\` |
-| Grey (alternate) | \`#f3f4f6\` | \`#42389d\` |
-
-Grey row changes header + financial text to brand/800. Badge colours stay identical — only the cell container bg changes to \`#f3f4f6\`.
+All rows use \`#ffffff\`. No zebra striping — the heatmap color ramp provides sufficient
+visual structure. Alternating grey rows conflict with the lightest heatmap bands
+(\`#f0f5ff\`, \`#e5edff\`) and add visual noise on top of an already color-encoded table.
 
 ### Developer notes
 - Percent cell container: \`padding:8px 4px\` (not the standard 8px 16px)
@@ -171,8 +162,7 @@ Grey row changes header + financial text to brand/800. Badge colours stay identi
 - Verify smooth color progression: lightest (#f0f5ff) → darkest (#362f78)
 - Text contrast at 50% (#8da2fb badge): dark text (#111928) — confirm legibility
 - At 60% (#6875f5 badge): flips to white — check no intermediate step is missed
-- Grey row: ALL text (header, count, financials) must change to #42389d
-- Badges on grey row: badge colours are identical to white row — only outer cell bg shifts`,
+- All rows: white background (#ffffff), no zebra striping`,
       },
     },
   },
@@ -186,8 +176,8 @@ Grey row changes header + financial text to brand/800. Badge colours stay identi
     },
     rowState: {
       control: 'select',
-      options: ['white', 'grey'],
-      description: '`white` = default row (#ffffff). `grey` = alternate row (#f3f4f6) — also changes all text to brand/800 (#42389d).',
+      options: ['white'],
+      description: 'Row background. Always white (#ffffff) — no zebra striping on cohort heatmap tables.',
       table: { category: 'Appearance', defaultValue: { summary: 'white' } },
     },
   },
@@ -311,7 +301,7 @@ export const PercentBadgeRamp = {
 ───────────────────────────────────────────────────────────────────────── */
 /**
  * Complete cohort row with realistic "Feb 2023" data from Figma.
- * Shows white (default) and grey (alternating) row states.
+ * All rows are white (#ffffff) — no zebra striping.
  *
  * Row columns (Figma-exact widths):
  *   Row header (140px) · Count (116px) · 13× Percent cells
@@ -322,20 +312,17 @@ export const PercentBadgeRamp = {
  *   100%, 98%, 84%, 72%, 80%, 66%, 62%, 54%, 48%, 36%, 22%, 14%, 8%
  *
  * **QA checklist**
- * - White row: all text #111928
- * - Grey row: ALL text #42389d (header + count + all financials)
- * - Badges are identical on both rows — only cell bg changes
+ * - All rows: white background (#ffffff), text #111928
  * - Row height driven by badge cells (~58px); financial cells stretch to match
  * - Horizontal scroll on narrow viewports — do not truncate the row
  */
 export const CohortRowExample = {
-  name: 'Cohort row — white & grey',
+  name: 'Cohort row',
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
-        story: `Full cohort row (Feb 2023 from Figma) in white and grey row states.
-Grey row changes header and all financial cell text to brand/800 (\`#42389d\`).
+        story: `Full cohort row (Feb 2023 from Figma). All rows white — no zebra striping.
 Scroll horizontally if the viewport is narrow.`,
       },
       source: {
@@ -374,11 +361,7 @@ Scroll horizontally if the viewport is narrow.`,
   </div>
 </div>
 
-<!-- CohortRow — grey (alternate) row state: change background to #f3f4f6, text to #42389d -->
-<div style="display:flex;align-items:stretch;background:var(--color-bg-muted);border-bottom:1px solid #e5e7eb;">
-  <!-- same structure, all text color: #42389d, all cell bg: #f3f4f6 -->
-  <!-- badge colours are identical — only cell container bg changes -->
-</div>`,
+<!-- All rows use background:#ffffff — no zebra striping -->`,
       },
     },
   },
@@ -410,9 +393,9 @@ Scroll horizontally if the viewport is narrow.`,
       { amount: '0.00',  currency: true,  width: 120 },
     ];
 
-    const cohortRow = (grey) => {
-      const rowBg  = grey ? '#f3f4f6' : '#ffffff';
-      const textCol = grey ? '#42389d' : '#111928';
+    const cohortRow = () => {
+      const rowBg  = '#ffffff';
+      const textCol = '#111928';
       return /* html */`
         <div style="display:flex;align-items:stretch;background:${rowBg};
                     border-bottom:1px solid #e5e7eb;">
@@ -487,15 +470,12 @@ Scroll horizontally if the viewport is narrow.`,
                              letter-spacing:.08em;color:#9ca3af;">${label}</span>
               </div>`).join('')}
           </div>
-          <!-- White row -->
-          ${cohortRow(false)}
-          <!-- Grey row (alternating) -->
-          ${cohortRow(true)}
-          <!-- Second white row (to show alternating pattern) -->
-          ${cohortRow(false)}
+          ${cohortRow()}
+          ${cohortRow()}
+          ${cohortRow()}
         </div>
         <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;">
-          White row + grey (alternating) + white row. Scroll horizontally to see all columns.
+          3 rows shown. All rows white — no zebra. Scroll horizontally to see all columns.
         </p>
       </div>`;
   },
@@ -525,8 +505,7 @@ Scroll horizontally if the viewport is narrow.`,
  * - Triangular shape: each newer cohort has exactly one fewer filled column
  * - All Month 1 cells: brand/900 (#362f78) — darkest badge on every row
  * - Empty cells: #f3f4f6 badge bg, #d1d5db dash glyph, no color badge
- * - Even-indexed rows (0-based): white bg; odd-indexed: grey bg (#f3f4f6)
- *   + text flips to brand/800 (#42389d) on grey rows
+ * - All rows: white bg (#ffffff), text #111928 — no zebra striping
  * - Column headers: "Cohort" · "Users" · "Month 1" … "Month 7"
  * - Badge dimensions: 62×42px, border-radius:4px; cell container: px:4px
  * - Scroll horizontally on narrow viewports — do not truncate
@@ -585,10 +564,7 @@ fading toward brand/50 as retention drops in later months.`,
     <!-- … remaining months … -->
   </div>
 
-  <!-- Data row — grey (odd index): background #f3f4f6, text color #42389d -->
-  <div style="display:flex;align-items:stretch;background:var(--color-bg-muted);border-bottom:1px solid #e5e7eb;">
-    <!-- same structure — badge colours unchanged, only cell container bg changes -->
-  </div>
+  <!-- All rows: background #ffffff — no zebra striping -->
 
   <!-- Empty cell placeholder (no data yet):
     <div style="padding:8px 4px;background:#ffffff;">
@@ -667,9 +643,8 @@ fading toward brand/50 as retention drops in later months.`,
 
     /* Data rows */
     const dataRows = COHORTS.map(({ label, users, pcts }, idx) => {
-      const grey    = idx % 2 === 1;
-      const rowBg   = grey ? '#f3f4f6' : '#ffffff';
-      const textCol = grey ? '#42389d' : '#111928';
+      const rowBg   = '#ffffff';
+      const textCol = '#111928';
 
       return /* html */`
         <div style="display:flex;align-items:stretch;background:${rowBg};
@@ -704,8 +679,7 @@ fading toward brand/50 as retention drops in later months.`,
           ${dataRows}
         </div>
         <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;">
-          7 cohort periods · triangular fill · alternating grey rows ·
-          scroll horizontally on narrow viewports
+          7 cohort periods · triangular fill · all rows white · scroll horizontally on narrow viewports
         </p>
       </div>`;
   },
