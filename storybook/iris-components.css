@@ -3321,6 +3321,8 @@ kbd.kbd-dark {
 /* Row types */
 .iris-cohort-badge--white { background: #ffffff; color: #111928; }
 .iris-cohort-badge--grey  { background: #f3f4f6; color: #42389d; }
+/* Empty cell placeholder — light dash, no data yet */
+.iris-cohort-badge--empty { background: #f3f4f6; color: #d1d5db; }
 
 /* ── AUTOCOMPLETE ───────────────────────────────────────────── */
 /* Wraps form-input with a floating result list                 */
