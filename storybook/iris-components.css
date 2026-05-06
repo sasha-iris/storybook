@@ -2674,3 +2674,687 @@ kbd.kbd-dark {
 .iris-control--destructive.iris-control--disabled .iris-control__helper {
   color: var(--color-ctrl-danger-disabled-text);
 }
+
+/* ── TABS ───────────────────────────────────────────────────── */
+/* Figma node 10007:72664 · h=45px · pad=12px 16px · font=14px/500 */
+.iris-tab-bar {
+  display: flex;
+  align-items: flex-end;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid #e5e7eb;
+  gap: 0;
+}
+.iris-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  height: 45px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: #4b5563;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.iris-tab:hover {
+  color: #374151;
+  border-bottom-color: #d1d5db;
+}
+.iris-tab--active {
+  color: #42389d;
+  border-bottom-color: #42389d;
+}
+.iris-tab__counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  min-width: 16px;
+  height: 18px;
+  background: #d1d5db;
+  color: #4b5563;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  border-radius: 4px;
+  line-height: 1;
+}
+.iris-tab--active .iris-tab__counter {
+  background: #42389d;
+  color: #ffffff;
+}
+
+/* ── CHIP ───────────────────────────────────────────────────── */
+/* Figma node 9444:148518 · h=22px · radius=4px · font=12px/500 */
+.iris-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  line-height: 1.5;
+  font-family: var(--font-family-base);
+}
+.iris-chip:disabled,
+.iris-chip--disabled { opacity: 0.9; cursor: not-allowed; }
+
+/* Color variants */
+.iris-chip--light   { background: #f3f4f6; color: #4a5565; }
+.iris-chip--light:hover { background: #e5e7eb; }
+.iris-chip--dark    { background: #4a5565; color: #ffffff; }
+.iris-chip--dark:hover { background: #1e2939; }
+.iris-chip--indigo  { background: #5850ec; color: #ffffff; }
+.iris-chip--indigo:hover { background: #42389d; }
+.iris-chip--green   { background: #009966; color: #ffffff; }
+.iris-chip--green:hover { background: #006045; }
+.iris-chip--red     { background: #e7000b; color: #ffffff; }
+.iris-chip--red:hover { background: #9f0712; }
+.iris-chip--orange  { background: #d03801; color: #ffffff; }
+.iris-chip--orange:hover { background: #8a2c0d; }
+.iris-chip--teal    { background: #009689; color: #ffffff; }
+.iris-chip--teal:hover { background: #005f59; }
+.iris-chip--blue    { background: #155dfc; color: #ffffff; }
+.iris-chip--blue:hover { background: #193cb8; }
+.iris-chip--purple  { background: #9810fa; color: #ffffff; }
+.iris-chip--purple:hover { background: #6e11b0; }
+.iris-chip--pink    { background: #e60076; color: #ffffff; }
+.iris-chip--pink:hover { background: #a3004c; }
+
+/* Disabled state per color */
+.iris-chip--light.iris-chip--disabled   { background: #f3f4f6; color: #99a1af; }
+.iris-chip--indigo.iris-chip--disabled  { background: #b4c6fc; }
+.iris-chip--green.iris-chip--disabled   { background: #5ee9b5; }
+.iris-chip--red.iris-chip--disabled     { background: #ffa2a2; }
+.iris-chip--orange.iris-chip--disabled  { background: #fdba8c; }
+.iris-chip--teal.iris-chip--disabled    { background: #46ecd5; }
+.iris-chip--blue.iris-chip--disabled    { background: #8ec5ff; }
+.iris-chip--purple.iris-chip--disabled  { background: #dab2ff; }
+.iris-chip--pink.iris-chip--disabled    { background: #fda5d5; }
+
+/* ── TAG ────────────────────────────────────────────────────── */
+/* Figma node 9492:152077 · h=18px · no background · font=12px/500 */
+.iris-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  line-height: 1.5;
+  font-family: var(--font-family-base);
+}
+/* Color variants — dot and text (Figma-exact, some differ slightly) */
+.iris-tag--grey   { color: #4a5565; }
+.iris-tag--indigo { color: #5850ec; }
+.iris-tag--green  { color: #009966; }
+.iris-tag--red    { color: #e7000b; }
+.iris-tag--orange { color: #d03801; }
+.iris-tag--teal   { color: #009689; }
+.iris-tag--blue   { color: #155dfc; }
+.iris-tag--purple { color: #9810fa; }
+.iris-tag--pink   { color: #e60076; }
+
+.iris-tag__dot {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── DRAWER ─────────────────────────────────────────────────── */
+/* Figma · side panel overlay · padding=24px 16px              */
+.iris-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+}
+.iris-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 320px;
+  max-width: 100vw;
+  background: #ffffff;
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+}
+.iris-drawer--dark { background: #1f2a37; }
+.iris-drawer--left { right: auto; left: 0; box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12); }
+.iris-drawer__inner { padding: 24px 16px; flex: 1; }
+.iris-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.iris-drawer__title {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: #6b7280;
+  font-family: var(--font-family-base);
+  line-height: 1.5;
+}
+.iris-drawer--dark .iris-drawer__title { color: #9ca3af; }
+.iris-drawer__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  color: #6b7280;
+  transition: background 0.15s;
+}
+.iris-drawer__close:hover { background: #f3f4f6; }
+
+/* ── SELECT (custom) ────────────────────────────────────────── */
+/* Figma · custom select with search · height=42px             */
+.iris-select {
+  position: relative;
+  width: 100%;
+}
+.iris-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  transition: border-color 0.15s;
+}
+.iris-select__trigger:hover { border-color: #9ca3af; }
+.iris-select__trigger--open { border-color: #155dfc; }
+.iris-select__trigger--error { border-color: #c81e1e; background: #fdf2f2; }
+.iris-select__trigger--disabled { border-color: #e5e7eb; opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+.iris-select__placeholder { flex: 1; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iris-select__value { flex: 1; color: #111928; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iris-select__chevron { flex-shrink: 0; color: #6b7280; }
+.iris-select__error-text { font-size: var(--text-xs); color: #c81e1e; margin-top: 4px; }
+.iris-select__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  z-index: 50;
+  overflow: hidden;
+}
+.iris-select__search {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.iris-select__search input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: var(--text-sm);
+  color: #111928;
+  background: transparent;
+  font-family: var(--font-family-base);
+}
+.iris-select__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.iris-select__option:hover { background: #f3f4f6; }
+.iris-select__option--selected { color: #42389d; }
+
+/* ── SEARCH BAR ─────────────────────────────────────────────── */
+/* Figma · combined search input + scope selector + button     */
+.iris-search {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+}
+.iris-search__input-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+}
+.iris-search__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: var(--text-sm);
+  color: #111928;
+  background: transparent;
+  font-family: var(--font-family-base);
+}
+.iris-search__input::placeholder { color: #6b7280; }
+.iris-search__scope {
+  height: 42px;
+  padding: 0 12px;
+  background: #f3f4f6;
+  border-left: 1px solid #d1d5db;
+  border-right: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: #111928;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--font-family-base);
+}
+.iris-search__btn {
+  height: 42px;
+  padding: 0 16px;
+  background: #42389d;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  transition: background 0.15s;
+}
+.iris-search__btn:hover { background: #362f78; }
+
+/* ── BANNER ─────────────────────────────────────────────────── */
+/* Figma · top-of-page notification strip                       */
+.iris-banner {
+  width: 100%;
+  background: var(--color-bg-default);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+}
+.iris-banner__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.iris-banner__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-border-default);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iris-banner__text {
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  color: var(--color-text-heading);
+  line-height: 1.5;
+}
+.iris-banner__dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+/* Centered card variant */
+.iris-banner--card {
+  background: var(--color-bg-muted);
+  padding: 16px;
+  justify-content: center;
+}
+.iris-banner__card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-bg-muted);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1280px;
+  width: 100%;
+}
+
+/* ── RANGE SLIDER (custom) ──────────────────────────────────── */
+/* Figma · custom slider with fill + value tooltip             */
+.iris-range-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 4px;
+}
+.iris-range-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: var(--radius-full);
+  overflow: visible;
+}
+.iris-range-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 8px;
+  background: #155dfc;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+}
+.iris-range-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 1;
+}
+.iris-range-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  background: #111928;
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.iris-range-tooltip span {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: #ffffff;
+  font-family: var(--font-family-base);
+}
+.iris-range-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 4px;
+  background: #111928;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.iris-range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: var(--text-xs);
+  color: #6b7280;
+  font-family: var(--font-family-base);
+}
+
+/* ── DATEPICKER / CALENDAR ──────────────────────────────────── */
+/* Figma · inline calendar card + input trigger                */
+.iris-datepicker-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  color: #6b7280;
+  transition: border-color 0.15s;
+}
+.iris-datepicker-input:hover { border-color: #9ca3af; }
+.iris-datepicker-input--open  { border-color: #155dfc; }
+.iris-datepicker-input__value { flex: 1; }
+.iris-datepicker-input__icon  { flex-shrink: 0; color: #6b7280; }
+
+.iris-cal {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  padding: 16px;
+  width: 288px;
+  font-family: var(--font-family-base);
+}
+.iris-cal--dark { background: #374151; }
+.iris-cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.iris-cal__title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #111928;
+}
+.iris-cal--dark .iris-cal__title { color: #ffffff; }
+.iris-cal__nav {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  transition: color 0.15s;
+}
+.iris-cal--dark .iris-cal__nav { color: #9ca3af; }
+.iris-cal__nav:hover { color: #111928; }
+.iris-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.iris-cal__day-header {
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: #6b7280;
+  padding: 4px 0;
+}
+.iris-cal--dark .iris-cal__day-header { color: #9ca3af; }
+.iris-cal__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+  background: transparent;
+  border: none;
+  font-family: var(--font-family-base);
+}
+.iris-cal--dark .iris-cal__day { color: #ffffff; }
+.iris-cal__day:hover { background: #f3f4f6; }
+.iris-cal__day--today { font-weight: var(--font-semibold); }
+/* Single selected */
+.iris-cal__day--selected { background: #1447e6; color: #ffffff; }
+.iris-cal__day--selected:hover { background: #193cb8; }
+/* Range selected */
+.iris-cal__day--range-selected { background: #42389d; color: #ffffff; }
+/* In range (between start and end) */
+.iris-cal__day--in-range { background: #f3f4f6; border-radius: 0; }
+.iris-cal__day--muted { color: #9ca3af; }
+.iris-cal__day--disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.iris-cal__footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+/* ── TABLE CELLS ────────────────────────────────────────────── */
+/* Figma · financial table primitive · w=146px · h=38px        */
+.iris-cell {
+  display: flex;
+  align-items: center;
+  width: 146px;
+  height: 38px;
+  padding: 8px 16px;
+  font-size: var(--text-sm);
+  font-family: var(--font-family-base);
+  line-height: 1.5;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+/* Text color options */
+.iris-cell--default  { color: #111928; background: #ffffff; }
+.iris-cell--positive { color: #007a55; background: #ffffff; }
+.iris-cell--negative { color: #c70036; background: #ffffff; }
+.iris-cell--blue     { color: #155dfc; background: #eff6ff; }
+.iris-cell--muted    { color: #6b7280; background: #ffffff; }
+/* Row backgrounds */
+.iris-cell--row-default  { background: #ffffff; }
+.iris-cell--row-noncoll  { background: #f9fafb; }
+.iris-cell--row-derived  { background: #fff8f1; }
+.iris-cell--row-total    { background: #f3f4f6; }
+/* Column header cell */
+.iris-cell-header {
+  display: flex;
+  align-items: center;
+  width: 146px;
+  height: 38px;
+  padding: 8px 16px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: #6b7280;
+  background: #ffffff;
+  font-family: var(--font-family-base);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+/* Row label cell (wider, fixed left column) */
+.iris-cell-label {
+  display: flex;
+  align-items: center;
+  width: 180px;
+  min-height: 38px;
+  padding: 8px 12px 8px 0;
+  font-size: var(--text-sm);
+  color: #111928;
+  font-family: var(--font-family-base);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* ── TABLE COHORT CELLS ─────────────────────────────────────── */
+/* Figma · cohort heatmap · badge=62×42px · radius=4px         */
+.iris-cohort-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+.iris-cohort-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 42px;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+}
+/* Heat bands — brand scale (text flips white at 60%+) */
+.iris-cohort-badge--10  { background: #f0f5ff; color: #111928; }
+.iris-cohort-badge--20  { background: #e5edff; color: #111928; }
+.iris-cohort-badge--30  { background: #cddbfe; color: #111928; }
+.iris-cohort-badge--40  { background: #b4c6fc; color: #111928; }
+.iris-cohort-badge--50  { background: #8da2fb; color: #111928; }
+.iris-cohort-badge--60  { background: #6875f5; color: #ffffff; }
+.iris-cohort-badge--70  { background: #5850ec; color: #ffffff; }
+.iris-cohort-badge--80  { background: #5145cd; color: #ffffff; }
+.iris-cohort-badge--90  { background: #42389d; color: #ffffff; }
+.iris-cohort-badge--100 { background: #362f78; color: #ffffff; }
+/* Row types */
+.iris-cohort-badge--white { background: #ffffff; color: #111928; }
+.iris-cohort-badge--grey  { background: #f3f4f6; color: #42389d; }
+
+/* ── AUTOCOMPLETE ───────────────────────────────────────────── */
+/* Wraps form-input with a floating result list                 */
+.iris-autocomplete { position: relative; width: 100%; }
+.iris-autocomplete__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  z-index: 50;
+  overflow: hidden;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.iris-autocomplete__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-family: var(--font-family-base);
+}
+.iris-autocomplete__item:hover,
+.iris-autocomplete__item--focused { background: #f3f4f6; }
+.iris-autocomplete__item--selected { color: #42389d; font-weight: var(--font-medium); }
+.iris-autocomplete__empty {
+  padding: 12px;
+  font-size: var(--text-sm);
+  color: #6b7280;
+  text-align: center;
+  font-family: var(--font-family-base);
+}

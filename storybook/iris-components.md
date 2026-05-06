@@ -1,51 +1,124 @@
 # Iris Library — Component Styles
 
-**Source:** Figma file `ZKtEULdYKaXe5uQl1J6ijI` (Iris Library)  
+**Source:** Figma `ZKtEULdYKaXe5uQl1J6ijI` (Iris Library)  
 **Storybook:** github.com/sasha-iris/storybook
 
 ## Instructions for Lovable
 
-Add the CSS below to `index.css`, after `iris-recolor.css`. Then use these class names directly on your components instead of Tailwind recreations.
+Add the CSS block at the bottom of this file to `src/index.css`, after `iris-recolor.css`. Then use these class names on your React components instead of Tailwind reconstructions.
 
-### Key class patterns
+### Component class reference
 
 | Component | Class names |
 |---|---|
-| Button | `btn btn-primary btn-md` |
-| Button outline | `btn btn-outline-primary btn-md` |
-| Button group (segmented) | `btn-group` → children `btn`, active child `btn active` |
-| Input | `form-input` |
-| Select | `form-select` |
-| Textarea | `form-textarea` |
-| Form group | `form-group` → `form-label` + `form-input` |
-| Badge | `badge badge-green` |
-| Alert | `alert alert-info` |
-| Avatar | `avatar avatar-md` |
-| Card | `card` → `card-header` + `card-body` + `card-footer` |
-| Sidebar item | `sidebar-item` / `sidebar-item active` |
-| Progress bar | `progress` → child `progress-bar progress-bar-default` |
-| Pagination | `pagination` → `page-item` → `page-link` |
-| Modal | `modal-backdrop` → `modal-dialog` → `modal-header` + `modal-body` + `modal-footer` |
-| Dropdown | `dropdown` → `dropdown-menu dropdown-menu--absolute` → `dropdown-item` |
-| Toggle | `iris-toggle iris-toggle--on` + child `iris-toggle__thumb` |
-| Checkbox | `iris-checkbox iris-checkbox--checked` |
-| Radio | `iris-radio iris-radio--checked` |
-| Toast | `toast` → `toast-icon toast-icon-success` + `toast-body` |
-| Tooltip | `tooltip-wrap` → `tooltip-bubble tooltip-top` |
-| Accordion | `accordion` → `accordion-item open` → `accordion-header` + `accordion-body` |
-| Skeleton | `skeleton skeleton-w-3-4` |
-| Stepper | `stepper` → `stepper-item active` / `completed` → `stepper-icon` + `stepper-label` |
-| Breadcrumb | `breadcrumb` → `breadcrumb-item` / `breadcrumb-item active` |
-| List group | `list-group` → `list-group-item` / `list-group-item active` |
-| KBD | `kbd` / `kbd kbd-dark` |
-| Indicator | `indicator` → `indicator-item indicator-top-right` → `indicator-dot` |
+| **Button** | `btn btn-primary btn-md` |
+| **Button outline** | `btn btn-outline-primary btn-md` |
+| **Button sizes** | `btn-xs` `btn-sm` `btn-md` `btn-lg` `btn-xl` |
+| **Button colors** | `btn-primary` `btn-dark` `btn-green` `btn-red` `btn-yellow` `btn-blue` `btn-gray` `btn-alternative` `btn-light` |
+| **Button group (segmented)** | `btn-group` → children `btn`, active child adds `active` |
+| **Icon button** | `btn btn-primary btn-icon btn-md` |
+| **Link button** | `btn-link btn-link-semibold` |
+| **Social button** | `btn-social btn-social-dark btn-md` |
+| **Input** | `form-input` |
+| **Input sizes** | `form-input-sm` `form-input-lg` |
+| **Select (native)** | `form-select` |
+| **Textarea** | `form-textarea` |
+| **Form group** | `form-group` → `form-label` + `form-input` + `form-helper` |
+| **Validation** | `is-success` `is-error` on input · `form-feedback-error` `form-feedback-success` |
+| **Floating label** | `form-floating` → `form-input` + `form-float-label` |
+| **File input** | `form-file-label` → `form-file-btn` + `form-file-placeholder` |
+| **Range slider (native)** | `form-range` |
+| **Toggle (form)** | `form-toggle` → `input[type=checkbox]` + `form-toggle-track` |
+| **Checkbox (form)** | `form-check` → `form-check-input` + `form-check-label` |
+| **Search input** | `form-search-wrap` → `form-search-icon` + `form-input` |
+| **Badge** | `badge badge-green` |
+| **Badge sizes** | `badge` `badge-lg` |
+| **Badge colors** | `badge-default` `badge-dark` `badge-primary` `badge-red` `badge-green` `badge-yellow` `badge-indigo` `badge-purple` `badge-pink` |
+| **Badge outline** | `badge-outline-default` `badge-outline-primary` `badge-outline-red` `badge-outline-green` `badge-outline-yellow` `badge-outline-purple` |
+| **Alert** | `alert alert-info` |
+| **Alert variants** | `alert-info` `alert-success` `alert-warning` `alert-danger` `alert-dark` |
+| **Avatar** | `avatar avatar-md` |
+| **Avatar sizes** | `avatar-xs` `avatar-sm` `avatar-md` `avatar-lg` `avatar-xl` |
+| **Avatar group** | `avatar-group` → `avatar` items + `avatar-group-count` |
+| **Avatar status** | `avatar-wrap` → `avatar` + `avatar-status avatar-status-online` |
+| **Breadcrumb** | `breadcrumb` → `breadcrumb-item` / `breadcrumb-item active` · `breadcrumb-sep` |
+| **Accordion** | `accordion` → `accordion-item open` → `accordion-header` + `accordion-body` |
+| **Dropdown** | `dropdown` → `dropdown-menu dropdown-menu--absolute` → `dropdown-item` |
+| **Dropdown dark** | `dropdown-menu--dark` |
+| **Dropdown item states** | `active` `danger` `disabled`/`aria-disabled` on `dropdown-item` |
+| **Dropdown trigger** | `dropdown-trigger` `dropdown-trigger--outline` `dropdown-trigger--icon` |
+| **Modal** | `modal-backdrop` → `modal-dialog` → `modal-header` + `modal-body` + `modal-footer` |
+| **Modal sizes** | `modal-dialog-sm` `modal-dialog-lg` `modal-dialog-xl` |
+| **Pagination** | `pagination` → `page-item` (`.active` `.disabled`) → `page-link` |
+| **Pagination small** | `pagination-sm` |
+| **Pagination info** | `pagination-info` → `span` for bold numbers |
+| **Progress bar** | `progress` → `progress-bar progress-bar-default` |
+| **Progress sizes** | `progress-sm` `progress-lg` `progress-xl` |
+| **Progress colors** | `progress-bar-default` `progress-bar-green` `progress-bar-red` `progress-bar-yellow` `progress-bar-purple` `progress-bar-dark` |
+| **Sidebar** | `sidebar` → `sidebar-item` / `sidebar-item active` |
+| **Sidebar parts** | `sidebar-logo` `sidebar-section` `sidebar-section-label` `sidebar-item-icon` `sidebar-item-badge` `sidebar-footer` |
+| **Skeleton** | `skeleton skeleton-w-3-4` |
+| **Skeleton shapes** | `skeleton` `skeleton-text` `skeleton-avatar` `skeleton-image` |
+| **Skeleton widths** | `skeleton-w-full` `skeleton-w-3-4` `skeleton-w-1-2` `skeleton-w-1-3` `skeleton-w-2-3` |
+| **Stepper** | `stepper` → `stepper-item` (`.active` `.completed`) → `stepper-icon` + `stepper-label` |
+| **Stepper vertical** | `stepper stepper-vertical` |
+| **Toast** | `toast` → `toast-icon toast-icon-success` + `toast-body` → `toast-title` + `toast-message` |
+| **Tooltip** | `tooltip-wrap` → `tooltip-bubble tooltip-top` |
+| **Tooltip positions** | `tooltip-top` `tooltip-bottom` `tooltip-left` `tooltip-right` |
+| **Tooltip light** | add `tooltip-light` to `tooltip-bubble` |
+| **List group** | `list-group` → `list-group-item` (`.active` `.disabled`) |
+| **KBD** | `kbd` / `kbd kbd-dark` · combos: `kbd-combo` + `kbd-sep` |
+| **Indicator** | `indicator` → `indicator-item indicator-top-right` → `indicator-dot` / `indicator-badge` |
+| **Card** | `card` → `card-header` + `card-body` + `card-footer` |
+| **Card KPI** | `card-stat-value` `card-stat-label` `card-trend card-trend-up` |
+| **Card chart** | `card-chart-area` `card-period-select` → `card-period-btn active` |
+| **Card legend** | `card-legend` → `card-legend-item` → `card-legend-dot` |
+| **Card tabs** | `card-tabs` → `card-tab active` |
+| **Card icon** | `card-icon card-icon-blue` |
+| **Card reporting** | `card-reporting` `card-reporting--hovered` `card-reporting--inactive` |
+| **Iris Toggle** | `iris-toggle iris-toggle--on` + child `iris-toggle__thumb` |
+| **Toggle states** | `iris-toggle--off` `iris-toggle--destructive` `iris-toggle--disabled` |
+| **Iris Checkbox** | `iris-checkbox iris-checkbox--checked` |
+| **Checkbox states** | `iris-checkbox--intermediate` `iris-checkbox--destructive` `iris-checkbox--disabled` |
+| **Iris Radio** | `iris-radio iris-radio--checked` |
+| **Radio states** | `iris-radio--destructive` `iris-radio--disabled` |
+| **Control wrapper** | `iris-control` → `iris-control__check` + `iris-control__body` → `iris-control__label` + `iris-control__helper` |
+| **Tabs** | `iris-tab-bar` → `iris-tab` / `iris-tab iris-tab--active` |
+| **Tab counter** | `iris-tab__counter` inside `iris-tab` |
+| **Chip** | `iris-chip iris-chip--light` |
+| **Chip colors** | `iris-chip--light` `iris-chip--dark` `iris-chip--indigo` `iris-chip--green` `iris-chip--red` `iris-chip--orange` `iris-chip--teal` `iris-chip--blue` `iris-chip--purple` `iris-chip--pink` |
+| **Chip disabled** | add `iris-chip--disabled` |
+| **Tag** | `iris-tag iris-tag--grey` |
+| **Tag colors** | `iris-tag--grey` `iris-tag--indigo` `iris-tag--green` `iris-tag--red` `iris-tag--orange` `iris-tag--teal` `iris-tag--blue` `iris-tag--purple` `iris-tag--pink` |
+| **Drawer** | `iris-drawer-backdrop` + `iris-drawer` → `iris-drawer__inner` → `iris-drawer__header` + `iris-drawer__title` + `iris-drawer__close` |
+| **Drawer dark** | `iris-drawer iris-drawer--dark` |
+| **Select (custom)** | `iris-select` → `iris-select__trigger` + `iris-select__menu` → `iris-select__option` |
+| **Select states** | `iris-select__trigger--open` `iris-select__trigger--error` `iris-select__trigger--disabled` |
+| **Search bar** | `iris-search` → `iris-search__input-wrap` + `iris-search__scope` + `iris-search__btn` |
+| **Banner** | `iris-banner` → `iris-banner__body` + `iris-banner__icon` + `iris-banner__text` + `iris-banner__dismiss` |
+| **Banner card** | `iris-banner iris-banner--card` → `iris-banner__card` |
+| **Range slider (custom)** | `iris-range-wrap` → `iris-range-track` → `iris-range-fill` + `iris-range-thumb` + `iris-range-tooltip` |
+| **Datepicker input** | `iris-datepicker-input` + `iris-datepicker-input__icon` |
+| **Calendar** | `iris-cal` → `iris-cal__header` + `iris-cal__grid` → `iris-cal__day-header` + `iris-cal__day` |
+| **Calendar day states** | `iris-cal__day--selected` `iris-cal__day--range-selected` `iris-cal__day--in-range` `iris-cal__day--today` `iris-cal__day--muted` `iris-cal__day--disabled` |
+| **Calendar dark** | `iris-cal iris-cal--dark` |
+| **Table cell** | `iris-cell iris-cell--default` |
+| **Cell colors** | `iris-cell--default` `iris-cell--positive` `iris-cell--negative` `iris-cell--blue` `iris-cell--muted` |
+| **Cell row types** | `iris-cell--row-default` `iris-cell--row-noncoll` `iris-cell--row-derived` `iris-cell--row-total` |
+| **Table header cell** | `iris-cell-header` |
+| **Table label cell** | `iris-cell-label` |
+| **Cohort cell** | `iris-cohort-cell` → `iris-cohort-badge iris-cohort-badge--50` |
+| **Cohort heat bands** | `--10` `--20` `--30` `--40` `--50` `--60` `--70` `--80` `--90` `--100` |
+| **Cohort row types** | `iris-cohort-badge--white` `iris-cohort-badge--grey` |
+| **Autocomplete** | `iris-autocomplete` → `form-input` + `iris-autocomplete__menu` → `iris-autocomplete__item` |
 
 ### ⚠️ Critical rules
 
-- **btn-group active segment** = gray background `#f3f4f6` + dark text `#101828`. NEVER purple. NEVER `btn-primary`.
-- **Sidebar active item** = `className="sidebar-item active"` → background `#e5e7eb`, text + icon `#42389d`.
+- **btn-group active segment** = gray `#f3f4f6` + dark text `#101828`. NEVER purple. NEVER `btn-primary`.
+- **Sidebar active item** = `sidebar-item active` → background `#e5e7eb`, text + icon `#42389d`.
 - **Brand color** = `#42389d` (purple). NOT `#1C64F2` (old blue).
-- **All font sizes and spacing come from the CSS below** — do not override with Tailwind unless explicitly needed.
+- **Calendar: single select** uses `#1447e6` (blue). **Range select** uses `#42389d` (brand purple).
+- **Cohort badge text** flips from `#111928` to `#ffffff` at 60%+ (bands --60 and above).
 
 ---
 
@@ -2727,5 +2800,689 @@ kbd.kbd-dark {
 .iris-control--destructive.iris-control--disabled .iris-control__label,
 .iris-control--destructive.iris-control--disabled .iris-control__helper {
   color: var(--color-ctrl-danger-disabled-text);
+}
+
+/* ── TABS ───────────────────────────────────────────────────── */
+/* Figma node 10007:72664 · h=45px · pad=12px 16px · font=14px/500 */
+.iris-tab-bar {
+  display: flex;
+  align-items: flex-end;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid #e5e7eb;
+  gap: 0;
+}
+.iris-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  height: 45px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: #4b5563;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.iris-tab:hover {
+  color: #374151;
+  border-bottom-color: #d1d5db;
+}
+.iris-tab--active {
+  color: #42389d;
+  border-bottom-color: #42389d;
+}
+.iris-tab__counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  min-width: 16px;
+  height: 18px;
+  background: #d1d5db;
+  color: #4b5563;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  border-radius: 4px;
+  line-height: 1;
+}
+.iris-tab--active .iris-tab__counter {
+  background: #42389d;
+  color: #ffffff;
+}
+
+/* ── CHIP ───────────────────────────────────────────────────── */
+/* Figma node 9444:148518 · h=22px · radius=4px · font=12px/500 */
+.iris-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  line-height: 1.5;
+  font-family: var(--font-family-base);
+}
+.iris-chip:disabled,
+.iris-chip--disabled { opacity: 0.9; cursor: not-allowed; }
+
+/* Color variants */
+.iris-chip--light   { background: #f3f4f6; color: #4a5565; }
+.iris-chip--light:hover { background: #e5e7eb; }
+.iris-chip--dark    { background: #4a5565; color: #ffffff; }
+.iris-chip--dark:hover { background: #1e2939; }
+.iris-chip--indigo  { background: #5850ec; color: #ffffff; }
+.iris-chip--indigo:hover { background: #42389d; }
+.iris-chip--green   { background: #009966; color: #ffffff; }
+.iris-chip--green:hover { background: #006045; }
+.iris-chip--red     { background: #e7000b; color: #ffffff; }
+.iris-chip--red:hover { background: #9f0712; }
+.iris-chip--orange  { background: #d03801; color: #ffffff; }
+.iris-chip--orange:hover { background: #8a2c0d; }
+.iris-chip--teal    { background: #009689; color: #ffffff; }
+.iris-chip--teal:hover { background: #005f59; }
+.iris-chip--blue    { background: #155dfc; color: #ffffff; }
+.iris-chip--blue:hover { background: #193cb8; }
+.iris-chip--purple  { background: #9810fa; color: #ffffff; }
+.iris-chip--purple:hover { background: #6e11b0; }
+.iris-chip--pink    { background: #e60076; color: #ffffff; }
+.iris-chip--pink:hover { background: #a3004c; }
+
+/* Disabled state per color */
+.iris-chip--light.iris-chip--disabled   { background: #f3f4f6; color: #99a1af; }
+.iris-chip--indigo.iris-chip--disabled  { background: #b4c6fc; }
+.iris-chip--green.iris-chip--disabled   { background: #5ee9b5; }
+.iris-chip--red.iris-chip--disabled     { background: #ffa2a2; }
+.iris-chip--orange.iris-chip--disabled  { background: #fdba8c; }
+.iris-chip--teal.iris-chip--disabled    { background: #46ecd5; }
+.iris-chip--blue.iris-chip--disabled    { background: #8ec5ff; }
+.iris-chip--purple.iris-chip--disabled  { background: #dab2ff; }
+.iris-chip--pink.iris-chip--disabled    { background: #fda5d5; }
+
+/* ── TAG ────────────────────────────────────────────────────── */
+/* Figma node 9492:152077 · h=18px · no background · font=12px/500 */
+.iris-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  line-height: 1.5;
+  font-family: var(--font-family-base);
+}
+/* Color variants — dot and text (Figma-exact, some differ slightly) */
+.iris-tag--grey   { color: #4a5565; }
+.iris-tag--indigo { color: #5850ec; }
+.iris-tag--green  { color: #009966; }
+.iris-tag--red    { color: #e7000b; }
+.iris-tag--orange { color: #d03801; }
+.iris-tag--teal   { color: #009689; }
+.iris-tag--blue   { color: #155dfc; }
+.iris-tag--purple { color: #9810fa; }
+.iris-tag--pink   { color: #e60076; }
+
+.iris-tag__dot {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── DRAWER ─────────────────────────────────────────────────── */
+/* Figma · side panel overlay · padding=24px 16px              */
+.iris-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+}
+.iris-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 320px;
+  max-width: 100vw;
+  background: #ffffff;
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+}
+.iris-drawer--dark { background: #1f2a37; }
+.iris-drawer--left { right: auto; left: 0; box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12); }
+.iris-drawer__inner { padding: 24px 16px; flex: 1; }
+.iris-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.iris-drawer__title {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: #6b7280;
+  font-family: var(--font-family-base);
+  line-height: 1.5;
+}
+.iris-drawer--dark .iris-drawer__title { color: #9ca3af; }
+.iris-drawer__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  color: #6b7280;
+  transition: background 0.15s;
+}
+.iris-drawer__close:hover { background: #f3f4f6; }
+
+/* ── SELECT (custom) ────────────────────────────────────────── */
+/* Figma · custom select with search · height=42px             */
+.iris-select {
+  position: relative;
+  width: 100%;
+}
+.iris-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  transition: border-color 0.15s;
+}
+.iris-select__trigger:hover { border-color: #9ca3af; }
+.iris-select__trigger--open { border-color: #155dfc; }
+.iris-select__trigger--error { border-color: #c81e1e; background: #fdf2f2; }
+.iris-select__trigger--disabled { border-color: #e5e7eb; opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+.iris-select__placeholder { flex: 1; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iris-select__value { flex: 1; color: #111928; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iris-select__chevron { flex-shrink: 0; color: #6b7280; }
+.iris-select__error-text { font-size: var(--text-xs); color: #c81e1e; margin-top: 4px; }
+.iris-select__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  z-index: 50;
+  overflow: hidden;
+}
+.iris-select__search {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.iris-select__search input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: var(--text-sm);
+  color: #111928;
+  background: transparent;
+  font-family: var(--font-family-base);
+}
+.iris-select__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.iris-select__option:hover { background: #f3f4f6; }
+.iris-select__option--selected { color: #42389d; }
+
+/* ── SEARCH BAR ─────────────────────────────────────────────── */
+/* Figma · combined search input + scope selector + button     */
+.iris-search {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+}
+.iris-search__input-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+}
+.iris-search__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: var(--text-sm);
+  color: #111928;
+  background: transparent;
+  font-family: var(--font-family-base);
+}
+.iris-search__input::placeholder { color: #6b7280; }
+.iris-search__scope {
+  height: 42px;
+  padding: 0 12px;
+  background: #f3f4f6;
+  border-left: 1px solid #d1d5db;
+  border-right: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: #111928;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--font-family-base);
+}
+.iris-search__btn {
+  height: 42px;
+  padding: 0 16px;
+  background: #42389d;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  transition: background 0.15s;
+}
+.iris-search__btn:hover { background: #362f78; }
+
+/* ── BANNER ─────────────────────────────────────────────────── */
+/* Figma · top-of-page notification strip                       */
+.iris-banner {
+  width: 100%;
+  background: var(--color-bg-default);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+}
+.iris-banner__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.iris-banner__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-border-default);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iris-banner__text {
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  color: var(--color-text-heading);
+  line-height: 1.5;
+}
+.iris-banner__dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+/* Centered card variant */
+.iris-banner--card {
+  background: var(--color-bg-muted);
+  padding: 16px;
+  justify-content: center;
+}
+.iris-banner__card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-bg-muted);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1280px;
+  width: 100%;
+}
+
+/* ── RANGE SLIDER (custom) ──────────────────────────────────── */
+/* Figma · custom slider with fill + value tooltip             */
+.iris-range-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 4px;
+}
+.iris-range-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: var(--radius-full);
+  overflow: visible;
+}
+.iris-range-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 8px;
+  background: #155dfc;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+}
+.iris-range-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 1;
+}
+.iris-range-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  background: #111928;
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.iris-range-tooltip span {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: #ffffff;
+  font-family: var(--font-family-base);
+}
+.iris-range-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 4px;
+  background: #111928;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.iris-range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: var(--text-xs);
+  color: #6b7280;
+  font-family: var(--font-family-base);
+}
+
+/* ── DATEPICKER / CALENDAR ──────────────────────────────────── */
+/* Figma · inline calendar card + input trigger                */
+.iris-datepicker-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  color: #6b7280;
+  transition: border-color 0.15s;
+}
+.iris-datepicker-input:hover { border-color: #9ca3af; }
+.iris-datepicker-input--open  { border-color: #155dfc; }
+.iris-datepicker-input__value { flex: 1; }
+.iris-datepicker-input__icon  { flex-shrink: 0; color: #6b7280; }
+
+.iris-cal {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  padding: 16px;
+  width: 288px;
+  font-family: var(--font-family-base);
+}
+.iris-cal--dark { background: #374151; }
+.iris-cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.iris-cal__title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #111928;
+}
+.iris-cal--dark .iris-cal__title { color: #ffffff; }
+.iris-cal__nav {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  transition: color 0.15s;
+}
+.iris-cal--dark .iris-cal__nav { color: #9ca3af; }
+.iris-cal__nav:hover { color: #111928; }
+.iris-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.iris-cal__day-header {
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: #6b7280;
+  padding: 4px 0;
+}
+.iris-cal--dark .iris-cal__day-header { color: #9ca3af; }
+.iris-cal__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+  background: transparent;
+  border: none;
+  font-family: var(--font-family-base);
+}
+.iris-cal--dark .iris-cal__day { color: #ffffff; }
+.iris-cal__day:hover { background: #f3f4f6; }
+.iris-cal__day--today { font-weight: var(--font-semibold); }
+/* Single selected */
+.iris-cal__day--selected { background: #1447e6; color: #ffffff; }
+.iris-cal__day--selected:hover { background: #193cb8; }
+/* Range selected */
+.iris-cal__day--range-selected { background: #42389d; color: #ffffff; }
+/* In range (between start and end) */
+.iris-cal__day--in-range { background: #f3f4f6; border-radius: 0; }
+.iris-cal__day--muted { color: #9ca3af; }
+.iris-cal__day--disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.iris-cal__footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+/* ── TABLE CELLS ────────────────────────────────────────────── */
+/* Figma · financial table primitive · w=146px · h=38px        */
+.iris-cell {
+  display: flex;
+  align-items: center;
+  width: 146px;
+  height: 38px;
+  padding: 8px 16px;
+  font-size: var(--text-sm);
+  font-family: var(--font-family-base);
+  line-height: 1.5;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+/* Text color options */
+.iris-cell--default  { color: #111928; background: #ffffff; }
+.iris-cell--positive { color: #007a55; background: #ffffff; }
+.iris-cell--negative { color: #c70036; background: #ffffff; }
+.iris-cell--blue     { color: #155dfc; background: #eff6ff; }
+.iris-cell--muted    { color: #6b7280; background: #ffffff; }
+/* Row backgrounds */
+.iris-cell--row-default  { background: #ffffff; }
+.iris-cell--row-noncoll  { background: #f9fafb; }
+.iris-cell--row-derived  { background: #fff8f1; }
+.iris-cell--row-total    { background: #f3f4f6; }
+/* Column header cell */
+.iris-cell-header {
+  display: flex;
+  align-items: center;
+  width: 146px;
+  height: 38px;
+  padding: 8px 16px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: #6b7280;
+  background: #ffffff;
+  font-family: var(--font-family-base);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+/* Row label cell (wider, fixed left column) */
+.iris-cell-label {
+  display: flex;
+  align-items: center;
+  width: 180px;
+  min-height: 38px;
+  padding: 8px 12px 8px 0;
+  font-size: var(--text-sm);
+  color: #111928;
+  font-family: var(--font-family-base);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* ── TABLE COHORT CELLS ─────────────────────────────────────── */
+/* Figma · cohort heatmap · badge=62×42px · radius=4px         */
+.iris-cohort-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+.iris-cohort-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 42px;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+}
+/* Heat bands — brand scale (text flips white at 60%+) */
+.iris-cohort-badge--10  { background: #f0f5ff; color: #111928; }
+.iris-cohort-badge--20  { background: #e5edff; color: #111928; }
+.iris-cohort-badge--30  { background: #cddbfe; color: #111928; }
+.iris-cohort-badge--40  { background: #b4c6fc; color: #111928; }
+.iris-cohort-badge--50  { background: #8da2fb; color: #111928; }
+.iris-cohort-badge--60  { background: #6875f5; color: #ffffff; }
+.iris-cohort-badge--70  { background: #5850ec; color: #ffffff; }
+.iris-cohort-badge--80  { background: #5145cd; color: #ffffff; }
+.iris-cohort-badge--90  { background: #42389d; color: #ffffff; }
+.iris-cohort-badge--100 { background: #362f78; color: #ffffff; }
+/* Row types */
+.iris-cohort-badge--white { background: #ffffff; color: #111928; }
+.iris-cohort-badge--grey  { background: #f3f4f6; color: #42389d; }
+
+/* ── AUTOCOMPLETE ───────────────────────────────────────────── */
+/* Wraps form-input with a floating result list                 */
+.iris-autocomplete { position: relative; width: 100%; }
+.iris-autocomplete__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+  z-index: 50;
+  overflow: hidden;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.iris-autocomplete__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-family: var(--font-family-base);
+}
+.iris-autocomplete__item:hover,
+.iris-autocomplete__item--focused { background: #f3f4f6; }
+.iris-autocomplete__item--selected { color: #42389d; font-weight: var(--font-medium); }
+.iris-autocomplete__empty {
+  padding: 12px;
+  font-size: var(--text-sm);
+  color: #6b7280;
+  text-align: center;
+  font-family: var(--font-family-base);
 }
 ```
