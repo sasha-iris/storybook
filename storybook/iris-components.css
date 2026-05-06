@@ -1,10 +1,116 @@
 /* =============================================================
-   Iris Library — Component Styles
-   Requires iris-tokens.css (CSS variables) loaded before this.
-   No reset included — Tailwind Preflight or your own reset handles it.
+   Iris Library — Component CSS
+   Source: Figma ZKtEULdYKaXe5uQl1J6ijI (Iris Library)
+
+   HOW TO USE IN LOVABLE:
+   Paste this entire file into your project's global CSS
+   (index.css / global.css), AFTER iris-recolor.css.
+   Then use className="btn btn-primary btn-md" etc. directly
+   instead of recreating styles with Tailwind classes.
+
+   Components: btn · btn-group · btn-social · btn-link ·
+   btn-chart · btn-table · form-* · alert · avatar · badge ·
+   breadcrumb · accordion · dropdown-* · modal-* · pagination ·
+   progress · sidebar · skeleton · stepper · toast · tooltip-* ·
+   list-group · kbd · indicator · card · iris-toggle ·
+   iris-checkbox · iris-radio · iris-control
    ============================================================= */
 
-/* Base — font + link only (no full reset to avoid Tailwind conflicts) */
+/* ── Token declarations ─────────────────────────────────────── */
+/* These are the Iris DS internal variables used by components.  */
+/* They complement iris-recolor.css which sets shadcn variables. */
+:root {
+  /* Typography */
+  --font-family-base:                'Inter', ui-sans-serif, system-ui, sans-serif;
+  --text-xs:    0.75rem;   /* 12px */
+  --text-sm:    0.875rem;  /* 14px */
+  --text-base:  1rem;      /* 16px */
+  --text-lg:    1.125rem;  /* 18px */
+  --font-normal:   400;
+  --font-medium:   500;
+  --font-semibold: 600;
+  --font-bold:     700;
+  --font-extrabold:800;
+
+  /* Radii */
+  --radius-sm:   0.25rem;  /* 4px  */
+  --radius-md:   0.5rem;   /* 8px  */
+  --radius-lg:   0.75rem;  /* 12px */
+  --radius-xl:   1rem;     /* 16px */
+  --radius-full: 9999px;
+
+  /* Text colors */
+  --color-text-primary:              #111827;
+  --color-text-secondary:            #6B7280;
+  --color-text-disabled:             #9CA3AF;
+  --color-text-inverse:              #FFFFFF;
+  --color-text-link:                 #1447e6;
+  --color-text-heading:              #101828;
+  --color-text-body:                 #4a5565;
+  --color-text-body-subtle:          #6a7282;
+  --color-text-fg-brand:             #1447e6;
+  --color-text-fg-success:           #007a55;
+  --color-text-fg-danger:            #c70036;
+  --color-text-fg-danger-strong:     #8b0836;
+
+  /* Background colors */
+  --color-bg-white:                  #ffffff;
+  --color-bg-surface:                #ffffff;
+  --color-bg-default:                #f9fafb;
+  --color-bg-muted:                  #f3f4f6;
+  --color-bg-tertiary:               #f3f4f6;
+  --color-bg-primary:                #42389d; /* brand purple — NOT legacy blue */
+  --color-bg-primary-hover:          #362f78;
+  --color-bg-dark:                   #1e2939;
+  --color-bg-dark-strong:            #101828;
+  --color-bg-brand:                  #5145cd;
+  --color-bg-brand-soft:             #dbeafe;
+  --color-bg-disabled:               #f3f4f6;
+
+  /* Border colors */
+  --color-border-default:            #e5e7eb;
+  --color-border-base:               #e5e7eb;
+  --color-border-focus:              #155dfc;
+
+  /* Semantic */
+  --color-danger:                    #e02424;
+
+  /* Button tokens */
+  --btn-primary-bg:    #42389d;
+  --btn-primary-hover: #362f78;
+  --btn-dark-hover:    #111928;
+  --btn-green-bg:      #007a55;
+  --btn-green-hover:   #005e3e;
+  --btn-red-bg:        #c10007;
+  --btn-red-hover:     #a30006;
+  --btn-yellow-bg:     #d03801;
+  --btn-yellow-hover:  #b43100;
+  --btn-blue-bg:       #1447e6;
+  --btn-blue-hover:    #0f3bc0;
+  --btn-gray-bg:       #f9fafb;
+  --btn-gray-text:     #1e2939;
+  --btn-gray-border:   #e5e7eb;
+  --btn-gray-hover-bg: #f3f4f6;
+
+  /* Controls: Toggle · Checkbox · Radio */
+  --color-ctrl-off:                  #d1d5db;
+  --color-ctrl-off-hover:            #9ca3af;
+  --color-ctrl-off-disabled:         #e5e7eb;
+  --color-ctrl-danger:               #c81e1e;
+  --color-ctrl-danger-strong:        #c10007;
+  --color-ctrl-danger-hover:         #9f0712;
+  --color-ctrl-disabled-on:          #cddbfe;
+  --color-ctrl-disabled-danger:      #ffc9c9;
+  --color-ctrl-danger-label:         #c81e1e;
+  --color-ctrl-danger-helper:        #fb2c36;
+  --color-ctrl-danger-disabled-text: #ffa2a2;
+
+  /* Dropdown */
+  --color-dropdown-icon-danger:       #f05252;
+  --color-dropdown-disabled-selected: #b4c6fc;
+}
+
+/* Base — font only */
 body { font-family: var(--font-family-base); -webkit-font-smoothing: antialiased; }
 a { color: var(--color-text-link); text-decoration: none; }
 a:hover { text-decoration: underline; }
