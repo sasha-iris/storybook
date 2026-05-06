@@ -46,12 +46,13 @@ function MenuItem({ item, isActive }: { item: NavItem; isActive: boolean }) {
         // inactive
         "text-[#111928] bg-transparent",
         // hover (only when not active)
-        !isActive && "hover:bg-[#e5e7eb] hover:text-[#111928]",
-        // active
-        isActive && "bg-[#f3f4f6] text-[#42389d]"
+        !isActive && "hover:bg-[#f3f4f6] hover:text-[#111928]",
+        // active — Figma 9263:160934: bg #e5e7eb, text #42389d
+        isActive && "bg-[#e5e7eb] text-[#42389d]"
       )}
     >
       {/* icon — 24×24, inherits color from parent text-color */}
+      {/* icon must be 24×24px solid filled, inherits text color */}
       <span
         className="flex-shrink-0 flex items-center justify-center w-6 h-6"
         style={{ color: isActive ? "#42389d" : "#111928" }}

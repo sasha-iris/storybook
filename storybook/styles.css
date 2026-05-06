@@ -2087,19 +2087,18 @@ input[type="file"].form-file-input {
 }
 .sidebar-item:hover { background: var(--color-bg-muted); color: var(--color-text-primary); text-decoration: none; }
 
-/* Figma 1060:44 — active item fill=#f3f4f6, icon fill=#1f2a37 */
+/* Figma 9263:160934 — active item fill=#e5e7eb, text+icon=#42389d */
 .sidebar-item.active {
-  background: var(--color-bg-muted);
-  color: #1f2a37;
+  background: #e5e7eb;
+  color: #42389d;
 }
 
 .sidebar-item-icon {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
-  opacity: 0.7;
 }
-.sidebar-item.active .sidebar-item-icon { opacity: 1; color: #1f2a37; }
+.sidebar-item.active .sidebar-item-icon { color: #42389d; }
 
 .sidebar-item-badge {
   margin-left: auto;
