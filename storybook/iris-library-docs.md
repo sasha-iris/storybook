@@ -1,670 +1,287 @@
-# Iris Library — Component Docs
+# Iris Library — Complete Component Reference for Lovable
 
-All 30 component families. Use as knowledge for Lovable AI.
+> **Source:** Figma file `ZKtEULdYKaXe5uQl1J6ijI` (Iris Library)
+> **Stack in Lovable:** React + Tailwind CSS + shadcn/ui
+> **Font:** Inter (400/500/600/700/800) — add to `index.html` `<head>`:
+> ```html
+> <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+> ```
+> **CSS variables:** all shadcn/ui overrides and Iris tokens are in `iris-recolor.css`.
+> **Class-based styles:** available via `styles.css` (Iris Storybook CSS).
 
 ---
 
-# Accordion
+## Design Tokens
 
-**Accordion** progressively discloses content — items can be expanded to reveal more detail, keeping the page compact.
+### Colors — Brand
 
-Figma source: component set \
+| Token | Hex | Use |
+|-------|-----|-----|
+| brand-800 | `#42389d` | Primary buttons, active nav, links, focus rings |
+| brand-900 | `#362f78` | Primary button hover |
+| brand-600 | `#5850ec` | Border brand |
+| brand-500 | `#6875f5` | Charts, data bars |
+| brand-300 | `#b4c6fc` | Disabled checked state |
 
-## Variants
+### Colors — Semantic
 
-- Card — shared container
-- Card — with icon
-- Separate cards
-- Only links — minimal
-- All styles
+| Role | Hex | Use |
+|------|-----|-----|
+| Success | `#007a55` | Green button, success badge bg text |
+| Danger | `#c70036` | Destructive actions, error badges |
+| Warning | `#d03801` | Yellow/orange warning badge |
+| Info/Link | `#1447e6` | Blue links, info accent |
 
-## CSS classes
+### Colors — Grays (Iris scale)
 
-```
-.accordion
-.accordion-body
-.accordion-chevron
-.accordion-flush
-.accordion-header
-.accordion-item
-.open
-```
+| Name | Hex | Role |
+|------|-----|------|
+| gray-50 | `#f9fafb` | Page bg, input bg |
+| gray-100 | `#f3f4f6` | Sidebar bg, muted bg, hover, disabled bg |
+| gray-200 | `#e5e7eb` | Borders, sidebar active bg, dividers |
+| gray-300 | `#d1d5db` | Input border (default), control off |
+| gray-400 | `#9ca3af` | Disabled text, control hover |
+| gray-500 | `#6b7280` | Placeholder, muted text, inactive icons |
+| gray-900 | `#111928` | Primary text, inactive nav text |
+| dark | `#1e2939` | Dark button bg, dark sidebar item text |
+| heading | `#101828` | H1–H4 heading text |
 
-## HTML examples
+### Typography
+
+| Name | Size | Weight | Use |
+|------|------|--------|-----|
+| H1 | 30px / 1.875rem | 700 | Page titles |
+| H2 | 24px / 1.5rem | 400 | Section titles |
+| H3 | 20px / 1.25rem | 400 | Card/panel titles |
+| H4 | 18px / 1.125rem | 400 | Sub-section titles |
+| Body 1 | 16px / 1rem | 400 | Default body |
+| Body 2 | 14px / 0.875rem | 400 | Secondary text, labels |
+| Caption | 12px / 0.75rem | 400 | Helper text, meta |
+| Line-height | 1.5 | — | All text |
+
+### Radius
+
+| Token | Value | Use |
+|-------|-------|-----|
+| sm | 4px | Inline chips, table badges |
+| md | 8px | Inputs, selects, dropdowns, nav items |
+| lg | 12px | Buttons, cards |
+| xl | 16px | Cards, lib-card shell |
+| full | 9999px | Pill buttons, avatars |
+
+### Shadows
+
+| Token | Value | Use |
+|-------|-------|-----|
+| sm | `0px 1px 2px rgba(0,0,0,0.08)` | Cards, KPI tiles |
+| md | `0px 4px 12px rgba(0,0,0,0.10)` | Dropdowns, modals, tooltips |
+
+---
+
+## Sidebar / Navigation
+
+**Figma:** nodes `9272:163206` (sidebar) and `9263:160934` (menu item)
+
+### Layout
+
+| Property | Value |
+|----------|-------|
+| Width | 256px |
+| Height | 100vh |
+| Background | `#f3f4f6` (gray-100) |
+| Border-right | `1px solid #e5e7eb` |
+| Layout | flex column, gap 24px between sections |
+| Box-sizing | border-box |
+
+### Logo area
+
+| Property | Value |
+|----------|-------|
+| Padding | `24px 8px 0 28px` |
+
+### Nav container (main + bottom)
+
+| Property | Value |
+|----------|-------|
+| Padding | `0 8px 0 28px` (28px left, 8px right) |
+| Gap between items | 8px |
+| Width | 100%, box-sizing border-box |
+
+### Menu item
+
+| Property | Value |
+|----------|-------|
+| Height | 40px |
+| Padding | `6px 8px` |
+| Border-radius | 8px |
+| Icon size | 24x24px |
+| Icon-label gap | 4px |
+| Font | Inter 500 16px / 1.5 |
+
+### Menu item states
+
+| State | Background | Text color | Icon color |
+|-------|-----------|-----------|------------|
+| Active | `#e5e7eb` (gray-200) | `#42389d` (brand-800) | `#42389d` |
+| Inactive | transparent | `#111928` (gray-900) | `#6b7280` (gray-500) |
+| Hover (inactive) | `#f3f4f6` (gray-100) | `#111928` | `#6b7280` |
+
+IMPORTANT: Active item uses gray background + purple text. NOT a purple background.
+
+### Expandable menu item
+
+- Chevron: 20x20px, `#1f2a37`, right-aligned
+- Chevron flips: chevron-down (collapsed) to chevron-up (expanded)
+- Sub-items: `padding-left 28px`, same height/font as regular items, no icon
+- Sub-item active: `bg #f3f4f6`, `color #42389d`
+- Sub-item hover: `bg #e5e7eb`
+
+### Bottom nav divider
+
+- `1px solid #e5e7eb`, full width
+
+### HTML structure
 
 ```html
-<div class="accordion">
+<aside style="
+  width:256px; height:100vh;
+  background:#f3f4f6; border-right:1px solid #e5e7eb;
+  display:flex; flex-direction:column; gap:24px;
+  box-sizing:border-box;">
 
-  <!-- Item 1 — expanded: add class "open" to .accordion-item -->
-  <div class="accordion-item open">
-    <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-      <span style="flex:1;">Can I use FlowBite in open-source projects?</span>
-      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
-        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">
-      Generally, it is accepted to use FlowBite in open-source projects…
-    </div>
-  </div>
+  <!-- Logo -->
+  <div style="padding:24px 8px 0 28px;"><!-- logo --></div>
 
-  <!-- Item 2 — collapsed: no "open" class -->
-  <div class="accordion-item">
-    <button class="accordion-header" aria-expanded="false" aria-controls="body-1" id="header-1">
-      <span style="flex:1;">How do you achieve the blurry effect?</span>
-      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
-        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-    <div class="accordion-body" id="body-1" role="region" aria-labelledby="header-1">
-      The blurry effect can be achieved using the CSS backdrop-filter property…
-    </div>
-  </div>
+  <!-- Main nav -->
+  <nav style="display:flex;flex-direction:column;gap:8px;padding:0 8px 0 28px;box-sizing:border-box;">
 
-</div>
-```
+    <!-- ACTIVE item -->
+    <a href="#" aria-current="page" style="
+      display:flex;align-items:center;gap:4px;
+      height:40px;padding:6px 8px;border-radius:8px;
+      background:#e5e7eb;color:#42389d;
+      font:500 16px/1.5 inherit;text-decoration:none;">
+      <svg width="24" height="24" style="flex-shrink:0;color:#42389d;"><!-- icon --></svg>
+      <span>Overview</span>
+    </a>
 
-```html
-<!-- Active item with icon inside .accordion-header -->
-<div class="accordion-item open">
-  <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-    <span style="flex-shrink:0;display:flex;align-items:center;margin-right:8px;">
-      <!-- question-mark-circle 18×18 -->
-    </span>
-    <span style="flex:1;">What is this library?</span>
-    <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
-      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </button>
-  <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">Body text…</div>
-</div>
-```
+    <!-- INACTIVE item -->
+    <a href="#" style="
+      display:flex;align-items:center;gap:4px;
+      height:40px;padding:6px 8px;border-radius:8px;
+      background:transparent;color:#111928;
+      font:500 16px/1.5 inherit;text-decoration:none;">
+      <svg width="24" height="24" style="flex-shrink:0;color:#6b7280;"><!-- icon --></svg>
+      <span>Metrics</span>
+    </a>
 
-```html
-<div style="display:flex;flex-direction:column;gap:16px;">
-
-  <!-- Each item gets its own .accordion wrapper -->
-  <div class="accordion">
-    <div class="accordion-item open">
-      <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-        <span style="flex:1;">What is this library?</span>
-        <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    <!-- EXPANDABLE item -->
+    <div>
+      <button style="
+        display:flex;align-items:center;gap:4px;
+        width:100%;height:40px;padding:6px 8px;border-radius:8px;
+        background:transparent;color:#111928;
+        font:500 16px/1.5 inherit;border:none;cursor:pointer;">
+        <svg width="24" height="24" style="flex-shrink:0;color:#6b7280;"><!-- icon --></svg>
+        <span style="flex:1;text-align:left;">Financial Model</span>
+        <svg width="20" height="20" style="flex-shrink:0;color:#1f2a37;"><!-- chevron-down --></svg>
       </button>
-      <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">Body text…</div>
+      <!-- Sub-items (when expanded) -->
+      <div style="padding-left:28px;display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+        <a href="#" style="
+          display:flex;align-items:center;
+          height:40px;padding:6px 8px;border-radius:8px;
+          color:#111928;font:500 16px/1.5 inherit;text-decoration:none;">
+          Income Statement
+        </a>
+      </div>
     </div>
-  </div>
-
-  <div class="accordion">
-    <div class="accordion-item">
-      <button class="accordion-header" aria-expanded="false" aria-controls="body-1" id="header-1">
-        <span style="flex:1;">How do you achieve the blurry effect?</span>
-        <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <div class="accordion-body" id="body-1" role="region" aria-labelledby="header-1">Body text…</div>
-    </div>
-  </div>
-
-</div>
-```
-
----
-
-# Alerts
-
-**Alert** surfaces a brief, potentially time-sensitive message without interrupting the user's workflow.
-
-**Urgency levels** (from Notification system guidelines, node 9929:153267)
-- **High** — requires immediate action to restore full product access (e.g. payment failed, session expired)
-- **Medium** — notifies about features or opportunities that benefit the user
-- **Low** — status-change messages ("Email verified", "Link copied") and general product info
-
-**When to use**
-- Surfacing the outcome of a user action (success, error, warning)
-- Showing a persistent state the user should be aware of but can dismiss
-- Inline validation feedback on a section (not a single field)
-
-**When NOT to use**
-- Requiring an explicit decision → use a **Modal Dialog**
-- Communicating a site-wide critical outage → use a **Banner**
-- Brief ephemeral feedback after an action → use a **Toast**
-
-**Anatomy**
-\
-
-## Variants
-
-- All colors
-- All types
-
-## CSS classes
-
-```
-.alert
-.alert--danger
-.alert--dark
-.alert--default
-.alert--info
-.alert--light
-.alert--medium
-.alert--success
-.alert--warning
-.alert-body
-.alert-dismiss
-.alert-icon
-.alert-title
-.alert__body
-.alert__content
-.alert__cta
-.alert__dismiss
-.alert__header
-.alert__heading
-.alert__icon
-.btn
-.btn-xs
-```
-
-## HTML examples
-
-```html
-<!-- Success -->
-<div role="alert" class="alert alert--success alert--medium"> … </div>
-
-<!-- Danger -->
-<div role="alert" class="alert alert--danger alert--medium"> … </div>
-
-<!-- Info -->
-<div role="alert" class="alert alert--info alert--medium"> … </div>
-
-<!-- Warning -->
-<div role="alert" class="alert alert--warning alert--medium"> … </div>
-
-<!-- Default -->
-<div role="alert" class="alert alert--default alert--medium"> … </div>
-```
-
-```html
-<!-- Medium — tinted background -->
-<div role="alert" class="alert alert--info alert--medium"> … </div>
-
-<!-- Dark — solid accent background -->
-<div role="alert" class="alert alert--info alert--dark"> … </div>
-
-<!-- Light — white background with shadow -->
-<div role="alert" class="alert alert--info alert--light"> … </div>
-```
-
-```html
-<div role="alert" class="alert alert--warning alert--medium">
-  <div class="alert__content">
-    <div class="alert__header">
-      <svg class="alert__icon" aria-hidden="true"><!-- check-circle --></svg>
-      <span class="alert__heading">Your free trial ends in 3 days</span>
-      <button class="alert__dismiss" aria-label="Dismiss"><!-- × --></button>
-    </div>
-    <p class="alert__body">Upgrade to a paid plan to keep all features and avoid data loss.</p>
-    <button class="alert__cta">View more</button>
-  </div>
-</div>
-```
-
----
-
-# Autocomplete
-
-**Autocomplete** combines a search input with a dropdown panel that surfaces suggestions as the user types.
-
-**When to use**
-- Global site/doc search with instant results (Default type)
-- Entity lookup — searching users, customers, or tagged items (Advanced type with CTA)
-- Filtering a long list by keyword when a dropdown alone is too small
-
-**When NOT to use**
-- Selecting from a short fixed list (≤ 8 items) → use a \
-
-## Variants
-
-- States — Default type
-- States — Advanced type
-- Sizes — Default vs Large
-
-## CSS classes
-
-```
-.autocomplete
-```
-
-## HTML examples
-
-```html
-<!-- Initial: closed -->
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
-  <!-- search icon #6b7280 -->
-  <input placeholder="Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#6b7280;"/>
-</div>
-
-<!-- Active: open, focus ring #155dfc -->
-<div style="width:400px;">
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:#f9fafb;border:1px solid #155dfc;border-radius:8px;">
-    <!-- search icon #155dfc -->
-    <input placeholder="Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#111928;"/>
-  </div>
-  <div role="listbox" style="background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-    <div style="font-size:14px;font-weight:600;color:#111928;margin-bottom:6px;">Recent</div>
-    <div role="option" style="display:flex;align-items:center;gap:8px;padding:3px 0;">
-      <!-- search icon 14px #9ca3af -->
-      <span style="font-size:14px;color:#6b7280;">Customizing colors</span>
-    </div>
-    <!-- more rows... -->
-  </div>
-</div>
-
-<!-- Typing: × clear button, filtered results -->
-<!-- With CTA: last row has divider + plus + "Add new" in #155dfc -->
-```
-
-```html
-<!-- Advanced type — Active state (dismiss × on each item) -->
-<div style="width:400px;">
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:#f9fafb;border:1px solid #155dfc;border-radius:8px;">
-    <!-- search icon #155dfc -->
-    <input value="|Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#111928;"/>
-  </div>
-  <div role="listbox" style="background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-    <div style="font-size:14px;font-weight:600;color:#111928;margin-bottom:6px;">Recent</div>
-    <!-- Advanced result row: pill bg #f9fafb, r:8px -->
-    <div role="option" style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;background:#f9fafb;margin-bottom:4px;">
-      <!-- category icon 14px #9ca3af (e.g. color-swatch, view-grid, user-circle) -->
-      <span style="flex:1;font-size:14px;color:#6b7280;">Customizing colors</span>
-      <!-- dismiss × icon 14px #6b7280 (active) or navigate → (typing) -->
-    </div>
-  </div>
-</div>
-```
-
-```html
-<!-- Default size: 42px height, 14px font -->
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
-  <!-- search icon 18px -->
-  <input placeholder="Quick search for anything" style="font-size:14px;border:none;background:transparent;"/>
-</div>
-
-<!-- Large size: 52px height, 16px font -->
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:52px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
-  <!-- search icon 18px -->
-  <input placeholder="Quick search for anything" style="font-size:16px;border:none;background:transparent;"/>
-</div>
-```
-
----
-
-# Badge
-
-Status badges for labeling content, categorizing items, and indicating state.
-
-**When to use**
-- Label a record's status (Active, Pending, Archived)
-- Categorize items by topic, priority, or type
-- Show a removable filter chip in a search or filter bar
-
-**When NOT to use**
-- Interactive filter toggles → use Toggle buttons or Chips
-- Long explanatory text → use an Alert or inline notice
-- Navigation indicators → use a Tab with a counter instead
-
-**Anatomy**
-\
-
-## Variants
-
-- Colors — all 8 themes
-- Sizes — lg and sm
-- With icon — all themes
-- Dismissible — with × button
-
-## HTML examples
-
-```html
-<!-- Gray — neutral status -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#f3f4f6;color:#101828;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Neutral</span>
-
-<!-- Green — success / active -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#d0fae5;color:#006045;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Active</span>
-
-<!-- Red — error / failed -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#ffe2e2;color:#9f0712;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Failed</span>
-
-<!-- Yellow — warning / pending -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#fef9c2;color:#894b00;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Pending</span>
-```
-
-```html
-<!-- lg (default) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">In review</span>
-
-<!-- sm (compact) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:6px;padding:2px 10px;white-space:nowrap;line-height:1.5;">In review</span>
-```
-
-```html
-<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="#42389d" aria-hidden="true" style="flex-shrink:0;">
-    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5H10.75V5z" clip-rule="evenodd"/>
-  </svg>
-  <span>Scheduled</span>
-</span>
-```
-
----
-
-# Banner
-
-**Banner** displays a prominent, persistent message at the top (or bottom) of the screen for site-wide or contextually critical information.
-
-**When to use**
-- Communicating site-wide outages, maintenance windows, or planned downtime
-- Promoting a time-sensitive offer or product update to all users
-- Collecting newsletter signups inline at the top of a page
-- Surfacing a partner/referral opportunity contextually
-
-**When NOT to use**
-- Single-action confirmations or errors → use an **Alert** or **Toast**
-- Decisions that require user input → use a **Modal Dialog**
-- Short ephemeral feedback → use a **Toast** (auto-dismisses in ≥ 5 s)
-
-**Anatomy**
-\
-
-## Variants
-
-- All types
-- Non-dismissible
-
-## CSS classes
-
-```
-.banner
-.banner--bottom
-.banner--container-cta
-.banner--cta
-.banner--default
-.banner--newsletter
-.banner__dismiss
-.banner__icon
-.banner__icon-text
-.banner__text
-.btn
-.btn-light
-.btn-md
-.btn-primary
-.btn-xs
-.form-input
-.form-label
-```
-
-## HTML examples
-
-```html
-<!-- Default notification banner -->
-<div role="banner" class="banner banner--default"> … </div>
-
-<!-- Container CTA (centered card) -->
-<div role="banner" class="banner banner--container-cta"> … </div>
-
-<!-- Bottom awareness strip -->
-<div role="banner" class="banner banner--bottom"> … </div>
-
-<!-- CTA with two action buttons -->
-<div role="banner" class="banner banner--cta"> … </div>
-
-<!-- Newsletter signup -->
-<div role="banner" class="banner banner--newsletter"> … </div>
-```
-
-```html
-<!-- Non-dismissible: omit the × button entirely -->
-<div role="banner" class="banner banner--default">
-  <div class="banner__icon-text">
-    <svg class="banner__icon" aria-hidden="true"><!-- lightbulb --></svg>
-    <span class="banner__text">New brand identity has been launched for our Flowbite library.</span>
-  </div>
-  <!-- no dismiss button -->
-</div>
-```
-
----
-
-# Logo
-
-Iris hexagonal Smart mark — standalone and with the "Iris" wordmark.
-
-**Source:** Figma node \
-
-## Variants
-
-- Mark only — all sizes (light)
-- Logo with text — all sizes (light)
-- Dark variants — sm / md / lg
-- Reference grid — all sizes × modes
-- Card badge icons — used in KPI & Reporting cards
-- Inline icons — used in Card/Layouts
-- Trend icons — used in Card/KPI
-- Sidebar nav icons — used in Navigation/Sidebar
-- Badge icons — used in Badge
-- Chip / Tag icons — used in Chip, Tag
-- Indicators icons — used in Indicators
-- Skeleton icons — used in Skeleton
-- Banner icons — used in Banner
-- Toast icons — used in Toast
-- All icons — outline 24px
-- All brand icons
-
-## HTML examples
-
-### Logo
-
-```html
-<!-- Mark only — xs (24 px, card badge) -->
-<img src="./assets/iris-mark-xs.svg" height="24" alt="Iris mark" style="display:block;width:auto;">
-
-<!-- Mark only — md (48 px) -->
-<img src="./assets/iris-mark-md.svg" height="48" alt="Iris mark" style="display:block;width:auto;">
-```
-
-### Logo
-
-```html
-<!-- Full logo — sm (nav bar) -->
-<div style="display:inline-flex;align-items:center;gap:12px;">
-  <img src="./assets/iris-mark-sm.svg" height="32" alt="Iris mark" style="display:block;width:auto;">
-  <span style="font-size:24px;font-weight:600;color:#101828;white-space:nowrap;">Iris</span>
-</div>
-
-<!-- Full logo — md (page header) -->
-<div style="display:inline-flex;align-items:center;gap:16px;">
-  <img src="./assets/iris-mark-md.svg" height="48" alt="Iris mark" style="display:block;width:auto;">
-  <span style="font-size:36px;font-weight:600;color:#101828;white-space:nowrap;">Iris</span>
-</div>
-```
-
-### Logo
-
-```html
-<!-- Dark logo — md (dark nav bar or panel header) -->
-<div style="display:inline-flex;align-items:center;gap:16px;">
-  <img src="./assets/iris-mark-md-dark.svg" height="48" alt="Iris mark" style="display:block;width:auto;">
-  <span style="font-size:36px;font-weight:600;color:#ffffff;white-space:nowrap;">Iris</span>
-</div>
-
-<!-- Dark mark only — sm (icon slot on dark panel) -->
-<img src="./assets/iris-mark-sm-dark.svg" height="32" alt="Iris mark" style="display:block;width:auto;">
-```
-
-### Icons
-
-```html
-<!-- Heroicons v2 outline — example: plus -->
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-  aria-hidden="true">
-  <path d="M12 4.5V19.5M19.5 12L4.5 12"/>
-</svg>
-```
-
----
-
-# Breadcrumbs
-
-**Breadcrumbs** show the user's location within the site hierarchy and let them navigate back to any ancestor page.
-
-Figma source: component set \
-
-## Variants
-
-- Default — no background
-- With background
-- Both types
-- Depth variants — 2 to 4 items
-- Without home icon
-
-## CSS classes
-
-```
-.active
-.breadcrumb
-.breadcrumb-bg
-.breadcrumb-item
-.breadcrumb-sep
-```
-
-## HTML examples
-
-```html
-<nav aria-label="Breadcrumb">
-  <ol class="breadcrumb">
-
-    <li class="breadcrumb-item">
-      <a href="#">
-        <!-- home icon 20×20 -->
-        Home
-      </a>
-      <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
-    </li>
-
-    <li class="breadcrumb-item">
-      <a href="#">E-commerce</a>
-      <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
-    </li>
-
-    <!-- Current page: .breadcrumb-item.active + aria-current="page" -->
-    <li class="breadcrumb-item active">
-      <span aria-current="page">Products</span>
-    </li>
-
-  </ol>
-</nav>
-```
-
-```html
-<!-- With background: pill wrapper + .breadcrumb-bg modifier -->
-<!-- All items render in #4a5565 (var(--color-text-body)), chevron in #6a7282 -->
-<div style="display:inline-flex;background:var(--color-bg-default);border:1px solid var(--color-border-default);border-radius:8px;padding:12px 20px;">
-  <nav aria-label="Breadcrumb" class="breadcrumb-bg">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a href="#"><!-- home icon --> Home</a>
-        <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
-      </li>
-      <li class="breadcrumb-item">
-        <a href="#">E-commerce</a>
-        <span class="breadcrumb-sep" aria-hidden="true"><!-- chevron-right --></span>
-      </li>
-      <li class="breadcrumb-item active">
-        <span aria-current="page">Products</span>
-      </li>
-    </ol>
   </nav>
-</div>
+
+  <!-- Divider -->
+  <div style="height:1px;background:#e5e7eb;width:100%;flex-shrink:0;"></div>
+
+  <!-- Bottom nav -->
+  <nav style="display:flex;flex-direction:column;gap:8px;padding:0 8px 0 28px;box-sizing:border-box;">
+    <a href="#" style="
+      display:flex;align-items:center;gap:4px;
+      height:40px;padding:6px 8px;border-radius:8px;
+      background:transparent;color:#111928;
+      font:500 16px/1.5 inherit;text-decoration:none;">
+      <svg width="24" height="24" style="flex-shrink:0;color:#6b7280;"><!-- help icon --></svg>
+      <span>Help</span>
+    </a>
+  </nav>
+
+  <!-- Spacer -->
+  <div style="flex:1;"></div>
+
+  <!-- User profile -->
+  <div style="padding:12px 16px;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;">
+    <div style="width:32px;height:32px;border-radius:50%;background:#42389d;color:#fff;font:600 14px/1 inherit;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:600;color:#111928;">Alex Smith</div>
+      <div style="font-size:12px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">alex@example.com</div>
+    </div>
+  </div>
+
+</aside>
 ```
 
-```html
-<!-- Default: .breadcrumb inside <nav> -->
-<nav aria-label="Breadcrumb"><ol class="breadcrumb"><!-- ... --></ol></nav>
+### Tailwind class shorthand
 
-<!-- With background: pill wrapper + .breadcrumb -->
-<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">
-  <nav aria-label="Breadcrumb"><ol class="breadcrumb"><!-- ... --></ol></nav>
-</div>
+```
+Active item:      bg-[#e5e7eb] text-[#42389d]
+Inactive item:    bg-transparent text-[#111928]
+Hover (inactive): hover:bg-[#f3f4f6]
+Icon active:      text-[#42389d]
+Icon inactive:    text-[#6b7280]
+Item:             h-10 px-2 py-1.5 rounded-lg gap-1 text-base font-medium
+Icon:             w-6 h-6 flex-shrink-0
+Nav:              flex flex-col gap-2 pl-7 pr-2
 ```
 
 ---
 
-# Button
+## Button
 
-Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
+**CSS classes:** `.btn` + color + size modifier
 
-**CSS classes:** \
+### Colors (all require `.btn` base)
 
-## Variants
+| Class | BG | Hover BG | Text |
+|-------|----|----------|------|
+| `.btn-primary` | `#42389d` | `#362f78` | white |
+| `.btn-dark` | `#1e2939` | `#111928` | white |
+| `.btn-green` | `#007a55` | `#005e3e` | white |
+| `.btn-red` | `#c10007` | `#a30006` | white |
+| `.btn-yellow` | `#d03801` | `#b43100` | white |
+| `.btn-blue` | `#1447e6` | `#0f3bc0` | white |
+| `.btn-gray` | `#f9fafb` | `#f3f4f6` | `#1e2939`, border `#e5e7eb` |
+| `.btn-outline-primary` | transparent | `#42389d` | `#42389d`, white on hover |
 
-- Colors — all Figma colors
-- Sizes — xs to xl
-- States — default / disabled
-- Pill — rounded corners
-- Disabled state
-- Default — text segments (Years / Months / Days)
-- With stat — action + count
-- With dropdown — text + icon slot
-- With tooltip
-- All types — overview
-- Semibold — brand purple
-- Medium — subtle gray
-- Type comparison — Semibold vs Medium
-- Dark — all sizes
-- White variants (on dark background)
-- Multi-provider showcase
-- Overview — Chart vs Table button
+### Sizes
 
-## CSS classes
+| Class | Height | Padding | Font |
+|-------|--------|---------|------|
+| `.btn-xs` | ~34px | `8px 12px` | 12px |
+| `.btn-sm` | 36px | `8px 12px` | 14px |
+| `.btn-md` | 40px | `10px 20px` | 14px |
+| `.btn-lg` | 48px | `12px 20px` | 16px |
+| `.btn-xl` | 52px | `14px 24px` | 16px |
 
-```
-.active
-.btn
-.btn-blue
-.btn-chart
-.btn-dark
-.btn-gray
-.btn-green
-.btn-group
-.btn-group-stat-count
-.btn-icon
-.btn-lg
-.btn-link
-.btn-link-medium
-.btn-link-semibold
-.btn-md
-.btn-outline-primary
-.btn-pill
-.btn-primary
-.btn-red
-.btn-sm
-.btn-social
-.btn-social-dark
-.btn-social-dark-outline
-.btn-social-white
-.btn-social-white-outline
-.btn-table
-.btn-xl
-.btn-xs
-.btn-yellow
-```
+Border-radius: **12px**
+Focus: `outline: 2px solid #42389d; outline-offset: 2px`
 
-## HTML examples
+### Modifiers
 
-### Button
+- `.btn-icon` — icon-only square
+- `.btn-pill` — `border-radius: 9999px`
+- `[disabled]` — `opacity: 0.5; cursor: not-allowed`
+- `.btn-link` — text link, no border/bg
+- `.btn-group` — horizontal group container
+
+### HTML examples
 
 ```html
 <button class="btn btn-primary btn-md">Primary</button>
@@ -674,45 +291,33 @@ Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
 <button class="btn btn-yellow btn-md">Yellow</button>
 <button class="btn btn-blue btn-md">Blue</button>
 <button class="btn btn-gray btn-md">Gray</button>
+<button class="btn btn-outline-primary btn-md">Outline</button>
 
-<!-- Outline -->
-<button class="btn btn-outline-primary btn-md">Primary</button>
-```
-
-### Button
-
-```html
+<!-- Sizes -->
 <button class="btn btn-primary btn-xs">xs</button>
 <button class="btn btn-primary btn-sm">sm</button>
 <button class="btn btn-primary btn-md">md</button>
 <button class="btn btn-primary btn-lg">lg</button>
 <button class="btn btn-primary btn-xl">xl</button>
-```
 
-### Button
-
-```html
-<!-- Left icon -->
+<!-- With icon (left) -->
 <button class="btn btn-primary btn-md">
-  <svg><!-- heroicon 20px --></svg>
+  <svg width="20" height="20"><!-- heroicon --></svg>
   <span>Label</span>
 </button>
 
-<!-- Right icon -->
-<button class="btn btn-primary btn-md">
-  <span>Label</span>
-  <svg><!-- heroicon 20px --></svg>
-</button>
-
-<!-- Icon only -->
+<!-- Icon-only -->
 <button class="btn btn-primary btn-icon btn-md" aria-label="Action">
-  <svg><!-- heroicon 20px --></svg>
+  <svg width="20" height="20"><!-- heroicon --></svg>
 </button>
-```
 
-### Group
+<!-- Pill -->
+<button class="btn btn-primary btn-md btn-pill">Pill</button>
 
-```html
+<!-- Disabled -->
+<button class="btn btn-primary btn-md" disabled>Disabled</button>
+
+<!-- Group -->
 <div class="btn-group">
   <button class="btn">Years</button>
   <button class="btn">Months</button>
@@ -722,752 +327,70 @@ Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
 
 ---
 
-# Basics
+## Input / Forms
 
-The \
+### Input states
 
-## Variants
+| State | Border color |
+|-------|-------------|
+| Default | `#d1d5db` |
+| Focus | `#155dfc` |
+| Success | `#0e9f6e` |
+| Error | `#f05252` |
+| Disabled | `#d1d5db`, opacity 0.6 |
 
-- Card with button
-- Card with link
-- Horizontal card
-- Linechart — Upwards (602:20753)
-- Linechart — Downwards (602:20589)
-- Linechart-vert — Upwards (602:22376)
-- barchart — Upwards (602:20796)
-- barchart-vert — Upwards (602:23611)
-- barchart-big — Upwards (602:24711)
-- barchart-segm-hor — Upwards (602:25133)
-- Credit — Upwards (602:23265)
-- All variants — overview
-- User profile card
-- With form inputs
-- E-commerce card
-- Card with list
-- Pricing card
-- CTA card
-- Nav tabs card
-- Stats card (segmented tabs)
-- Testimonial card
-- Crypto card — connect wallet
-- Default — active, Iris owner
-- Hovered — active, Iris owner
-- Inactive — paused
-- User owner
-- Loading (skeleton)
-- Empty state
-- Error state
-- All states — side by side
+### Input sizes
 
-## CSS classes
+| Size | Height |
+|------|--------|
+| Small | 37px |
+| Medium (default) | 42px |
+| Large | 52px |
+
+Background: `#f9fafb` · Border-radius: `8px` · Font: 14px/400
+
+### CSS classes
 
 ```
-.btn
-.btn-alternative
-.btn-light
-.btn-md
-.btn-primary
-.btn-sm
-.btn-xs
-.card
-.card-body
-.card-body-padded
-.card-footer
-.card-footer-link
-.card-header
-.card-header-controls
-.card-header-sub
-.card-header-title
-.card-icon
-.card-icon-blue
-.card-icon-green
-.card-reporting
-.card-reporting--hovered
-.card-reporting--inactive
-.card-stat-label
-.card-stat-value
-.card-trend
-.card-trend-arrow
-.card-trend-context
-.card-trend-up
-.form-group
-.form-input
-.form-label
-.rpt-chip
-.rpt-chip--email
-.rpt-chip--muted
-.rpt-chip--slack
-.skeleton
-.skeleton-text
-.skeleton-w-1-2
-.skeleton-w-1-3
-.skeleton-w-2-3
-.skeleton-w-full
+.form-group    — wrapper div
+.form-label    — 14px/500 #111928, margin-bottom 4px
+.form-input    — full-width input, height 42px
+.form-helper   — 12px #6b7280, margin-top 4px
+.form-error    — 12px #c70036
 ```
 
-## HTML examples
-
-### Basics
+### HTML examples
 
 ```html
-<!-- Card with flush top image -->
-<div class="card">
-  <!-- Real usage: replace div with <img src="…" alt="…" style="width:100%;height:180px;object-fit:cover;display:block;"> -->
-  <div style="height:180px; background:var(--color-bg-tertiary);"></div>
-  <div class="card-body-padded">
-    <h5>Card title</h5>
-    <p>Body copy goes here.</p>
-    <button class="btn btn-primary btn-sm">Read more</button>
-  </div>
+<!-- Standard input with label + helper -->
+<div class="form-group">
+  <label class="form-label">Email address</label>
+  <input class="form-input" type="email" placeholder="name@example.com">
+  <span class="form-helper">We will never share your email.</span>
 </div>
-```
 
-### Basics
-
-```html
-<!-- Card with header + footer -->
-<div class="card">
-  <div class="card-header">
-    <div>
-      <div class="card-header-title">Recent activity</div>
-      <div class="card-header-sub">Last 7 days</div>
-    </div>
-    <div class="card-header-controls">
-      <button class="btn btn-alternative btn-xs">View all</button>
-      <button class="btn btn-light btn-xs">⋯</button>
-    </div>
-  </div>
-  <div class="card-body">
-    <!-- content -->
-  </div>
-  <div class="card-footer">
-    <span>Updated just now</span>
-    <a href="#" class="card-footer-link">See details →</a>
-  </div>
+<!-- Error state -->
+<div class="form-group">
+  <label class="form-label">Password</label>
+  <input class="form-input" type="password" style="border-color:#f05252;">
+  <span style="font-size:12px;color:#c70036;">Password must be at least 8 characters.</span>
 </div>
-```
-
-### Basics
-
-```html
-<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
-     box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);
-     padding:24px;max-width:384px;">
-  <h5 style="font-size:var(--text-2xl);font-weight:var(--font-bold);color:#111928;line-height:1.3;margin:0 0 12px;">
-    Noteworthy technology acquisitions 2021
-  </h5>
-  <p style="font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.6;margin:0 0 20px;">
-    Here are the biggest enterprise technology acquisitions of 2021 so far,
-    in reverse chronological order.
-  </p>
-  <button style="display:inline-flex;align-items:center;gap:8px;
-                 background:#42389d;color:#fff;font-size:var(--text-sm);font-weight:var(--font-medium);
-                 border:none;border-radius:12px;padding:10px 20px;cursor:pointer;">
-    Read more
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M4.167 10h11.666M10.833 5l5 5-5 5"
-            stroke="currentColor" stroke-width="1.67"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </button>
-</div>
-```
-
-### KPI
-
-```html
-<!-- Card KPI — Linechart (286×168px) -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
-            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
-
-  <!-- Header row: label + trend + icon pill -->
-  <div style="display:flex;gap:16px;align-items:flex-start;">
-    <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
-    </div>
-    <!-- Trend badge (up: #5850EC, down: #E74694) -->
-    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
-      <!-- trend-up arrow SVG here -->
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
-    </div>
-    <!-- Grey pill icon -->
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;">
-      <!-- currency-dollar SVG here -->
-    </div>
-  </div>
-
-  <!-- Line chart SVG — flush to card bottom, absolute positioned -->
-  <div style="position:absolute;bottom:0;left:0;right:0;">
-    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
-      <!-- area fill at 12% opacity (color #5850EC for up, #E74694 for down) -->
-      <path d="M0,60 C30,55 55,64 85,48 …286,3 L286,70 L0,70 Z" fill="#5850EC" opacity="0.12"/>
-      <!
-```
-
----
-
-# Chip
-
-Filter chips for interactive selections — removable tags attached to filters, inputs, or search queries.
-
-**When to use**
-- Represent an active filter the user can remove (e.g. "Status: Active ×")
-- Show selected items in a multi-select field
-- Tag an entity with a removable category label
-
-**When NOT to use**
-- Read-only status labels → use Badge instead
-- Navigation → use Tabs or Buttons
-- Long text → chips truncate; use a different pattern
-
-**Anatomy**
-\
-
-## Variants
-
-- Colors — all 10 themes
-- States — default / hover / disabled
-- With dot indicator
-
-## HTML examples
-
-```html
-<!-- Light (neutral default) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#f3f4f6;color:#4a5565;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <span>Marketing</span>
-  <button type="button" aria-label="Remove Marketing" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
-  </button>
-</span>
-
-<!-- Indigo -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
-  </button>
-</span>
-```
-
-```html
-<!-- Default -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
-  </button>
-</span>
 
 <!-- Disabled -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#b4c6fc;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;cursor:not-allowed;">
-  <span>Design</span>
-  <button type="button" aria-label="Remove Design" aria-disabled="true" style="background:none;border:none;cursor:not-allowed;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
-  </button>
-</span>
-```
-
-```html
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#f3f4f6" aria-hidden="true">
-    <circle cx="6" cy="6" r="3"/>
-  </svg>
-  <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
-  </button>
-</span>
-```
-
----
-
-# Controls
-
-**Controls** are interactive selection elements: Toggle, Checkbox, and Radio.
-Use them to let users turn features on/off or choose from a set of options.
-
-**When to use**
-- **Toggle** — enable/disable a single binary setting with immediate effect (no submit button needed)
-- **Checkbox** — select one or more independent options from a list; or represent an indeterminate (mixed) state
-- **Radio** — select exactly one option from a mutually exclusive set
-
-**When NOT to use**
-- Do not use Toggle when the action requires confirmation before applying (use a Checkbox + submit instead)
-- Do not use Radio for more than ~6 options — prefer a Select dropdown
-- Do not use Checkbox as a toggle for live settings — use Toggle instead
-
-**Anatomy**
-- **Control element** (16×16 px checkbox/radio; 28×16 px toggle) — the visual indicator
-- **Label** (14px/500) — primary text; required
-- **Helper text** (12px/400, gray/500) — optional secondary description
-- **Destructive variant** — red palette for danger
-
-## Variants
-
-- Toggle — all states
-- Checkbox — all states
-- Radio — all states
-- Controls — all types
-
-## HTML examples
-
-```html
-<!-- Toggle ON (default) -->
-<span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true">
-  <span class="iris-toggle__thumb"></span>
-</span>
-
-<!-- Toggle OFF (default) -->
-<span class="iris-toggle iris-toggle--off" role="switch" aria-checked="false">
-  <span class="iris-toggle__thumb"></span>
-</span>
-
-<!-- Toggle ON — destructive -->
-<span class="iris-toggle iris-toggle--on iris-toggle--destructive" role="switch" aria-checked="true">
-  <span class="iris-toggle__thumb"></span>
-</span>
-
-<!-- Toggle ON — disabled -->
-<span class="iris-toggle iris-toggle--on iris-toggle--disabled" role="switch" aria-checked="true" aria-disabled="true">
-  <span class="iris-toggle__thumb"></span>
-</span>
-```
-
-```html
-<!-- Unchecked -->
-<span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
-
-<!-- Checked -->
-<span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
-
-<!-- Intermediate (indeterminate) -->
-<span class="iris-checkbox iris-checkbox--intermediate" role="checkbox" aria-checked="mixed"></span>
-
-<!-- Destructive + checked -->
-<span class="iris-checkbox iris-checkbox--checked iris-checkbox--destructive" role="checkbox" aria-checked="true"></span>
-
-<!-- Disabled + checked -->
-<span class="iris-checkbox iris-checkbox--checked iris-checkbox--disabled" role="checkbox" aria-checked="true" aria-disabled="true"></span>
-```
-
-```html
-<!-- Unselected -->
-<span class="iris-radio" role="radio" aria-checked="false"></span>
-
-<!-- Selected -->
-<span class="iris-radio iris-radio--checked" role="radio" aria-checked="true"></span>
-
-<!-- Destructive + selected -->
-<span class="iris-radio iris-radio--checked iris-radio--destructive" role="radio" aria-checked="true"></span>
-
-<!-- Disabled + selected -->
-<span class="iris-radio iris-radio--checked iris-radio--disabled" role="radio" aria-checked="true" aria-disabled="true"></span>
-```
-
----
-
-# Datepicker
-
-**Datepicker** lets users select a single date, a date range, or a partial date (month/year/date-of-birth). It renders as an input trigger that opens a dropdown calendar panel.
-
-**When to use**
-- Filtering data by date or date range
-- Collecting birth dates or appointment dates in forms
-- Year/month navigation in reporting dashboards
-
-**When NOT to use**
-- Relative time ("last 7 days") — use a Dropdown or preset chip group instead
-- Inline date display only — use a plain text or Badge
-
-**Anatomy**
-- Input trigger (calendar icon + placeholder/value, Default 42px / Large 52px)
-- Calendar panel (header with prev/next arrows + month-year title)
-- Day grid (7 columns, day names row + day number cells)
-- Selected state: single day (\
-
-## Variants
-
-- All types — light
-- Input sizes
-- Day cell states
-
-## CSS classes
-
-```
-.datepicker-calendar
-.datepicker-input
-.datepicker-input--lg
-```
-
-## HTML examples
-
-```html
-<!-- Simple datepicker -->
-<div class="datepicker-input" style="height:42px;">
-  <!-- calendar icon + placeholder -->
-</div>
-<div class="datepicker-calendar">
-  <!-- header + day grid + footer -->
-</div>
-```
-
-```html
-<!-- Default 42px -->
-<div class="datepicker-input" style="height:42px;">...</div>
-
-<!-- Large 52px -->
-<div class="datepicker-input datepicker-input--lg" style="height:52px;">...</div>
-```
-
-```html
-<!-- Selected: bg #1447e6, text #ffffff, border-radius 8px -->
-<!-- Range endpoint: bg #42389d, text #ffffff -->
-<!-- In-range: bg #f3f4f6, text #111928 -->
-<!-- Normal: transparent, text #111928 -->
-```
-
----
-
-# Drawer
-
-**Drawer** (also called a side sheet or flyout) slides in from the edge of the screen to reveal supplementary content without navigating away from the current page.
-
-> ⚠️ **Status: hidden — design story usage unconfirmed.** This component is committed for reference. It is not shown in the sidebar until it is used in active design stories.
-
-**Types confirmed in Figma (node 13261:81153)**
-- Side drawer (slides in from right)
-- Bottom sheet (slides up from bottom)
-
-## Variants
-
-- Side drawer (right)
-- Bottom sheet
-
-## CSS classes
-
-Drawer has no dedicated CSS class — it uses inline positioning. Combine with `.modal-backdrop` for the overlay.
-
-```
-.modal-backdrop
-```
-
-## HTML examples
-
-```html
-<!-- Side drawer (right) -->
-<div style="position:fixed;top:0;bottom:0;right:0;width:320px;background:#fff;z-index:50;box-shadow:-4px 0 16px rgba(0,0,0,.12);">
-  <!-- drawer content -->
+<div class="form-group">
+  <label class="form-label">Username</label>
+  <input class="form-input" disabled placeholder="username" style="opacity:0.6;cursor:not-allowed;">
 </div>
 
-<!-- Bottom sheet -->
-<div style="position:fixed;bottom:0;left:0;right:0;background:#fff;z-index:50;box-shadow:0 -4px 16px rgba(0,0,0,.12);">
-  <!-- bottom content -->
-</div>
-```
-
----
-
-# Dropdown
-
-**Dropdown** provides contextual menus triggered by a button. It comes in three layers:
-a list item, a menu panel, and a trigger button.
-
-**When to use**
-- Contextual actions for a selected item (edit, delete, share)
-- Navigation links grouped by category (Settings → Profile / Billing / Team)
-- Filters and selections inline (date range picker, status filter)
-
-**When NOT to use**
-- Do not use Dropdown for more than ~12 items — use a full-page list or Search instead
-- Do not use Dropdown for primary page navigation — use Sidebar or Tabs
-- Do not use Dropdown when all options should be visible at once — use a Radio group
-
-**Anatomy**
-- **Trigger button** (.dropdown-trigger) — text or icon-only; brand/900 bg, indigo/200 ring
-- **Menu panel** (.dropdown-menu) — white, 8px radius, shadow; min 224px wide
-- **Section label** (.dropdown-label) — 12px/700 uppercase, optional count chip
-- **List item** (.dropdown-item) — 37px, 14px/400; left icon + text + right chevron
-- **Divider** (.dropdown-di
-
-## Variants
-
-- Menus — all types
-- Notification panel
-- Triggers — all variants
-
-## CSS classes
-
-```
-.active
-.danger
-.dropdown-avatar-item
-.dropdown-avatar-item__avatar
-.dropdown-avatar-item__name
-.dropdown-avatar-item__sub
-.dropdown-count
-.dropdown-cta
-.dropdown-divider
-.dropdown-item
-.dropdown-item__chevron
-.dropdown-item__icon
-.dropdown-item__text
-.dropdown-label
-.dropdown-menu
-.dropdown-notification
-.dropdown-notification__avatar
-.dropdown-notification__body
-.dropdown-notification__msg
-.dropdown-notification__time
-.dropdown-profile
-.dropdown-profile__avatar
-.dropdown-profile__email
-.dropdown-profile__name
-.dropdown-search
-.dropdown-search-input
-.dropdown-search-input__chevron
-.dropdown-search-input__icon
-.dropdown-search-input__text
-.dropdown-search-input__value
-.dropdown-trigger
-.dropdown-trigger--icon
-.dropdown-trigger--outline
-.dropdown-trigger--sm
-```
-
-## HTML examples
-
-```html
-<!-- Default item -->
-<button class="dropdown-item">
-  <span class="dropdown-item__icon"><!-- icon --></span>
-  <span class="dropdown-item__text">First Action</span>
-  <span class="dropdown-item__chevron"><!-- chevron-right --></span>
-</button>
-
-<!-- Selected item -->
-<button class="dropdown-item active">
-  <span class="dropdown-item__icon"><!-- icon --></span>
-  <span class="dropdown-item__text">First Action</span>
-  <span class="dropdown-item__chevron"><!-- chevron-right --></span>
-</button>
-
-<!-- Destructive item -->
-<button class="dropdown-item danger">
-  <span class="dropdown-item__icon"><!-- icon --></span>
-  <span class="dropdown-item__text">Delete Account</span>
-  <span class="dropdown-item__chevron"><!-- chevron-right --></span>
-</button>
-
-<!-- Disabled item -->
-<button class="dropdown-item" aria-disabled="true">
-  <span class="dropdown-item__icon"><!-- icon --></span>
-  <span class="dropdown-item__text">Export CSV</span>
-  <span class="dropdown-item__chevron"><!-- chevron-right --></span>
-</button>
-```
-
-```html
-<!-- Default menu (search + sections + footer) -->
-<div class="dropdown-menu" style="width:224px;">
-  <div class="dropdown-search">
-    <div class="dropdown-search-input">
-      <!-- search icon -->
-      <span class="dropdown-search-input__text">Search</span>
-      <span class="dropdown-search-input__value">Regular Select</span>
-    </div>
-  </div>
-  <div class="dropdown-label">ACTIONS <span class="dropdown-count">5</span></div>
-  <button class="dropdown-item">
-    <span class="dropdown-item__icon"><!-- icon --></span>
-    <span class="dropdown-item__text">First Action</span>
-  </button>
-  <hr class="dropdown-divider">
-  <button class="dropdown-item danger">
-    <span class="dropdown-item__text">Sign Out</span>
-  </button>
-</div>
-
-<!-- Checkbox filter menu -->
-<div class="dropdown-menu" style="width:280px;">
-  <div class="dropdown-label">FILTER BY STATUS</div>
-  <label style="display:flex;gap:8px;padding:8px 16px;cursor:pointer;">
-    <span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
-    <span class="iris-control__label">Active reports</span>
-  </label>
-</div>
-
-<!-- Toggle settings menu -->
-<div class="dropdown-menu" style="width:260px;">
-  <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
-    <span>Enable notifications</span>
-    <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true">
-      <span class="iris-toggle__thumb"></span>
-    </span>
-  </div>
-</div>
-
-<!-- App d
-```
-
-```html
-<div class="dropdown-menu" style="width:384px;">
-
-  <!-- Header -->
-  <div style="background:var(--color-bg-default);padding:8px 12px;">
-    <span style="font-size:var(--text-base);font-weight:500;">Notifications</span>
-  </div>
-
-  <!-- Notification row -->
-  <div class="dropdown-notification">
-    <span class="dropdown-notification__avatar">JL</span>
-    <div class="dropdown-notification__body">
-      <span class="dropdown-notification__msg">Jese Leos: "Hey, what's up?"</span>
-      <span class="dropdown-notification__time">a few moments ago</span>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div style="padding:8px 12px;display:flex;align-items:center;gap:8px;">
-    <!-- eye icon -->
-    <span style="font-size:var(--text-sm);font-weight:500;">View all</span>
-  </div>
-
-</div>
-```
-
----
-
-# Forms
-
-**Forms** collects the core form input elements used across the Iris Library: Input Field, Floating Label, Textarea, File Upload, Tag Input, and Read-only display.
-
-**When to use**
-- Any user-facing form: sign-up, settings, contact, checkout
-- Filtering and search configuration panels
-- Inline editing within data tables or cards
-
-**When NOT to use**
-- For single-item selection from a list → use **Dropdown** or **Select**
-- For toggle/checkbox/radio → use **Controls**
-- For multi-value selection → use **Multiselect** or **Tag Input**
-
-**Anatomy (Input Field)**
-- Label (required) — \
-
-## Variants
-
-- Input — all states
-- Input — all sizes
-- Textarea — all types
-- Read-only field
-- Select — all states
-- Multiselect — variants
-- All types
-
-## CSS classes
-
-```
-.bg-gray-100
-.bg-gray-50
-.bg-white
-.block
-.border
-.border-gray-200
-.border-gray-300
-.border-l
-.border-r
-.border-t
-.flex
-.flex-1
-.flex-wrap
-.font-medium
-.gap-1
-.gap-2
-.hidden
-.inline-flex
-.iris-range
-.items-center
-.justify-center
-.mb-1
-.mb-4
-.mt-1
-.outline-none
-.overflow-hidden
-.p-2
-.p-3
-.placeholder
-.placeholder-gray-400
-.px-2
-.px-3
-.resize-none
-.resize-y
-.rounded
-.rounded-lg
-.tag-pill
-.text-gray-400
-.text-gray-500
-.text-gray-600
-.text-gray-900
-.text-sm
-.text-xs
-.w-full
-```
-
-## HTML examples
-
-### Forms
-
-```html
-<!-- Normal -->
-<div><input style="border:1px solid #d1d5db;" /></div>
-
-<!-- Focus / typing -->
-<div><input style="border:1px solid #155dfc;" /></div>
-
-<!-- Success -->
-<div><input style="border:1px solid #0e9f6e;" /></div>
-
-<!-- Error -->
-<div><input style="border:1px solid #f05252;" /></div>
-
-<!-- Disabled -->
-<div><input disabled style="border:1px solid #d1d5db;opacity:0.6;" /></div>
-```
-
-### Forms
-
-```html
-<!-- Small 37px -->
-<input style="height:37px;" class="..." />
-
-<!-- Regular 42px (default) -->
-<input style="height:42px;" class="..." />
-
-<!-- Large 52px -->
-<input style="height:52px;" class="..." />
-```
-
-### Forms
-
-```html
-<!-- Border bottom — initial -->
+<!-- Floating label — initial -->
 <div style="border-bottom:2px solid #d1d5db;padding:12px;">
   <span style="color:#6b7280;font-size:14px;">Placeholder text</span>
 </div>
 
-<!-- Border bottom — active (label floated) -->
+<!-- Floating label — active/filled -->
 <div style="border-bottom:2px solid #155dfc;padding:6px 0 8px;">
-  <div style="font-size:12px;font-weight:500;color:#155dfc;">Placeholder text</div>
-  <span style="color:#111928;font-size:14px;">Typing |</span>
+  <div style="font-size:12px;font-weight:500;color:#155dfc;">Label</div>
+  <span style="color:#111928;font-size:14px;">Value text</span>
 </div>
 ```
 
@@ -1475,1075 +398,1220 @@ a list item, a menu panel, and a trigger button.
 
 ```html
 <!-- Default -->
-<div style="border:1px solid #d1d5db;border-radius:8px;height:40px;"></div>
-
-<!-- Hovered (chevron flips to up) -->
-<div style="border:1px solid #9ca3af;border-radius:8px;height:40px;"></div>
-
-<!-- Disabled -->
-<div style="border:1px solid #e5e7eb;border-radius:8px;height:40px;opacity:0.7;cursor:not-allowed;"></div>
+<div style="border:1px solid #d1d5db;border-radius:8px;height:40px;
+  display:flex;align-items:center;padding:0 12px;background:#f9fafb;cursor:pointer;">
+  <span style="flex:1;color:#6b7280;font-size:14px;">Select option</span>
+  <svg width="16" height="16"><!-- chevron-down --></svg>
+</div>
 
 <!-- Error -->
-<div style="border:1px solid #c81e1e;border-radius:8px;height:40px;"></div>
+<div style="border:1px solid #c81e1e;border-radius:8px;height:40px;
+  display:flex;align-items:center;padding:0 12px;background:#f9fafb;">
+  <span style="flex:1;color:#111928;font-size:14px;">Selected value</span>
+</div>
+
+<!-- Disabled -->
+<div style="border:1px solid #e5e7eb;border-radius:8px;height:40px;opacity:0.7;cursor:not-allowed;
+  display:flex;align-items:center;padding:0 12px;background:#f9fafb;">
+  <span style="flex:1;color:#6b7280;font-size:14px;">Select option</span>
+</div>
+```
+
+### Textarea
+
+```html
+<div class="form-group">
+  <label class="form-label">Description</label>
+  <textarea class="form-input" rows="4" style="resize:vertical;height:auto;"></textarea>
+</div>
 ```
 
 ---
 
-# Colors
+## Controls (Checkbox, Radio, Toggle)
 
-**Color tokens** are the single source of truth for all colors in the Iris Library.
-They are CSS custom properties defined in \
+**Anatomy:** 16x16px control + 14px/500 label + optional 12px/400 helper
 
-## Variants
+### Toggle
 
-- Text color variables
-- Background color variables
-- Border color variables
-- Semantic aliases (legacy)
-- Type scale (H1 – Caption)
-- Generic size scale (legacy)
-- Font weights
+- Size: 28x16px (track), 12x12px thumb
+- ON: `#42389d` (brand-800)
+- OFF: `#d1d5db` (gray-300)
+- Destructive ON: `#c81e1e`
+- Disabled ON brand: `#cddbfe`
+- Disabled ON danger: `#ffc9c9`
 
-## HTML examples
+### Checkbox
 
-### Typography
+- Size: 16x16px, radius 4px
+- Unchecked border: `#d1d5db`
+- Checked: bg `#42389d`, checkmark white
+- Intermediate: bg `#42389d`, dash icon
+- Destructive: `#c10007`
+- Disabled + checked: `#cddbfe`
 
-```html
-<!-- Page heading -->
-<h1 style="font-size: var(--text-h1); font-weight: var(--font-bold); color: var(--color-text-heading); line-height: var(--leading-base);">
-  Dashboard overview
-</h1>
+### Radio
 
-<!-- Section heading -->
-<h2 style="font-size: var(--text-h2); font-weight: var(--font-normal); color: var(--color-text-heading);">
-  Monthly performance
-</h2>
+- Size: 16x16px, circle
+- Unselected border: `#d1d5db`
+- Selected border + dot: `#42389d`
+- Destructive: `#c81e1e`
+- Disabled border: `#e5e7eb`
 
-<!-- Body text -->
-<p style="font-size: var(--text-body-1); font-weight: var(--font-normal); color: var(--color-text-body);">
-  Showing results for the last 30 days. Export the report to share with your team.
-</p>
-
-<!-- Supporting / secondary text -->
-<p style="font-size: var(--text-body-2); color: var(--color-text-body-subtle);">
-  Last updated 3 minutes ago
-</p>
-
-<!-- Label / hint -->
-<span style="font-size: var(--text-caption); color: var(--color-text-fg-disabled);">
-  Required field
-</span>
-```
-
----
-
-# Indicators
-
-Small visual signals that communicate status, count, or progress — without taking up significant space.
-
-**When to use**
-- Show online/offline or availability status next to a user name → **Badge indicator**
-- Label chart series or legend items with a color dot → **Dot (legend) indicator**
-- Show an unread count on a button or nav icon → **Count indicator**
-- Mark completed or active steps in a multi-step form → **Icon / Stepper indicator**
-
-**When NOT to use**
-- Standalone status labels that need more prominence → use Badge or Chip
-- Dismissible tags or filter chips → use Chip or Tag
-- Page-level alerts requiring action → use Alert or Toast
-
-**Anatomy**
-Five distinct types — all light mode only:
-- \
-
-## Variants
-
-- All types
-- Dot — legend colors
-- Badge — availability status
-- In context — button with count
-- In context — customer table
-- In context — stepper
-
-## CSS classes
-
-```
-.btn
-.btn-md
-.btn-primary
-```
-
-## HTML examples
+### HTML
 
 ```html
-<!-- Dot (legend) -->
-<span style="display:inline-flex;align-items:center;gap:4px;">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>
-  <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
+<!-- Toggle ON -->
+<span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true">
+  <span class="iris-toggle__thumb"></span>
 </span>
 
-<!-- Count -->
-<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;" aria-label="3 notifications">3</span>
-
-<!-- Badge: available -->
-<span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#def7ec;" role="status">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#0e9f6e"/></svg>
-  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#03543f;">Available</span>
-</span>
-```
-
-```html
-<span style="display:inline-flex;align-items:center;gap:4px;">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>
-  <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
-</span>
-```
-
-```html
-<!-- Available -->
-<span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#def7ec;" role="status">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#0e9f6e"/></svg>
-  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#03543f;">Available</span>
+<!-- Toggle OFF -->
+<span class="iris-toggle iris-toggle--off" role="switch" aria-checked="false">
+  <span class="iris-toggle__thumb"></span>
 </span>
 
-<!-- Unavailable -->
-<span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#fde8e8;" role="status">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#f05252"/></svg>
-  <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:#9b1c1c;">Unavailable</span>
+<!-- Toggle destructive ON -->
+<span class="iris-toggle iris-toggle--on iris-toggle--destructive" role="switch" aria-checked="true">
+  <span class="iris-toggle__thumb"></span>
 </span>
-```
 
----
-
-# KBD
-
-Keyboard key badge — visually represents a physical key or keyboard shortcut.
-
-**When to use**
-- Document keyboard shortcuts in help text, tooltips, or onboarding flows
-- Inline within prose to reference a key (e.g. "Press \
-
-## Variants
-
-- Letter keys — A–Z
-- Special keys — modifiers & control
-- Function keys — F1–F12
-- Arrow keys — ←→↑↓
-- In context — shortcut combos
-
-## CSS classes
-
-```
-.kbd-combo
-```
-
-## HTML examples
-
-```html
-<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">A</kbd>
-```
-
-```html
-<!-- Modifier combo example -->
-<span class="kbd-combo">
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">Shift</kbd>
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">S</kbd>
+<!-- Toggle disabled ON -->
+<span class="iris-toggle iris-toggle--on iris-toggle--disabled" role="switch" aria-checked="true" aria-disabled="true">
+  <span class="iris-toggle__thumb"></span>
 </span>
+
+<!-- Checkbox unchecked -->
+<span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
+
+<!-- Checkbox checked -->
+<span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
+
+<!-- Checkbox indeterminate -->
+<span class="iris-checkbox iris-checkbox--intermediate" role="checkbox" aria-checked="mixed"></span>
+
+<!-- Checkbox destructive + checked -->
+<span class="iris-checkbox iris-checkbox--checked iris-checkbox--destructive" role="checkbox" aria-checked="true"></span>
+
+<!-- Radio unselected -->
+<span class="iris-radio" role="radio" aria-checked="false"></span>
+
+<!-- Radio selected -->
+<span class="iris-radio iris-radio--checked" role="radio" aria-checked="true"></span>
+
+<!-- Radio destructive selected -->
+<span class="iris-radio iris-radio--checked iris-radio--destructive" role="radio" aria-checked="true"></span>
+```
+
+### Full control row with label
+
+```html
+<label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+  <span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
+  <div>
+    <span style="font-size:14px;font-weight:500;color:#111928;display:block;">Remember me</span>
+    <span style="font-size:12px;color:#6b7280;">Keep me signed in on this device</span>
+  </div>
+</label>
 ```
 
 ---
 
-# List Group
+## Tabs
 
-**List Group** is a vertical menu or option list, typically rendered as a dropdown panel or sidebar sub-menu. It supports optional leading icons and light/dark themes.
+### Specs
 
-**When to use**
-- User account dropdown menus (Profile · Settings · Sign out)
-- Context menus and action lists on right-click or overflow button
-- Navigation sub-panels in sidebars
+| Property | Value |
+|----------|-------|
+| Tab height | 45px |
+| Tab padding | `12px 16px` |
+| Font | 14px / 500 |
+| Tab bar border | `1px solid #e5e7eb` (bottom) |
+| Active indicator | `2px solid #42389d` (bottom) |
+| Active text | `#42389d` |
+| Default text | `#4b5563` |
+| Hover text | `#374151`, indicator `#d1d5db` |
 
-**When NOT to use**
-- Long scrollable lists of data → use a **Table** instead
-- Mutually exclusive choices → use **Radio** or **Select**
-- Multi-select → use **Multiselect** or **Tag Input**
-
-**Anatomy**
-- Container — \
-
-## Variants
-
-- All variants
-- In context — user dropdown
-- Custom items — longer list
-
-## CSS classes
-
-```
-.avatar-btn
-.h-8
-.list-group
-.list-group-item
-.rounded-full
-.w-8
-```
-
-## HTML examples
+### HTML
 
 ```html
-<!-- Light, no icons -->
-<ul class="list-group">
-  <li class="list-group-item">Profile</li>
-  <li class="list-group-item">Settings</li>
-  <li class="list-group-item">Messages</li>
-  <li class="list-group-item">Download</li>
-</ul>
-
-<!-- Light, with icons -->
-<ul class="list-group">
-  <li class="list-group-item">
-    <svg><!-- user-circle --></svg> Profile
-  </li>
-  ...
-</ul>
-```
-
-```html
-<!-- Avatar trigger button -->
-<button class="avatar-btn">
-  <img src="avatar.jpg" alt="User avatar" class="w-8 h-8 rounded-full" />
-</button>
-
-<!-- Dropdown panel (shown on click) -->
-<ul class="list-group" style="position:absolute;top:100%;right:0;width:240px;z-index:50;">
-  <li class="list-group-item"><svg>user-circle</svg> Profile</li>
-  <li class="list-group-item"><svg>adjustments</svg> Settings</li>
-  <li class="list-group-item"><svg>inbox</svg> Messages</li>
-  <li class="list-group-item"><svg>cloud-download</svg> Download</li>
-</ul>
-```
-
-```html
-<ul style="width:240px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
-  <!-- repeat list-item pattern for each entry -->
-</ul>
-```
-
----
-
-# Modal
-
-**Modal Dialog** — a layer above the page that requires user interaction before continuing.
-
-Figma source: \
-
-## Variants
-
-- Info — Terms of Service
-- Pop-up — delete confirmation
-- With forms — sign in
-- Crypto wallet — connect wallet
-- Dark mode — all types
-- Sizes — SM / Default / LG / XL
-- All types — light mode
-
-## CSS classes
-
-```
-.btn
-.btn-alternative
-.btn-md
-.btn-primary
-.btn-red
-.form-group
-.form-helper
-.form-input
-.form-label
-.modal-backdrop
-.modal-body
-.modal-close
-.modal-dialog
-.modal-dialog-lg
-.modal-dialog-sm
-.modal-dialog-xl
-.modal-footer
-.modal-header
-.modal-title
-```
-
-## HTML examples
-
-```html
-<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
-  <div class="modal-header">
-    <h2 class="modal-title" id="modal-title">Terms of Service</h2>
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
-  </div>
-  <div class="modal-body">
-    <p>The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union.</p>
-    <p>With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-primary btn-md">I accept</button>
-  </div>
-</div>
-```
-
-```html
-<div role="dialog" aria-modal="true" aria-labelledby="popup-title" class="modal-dialog modal-dialog-sm">
-  <!-- Header: close button only, no title, no border -->
-  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
-  </div>
-  <div class="modal-body" style="text-align:center;">
-    <!-- exclamation-circle icon 42×42 -->
-    <p id="popup-title">Are you sure you want to delete this product?</p>
-  </div>
-  <div class="modal-footer" style="justify-content:center;">
-    <button class="btn btn-red btn-md">Yes, I'm sure</button>
-    <button class="btn btn-alternative btn-md">No, cancel</button>
-  </div>
-</div>
-```
-
-```html
-<div role="dialog" aria-modal="true" aria-labelledby="form-modal-title" class="modal-dialog modal-dialog-sm">
-  <!-- Header: close button only, no title, no border -->
-  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
-  </div>
-  <div class="modal-body">
-    <h3 id="form-modal-title">Sign in to our platform</h3>
-
-    <div class="form-group">
-      <label class="form-label">Your email</label>
-      <input class="form-input" type="email" placeholder="name@flowbite.com">
-      <span class="form-helper">We'll never share your details. See our Privacy Policy.</span>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <input class="form-input" type="password" placeholder="••••••••••">
-    </div>
-
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <label style="display:flex;align-items:center;gap:8px;">
-        <input type="checkbox"> Remember me
-      </label>
-      <a href="#" style="color:#155dfc;">Lost Password?</a>
-    </div>
-
-    <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">Create account</button>
-    <p style="text-align:center;margin-top:12px;">
-      <a href="#" style="color:#155dfc;">Not registered? Create account</a>
-    </p>
-  </div>
-</div>
-```
-
----
-
-# Pagination
-
-**Pagination** lets users navigate between pages of a result set.
-
-Figma sources:
-- Pagination strip: \
-
-## Variants
-
-- Few pages — no ellipsis
-- Many pages — with ellipsis
-- Both sizes
-- Button states — all variants
-- Showing indicator — both sizes
-- In context — with Showing indicator
-
-## CSS classes
-
-```
-.active
-.disabled
-.page-item
-.page-link
-.pagination
-.pagination-info
-```
-
-## HTML examples
-
-```html
-<nav aria-label="Pagination">
-  <ul class="pagination">
-    <li class="page-item disabled">
-      <button class="page-link" aria-label="Previous page" disabled aria-disabled="true"><!-- chevron-left --></button>
-    </li>
-    <li class="page-item active">
-      <button class="page-link" aria-label="Page 1" aria-current="page">1</button>
-    </li>
-    <li class="page-item">
-      <button class="page-link" aria-label="Page 2">2</button>
-    </li>
-    <li class="page-item">
-      <button class="page-link" aria-label="Page 3">3</button>
-    </li>
-    <li class="page-item">
-      <button class="page-link" aria-label="Next page"><!-- chevron-right --></button>
-    </li>
-  </ul>
-</nav>
-```
-
-```html
-<!-- Default: CSS .page-link size (36×36px) -->
-<nav aria-label="Pagination"><ul class="pagination"><!-- ... --></ul></nav>
-
-<!-- Small: inline override style="min-width:32px;height:32px;" on each .page-link -->
-<nav aria-label="Pagination"><ul class="pagination"><!-- ... --></ul></nav>
-```
-
----
-
-# Progress Bar
-
-**Progress Bar** communicates the completion status of a task or process as a fraction of a total.
-
-**When to use**
-- Show upload, export, or processing progress with a known total
-- Visualise a metric against a target (e.g. storage used, budget consumed, goal completion)
-- Represent a step completion percentage in a multi-step flow
-
-**When NOT to use**
-- Do not use a progress bar for indeterminate loading — use a spinner instead
-- Do not use for binary pass/fail states — use a Badge or Status indicator
-- Do not use when the metric is best compared across items — use a bar chart instead
-
-**Anatomy**
-- **Track** — full-width gray background bar (6 px, \
-
-## Variants
-
-- All colors
-- All values (25 / 50 / 75 / 100)
-- Label below (helper text)
-- In context — dashboard card
-
-## CSS classes
-
-```
-.progress
-.progress-bar
-```
-
-## HTML examples
-
-```html
-<!-- Primary -->
-<div style="width:100%;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
-  </div>
-</div>
-
-<!-- Green -->
-<div style="width:100%;margin-top:16px;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#31c48d;border-radius:2px;"></div>
-  </div>
-</div>
-
-<!-- Orange -->
-<div style="width:100%;margin-top:16px;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#ff8a4c;border-radius:2px;"></div>
-  </div>
-</div>
-```
-
-```html
-<div role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
-  style="width:100%;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
-  </div>
-</div>
-```
-
-```html
-<div style="width:100%;">
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
-  </div>
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;margin-top:6px;">75%</div>
-</div>
-```
-
----
-
-# Sidebar
-
-**Navigation / Sidebar** — left navigation for authenticated dashboard views.
-
-Figma sources: component set \
-
-## Variants
-
-- Default — light, logo, overview active
-- Active states — all items
-- Financial model — collapsed
-- Menu item states — all variants
-- Color variants — White vs Gray
-- Contracted — icon only (60px)
-- Without logo
-- Contracted — with logo (60px)
-- In context — full page layout
-
-## CSS classes
-
-```
-.sidebar-item-icon
-```
-
-## HTML examples
-
-```html
-<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">
-  <!-- Logo -->
-  <!-- Nav items — active: bg:#e5e7eb; color:#42389d; aria-current="page" -->
-</aside>
-```
-
-```html
-<!-- Active menu item: bg #e5e7eb, text #42389d, aria-current="page" -->
-<a href="#" aria-current="page"
-   style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
-          border-radius:8px;background:#e5e7eb;width:100%;box-sizing:border-box;text-decoration:none;">
-  <!-- icon: 24×24, color #42389d -->
-  <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#42389d;">Overview</span>
-</a>
-
-<!-- Inactive menu item: no background, text #111928 -->
-<a href="#"
-   style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
-          border-radius:8px;width:100%;box-sizing:border-box;text-decoration:none;">
-  <!-- icon: 24×24, color #111928 -->
-  <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Metrics Library</span>
-</a>
-```
-
-```html
-<!-- Expandable menu item — collapsed state: chevron-down, sub-items hidden -->
-<div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
-            border-radius:8px;cursor:pointer;width:100%;box-sizing:border-box;">
-  <div style="display:flex;flex:1;gap:4px;align-items:center;">
-    <!-- icon: currency-dollar, 24×24, color #111928 -->
-    <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Financial model</span>
-  </div>
-  <!-- chevron-down when collapsed, chevron-up when expanded -->
-  <!-- svg chevron-down here -->
-</div>
-<!-- Sub-items: rendered when expanded=true, hidden when collapsed -->
-<!-- <div style="padding-left:28px;"> sub-item rows </div> -->
-```
-
----
-
-# Skeleton
-
-**Skeleton** renders a low-fidelity placeholder that mirrors the shape of content while it loads.
-
-**When to use**
-- While async data is being fetched (API calls, lazy imports)
-- When the exact shape of the incoming content is known
-- To reduce perceived latency — users see structure immediately
-
-**When NOT to use**
-- Short waits (< 300 ms) → use a spinner instead
-- Unknown content shape → use a generic full-area spinner
-- Error or empty states → use a dedicated empty-state component
-
-**Anatomy**
-Skeleton blocks come in two weights: \
-
-## Variants
-
-- All types
-- Static — no animation
-
-## CSS classes
-
-```
-.skeleton
-.skeleton--card-image
-.skeleton--image-text
-.skeleton--list
-.skeleton--simple-text
-.skeleton--static
-.skeleton--text
-.skeleton--widget
-.skeleton-avatar
-.skeleton-image
-```
-
-## HTML examples
-
-```html
-<!-- Card + Image skeleton -->
-<div class="skeleton skeleton--card-image"> … </div>
-
-<!-- Image + Text skeleton -->
-<div class="skeleton skeleton--image-text"> … </div>
-
-<!-- Text skeleton -->
-<div class="skeleton skeleton--text"> … </div>
-
-<!-- List skeleton (5 rows) -->
-<div class="skeleton skeleton--list"> … </div>
-
-<!-- Simple text skeleton (7 rows) -->
-<div class="skeleton skeleton--simple-text"> … </div>
-
-<!-- Widget (bar chart) skeleton -->
-<div class="skeleton skeleton--widget"> … </div>
-```
-
-```html
-<!-- Check for reduced motion preference -->
-<script>
-  const animated = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-</script>
-
-<!-- Pass animated=false when reduced motion is preferred -->
-<div class="skeleton skeleton--card-image skeleton--static"> … </div>
-```
-
----
-
-# Stepper
-
-**Stepper** — coming soon. No active design usage identified at this time.
-
-## Variants
-
-- Coming soon
-
----
-
-# Cells
-
-**Table / Cells** — primitive cell components for the Iris financial/analytics table.
-
-Figma nodes: TableCell \
-
-## Variants
-
-- Cell options — all variants
-- Cell × row type backgrounds
-- Editable — not-editing vs editing
-- Cell with caption (secondary line)
-- Column headers (horizontal) — all types
-- Period headers (vertical) — all types
-- Cell percent — badge ramp
-- Percent badge ramp — 10% → 100%
-- Cohort row — white & grey
-- Cohort analysis table — assembled heatmap
-- Financial table — P&L excerpt
-- Financial table — all row types
-- Financial table — ACTUALS vs FORECAST
-- Financial table — all cell options in context
-
-## HTML examples
-
-### Cells
-
-```html
-<!-- Default option -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
-</div>
-
-<!-- Blue option — cell bg + text both blue -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#ebf5ff;box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#1c64f2;flex-shrink:0;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#1c64f2;text-align:right;">500,00</span>
-</div>
-
-<!-- Calculated option -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;flex-shrink:0;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font
-```
-
-### Cells
-
-```html
-<!-- Default row -->
-<div style="background:#ffffff;width:146px;height:38px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
-</div>
-<!-- Derival row -->
-<div style="background:#fff8f1;…">…</div>
-<!-- Total row -->
-<div style="background:var(--color-bg-muted);…">…</div>
-<!-- Non-collapsible row -->
-<div style="background:var(--color-bg-default);…">…</div>
-```
-
-### Cells
-
-```html
-<!-- Editable, editing=true (focused state) -->
-<div style="display:flex;align-items:center;width:146px;height:38px;
-            background:var(--color-bg-surface);border:1px solid #e5e7eb;box-sizing:border-box;">
-  <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
-              border:1px solid #1c64f2;border-radius:4px;
-              padding:8px 16px;overflow:hidden;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">
-      500,00|
-    </span>
-  </div>
-</div>
-```
-
-### Cohort
-
-```html
-<!-- 60% badge — white text (brand/500) -->
-<div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <div style="display:flex;align-items:center;justify-content:center;
-              width:62px;height:42px;padding:10px;border-radius:4px;
-              background:#6875f5;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#fff;
-                 white-space:nowrap;text-align:center;">60%</span>
-  </div>
-</div>
-
-<!-- 40% badge — dark text (brand/300) -->
-<div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <div style="display:flex;align-items:center;justify-content:center;
-              width:62px;height:42px;padding:10px;border-radius:4px;
-              background:#b4c6fc;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#111928;
-                 white-space:nowrap;text-align:center;">40%</span>
-  </div>
-</div>
-```
-
----
-
-# Tabs
-
-**Tabs** allow users to navigate between related views within the same context without leaving the page.
-
-**When to use**
-- Switch between different sections of related content (e.g. Overview / Details / History)
-- Filter or segment a data set shown in the same area (e.g. Active / Archived / Draft)
-- Organise form steps or configuration groups that don't require a separate page
-
-**When NOT to use**
-- Do not use tabs for navigation between unrelated pages — use the Sidebar or a nav menu instead
-- Do not nest tabs inside other tabs — it creates orientation issues
-- Do not use tabs when there are more than 7–8 items — consider a dropdown or sidebar nav
-
-**Anatomy**
-- **Label** — required; text identifying the tab's content section
-- **Counter badge** — optional; numeric badge showing count (e.g. unread items, results)
-- **Dropdown chevron** — optional; indicates the tab opens a sub-menu (chevron toggles down ↔ up)
-- **Active indicator** — 2 px bottom border in brand purple (\
-
-## Variants
-
-- All states
-- With counter badge
-- With dropdown chevron
-- Full tab bar (realistic)
-
-## HTML examples
-
-```html
-<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
-  <!-- Default -->
-  <button role="tab" aria-selected="false"
-    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:#4b5563;border:none;border-bottom:2px solid transparent;
-           margin-bottom:-1px;background:transparent;">
+<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid #e5e7eb;">
+
+  <!-- Active -->
+  <button role="tab" aria-selected="true" style="
+    padding:12px 16px;height:45px;
+    font-size:14px;font-weight:500;color:#42389d;
+    border:none;border-bottom:2px solid #42389d;
+    margin-bottom:-1px;background:transparent;cursor:pointer;">
     Overview
   </button>
 
-  <!-- Hover (applied via :hover in CSS) -->
-  <button role="tab" aria-selected="false"
-    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:#374151;border:none;border-bottom:2px solid #d1d5db;
-           margin-bottom:-1px;background:transparent;">
+  <!-- Default -->
+  <button role="tab" aria-selected="false" style="
+    padding:12px 16px;height:45px;
+    font-size:14px;font-weight:500;color:#4b5563;
+    border:none;border-bottom:2px solid transparent;
+    margin-bottom:-1px;background:transparent;cursor:pointer;">
     Transactions
   </button>
 
-  <!-- Active -->
-  <button role="tab" aria-selected="true"
-    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:#42389d;border:none;border-bottom:2px solid #42389d;
-           margin-bottom:-1px;background:transparent;">
+  <!-- With counter badge -->
+  <button role="tab" aria-selected="false" style="
+    padding:12px 16px;height:45px;
+    font-size:14px;font-weight:500;color:#4b5563;
+    border:none;border-bottom:2px solid transparent;
+    margin-bottom:-1px;background:transparent;cursor:pointer;
+    display:flex;align-items:center;gap:8px;">
     Reports
+    <span style="display:inline-flex;align-items:center;justify-content:center;
+      min-width:20px;height:20px;padding:0 6px;
+      background:#e5edff;color:#42389d;
+      font-size:12px;font-weight:500;border-radius:9999px;">4</span>
   </button>
+
 </div>
 ```
 
 ---
 
-# Tag
+## Badge / Chip / Tag
 
-Inline text labels with a colored dot indicator — no background, purely typographic.
+### Sizes
 
-**When to use**
-- Categorize or label items inline within text (e.g. a status label inside a table cell)
-- Show a topic, category, or type tag with a color-coded dot for quick scanning
-- Complement other elements without adding visual weight (unlike Badge or Chip)
+| Size | Font | Padding | Radius |
+|------|------|---------|--------|
+| lg (default) | 14px / 400 | `2px 12px` | 6px |
+| sm | 12px / 500 | `2px 10px` | 6px |
 
-**When NOT to use**
-- Standalone status indicators that need a background for contrast → use Badge
-- Removable active filters → use Chip
-- Prominent action-required states → use Alert
+### Color palette
 
-**Anatomy**
-\
+| Theme | Background | Text |
+|-------|-----------|------|
+| Gray (neutral) | `#f3f4f6` | `#101828` |
+| Green (success) | `#d0fae5` | `#006045` |
+| Red (error) | `#ffe2e2` | `#9f0712` |
+| Yellow (warning) | `#fef9c2` | `#894b00` |
+| Brand/Indigo | `#e5edff` | `#42389d` |
+| Blue | `#dbeafe` | `#1e40af` |
 
-## Variants
-
-- Colors — all 9 themes
-- Dismissible — with × button
-
-## HTML examples
+### HTML
 
 ```html
-<!-- Grey (neutral) -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#4a5565;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#4b5563" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
-  <span>Neutral</span>
+<!-- Gray -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#f3f4f6;color:#101828;
+  font-size:14px;font-weight:400;border-radius:6px;
+  padding:2px 12px;white-space:nowrap;line-height:1.5;">
+  Neutral
 </span>
 
-<!-- Green -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#009966;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#057a55" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
-  <span>Active</span>
+<!-- Green success -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#d0fae5;color:#006045;
+  font-size:14px;font-weight:400;border-radius:6px;
+  padding:2px 12px;white-space:nowrap;line-height:1.5;">
+  Active
 </span>
 
-<!-- Red -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#e7000b;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#e02424" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
-  <span>Failed</span>
+<!-- Red error -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#ffe2e2;color:#9f0712;
+  font-size:14px;font-weight:400;border-radius:6px;
+  padding:2px 12px;white-space:nowrap;line-height:1.5;">
+  Failed
 </span>
-```
 
-```html
-<span style="display:inline-flex;align-items:center;gap:4px;color:#5850ec;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#5850ec" aria-hidden="true">
-    <circle cx="6" cy="6" r="3"/>
-  </svg>
-  <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#5850ec" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
+<!-- Yellow warning -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#fef9c2;color:#894b00;
+  font-size:14px;font-weight:400;border-radius:6px;
+  padding:2px 12px;white-space:nowrap;line-height:1.5;">
+  Pending
+</span>
+
+<!-- Brand indigo -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#e5edff;color:#42389d;
+  font-size:14px;font-weight:400;border-radius:6px;
+  padding:2px 12px;white-space:nowrap;line-height:1.5;">
+  In review
+</span>
+
+<!-- sm size -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#e5edff;color:#42389d;
+  font-size:12px;font-weight:500;border-radius:6px;
+  padding:2px 10px;white-space:nowrap;line-height:1.5;">
+  Tag
+</span>
+
+<!-- With icon -->
+<span style="display:inline-flex;align-items:center;gap:4px;
+  background:#e5edff;color:#42389d;font-size:14px;border-radius:6px;padding:2px 12px;line-height:1.5;">
+  <svg width="16" height="16" fill="#42389d" viewBox="0 0 20 20" aria-hidden="true"><!-- icon --></svg>
+  Scheduled
+</span>
+
+<!-- Dismissible -->
+<span style="display:inline-flex;align-items:center;gap:6px;
+  background:#f3f4f6;color:#101828;font-size:14px;border-radius:6px;padding:2px 8px 2px 12px;line-height:1.5;">
+  Label
+  <button aria-label="Remove" style="display:flex;align-items:center;padding:0;background:transparent;border:none;cursor:pointer;color:#6b7280;">
+    <svg width="14" height="14"><!-- x --></svg>
   </button>
 </span>
 ```
 
 ---
 
-# Toast
+## Dropdown / Menu
 
-**Toast** is a brief, auto-dismissing notification that appears in response to a user action or system event.
+### Panel specs
 
-**When to use**
-- Confirming an action just completed (file saved, form submitted)
-- Reporting a non-blocking error or warning (upload failed, quota exceeded)
-- Delivering a push notification or incoming message alert
-- Prompting the user to undo a destructive action within a short time window
+| Property | Value |
+|----------|-------|
+| Background | `#ffffff` |
+| Border-radius | 8px |
+| Border | `1px solid #e5e7eb` |
+| Shadow | `0px 4px 12px rgba(0,0,0,0.10)` |
+| Min-width | 224px |
+| Padding | `8px 0` |
 
-**When NOT to use**
-- Critical errors that block the workflow → use a modal or inline error state
-- Persistent information the user must act on → use an Alert or Banner
-- Long messages (> 2 sentences) → toasts are too small; use a notification drawer
+### Item specs
 
-**Anatomy**
-\
+| Property | Value |
+|----------|-------|
+| Height | 37px |
+| Padding | `8px 16px` |
+| Font | 14px / 400 |
+| Icon size | 16x16px |
+| Selected bg | `#e5edff` |
+| Hover bg | `#f3f4f6` |
+| Danger text | `#c70036`, icon `#f05252` |
+| Disabled opacity | 0.5 |
 
-## Variants
-
-- All types
-
-## CSS classes
+### CSS classes
 
 ```
-.btn
-.btn-green
-.btn-light
-.btn-primary
-.btn-red
-.btn-xs
-.toast
-.toast--danger
-.toast--default
-.toast--expanded
-.toast--interactive
-.toast--push
-.toast--simple
-.toast--success
-.toast-body
-.toast-close
-.toast-icon
-.toast-icon-danger
-.toast-icon-success
-.toast-message
-.toast-title
-.toast-title-row
+.dropdown-menu           — panel wrapper
+.dropdown-item           — single row (button/link)
+.dropdown-item.active    — selected state
+.dropdown-item.danger    — destructive action
+.dropdown-item__icon     — left icon
+.dropdown-item__text     — label
+.dropdown-item__chevron  — right chevron
+.dropdown-label          — section header (12px/700 uppercase)
+.dropdown-count          — count chip next to label
+.dropdown-divider        — hr separator (1px #e5e7eb)
+.dropdown-search         — search header inside menu
+.dropdown-trigger        — trigger button
+.dropdown-trigger--outline
+.dropdown-trigger--sm
+.dropdown-trigger--icon
+.dropdown-notification   — notification row
+.dropdown-profile        — user profile row
 ```
 
-## HTML examples
+### HTML
+
+```html
+<!-- Standard dropdown -->
+<div class="dropdown-menu" style="width:224px;">
+  <div class="dropdown-label">ACTIONS <span class="dropdown-count">5</span></div>
+
+  <button class="dropdown-item">
+    <span class="dropdown-item__icon"><!-- icon 16px --></span>
+    <span class="dropdown-item__text">Edit</span>
+  </button>
+
+  <button class="dropdown-item active">
+    <span class="dropdown-item__icon"><!-- icon 16px --></span>
+    <span class="dropdown-item__text">Selected option</span>
+  </button>
+
+  <button class="dropdown-item" aria-disabled="true">
+    <span class="dropdown-item__text">Export (unavailable)</span>
+  </button>
+
+  <hr class="dropdown-divider">
+
+  <button class="dropdown-item danger">
+    <span class="dropdown-item__icon"><!-- trash icon, #f05252 --></span>
+    <span class="dropdown-item__text">Delete</span>
+  </button>
+</div>
+
+<!-- With checkbox items (filter menu) -->
+<div class="dropdown-menu" style="width:280px;">
+  <div class="dropdown-label">FILTER BY STATUS</div>
+  <label style="display:flex;gap:8px;padding:8px 16px;cursor:pointer;font-size:14px;color:#111928;">
+    <span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
+    Active reports
+  </label>
+</div>
+
+<!-- Notification panel -->
+<div class="dropdown-menu" style="width:384px;">
+  <div style="background:#f9fafb;padding:8px 12px;">
+    <span style="font-size:16px;font-weight:500;color:#111928;">Notifications</span>
+  </div>
+  <div class="dropdown-notification">
+    <span class="dropdown-notification__avatar">JL</span>
+    <div class="dropdown-notification__body">
+      <span class="dropdown-notification__msg">Jese: "Hey, what is up?"</span>
+      <span class="dropdown-notification__time">a few moments ago</span>
+    </div>
+  </div>
+  <div style="padding:8px 12px;">
+    <span style="font-size:14px;font-weight:500;color:#42389d;">View all</span>
+  </div>
+</div>
+```
+
+---
+
+## Dialog / Modal
+
+### Sizes
+
+| Class | Width |
+|-------|-------|
+| `.modal-dialog` | ~520px (default) |
+| `.modal-dialog-sm` | ~400px |
+| `.modal-dialog-lg` | ~800px |
+| `.modal-dialog-xl` | ~1024px |
+
+### CSS classes
+
+```
+.modal-backdrop  — fixed full-screen overlay (rgba(0,0,0,0.5))
+.modal-dialog    — panel (white, radius 16px, shadow-md)
+.modal-header    — padding 20px 24px, border-bottom 1px #e5e7eb, flex row
+.modal-title     — 18px/600 #111928
+.modal-close     — x button top-right
+.modal-body      — padding 24px, scrollable
+.modal-footer    — padding 16px 24px, border-top 1px #e5e7eb, flex row, gap 12px, justify flex-end
+```
+
+### HTML
+
+```html
+<!-- Info modal -->
+<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
+  <div class="modal-header">
+    <h2 class="modal-title" id="modal-title">Terms of Service</h2>
+    <button class="modal-close" aria-label="Close">x</button>
+  </div>
+  <div class="modal-body">
+    <p>Content goes here.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-md">I accept</button>
+    <button class="btn btn-gray btn-md">Decline</button>
+  </div>
+</div>
+
+<!-- Confirmation pop-up (sm) -->
+<div role="dialog" aria-modal="true" class="modal-dialog modal-dialog-sm">
+  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
+    <button class="modal-close" aria-label="Close">x</button>
+  </div>
+  <div class="modal-body" style="text-align:center;">
+    <!-- exclamation icon 42x42px -->
+    <p style="font-size:18px;font-weight:600;color:#111928;margin-bottom:8px;">Delete item?</p>
+    <p style="font-size:14px;color:#6b7280;">This action cannot be undone.</p>
+  </div>
+  <div class="modal-footer" style="justify-content:center;">
+    <button class="btn btn-red btn-md">Yes, delete</button>
+    <button class="btn btn-gray btn-md">Cancel</button>
+  </div>
+</div>
+
+<!-- With form (sign in) -->
+<div role="dialog" aria-modal="true" class="modal-dialog modal-dialog-sm">
+  <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
+    <button class="modal-close" aria-label="Close">x</button>
+  </div>
+  <div class="modal-body">
+    <h3 style="font-size:20px;font-weight:600;color:#111928;margin-bottom:20px;">Sign in</h3>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" placeholder="name@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;">
+    </div>
+    <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">Sign in</button>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="modal-backdrop" aria-hidden="true"></div>
+```
+
+---
+
+## Drawer
+
+Side drawer (right) or bottom sheet for supplementary content.
+
+```html
+<!-- Side drawer (right) -->
+<div style="position:fixed;top:0;bottom:0;right:0;width:320px;
+  background:#fff;z-index:50;box-shadow:-4px 0 16px rgba(0,0,0,.12);
+  display:flex;flex-direction:column;">
+  <div style="display:flex;align-items:center;justify-content:space-between;
+    padding:20px 24px;border-bottom:1px solid #e5e7eb;">
+    <h3 style="font-size:18px;font-weight:600;color:#111928;">Panel title</h3>
+    <button aria-label="Close" style="background:none;border:none;cursor:pointer;color:#6b7280;">x</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:24px;">
+    <!-- content -->
+  </div>
+  <div style="padding:16px 24px;border-top:1px solid #e5e7eb;">
+    <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">Save changes</button>
+  </div>
+</div>
+
+<!-- Bottom sheet -->
+<div style="position:fixed;bottom:0;left:0;right:0;
+  background:#fff;z-index:50;
+  box-shadow:0 -4px 16px rgba(0,0,0,.12);
+  border-radius:16px 16px 0 0;padding:24px;">
+  <div style="width:32px;height:4px;background:#d1d5db;border-radius:9999px;margin:0 auto 20px;"></div>
+  <!-- content -->
+</div>
+
+<!-- Overlay -->
+<div class="modal-backdrop" aria-hidden="true"></div>
+```
+
+---
+
+## Table
+
+### Cell specs
+
+| Property | Value |
+|----------|-------|
+| Cell width | 146px |
+| Cell height | 38px |
+| Cell padding | `8px 16px` |
+| Text align | right (numeric data) |
+| Font | 14px / 500 / `#111928` |
+
+### Row types
+
+| Row type | Background |
+|----------|-----------|
+| Default | `#ffffff` |
+| Derival (calculated) | `#fff8f1` |
+| Total | `#f3f4f6` |
+| Non-collapsible | `#f9fafb` |
+
+### Column header
+
+```html
+<div style="display:flex;align-items:center;justify-content:flex-end;
+  width:146px;height:38px;padding:8px 16px;
+  background:#f3f4f6;box-sizing:border-box;">
+  <span style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;">Jan 2024</span>
+</div>
+```
+
+### Data cell
+
+```html
+<!-- Default -->
+<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
+  width:146px;height:38px;padding:8px 16px;background:#fff;box-sizing:border-box;">
+  <span style="font-size:14px;font-weight:500;color:#111928;">$</span>
+  <span style="font-size:14px;font-weight:500;color:#111928;text-align:right;">500,00</span>
+</div>
+
+<!-- Editable (focused) -->
+<div style="display:flex;align-items:center;width:146px;height:38px;
+  background:#fff;border:1px solid #e5e7eb;box-sizing:border-box;">
+  <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
+    border:1px solid #1c64f2;border-radius:4px;
+    padding:8px 16px;overflow:hidden;box-sizing:border-box;">
+    <span style="font-size:14px;font-weight:500;color:#111928;text-align:right;">500,00|</span>
+  </div>
+</div>
+```
+
+### Cohort badge (percent heatmap)
+
+```html
+<!-- >= 50% — white text, brand-500 bg -->
+<div style="display:flex;align-items:center;justify-content:center;
+  width:62px;height:42px;padding:10px;border-radius:4px;
+  background:#6875f5;box-sizing:border-box;">
+  <span style="font-size:12px;font-weight:600;color:#fff;">60%</span>
+</div>
+
+<!-- < 50% — dark text, brand-300 bg -->
+<div style="display:flex;align-items:center;justify-content:center;
+  width:62px;height:42px;padding:10px;border-radius:4px;
+  background:#b4c6fc;box-sizing:border-box;">
+  <span style="font-size:12px;font-weight:600;color:#111928;">40%</span>
+</div>
+```
+
+---
+
+## Accordion
+
+### CSS classes
+
+```
+.accordion             — container (border, radius 12px, overflow hidden)
+.accordion-item        — single item (border-bottom)
+.accordion-item.open   — expanded state
+.accordion-header      — trigger button (flex, min-height 48px, 16px/500)
+.accordion-body        — content area (14px, padding 0 20px 16px)
+.accordion-chevron     — chevron icon (rotates 180 deg when .open)
+```
+
+### HTML
+
+```html
+<div class="accordion">
+
+  <!-- Expanded -->
+  <div class="accordion-item open">
+    <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
+      <span style="flex:1;">What is the Iris Library?</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">
+      The Iris Library is a design system for financial dashboards.
+    </div>
+  </div>
+
+  <!-- Collapsed -->
+  <div class="accordion-item">
+    <button class="accordion-header" aria-expanded="false" aria-controls="body-1" id="header-1">
+      <span style="flex:1;">How do I get started?</span>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="accordion-body" id="body-1" role="region" aria-labelledby="header-1">
+      Import the CSS and follow the HTML structure.
+    </div>
+  </div>
+
+</div>
+```
+
+---
+
+## Alert
+
+### Variants (color + type)
+
+```
+Color modifiers:
+  .alert--success  .alert--danger  .alert--warning  .alert--info  .alert--default
+
+Type modifiers (second class):
+  .alert--medium   — tinted bg (default)
+  .alert--dark     — solid accent bg
+  .alert--light    — white bg + shadow
+```
+
+### HTML
+
+```html
+<div role="alert" class="alert alert--warning alert--medium">
+  <div class="alert__content">
+    <div class="alert__header">
+      <svg class="alert__icon" aria-hidden="true"><!-- icon --></svg>
+      <span class="alert__heading">Your free trial ends in 3 days</span>
+      <button class="alert__dismiss" aria-label="Dismiss">x</button>
+    </div>
+    <p class="alert__body">Upgrade to keep all features and avoid data loss.</p>
+    <button class="alert__cta">View plans</button>
+  </div>
+</div>
+```
+
+---
+
+## Toast
+
+### Types
+
+| Class | Role |
+|-------|------|
+| `.toast--success` | Confirmation |
+| `.toast--danger` | Error notification |
+| `.toast--default` | Neutral message |
+| `.toast--simple` | Text-only minimal |
+| `.toast--push` | Push notification |
+| `.toast--interactive` | With CTA |
+| `.toast--expanded` | Full message + CTA |
+
+**Position:** fixed bottom-right (or top-right), z-index 50, width ~320px
+
+### HTML
 
 ```html
 <!-- Success -->
 <div class="toast toast--success" role="status" aria-live="polite">
   <div class="toast-icon toast-icon-success"><!-- check icon --></div>
   <p class="toast-title">File saved successfully.</p>
-  <button class="toast-close" aria-label="Dismiss">×</button>
+  <button class="toast-close" aria-label="Dismiss">x</button>
 </div>
 
 <!-- Danger -->
 <div class="toast toast--danger" role="alert" aria-live="assertive">
   <div class="toast-icon toast-icon-danger"><!-- bell icon --></div>
   <p class="toast-title">The file was permanently deleted.</p>
-  <button class="toast-close" aria-label="Dismiss">×</button>
+  <button class="toast-close" aria-label="Dismiss">x</button>
 </div>
 
-<!-- Default -->
-<div class="toast toast--default" role="status" aria-live="polite"> … </div>
-
-<!-- Simple -->
-<div class="toast toast--simple" role="status" aria-live="polite"> … </div>
-
-<!-- Push notification -->
-<div class="toast toast--push" role="status" aria-live="polite"> … </div>
-
-<!-- Interactive -->
-<div class="toast toast--interactive" role="status" aria-live="polite"> … </div>
-```
-
-```html
-<!-- Success with CTA -->
+<!-- Expanded success with CTA -->
 <div class="toast toast--success toast--expanded" role="status" aria-live="polite">
   <div class="toast-title-row">
-    <!-- check-circle icon -->
     <strong class="toast-title">Success</strong>
-    <button class="toast-close" aria-label="Dismiss">×</button>
+    <button class="toast-close" aria-label="Dismiss">x</button>
   </div>
-  <p class="toast-message">Your changes have been saved and are now visible to all collaborators.</p>
+  <p class="toast-message">Your changes have been saved.</p>
   <button class="btn btn-green btn-xs">View file</button>
-</div>
-
-<!-- Danger with CTA -->
-<div class="toast toast--danger toast--expanded" role="alert" aria-live="assertive">
-  <div class="toast-title-row">
-    <!-- x-circle icon -->
-    <strong class="toast-title">Attention</strong>
-    <button class="toast-close" aria-label="Dismiss">×</button>
-  </div>
-  <p class="toast-message">Oh snap! Something went wrong. Your changes could not be saved.</p>
-  <button class="btn btn-red btn-xs">Undo action</button>
 </div>
 ```
 
 ---
 
-# Tooltip
+## Tooltip
 
-**Tooltip** surfaces a short label or explanation when a user hovers or focuses an element.
+### Specs
 
-**When to use**
-- Clarifying an icon button that has no visible label
-- Surfacing extra context for a form field or data point without cluttering the layout
-- Showing keyboard shortcuts or command names on hover
+- Dark: bg `#1f2a37`, text white
+- Light: bg `#ffffff`, border `#e5e7eb`, shadow-md
+- Font: 12px / 400 (body), 14px / 500 (title)
+- Radius: 8px
+- Padding: `8px 12px`
+- Max-width: 200px
 
-**When NOT to use**
-- Long or critical information → use a popover or inline help text (tooltips are hidden by default and not read on mobile)
-- Required form guidance → use a visible hint below the field
-- Error messages → use an inline validation message
-
-**Anatomy**
-\
-
-## Variants
-
-- All positions
-- Both colors
-
-## CSS classes
+### CSS classes
 
 ```
-.btn
-.btn-primary
-.btn-sm
-.tooltip-bottom
-.tooltip-bubble
-.tooltip-dark
-.tooltip-left
-.tooltip-light
-.tooltip-right
-.tooltip-top
-.tooltip-wrap
+.tooltip-wrap     — position:relative container
+.tooltip-bubble   — the tooltip panel (position:absolute)
+.tooltip-dark     — dark variant
+.tooltip-light    — white variant
+.tooltip-top      — above trigger
+.tooltip-right    — to the right
+.tooltip-bottom   — below trigger
+.tooltip-left     — to the left
 ```
 
-## HTML examples
+### HTML
 
 ```html
-<!-- Top -->
-<div class="tooltip-wrap tooltip-top" data-tooltip>
-  <button class="btn btn-primary btn-sm" aria-describedby="tip-top">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-top"> … </div>
-</div>
-
-<!-- Right -->
-<div class="tooltip-wrap tooltip-right" data-tooltip>
-  <button class="btn btn-primary btn-sm" aria-describedby="tip-right">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-right"> … </div>
-</div>
-
-<!-- Bottom -->
-<div class="tooltip-wrap tooltip-bottom" data-tooltip>
-  <button class="btn btn-primary btn-sm" aria-describedby="tip-bottom">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-bottom"> … </div>
-</div>
-
-<!-- Left -->
-<div class="tooltip-wrap tooltip-left" data-tooltip>
-  <button class="btn btn-primary btn-sm" aria-describedby="tip-left">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-left"> … </div>
+<div class="tooltip-wrap tooltip-top">
+  <button class="btn btn-primary btn-sm" aria-describedby="tip-1">Hover me</button>
+  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-1">
+    <strong style="font-size:14px;font-weight:500;color:#fff;">Info title</strong>
+    <div style="height:1px;background:#4b5563;margin:6px 0;"></div>
+    <p style="font-size:12px;color:#f3f4f6;">Short description text.</p>
+  </div>
 </div>
 ```
+
+---
+
+## Pagination
+
+### Sizes
+
+| Size | Item |
+|------|------|
+| Default | 36x36px |
+| Small | 32x32px |
+
+### CSS classes
+
+```
+.pagination        — flex row, gap 2px
+.page-item         — list item
+.page-item.active  — current page (brand bg)
+.page-item.disabled — prev/next at boundary
+.page-link         — button (36x36px, radius 8px, 14px/400)
+```
+
+### HTML
 
 ```html
-<!-- Dark tooltip -->
-<div class="tooltip-bubble tooltip-dark" role="tooltip">
-  <strong style="font-weight:var(--font-medium);font-size:var(--text-sm);color:#ffffff;">More information</strong>
-  <div style="height:1px;background:#4b5563;margin:6px 0;"></div>
-  <p style="font-size:var(--text-xs);color:var(--color-bg-muted);">The user wants to find a specific page or site.</p>
-</div>
+<nav aria-label="Pagination">
+  <ul class="pagination">
+    <li class="page-item disabled">
+      <button class="page-link" aria-label="Previous" disabled><!-- chevron-left --></button>
+    </li>
+    <li class="page-item active">
+      <button class="page-link" aria-current="page">1</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link">2</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link">3</button>
+    </li>
+    <li class="page-item">
+      <span class="page-link" aria-hidden="true">...</span>
+    </li>
+    <li class="page-item">
+      <button class="page-link">10</button>
+    </li>
+    <li class="page-item">
+      <button class="page-link" aria-label="Next"><!-- chevron-right --></button>
+    </li>
+  </ul>
+</nav>
+```
 
-<!-- White tooltip -->
-<div class="tooltip-bubble tooltip-light" role="tooltip">
-  <strong style="font-weight:var(--font-medium);font-size:var(--text-sm);color:var(--color-text-heading);">More information</strong>
-  <div style="height:1px;background:var(--color-border-default);margin:6px 0;"></div>
-  <p style="font-size:var(--text-xs);color:var(--color-text-secondary);">The user wants to find a specific page or site.</p>
+---
+
+## Progress Bar
+
+### Specs
+
+| Property | Value |
+|----------|-------|
+| Track height | 8px |
+| Track bg | `#e5e7eb` |
+| Fill: primary | `#42389d` |
+| Fill: green | `#007a55` |
+| Fill: red | `#c10007` |
+| Fill: yellow | `#d03801` |
+| Fill: blue | `#1447e6` |
+| Border-radius | 9999px |
+
+### HTML
+
+```html
+<div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+    <span style="font-size:14px;font-weight:500;color:#111928;">Progress</span>
+    <span style="font-size:14px;color:#6b7280;">65%</span>
+  </div>
+  <div style="height:8px;background:#e5e7eb;border-radius:9999px;overflow:hidden;">
+    <div style="height:100%;width:65%;background:#42389d;border-radius:9999px;"></div>
+  </div>
 </div>
 ```
 
+---
+
+## Skeleton
+
+```html
+<div style="animation:pulse 2s infinite;">
+  <div style="height:16px;background:#f3f4f6;border-radius:4px;margin-bottom:8px;"></div>
+  <div style="height:16px;background:#f3f4f6;border-radius:4px;width:75%;"></div>
+</div>
+```
+
+---
+
+## Breadcrumbs
+
+```html
+<nav aria-label="Breadcrumb">
+  <ol style="display:flex;align-items:center;gap:8px;list-style:none;">
+    <li><a href="/" style="font-size:14px;color:#6b7280;text-decoration:none;">Home</a></li>
+    <li aria-hidden="true" style="color:#d1d5db;">/ </li>
+    <li><a href="/reports" style="font-size:14px;color:#6b7280;text-decoration:none;">Reports</a></li>
+    <li aria-hidden="true" style="color:#d1d5db;">/ </li>
+    <li><span style="font-size:14px;color:#111928;font-weight:500;" aria-current="page">Q1 2024</span></li>
+  </ol>
+</nav>
+```
+
+---
+
+## Banner
+
+Site-wide notice bar (not inline alert).
+
+```html
+<div role="banner" style="
+  background:#e5edff;border-bottom:1px solid #b4c6fc;
+  padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <!-- info icon 20px #42389d -->
+    <span style="font-size:14px;font-weight:500;color:#42389d;">
+      New feature available — upgrade to unlock analytics.
+    </span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+    <button class="btn btn-primary btn-sm">Upgrade</button>
+    <button aria-label="Dismiss" style="background:transparent;border:none;cursor:pointer;color:#6b7280;font-size:18px;">x</button>
+  </div>
+</div>
+```
+
+---
+
+## List Group
+
+```html
+<ul style="list-style:none;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+  <li style="display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;border-bottom:1px solid #e5e7eb;font-size:14px;color:#111928;">
+    <span>Item 1</span>
+    <span style="background:#d0fae5;color:#006045;font-size:12px;border-radius:6px;padding:2px 8px;">Active</span>
+  </li>
+  <li style="display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #e5e7eb;font-size:14px;color:#111928;">
+    <span>Item 2</span>
+  </li>
+  <li style="display:flex;align-items:center;padding:12px 16px;font-size:14px;color:#111928;">
+    <span>Item 3</span>
+  </li>
+</ul>
+```
+
+---
+
+## KBD (Keyboard shortcut)
+
+```html
+<kbd style="display:inline-flex;align-items:center;
+  background:#f3f4f6;border:1px solid #d1d5db;border-bottom:2px solid #d1d5db;
+  border-radius:4px;padding:2px 6px;
+  font-family:ui-monospace,monospace;font-size:12px;color:#374151;">
+  Ctrl+K
+</kbd>
+```
+
+---
+
+## Indicator / Status dot
+
+```html
+<!-- Online -->
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#111928;">
+  <span style="width:8px;height:8px;border-radius:50%;background:#007a55;flex-shrink:0;"></span>
+  Online
+</span>
+
+<!-- Offline -->
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#111928;">
+  <span style="width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0;"></span>
+  Offline
+</span>
+
+<!-- At risk -->
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#111928;">
+  <span style="width:8px;height:8px;border-radius:50%;background:#d03801;flex-shrink:0;"></span>
+  At risk
+</span>
+```
+
+---
+
+## Stepper
+
+```html
+<ol style="display:flex;align-items:center;list-style:none;">
+
+  <!-- Completed -->
+  <li style="display:flex;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:50%;
+      background:#42389d;color:#fff;font-size:14px;font-weight:500;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      v
+    </div>
+    <span style="font-size:14px;font-weight:500;color:#42389d;margin-left:8px;white-space:nowrap;">Account info</span>
+    <div style="flex:1;min-width:24px;height:1px;background:#42389d;margin:0 12px;"></div>
+  </li>
+
+  <!-- Current -->
+  <li style="display:flex;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:50%;
+      border:2px solid #42389d;color:#42389d;font-size:14px;font-weight:500;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      2
+    </div>
+    <span style="font-size:14px;font-weight:500;color:#111928;margin-left:8px;white-space:nowrap;">Payment</span>
+    <div style="flex:1;min-width:24px;height:1px;background:#e5e7eb;margin:0 12px;"></div>
+  </li>
+
+  <!-- Future -->
+  <li style="display:flex;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:50%;
+      border:2px solid #d1d5db;color:#6b7280;font-size:14px;font-weight:500;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      3
+    </div>
+    <span style="font-size:14px;color:#6b7280;margin-left:8px;white-space:nowrap;">Review</span>
+  </li>
+
+</ol>
+```
+
+---
+
+## Search
+
+### Input + Button (most common)
+
+```html
+<div style="display:flex;overflow:hidden;border:1px solid #d1d5db;border-radius:8px;">
+  <div style="display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;background:#f9fafb;flex:1;">
+    <!-- search icon 18px #6b7280 -->
+    <span style="font-size:14px;color:#6b7280;">Search</span>
+  </div>
+  <button style="width:42px;height:42px;background:#42389d;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;">
+    <!-- search icon 20px white -->
+  </button>
+</div>
+```
+
+### Input + Select + Button
+
+```html
+<div style="display:flex;overflow:hidden;border:1px solid #d1d5db;border-radius:8px;">
+  <button style="height:42px;padding:0 12px;background:#f3f4f6;border:none;border-right:1px solid #d1d5db;
+    cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+    <span style="font-size:14px;font-weight:500;color:#111928;">All categories</span>
+    <!-- chevron-down 16px -->
+  </button>
+  <div style="flex:1;display:flex;align-items:center;padding:0 12px;background:#f9fafb;">
+    <span style="font-size:14px;color:#6b7280;">Search Mockups, Logos...</span>
+  </div>
+  <button style="width:42px;height:42px;background:#42389d;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;">
+    <!-- search icon 20px white -->
+  </button>
+</div>
+```
+
+---
+
+## Cards / Panels
+
+### Standard card
+
+```html
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;
+  box-shadow:0px 1px 2px rgba(0,0,0,0.08);">
+  <!-- content -->
+</div>
+```
+
+### KPI / Metric card
+
+```html
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px 24px;
+  display:flex;flex-direction:column;gap:8px;
+  box-shadow:0px 1px 2px rgba(0,0,0,0.08);">
+  <span style="font-size:14px;color:#6b7280;font-weight:400;">Total Revenue</span>
+  <span style="font-size:30px;font-weight:700;color:#111928;">$48,295</span>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <!-- trend up arrow icon, green -->
+    <span style="font-size:14px;font-weight:500;color:#007a55;">+12.5%</span>
+    <span style="font-size:12px;color:#6b7280;">vs last month</span>
+  </div>
+</div>
+```
+
+### Chart / Reporting card
+
+```html
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+  <div style="padding:20px 24px;border-bottom:1px solid #e5e7eb;
+    display:flex;align-items:center;justify-content:space-between;">
+    <h3 style="font-size:18px;font-weight:600;color:#111928;">Revenue Overview</h3>
+    <div class="btn-group"><!-- period buttons --></div>
+  </div>
+  <div style="padding:24px;">
+    <!-- chart component -->
+  </div>
+</div>
+```
+
+---
+
+## Tag Input (Multi-value)
+
+```html
+<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;
+  min-height:42px;padding:4px 8px;
+  border:1px solid #d1d5db;border-radius:8px;background:#f9fafb;">
+
+  <span style="display:inline-flex;align-items:center;gap:4px;
+    background:#e5edff;color:#42389d;
+    font-size:12px;font-weight:500;border-radius:9999px;padding:2px 8px;">
+    react
+    <button aria-label="Remove" style="background:none;border:none;cursor:pointer;color:#42389d;padding:0;line-height:1;">x</button>
+  </span>
+
+  <input style="border:none;background:transparent;font-size:14px;color:#111928;outline:none;min-width:80px;flex:1;"
+    placeholder="Add tag...">
+</div>
+```
+
+---
+
+## Datepicker
+
+### Key specs
+
+| Property | Value |
+|----------|-------|
+| Input | 42px height, border `#d1d5db`, radius 8px, bg `#f9fafb` |
+| Calendar panel | white, border `#e5e7eb`, radius 8px, shadow-md, ~280px wide |
+| Day cell | 36x36px, circle shape |
+| Selected day | bg `#42389d`, text white, radius 50% |
+| Today | border `2px solid #42389d`, text `#42389d` |
+| Day hover | bg `#f3f4f6` |
+| Other-month day | color `#9ca3af` |
+| Nav arrows | 20x20px, `#6b7280` |
+
+```html
+<!-- Trigger input -->
+<div style="position:relative;width:240px;">
+  <input style="width:100%;height:42px;padding:0 12px 0 40px;
+    border:1px solid #d1d5db;border-radius:8px;
+    background:#f9fafb;font-size:14px;color:#111928;cursor:pointer;box-sizing:border-box;"
+    placeholder="Select date" readonly>
+  <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7280;">
+    <!-- calendar icon 18px -->
+  </span>
+</div>
+```
+
+---
+
+## Autocomplete
+
+- Input: same as Forms (42px, border `#d1d5db`, radius 8px, bg `#f9fafb`)
+- Results panel: dropdown-menu spec (white, radius 8px, shadow, border `#e5e7eb`)
+- Matched text highlight: `color:#42389d; font-weight:600`
+- Result item: 37px, 14px/400, hover bg `#f3f4f6`
+- No results message: `#6b7280` centered in panel
+
+---
+
+## States Reference
+
+### Focus
+
+```css
+/* All interactive elements */
+outline: 2px solid #42389d;
+outline-offset: 2px;
+
+/* Inputs on focus */
+border-color: #155dfc;
+```
+
+### Disabled
+
+```css
+opacity: 0.5;          /* buttons */
+opacity: 0.6;          /* inputs */
+cursor: not-allowed;
+color: #99a1af;        /* text */
+border-color: #e5e7eb; /* border */
+background: #f3f4f6;   /* bg */
+```
+
+### Hover
+
+| Element | Hover bg |
+|---------|----------|
+| Nav items | `#f3f4f6` |
+| Buttons | see button hover tokens above |
+| Dropdown items | `#f3f4f6` |
+| Table rows | `#f9fafb` |
+
+### Error
+
+| Property | Value |
+|----------|-------|
+| Border | `#f05252` |
+| Text | `#c70036` |
+| Icon | `#c70036` |
+| Helper text | `#c70036`, 12px |
+
+### Success
+
+| Property | Value |
+|----------|-------|
+| Border | `#0e9f6e` |
+| Text | `#007a55` |
+
+---
+
+## Layout Grid
+
+### Dashboard layout (sidebar + main)
+
+```html
+<div style="display:flex;height:100vh;overflow:hidden;">
+
+  <!-- Fixed sidebar -->
+  <aside style="width:256px;flex-shrink:0;overflow-y:auto;">
+    <!-- Sidebar component -->
+  </aside>
+
+  <!-- Scrollable main -->
+  <main style="flex:1;overflow-y:auto;background:#f9fafb;">
+
+    <!-- Page header -->
+    <div style="padding:24px 32px;border-bottom:1px solid #e5e7eb;background:#fff;">
+      <h1 style="font-size:24px;font-weight:700;color:#101828;">Page Title</h1>
+    </div>
+
+    <!-- Page body -->
+    <div style="padding:32px;">
+
+      <!-- KPI row (4 cards) -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px;">
+        <!-- KPI cards -->
+      </div>
+
+      <!-- Chart + detail (2 col) -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+        <!-- Chart card -->
+        <!-- Summary card -->
+      </div>
+
+    </div>
+  </main>
+
+</div>
+```
+
+---
+
+## Icon Usage
+
+Iris Library uses **Heroicons v2 solid** (24/solid, viewBox 0 0 24 24). Display at 24x24px.
+
+| Context | Size | Color |
+|---------|------|-------|
+| Sidebar inactive | 24x24px | `#6b7280` |
+| Sidebar active | 24x24px | `#42389d` |
+| Button | 20x20px | inherits button text color |
+| Dropdown item | 16x16px | `#6b7280` or `#f05252` (danger) |
+| Inline text | 16x16px | matches surrounding text |
+| Badge | 16x16px | matches badge text color |
+| Alert | 20x20px | matches alert semantic color |
+
+```html
+<!-- Always use aria-hidden on decorative icons -->
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+  <!-- heroicons v2 solid path -->
+</svg>
+```

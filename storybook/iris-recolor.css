@@ -1,87 +1,253 @@
 /* =============================================================
-   Iris Library — Recolor Override for Lovable
+   Iris Library — Token & Recolor CSS for Lovable
+   Source: Figma ZKtEULdYKaXe5uQl1J6ijI (Iris Library)
 
    HOW TO USE:
-   Paste this into Lovable → Settings → Custom CSS
-   It overrides the default shadcn/ui color variables with
-   the Iris Library brand color system (purple #42389d).
+   1. Add Inter to your index.html <head>:
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+   2. Paste this file into Lovable → Settings → Custom CSS.
 
-   The variables below follow the shadcn/ui convention:
-   space-separated HSL values (no hsl() wrapper).
-   Tailwind reads them as: hsl(var(--primary)).
+   The shadcn/ui variables below use space-separated HSL values
+   (no hsl() wrapper) — this is how Tailwind + shadcn reads them:
+   e.g. hsl(var(--primary))
    ============================================================= */
 
+/* ── Font ─────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
-  /* ── Core surfaces ──────────────────────────────────────── */
-  --background:           210 20% 98%;    /* #f9fafb — page background   */
-  --foreground:           220 43% 11%;    /* #101828 — default text       */
+  /* ── shadcn/ui core surface overrides ────────────────────── */
+  --background:             210 20% 98%;   /* #f9fafb — page bg      */
+  --foreground:             220 43% 11%;   /* #101828 — body text    */
 
-  --card:                 0 0% 100%;      /* #ffffff — card background    */
-  --card-foreground:      220 43% 11%;    /* #101828                      */
+  --card:                   0 0% 100%;     /* #ffffff                */
+  --card-foreground:        220 43% 11%;
 
-  --popover:              0 0% 100%;
-  --popover-foreground:   220 43% 11%;
+  --popover:                0 0% 100%;
+  --popover-foreground:     220 43% 11%;
 
-  /* ── Brand / Primary — Iris purple ─────────────────────── */
-  --primary:              246 47% 42%;    /* #42389d — buttons, links, active states */
-  --primary-foreground:   0 0% 100%;      /* #ffffff                      */
+  /* ── Brand primary — Iris purple ─────────────────────────── */
+  --primary:                246 47% 42%;   /* #42389d                */
+  --primary-foreground:     0 0% 100%;     /* #ffffff                */
 
-  /* ── Secondary ──────────────────────────────────────────── */
-  --secondary:            220 14% 96%;    /* #f3f4f6 — secondary buttons  */
-  --secondary-foreground: 216 31% 17%;    /* #1e2939                      */
+  /* ── Secondary ───────────────────────────────────────────── */
+  --secondary:              220 14% 96%;   /* #f3f4f6                */
+  --secondary-foreground:   216 31% 17%;   /* #1e2939                */
 
   /* ── Muted ───────────────────────────────────────────────── */
-  --muted:                220 14% 96%;    /* #f3f4f6                      */
-  --muted-foreground:     220 9% 46%;     /* #6b7280 — placeholder, hints */
+  --muted:                  220 14% 96%;   /* #f3f4f6                */
+  --muted-foreground:       220 9% 46%;    /* #6b7280 — placeholder  */
 
-  /* ── Accent (blue — secondary CTA) ─────────────────────── */
-  --accent:               225 84% 49%;    /* #1447e6                      */
-  --accent-foreground:    0 0% 100%;      /* #ffffff                      */
+  /* ── Accent — blue CTA ───────────────────────────────────── */
+  --accent:                 225 84% 49%;   /* #1447e6                */
+  --accent-foreground:      0 0% 100%;
 
   /* ── Destructive ─────────────────────────────────────────── */
-  --destructive:          344 100% 39%;   /* #c70036 — danger/delete      */
-  --destructive-foreground: 0 0% 100%;   /* #ffffff                      */
-
-  /* ── Borders & inputs ────────────────────────────────────── */
-  --border:               220 13% 91%;    /* #e5e7eb                      */
-  --input:                216 12% 84%;    /* #d1d5db                      */
-  --ring:                 246 47% 42%;    /* #42389d — focus ring         */
-
-  /* ── Border radius ───────────────────────────────────────── */
-  --radius:               0.75rem;        /* 12px — matches Iris radius-lg */
-
-  /* ── Semantic extras (used in Iris components) ───────────── */
-  --success:              162 100% 24%;   /* #007a55                      */
-  --warning:              16 99% 41%;     /* #d03801                      */
-}
-
-/* Dark mode — if your Lovable project uses .dark class */
-.dark {
-  --background:           220 43% 11%;    /* #101828                      */
-  --foreground:           210 20% 98%;    /* #f9fafb                      */
-
-  --card:                 216 31% 17%;    /* #1e2939                      */
-  --card-foreground:      210 20% 98%;
-
-  --popover:              216 31% 17%;
-  --popover-foreground:   210 20% 98%;
-
-  --primary:              246 47% 42%;    /* #42389d — same purple in dark */
-  --primary-foreground:   0 0% 100%;
-
-  --secondary:            215 25% 27%;
-  --secondary-foreground: 210 20% 98%;
-
-  --muted:                215 25% 27%;
-  --muted-foreground:     220 9% 64%;
-
-  --accent:               225 84% 49%;
-  --accent-foreground:    0 0% 100%;
-
-  --destructive:          344 100% 39%;
+  --destructive:            344 100% 39%;  /* #c70036                */
   --destructive-foreground: 0 0% 100%;
 
-  --border:               215 25% 27%;
-  --input:                215 25% 27%;
-  --ring:                 246 47% 42%;
+  /* ── Borders & inputs ────────────────────────────────────── */
+  --border:                 220 13% 91%;   /* #e5e7eb                */
+  --input:                  216 12% 84%;   /* #d1d5db                */
+  --ring:                   246 47% 42%;   /* #42389d — focus ring   */
+
+  /* ── Border radius ───────────────────────────────────────── */
+  --radius:                 0.75rem;       /* 12px = Iris radius-lg  */
+
+  /* ── Semantic extras ─────────────────────────────────────── */
+  --success:                162 100% 24%;  /* #007a55                */
+  --warning:                16 99% 41%;    /* #d03801                */
+
+  /* ══════════════════════════════════════════════════════════
+     IRIS DESIGN TOKENS
+     These are the raw Iris Library values in hex.
+     Use these for component-level styles that Tailwind
+     cannot cover via shadcn variables alone.
+     ════════════════════════════════════════════════════════ */
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --iris-font:              'Inter', ui-sans-serif, system-ui, sans-serif;
+  --iris-text-h1:           1.875rem;      /* 30px · 700             */
+  --iris-text-h2:           1.5rem;        /* 24px · 400             */
+  --iris-text-h3:           1.25rem;       /* 20px · 400             */
+  --iris-text-h4:           1.125rem;      /* 18px · 400             */
+  --iris-text-body:         1rem;          /* 16px · 400             */
+  --iris-text-body-sm:      0.875rem;      /* 14px · 400             */
+  --iris-text-caption:      0.75rem;       /* 12px · 400             */
+  --iris-leading:           1.5;
+
+  /* ── Radius scale ────────────────────────────────────────── */
+  --iris-radius-sm:         4px;
+  --iris-radius-md:         8px;
+  --iris-radius-lg:         12px;
+  --iris-radius-xl:         16px;
+  --iris-radius-full:       9999px;
+
+  /* ── Shadow ──────────────────────────────────────────────── */
+  --iris-shadow-sm:         0px 1px 2px rgba(0,0,0,0.08);
+  --iris-shadow-md:         0px 4px 12px rgba(0,0,0,0.10);
+
+  /* ── Color primitives ────────────────────────────────────── */
+  --iris-white:             #ffffff;
+  --iris-gray-50:           #f9fafb;
+  --iris-gray-100:          #f3f4f6;
+  --iris-gray-200:          #e5e7eb;
+  --iris-gray-300:          #d1d5db;
+  --iris-gray-400:          #9ca3af;
+  --iris-gray-500:          #6b7280;
+  --iris-gray-700:          #374151;
+  --iris-gray-800:          #1f2a37;
+  --iris-gray-900:          #111928;
+
+  /* ── Brand scale ─────────────────────────────────────────── */
+  --iris-brand-300:         #b4c6fc;       /* disabled checked       */
+  --iris-brand-500:         #6875f5;       /* chart bar              */
+  --iris-brand-600:         #5850ec;       /* border brand           */
+  --iris-brand-700:         #5145cd;       /* bg brand               */
+  --iris-brand-800:         #42389d;       /* PRIMARY — buttons, nav */
+  --iris-brand-900:         #362f78;       /* primary hover          */
+
+  /* ── Semantic bg ─────────────────────────────────────────── */
+  --iris-bg-page:           #f9fafb;
+  --iris-bg-surface:        #ffffff;
+  --iris-bg-muted:          #f3f4f6;
+  --iris-bg-quaternary:     #e5e7eb;
+  --iris-bg-disabled:       #f3f4f6;
+
+  /* ── Semantic text ───────────────────────────────────────── */
+  --iris-text-heading:      #101828;
+  --iris-text-body-color:   #4a5565;
+  --iris-text-muted:        #6b7280;
+  --iris-text-disabled:     #99a1af;
+  --iris-text-brand:        #1447e6;
+  --iris-text-danger:       #c70036;
+  --iris-text-success:      #007a55;
+  --iris-text-warning:      #d03801;
+
+  /* ── Semantic border ─────────────────────────────────────── */
+  --iris-border-base:       #e5e7eb;
+  --iris-border-input:      #d1d5db;
+  --iris-border-focus:      #155dfc;
+  --iris-border-error:      #f05252;
+  --iris-border-success:    #0e9f6e;
+
+  /* ── Button tokens ───────────────────────────────────────── */
+  --iris-btn-primary-bg:    #42389d;
+  --iris-btn-primary-hover: #362f78;
+  --iris-btn-dark-bg:       #1e2939;
+  --iris-btn-dark-hover:    #111928;
+  --iris-btn-green-bg:      #007a55;
+  --iris-btn-green-hover:   #005e3e;
+  --iris-btn-red-bg:        #c10007;
+  --iris-btn-red-hover:     #a30006;
+  --iris-btn-yellow-bg:     #d03801;
+  --iris-btn-yellow-hover:  #b43100;
+  --iris-btn-blue-bg:       #1447e6;
+  --iris-btn-blue-hover:    #0f3bc0;
+  --iris-btn-gray-bg:       #f9fafb;
+  --iris-btn-gray-text:     #1e2939;
+  --iris-btn-gray-border:   #e5e7eb;
+  --iris-btn-gray-hover:    #f3f4f6;
+
+  /* ── Sidebar tokens (Figma 9263:160934, 9272:163206) ─────── */
+  --iris-sidebar-bg:        #f3f4f6;
+  --iris-sidebar-width:     256px;
+  --iris-sidebar-border:    #e5e7eb;
+  --iris-sidebar-item-h:    40px;
+  --iris-sidebar-item-radius: 8px;
+  --iris-sidebar-active-bg: #e5e7eb;       /* gray-200               */
+  --iris-sidebar-active-text: #42389d;     /* brand-800              */
+  --iris-sidebar-inactive-text: #111928;   /* gray-900               */
+  --iris-sidebar-inactive-icon: #6b7280;   /* gray-500               */
+  --iris-sidebar-hover-bg:  #f3f4f6;       /* gray-100               */
+
+  /* ── Form / Input tokens ─────────────────────────────────── */
+  --iris-input-bg:          #f9fafb;
+  --iris-input-border:      #d1d5db;
+  --iris-input-h-sm:        37px;
+  --iris-input-h-md:        42px;
+  --iris-input-h-lg:        52px;
+  --iris-input-radius:      8px;
+  --iris-input-focus-border: #155dfc;
+  --iris-input-error-border: #f05252;
+  --iris-input-success-border: #0e9f6e;
+
+  /* ── Control tokens (Checkbox, Radio, Toggle) ────────────── */
+  --iris-ctrl-off:          #d1d5db;       /* unchecked border/track */
+  --iris-ctrl-off-hover:    #9ca3af;
+  --iris-ctrl-off-disabled: #e5e7eb;
+  --iris-ctrl-on:           #42389d;       /* checked fill           */
+  --iris-ctrl-danger:       #c81e1e;       /* destructive            */
+  --iris-ctrl-danger-hover: #9f0712;
+  --iris-ctrl-disabled-on:  #cddbfe;       /* disabled + checked     */
+  --iris-ctrl-disabled-danger: #ffc9c9;
+
+  /* ── Tab tokens ──────────────────────────────────────────── */
+  --iris-tab-h:             45px;
+  --iris-tab-active-color:  #42389d;
+  --iris-tab-active-border: #42389d;
+  --iris-tab-default-color: #4b5563;
+  --iris-tab-hover-color:   #374151;
+  --iris-tab-hover-border:  #d1d5db;
+
+  /* ── Badge tokens ────────────────────────────────────────── */
+  --iris-badge-gray-bg:     #f3f4f6;
+  --iris-badge-gray-text:   #101828;
+  --iris-badge-green-bg:    #d0fae5;
+  --iris-badge-green-text:  #006045;
+  --iris-badge-red-bg:      #ffe2e2;
+  --iris-badge-red-text:    #9f0712;
+  --iris-badge-yellow-bg:   #fef9c2;
+  --iris-badge-yellow-text: #894b00;
+  --iris-badge-brand-bg:    #e5edff;
+  --iris-badge-brand-text:  #42389d;
+  --iris-badge-radius:      6px;
+
+  /* ── Dropdown tokens ─────────────────────────────────────── */
+  --iris-dropdown-bg:       #ffffff;
+  --iris-dropdown-radius:   8px;
+  --iris-dropdown-min-w:    224px;
+  --iris-dropdown-item-h:   37px;
+  --iris-dropdown-danger-icon: #f05252;
+  --iris-dropdown-disabled-sel: #b4c6fc;
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+.dark {
+  --background:             220 43% 11%;   /* #101828                */
+  --foreground:             210 20% 98%;   /* #f9fafb                */
+
+  --card:                   216 31% 17%;   /* #1e2939                */
+  --card-foreground:        210 20% 98%;
+
+  --popover:                216 31% 17%;
+  --popover-foreground:     210 20% 98%;
+
+  --primary:                246 47% 42%;   /* #42389d                */
+  --primary-foreground:     0 0% 100%;
+
+  --secondary:              215 25% 27%;
+  --secondary-foreground:   210 20% 98%;
+
+  --muted:                  215 25% 27%;
+  --muted-foreground:       220 9% 64%;
+
+  --accent:                 225 84% 49%;
+  --accent-foreground:      0 0% 100%;
+
+  --destructive:            344 100% 39%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border:                 215 25% 27%;
+  --input:                  215 25% 27%;
+  --ring:                   246 47% 42%;
+}
+
+/* ── Base typography ─────────────────────────────────────── */
+body {
+  font-family: var(--iris-font);
+  font-size: var(--iris-text-body);
+  line-height: var(--iris-leading);
+  color: var(--iris-text-heading);
+  -webkit-font-smoothing: antialiased;
 }
