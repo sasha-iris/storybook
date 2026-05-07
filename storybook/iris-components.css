@@ -913,6 +913,7 @@ input[type="file"].form-file-input {
   align-items: center;
   gap: 0;
   padding: 4px 10px;
+  font-size: 11px;
   line-height: 1.3;
   white-space: nowrap;
   width: 96px;
