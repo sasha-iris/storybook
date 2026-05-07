@@ -921,7 +921,7 @@ input[type="file"].form-file-input {
   border-radius: var(--radius-md);
 }
 .badge--date__sub {
-  font-size: 10px;
+  font-size: var(--text-xs);
   font-weight: var(--font-medium);
   opacity: 0.75;
   line-height: 1.2;
