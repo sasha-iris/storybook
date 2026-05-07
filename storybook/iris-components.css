@@ -3297,6 +3297,18 @@ kbd.kbd-dark {
 .iris-cell--row-noncoll  { background: #f9fafb; }
 .iris-cell--row-derived  { background: #fff8f1; }
 .iris-cell--row-total    { background: #f3f4f6; }
+/* Flexible table column header — for modal/form tables without fixed column widths */
+.iris-th {
+  padding: 6px 8px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-align: left;
+}
+
 /* Column header cell */
 .iris-cell-header {
   display: flex;
