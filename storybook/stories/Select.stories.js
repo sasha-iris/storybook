@@ -223,7 +223,7 @@ export const AllStates = {
       { state: 'disabled', label: 'Disabled', value: 'English (UK)' },
       { state: 'error',    label: 'Error',    value: 'English (UK)' },
     ];
-    return `<div style="display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:16px;max-width:900px;font-family:inherit;">
+    return `<div style="display:grid;grid-template-columns:repeat(4,220px);gap:16px;font-family:inherit;">
       ${states.map(s => `<div>
         <div style="font-size:11px;color:#6b7280;margin-bottom:8px;font-family:inherit;">${s.label}</div>
         ${selectInput({ ...s, type, labelText: type === 'with-label' ? 'Select language' : '', optionalText: type === 'with-label' })}
