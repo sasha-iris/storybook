@@ -907,6 +907,23 @@ input[type="file"].form-file-input {
 .badge-outline-yellow   { background: transparent; border-color: #C27803; color: #C27803; }
 .badge-outline-purple   { background: transparent; border-color: #7E3AF2; color: #7E3AF2; }
 
+/* Two-line date chip — use with a color variant: badge badge-red badge--date */
+.badge--date {
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+  min-width: 72px;
+  text-align: center;
+}
+.badge--date__sub {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  opacity: 0.8;
+}
+
 
 /* =============================================
    BREADCRUMB
