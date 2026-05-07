@@ -923,7 +923,7 @@ input[type="file"].form-file-input {
 }
 .badge--date__sub {
   font-size: 10px;
-  font-weight: var(--font-medium);
+  font-weight: var(--font-normal);
   opacity: 0.75;
   line-height: 1.2;
 }
