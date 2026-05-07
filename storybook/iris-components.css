@@ -3314,6 +3314,15 @@ kbd.kbd-dark {
   font-size: 9px;
 }
 
+/* Sub-row caption — margin %, footnotes, secondary numeric labels */
+.iris-caption-xs {
+  font-size: 10px;
+  color: #6b7280;
+  font-weight: 400;
+  line-height: 1.4;
+  tabular-nums: initial;
+}
+
 /* Column header cell */
 .iris-cell-header {
   display: flex;
