@@ -915,7 +915,7 @@ input[type="file"].form-file-input {
   padding: 4px 10px;
   line-height: 1.2;
   white-space: nowrap;
-  min-width: 72px;
+  width: 96px;
   text-align: center;
 }
 .badge--date__sub {
