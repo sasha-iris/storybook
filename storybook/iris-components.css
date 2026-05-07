@@ -3309,6 +3309,10 @@ kbd.kbd-dark {
   white-space: nowrap;
   text-align: left;
 }
+.iris-th--sm {
+  padding: 4px 6px;
+  font-size: 9px;
+}
 
 /* Column header cell */
 .iris-cell-header {
