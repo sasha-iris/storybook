@@ -17,7 +17,7 @@
 
 :root {
   /* ── shadcn/ui core surface overrides ────────────────────── */
-  --background:             210 20% 98%;   /* #f9fafb — page bg      */
+  --background:             220 14% 96%;   /* #f3f4f6 — page bg (gray-100) */
   --foreground:             220 43% 11%;   /* #101828 — body text    */
 
   --card:                   0 0% 100%;     /* #ffffff                */
