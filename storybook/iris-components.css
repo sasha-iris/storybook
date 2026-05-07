@@ -886,6 +886,7 @@ input[type="file"].form-file-input {
   border: 1px solid transparent;
 }
 
+.badge-sm { font-size: 10px; padding: 1px 6px; }
 .badge-lg { font-size: var(--text-sm); padding: 4px 12px; }
 
 /* Color variants */
