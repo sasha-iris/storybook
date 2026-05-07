@@ -1680,6 +1680,53 @@ input[type="file"].form-file-input {
   border-top: 1px solid var(--color-border-default);
 }
 
+/* Collapsed sidebar — icon-only mode */
+.sidebar--collapsed {
+  width: 56px;
+  min-width: 56px;
+}
+.sidebar--collapsed .sidebar-logo-name,
+.sidebar--collapsed .sidebar-section-label,
+.sidebar--collapsed .sidebar-item-badge,
+.sidebar--collapsed .sidebar-item span:not(.sidebar-item-icon) {
+  display: none;
+}
+.sidebar--collapsed .sidebar-logo {
+  justify-content: center;
+  padding: 0 0 20px;
+}
+.sidebar--collapsed .sidebar-item {
+  justify-content: center;
+  padding: 9px 0;
+}
+.sidebar--collapsed .sidebar-item-icon {
+  margin: 0 auto;
+}
+.sidebar--collapsed .sidebar-footer {
+  padding: 12px 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Toggle button */
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-text-disabled);
+  transition: background 0.1s, color 0.1s;
+}
+.sidebar-toggle:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+}
+
 
 /* =============================================
    SKELETON
