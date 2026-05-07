@@ -891,7 +891,7 @@ input[type="file"].form-file-input {
 .badge-lg { font-size: var(--text-sm); padding: 4px 12px; }
 
 /* Color variants */
-.badge-default  { background: #E5E7EB; color: #374151; }
+.badge-default, .badge--gray { background: #f3f4f6; color: #101828; }
 .badge-dark     { background: #374151; color: #fff; }
 .badge-primary  { background: #DBEAFE; color: #1E40AF; }
 .badge-red      { background: #FEE2E2; color: #991B1B; }
@@ -902,7 +902,7 @@ input[type="file"].form-file-input {
 .badge-pink     { background: #FCE7F3; color: #9D174D; }
 
 /* Bordered variants */
-.badge-outline-default  { background: transparent; border-color: #374151; color: #374151; }
+.badge-outline-default, .badge--outline { background: transparent; border-color: #e5e7eb; color: #374151; }
 .badge-outline-primary  { background: transparent; border-color: #1C64F2; color: #1C64F2; }
 .badge-outline-red      { background: transparent; border-color: #E02424; color: #E02424; }
 .badge-outline-green    { background: transparent; border-color: #057A55; color: #057A55; }
