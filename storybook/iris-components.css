@@ -1684,7 +1684,6 @@ input[type="file"].form-file-input {
 .sidebar--collapsed {
   width: 60px;
   min-width: 60px;
-  background: #ffffff;
 }
 .sidebar--collapsed .sidebar-logo-name,
 .sidebar--collapsed .sidebar-section-label,
