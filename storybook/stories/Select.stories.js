@@ -63,7 +63,7 @@ function selectInput(args) {
       box-sizing:border-box;cursor:${isDisabled ? 'not-allowed' : 'pointer'};">
       ${icnCheck(checkColor)}
       ${inlineLabel}
-      <span style="flex:1;font-size:14px;color:${textColor};font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${value}</span>
+      <span style="flex:1;min-width:0;font-size:14px;color:${textColor};font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${value}</span>
       ${isHovered ? icnChevronUp(chevronColor) : icnChevronDown(chevronColor)}
     </div>
     ${errorMsg}
@@ -218,10 +218,10 @@ export const AllStates = {
   },
   render: ({ type }) => {
     const states = [
-      { state: 'default',  label: 'Default',  value: 'English' },
-      { state: 'hovered',  label: 'Hovered',  value: 'English' },
-      { state: 'disabled', label: 'Disabled', value: 'English' },
-      { state: 'error',    label: 'Error',    value: 'English' },
+      { state: 'default',  label: 'Default',  value: 'English (UK)' },
+      { state: 'hovered',  label: 'Hovered',  value: 'English (UK)' },
+      { state: 'disabled', label: 'Disabled', value: 'English (UK)' },
+      { state: 'error',    label: 'Error',    value: 'English (UK)' },
     ];
     return `<div style="display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:16px;max-width:900px;font-family:inherit;">
       ${states.map(s => `<div>
