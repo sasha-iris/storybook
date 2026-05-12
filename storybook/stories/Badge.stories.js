@@ -2,6 +2,7 @@
  * Iris Library — Badge
  *
  * Source: Figma › Iris Library › Badges (node 639:4756)
+ * Metric chip variant: two-line priority badge (label + metric value)
  * Light mode only.
  *
  * ## Figma variants
@@ -45,6 +46,27 @@ const COLOR_NAMES = Object.keys(BADGE_COLORS);
 const ICON_PATH = 'M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5H10.75V5z';
 // Heroicons mini — x-mark (20x20 solid)
 const DISMISS_PATH = 'M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z';
+// Heroicons mini — exclamation-circle (20x20 solid)
+const EXCLAMATION_PATH = 'M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z';
+
+const METRIC_LEVELS = [
+  { key: 'critical', label: 'Critical', color: 'red'    },
+  { key: 'high',     label: 'High',     color: 'yellow' },
+  { key: 'medium',   label: 'Medium',   color: 'blue'   },
+  { key: 'low',      label: 'Low',      color: 'green'  },
+  { key: 'none',     label: 'None',     color: 'gray'   },
+];
+
+function metricBadge({ label = 'Critical', sub = '11.0% rev', color = 'red', icon = false }) {
+  const { bg, text } = BADGE_COLORS[color] ?? BADGE_COLORS.red;
+  const iconHtml = icon
+    ? `<svg width="12" height="12" viewBox="0 0 20 20" fill="${text}" aria-hidden="true" style="flex-shrink:0;margin-bottom:1px;"><path fill-rule="evenodd" d="${EXCLAMATION_PATH}" clip-rule="evenodd"/></svg>`
+    : '';
+  return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0;background:${bg};color:${text};font-size:10px;font-weight:600;line-height:1.3;border-radius:8px;padding:4px 8px;white-space:nowrap;text-align:center;font-family:inherit;">
+  ${icon ? `<span style="display:flex;align-items:center;gap:3px;">${iconHtml}${label}</span>` : label}
+  <span style="font-size:10px;font-weight:400;opacity:0.70;line-height:1.2;">${sub}</span>
+</span>`;
+}
 
 function badge({ label = 'Badge', color = 'indigo', size = 'lg', icon = false, dismissible = false }) {
   const { bg, text, dismiss } = BADGE_COLORS[color] ?? BADGE_COLORS.indigo;
@@ -336,5 +358,116 @@ All 8 themes with a dismiss × button. The × uses a brighter variant of the the
     return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
       ${COLOR_NAMES.map(c => badge({ label: labels[c], color: c, size, dismissible: true })).join('\n      ')}
     </div>`;
+  },
+};
+
+/* ─────────────────────────────────────────────
+   METRIC CHIP — priority levels
+───────────────────────────────────────────── */
+const METRIC_SAMPLES = {
+  critical: ['11.0% rev', '10.6% rev', '9.8% rev'],
+  high:     ['6.9% rev',  '5.9% rev',  '4.3% rev'],
+  medium:   ['3.1% rev',  '2.7% rev'],
+  low:      ['1.4% rev',  '0.8% rev'],
+  none:     ['—'],
+};
+
+export const MetricChip = {
+  name: 'Metric chip — priority levels',
+  args: {},
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Two-line priority chip: bold label on top, metric value below. Used in data tables and KPI lists to combine a severity label with its numeric value in a compact badge.
+
+**✅ Do** — use when you need both a priority level AND a metric in a confined table cell.
+**❌ Don't** — use as a status label without a metric — use the standard single-line badge instead.
+
+CSS: \`<span class="badge badge-red badge--metric">\`
+        `,
+      },
+      source: {
+        code: `<!-- Critical -->
+<span class="badge badge-red badge--metric">
+  Critical
+  <span class="badge--metric__sub">11.0% rev</span>
+</span>
+
+<!-- High -->
+<span class="badge badge-yellow badge--metric">
+  High
+  <span class="badge--metric__sub">6.9% rev</span>
+</span>
+
+<!-- Medium -->
+<span class="badge badge-blue badge--metric">
+  Medium
+  <span class="badge--metric__sub">3.1% rev</span>
+</span>
+
+<!-- Low -->
+<span class="badge badge-green badge--metric">
+  Low
+  <span class="badge--metric__sub">1.4% rev</span>
+</span>`,
+        language: 'html',
+      },
+    },
+  },
+  render: () => {
+    const cols = METRIC_LEVELS.map(({ label, color, key }) => {
+      const values = METRIC_SAMPLES[key];
+      return `
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+          ${values.map(v => metricBadge({ label, sub: v, color })).join('\n          ')}
+        </div>`;
+    });
+    return `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">${cols.join('')}</div>`;
+  },
+};
+
+/* ─────────────────────────────────────────────
+   METRIC CHIP — with icon
+───────────────────────────────────────────── */
+export const MetricChipWithIcon = {
+  name: 'Metric chip — with icon',
+  args: {},
+  parameters: {
+    controls: { include: [] },
+    docs: {
+      description: {
+        story: `
+Same chip with a leading exclamation-circle icon. Use the icon variant to draw extra attention to high-priority items in a dense list.
+
+**✅ Do** — use consistently: if one row has an icon, all rows in the column should have one.
+**❌ Don't** — add icons to low-priority or neutral chips — it dilutes the signal.
+        `,
+      },
+      source: {
+        code: `<!-- Critical — with icon -->
+<span class="badge badge-red badge--metric">
+  <span style="display:flex;align-items:center;gap:3px;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+    </svg>
+    Critical
+  </span>
+  <span class="badge--metric__sub">11.0% rev</span>
+</span>`,
+        language: 'html',
+      },
+    },
+  },
+  render: () => {
+    const cols = METRIC_LEVELS.map(({ label, color, key }) => {
+      const values = METRIC_SAMPLES[key];
+      return `
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+          ${values.map(v => metricBadge({ label, sub: v, color, icon: true })).join('\n          ')}
+        </div>`;
+    });
+    return `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">${cols.join('')}</div>`;
   },
 };
