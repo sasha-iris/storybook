@@ -428,14 +428,17 @@ export const Interactive = {
       },
     },
   },
-  render: ({ contracted, showLogo, activeItem, financialExpanded, color }) => `
-    <div style="height:100vh;display:flex;">
-      ${contracted === true
-        ? contractedSidebar()
-        : sidebar({ showLogo: showLogo === true, activeItem, financialExpanded: financialExpanded === true, color })
-      }
-    </div>
-  `,
+  render: (args) => {
+    const isContracted = args.contracted === true;
+    const showLogo    = args.showLogo !== false;
+    const expanded    = args.financialExpanded !== false;
+    const activeItem  = args.activeItem || 'overview';
+    const color       = args.color || 'gray';
+    const inner = isContracted
+      ? contractedSidebar()
+      : sidebar({ showLogo, activeItem, financialExpanded: expanded, color });
+    return '<div style="height:100vh;display:flex;">' + inner + '</div>';
+  },
 };
 
 export const Default = {
