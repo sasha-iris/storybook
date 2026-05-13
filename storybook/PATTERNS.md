@@ -103,7 +103,51 @@ Rules:
 
 ---
 
-## 2. Actions tab — KNOWN LIMITATION in html-vite
+## 2. Known Controls failure modes — ALWAYS CHECK
+
+### controls: { include: [] } does NOT hide controls
+Empty array is treated as "no filter" — all argTypes from default export appear.
+
+```js
+// ❌ WRONG — shows all inherited controls
+parameters: { controls: { include: [] } }
+
+// ✅ CORRECT for static stories with no configurable args
+parameters: { controls: { disable: true } }
+
+// ✅ CORRECT for gallery stories with one scoped control
+parameters: { controls: { include: ['size'] } }
+```
+
+### render as template literal breaks re-render on arg change
+When render logic has conditionals, use a function body — not a template literal arrow.
+
+```js
+// ❌ WRONG — may not re-render when args change
+render: ({ contracted, color }) => `${contracted ? foo() : bar(color)}`,
+
+// ✅ CORRECT
+render: (args) => {
+  if (args.contracted) return foo();
+  return bar(args.color);
+},
+```
+
+### Boolean args can arrive as string "false"
+Storybook Controls sometimes pass `"false"` (string) instead of `false` (boolean).
+`"false"` is truthy — `if ("false")` is true.
+
+```js
+// ❌ WRONG
+render: ({ showLogo }) => sidebar({ showLogo })
+
+// ✅ CORRECT
+render: (args) => sidebar({ showLogo: args.showLogo !== false })
+```
+
+---
+
+## 2b. Actions tab — KNOWN LIMITATION in html-vite
 
 **Status: не работает в этом проекте (Storybook 8 html-vite статическая сборка).**
 
