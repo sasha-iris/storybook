@@ -345,7 +345,7 @@ export const BothSizes = {
 export const ButtonStates = {
   name: 'Button states — all variants',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

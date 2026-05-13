@@ -208,7 +208,7 @@ export const Interactive = {
 export const AllTypes = {
   name: 'All types',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -275,7 +275,7 @@ All 5 indicator types side by side.
 export const LegendColors = {
   name: 'Dot — legend colors',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -311,7 +311,7 @@ The 4 standard chart legend colors from Figma. Use these dots to label series in
 export const BadgeVariants = {
   name: 'Badge — availability status',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -350,7 +350,7 @@ Two badge indicator variants for user availability status (from Figma node 110:2
 export const InContextButton = {
   name: 'In context — button with count',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -390,7 +390,7 @@ Count indicator overlaid on a button — the pattern from Figma node 110:22652.
 export const InContextTable = {
   name: 'In context — customer table',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -455,7 +455,7 @@ Badge indicators used as status labels in a customer list — the "Badge indicat
 export const InContextStepper = {
   name: 'In context — stepper',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

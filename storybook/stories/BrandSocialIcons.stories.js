@@ -24,7 +24,7 @@ export default {
 `,
       },
     },
-    controls: { include: [] },
+    controls: { disable: true },
   },
 };
 
@@ -87,7 +87,7 @@ const ENTERPRISE_ICONS = [["sps-commerce-original", SPS_COMMERCE_ORIGINAL], ["sp
 export const AllBrandIcons = {
   name: 'All brand icons',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'All 36 brand icons: 18 original-color variants and 18 dark variants. Dark variants are shown on dark backgrounds.',

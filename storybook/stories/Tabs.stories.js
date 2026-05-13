@@ -238,7 +238,7 @@ export const Interactive = {
 export const AllStates = {
   name: 'All states',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -301,7 +301,7 @@ All three states from Figma node \`10007:72664\`:
 export const WithCounter = {
   name: 'With counter badge',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -361,7 +361,7 @@ Badge colours per state (Figma node \`10007:72664\`):
 export const WithDropdown = {
   name: 'With dropdown chevron',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -421,7 +421,7 @@ Dropdown tabs (Figma \`dropdown=yes\`) indicate that clicking the tab opens a su
 export const FullBar = {
   name: 'Full tab bar (realistic)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

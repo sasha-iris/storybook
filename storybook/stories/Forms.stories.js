@@ -470,7 +470,7 @@ export const FloatingLabels = {
   name: 'Floating Label — all states',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `Floating label floats above the input when active. Two styles: **Border bottom** (minimal, for clean dashboards) and **Background** (filled, for form cards).
@@ -519,7 +519,7 @@ export const TextareaTypes = {
   name: 'Textarea — all types',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `4 textarea variants from Figma.
@@ -613,7 +613,7 @@ export const TagInputVariants = {
   name: 'Tag Input — variants',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `Tag (multi-value) input field for email addresses, keywords, or labels. Tags render as dismissible pills inside the input.
@@ -653,7 +653,7 @@ export const ReadOnlyField = {
   name: 'Read-only field',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `Inline read-only display: label + value + disabled chevron. Use in profile summaries or confirmation screens where the user cannot edit the value.

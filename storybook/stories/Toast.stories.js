@@ -245,7 +245,7 @@ export const AllTypes = {
   name: 'All types',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `All six toast types in their compact (no-CTA) form. No scoped controls — each type has its own fixed layout.

@@ -438,7 +438,7 @@ export const Interactive = {
 export const Info = {
   name: 'Info — Terms of Service',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -476,7 +476,7 @@ Informational modal — Figma: \`Type=Info\`. Presents legal or consent content 
 export const PopUp = {
   name: 'Pop-up — delete confirmation',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -515,7 +515,7 @@ Destructive confirmation modal — Figma: \`Type=Pop-up\`. No title in header; b
 export const WithForms = {
   name: 'With forms — sign in',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -573,7 +573,7 @@ Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from
 export const CryptoWallet = {
   name: 'Crypto wallet — connect wallet',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -622,7 +622,7 @@ Wallet selection modal — Figma: \`Type=Crypto wallet\`. Title in header; walle
 export const DarkMode = {
   name: 'Dark mode — all types',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -682,7 +682,7 @@ Dark mode tokens: \`bg:#374151\`, \`title:#ffffff\`, \`body:#9ca3af\`, \`separat
 export const Sizes = {
   name: 'Sizes — SM / Default / LG / XL',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -727,7 +727,7 @@ All four size variants — Figma: \`Size=SM/Default/LG/XL\`. All use the Info ty
 export const AllTypes = {
   name: 'All types — light mode',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'All 4 modal types side-by-side in light mode: Info, Pop-up, With forms, Crypto wallet.',

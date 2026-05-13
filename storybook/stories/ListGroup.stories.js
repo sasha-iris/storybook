@@ -168,7 +168,7 @@ export const AllVariants = {
   name: 'All variants',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `All 4 Figma variants in a 2×2 grid: icons on/off × light/dark.

@@ -237,7 +237,7 @@ export const MultiselectVariants = {
   name: 'Multiselect — variants',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `Multiselect in Default and Error states, with and without label/helper. Error state shows red label, red border, \`#fdf2f2\` background, and red helper text.

@@ -159,7 +159,7 @@ These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--
 export const UserProfileCard = {
   name: 'User profile card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -251,7 +251,7 @@ Social profile card. Centred avatar, name, role, and two action buttons.
 export const WithFormInputs = {
   name: 'With form inputs',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -376,7 +376,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 export const EcommerceCard = {
   name: 'E-commerce card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -480,7 +480,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
 export const CardWithList = {
   name: 'Card with list',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -586,7 +586,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
 export const PricingCard = {
   name: 'Pricing card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -699,7 +699,7 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
 export const CTACard = {
   name: 'CTA card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -813,7 +813,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
 export const NavTabsCard = {
   name: 'Nav tabs card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -908,7 +908,7 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
 export const StatsCard = {
   name: 'Stats card (segmented tabs)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -1021,7 +1021,7 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
 export const TestimonialCard = {
   name: 'Testimonial card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -1134,7 +1134,7 @@ export const TestimonialCard = {
 export const CryptoCard = {
   name: 'Crypto card — connect wallet',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

@@ -460,7 +460,7 @@ Use **Menu type** to switch between all Figma menu variants. Use **Icon-only tri
 export const ListItemsGallery = {
   name: 'List Items — all states',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -557,7 +557,7 @@ All 9 variants from Figma node **9456:150381**.
 export const MenusGallery = {
   name: 'Menus — all types',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -665,7 +665,7 @@ Complete menu panels from Figma node **3283:21147**.
 export const NotificationMenu = {
   name: 'Notification panel',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -713,7 +713,7 @@ Header: 16px/500 on gray/50 bg. Each row: 44×44 avatar + message body + blue ti
 export const TriggersGallery = {
   name: 'Triggers — all variants',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

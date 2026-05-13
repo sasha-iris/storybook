@@ -97,7 +97,7 @@ const row = (sample, cssVar, px, weight, figmaStyle, isLast) => `
 export const TypeScale = {
   name: 'Type scale (H1 – Caption)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -163,7 +163,7 @@ Tokens map to \`--text-h1\` through \`--text-caption\` in \`styles.css\`.
 export const GenericScale = {
   name: 'Generic size scale (legacy)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -226,7 +226,7 @@ Migration guide:
 export const FontWeights = {
   name: 'Font weights',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

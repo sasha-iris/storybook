@@ -148,7 +148,7 @@ export const Interactive = {
 export const AllColors = {
   name: 'Colors — all 9 themes',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -195,7 +195,7 @@ All 9 color themes. Tags have no background — the dot and text carry the color
 export const Dismissible = {
   name: 'Dismissible — with × button',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

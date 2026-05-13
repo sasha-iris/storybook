@@ -149,7 +149,7 @@ export const Interactive = {
 export const LetterKeys = {
   name: 'Letter keys — A–Z',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -179,7 +179,7 @@ All 26 letter keys. Width: 29×30px.
 export const SpecialKeys = {
   name: 'Special keys — modifiers & control',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -223,7 +223,7 @@ Modifier and control keys with Figma-spec widths.
 export const FunctionKeys = {
   name: 'Function keys — F1–F12',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'All 12 function keys. Width: 32×30px.',
@@ -248,7 +248,7 @@ export const FunctionKeys = {
 export const ArrowKeys = {
   name: 'Arrow keys — ←→↑↓',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -283,7 +283,7 @@ Arrow keys rendered as SVG vector icons (Figma-exact). Width: 32×30px.
 export const InContext = {
   name: 'In context — shortcut combos',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

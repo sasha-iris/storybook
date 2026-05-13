@@ -264,7 +264,7 @@ export const AllTypes = {
   name: 'All types',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `All 5 slider types rendered at full width for visual comparison.

@@ -163,7 +163,7 @@ export const Interactive = {
 export const AllColors = {
   name: 'Colors — all 10 themes',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -265,7 +265,7 @@ Default, hover, and disabled states for the selected color. Use the **color** co
 export const WithDot = {
   name: 'With dot indicator',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

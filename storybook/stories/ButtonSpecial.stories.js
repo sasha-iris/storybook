@@ -184,7 +184,7 @@ Chart button (node 9705:152804) — 24×24px, transparent bg. Use **state** cont
 export const ChartButtonToolbar = {
   name: 'Chart Button — toolbar context',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'All 3 states shown in a simulated chart toolbar wrapper.',
@@ -245,7 +245,7 @@ QA: Icon is **12px** (smaller than chart button's 16px).
 export const TableButtonInContext = {
   name: 'Table Button — table row context',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Button shown in a realistic data table row to verify sizing and shadow in context.',
@@ -286,7 +286,7 @@ export const TableButtonInContext = {
 export const BothUtilityButtons = {
   name: 'Overview — Chart vs Table button',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

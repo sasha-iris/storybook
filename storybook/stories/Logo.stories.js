@@ -100,7 +100,7 @@ const sizeLabel = (size) =>
 export const MarkOnly = {
   name: 'Mark only — all sizes (light)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -147,7 +147,7 @@ Smart mark only (no wordmark), light mode. Used in constrained slots such as car
 export const WithText = {
   name: 'Logo with text — all sizes (light)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -202,7 +202,7 @@ Full logo: Smart mark + "Iris" wordmark. Light mode. Used in nav bars, headers, 
 export const DarkVariants = {
   name: 'Dark variants — sm / md / lg',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     backgrounds: { default: 'dark' },
     docs: {
       description: {
@@ -248,7 +248,7 @@ Dark mode — sm, md, lg on a dark background. \`xs\` dark falls back to the lig
 export const ReferenceGrid = {
   name: 'Reference grid — all sizes × modes',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

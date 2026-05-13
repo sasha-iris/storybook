@@ -164,7 +164,7 @@ export const AllTypes = {
   name: 'All types',
   args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `All 6 search patterns from Figma. Each is a full-width composite — place them in headers, filter bars, or hero sections.

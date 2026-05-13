@@ -38,7 +38,7 @@ export default {
 `,
       },
     },
-    controls: { include: [] },
+    controls: { disable: true },
   },
 };
 
@@ -393,7 +393,7 @@ function iconSection(title, names) {
 export const AllIcons = {
   name: 'All icons — outline 24px',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: '299 Heroicons v2 outline icons (24×24). Hover an icon to see its name. Copy the `d` path from `ICONS[name]` in this file, or visit [heroicons.com](https://heroicons.com) to browse and copy SVG markup.',

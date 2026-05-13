@@ -308,7 +308,7 @@ Use in compact layouts (cards, table rows) where space above the track is unavai
 export const InContext = {
   name: 'In context — dashboard card',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `

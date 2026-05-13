@@ -188,7 +188,7 @@ export const Default = {
 export const OnlyIcon = {
   name: 'Only Icon — prev / next',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Icon-only segments — common for pagination controls. Segments are square (40×40px).',
@@ -216,7 +216,7 @@ export const OnlyIcon = {
 export const WithStat = {
   name: 'With stat — action + count',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Left segment: icon + label. Right segment: numeric count in muted style (`btn-group-stat-count`).',
@@ -254,7 +254,7 @@ export const WithStat = {
 export const WithDropdown = {
   name: 'With dropdown — text + icon slot',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Common pattern: primary action text + secondary icon (save/bookmark). Right slot is icon-only square.',
@@ -297,7 +297,7 @@ export const WithDropdown = {
 export const WithTooltip = {
   name: 'With tooltip',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -336,7 +336,7 @@ Figma specs: bg \`#111928\`, border-radius 4px, shadow-xs, arrow pointing down.
 export const AllTypes = {
   name: 'All types — overview',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: 'All 4 group patterns in one view for quick QA comparison.',
