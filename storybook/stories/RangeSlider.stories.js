@@ -140,10 +140,12 @@ function nativeSlider(args) {
         <span style="display:inline-block;padding:3px 10px;background:${C.tooltip};border-radius:6px;font-size:12px;font-weight:500;color:${C.tooltipText};font-family:inherit;">${value}%</span>
       </div>` : '';
 
+  const onInput = `this.style.background='linear-gradient(to right,${C.fill} 0%,${C.fill} '+this.value+'%,${C.track} '+this.value+'%,${C.track} 100%)'`;
+
   if (sliderType === 'volume') {
     return `${thumbStyle}<div style="display:flex;align-items:center;gap:12px;font-family:inherit;">
       ${icnVolOff()}
-      <input type="range" min="0" max="100" value="${value}" class="iris-range" style="${trackStyle}" />
+      <input type="range" min="0" max="100" value="${value}" class="iris-range" style="${trackStyle}" oninput="${onInput}" />
       ${icnVolUp()}
     </div>`;
   }
@@ -151,18 +153,19 @@ function nativeSlider(args) {
   if (sliderType === 'range') {
     const v1 = Math.max(0, value - 20);
     const v2 = Math.min(100, value + 20);
+    const onInput1 = `this.style.background='linear-gradient(to right,${C.fill} 0%,${C.fill} '+this.value+'%,${C.track} '+this.value+'%,${C.track} 100%)'`;
     return `${thumbStyle}<div style="font-family:inherit;">
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;color:${C.label};font-family:inherit;">
         <span>Min: ${v1}%</span><span>Max: ${v2}%</span>
       </div>
-      <input type="range" min="0" max="100" value="${v1}" class="iris-range" style="${trackStyle}" />
-      <input type="range" min="0" max="100" value="${v2}" class="iris-range" style="${trackStyle};margin-top:8px;" />
+      <input type="range" min="0" max="100" value="${v1}" class="iris-range" style="${trackStyle}" oninput="${onInput1}" />
+      <input type="range" min="0" max="100" value="${v2}" class="iris-range" style="${trackStyle};margin-top:8px;" oninput="${onInput1}" />
     </div>`;
   }
 
   return `${thumbStyle}<div style="font-family:inherit;">
     ${tooltip}
-    <input type="range" min="${min}" max="${max}" value="${value}" class="iris-range" style="${trackStyle}" />
+    <input type="range" min="${min}" max="${max}" value="${value}" class="iris-range" style="${trackStyle}" oninput="${onInput}" />
     ${labels}
   </div>`;
 }
