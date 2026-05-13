@@ -153,14 +153,56 @@ function nativeSlider(args) {
   if (sliderType === 'range') {
     const v1 = Math.max(0, value - 20);
     const v2 = Math.min(100, value + 20);
-    const onInput1 = `this.style.background='linear-gradient(to right,${C.fill} 0%,${C.fill} '+this.value+'%,${C.track} '+this.value+'%,${C.track} 100%)'`;
-    return `${thumbStyle}<div style="font-family:inherit;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;color:${C.label};font-family:inherit;">
-        <span>Min: ${v1}%</span><span>Max: ${v2}%</span>
+    // Unique ID per render so multiple stories on the Docs page don't conflict
+    const uid = 'rng' + Math.random().toString(36).slice(2, 7);
+    const twoThumbStyle = `
+      <style>
+        .${uid}::-webkit-slider-thumb{
+          appearance:none;-webkit-appearance:none;
+          width:22px;height:22px;border-radius:50%;
+          background:${C.thumb};border:2px solid ${C.thumbBorder};
+          box-shadow:0 1px 4px rgba(0,0,0,.12);cursor:pointer;
+          pointer-events:auto;
+        }
+        .${uid}::-moz-range-thumb{
+          width:22px;height:22px;border-radius:50%;
+          background:${C.thumb};border:2px solid ${C.thumbBorder};
+          box-shadow:0 1px 4px rgba(0,0,0,.12);cursor:pointer;
+        }
+      </style>`;
+    return `${twoThumbStyle}
+    <div style="font-family:inherit;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;color:${C.label};font-family:inherit;">
+        <span id="${uid}-lo">Min: ${v1}%</span><span id="${uid}-hi">Max: ${v2}%</span>
       </div>
-      <input type="range" min="0" max="100" value="${v1}" class="iris-range" style="${trackStyle}" oninput="${onInput1}" />
-      <input type="range" min="0" max="100" value="${v2}" class="iris-range" style="${trackStyle};margin-top:8px;" oninput="${onInput1}" />
-    </div>`;
+      <div style="position:relative;height:22px;">
+        <div style="position:absolute;left:0;right:0;height:8px;top:7px;background:${C.track};border-radius:4px;"></div>
+        <div id="${uid}-fill" style="position:absolute;height:8px;top:7px;background:${C.fill};border-radius:2px;left:${v1}%;width:${v2 - v1}%;"></div>
+        <input id="${uid}-a" type="range" min="0" max="100" value="${v1}" class="${uid}"
+          style="position:absolute;width:100%;top:0;margin:0;padding:0;background:transparent;appearance:none;-webkit-appearance:none;outline:none;pointer-events:none;height:22px;">
+        <input id="${uid}-b" type="range" min="0" max="100" value="${v2}" class="${uid}"
+          style="position:absolute;width:100%;top:0;margin:0;padding:0;background:transparent;appearance:none;-webkit-appearance:none;outline:none;pointer-events:none;height:22px;">
+      </div>
+    </div>
+    <script>
+    (function(){
+      var a = document.getElementById('${uid}-a');
+      var b = document.getElementById('${uid}-b');
+      var fill = document.getElementById('${uid}-fill');
+      var lo = document.getElementById('${uid}-lo');
+      var hi = document.getElementById('${uid}-hi');
+      function upd(){
+        var mn = Math.min(+a.value, +b.value);
+        var mx = Math.max(+a.value, +b.value);
+        fill.style.left = mn + '%';
+        fill.style.width = (mx - mn) + '%';
+        lo.textContent = 'Min: ' + mn + '%';
+        hi.textContent = 'Max: ' + mx + '%';
+      }
+      a.addEventListener('input', upd);
+      b.addEventListener('input', upd);
+    })();
+    </script>`;
   }
 
   return `${thumbStyle}<div style="font-family:inherit;">
