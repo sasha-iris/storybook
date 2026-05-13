@@ -374,12 +374,13 @@ const METRIC_SAMPLES = {
 
 export const MetricChip = {
   name: 'Metric chip — priority levels',
+  args: { icon: false },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['icon'] },
     docs: {
       description: {
         story: `
-Two-line priority chip: bold label on top, metric value below. Used in data tables and KPI lists to combine a severity label with its numeric value in a compact badge.
+Two-line priority chip: bold label on top, metric value below. Toggle **icon** in Controls to switch between variants.
 
 **✅ Do** — use when you need both a priority level AND a metric in a confined table cell.
 **❌ Don't** — use as a status label without a metric — use the standard single-line badge instead.
@@ -391,6 +392,17 @@ CSS: \`<span class="badge badge-red badge--metric">\`
         code: `<!-- Critical -->
 <span class="badge badge-red badge--metric">
   Critical
+  <span class="badge--metric__sub">11.0% rev</span>
+</span>
+
+<!-- Critical — with icon -->
+<span class="badge badge-red badge--metric">
+  <span style="display:flex;align-items:center;gap:3px;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+    </svg>
+    Critical
+  </span>
   <span class="badge--metric__sub">11.0% rev</span>
 </span>
 
@@ -415,55 +427,12 @@ CSS: \`<span class="badge badge-red badge--metric">\`
       },
     },
   },
-  render: () => {
+  render: ({ icon }) => {
     const cols = METRIC_LEVELS.map(({ label, color, key }) => {
       const values = METRIC_SAMPLES[key];
       return `
         <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
-          ${values.map(v => metricBadge({ label, sub: v, color })).join('\n          ')}
-        </div>`;
-    });
-    return `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">${cols.join('')}</div>`;
-  },
-};
-
-/* ─────────────────────────────────────────────
-   METRIC CHIP — with icon
-───────────────────────────────────────────── */
-export const MetricChipWithIcon = {
-  name: 'Metric chip — with icon',
-  parameters: {
-    controls: { disable: true },
-    docs: {
-      description: {
-        story: `
-Same chip with a leading exclamation-circle icon. Use the icon variant to draw extra attention to high-priority items in a dense list.
-
-**✅ Do** — use consistently: if one row has an icon, all rows in the column should have one.
-**❌ Don't** — add icons to low-priority or neutral chips — it dilutes the signal.
-        `,
-      },
-      source: {
-        code: `<!-- Critical — with icon -->
-<span class="badge badge-red badge--metric">
-  <span style="display:flex;align-items:center;gap:3px;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-    </svg>
-    Critical
-  </span>
-  <span class="badge--metric__sub">11.0% rev</span>
-</span>`,
-        language: 'html',
-      },
-    },
-  },
-  render: () => {
-    const cols = METRIC_LEVELS.map(({ label, color, key }) => {
-      const values = METRIC_SAMPLES[key];
-      return `
-        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
-          ${values.map(v => metricBadge({ label, sub: v, color, icon: true })).join('\n          ')}
+          ${values.map(v => metricBadge({ label, sub: v, color, icon })).join('\n          ')}
         </div>`;
     });
     return `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">${cols.join('')}</div>`;
