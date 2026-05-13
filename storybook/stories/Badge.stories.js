@@ -374,9 +374,8 @@ const METRIC_SAMPLES = {
 
 export const MetricChip = {
   name: 'Metric chip — priority levels',
-  args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -433,9 +432,8 @@ CSS: \`<span class="badge badge-red badge--metric">\`
 ───────────────────────────────────────────── */
 export const MetricChipWithIcon = {
   name: 'Metric chip — with icon',
-  args: {},
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
