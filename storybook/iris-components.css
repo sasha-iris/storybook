@@ -1556,12 +1556,15 @@ input[type="file"].form-file-input {
   justify-content: center;
 }
 
-.progress-bar-default { background: var(--color-bg-primary); }
-.progress-bar-green   { background: #0E9F6E; }
-.progress-bar-red     { background: #E02424; }
-.progress-bar-yellow  { background: #C27803; }
-.progress-bar-purple  { background: #7E3AF2; }
-.progress-bar-dark    { background: #1F2A37; }
+.progress-bar-primary { background: #5850ec; }
+.progress-bar-green   { background: #31c48d; }
+.progress-bar-orange  { background: #ff8a4c; }
+.progress-bar-yellow  { background: #ffdf20; }
+.progress-bar-pink    { background: #e74694; }
+.progress-bar-indigo  { background: #5850ec; }
+.progress-bar-purple  { background: #7e3af2; }
+.progress-bar-dark    { background: #111928; }
+.progress-bar-blue    { background: #1c64f2; }
 
 .progress-label {
   font-size: 10px;
@@ -1667,7 +1670,7 @@ input[type="file"].form-file-input {
   flex-shrink: 0;
   opacity: 0.7;
 }
-.sidebar-item.active .sidebar-item-icon { opacity: 1; color: #1f2a37; }
+.sidebar-item.active .sidebar-item-icon { color: #42389d; }
 
 .sidebar-item-badge {
   margin-left: auto;

@@ -1380,6 +1380,29 @@ input[type="file"].form-file-input {
 .badge-outline-yellow   { background: transparent; border-color: #C27803; color: #C27803; }
 .badge-outline-purple   { background: transparent; border-color: #7E3AF2; color: #7E3AF2; }
 
+.badge-sm { font-size: 10px; padding: 1px 6px; }
+
+/* Two-line date chip — badge badge-red badge--date */
+.badge--date {
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  line-height: 1.3;
+  white-space: nowrap;
+  width: 96px;
+  text-align: center;
+  border-radius: var(--radius-md);
+}
+.badge--date__sub {
+  font-size: 10px;
+  font-weight: var(--font-normal);
+  opacity: 0.75;
+  line-height: 1.2;
+}
+
 /* Two-line metric chip — badge badge-red badge--metric */
 .badge--metric {
   display: inline-flex;
@@ -2008,12 +2031,15 @@ input[type="file"].form-file-input {
   justify-content: center;
 }
 
-.progress-bar-default { background: var(--color-bg-primary); }
-.progress-bar-green   { background: #0E9F6E; }
-.progress-bar-red     { background: #E02424; }
-.progress-bar-yellow  { background: #C27803; }
-.progress-bar-purple  { background: #7E3AF2; }
-.progress-bar-dark    { background: #1F2A37; }
+.progress-bar-primary { background: #5850ec; }
+.progress-bar-green   { background: #31c48d; }
+.progress-bar-orange  { background: #ff8a4c; }
+.progress-bar-yellow  { background: #ffdf20; }
+.progress-bar-pink    { background: #e74694; }
+.progress-bar-indigo  { background: #5850ec; }
+.progress-bar-purple  { background: #7e3af2; }
+.progress-bar-dark    { background: #111928; }
+.progress-bar-blue    { background: #1c64f2; }
 
 .progress-label {
   font-size: 10px;
@@ -2122,6 +2148,23 @@ input[type="file"].form-file-input {
 
 .sidebar-item-badge {
   margin-left: auto;
+}
+
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-text-disabled);
+  transition: background 0.1s, color 0.1s;
+}
+.sidebar-toggle:hover {
+  background: var(--color-bg-muted);
 }
 
 .sidebar-footer {
