@@ -444,6 +444,7 @@ export const Interactive = {
 export const Default = {
   name: 'Default — light, logo, overview active',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: { story: 'Default sidebar state: logo visible, Financial model expanded, Overview active.' },
       source: {
@@ -471,6 +472,7 @@ export const Default = {
 export const ActiveStates = {
   name: 'Active states — all items',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Each sidebar item shown in its active state. Use to verify color (#42389d) and background (#e5e7eb) are applied correctly.',
@@ -516,6 +518,7 @@ export const ActiveStates = {
 export const Collapsed = {
   name: 'Financial model — collapsed',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Financial model sub-menu collapsed. Chevron points down. Sub-items hidden.',
@@ -556,7 +559,7 @@ export const Collapsed = {
 export const MenuItemStates = {
   name: 'Menu item states — all variants',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -637,7 +640,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
 export const ColorVariants = {
   name: 'Color variants — White vs Gray',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -679,7 +682,7 @@ Both use identical menu item tokens and the same \`#e5e7eb\` right border.
 export const ContractedSidebar = {
   name: 'Contracted — icon only (60px)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -754,6 +757,7 @@ Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
 export const NoLogo = {
   name: 'Without logo',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Sidebar without the logo area — use when the Iris logo is already rendered in a top bar. Nav items start from the top with no additional padding.',
@@ -837,7 +841,7 @@ function contractedSidebarWithLogo({ activeKey = 'chartPie' } = {}) {
 export const ContractedWithLogo = {
   name: 'Contracted — with logo (60px)',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
@@ -890,7 +894,7 @@ Use this variant when the contracted sidebar is the only navigation element on t
 export const InContext = {
   name: 'In context — full page layout',
   parameters: {
-    controls: { include: [] },
+    controls: { disable: true },
     docs: {
       description: {
         story: `
