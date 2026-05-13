@@ -890,16 +890,15 @@ input[type="file"].form-file-input {
 .badge-sm { font-size: 10px; padding: 1px 6px; }
 .badge-lg { font-size: var(--text-sm); padding: 4px 12px; }
 
-/* Color variants */
-.badge-default, .badge--gray { background: #f3f4f6; color: #101828; }
-.badge-dark     { background: #374151; color: #fff; }
-.badge-primary  { background: #DBEAFE; color: #1E40AF; }
-.badge-red      { background: #FEE2E2; color: #991B1B; }
-.badge-green    { background: #D1FAE5; color: #065F46; }
-.badge-yellow   { background: #FEF3C7; color: #92400E; }
-.badge-indigo   { background: #E0E7FF; color: #3730A3; }
-.badge-purple   { background: #EDE9FE; color: #5B21B6; }
-.badge-pink     { background: #FCE7F3; color: #9D174D; }
+/* Color variants — source: Figma node 639:4756 */
+.badge-gray     { background: #f3f4f6; color: #101828; }
+.badge-blue     { background: #dbeafe; color: #193cb8; }
+.badge-indigo   { background: #e5edff; color: #42389d; }
+.badge-purple   { background: #f3e8ff; color: #6e11b0; }
+.badge-pink     { background: #fce7f3; color: #a3004c; }
+.badge-green    { background: #d0fae5; color: #006045; }
+.badge-yellow   { background: #fef9c2; color: #894b00; }
+.badge-red      { background: #ffe2e2; color: #9f0712; }
 
 /* Bordered variants */
 .badge-outline-default, .badge--outline { background: transparent; border-color: #e5e7eb; color: #374151; }
