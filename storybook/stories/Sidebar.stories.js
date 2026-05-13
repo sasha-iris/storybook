@@ -353,9 +353,14 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
   },
   argTypes: {
     // ── Content ──────────────────────────────────────────────
+    contracted: {
+      control: 'boolean',
+      description: 'Switch to contracted (icon-only, 60px) mode. Logo and labels hidden. Figma node 1060:44.',
+      table: { category: 'Content', defaultValue: { summary: false } },
+    },
     showLogo: {
       control: 'boolean',
-      description: 'Show the Iris logo + wordmark at the top. Set `false` when logo lives in a top bar.',
+      description: 'Show the Iris logo + wordmark at the top. Set `false` when logo lives in a top bar. Ignored when `contracted` is true.',
       table: { category: 'Content', defaultValue: { summary: true } },
     },
     activeItem: {
@@ -368,17 +373,18 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
     color: {
       control: 'select',
       options: ['gray', 'white'],
-      description: 'Background color variant. `gray` = `#f3f4f6` (Figma Color=Gray). `white` = `#ffffff` (Figma Color=White). Both are light-mode variants (node `1057:2041`).',
+      description: 'Background color variant. `gray` = `#f3f4f6` (Figma Color=Gray). `white` = `#ffffff` (Figma Color=White). Ignored when `contracted` is true (always white per Figma).',
       table: { category: 'Appearance', defaultValue: { summary: 'gray' } },
     },
     // ── State ────────────────────────────────────────────────
     financialExpanded: {
       control: 'boolean',
-      description: 'Whether the Financial model sub-menu is expanded. Controls chevron direction and sub-item visibility.',
+      description: 'Whether the Financial model sub-menu is expanded. Ignored when `contracted` is true.',
       table: { category: 'State', defaultValue: { summary: true } },
     },
   },
   args: {
+    contracted: false,
     showLogo: true,
     activeItem: 'overview',
     color: 'gray',
@@ -422,9 +428,12 @@ export const Interactive = {
       },
     },
   },
-  render: ({ showLogo, activeItem, financialExpanded, color }) => `
+  render: ({ contracted, showLogo, activeItem, financialExpanded, color }) => `
     <div style="height:100vh;display:flex;">
-      ${sidebar({ showLogo, activeItem, financialExpanded, color })}
+      ${contracted === true
+        ? contractedSidebar()
+        : sidebar({ showLogo: showLogo === true, activeItem, financialExpanded: financialExpanded === true, color })
+      }
     </div>
   `,
 };
