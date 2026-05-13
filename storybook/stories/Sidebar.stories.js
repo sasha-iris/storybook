@@ -170,9 +170,11 @@ function menuItem({ icon, label, active = false, expandable = false, expanded = 
 
 function subItem({ label, active = false }) {
   const textColor = active ? '#42389d' : '#111928';
+  // padding-left:0 overrides ITEM_OVERRIDE's 8px left — indent comes from wrapper only (28px)
+  // Total from sidebar edge: 28px (nav section) + 28px (wrapper) = 56px — matches Figma node 9272:163206
   return `
     <div style="padding-left:28px;">
-      <div class="sidebar-item${active ? ' active' : ''}" style="${ITEM_OVERRIDE}color:${textColor};">
+      <div class="sidebar-item${active ? ' active' : ''}" style="${ITEM_OVERRIDE}padding-left:0;color:${textColor};">
         <span style="font:500 16px/1.5 inherit;">${label}</span>
       </div>
     </div>

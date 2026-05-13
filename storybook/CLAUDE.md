@@ -142,4 +142,15 @@ Known failure modes to check:
 - `console.log` in event listeners → logs to browser console, NOT to Storybook Actions tab
 - `render: () => ...` ignoring args → Controls panel shows but does nothing
 - `controls: { disable: true }` on gallery stories → Controls useless
+- `controls: { include: [] }` with empty array → does NOT hide controls, inherits all argTypes from default export. Always use `controls: { disable: true }` on static stories instead
+- `render: (args) => \`...\`` template literal with conditional logic → may not re-render on arg change. Use function body `render: (args) => { ... return ... }` when render has if/ternary
+- Boolean args from Controls can arrive as string `"false"` instead of boolean `false` → always use `args.showLogo !== false` or `!!args.showLogo`, never `args.showLogo === true` alone
 - Pushing to `sasha-iris/main` deploys to the live site immediately — only push when correct
+
+## CSS sync rule — MANDATORY
+
+Every CSS change must go into BOTH files simultaneously:
+- `styles.css` — used by Storybook preview
+- `iris-components.css` — used by Lovable export
+
+Never update one without the other. If a class exists in one file, it must exist in the other with identical values.
