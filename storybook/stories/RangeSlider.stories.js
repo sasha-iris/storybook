@@ -32,8 +32,10 @@ function sliderTrack({ fillPct = 35, thumbPos = null, secondThumbPos = null, too
   const filled = Math.round((fillPct / 100) * trackWidth);
   const fillColor = isVolume ? C.fillVolume : C.fill;
 
-  // Main fill bar
-  const fillBar = `<div style="position:absolute;left:0;top:0;height:8px;width:${filled}px;background:${C.fill};border-radius:4px 0 0 4px;"></div>`;
+  // Main fill bar — hidden for range type (two thumbs); only the between-fill is used there
+  const fillBar = secondThumbPos === null
+    ? `<div style="position:absolute;left:0;top:0;height:8px;width:${filled}px;background:${C.fill};border-radius:4px 0 0 4px;"></div>`
+    : '';
 
   // Volume uses a gradient fill
   const volFill = isVolume ? `<div style="position:absolute;left:0;top:0;height:8px;width:${filled}px;background:${C.fill};border-radius:4px 0 0 4px;"></div>` : '';
@@ -135,12 +137,17 @@ function nativeSlider(args) {
         ${['0','50','100','150'].map(l => `<span style="font-size:14px;font-weight:500;color:${C.label};font-family:inherit;">${l}</span>`).join('')}
       </div>` : '';
 
+  // Unique ID so tooltip text can be updated by oninput
+  const tipUid = 'tip' + Math.random().toString(36).slice(2, 7);
   const tooltip = sliderType === 'with-tooltip'
     ? `<div style="text-align:right;margin-bottom:4px;">
-        <span style="display:inline-block;padding:3px 10px;background:${C.tooltip};border-radius:6px;font-size:12px;font-weight:500;color:${C.tooltipText};font-family:inherit;">${value}%</span>
+        <span id="${tipUid}" style="display:inline-block;padding:3px 10px;background:${C.tooltip};border-radius:6px;font-size:12px;font-weight:500;color:${C.tooltipText};font-family:inherit;">${value}%</span>
       </div>` : '';
 
-  const onInput = `this.style.background='linear-gradient(to right,${C.fill} 0%,${C.fill} '+this.value+'%,${C.track} '+this.value+'%,${C.track} 100%)'`;
+  const gradientUpdate = `this.style.background='linear-gradient(to right,${C.fill} 0%,${C.fill} '+this.value+'%,${C.track} '+this.value+'%,${C.track} 100%)'`;
+  const onInput = sliderType === 'with-tooltip'
+    ? `${gradientUpdate};document.getElementById('${tipUid}').textContent=this.value+'%'`
+    : gradientUpdate;
 
   if (sliderType === 'volume') {
     return `${thumbStyle}<div style="display:flex;align-items:center;gap:12px;font-family:inherit;">
