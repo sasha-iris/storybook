@@ -51,31 +51,23 @@ function calendarIcon(color) {
 // ─── Calendar month grid ───────────────────────────────────────────────────────
 // days: array of {label, state:'normal'|'selected'|'range'|'range-end'|'empty'|'today'}
 function monthGrid(days, dark) {
-  const textDef   = dark ? T.dark_dayText  : T.dayText;
-  const hdrColor  = dark ? T.dark_dayHdr   : T.dayHeader;
-  const bgCard    = dark ? T.dark_bgCard   : T.bgCard;
   const DAY_HEADERS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
   const headerRow = DAY_HEADERS.map(d =>
-    `<div style="width:36px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:${hdrColor};">${d}</div>`
+    `<div class="iris-cal__day-header">${d}</div>`
   ).join('');
 
   const cells = days.map(({ label, state }) => {
-    let bg = 'transparent', color = textDef, radius = '8px', fw = '700';
-    if (state === 'selected') { bg = T.selectedSimple; color = '#ffffff'; }
-    if (state === 'range-end') { bg = T.selectedRange; color = '#ffffff'; }
-    if (state === 'range')     { bg = T.inRange; color = textDef; }
-    if (state === 'empty')     { color = 'transparent'; }
-    if (state === 'range')     { radius = '0px'; }
-    return `<div style="width:36px;height:34px;display:flex;align-items:center;justify-content:center;
-      background:${bg};border-radius:${radius};font-size:12px;font-weight:${fw};color:${color};cursor:${label ? 'pointer' : 'default'};">
-      ${label || ''}
-    </div>`;
+    let cls = 'iris-cal__day';
+    if (state === 'selected')  cls += ' iris-cal__day--selected';
+    if (state === 'range-end') cls += ' iris-cal__day--range-selected';
+    if (state === 'range')     cls += ' iris-cal__day--in-range';
+    if (state === 'today')     cls += ' iris-cal__day--today';
+    if (!label)                cls += ' iris-cal__day--muted';
+    return `<button class="${cls}">${label || ''}</button>`;
   }).join('');
 
-  return `<div style="display:grid;grid-template-columns:repeat(7,36px);gap:0;">
-    ${headerRow}${cells}
-  </div>`;
+  return `<div class="iris-cal__grid">${headerRow}${cells}</div>`;
 }
 
 // Default month: May 2024, selected = 14
@@ -102,55 +94,43 @@ function rangeMonthDays(start, end) {
 }
 
 // ─── Calendar card shell ───────────────────────────────────────────────────────
-function calCard(inner, dark, width = 284) {
-  const bg     = dark ? T.dark_bgCard : T.bgCard;
-  const arrow  = dark ? T.dark_title  : T.titleColor;
-  return `<div style="background:${bg};border-radius:8px;padding:12px;width:${width}px;
-    box-shadow:0 4px 24px rgba(0,0,0,0.12);font-family:inherit;box-sizing:border-box;">${inner}</div>`;
+function calCard(inner, dark) {
+  const darkCls = dark ? ' iris-cal--dark' : '';
+  return `<div class="iris-cal${darkCls}">${inner}</div>`;
 }
 
-function calHeader(monthYear, dark, withTabs = false) {
-  const color = dark ? T.dark_title : T.titleColor;
-  const arrow = dark ? T.dark_title : T.titleColor;
-  const title = withTabs
-    ? `<div style="display:flex;gap:4px;">
-        <span style="font-size:12px;font-weight:700;color:${color};padding:4px 8px;background:#f3f4f6;border-radius:4px;">${monthYear.split(' ')[0]}</span>
-        <span style="font-size:12px;font-weight:700;color:${color};padding:4px 8px;background:#f3f4f6;border-radius:4px;">${monthYear.split(' ')[1]}</span>
-      </div>`
-    : `<span style="font-size:12px;font-weight:700;color:${color};">${monthYear}</span>`;
-  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <button style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;">${chevronLeft(arrow)}</button>
-    ${title}
-    <button style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;">${chevronRight(arrow)}</button>
+function calHeader(monthYear, dark) {
+  return `<div class="iris-cal__header">
+    <button class="iris-cal__nav">${chevronLeft(dark ? T.dark_title : T.titleColor)}</button>
+    <span class="iris-cal__title">${monthYear}</span>
+    <button class="iris-cal__nav">${chevronRight(dark ? T.dark_title : T.titleColor)}</button>
   </div>`;
 }
 
 function calFooter(dark) {
-  const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
-  const cancelText = dark ? '#ffffff'         : T.btnCancelText;
-  const cancelBorder = dark ? 'none' : `1px solid ${T.borderInput}`;
-  return `<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
-    <button style="height:37px;padding:0 16px;background:${cancelBg};border:${cancelBorder};
-      border-radius:12px;font-size:12px;font-weight:500;color:${cancelText};cursor:pointer;font-family:inherit;">Cancel</button>
-    <button style="height:37px;padding:0 16px;background:${T.btnOk};border:none;
-      border-radius:12px;font-size:12px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">Ok</button>
+  return `<div class="iris-cal__footer">
+    <button class="btn btn-outline-gray btn-sm">Cancel</button>
+    <button class="btn btn-primary btn-sm">Ok</button>
+  </div>`;
+}
+
+function calPresets(active = '') {
+  const presets = ['Last 7 days', 'Last 30 days', 'This month', 'Last month', 'This quarter', 'YTD'];
+  return `<div class="iris-cal__presets">
+    ${presets.map(p => `<span class="iris-cal__preset${p === active ? ' iris-cal__preset--active' : ''}">${p}</span>`).join('')}
   </div>`;
 }
 
 // ─── Input trigger ─────────────────────────────────────────────────────────────
-function datepickerInput({ placeholder = 'Select date', size = 'default', dark = false, value = '' }) {
-  const h        = size === 'large' ? 52 : 42;
-  const bg       = dark ? '#374151'      : T.bgInput;
-  const border   = dark ? '#4b5563'      : T.borderInput;
-  const text     = dark ? '#ffffff'      : T.dayText;
-  const phColor  = dark ? T.dark_dayHdr  : T.placeholder;
+function datepickerInput({ placeholder = 'Select date', size = 'default', dark = false, value = '', error = false }) {
+  const lgCls    = size === 'large' ? ' iris-datepicker-input--lg' : '';
+  const errCls   = error ? ' iris-datepicker-input--error' : '';
+  const filledCls = value ? ' iris-datepicker-input--filled' : '';
   const iconColor = dark ? T.dark_calIcon : T.calIcon;
-  const displayed = value || `<span style="color:${phColor};">${placeholder}</span>`;
-  return `<div style="display:flex;align-items:center;width:325px;height:${h}px;
-    background:${bg};border:1px solid ${border};border-radius:8px;
-    padding:0 12px;gap:8px;box-sizing:border-box;cursor:pointer;font-family:inherit;">
-    ${calendarIcon(iconColor)}
-    <span style="font-size:14px;color:${text};">${displayed}</span>
+  const displayed = value || placeholder;
+  return `<div class="iris-datepicker-input${lgCls}${errCls}${filledCls}" style="width:325px;">
+    <span class="iris-datepicker-input__icon">${calendarIcon(iconColor)}</span>
+    <span class="iris-datepicker-input__value">${displayed}</span>
   </div>`;
 }
 
@@ -159,7 +139,7 @@ function simpleCalendar({ dark, size }) {
   const header = calHeader('May 2024', dark);
   const grid   = monthGrid(defaultMonthDays(14), dark);
   const footer = calFooter(dark);
-  return calCard(`${header}${grid}${footer}`, dark, 284);
+  return calCard(`${header}${grid}${footer}`, dark);
 }
 
 // ─── Range datepicker ─────────────────────────────────────────────────────────
@@ -198,9 +178,9 @@ function rangeCalendar({ dark }) {
   </div>`.replace('<div style="position:absolute', `</div><div style="position:relative"><div style="position:absolute`);
 }
 
-// Simpler range implementation without positioning hacks
-function rangeCalendarSimple({ dark }) {
-  const bg = dark ? T.dark_bgCard : T.bgCard;
+// Simpler range implementation using iris-cal classes
+function rangeCalendarSimple({ dark, withPresets = false }) {
+  const darkCls = dark ? ' iris-cal--dark' : '';
 
   const aprilBlanks = Array(1).fill({ label: '', state: 'empty' });
   const aprilDays = [...aprilBlanks, ...Array.from({ length: 30 }, (_, i) => {
@@ -218,33 +198,18 @@ function rangeCalendarSimple({ dark }) {
     return { label: String(d), state: 'normal' };
   })];
 
-  const arrow = dark ? T.dark_title : T.titleColor;
-  const titleColor = dark ? T.dark_title : T.titleColor;
-
-  function miniHeader(label) {
-    return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <button style="background:none;border:none;cursor:pointer;padding:0;">${chevronLeft(arrow)}</button>
-      <span style="font-size:12px;font-weight:700;color:${titleColor};">${label}</span>
-      <button style="background:none;border:none;cursor:pointer;padding:0;">${chevronRight(arrow)}</button>
-    </div>`;
-  }
-
-  const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
-  const cancelText = dark ? '#ffffff'         : T.btnCancelText;
-  const cancelBorder = dark ? 'none' : `1px solid ${T.borderInput}`;
-
-  return `<div style="background:${bg};border-radius:8px;padding:12px;
-    box-shadow:0 4px 24px rgba(0,0,0,0.12);display:inline-block;font-family:inherit;">
-    <div style="display:flex;gap:16px;">
-      <div>${miniHeader('April 2024')}${monthGrid(aprilDays, dark)}</div>
-      <div>${miniHeader('May 2024')}${monthGrid(mayDays, dark)}</div>
+  return `<div class="iris-cal iris-cal--range${darkCls}">
+    <div class="iris-cal__months">
+      <div>
+        ${calHeader('April 2024', dark)}
+        ${monthGrid(aprilDays, dark)}
+      </div>
+      <div>
+        ${calHeader('May 2024', dark)}
+        ${monthGrid(mayDays, dark)}
+      </div>
     </div>
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
-      <button style="height:37px;padding:0 16px;background:${cancelBg};border:${cancelBorder};
-        border-radius:12px;font-size:12px;font-weight:500;color:${cancelText};cursor:pointer;font-family:inherit;">Cancel</button>
-      <button style="height:37px;padding:0 16px;background:${T.btnOk};border:none;
-        border-radius:12px;font-size:12px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">Ok</button>
-    </div>
+    ${withPresets ? calPresets('Last 30 days') : calFooter(dark)}
   </div>`;
 }
 
@@ -514,13 +479,27 @@ export const Interactive = {
         transform: (_src, ctx) => {
           const { type, dark, size } = ctx.args;
           const placeholder = type === 'range' ? 'Select period' : 'Select date';
-          const h = size === 'large' ? 52 : 42;
-          return `<!-- Input trigger (${size}, ${dark ? 'dark' : 'light'}) -->
-<div class="datepicker-input" style="height:${h}px;">
-  ${calendarIcon(dark ? T.dark_calIcon : T.calIcon)}
-  <span>${placeholder}</span>
+          const lgCls = size === 'large' ? ' iris-datepicker-input--lg' : '';
+          const darkCal = dark ? ' iris-cal--dark' : '';
+          return `<!-- Input trigger -->
+<div class="iris-datepicker-input${lgCls}">
+  <span class="iris-datepicker-input__icon"><!-- calendar icon --></span>
+  <span class="iris-datepicker-input__value">${placeholder}</span>
 </div>
-<!-- Calendar dropdown: type="${type}" -->`;
+
+<!-- Calendar popup (type="${type}") -->
+<div class="iris-cal${type === 'range' ? ' iris-cal--range' : ''}${darkCal}">
+  <div class="iris-cal__header">
+    <button class="iris-cal__nav"><!-- chevron-left --></button>
+    <span class="iris-cal__title">May 2024</span>
+    <button class="iris-cal__nav"><!-- chevron-right --></button>
+  </div>
+  <div class="iris-cal__grid">
+    <!-- day headers: iris-cal__day-header -->
+    <!-- day cells: iris-cal__day, iris-cal__day--selected, iris-cal__day--in-range, iris-cal__day--muted -->
+  </div>
+  ${type === 'range' ? `<!-- presets -->\n<div class="iris-cal__presets">\n  <span class="iris-cal__preset iris-cal__preset--active">Last 30 days</span>\n  <span class="iris-cal__preset">This month</span>\n</div>` : `<div class="iris-cal__footer">\n  <button class="btn btn-outline-gray btn-sm">Cancel</button>\n  <button class="btn btn-primary btn-sm">Ok</button>\n</div>`}
+</div>`;
         },
       },
     },
@@ -544,12 +523,45 @@ export const AllTypesLight = {
 ❌ Don't use **Range** when only a single boundary date is needed`,
       },
       source: {
-        code: `<!-- Simple datepicker -->
-<div class="datepicker-input" style="height:42px;">
-  <!-- calendar icon + placeholder -->
+        code: `<!-- Input trigger -->
+<div class="iris-datepicker-input">
+  <span class="iris-datepicker-input__icon"><!-- calendar icon --></span>
+  <span class="iris-datepicker-input__value">Select date</span>
 </div>
-<div class="datepicker-calendar">
-  <!-- header + day grid + footer -->
+
+<!-- Calendar popup -->
+<div class="iris-cal">
+  <div class="iris-cal__header">
+    <button class="iris-cal__nav"><!-- chevron-left --></button>
+    <span class="iris-cal__title">May 2024</span>
+    <button class="iris-cal__nav"><!-- chevron-right --></button>
+  </div>
+  <div class="iris-cal__grid">
+    <div class="iris-cal__day-header">Su</div><!-- Mo Tu We Th Fr Sa -->
+    <button class="iris-cal__day">1</button>
+    <button class="iris-cal__day iris-cal__day--selected">14</button>
+    <button class="iris-cal__day iris-cal__day--in-range">15</button>
+    <button class="iris-cal__day iris-cal__day--muted">1</button><!-- outside month -->
+  </div>
+  <div class="iris-cal__footer">
+    <button class="btn btn-outline-gray btn-sm">Cancel</button>
+    <button class="btn btn-primary btn-sm">Ok</button>
+  </div>
+</div>
+
+<!-- Range picker with presets -->
+<div class="iris-cal iris-cal--range">
+  <div class="iris-cal__months">
+    <div><!-- April grid --></div>
+    <div><!-- May grid --></div>
+  </div>
+  <div class="iris-cal__presets">
+    <span class="iris-cal__preset iris-cal__preset--active">Last 30 days</span>
+    <span class="iris-cal__preset">This month</span>
+    <span class="iris-cal__preset">Last month</span>
+    <span class="iris-cal__preset">This quarter</span>
+    <span class="iris-cal__preset">YTD</span>
+  </div>
 </div>`,
       },
     },
@@ -582,10 +594,16 @@ export const InputSizes = {
       },
       source: {
         code: `<!-- Default 42px -->
-<div class="datepicker-input" style="height:42px;">...</div>
+<div class="iris-datepicker-input">...</div>
 
 <!-- Large 52px -->
-<div class="datepicker-input datepicker-input--lg" style="height:52px;">...</div>`,
+<div class="iris-datepicker-input iris-datepicker-input--lg">...</div>
+
+<!-- Error state -->
+<div class="iris-datepicker-input iris-datepicker-input--error">...</div>
+
+<!-- Filled (has value) -->
+<div class="iris-datepicker-input iris-datepicker-input--filled">...</div>`,
       },
     },
   },
@@ -622,35 +640,75 @@ export const DayCellStates = {
         story: `All individual day cell states from Figma node 9667:2900. Shows how selected, range-endpoint, in-range, and default cells appear side-by-side.`,
       },
       source: {
-        code: `<!-- Selected: bg #1447e6, text #ffffff, border-radius 8px -->
-<!-- Range endpoint: bg #42389d, text #ffffff -->
-<!-- In-range: bg #f3f4f6, text #111928 -->
-<!-- Normal: transparent, text #111928 -->`,
+        code: `<button class="iris-cal__day">14</button>
+<button class="iris-cal__day iris-cal__day--today">14</button>
+<button class="iris-cal__day iris-cal__day--selected">14</button>
+<button class="iris-cal__day iris-cal__day--range-selected">14</button>
+<button class="iris-cal__day iris-cal__day--in-range">14</button>
+<button class="iris-cal__day iris-cal__day--muted">14</button>
+<button class="iris-cal__day iris-cal__day--disabled">14</button>`,
       },
     },
   },
   render: ({ dark }) => {
-    const bg    = dark ? T.dark_bgCard : T.bgCard;
-    const text  = dark ? T.dark_dayText : T.dayText;
-    const label = dark ? T.dark_title : T.titleColor;
-
+    const darkCls = dark ? ' iris-cal--dark' : '';
     const stateData = [
-      { label: 'Normal',       bg: 'transparent',     color: text,      fw: 700 },
-      { label: 'Today',        bg: 'transparent',     color: T.selectedSimple, fw: 700 },
-      { label: 'Selected',     bg: T.selectedSimple,  color: '#ffffff',  fw: 700 },
-      { label: 'Range end',    bg: T.selectedRange,   color: '#ffffff',  fw: 700 },
-      { label: 'In range',     bg: T.inRange,         color: text,       fw: 400 },
+      { label: 'Normal',      cls: '' },
+      { label: 'Today',       cls: ' iris-cal__day--today' },
+      { label: 'Selected',    cls: ' iris-cal__day--selected' },
+      { label: 'Range end',   cls: ' iris-cal__day--range-selected' },
+      { label: 'In range',    cls: ' iris-cal__day--in-range' },
+      { label: 'Muted',       cls: ' iris-cal__day--muted' },
+      { label: 'Disabled',    cls: ' iris-cal__day--disabled' },
     ];
 
     const cells = stateData.map(s =>
       `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-        <div style="width:36px;height:34px;display:flex;align-items:center;justify-content:center;
-          background:${s.bg};border-radius:8px;font-size:12px;font-weight:${s.fw};color:${s.color};font-family:inherit;">14</div>
-        <span style="font-size:10px;color:${dark ? '#9ca3af' : '#6b7280'};font-family:inherit;">${s.label}</span>
+        <button class="iris-cal__day${s.cls}">14</button>
+        <span style="font-size:10px;color:#6b7280;font-family:inherit;">${s.label}</span>
       </div>`
     ).join('');
 
-    return `<div style="background:${bg};border-radius:8px;padding:20px;display:inline-flex;gap:16px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:inherit;">${cells}</div>`;
+    return `<div class="iris-cal${darkCls}" style="display:inline-flex;gap:16px;width:auto;padding:20px;">${cells}</div>`;
   },
+};
+
+// ─── Gallery: Range with presets (P&L pattern) ────────────────────────────────
+export const RangeWithPresets = {
+  name: 'Range — with preset shortcuts',
+  args: { dark: false },
+  parameters: {
+    controls: { include: ['dark'] },
+    docs: {
+      description: {
+        story: `Range datepicker with preset shortcut footer — the pattern used on the P&L page. Presets replace the Cancel/Ok footer.
+
+✅ Use presets when the user typically picks relative periods (last month, YTD)
+✅ Use \`iris-cal__preset--active\` on the currently selected preset
+❌ Don't mix presets and Cancel/Ok in the same calendar`,
+      },
+      source: {
+        code: `<div class="iris-cal iris-cal--range">
+  <div class="iris-cal__months">
+    <div>
+      <div class="iris-cal__header">...</div>
+      <div class="iris-cal__grid">...</div>
+    </div>
+    <div>
+      <div class="iris-cal__header">...</div>
+      <div class="iris-cal__grid">...</div>
+    </div>
+  </div>
+  <div class="iris-cal__presets">
+    <span class="iris-cal__preset iris-cal__preset--active">Last 30 days</span>
+    <span class="iris-cal__preset">This month</span>
+    <span class="iris-cal__preset">Last month</span>
+    <span class="iris-cal__preset">This quarter</span>
+    <span class="iris-cal__preset">YTD</span>
+  </div>
+</div>`,
+      },
+    },
+  },
+  render: ({ dark }) => rangeCalendarSimple({ dark, withPresets: true }),
 };
