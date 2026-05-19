@@ -3347,28 +3347,6 @@ kbd.kbd-dark {
   gap: 24px;
 }
 
-/* Preset shortcuts footer (Last 7 days, Last 30 days, etc.) */
-.iris-cal__presets {
-  display: flex;
-  gap: 0;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 12px;
-  padding-top: 12px;
-  flex-wrap: wrap;
-}
-.iris-cal__preset {
-  padding: 4px 12px;
-  font-size: var(--text-sm);
-  color: #6b7280;
-  cursor: pointer;
-  border-right: 1px solid #e5e7eb;
-  white-space: nowrap;
-  transition: color 0.1s;
-}
-.iris-cal__preset:last-child { border-right: none; }
-.iris-cal__preset:hover      { color: #111928; }
-.iris-cal__preset--active    { color: #42389d; font-weight: var(--font-medium); }
-
 /* Range start / end day modifiers */
 .iris-cal__day--range-start { background: #42389d; color: #ffffff; border-radius: 8px 0 0 8px; }
 .iris-cal__day--range-end   { background: #42389d; color: #ffffff; border-radius: 0 8px 8px 0; }

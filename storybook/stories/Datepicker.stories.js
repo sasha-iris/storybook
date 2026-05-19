@@ -114,12 +114,6 @@ function calFooter(dark) {
   </div>`;
 }
 
-function calPresets(active = '') {
-  const presets = ['Last 7 days', 'Last 30 days', 'This month', 'Last month', 'This quarter', 'YTD'];
-  return `<div class="iris-cal__presets">
-    ${presets.map(p => `<span class="iris-cal__preset${p === active ? ' iris-cal__preset--active' : ''}">${p}</span>`).join('')}
-  </div>`;
-}
 
 // ─── Input trigger ─────────────────────────────────────────────────────────────
 function datepickerInput({ placeholder = 'Select date', size = 'default', dark = false, value = '', error = false }) {
@@ -179,7 +173,7 @@ function rangeCalendar({ dark }) {
 }
 
 // Simpler range implementation using iris-cal classes
-function rangeCalendarSimple({ dark, withPresets = false }) {
+function rangeCalendarSimple({ dark }) {
   const darkCls = dark ? ' iris-cal--dark' : '';
 
   const aprilBlanks = Array(1).fill({ label: '', state: 'empty' });
@@ -209,7 +203,7 @@ function rangeCalendarSimple({ dark, withPresets = false }) {
         ${monthGrid(mayDays, dark)}
       </div>
     </div>
-    ${withPresets ? calPresets('Last 30 days') : calFooter(dark)}
+    ${calFooter(dark)}
   </div>`;
 }
 
@@ -549,18 +543,21 @@ export const AllTypesLight = {
   </div>
 </div>
 
-<!-- Range picker with presets -->
+<!-- Range picker: two months side by side -->
 <div class="iris-cal iris-cal--range">
   <div class="iris-cal__months">
-    <div><!-- April grid --></div>
-    <div><!-- May grid --></div>
+    <div>
+      <div class="iris-cal__header">...</div>
+      <div class="iris-cal__grid">...</div>
+    </div>
+    <div>
+      <div class="iris-cal__header">...</div>
+      <div class="iris-cal__grid">...</div>
+    </div>
   </div>
-  <div class="iris-cal__presets">
-    <span class="iris-cal__preset iris-cal__preset--active">Last 30 days</span>
-    <span class="iris-cal__preset">This month</span>
-    <span class="iris-cal__preset">Last month</span>
-    <span class="iris-cal__preset">This quarter</span>
-    <span class="iris-cal__preset">YTD</span>
+  <div class="iris-cal__footer">
+    <button class="btn btn-outline-gray btn-sm">Cancel</button>
+    <button class="btn btn-primary btn-sm">Ok</button>
   </div>
 </div>`,
       },
@@ -673,42 +670,3 @@ export const DayCellStates = {
   },
 };
 
-// ─── Gallery: Range with presets (P&L pattern) ────────────────────────────────
-export const RangeWithPresets = {
-  name: 'Range — with preset shortcuts',
-  args: { dark: false },
-  parameters: {
-    controls: { include: ['dark'] },
-    docs: {
-      description: {
-        story: `Range datepicker with preset shortcut footer — the pattern used on the P&L page. Presets replace the Cancel/Ok footer.
-
-✅ Use presets when the user typically picks relative periods (last month, YTD)
-✅ Use \`iris-cal__preset--active\` on the currently selected preset
-❌ Don't mix presets and Cancel/Ok in the same calendar`,
-      },
-      source: {
-        code: `<div class="iris-cal iris-cal--range">
-  <div class="iris-cal__months">
-    <div>
-      <div class="iris-cal__header">...</div>
-      <div class="iris-cal__grid">...</div>
-    </div>
-    <div>
-      <div class="iris-cal__header">...</div>
-      <div class="iris-cal__grid">...</div>
-    </div>
-  </div>
-  <div class="iris-cal__presets">
-    <span class="iris-cal__preset iris-cal__preset--active">Last 30 days</span>
-    <span class="iris-cal__preset">This month</span>
-    <span class="iris-cal__preset">Last month</span>
-    <span class="iris-cal__preset">This quarter</span>
-    <span class="iris-cal__preset">YTD</span>
-  </div>
-</div>`,
-      },
-    },
-  },
-  render: ({ dark }) => rangeCalendarSimple({ dark, withPresets: true }),
-};
