@@ -3222,3 +3222,112 @@ kbd.kbd-dark {
 .iris-control--destructive.iris-control--disabled .iris-control__helper {
   color: var(--color-ctrl-danger-disabled-text);
 }
+
+/* ── DATEPICKER / CALENDAR ──────────────────────────────────── */
+/* Figma · inline calendar card + input trigger                */
+.iris-datepicker-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--text-sm);
+  color: #6b7280;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+  width: 100%;
+}
+.iris-datepicker-input:hover          { border-color: #9ca3af; }
+.iris-datepicker-input--open          { border-color: #155dfc; }
+.iris-datepicker-input--lg            { height: 52px; }
+.iris-datepicker-input--error         { border-color: #f05252; }
+.iris-datepicker-input--error:hover   { border-color: #c81e1e; }
+.iris-datepicker-input--filled        { color: #111928; }
+.iris-datepicker-input__value         { flex: 1; }
+.iris-datepicker-input__icon          { flex-shrink: 0; color: #6b7280; }
+
+.iris-cal {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  padding: 16px;
+  width: 288px;
+  font-family: var(--font-family-base);
+}
+.iris-cal--dark { background: #374151; }
+.iris-cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.iris-cal__title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #111928;
+}
+.iris-cal--dark .iris-cal__title { color: #ffffff; }
+.iris-cal__nav {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  transition: color 0.15s;
+}
+.iris-cal--dark .iris-cal__nav { color: #9ca3af; }
+.iris-cal__nav:hover { color: #111928; }
+.iris-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.iris-cal__day-header {
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: #6b7280;
+  padding: 4px 0;
+}
+.iris-cal--dark .iris-cal__day-header { color: #9ca3af; }
+.iris-cal__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  color: #111928;
+  cursor: pointer;
+  transition: background 0.1s;
+  background: transparent;
+  border: none;
+  font-family: var(--font-family-base);
+}
+.iris-cal--dark .iris-cal__day { color: #ffffff; }
+.iris-cal__day:hover { background: #f3f4f6; }
+.iris-cal__day--today { font-weight: var(--font-semibold); }
+.iris-cal__day--selected { background: #1447e6; color: #ffffff; }
+.iris-cal__day--selected:hover { background: #193cb8; }
+.iris-cal__day--range-selected { background: #42389d; color: #ffffff; }
+.iris-cal__day--in-range { background: #f3f4f6; border-radius: 0; }
+.iris-cal__day--muted { color: #9ca3af; }
+.iris-cal__day--disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.iris-cal__footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+.iris-cal--range { width: auto; display: inline-block; }
+.iris-cal--range .iris-cal__months { display: flex; gap: 24px; }
+.iris-cal__day--range-start { background: #42389d; color: #ffffff; border-radius: 8px 0 0 8px; }
+.iris-cal__day--range-end   { background: #42389d; color: #ffffff; border-radius: 0 8px 8px 0; }
