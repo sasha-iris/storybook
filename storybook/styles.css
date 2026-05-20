@@ -706,6 +706,13 @@ a:hover { text-decoration: underline; }
   font-weight: 500;
   color: var(--color-text-body-subtle);
 }
+/* primary modifier — chart/visualization toggles (Daily/Cumulative, week pickers) */
+.btn-group--primary .btn.active,
+.btn-group--primary .btn:hover {
+  background: #e5edff;
+  color: #42389d;
+  text-decoration: none;
+}
 
 /* ── Social Buttons (Figma: Social buttons) ─────────────────────
    Sign-in with <Provider> — dark/white × outline/solid           */

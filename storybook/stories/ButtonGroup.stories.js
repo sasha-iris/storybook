@@ -331,6 +331,72 @@ Figma specs: bg \`#111928\`, border-radius 4px, shadow-xs, arrow pointing down.
 };
 
 /**
+ * Primary modifier — for toggles attached to charts or data visualisations.
+ * Active segment gets a soft indigo bg (#e5edff) with brand purple text (#42389d)
+ * instead of the default grey — visually connects the control to the chart it drives.
+ *
+ * Use cases: Daily/Cumulative chart mode, Entire month/Week pickers, KPI metric toggles.
+ * Plain UI filters and toolbars should use the default btn-group (grey active).
+ */
+export const Primary = {
+  name: 'Primary — chart & visualisation toggles',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: `
+Add \`btn-group--primary\` to the container to switch the active state from grey to the brand purple tint.
+
+**When to use:** the toggle directly controls a chart or visualisation — Daily/Cumulative, time-range pickers, KPI metric selectors.
+**When NOT to use:** standalone filter bars, toolbars, table-mode toggles → use the default \`btn-group\` (grey active).
+
+\`\`\`html
+<div class="btn-group btn-group--primary">
+  <button class="btn active">Daily</button>
+  <button class="btn">Cumulative</button>
+</div>
+\`\`\`
+        `,
+      },
+    },
+  },
+  render: () => `
+    <div style="display:flex;flex-direction:column;gap:24px;">
+
+      <div>
+        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
+                  color:#9CA3AF;margin:0 0 8px;">Chart mode toggle (2 segments)</p>
+        <div class="btn-group btn-group--primary">
+          <button class="btn active">Daily</button>
+          <button class="btn">Cumulative</button>
+        </div>
+      </div>
+
+      <div>
+        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
+                  color:#9CA3AF;margin:0 0 8px;">Time-range picker (5 segments)</p>
+        <div class="btn-group btn-group--primary">
+          <button class="btn active">Entire month</button>
+          <button class="btn">Week 1</button>
+          <button class="btn">Week 2</button>
+          <button class="btn">Week 3</button>
+          <button class="btn">Week 4</button>
+        </div>
+      </div>
+
+      <div>
+        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
+                  color:#9CA3AF;margin:0 0 8px;">Default btn-group for comparison (grey active)</p>
+        <div class="btn-group">
+          <button class="btn active">Daily</button>
+          <button class="btn">Cumulative</button>
+        </div>
+      </div>
+
+    </div>`,
+};
+
+/**
  * All group types side by side for a quick QA scan.
  */
 export const AllTypes = {
@@ -339,14 +405,14 @@ export const AllTypes = {
     controls: { disable: true },
     docs: {
       description: {
-        story: 'All 4 group patterns in one view for quick QA comparison.',
+        story: 'All group patterns in one view for quick QA comparison.',
       },
     },
   },
   render: () => `
     <div style="display:flex;flex-direction:column;gap:20px;">
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Default</span>
+        <span style="width:160px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Default</span>
         <div class="btn-group">
           <button class="btn">Years</button>
           <button class="btn">Months</button>
@@ -354,21 +420,28 @@ export const AllTypes = {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Only Icon</span>
+        <span style="width:160px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Primary (chart toggle)</span>
+        <div class="btn-group btn-group--primary">
+          <button class="btn active">Daily</button>
+          <button class="btn">Cumulative</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="width:160px;font:11px/1 sans-serif;color:var(--color-text-secondary);">Only Icon</span>
         <div class="btn-group">
           <button class="btn" style="padding:9px;" aria-label="Prev">${CHEVRON_LEFT}</button>
           <button class="btn" style="padding:9px;" aria-label="Next">${CHEVRON_RIGHT}</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">With stat</span>
+        <span style="width:160px;font:11px/1 sans-serif;color:var(--color-text-secondary);">With stat</span>
         <div class="btn-group">
           <button class="btn" style="gap:8px;padding:8px 16px;">${DOWNLOAD_ICON}<span>Download</span></button>
           <button class="btn" style="padding:8px 16px;"><span class="btn-group-stat-count">12k</span></button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="width:140px;font:11px/1 sans-serif;color:var(--color-text-secondary);">With dropdown</span>
+        <span style="width:160px;font:11px/1 sans-serif;color:var(--color-text-secondary);">With dropdown</span>
         <div class="btn-group">
           <button class="btn" style="padding:8px 16px;">Save changes</button>
           <button class="btn" style="padding:8px 9px;" aria-label="Bookmark">${BOOKMARK_ICON}</button>
