@@ -713,6 +713,11 @@ a:hover { text-decoration: underline; }
   color: #42389d;
   text-decoration: none;
 }
+/* sm modifier — compact chart toggles (~32px height vs default 40px) */
+.btn-group--sm .btn {
+  padding: 6px 12px;
+  font-size: var(--text-sm);
+}
 
 /* ── Social Buttons (Figma: Social buttons) ─────────────────────
    Sign-in with <Provider> — dark/white × outline/solid           */

@@ -345,13 +345,17 @@ export const Primary = {
     docs: {
       description: {
         story: `
-Add \`btn-group--primary\` to the container to switch the active state from grey to the brand purple tint.
+Add \`btn-group--primary\` for the brand purple active state.
+Add \`btn-group--sm\` for compact height (~32px vs default 40px) — typical for chart area toggles.
+Modifiers are independent and composable.
 
-**When to use:** the toggle directly controls a chart or visualisation — Daily/Cumulative, time-range pickers, KPI metric selectors.
-**When NOT to use:** standalone filter bars, toolbars, table-mode toggles → use the default \`btn-group\` (grey active).
+**When to use primary:** toggle directly controls a chart — Daily/Cumulative, time-range pickers, KPI metric selectors.
+**When to use sm:** toggle sits inside a card or chart area where full-size feels heavy.
+**Default btn-group** (no modifiers) → standalone filter bars, toolbars, table-mode toggles.
 
 \`\`\`html
-<div class="btn-group btn-group--primary">
+<!-- chart toggle: compact + purple -->
+<div class="btn-group btn-group--primary btn-group--sm">
   <button class="btn active">Daily</button>
   <button class="btn">Cumulative</button>
 </div>
@@ -365,8 +369,8 @@ Add \`btn-group--primary\` to the container to switch the active state from grey
 
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Chart mode toggle (2 segments)</p>
-        <div class="btn-group btn-group--primary">
+                  color:#9CA3AF;margin:0 0 8px;">Chart mode toggle — primary + sm</p>
+        <div class="btn-group btn-group--primary btn-group--sm">
           <button class="btn active">Daily</button>
           <button class="btn">Cumulative</button>
         </div>
@@ -374,8 +378,8 @@ Add \`btn-group--primary\` to the container to switch the active state from grey
 
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Time-range picker (5 segments)</p>
-        <div class="btn-group btn-group--primary">
+                  color:#9CA3AF;margin:0 0 8px;">Time-range picker — primary + sm (5 segments)</p>
+        <div class="btn-group btn-group--primary btn-group--sm">
           <button class="btn active">Entire month</button>
           <button class="btn">Week 1</button>
           <button class="btn">Week 2</button>
@@ -386,7 +390,16 @@ Add \`btn-group--primary\` to the container to switch the active state from grey
 
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Default btn-group for comparison (grey active)</p>
+                  color:#9CA3AF;margin:0 0 8px;">Primary only (standard 40px)</p>
+        <div class="btn-group btn-group--primary">
+          <button class="btn active">Daily</button>
+          <button class="btn">Cumulative</button>
+        </div>
+      </div>
+
+      <div>
+        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
+                  color:#9CA3AF;margin:0 0 8px;">Default (grey active, standard size)</p>
         <div class="btn-group">
           <button class="btn active">Daily</button>
           <button class="btn">Cumulative</button>
