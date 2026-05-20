@@ -75,11 +75,23 @@ Border-radius: **6px** on the container (not the standard 12px).
       description: 'Label for segment 3 (rightmost).',
       table: { category: 'Content', defaultValue: { summary: 'Days' } },
     },
+    // ── Appearance ───────────────────────────────────────────
+    primary: {
+      control: 'boolean',
+      description: 'Adds `btn-group--primary` — soft indigo active state for chart/visualisation toggles.',
+      table: { category: 'Appearance', defaultValue: { summary: false } },
+    },
+    size: {
+      control: 'select',
+      options: ['default', 'sm'],
+      description: '`sm` adds `btn-group--sm` — compact ~32px height for card/chart areas.',
+      table: { category: 'Appearance', defaultValue: { summary: 'default' } },
+    },
     // ── State ────────────────────────────────────────────────
     activeIndex: {
       control: 'select',
       options: [0, 1, 2],
-      description: 'Which segment (0-indexed) gets the `.active` class — bg #f3f4f6.',
+      description: 'Which segment (0-indexed) gets the `.active` class.',
       table: { category: 'State', defaultValue: { summary: 2 } },
     },
   },
@@ -87,6 +99,8 @@ Border-radius: **6px** on the container (not the standard 12px).
     seg1: 'Years',
     seg2: 'Months',
     seg3: 'Days',
+    primary: false,
+    size: 'default',
     activeIndex: 2,
   },
 };
@@ -124,25 +138,28 @@ const BOOKMARK_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 2
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: ({ seg1, seg2, seg3, activeIndex }) => `
-    <div class="btn-group">
+  render: ({ seg1, seg2, seg3, activeIndex, primary, size }) => {
+    const cls = ['btn-group', primary && 'btn-group--primary', size === 'sm' && 'btn-group--sm'].filter(Boolean).join(' ');
+    return `<div class="${cls}">
       <button class="btn${activeIndex === 0 ? ' active' : ''}">${seg1}</button>
       <button class="btn${activeIndex === 1 ? ' active' : ''}">${seg2}</button>
       <button class="btn${activeIndex === 2 ? ' active' : ''}">${seg3}</button>
-    </div>`,
+    </div>`;
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Use **seg1–seg3** to rename segments and **activeIndex** to change which segment is active.',
+        story: 'Configure all modifiers and content. Use **primary** + **size=sm** to match chart-area toggles.',
       },
       source: {
         transform: (_src, storyCtx) => {
           const a = storyCtx.args;
+          const cls = ['btn-group', a.primary && 'btn-group--primary', a.size === 'sm' && 'btn-group--sm'].filter(Boolean).join(' ');
           const segs = [a.seg1, a.seg2, a.seg3];
           const buttons = segs.map((seg, i) =>
             `  <button class="btn${i === a.activeIndex ? ' active' : ''}">${seg}</button>`
           ).join('\n');
-          return `<div class="btn-group">\n${buttons}\n</div>`;
+          return `<div class="${cls}">\n${buttons}\n</div>`;
         },
       },
     },
@@ -340,18 +357,21 @@ Figma specs: bg \`#111928\`, border-radius 4px, shadow-xs, arrow pointing down.
  */
 export const Primary = {
   name: 'Primary — chart & visualisation toggles',
+  args: { size: 'sm' },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['size'] },
     docs: {
       description: {
         story: `
 Add \`btn-group--primary\` for the brand purple active state.
-Add \`btn-group--sm\` for compact height (~32px vs default 40px) — typical for chart area toggles.
+Add \`btn-group--sm\` for compact ~32px height — typical for chart-area toggles.
 Modifiers are independent and composable.
 
 **When to use primary:** toggle directly controls a chart — Daily/Cumulative, time-range pickers, KPI metric selectors.
 **When to use sm:** toggle sits inside a card or chart area where full-size feels heavy.
-**Default btn-group** (no modifiers) → standalone filter bars, toolbars, table-mode toggles.
+**Default btn-group** (no modifiers) → filter bars, toolbars, table-mode toggles.
+
+Use the **size** control below to compare sm vs default height across all examples.
 
 \`\`\`html
 <!-- chart toggle: compact + purple -->
@@ -364,13 +384,15 @@ Modifiers are independent and composable.
       },
     },
   },
-  render: () => `
+  render: ({ size }) => {
+    const sm = size === 'sm' ? ' btn-group--sm' : '';
+    return `
     <div style="display:flex;flex-direction:column;gap:24px;">
 
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Chart mode toggle — primary + sm</p>
-        <div class="btn-group btn-group--primary btn-group--sm">
+                  color:#9CA3AF;margin:0 0 8px;">Chart mode toggle — primary${sm ? ' + sm' : ''}</p>
+        <div class="btn-group btn-group--primary${sm}">
           <button class="btn active">Daily</button>
           <button class="btn">Cumulative</button>
         </div>
@@ -378,8 +400,8 @@ Modifiers are independent and composable.
 
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Time-range picker — primary + sm (5 segments)</p>
-        <div class="btn-group btn-group--primary btn-group--sm">
+                  color:#9CA3AF;margin:0 0 8px;">Time-range picker — primary${sm ? ' + sm' : ''} (5 segments)</p>
+        <div class="btn-group btn-group--primary${sm}">
           <button class="btn active">Entire month</button>
           <button class="btn">Week 1</button>
           <button class="btn">Week 2</button>
@@ -390,23 +412,15 @@ Modifiers are independent and composable.
 
       <div>
         <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Primary only (standard 40px)</p>
-        <div class="btn-group btn-group--primary">
+                  color:#9CA3AF;margin:0 0 8px;">Default btn-group for comparison (grey)</p>
+        <div class="btn-group${sm}">
           <button class="btn active">Daily</button>
           <button class="btn">Cumulative</button>
         </div>
       </div>
 
-      <div>
-        <p style="font:10px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
-                  color:#9CA3AF;margin:0 0 8px;">Default (grey active, standard size)</p>
-        <div class="btn-group">
-          <button class="btn active">Daily</button>
-          <button class="btn">Cumulative</button>
-        </div>
-      </div>
-
-    </div>`,
+    </div>`;
+  },
 };
 
 /**
