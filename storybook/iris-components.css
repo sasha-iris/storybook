@@ -2686,7 +2686,40 @@ kbd.kbd-dark {
 }
 
 /* ── Iris Checkbox ────────────────────────────────────────────── */
-/* 16×16 px, border-radius 4 px. Span-based for full visual control. */
+/* 16×16 px, border-radius 4 px. Span-based for full visual control.
+
+   ── REACT/JSX PATTERN (use this for ALL checkbox items in dropdowns) ──
+
+   Single checkbox row (CheckRow component):
+   <label
+     className="iris-control"
+     style={{display:'flex',gap:'8px',alignItems:'flex-start',cursor:'pointer',width:'100%'}}
+     onClick={onClick}
+   >
+     <span className="iris-control__check" style={{marginTop:'2px'}}>
+       <span
+         className={`iris-checkbox${selected ? ' iris-checkbox--checked' : ''}`}
+         role="checkbox"
+         aria-checked={selected}
+       />
+     </span>
+     <span className="iris-control__body">
+       <span className="iris-control__label">{label}</span>
+     </span>
+   </label>
+
+   Dropdown container (multi-select filter menu):
+   <div className="dropdown-menu dropdown-menu--checkbox">
+     {options.map(opt => <CheckRow ... />)}
+     <hr className="dropdown-divider" />
+     <button className="btn btn-link btn-sm">Clear</button>
+   </div>
+
+   IMPORTANT:
+   - Never use <input type="checkbox"> — always use iris-checkbox span
+   - Never use Tailwind checkbox classes (checked:, accent-color, etc.)
+   - iris-checkbox--checked adds the purple fill + white checkmark via CSS
+   ─────────────────────────────────────────────────────────────────── */
 .iris-checkbox {
   display: inline-flex;
   align-items: center;
