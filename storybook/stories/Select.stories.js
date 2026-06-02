@@ -284,3 +284,92 @@ export const MultiselectVariants = {
     </div>`;
   },
 };
+
+/* ── Select with leading icon (filter/selector buttons) ────────────── */
+
+const ICON_CATEGORY = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM15 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM5 13a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z"/></svg>`;
+const ICON_LOCATION = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>`;
+const ICON_DOCUMENT = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>`;
+const ICON_LIGHTNING = `<svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0110 2v5H6a1 1 0 00-.82 1.573l6 8A1 1 0 0012 16v-5h4a1 1 0 00.82-1.573l-6-8a1 1 0 00-.82-.381z" clip-rule="evenodd"/></svg>`;
+
+export const SelectWithIcon = {
+  name: 'Select — with leading icon (filters)',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: `
+Filter/selector buttons with leading icon, label, and chevron down.
+
+**Structure:**
+\`\`\`html
+<div class="form-select-wrap">
+  <svg>...</svg>
+  <select>
+    <option>Option 1</option>
+    ...
+  </select>
+</div>
+\`\`\`
+
+Use with any icon from @heroicons/react/24/outline or custom SVG.
+        `,
+      },
+      source: {
+        language: 'html',
+        code: `<div class="form-select-wrap">
+  <svg>CategoryIcon</svg>
+  <select>
+    <option>Category 1</option>
+    <option>Category 2</option>
+  </select>
+</div>`,
+      },
+    },
+  },
+  render: () => `
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;">
+
+  <div>
+    <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Filter buttons with icons</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div class="form-select-wrap">
+        ${ICON_CATEGORY}
+        <select style="color:#111928;">
+          <option>Category</option>
+          <option>Electronics</option>
+          <option>Clothing</option>
+        </select>
+      </div>
+
+      <div class="form-select-wrap">
+        ${ICON_LOCATION}
+        <select style="color:#111928;">
+          <option>Location</option>
+          <option>NYC Store</option>
+          <option>Chicago WH</option>
+        </select>
+      </div>
+
+      <div class="form-select-wrap">
+        ${ICON_DOCUMENT}
+        <select style="color:#111928;">
+          <option>Cover</option>
+          <option>20 days</option>
+          <option>30 days</option>
+        </select>
+      </div>
+
+      <div class="form-select-wrap">
+        ${ICON_LIGHTNING}
+        <select style="color:#111928;">
+          <option>Demand</option>
+          <option>High</option>
+          <option>Low</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>`,
+};
