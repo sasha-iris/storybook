@@ -8,6 +8,13 @@
    Then use className="btn btn-primary btn-md" etc. directly
    instead of recreating styles with Tailwind classes.
 
+   IMPORTANT — FOR ALL NEW COMPONENTS:
+   This file is the single source of truth for all UI components.
+   Before creating any new component, check this file for existing
+   classes. Never recreate styles that already exist here.
+   Never use Tailwind utility classes on elements that have
+   Iris Library classes — Tailwind overrides Iris styles.
+
    Components: btn · btn-group · btn-social · btn-link ·
    btn-chart · btn-table · form-* · alert · avatar · badge ·
    breadcrumb · accordion · dropdown-* · modal-* · pagination ·
