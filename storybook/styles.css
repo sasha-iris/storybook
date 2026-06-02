@@ -3360,8 +3360,8 @@ kbd.kbd-dark {
 .iris-cal--dark .iris-cal__day { color: #ffffff; }
 .iris-cal__day:hover { background: #f3f4f6; }
 .iris-cal__day--today { font-weight: var(--font-semibold); }
-.iris-cal__day--selected { background: #1447e6; color: #ffffff; border-radius: 50%; }
-.iris-cal__day--selected:hover { background: #193cb8; border-radius: 50%; }
+.iris-cal__day--selected { background: #1447e6; color: #ffffff; border-radius: 8px; }
+.iris-cal__day--selected:hover { background: #193cb8; border-radius: 8px; }
 .iris-cal__day--range-selected { background: #42389d; color: #ffffff; }
 .iris-cal__day--in-range { background: #f3f4f6; border-radius: 0; }
 .iris-cal__day--muted { color: #9ca3af; }
