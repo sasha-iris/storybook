@@ -896,7 +896,7 @@ export const FilterSelectDropdown = {
     <span style="flex:1;text-align:left;">${label}</span>
     ${chevron}
   </button>
-  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:16px;display:flex;flex-direction:column;gap:12px;">
+  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute dropdown-menu--checkbox" style="width:100%;top:calc(100%+4px);left:0;">
     ${['Electronics', 'Clothing', 'Books', 'Accessories'].map((opt, i) => `
     <label class="iris-control" style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;width:100%;">
       <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox${i === 0 ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${i === 0}"></span></span>
@@ -931,7 +931,7 @@ export const FilterSelectStates = {
         <span style="flex:1;text-align:left;font-size:14px;">Category</span>
         ${CHEVRON_DOWN}
       </button>
-      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div class="dropdown-menu dropdown-menu--absolute dropdown-menu--checkbox" style="width:100%;top:calc(100%+4px);left:0;">
         ${['Electronics', 'Clothing', 'Books'].map(opt => `
         <label class="iris-control" style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;width:100%;">
           <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox" role="checkbox" aria-checked="false"></span></span>
@@ -949,7 +949,7 @@ export const FilterSelectStates = {
         <span style="flex:1;text-align:left;font-size:14px;">Location <strong>(2)</strong></span>
         ${CHEVRON_UP}
       </button>
-      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div class="dropdown-menu dropdown-menu--absolute dropdown-menu--checkbox" style="width:100%;top:calc(100%+4px);left:0;">
         ${[['NYC Store', true], ['Chicago WH', true], ['LA DC', false]].map(([opt, checked]) => `
         <label class="iris-control" style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;width:100%;">
           <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>

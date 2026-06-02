@@ -1625,6 +1625,22 @@ input[type="file"].form-file-input {
 .dropdown-menu--right { left: auto; right: 0; }
 
 /* Dark mode — Figma bg=#374151 (gray-700) */
+/* Checkbox menu — Figma Type=Checkbox */
+.dropdown-menu--checkbox {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dropdown-menu--checkbox .iris-control {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+  width: 100%;
+}
+.dropdown-menu--checkbox .iris-control__check { margin-top: 2px; }
+
 .dropdown-menu--dark { background: #374151; }
 
 /* ── Section label ───────────────────────────────────────────── */

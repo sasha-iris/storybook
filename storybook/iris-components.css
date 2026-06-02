@@ -1167,6 +1167,39 @@ input[type="file"].form-file-input {
 .dropdown-menu-right,
 .dropdown-menu--right { left: auto; right: 0; }
 
+/* Checkbox menu — Figma Type=Checkbox (node 3283:21147)
+   Use for multi-select filter dropdowns with iris-checkbox items.
+   Outer padding 16px, gap 12px between items.
+   Items have NO individual padding — padding comes from menu container.
+   Example:
+   <div class="dropdown-menu dropdown-menu--checkbox">
+     <label class="iris-control">
+       <span class="iris-control__check">
+         <span class="iris-checkbox [iris-checkbox--checked]"></span>
+       </span>
+       <span class="iris-control__body">
+         <span class="iris-control__label">Option</span>
+       </span>
+     </label>
+     <hr class="dropdown-divider">
+     <button class="btn btn-link btn-sm">Clear</button>
+   </div>
+*/
+.dropdown-menu--checkbox {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dropdown-menu--checkbox .iris-control {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+  width: 100%;
+}
+.dropdown-menu--checkbox .iris-control__check { margin-top: 2px; }
+
 /* Dark mode — Figma bg=#374151 (gray-700) */
 .dropdown-menu--dark { background: #374151; }
 
