@@ -1387,8 +1387,11 @@ input[type="file"].form-file-input {
   background: transparent;
   border-color: var(--color-border-base); /* #e5e7eb */
   color: var(--color-bg-dark);            /* #1e2939 */
+  gap: 8px;
 }
 .dropdown-trigger--outline:hover { background: var(--color-bg-muted); }
+/* Chevron down (last icon) always goes to the right */
+.dropdown-trigger--outline svg:last-child { margin-left: auto; }
 /* Icons inside any dropdown trigger are always 16px — no inline sizing needed */
 .dropdown-trigger svg { width: 16px; height: 16px; flex-shrink: 0; }
 
