@@ -1873,8 +1873,9 @@ input[type="file"].form-file-input {
 .dropdown-trigger--outline:hover { background: var(--color-bg-muted); }
 /* Chevron down (last icon) always goes to the right */
 .dropdown-trigger--outline svg:last-child { margin-left: auto; }
-/* Icons inside dropdown triggers */
-.dropdown-trigger svg { width: 18px; height: 18px; flex-shrink: 0; }
+/* Icons inside dropdown triggers and outline filter buttons — always 18px */
+.dropdown-trigger svg,
+.btn-outline-gray svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 /* =============================================
    MODAL
