@@ -3415,9 +3415,9 @@ kbd.kbd-dark {
 .iris-cal--dark .iris-cal__day { color: #ffffff; }
 .iris-cal__day:hover { background: #f3f4f6; }
 .iris-cal__day--today { font-weight: var(--font-semibold); }
-/* Single selected */
-.iris-cal__day--selected { background: #1447e6; color: #ffffff; }
-.iris-cal__day--selected:hover { background: #193cb8; }
+/* Single selected — circle */
+.iris-cal__day--selected { background: #1447e6; color: #ffffff; border-radius: 50%; }
+.iris-cal__day--selected:hover { background: #193cb8; border-radius: 50%; }
 /* Range selected */
 .iris-cal__day--range-selected { background: #42389d; color: #ffffff; }
 /* In range (between start and end) */
