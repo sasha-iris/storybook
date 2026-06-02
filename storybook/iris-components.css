@@ -1405,6 +1405,29 @@ input[type="file"].form-file-input {
   font-size: var(--text-xs); font-weight: var(--font-medium);
   border-width: 1px;
 }
+/* ── WHEN TO USE WHICH DROPDOWN PATTERN ────────────────────────
+
+   1. FILTER BUTTON with popover (dropdown-trigger--outline)
+      USE WHEN: multi-select filter above a table/list
+      - User picks multiple values (Category: Electronics + Clothing)
+      - Shows count badge when active: "Category (2)"
+      - Stays open while selecting multiple items
+      - Examples: Category, Location, Cover, Demand filters
+      Pattern: btn btn-outline-gray btn-sm + Popover + checkboxes inside
+
+   2. REGULAR SELECT (form-select)
+      USE WHEN: single-value picker, one selection at a time
+      - User picks ONE option and menu closes
+      - Simple list without checkboxes
+      - Examples: "All Channels", "All Time", status filter
+      Pattern: <select class="form-select"> or Shadcn Select
+      Border-radius: 8px (radius-md) — NOT 12px like buttons
+
+   KEY DIFFERENCE:
+   - Multi-select + stays open + badge count → dropdown-trigger--outline
+   - Single-select + closes on pick → form-select
+   ──────────────────────────────────────────────────────────── */
+
 /* Outline (secondary) trigger */
 .dropdown-trigger--outline {
   background: transparent;

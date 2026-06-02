@@ -836,27 +836,36 @@ export const FilterSelectDropdown = {
     docs: {
       description: {
         story: `
-Filter/selector dropdown button. Use \`dropdown-trigger dropdown-trigger--outline\` classes.
+**Multi-select filter button** — opens a popover with checkboxes. Use above tables and lists when users need to filter by multiple values simultaneously.
+
+✅ **Use this when:**
+- User can select multiple values (Category: Electronics + Clothing)
+- Shows count badge when active: "Category (2)"
+- Menu stays open while selecting
+- Examples: Category, Location, Cover, Demand, Days of cover
+
+❌ **Use \`form-select\` instead when:**
+- User picks ONE value and menu closes immediately
+- Simple single-select (All Channels, All Time, status)
+- Border-radius 8px, not 12px
+
+---
 
 **Specs (Figma):**
 - Height: 36px (\`btn-sm\`)
-- Icon size: 16px (\`w-4 h-4\` in React)
-- Border: 1px solid \`#e5e7eb\`
-- Hover background: \`var(--color-bg-muted)\`
-- Chevron: down by default, up when open
-
-**CSS classes:**
-\`\`\`
-dropdown-trigger dropdown-trigger--outline
-\`\`\`
+- Icon: 16px (\`w-4 h-4\` in React)
+- Border: 1px solid \`#e5e7eb\`, radius 12px
+- Hover: \`var(--color-bg-muted)\`
+- Chevron flips when open
 
 **React pattern:**
 \`\`\`jsx
 <button className="btn btn-outline-gray btn-sm">
   <SomeIcon className="w-4 h-4" />
-  Label
+  {label}{count > 0 && \` (\${count})\`}
   <ChevronDownIcon className="w-4 h-4" />
 </button>
+// Inside popover: checkboxes list
 \`\`\`
         `,
       },
@@ -885,12 +894,15 @@ dropdown-trigger dropdown-trigger--outline
     <span style="flex:1;text-align:left;font-size:var(--text-sm);">${label}</span>
     ${chevron}
   </button>
-  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
-    ${[
-      item({ label: 'Option 1', active: false, chevron: false }),
-      item({ label: 'Option 2', active: false, chevron: false }),
-      item({ label: 'Option 3', active: false, chevron: false }),
-    ].join('')}
+  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
+    ${['Electronics', 'Clothing', 'Books', 'Accessories'].map((opt, i) => `
+    <label style="display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--color-text-heading);font-family:inherit;">
+      <input type="checkbox" class="form-check-input" ${i === 0 ? 'checked' : ''}
+        style="width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--color-brand-primary);">
+      ${opt}
+    </label>`).join('')}
+    <div class="dropdown-divider" style="margin:4px 0;"></div>
+    <button class="btn btn-link btn-sm" style="width:100%;text-align:center;">Clear</button>
   </div>` : ''}
 </div>`;
   },
@@ -918,30 +930,32 @@ export const FilterSelectStates = {
         <span style="flex:1;text-align:left;font-size:14px;">Category</span>
         ${CHEVRON_DOWN}
       </button>
-      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
-        ${[
-          item({ label: 'Electronics', active: false, chevron: false }),
-          item({ label: 'Clothing', active: false, chevron: false }),
-          item({ label: 'Books', active: false, chevron: false }),
-        ].join('')}
+      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
+        ${['Electronics', 'Clothing', 'Books'].map(opt => `
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--color-text-heading);font-family:inherit;">
+          <input type="checkbox" class="form-check-input" style="width:16px;height:16px;flex-shrink:0;accent-color:var(--color-brand-primary);">
+          ${opt}
+        </label>`).join('')}
       </div>
     </div>
   </div>
 
   <div>
-    <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Hovered (chevron up)</p>
+    <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Open — 2 selected</p>
     <div style="position:relative;width:220px;">
       <button class="dropdown-trigger dropdown-trigger--outline" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;background:var(--color-bg-muted);">
         ${ICON_LOCATION}
-        <span style="flex:1;text-align:left;font-size:14px;">Location</span>
+        <span style="flex:1;text-align:left;font-size:14px;">Location <strong>(2)</strong></span>
         ${CHEVRON_UP}
       </button>
-      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
-        ${[
-          item({ label: 'NYC Store', active: true, chevron: false }),
-          item({ label: 'Chicago WH', chevron: false }),
-          item({ label: 'LA DC', chevron: false }),
-        ].join('')}
+      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
+        ${[['NYC Store', true], ['Chicago WH', true], ['LA DC', false]].map(([opt, checked]) => `
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--color-text-heading);font-family:inherit;">
+          <input type="checkbox" class="form-check-input" ${checked ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;accent-color:var(--color-brand-primary);">
+          ${opt}
+        </label>`).join('')}
+        <div class="dropdown-divider" style="margin:4px 0;"></div>
+        <button class="btn btn-link btn-sm" style="width:100%;text-align:center;">Clear</button>
       </div>
     </div>
   </div>
