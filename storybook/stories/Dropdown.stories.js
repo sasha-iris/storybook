@@ -894,14 +894,13 @@ export const FilterSelectDropdown = {
     <span style="flex:1;text-align:left;font-size:var(--text-sm);">${label}</span>
     ${chevron}
   </button>
-  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
+  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
     ${['Electronics', 'Clothing', 'Books', 'Accessories'].map((opt, i) => `
-    <label style="display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--color-text-heading);font-family:inherit;">
-      <input type="checkbox" class="form-check-input" ${i === 0 ? 'checked' : ''}
-        style="width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--color-brand-primary);">
-      ${opt}
+    <label class="iris-control" style="display:flex;gap:8px;align-items:center;padding:8px 16px;cursor:pointer;width:100%;">
+      <span class="iris-control__check"><span class="iris-checkbox${i === 0 ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${i === 0}"></span></span>
+      <span class="iris-control__body"><span class="iris-control__label">${opt}</span></span>
     </label>`).join('')}
-    <div class="dropdown-divider" style="margin:4px 0;"></div>
+    <hr class="dropdown-divider">
     <button class="btn btn-link btn-sm" style="width:100%;text-align:center;">Clear</button>
   </div>` : ''}
 </div>`;
@@ -930,11 +929,11 @@ export const FilterSelectStates = {
         <span style="flex:1;text-align:left;font-size:14px;">Category</span>
         ${CHEVRON_DOWN}
       </button>
-      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
+      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
         ${['Electronics', 'Clothing', 'Books'].map(opt => `
-        <label style="display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--color-text-heading);font-family:inherit;">
-          <input type="checkbox" class="form-check-input" style="width:16px;height:16px;flex-shrink:0;accent-color:var(--color-brand-primary);">
-          ${opt}
+        <label class="iris-control" style="display:flex;gap:8px;align-items:center;padding:8px 16px;cursor:pointer;width:100%;">
+          <span class="iris-control__check"><span class="iris-checkbox" role="checkbox" aria-checked="false"></span></span>
+          <span class="iris-control__body"><span class="iris-control__label">${opt}</span></span>
         </label>`).join('')}
       </div>
     </div>
@@ -950,11 +949,11 @@ export const FilterSelectStates = {
       </button>
       <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
         ${[['NYC Store', true], ['Chicago WH', true], ['LA DC', false]].map(([opt, checked]) => `
-        <label style="display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--color-text-heading);font-family:inherit;">
-          <input type="checkbox" class="form-check-input" ${checked ? 'checked' : ''} style="width:16px;height:16px;flex-shrink:0;accent-color:var(--color-brand-primary);">
-          ${opt}
+        <label class="iris-control" style="display:flex;gap:8px;align-items:center;padding:8px 16px;cursor:pointer;width:100%;">
+          <span class="iris-control__check"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
+          <span class="iris-control__body"><span class="iris-control__label">${opt}</span></span>
         </label>`).join('')}
-        <div class="dropdown-divider" style="margin:4px 0;"></div>
+        <hr class="dropdown-divider">
         <button class="btn btn-link btn-sm" style="width:100%;text-align:center;">Clear</button>
       </div>
     </div>
