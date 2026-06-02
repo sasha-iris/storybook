@@ -785,8 +785,9 @@ Trigger bg: brand/900 \`#362f78\` · ring: indigo/200 \`#cddbfe\` (3px border) �
 
 /* ── Filter Select Dropdown with outline icon ──────────────────────── */
 
-const ICON_CATEGORY_OUTLINE = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4"/><rect x="13" y="3" width="4" height="4"/><rect x="3" y="13" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/></svg>`;
-const ICON_LOCATION_OUTLINE = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2a5 5 0 015 5c0 3-5 10-5 10s-5-7-5-10a5 5 0 015-5z"/><circle cx="10" cy="8" r="2" fill="currentColor"/></svg>`;
+/* Heroicons @24/outline */
+const ICON_CATEGORY = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h0c0-.621.504-1.125 1.125-1.125m17.25 0a1.125 1.125 0 0 0 1.125-1.125m0-3.750h-15m16.5-1.125a1.125 1.125 0 0 0-1.125-1.125XXXX3.75m1.125 1.125L2.25 12m15.75-7.5h-15m0 1.125a1.125 1.125 0 0 1-1.125-1.125M2.25 4.5H21.75a2.25 2.25 0 0 1 2.25 2.25v10.5A2.25 2.25 0 0 1 21.75 19.5H2.25A2.25 2.25 0 0 1 0 17.25V6.75A2.25 2.25 0 0 1 2.25 4.5Z" /></svg>`;
+const ICON_LOCATION = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>`;
 
 export const FilterSelectDropdown = {
   name: 'Filter Select — with outline icon & menu',
@@ -813,7 +814,7 @@ export const FilterSelectDropdown = {
     <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Default state</p>
     <div style="position:relative;width:220px;">
       <button class="dropdown-trigger dropdown-trigger--outline" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;">
-        ${ICON_CATEGORY_OUTLINE}
+        ${ICON_CATEGORY}
         <span style="flex:1;text-align:left;font-size:14px;">Category</span>
         ${CHEVRON_DOWN}
       </button>
@@ -834,7 +835,7 @@ export const FilterSelectDropdown = {
     <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Hovered (chevron up)</p>
     <div style="position:relative;width:220px;">
       <button class="dropdown-trigger dropdown-trigger--outline" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;background:var(--color-bg-muted);">
-        ${ICON_LOCATION_OUTLINE}
+        ${ICON_LOCATION}
         <span style="flex:1;text-align:left;font-size:14px;">Location</span>
         ${CHEVRON_UP}
       </button>
