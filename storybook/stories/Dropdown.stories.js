@@ -797,6 +797,17 @@ export const FilterSelectDropdown = {
       description: 'Button label text',
       table: { category: 'Content', defaultValue: { summary: 'Category' } },
     },
+    showIcon: {
+      control: 'boolean',
+      description: 'Show leading icon on the left',
+      table: { category: 'Content', defaultValue: { summary: true } },
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'md'],
+      description: '`sm` = 36px height, 16px icons · `md` = 40px height, 18px icons',
+      table: { category: 'Appearance', defaultValue: { summary: 'sm' } },
+    },
     open: {
       control: 'boolean',
       description: 'Open state — chevron flips up, background turns muted',
@@ -815,6 +826,8 @@ export const FilterSelectDropdown = {
   },
   args: {
     label: 'Category',
+    showIcon: true,
+    size: 'sm',
     open: false,
     active: false,
     showMenu: false,
@@ -860,14 +873,16 @@ dropdown-trigger dropdown-trigger--outline
     },
   },
   render: (args) => {
-    const { label, open, active, showMenu } = args;
+    const { label, showIcon, size, open, active, showMenu } = args;
+    const iconSizePx = size === 'md' ? 18 : 16;
     const bg = open || active ? 'background:var(--color-bg-muted);' : '';
     const chevron = open ? CHEVRON_UP : CHEVRON_DOWN;
+    const icon = ICON_CATEGORY.replace(/width="\d+"/, `width="${iconSizePx}"`).replace(/height="\d+"/, `height="${iconSizePx}"`);
     return `
 <div style="position:relative;width:220px;">
   <button class="dropdown-trigger dropdown-trigger--outline${active ? ' active' : ''}" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;${bg}">
-    ${ICON_CATEGORY}
-    <span style="flex:1;text-align:left;font-size:14px;">${label}</span>
+    ${showIcon !== false ? icon : ''}
+    <span style="flex:1;text-align:left;font-size:var(--text-sm);">${label}</span>
     ${chevron}
   </button>
   ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
