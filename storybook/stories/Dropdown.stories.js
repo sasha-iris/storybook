@@ -790,20 +790,105 @@ const ICON_CATEGORY = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewB
 const ICON_LOCATION = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>`;
 
 export const FilterSelectDropdown = {
-  name: 'Filter Select — with outline icon & menu',
+  name: 'Filter Select — Interactive (Controls)',
+  argTypes: {
+    label: {
+      control: 'text',
+      description: 'Button label text',
+      table: { category: 'Content', defaultValue: { summary: 'Category' } },
+    },
+    open: {
+      control: 'boolean',
+      description: 'Open state — chevron flips up, background turns muted',
+      table: { category: 'State', defaultValue: { summary: false } },
+    },
+    active: {
+      control: 'boolean',
+      description: 'Active/selected state — button highlighted with brand color',
+      table: { category: 'State', defaultValue: { summary: false } },
+    },
+    showMenu: {
+      control: 'boolean',
+      description: 'Show dropdown menu below the button',
+      table: { category: 'State', defaultValue: { summary: false } },
+    },
+  },
+  args: {
+    label: 'Category',
+    open: false,
+    active: false,
+    showMenu: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Filter/selector dropdown button. Use \`dropdown-trigger dropdown-trigger--outline\` classes.
+
+**Specs (Figma):**
+- Height: 36px (\`btn-sm\`)
+- Icon size: 16px (\`w-4 h-4\` in React)
+- Border: 1px solid \`#e5e7eb\`
+- Hover background: \`var(--color-bg-muted)\`
+- Chevron: down by default, up when open
+
+**CSS classes:**
+\`\`\`
+dropdown-trigger dropdown-trigger--outline
+\`\`\`
+
+**React pattern:**
+\`\`\`jsx
+<button className="btn btn-outline-gray btn-sm">
+  <SomeIcon className="w-4 h-4" />
+  Label
+  <ChevronDownIcon className="w-4 h-4" />
+</button>
+\`\`\`
+        `,
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const { label, open } = ctx.args;
+          return `<button class="dropdown-trigger dropdown-trigger--outline${open ? ' open' : ''}">
+  <svg width="16" height="16"><!-- icon --></svg>
+  ${label}
+  <svg width="16" height="16"><!-- ${open ? 'ChevronUp' : 'ChevronDown'} --></svg>
+</button>`;
+        },
+      },
+    },
+  },
+  render: (args) => {
+    const { label, open, active, showMenu } = args;
+    const bg = open || active ? 'background:var(--color-bg-muted);' : '';
+    const chevron = open ? CHEVRON_UP : CHEVRON_DOWN;
+    return `
+<div style="position:relative;width:220px;">
+  <button class="dropdown-trigger dropdown-trigger--outline${active ? ' active' : ''}" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;${bg}">
+    ${ICON_CATEGORY}
+    <span style="flex:1;text-align:left;font-size:14px;">${label}</span>
+    ${chevron}
+  </button>
+  ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
+    ${[
+      item({ label: 'Option 1', active: false, chevron: false }),
+      item({ label: 'Option 2', active: false, chevron: false }),
+      item({ label: 'Option 3', active: false, chevron: false }),
+    ].join('')}
+  </div>` : ''}
+</div>`;
+  },
+};
+
+/* ── Filter Select Gallery — states ───────────────────────────── */
+export const FilterSelectStates = {
+  name: 'Filter Select — all states',
   parameters: {
     controls: { disable: true },
     docs: {
       description: {
-        story: `Filter/selector buttons with leading outline icon + dropdown menu. Shows default and hovered states with chevron flipping and menu open below.`,
-      },
-      source: {
-        language: 'html',
-        code: `<button class="dropdown-trigger dropdown-trigger--outline">
-  <svg>CategoryIcon</svg>
-  Category
-  <svg>ChevronDown</svg>
-</button>`,
+        story: 'All states of the filter dropdown button: default, open (chevron up), active (selection made), with menu open.',
       },
     },
   },
