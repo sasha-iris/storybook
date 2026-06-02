@@ -1419,6 +1419,18 @@ input[type="file"].form-file-input {
 /* Icons inside dropdown triggers — always 18px */
 .dropdown-trigger svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+/* ── REACT/TAILWIND NOTE ────────────────────────────────────────
+   In React components, icon size MUST be set via className, not CSS.
+   Always use: className="w-[18px] h-[18px]" on Icon and ChevronDown.
+   Pattern for ALL filter/selector dropdown buttons:
+
+   <button className="btn btn-outline-gray btn-sm">
+     <SomeIcon className="w-[18px] h-[18px]" />
+     Label
+     <ChevronDownIcon className="w-[18px] h-[18px]" />
+   </button>
+   ──────────────────────────────────────────────────────────── */
+
 /* =============================================
    MODAL
    Source: Figma › ---- Modals
