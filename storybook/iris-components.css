@@ -3,10 +3,11 @@
    Source: Figma ZKtEULdYKaXe5uQl1J6ijI (Iris Library)
 
    HOW TO USE IN LOVABLE:
-   Paste this entire file into your project's global CSS
-   (index.css / global.css), AFTER iris-recolor.css.
-   Then use className="btn btn-primary btn-md" etc. directly
-   instead of recreating styles with Tailwind classes.
+   1. Add :root block from iris-tokens.css to END of src/index.css
+   2. Add full contents of this file to END of src/index.css
+   3. Add "@layer iris;" after @tailwind directives at top of src/index.css
+   DO NOT replace src/index.css — only append to it.
+   All component styles are in @layer iris — always wins over Tailwind.
 
    IMPORTANT — FOR ALL NEW COMPONENTS:
    This file is the single source of truth for all UI components.
@@ -123,6 +124,9 @@
   --color-dropdown-icon-danger:       #f05252;
   --color-dropdown-disabled-selected: #b4c6fc;
 }
+
+
+@layer iris {
 
 /* Base — font only */
 body { font-family: var(--font-family-base); -webkit-font-smoothing: antialiased; }
@@ -3532,4 +3536,6 @@ kbd.kbd-dark {
   color: #6b7280;
   text-align: center;
   font-family: var(--font-family-base);
+}
+
 }
