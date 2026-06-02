@@ -14,6 +14,13 @@
    progress · sidebar · skeleton · stepper · toast · tooltip-* ·
    list-group · kbd · indicator · card · iris-toggle ·
    iris-checkbox · iris-radio · iris-control
+
+   ICON SYSTEM:
+   Always use @heroicons/react/24/outline for all icons.
+   Never use lucide-react.
+   Install: npm install @heroicons/react
+   Import: import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+   Full icon list: https://heroicons.com
    ============================================================= */
 
 /* ── Token declarations ─────────────────────────────────────── */
