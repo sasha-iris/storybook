@@ -1408,7 +1408,7 @@ input[type="file"].form-file-input {
 /* Outline (secondary) trigger */
 .dropdown-trigger--outline {
   background: transparent;
-  border-color: var(--color-border-base); /* #e5e7eb */
+  border: 1px solid var(--color-border-base); /* #e5e7eb */
   color: var(--color-bg-dark);            /* #1e2939 */
   gap: 8px;
 }

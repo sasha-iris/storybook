@@ -821,9 +821,9 @@ export const FilterSelectDropdown = {
         ${section({
           label: 'SELECT CATEGORY',
           items: [
-            item({ label: 'Electronics', active: false }),
-            item({ label: 'Clothing', active: false }),
-            item({ label: 'Books', active: false }),
+            item({ label: 'Electronics', active: false, chevron: false }),
+            item({ label: 'Clothing', active: false, chevron: false }),
+            item({ label: 'Books', active: false, chevron: false }),
           ].join(''),
         })}
       </div>
@@ -842,9 +842,9 @@ export const FilterSelectDropdown = {
         ${section({
           label: 'SELECT LOCATION',
           items: [
-            item({ label: 'NYC Store', active: true }),
-            item({ label: 'Chicago WH' }),
-            item({ label: 'LA DC' }),
+            item({ label: 'NYC Store', active: true, chevron: false }),
+            item({ label: 'Chicago WH', chevron: false }),
+            item({ label: 'LA DC', chevron: false }),
           ].join(''),
         })}
       </div>
