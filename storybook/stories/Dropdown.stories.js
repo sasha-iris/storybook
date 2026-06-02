@@ -782,6 +782,77 @@ Trigger bg: brand/900 \`#362f78\` · ring: indigo/200 \`#cddbfe\` (3px border) �
 </div>`,
 };
 
+/* ── Filter Select Dropdown with outline icon ──────────────────────── */
+
+const ICON_CATEGORY_OUTLINE = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4"/><rect x="13" y="3" width="4" height="4"/><rect x="3" y="13" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/></svg>`;
+const ICON_LOCATION_OUTLINE = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2a5 5 0 015 5c0 3-5 10-5 10s-5-7-5-10a5 5 0 015-5z"/><circle cx="10" cy="8" r="2" fill="currentColor"/></svg>`;
+
+export const FilterSelectDropdown = {
+  name: 'Filter Select — with outline icon & menu',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: `Filter/selector buttons with leading outline icon + dropdown menu. Shows default and hovered states with chevron flipping and menu open below.`,
+      },
+      source: {
+        language: 'html',
+        code: `<button class="dropdown-trigger dropdown-trigger--outline">
+  <svg>CategoryIcon</svg>
+  Category
+  <svg>ChevronDown</svg>
+</button>`,
+      },
+    },
+  },
+  render: () => `
+<div style="display:flex;gap:40px;align-items:flex-start;">
+
+  <div>
+    <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Default state</p>
+    <div style="position:relative;width:220px;">
+      <button class="dropdown-trigger dropdown-trigger--outline" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;">
+        ${ICON_CATEGORY_OUTLINE}
+        <span style="flex:1;text-align:left;font-size:14px;">Category</span>
+        ${CHEVRON_DOWN}
+      </button>
+      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
+        ${section({
+          label: 'SELECT CATEGORY',
+          items: [
+            item({ label: 'Electronics', active: false }),
+            item({ label: 'Clothing', active: false }),
+            item({ label: 'Books', active: false }),
+          ].join(''),
+        })}
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;">Hovered (chevron up)</p>
+    <div style="position:relative;width:220px;">
+      <button class="dropdown-trigger dropdown-trigger--outline" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;background:var(--color-bg-muted);">
+        ${ICON_LOCATION_OUTLINE}
+        <span style="flex:1;text-align:left;font-size:14px;">Location</span>
+        ${CHEVRON_UP}
+      </button>
+      <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
+        ${section({
+          label: 'SELECT LOCATION',
+          items: [
+            item({ label: 'NYC Store', active: true }),
+            item({ label: 'Chicago WH' }),
+            item({ label: 'LA DC' }),
+          ].join(''),
+        })}
+      </div>
+    </div>
+  </div>
+
+</div>`,
+};
+
 /* ── Outline trigger (light filter/selector buttons) ────────────── */
 
 export const OutlineTrigger = {
