@@ -70,6 +70,33 @@ function selectInput(args) {
   </div>`;
 }
 
+// ─── Filter Select Input with leading outline icon ──────────────────────────────
+function filterSelectInput(args) {
+  const { state = 'default', value = 'Category', icon = '' } = args;
+  const isDisabled = state === 'disabled';
+  const isError    = state === 'error';
+  const isHovered  = state === 'hovered';
+
+  const border = isError ? C.borderError : isHovered ? C.borderHover : isDisabled ? C.borderDisabled : C.borderDef;
+  const textColor = isDisabled ? C.valueDisabled : isError ? C.errorText : C.value;
+  const chevronColor = isDisabled ? C.borderDisabled : C.chevron;
+  const iconColor = isDisabled ? C.borderDisabled : C.chevron;
+  const opacity = isDisabled ? '0.7' : '1';
+
+  const errorMsg = isError ? `<div style="font-size:12px;color:${C.errorText};margin-top:4px;font-family:inherit;">Error text.</div>` : '';
+
+  return `<div style="opacity:${opacity};font-family:inherit;">
+    <div style="display:flex;align-items:center;gap:8px;height:40px;padding:0 10px;
+      background:${C.inputBg};border:1px solid ${border};border-radius:8px;
+      box-sizing:border-box;cursor:${isDisabled ? 'not-allowed' : 'pointer'};">
+      <span style="width:18px;height:18px;flex-shrink:0;color:${iconColor};display:flex;align-items:center;justify-content:center;">${icon}</span>
+      <span style="flex:1;min-width:0;font-size:14px;color:${textColor};font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${value}</span>
+      ${isHovered ? icnChevronUp(chevronColor) : icnChevronDown(chevronColor)}
+    </div>
+    ${errorMsg}
+  </div>`;
+}
+
 // ─── Multiselect (10071:67527) ────────────────────────────────────────────────
 function multiselect(args) {
   const { state = 'default', showLabel = true, showHelper = true, selectedValues = [] } = args;
@@ -372,4 +399,47 @@ Use with any icon from @heroicons/react/24/outline or custom SVG.
   </div>
 
 </div>`,
+};
+
+/* ── Filter Select Input — all states ──────────────────────────────────────── */
+
+const ICON_CAT_OUT = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="4" height="4"/><rect x="13" y="3" width="4" height="4"/><rect x="3" y="13" width="4" height="4"/><rect x="13" y="13" width="4" height="4"/></svg>`;
+const ICON_LOC_OUT = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2a5 5 0 015 5c0 3-5 10-5 10s-5-7-5-10a5 5 0 015-5z"/><circle cx="10" cy="8" r="2" fill="currentColor"/></svg>`;
+const ICON_DOC_OUT = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h7.172A2 2 0 0112 3.172v11.656A2 2 0 0110 16H4a2 2 0 01-2-2V4a2 2 0 012-2zm4 5h5m-5 3h5"/></svg>`;
+const ICON_PWR_OUT = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 1l5 9h-3l-4 8-1-8H6l5-9z"/></svg>`;
+
+export const FilterSelectVariants = {
+  name: 'Select — filter with icon (all states)',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: `Filter/selector buttons with leading outline icon, showing all 4 states: default, hovered, disabled, error. Inherits All States styling but with outline icons.`,
+      },
+      source: {
+        language: 'html',
+        code: `<div class="form-select-wrap">
+  <svg>CategoryIcon</svg>
+  <select>
+    <option>Category</option>
+    ...
+  </select>
+</div>`,
+      },
+    },
+  },
+  render: () => {
+    const states = [
+      { state: 'default',  label: 'Default',  icon: ICON_CAT_OUT,  value: 'Category' },
+      { state: 'hovered',  label: 'Hovered',  icon: ICON_LOC_OUT,  value: 'Location' },
+      { state: 'disabled', label: 'Disabled', icon: ICON_DOC_OUT,  value: 'Cover' },
+      { state: 'error',    label: 'Error',    icon: ICON_PWR_OUT,  value: 'Demand' },
+    ];
+    return `<div style="display:grid;grid-template-columns:repeat(4,220px);gap:16px;font-family:inherit;">
+      ${states.map(s => `<div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;font-family:inherit;">${s.label}</div>
+        ${filterSelectInput({ ...s })}
+      </div>`).join('')}
+    </div>`;
+  },
 };
