@@ -1425,9 +1425,9 @@ input[type="file"].form-file-input {
    Pattern for ALL filter/selector dropdown buttons:
 
    <button className="btn btn-outline-gray btn-sm">
-     <SomeIcon className="w-[18px] h-[18px]" />
+     <SomeIcon className="w-4 h-4" />   {/* 16px — Figma sm button icon size */}
      Label
-     <ChevronDownIcon className="w-[18px] h-[18px]" />
+     <ChevronDownIcon className="w-4 h-4" />
    </button>
    ──────────────────────────────────────────────────────────── */
 
