@@ -1846,7 +1846,8 @@ input[type="file"].form-file-input {
   color: var(--color-bg-dark);            /* #1e2939 */
 }
 .dropdown-trigger--outline:hover { background: var(--color-bg-muted); }
-
+/* Icons inside any dropdown trigger are always 16px — no inline sizing needed */
+.dropdown-trigger svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 /* =============================================
    MODAL
