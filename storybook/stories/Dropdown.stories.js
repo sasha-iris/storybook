@@ -883,21 +883,23 @@ export const FilterSelectDropdown = {
   },
   render: (args) => {
     const { label, showIcon, size, open, active, showMenu } = args;
-    const iconSizePx = size === 'md' ? 18 : 16;
+    const isSm = size !== 'md';
+    const iconSizePx = isSm ? 16 : 18;
+    const sizeClass = isSm ? ' dropdown-trigger--sm' : '';
     const bg = open || active ? 'background:var(--color-bg-muted);' : '';
     const chevron = open ? CHEVRON_UP : CHEVRON_DOWN;
     const icon = ICON_CATEGORY.replace(/width="\d+"/, `width="${iconSizePx}"`).replace(/height="\d+"/, `height="${iconSizePx}"`);
     return `
 <div style="position:relative;width:220px;">
-  <button class="dropdown-trigger dropdown-trigger--outline${active ? ' active' : ''}" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;${bg}">
+  <button class="dropdown-trigger dropdown-trigger--outline${sizeClass}${active ? ' active' : ''}" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;${bg}">
     ${showIcon !== false ? icon : ''}
-    <span style="flex:1;text-align:left;font-size:var(--text-sm);">${label}</span>
+    <span style="flex:1;text-align:left;">${label}</span>
     ${chevron}
   </button>
   ${showMenu ? `<div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
     ${['Electronics', 'Clothing', 'Books', 'Accessories'].map((opt, i) => `
-    <label class="iris-control" style="display:flex;gap:8px;align-items:center;padding:8px 16px;cursor:pointer;width:100%;">
-      <span class="iris-control__check"><span class="iris-checkbox${i === 0 ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${i === 0}"></span></span>
+    <label class="iris-control" style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
+      <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox${i === 0 ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${i === 0}"></span></span>
       <span class="iris-control__body"><span class="iris-control__label">${opt}</span></span>
     </label>`).join('')}
     <hr class="dropdown-divider">
@@ -931,8 +933,8 @@ export const FilterSelectStates = {
       </button>
       <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;">
         ${['Electronics', 'Clothing', 'Books'].map(opt => `
-        <label class="iris-control" style="display:flex;gap:8px;align-items:center;padding:8px 16px;cursor:pointer;width:100%;">
-          <span class="iris-control__check"><span class="iris-checkbox" role="checkbox" aria-checked="false"></span></span>
+        <label class="iris-control" style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
+          <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox" role="checkbox" aria-checked="false"></span></span>
           <span class="iris-control__body"><span class="iris-control__label">${opt}</span></span>
         </label>`).join('')}
       </div>
@@ -949,8 +951,8 @@ export const FilterSelectStates = {
       </button>
       <div class="dropdown-menu dropdown-menu--absolute" style="width:100%;top:calc(100%+4px);left:0;padding:4px 0;">
         ${[['NYC Store', true], ['Chicago WH', true], ['LA DC', false]].map(([opt, checked]) => `
-        <label class="iris-control" style="display:flex;gap:8px;align-items:center;padding:8px 16px;cursor:pointer;width:100%;">
-          <span class="iris-control__check"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
+        <label class="iris-control" style="display:flex;gap:8px;align-items:flex-start;padding:8px 16px;cursor:pointer;width:100%;">
+          <span class="iris-control__check" style="margin-top:2px;"><span class="iris-checkbox${checked ? ' iris-checkbox--checked' : ''}" role="checkbox" aria-checked="${checked}"></span></span>
           <span class="iris-control__body"><span class="iris-control__label">${opt}</span></span>
         </label>`).join('')}
         <hr class="dropdown-divider">
