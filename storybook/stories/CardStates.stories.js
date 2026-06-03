@@ -63,7 +63,10 @@ All states use the same \`.card\` shell — only the body content changes. The c
 
 **✅ Do** — keep card height identical across all states to prevent layout shift.
 **❌ Don't** — use a spinner instead of skeleton for loading (causes size jump).
-**❌ Don't** — show an empty state and an error state with the same message.`,
+**❌ Don't** — show an empty state and an error state with the same message.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

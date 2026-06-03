@@ -137,6 +137,8 @@ export default {
 
 ### Border-radius note
 These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--radius-xl, 16px)\` used by the \`.card\` CSS class in Card/Basics. Inline styles are used here for Figma parity.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

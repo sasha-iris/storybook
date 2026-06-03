@@ -100,6 +100,8 @@ Five distinct types — all light mode only:
 - \`Icon\` — 24×24 blue circle with a check mark. Marks a completed step.
 - \`Stepper\` — 24×24 outer ring (#bedbff) with 12×12 inner dot (var(--color-primary)). Active/pending step in a stepper.
 - \`Badge\` — pill shape (h=22, br=99). Green = available, red = unavailable.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

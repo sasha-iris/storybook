@@ -318,6 +318,8 @@ export default {
 - Input text or placeholder
 - Clear × button (shown when value present)
 - Helper/caption text — \`font-size:12px\`, color varies by state
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

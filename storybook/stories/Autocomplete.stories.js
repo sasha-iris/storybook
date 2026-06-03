@@ -179,6 +179,8 @@ export default {
 - **Result row — Default**: search icon + label
 - **Result row — Advanced**: category icon + label + dismiss × (active) or navigate → (typing)
 - **CTA row** (With CTA state): \`var(--color-border-default)\` divider + plus icon + action label in \`var(--color-primary)\`
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

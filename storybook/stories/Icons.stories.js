@@ -110,6 +110,8 @@ No extras, no speculative additions.
 | Datepicker icons | Datepicker (chevron-left/right stroke, calendar stroke) |
 | ListGroup icons | ListGroup (user-circle, adjustments, inbox, cloud-download — stroke 16×16) |
 | Modal icons | Modal (close ×, exclamation amber, mail stroke, lock stroke, question-circle stroke) |
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

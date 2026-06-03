@@ -332,7 +332,10 @@ All three states from Figma node \`10007:72664\`:
            margin-bottom:-1px;background:transparent;">
     Reports
   </button>
-</div>`,
+</div>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
         language: 'html',
       },
     },

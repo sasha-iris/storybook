@@ -64,7 +64,9 @@ Social sign-in buttons — provider icon + text, 2 color modes, 2 outline modes,
 \`\`\`
 
 > **Note:** Border-radius is **8px** on social buttons, not the standard 12px.
-      `,
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

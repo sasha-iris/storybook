@@ -263,7 +263,10 @@ Period column headers (time-series, e.g. months):
 - \`Blue\` uniquely changes the cell background to \`#ebf5ff\` — other options inherit row bg
 - Editing state text reverts to \`#111928\` (not blue) — verify with designer intent
 - \`$\` currency symbol must match value text colour in every option
-- Bold header (600) vs regular (500): check visual weight difference in the type column story`,
+- Bold header (600) vs regular (500): check visual weight difference in the type column story
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

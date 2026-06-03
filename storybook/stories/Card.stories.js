@@ -85,7 +85,10 @@ It provides the border, background, border-radius, and \`overflow:hidden\` clip.
 - For full-width embedded components (list groups, tables), set
   \`border-left:none; border-right:none\` on the inner component to remove doubled borders.
 - Card width is set by the **parent container**, not the card itself.
-  Recommended: \`max-width:380px\` for standalone; \`1fr\` grid for grids.`,
+  Recommended: \`max-width:380px\` for standalone; \`1fr\` grid for grids.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

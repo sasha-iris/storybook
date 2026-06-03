@@ -460,7 +460,10 @@ export const Default = {
         code: `<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">
   <!-- Logo -->
   <!-- Nav items — active: bg:var(--color-border-default); color:#42389d; aria-current="page" -->
-</aside>`,
+</aside>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
         language: 'html',
       },
     },

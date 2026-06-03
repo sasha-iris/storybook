@@ -189,7 +189,10 @@ Use these for any foreground text, icons, or labels.
 .warning-msg  { color: var(--color-text-fg-warning); }
 
 /* Disabled */
-.label--disabled { color: var(--color-text-fg-disabled); }`,
+.label--disabled { color: var(--color-text-fg-disabled); }
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
         language: 'css',
       },
     },

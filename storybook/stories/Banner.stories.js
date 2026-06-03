@@ -160,6 +160,8 @@ export default {
 **Responsiveness** — At tablet/mobile breakpoints the layout stacks vertically and buttons become full-width. The banner always spans 100% of the viewport width.
 
 **Accessibility** — Use \`role="banner"\` on the root element (only once per page — it maps to the HTML \`<header>\` landmark). Dismiss buttons require \`aria-label="Dismiss"\`. Banners should not use \`role="alert"\` — they are persistent, not time-sensitive.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

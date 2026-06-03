@@ -457,7 +457,10 @@ Informational modal — Figma: \`Type=Info\`. Presents legal or consent content 
   <div class="modal-footer">
     <button class="btn btn-primary btn-md">I accept</button>
   </div>
-</div>`,
+</div>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

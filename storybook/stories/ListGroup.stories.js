@@ -102,6 +102,8 @@ export default {
 - Container: \`bg:var(--color-text-primary)\`, \`border:#4b5563\`
 - Dividers: \`#4b5563\`
 - Text + icons: \`var(--color-bg-white)\`
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

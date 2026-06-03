@@ -284,7 +284,10 @@ Pagination with ≤ 5 pages — all page numbers shown, no ellipsis. Figma: \`Si
       <button class="page-link" aria-label="Next page"><!-- chevron-right --></button>
     </li>
   </ul>
-</nav>`,
+</nav>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

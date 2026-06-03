@@ -6,7 +6,10 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: `**Stepper** — coming soon. No active design usage identified at this time.`,
+        component: `**Stepper** — coming soon. No active design usage identified at this time.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
     controls: { disable: true },

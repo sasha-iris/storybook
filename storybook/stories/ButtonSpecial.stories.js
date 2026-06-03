@@ -69,7 +69,9 @@ Two compact utility button patterns used inside chart toolbars and data tables.
 \`\`\`
 
 These are NOT general-purpose buttons — purpose-built for dense UI contexts.
-      `,
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

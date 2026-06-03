@@ -162,7 +162,10 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 - Verify smooth color progression: lightest (#f0f5ff) → darkest (#362f78)
 - Text contrast at 50% (#8da2fb badge): dark text (#111928) — confirm legibility
 - At 60% (#6875f5 badge): flips to white — check no intermediate step is missed
-- All rows: white background (var(--color-bg-white)), no zebra striping`,
+- All rows: white background (var(--color-bg-white)), no zebra striping
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

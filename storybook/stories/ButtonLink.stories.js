@@ -65,7 +65,9 @@ three sizes, optional left icon.
   Sign In
 </a>
 \`\`\`
-      `,
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

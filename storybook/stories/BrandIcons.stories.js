@@ -35,7 +35,9 @@ export default {
   <path d="M12 4.5V19.5M19.5 12L4.5 12"/>
 </svg>
 \`\`\`
-`,
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
     controls: { disable: true },

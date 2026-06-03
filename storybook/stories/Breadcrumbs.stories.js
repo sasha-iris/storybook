@@ -291,7 +291,10 @@ Default breadcrumb — Figma: \`Type=Default\` (node \`3284:24211\`).
     </li>
 
   </ol>
-</nav>`,
+</nav>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

@@ -288,7 +288,10 @@ Uses \`.accordion\` wrapper. Active item gets \`.accordion-item.open\` — heade
     </div>
   </div>
 
-</div>`,
+</div>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
       },
     },
   },

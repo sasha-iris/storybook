@@ -54,6 +54,8 @@ Segmented button groups — joined segments sharing a single border line.
 \`\`\`
 
 Border-radius: **6px** on the container (not the standard 12px).
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

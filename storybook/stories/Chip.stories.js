@@ -94,6 +94,8 @@ Filter chips for interactive selections — removable tags attached to filters, 
 
 **Colors** — 10 themes: light (default), dark, and 8 semantic colors.
 **States** — default, hover, disabled (opacity + muted text/bg).
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

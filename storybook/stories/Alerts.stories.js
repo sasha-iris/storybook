@@ -110,6 +110,8 @@ export default {
 - \`light\` — white background with subtle shadow, accent-colored text; use on colored page backgrounds
 
 **Accessibility** — the alert container uses \`role="alert"\` so screen readers announce it immediately. The dismiss button has \`aria-label="Dismiss"\`. Avoid triggering \`role="alert"\` on page load — reserve it for dynamic updates.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

@@ -116,6 +116,8 @@ Use them to let users turn features on/off or choose from a set of options.
 - **Helper text** (12px/400, gray/500) — optional secondary description
 - **Destructive variant** — red palette for dangerous or error states
 - **Disabled variant** — muted palette; \`pointer-events:none\`
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

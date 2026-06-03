@@ -229,7 +229,10 @@ Tokens map to \`--text-h1\` through \`--text-caption\` in \`styles.css\`.
 <!-- Label / hint -->
 <span style="font-size: var(--text-caption); color: var(--color-text-fg-disabled);">
   Required field
-</span>`,
+</span>
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        `,
         language: 'html',
       },
     },

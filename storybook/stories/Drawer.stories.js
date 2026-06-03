@@ -271,6 +271,8 @@ export default {
 - Complex multi-step flows → use a full page or wizard
 - Critical destructive actions → use a **Modal** with explicit confirmation
 - Simple one-field inputs → use an inline form
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

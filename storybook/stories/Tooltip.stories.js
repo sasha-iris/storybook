@@ -74,6 +74,8 @@ export default {
 \`[arrow] [title] [divider] [body]\` — title + body combination; use the \`title\`-only pattern for short single-line labels.
 
 **Colors**: \`dark\` (default) suits most page backgrounds; \`white\` suits dark-background contexts or when the tooltip sits on a dark card.
+
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },
