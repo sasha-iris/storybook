@@ -5,13 +5,17 @@
 
 ## ✅ Completed This Session
 
-### 1. Added Three-Tier Code Snippets to Button Story
-- **HTML Container** — Copy-paste ready HTML code
-- **React Container** — JSX element version
-- **Component (с событиями)** — Full React component with onClick, label, disabled props
-- Dynamic code generation via render function
-- Copy buttons with "Copied!" feedback (green for 2 sec)
-- All tested locally before pushing
+### 1. Added Three-Tier Code Snippets to Button, Badge & ProgressBar
+- **Button** ✅ — 3 containers: HTML, React, Component (With Events)
+  - Signature: `Button({ label, onClick, disabled })`
+  
+- **Badge** ✅ — 3 containers: HTML, React, Component (With Events)
+  - Signature: `Badge({ label, color, size, icon, onDismiss })`
+  
+- **ProgressBar** ✅ — 3 containers: HTML, React, Component (With Events)
+  - Signature: `ProgressBar({ value, color, labelBelow })`
+
+All use dynamic code generation, Copy buttons with feedback, English-only labels
 
 ### 2. GitHub Worktrees Issue Fixed
 - Worktrees were being accidentally committed to git
@@ -76,16 +80,15 @@ const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;
 
 ## 🎯 Next Steps (Priority Order)
 
-### Immediate (Same Session Possible)
-1. **Add 3-tier code to Badge.stories.js**
-   - Same pattern as Button
-   - Component signature: `Badge({ label, color = "primary" })`
-   - Build and test locally
+### ✅ Completed
+1. ✅ **Badge.stories.js** — 3-tier code added
+2. ✅ **ProgressBar.stories.js** — 3-tier code added
 
-2. **Add 3-tier code to ProgressBar.stories.js**
-   - Same pattern as Button
-   - Component signature: `ProgressBar({ progress = 50, height = "4px" })`
-   - Build and test locally
+### Immediate (High Priority)
+1. **Add 3-tier code to remaining core components**
+   - Card, Tabs, Modal, Dropdown, Pagination, etc.
+   - Total ~38 more components
+   - Can batch 5-10 per session
 
 ### Medium Priority
 3. **Apply pattern to remaining components**
@@ -128,13 +131,14 @@ git push
 
 | File | Purpose | Last Updated |
 |------|---------|---|
-| Button.stories.js | 3-tier code + controls | ✅ 2026-06-03 |
-| Badge.stories.js | 2-tier code + controls | ⏳ needs update |
-| ProgressBar.stories.js | 2-tier code + controls | ⏳ needs update |
+| Button.stories.js | ✅ 3-tier code + controls | 2026-06-03 |
+| Badge.stories.js | ✅ 3-tier code + controls | 2026-06-03 |
+| ProgressBar.stories.js | ✅ 3-tier code + controls | 2026-06-03 |
 | styles.css | Foundation tokens + component CSS | ✅ synced |
 | iris-components.css | Lovable export version | ✅ synced |
 | SETUP.md | Installation guide (English) | ✅ complete |
 | storybook-static/ | Built files for Pages | ✅ deployed |
+| .gitignore | Excludes .claude/worktrees/ | ✅ added |
 
 ## 🚀 Deploy Workflow
 
@@ -144,10 +148,27 @@ git push
 4. **Commit + Push** → git commit -m "..." && git push
 5. **Wait 1-2 min** → GitHub Actions rebuilds Pages
 
-## 📝 Notes
+## 📝 Rules & Standards
 
-- All code is English in stories/docs (no Russian in code)
-- Russian communication only in this session log
+**Code Quality:**
+- ✅ **English ONLY in code** — no Russian text in JSX, HTML, or variable names
+- Labels like "Component (With Events)" — never "Component (с событиями)"
+- All comments, strings, classNames in English
+
+**Code Patterns:**
 - Foundation tokens are source of truth for colors
 - Copy buttons use neutral gray (#f3f4f6), not brand colors
 - Component event handlers show production patterns
+- Template literals use proper `${}` syntax
+
+**Testing Before Push:**
+- Local: `npm run storybook` on localhost
+- Build: `npm run build-storybook` (must show "✓ built in Xs")
+- Verify: no SyntaxError in console
+- Commit: git commit with descriptive message
+- Push: git push to origin/main
+
+**Session Continuity:**
+- This log updated after each major batch
+- Allows seamless handoff to another account
+- All next steps documented for immediate continuation
