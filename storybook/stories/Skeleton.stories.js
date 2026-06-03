@@ -193,7 +193,7 @@ Skeleton blocks come in two weights: \`var(--color-border-default)\` (darker, us
 and \`var(--color-border-default)\` (lighter, used for body text). Both support an optional shimmer animation.
 The \`animated\` prop should be disabled when \`prefers-reduced-motion: reduce\` is detected.
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

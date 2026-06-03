@@ -22,7 +22,7 @@ export default {
 
 **Available icons**: Facebook, LinkedIn, YouTube, TikTok, Pinterest, Snapchat, Google, Google Ads, Amazon, Shopify, eBay, Stripe, PayPal, Plaid, QuickBooks, Xero, NetSuite, SPS Commerce
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
 `,
       },
     },

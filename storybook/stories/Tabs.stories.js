@@ -49,7 +49,7 @@ export default {
 - **Active indicator** — 2 px bottom border in brand purple (\`#42389d\`) on the active tab
 - **Tab bar** — container row with a 1 px bottom separator (\`var(--color-border-default)\`)
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

@@ -103,7 +103,7 @@ export default {
 - Dividers: \`#4b5563\`
 - Text + icons: \`var(--color-bg-white)\`
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

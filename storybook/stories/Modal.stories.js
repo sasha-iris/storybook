@@ -302,7 +302,7 @@ Pop-up and With forms types have no \`.modal-title\` in the header — only the 
 - Close button: \`aria-label="Close dialog"\`
 - Keyboard: Escape closes; Tab cycles within the dialog (trap focus in JS)
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

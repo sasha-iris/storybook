@@ -83,7 +83,7 @@ Scheduled-report card for the Iris Finance reporting dashboard. Shows report con
 > **Note:** This card is **not** the same as \`.card\`. It has no base border,
 > uses \`border-radius: 12px\` (not 16px), and its own toggle + chip sub-components.
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

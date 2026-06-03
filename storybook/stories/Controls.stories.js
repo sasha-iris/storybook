@@ -117,7 +117,7 @@ Use them to let users turn features on/off or choose from a set of options.
 - **Destructive variant** — red palette for dangerous or error states
 - **Disabled variant** — muted palette; \`pointer-events:none\`
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

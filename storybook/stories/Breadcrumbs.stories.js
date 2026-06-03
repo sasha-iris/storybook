@@ -127,7 +127,7 @@ The last item is always the current page — it carries \`aria-current="page"\` 
 - Current item: \`aria-current="page"\` on a \`<span>\` inside \`.breadcrumb-item.active\`
 - Separator chevrons: \`aria-hidden="true"\` on \`.breadcrumb-sep\`
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

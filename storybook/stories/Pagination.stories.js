@@ -138,7 +138,7 @@ The current page has \`.page-item.active\` + \`aria-current="page"\`. Disabled p
 - Active page button has \`aria-current="page"\`
 - Disabled prev/next have \`disabled\` + \`aria-disabled="true"\`
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

@@ -130,7 +130,7 @@ Figma source: component set \`2370:20939\`.
 - \`role="region"\` + \`aria-labelledby\` on every \`.accordion-body\` panel
 - Keyboard: Tab focuses headers; Enter/Space toggles open/closed
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

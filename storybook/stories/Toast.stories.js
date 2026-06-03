@@ -171,7 +171,7 @@ The \`cta\` flag switches from the compact single-line layout to the expanded la
 | \`push\` | Incoming message / social notification |
 | \`interactive\` | Prompt requiring an immediate decision (update, confirm) |
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

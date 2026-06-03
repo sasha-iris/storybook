@@ -377,7 +377,7 @@ The chart type (\`property3\`) and trend direction (\`property2\`) are the two F
 - Bar chart: 14 bars, 3px wide, border-radius 32px, bar at index 6 = lighter shade
 - Line chart: height 69–70px, flush to card bottom, absolutely positioned
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

@@ -149,7 +149,7 @@ export function MyComponent() {
 Named scale: \`--text-{role}\` → \`--text-h1\`, \`--text-body-2\`, \`--text-caption\`
 Weight tokens: \`--font-{weight-name}\` → \`--font-bold\`, \`--font-semibold\`
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

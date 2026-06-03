@@ -350,7 +350,7 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
 - Sub-items: 28px left indent, no icon, \`#111928\` text
 - Active item requires \`aria-current="page"\` for accessibility
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

@@ -125,7 +125,7 @@ export function MyComponent() {
 - Don't use accent colors for regular text without WCAG contrast check
 - Don't use legacy color names (\`--color-primary\`, \`--color-danger\`) — they're being replaced
 
-        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
