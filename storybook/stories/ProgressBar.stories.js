@@ -24,7 +24,7 @@
 
 export default {
   title: 'Iris Library/Progress Bar',
-  tags: ['autodocs', 'stable'],
+  tags: ['stable'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'white' },
