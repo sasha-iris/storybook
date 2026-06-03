@@ -214,6 +214,9 @@ export const Interactive = {
       reactCode = `<button className="${classes}"${dis}>${left}\n  <span>${a.label}</span>${right}\n</button>`;
     }
 
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
@@ -223,19 +226,26 @@ export const Interactive = {
           <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button onclick="navigator.clipboard.writeText(\`${htmlCode.replace(/`/g, '\\`')}\`)" style="padding:8px 16px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;">📋 Copy HTML</button>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 16px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;">📋 Copy HTML</button>
           </div>
           <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button onclick="navigator.clipboard.writeText(\`${reactCode.replace(/`/g, '\\`')}\`)" style="padding:8px 16px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;">📋 Copy React</button>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 16px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;">📋 Copy React</button>
           </div>
         </div>
       </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+          });
+        });
+      </script>
     `;
   },
   parameters: {
