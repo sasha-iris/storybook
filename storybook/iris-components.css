@@ -961,7 +961,13 @@ input[type="file"].form-file-input {
 .badge-outline-yellow   { background: transparent; border-color: #C27803; color: #C27803; }
 .badge-outline-purple   { background: transparent; border-color: #7E3AF2; color: #7E3AF2; }
 
-/* Two-line metric chip — use with a color variant: badge badge-red badge--metric */
+/* Two-line metric chip — use with a color variant: badge badge-red badge--metric
+   Structure: <span class="badge badge-red badge--metric">
+     <span class="badge--metric__icon"><!-- icon -->Label</span>
+     <span class="badge--metric__sub">value</span>
+   </span>
+   Without icon, just put label directly (no __icon wrapper).
+*/
 .badge--metric {
   flex-direction: column;
   align-items: center;
@@ -973,6 +979,11 @@ input[type="file"].form-file-input {
   white-space: nowrap;
   text-align: center;
   border-radius: var(--radius-md);
+}
+.badge--metric__icon {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 .badge--metric__sub {
   font-size: 10px;

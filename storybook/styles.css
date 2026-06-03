@@ -1452,6 +1452,11 @@ input[type="file"].form-file-input {
   text-align: center;
   border-radius: var(--radius-md);
 }
+.badge--metric__icon {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
 .badge--metric__sub {
   font-size: 10px;
   font-weight: var(--font-normal);
