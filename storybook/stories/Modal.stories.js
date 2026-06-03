@@ -192,14 +192,14 @@ function modalWithForms({ size = 'sm', darkMode = false, showOverlay = true } = 
         <span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
         Remember me
       </label>
-      <a href="#" style="font-size:var(--text-sm);color:var(--color-interactive-primary);text-decoration:none;">Lost Password?</a>
+      <a href="#" style="font-size:var(--text-sm);color:var(--color-primary);text-decoration:none;">Lost Password?</a>
     </div>
 
     <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;margin-bottom:12px;">
       Create account
     </button>
     <p style="text-align:center;font-size:var(--text-sm);margin:0;">
-      <a href="#" style="color:var(--color-interactive-primary);font-weight:var(--font-medium);text-decoration:none;">Not registered? Create account</a>
+      <a href="#" style="color:var(--color-primary);font-weight:var(--font-medium);text-decoration:none;">Not registered? Create account</a>
     </p>
   </div>
 </div>`;
@@ -546,12 +546,12 @@ Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from
       <label style="display:flex;align-items:center;gap:8px;">
         <input type="checkbox"> Remember me
       </label>
-      <a href="#" style="color:var(--color-interactive-primary);">Lost Password?</a>
+      <a href="#" style="color:var(--color-primary);">Lost Password?</a>
     </div>
 
     <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">Create account</button>
     <p style="text-align:center;margin-top:12px;">
-      <a href="#" style="color:var(--color-interactive-primary);">Not registered? Create account</a>
+      <a href="#" style="color:var(--color-primary);">Not registered? Create account</a>
     </p>
   </div>
 </div>`,

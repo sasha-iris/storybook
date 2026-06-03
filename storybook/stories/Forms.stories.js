@@ -12,7 +12,7 @@ const C = {
   help:       '#6b7280',
   inputBg:    'var(--color-bg-tertiary)',
   borderDef:  'var(--color-border-default)',
-  borderFocus:'var(--color-interactive-primary)',
+  borderFocus:'var(--color-primary)',
   borderOk:   '#0e9f6e',
   borderErr:  '#f05252',
   captionOk:  '#057a55',
@@ -21,7 +21,7 @@ const C = {
   tagText:    '#4b5563',
   btnDark:    '#1f2a37',
   btnBlue:    '#1447e6',
-  sendBlue:   'var(--color-interactive-primary)',
+  sendBlue:   'var(--color-primary)',
   toolbarBg:  'var(--color-bg-tertiary)',
   footerBg:   'var(--color-bg-tertiary)',
   dragBorder: 'var(--color-border-default)',
@@ -37,7 +37,7 @@ const icnChevronDown = (c='#6b7280') => `<svg width="18" height="18" viewBox="0 
 const icnCloud = (c='var(--color-border-light)') => `<svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M13 28a7 7 0 0 1 0-14 7 7 0 0 1 6.5-4.4A7 7 0 0 1 28 14.7 6 6 0 1 1 28 27H13Z" stroke="${c}" stroke-width="1.5"/><path d="M20 32v-8M17 27l3-3 3 3" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const icnPhoto = (c='#6b7280') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="${c}" stroke-width="1.5"/><circle cx="8" cy="10" r="2" stroke="${c}" stroke-width="1.5"/><path d="m2 17 5-4 4 3 3-3 5 4" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
 const icnEmoji = (c='#6b7280') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="${c}" stroke-width="1.5"/><path d="M8.5 14.5s1 2 3.5 2 3.5-2 3.5-2" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="10" r="1" fill="${c}"/><circle cx="15" cy="10" r="1" fill="${c}"/></svg>`;
-const icnPlane = (c='var(--color-interactive-primary)') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const icnPlane = (c='var(--color-primary)') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const icnBold = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3h4.5a3 3 0 0 1 0 6H5V3ZM5 9h5a3 3 0 0 1 0 6H5V9Z" stroke="${c}" stroke-width="1.5"/></svg>`;
 const icnItalic = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3H7M9 13H6M9 3 7 13" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const icnLink = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6.5 9.5a3.54 3.54 0 0 0 5 0l2-2a3.54 3.54 0 0 0-5-5L7 4M9.5 6.5a3.54 3.54 0 0 0-5 0L2.5 8.5a3.54 3.54 0 0 0 5 5L9 12" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
@@ -360,13 +360,13 @@ export const Interactive = {
   render: (args) => {
     const a = args;
     const h = a.size === 'small' ? 37 : a.size === 'large' ? 52 : 42;
-    const border = a.fieldState === 'error' ? '#f05252' : a.fieldState === 'success' ? '#0e9f6e' : a.fieldState === 'typing' || a.fieldState === 'active' ? 'var(--color-interactive-primary)' : 'var(--color-border-default)';
+    const border = a.fieldState === 'error' ? '#f05252' : a.fieldState === 'success' ? '#0e9f6e' : a.fieldState === 'typing' || a.fieldState === 'active' ? 'var(--color-primary)' : 'var(--color-border-default)';
 
     const htmlCode = `<div style="margin-bottom:16px;">\n  <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:4px;">First name</label>\n  <input type="text"\n    style="height:${h}px;border-color:${border};padding:0 12px;width:100%;background:var(--color-bg-tertiary);border:1px solid;border-radius:8px;"\n    placeholder="Enter your first name"\n    ${a.fieldState === 'disabled' ? 'disabled' : ''}\n  />\n  <p style="font-size:var(--text-xs);color:#6b7280;margin-top:4px;">Helper text</p>\n</div>`;
 
     const reactCode = `<div style={{ marginBottom: '16px' }}>\n  <label style={{ fontWeight: 'var(--font-medium)' }}>First name</label>\n  <input\n    type="text"\n    value={name}\n    onChange={(e) => setName(e.target.value)}\n    placeholder="Enter your first name"\n    style={{\n      height: '${h}px',\n      borderColor: '${border}',\n      borderRadius: '8px',\n    }}\n    disabled={${a.fieldState === 'disabled'}}\n  />\n  <p style={{ fontSize: 'var(--text-xs)' }}>Helper text</p>\n</div>`;
 
-    const componentCode = `export function FormField({ label, value, onChange, fieldState = 'default', size = 'regular', disabled = false }) {\n  const h = size === 'small' ? 37 : size === 'large' ? 52 : 42;\n  const borderColor = fieldState === 'error' ? '#f05252' : fieldState === 'success' ? '#0e9f6e' : fieldState === 'active' ? 'var(--color-interactive-primary)' : 'var(--color-border-default)';\n\n  return (\n    <div style={{ marginBottom: '16px' }}>\n      <label style={{ fontWeight: 'var(--font-medium)' }}>{label}</label>\n      <input\n        type="text"\n        value={value}\n        onChange={(e) => onChange?.(e.target.value)}\n        style={{\n          height: h,\n          borderColor: borderColor,\n          width: '100%',\n          padding: '0 12px',\n          borderRadius: '8px',\n        }}\n        disabled={disabled}\n      />\n    </div>\n  );\n}`;
+    const componentCode = `export function FormField({ label, value, onChange, fieldState = 'default', size = 'regular', disabled = false }) {\n  const h = size === 'small' ? 37 : size === 'large' ? 52 : 42;\n  const borderColor = fieldState === 'error' ? '#f05252' : fieldState === 'success' ? '#0e9f6e' : fieldState === 'active' ? 'var(--color-primary)' : 'var(--color-border-default)';\n\n  return (\n    <div style={{ marginBottom: '16px' }}>\n      <label style={{ fontWeight: 'var(--font-medium)' }}>{label}</label>\n      <input\n        type="text"\n        value={value}\n        onChange={(e) => onChange?.(e.target.value)}\n        style={{\n          height: h,\n          borderColor: borderColor,\n          width: '100%',\n          padding: '0 12px',\n          borderRadius: '8px',\n        }}\n        disabled={disabled}\n      />\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -455,7 +455,7 @@ export const AllStates = {
 <div><input style="border:1px solid var(--color-border-default);" /></div>
 
 <!-- Focus / typing -->
-<div><input style="border:1px solid var(--color-interactive-primary);" /></div>
+<div><input style="border:1px solid var(--color-primary);" /></div>
 
 <!-- Success -->
 <div><input style="border:1px solid #0e9f6e;" /></div>
@@ -541,8 +541,8 @@ export const FloatingLabels = {
 </div>
 
 <!-- Border bottom — active (label floated) -->
-<div style="border-bottom:2px solid var(--color-interactive-primary);padding:6px 0 8px;">
-  <div style="font-size:12px;font-weight:500;color:var(--color-interactive-primary);">Placeholder text</div>
+<div style="border-bottom:2px solid var(--color-primary);padding:6px 0 8px;">
+  <div style="font-size:12px;font-weight:500;color:var(--color-primary);">Placeholder text</div>
   <span style="color:#111928;font-size:14px;">Typing |</span>
 </div>`,
       },

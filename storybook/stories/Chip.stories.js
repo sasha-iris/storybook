@@ -20,7 +20,7 @@
  * red:    #e7000b / var(--color-bg-white) / var(--color-bg-secondary) / #9f0712 / #ffa2a2 / var(--color-bg-white)
  * orange: #d03801 / var(--color-bg-white) / var(--color-bg-secondary) / #8a2c0d / #fdba8c / var(--color-bg-white)
  * teal:   #009689 / var(--color-bg-white) / var(--color-bg-secondary) / #005f59 / #46ecd5 / var(--color-bg-white)
- * blue:   var(--color-interactive-primary) / var(--color-bg-white) / var(--color-bg-secondary) / #193cb8 / #8ec5ff / var(--color-bg-white)
+ * blue:   var(--color-primary) / var(--color-bg-white) / var(--color-bg-secondary) / #193cb8 / #8ec5ff / var(--color-bg-white)
  * purple: #9810fa / var(--color-bg-white) / var(--color-bg-secondary) / #6e11b0 / #dab2ff / var(--color-bg-white)
  * pink:   #e60076 / var(--color-bg-white) / var(--color-bg-secondary) / #a3004c / #fda5d5 / var(--color-bg-white)
  */

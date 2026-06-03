@@ -9,12 +9,12 @@
  * ## Indicator types (from Figma)
  * Default        — 12×12 dot + label text (legend / status row)
  * Count          — 24×24 circle #f05252 with number (notification badge)
- * Icon           — 24×24 circle var(--color-interactive-primary) with check icon
- * Stepper        — outer 24×24 #bedbff + inner 12×12 var(--color-interactive-primary)
+ * Icon           — 24×24 circle var(--color-primary) with check icon
+ * Stepper        — outer 24×24 #bedbff + inner 12×12 var(--color-primary)
  * Badge          — pill h=22 br=99 (available / unavailable status)
  *
  * ## Legend colors (node 110:22652)
- * blue:   var(--color-interactive-primary)
+ * blue:   var(--color-primary)
  * purple: #9061f9
  * indigo: #6875f5
  * teal:   #00bba7
@@ -25,7 +25,7 @@
  */
 
 const LEGEND_COLORS = {
-  blue:   'var(--color-interactive-primary)',
+  blue:   'var(--color-primary)',
   purple: '#9061f9',
   indigo: '#6875f5',
   teal:   '#00bba7',
@@ -39,7 +39,7 @@ const BADGE_VARIANTS = {
 // Check icon — 16×16 stroke
 const CHECK_SVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
 
-function dotIndicator({ label = 'Indicator text', dotColor = 'var(--color-interactive-primary)' }) {
+function dotIndicator({ label = 'Indicator text', dotColor = 'var(--color-primary)' }) {
   return `<span style="display:inline-flex;align-items:center;gap:4px;">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
     <circle cx="6" cy="6" r="6" fill="${dotColor}"/>
@@ -53,12 +53,12 @@ function countIndicator({ count = 1 }) {
 }
 
 function iconIndicator() {
-  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-interactive-primary);" aria-label="Completed">${CHECK_SVG}</span>`;
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-primary);" aria-label="Completed">${CHECK_SVG}</span>`;
 }
 
 function stepperIndicator() {
   return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-hidden="true">
-  <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
+  <span style="width:12px;height:12px;border-radius:50%;background:var(--color-primary);display:block;"></span>
 </span>`;
 }
 
@@ -98,7 +98,7 @@ Five distinct types — all light mode only:
 - \`Dot\` — 12×12 dot + label (var(--text-sm)/var(--font-medium)). Used for chart legends and status rows.
 - \`Count\` — 24×24 red circle with a number. Overlaid on buttons or nav items.
 - \`Icon\` — 24×24 blue circle with a check mark. Marks a completed step.
-- \`Stepper\` — 24×24 outer ring (#bedbff) with 12×12 inner dot (var(--color-interactive-primary)). Active/pending step in a stepper.
+- \`Stepper\` — 24×24 outer ring (#bedbff) with 12×12 inner dot (var(--color-primary)). Active/pending step in a stepper.
 - \`Badge\` — pill shape (h=22, br=99). Green = available, red = unavailable.
         `,
       },
@@ -124,8 +124,8 @@ Five distinct types — all light mode only:
     },
     dotColor: {
       control: 'color',
-      description: 'Dot fill for the **dot (legend)** type. Use one of the standard legend colors: blue `var(--color-interactive-primary)`, purple `#9061f9`, indigo `#6875f5`, teal `#00bba7`.',
-      table: { category: 'Appearance', defaultValue: { summary: 'var(--color-interactive-primary)' } },
+      description: 'Dot fill for the **dot (legend)** type. Use one of the standard legend colors: blue `var(--color-primary)`, purple `#9061f9`, indigo `#6875f5`, teal `#00bba7`.',
+      table: { category: 'Appearance', defaultValue: { summary: 'var(--color-primary)' } },
     },
     count: {
       control: { type: 'number', min: 1, max: 99 },
@@ -137,7 +137,7 @@ Five distinct types — all light mode only:
     type: 'badge',
     label: 'Available',
     variant: 'available',
-    dotColor: 'var(--color-interactive-primary)',
+    dotColor: 'var(--color-primary)',
     count: 3,
   },
 };
@@ -148,9 +148,9 @@ Five distinct types — all light mode only:
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: ({ type, label, variant, dotColor, count }) => {
-    const htmlCode = `<div style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dotColor || 'var(--color-interactive-primary)'};"></div>`;
+    const htmlCode = `<div style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dotColor || 'var(--color-primary)'};"></div>`;
     const reactCode = `<div style={{\n  display: 'inline-block',\n  width: '12px',\n  height: '12px',\n  borderRadius: '50%',\n  background: color,\n}} />`;
-    const componentCode = `export function Indicator({ type = 'dot', color = 'var(--color-interactive-primary)', label, count }) {\n  return (\n    <div style={{\n      display: 'inline-block',\n      width: '12px',\n      height: '12px',\n      borderRadius: '50%',\n      background: color,\n    }} />\n  );\n}`;
+    const componentCode = `export function Indicator({ type = 'dot', color = 'var(--color-primary)', label, count }) {\n  return (\n    <div style={{\n      display: 'inline-block',\n      width: '12px',\n      height: '12px',\n      borderRadius: '50%',\n      background: color,\n    }} />\n  );\n}`;
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -184,7 +184,7 @@ export const Interactive = {
             return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-bg-white);line-height:1;" aria-label="${count} notifications">${count}</span>`;
           }
           if (type === 'icon') {
-            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-interactive-primary);" aria-label="Completed">
+            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-primary);" aria-label="Completed">
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M2.5 8.5L6 12L13.5 4"/>
   </svg>
@@ -192,7 +192,7 @@ export const Interactive = {
           }
           if (type === 'stepper') {
             return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-hidden="true">
-  <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
+  <span style="width:12px;height:12px;border-radius:50%;background:var(--color-primary);display:block;"></span>
 </span>`;
           }
           // badge
@@ -236,7 +236,7 @@ All 5 indicator types side by side.
       source: {
         code: `<!-- Dot (legend) -->
 <span style="display:inline-flex;align-items:center;gap:4px;">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-interactive-primary)"/></svg>
+  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-primary)"/></svg>
   <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
 </span>
 
@@ -255,7 +255,7 @@ All 5 indicator types side by side.
   render: () => `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:24px;">
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
       <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Dot</span>
-      ${dotIndicator({ label: 'Revenue', dotColor: 'var(--color-interactive-primary)' })}
+      ${dotIndicator({ label: 'Revenue', dotColor: 'var(--color-primary)' })}
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
       <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Count</span>
@@ -295,7 +295,7 @@ The 4 standard chart legend colors from Figma. Use these dots to label series in
       },
       source: {
         code: `<span style="display:inline-flex;align-items:center;gap:4px;">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-interactive-primary)"/></svg>
+  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-primary)"/></svg>
   <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
 </span>`,
         language: 'html',
@@ -476,18 +476,18 @@ Stepper indicators used in a multi-step progress bar — the "Stepper" example f
       source: {
         code: `<div style="display:flex;align-items:center;gap:0;">
   <!-- Completed step -->
-  <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-interactive-primary);" aria-label="Step 1: Completed">
+  <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-primary);" aria-label="Step 1: Completed">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>
   </span>
   <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Active step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-current="step" aria-label="Step 2: Current">
-    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
+    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-primary);display:block;"></span>
   </span>
   <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Pending step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-label="Step 3: Pending">
-    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
+    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-primary);display:block;"></span>
   </span>
 </div>`,
         language: 'html',

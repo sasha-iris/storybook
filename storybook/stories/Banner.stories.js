@@ -65,9 +65,9 @@ function bannerBottom({ text, link, dismissible }) {
       ${iconSvg(RECEIPT_TAX_PATH, 16, 'var(--color-text-secondary)')}
       <span style="font-size:var(--text-base);font-weight:var(--font-medium);color:#4b5563;">${text}</span>
     </div>
-    <a href="#" style="display:flex;align-items:center;gap:4px;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-interactive-primary);text-decoration:none;">
+    <a href="#" style="display:flex;align-items:center;gap:4px;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-primary);text-decoration:none;">
       ${link}
-      ${iconSvg(ARROW_NARROW_RIGHT, 16, 'var(--color-interactive-primary)')}
+      ${iconSvg(ARROW_NARROW_RIGHT, 16, 'var(--color-primary)')}
     </a>
   </div>
   ${dismissible ? dismissBtn(16) : ''}

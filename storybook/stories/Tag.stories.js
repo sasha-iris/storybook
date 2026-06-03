@@ -19,7 +19,7 @@
  * red:    dot #e02424 / text #e7000b
  * orange: dot #d03801 / text #d03801
  * teal:   dot #009689 / text #009689
- * blue:   dot var(--color-interactive-primary) / text var(--color-interactive-primary)
+ * blue:   dot var(--color-primary) / text var(--color-primary)
  * purple: dot #7e3af2 / text #9810fa
  * pink:   dot #d61f69 / text #e60076
  */
@@ -31,7 +31,7 @@ const TAG_COLORS = {
   red:    { dot: '#e02424', text: '#e7000b' },
   orange: { dot: '#d03801', text: '#d03801' },
   teal:   { dot: '#009689', text: '#009689' },
-  blue:   { dot: 'var(--color-interactive-primary)', text: 'var(--color-interactive-primary)' },
+  blue:   { dot: 'var(--color-primary)', text: 'var(--color-primary)' },
   purple: { dot: '#7e3af2', text: '#9810fa' },
   pink:   { dot: '#d61f69', text: '#e60076' },
 };

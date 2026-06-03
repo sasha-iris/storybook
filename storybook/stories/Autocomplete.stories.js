@@ -76,8 +76,8 @@ function inputField({ size, state, placeholder, query }) {
   const isTyping = state === 'typing' || state === 'withCta';
   const height   = size === 'large' ? '52px' : '42px';
   const fontSize = size === 'large' ? '16px' : '14px';
-  const borderColor = isOpen ? 'var(--color-interactive-primary)' : 'var(--color-border-default)';
-  const iconColor   = isOpen ? 'var(--color-interactive-primary)' : '#6b7280';
+  const borderColor = isOpen ? 'var(--color-primary)' : 'var(--color-border-default)';
+  const iconColor   = isOpen ? 'var(--color-primary)' : '#6b7280';
   const displayText = isTyping
     ? `${query}|`
     : (isOpen ? `|${placeholder}` : placeholder);
@@ -104,7 +104,7 @@ function dropdownDefault(state) {
   const ctaHtml = d.cta ? `
   <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--color-border-default);display:flex;align-items:center;gap:6px;cursor:pointer;">
     <span style="color:#1f2a37;flex-shrink:0;display:flex;">${ico(P_PLUS, 14)}</span>
-    <span style="font-size:14px;font-weight:500;color:var(--color-interactive-primary);font-family:inherit;">${d.cta}</span>
+    <span style="font-size:14px;font-weight:500;color:var(--color-primary);font-family:inherit;">${d.cta}</span>
   </div>` : '';
 
   return `
@@ -135,7 +135,7 @@ function dropdownAdvanced(state) {
   ${s.cta ? `
   <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--color-border-default);display:flex;align-items:center;gap:6px;cursor:pointer;">
     <span style="color:#1f2a37;flex-shrink:0;display:flex;">${ico(P_PLUS, 14)}</span>
-    <span style="font-size:14px;font-weight:500;color:var(--color-interactive-primary);font-family:inherit;">${s.cta}</span>
+    <span style="font-size:14px;font-weight:500;color:var(--color-primary);font-family:inherit;">${s.cta}</span>
   </div>` : ''}`).join('')}
 </div>`;
 }
@@ -174,11 +174,11 @@ export default {
 - Forms where free text is valid — do not constrain with suggestions
 
 **Anatomy**
-- **Input** (\`var(--color-bg-tertiary)\` bg) — search icon (turns \`var(--color-interactive-primary)\` on focus) + placeholder / typed text + clear × button
+- **Input** (\`var(--color-bg-tertiary)\` bg) — search icon (turns \`var(--color-primary)\` on focus) + placeholder / typed text + clear × button
 - **Dropdown panel** (\`var(--color-bg-white)\`, \`var(--color-border-default)\` border, \`r:8px\`) — section heading + result rows + optional CTA
 - **Result row — Default**: search icon + label
 - **Result row — Advanced**: category icon + label + dismiss × (active) or navigate → (typing)
-- **CTA row** (With CTA state): \`var(--color-border-default)\` divider + plus icon + action label in \`var(--color-interactive-primary)\`
+- **CTA row** (With CTA state): \`var(--color-border-default)\` divider + plus icon + action label in \`var(--color-primary)\`
         `,
       },
     },
@@ -204,7 +204,7 @@ export default {
       options: ['initial', 'active', 'typing', 'withCta'],
       description: `Simulated interaction state:
 - **initial** — closed, placeholder visible, gray border
-- **active** — dropdown open, blue focus border (\`var(--color-interactive-primary)\`), cursor before placeholder
+- **active** — dropdown open, blue focus border (\`var(--color-primary)\`), cursor before placeholder
 - **typing** — open with typed query, clear × button visible, filtered results
 - **withCta** — open with result + CTA row ("Add new")
 
@@ -240,14 +240,14 @@ export const Interactive = {
   render: (args) => {
     const a = args;
     const isOpen = a.state !== 'initial';
-    const border = isOpen ? 'var(--color-interactive-primary)' : 'var(--color-border-default)';
+    const border = isOpen ? 'var(--color-primary)' : 'var(--color-border-default)';
     const height = a.size === 'large' ? '52px' : '42px';
 
     const htmlCode = `<div role="combobox" style="position:relative;width:400px;">\n  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:${height};background:var(--color-bg-tertiary);border:1px solid ${border};border-radius:8px;">\n    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="4"/><path d="m10 10 3 3"/></svg>\n    <input type="text" placeholder="${a.placeholder}" style="flex:1;border:none;background:transparent;" />\n  </div>\n  ${isOpen ? `<div role="listbox" style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px;z-index:10;">\n    <div style="font-weight:600;color:#111928;">Recent</div>\n    <div role="option" style="padding:8px 0;color:#6b7280;">Customizing colors</div>\n  </div>` : ''}\n</div>`;
 
-    const reactCode = `<div role="combobox" style={{ position: 'relative' }}>\n  <div\n    style={{\n      display: 'flex',\n      alignItems: 'center',\n      gap: '8px',\n      padding: '0 12px',\n      height: '${height}',\n      background: 'var(--color-bg-tertiary)',\n      border: \`1px solid \${isOpen ? 'var(--color-interactive-primary)' : 'var(--color-border-default)'}\`,\n      borderRadius: '8px',\n    }}\n  >\n    <input\n      type="text"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      onFocus={() => setOpen(true)}\n      placeholder="${a.placeholder}"\n      role="combobox"\n      aria-expanded={isOpen}\n    />\n  </div>\n  {isOpen && (\n    <div role="listbox\" style={{ position: 'absolute', top: '100%', zIndex: 10 }}>\n      {results.map((item) => (\n        <div key={item} role="option\" onClick={() => onSelect(item)}>\n          {item}\n        </div>\n      ))}\n    </div>\n  )}\n</div>`;
+    const reactCode = `<div role="combobox" style={{ position: 'relative' }}>\n  <div\n    style={{\n      display: 'flex',\n      alignItems: 'center',\n      gap: '8px',\n      padding: '0 12px',\n      height: '${height}',\n      background: 'var(--color-bg-tertiary)',\n      border: \`1px solid \${isOpen ? 'var(--color-primary)' : 'var(--color-border-default)'}\`,\n      borderRadius: '8px',\n    }}\n  >\n    <input\n      type="text"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      onFocus={() => setOpen(true)}\n      placeholder="${a.placeholder}"\n      role="combobox"\n      aria-expanded={isOpen}\n    />\n  </div>\n  {isOpen && (\n    <div role="listbox\" style={{ position: 'absolute', top: '100%', zIndex: 10 }}>\n      {results.map((item) => (\n        <div key={item} role="option\" onClick={() => onSelect(item)}>\n          {item}\n        </div>\n      ))}\n    </div>\n  )}\n</div>`;
 
-    const componentCode = `export function Autocomplete({ items = [], placeholder, onSelect, size = 'default' }) {\n  const [open, setOpen] = useState(false);\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState(items);\n\n  const handleChange = (value) => {\n    setQuery(value);\n    setResults(items.filter((item) => item.toLowerCase().includes(value.toLowerCase())));\n  };\n\n  const handleSelect = (item) => {\n    setQuery(item);\n    setOpen(false);\n    onSelect?.(item);\n  };\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        style={{\n          display: 'flex',\n          alignItems: 'center',\n          height: size === 'large' ? '52px' : '42px',\n          border: open ? '1px solid var(--color-interactive-primary)' : '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          padding: '0 12px',\n          background: 'var(--color-bg-tertiary)',\n        }}\n      >\n        <input\n          type="text"\n          value={query}\n          onChange={(e) => handleChange(e.target.value)}\n          onFocus={() => setOpen(true)}\n          placeholder={placeholder}\n          role="combobox"\n          aria-expanded={open}\n          style={{ flex: 1, border: 'none', background: 'transparent' }}\n        />\n      </div>\n      {open && (\n        <div style={{\n          position: 'absolute',\n          top: '100%',\n          left: 0,\n          right: 0,\n          background: '#fff',\n          border: '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          marginTop: '4px',\n          zIndex: 1000,\n        }}>\n          {results.map((item) => (\n            <div\n              key={item}\n              role="option\"\n              onClick={() => handleSelect(item)}\n              style={{ padding: '8px 12px', cursor: 'pointer' }}\n            >\n              {item}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
+    const componentCode = `export function Autocomplete({ items = [], placeholder, onSelect, size = 'default' }) {\n  const [open, setOpen] = useState(false);\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState(items);\n\n  const handleChange = (value) => {\n    setQuery(value);\n    setResults(items.filter((item) => item.toLowerCase().includes(value.toLowerCase())));\n  };\n\n  const handleSelect = (item) => {\n    setQuery(item);\n    setOpen(false);\n    onSelect?.(item);\n  };\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        style={{\n          display: 'flex',\n          alignItems: 'center',\n          height: size === 'large' ? '52px' : '42px',\n          border: open ? '1px solid var(--color-primary)' : '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          padding: '0 12px',\n          background: 'var(--color-bg-tertiary)',\n        }}\n      >\n        <input\n          type="text"\n          value={query}\n          onChange={(e) => handleChange(e.target.value)}\n          onFocus={() => setOpen(true)}\n          placeholder={placeholder}\n          role="combobox"\n          aria-expanded={open}\n          style={{ flex: 1, border: 'none', background: 'transparent' }}\n        />\n      </div>\n      {open && (\n        <div style={{\n          position: 'absolute',\n          top: '100%',\n          left: 0,\n          right: 0,\n          background: '#fff',\n          border: '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          marginTop: '4px',\n          zIndex: 1000,\n        }}>\n          {results.map((item) => (\n            <div\n              key={item}\n              role="option\"\n              onClick={() => handleSelect(item)}\n              style={{ padding: '8px 12px', cursor: 'pointer' }}\n            >\n              {item}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -340,10 +340,10 @@ export const StatesDefault = {
   <input placeholder="Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#6b7280;"/>
 </div>
 
-<!-- Active: open, focus ring var(--color-interactive-primary) -->
+<!-- Active: open, focus ring var(--color-primary) -->
 <div style="width:400px;">
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-interactive-primary);border-radius:8px;">
-    <!-- search icon var(--color-interactive-primary) -->
+  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-primary);border-radius:8px;">
+    <!-- search icon var(--color-primary) -->
     <input placeholder="Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#111928;"/>
   </div>
   <div role="listbox" style="background:var(--color-bg-white);border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
@@ -357,7 +357,7 @@ export const StatesDefault = {
 </div>
 
 <!-- Typing: × clear button, filtered results -->
-<!-- With CTA: last row has divider + plus + "Add new" in var(--color-interactive-primary) -->`,
+<!-- With CTA: last row has divider + plus + "Add new" in var(--color-primary) -->`,
       },
     },
   },
@@ -393,7 +393,7 @@ export const StatesAdvanced = {
 
 - **Active** — each item has a dismiss **×** on the right (remove from recent)
 - **Typing** — each item has a navigate **→** on the right (go to that result)
-- **With CTA** — single result + "Add new" CTA with \`var(--color-interactive-primary)\` blue text
+- **With CTA** — single result + "Add new" CTA with \`var(--color-primary)\` blue text
 
 ✅ Use Advanced type when results come from different categories (docs sections, user records, settings pages)
 ❌ Don't use Advanced type for simple homogeneous lists — Default type is less noisy`,
@@ -402,8 +402,8 @@ export const StatesAdvanced = {
         language: 'html',
         code: `<!-- Advanced type — Active state (dismiss × on each item) -->
 <div style="width:400px;">
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-interactive-primary);border-radius:8px;">
-    <!-- search icon var(--color-interactive-primary) -->
+  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-primary);border-radius:8px;">
+    <!-- search icon var(--color-primary) -->
     <input value="|Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#111928;"/>
   </div>
   <div role="listbox" style="background:var(--color-bg-white);border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px 16px 8px;">

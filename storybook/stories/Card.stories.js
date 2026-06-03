@@ -412,7 +412,7 @@ Button colour is brand/800 (\`#42389d\`).
  * (Figma uses a 2-vector raster with no composite asset).
  *
  * **QA checklist**
- * - Link colour: var(--color-interactive-primary) (blue/600)
+ * - Link colour: var(--color-primary) (blue/600)
  * - External-link icon is inline SVG; verify it aligns with the link text baseline
  * - Gift icon container: 40px × 40px, background var(--color-bg-tertiary), border-radius 8px
  * - Card width: 384px; padding: 24px
@@ -423,7 +423,7 @@ export const WithLink = {
     docs: {
       description: {
         story: `Content card with a top icon, body copy, and an external-link CTA.
-Link colour is blue/600 (\`var(--color-interactive-primary)\`). Gift icon is approximated (APPROX) — Figma source is a 2-vector raster.
+Link colour is blue/600 (\`var(--color-primary)\`). Gift icon is approximated (APPROX) — Figma source is a 2-vector raster.
 
 \`\`\`html
 <div style="…padding:24px;max-width:384px;">
@@ -431,7 +431,7 @@ Link colour is blue/600 (\`var(--color-interactive-primary)\`). Gift icon is app
   <div style="width:40px;height:40px;background:var(--color-bg-default);border-radius:8px;…">…gift svg…</div>
   <h5>Terms of Service</h5>
   <p>Review our full terms…</p>
-  <a href="#" style="color:var(--color-interactive-primary);">See our guideline →</a>
+  <a href="#" style="color:var(--color-primary);">See our guideline →</a>
 </div>
 \`\`\``,
       },
@@ -458,7 +458,7 @@ Link colour is blue/600 (\`var(--color-interactive-primary)\`). Gift icon is app
     when using the Iris platform.
   </p>
   <a href="#" style="display:inline-flex;align-items:center;gap:6px;
-                     color:var(--color-interactive-primary);font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
+                     color:var(--color-primary);font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
     See our guideline
     <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
          xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -495,7 +495,7 @@ Link colour is blue/600 (\`var(--color-interactive-primary)\`). Gift icon is app
         when using the Iris platform.
       </p>
       <a href="#" style="display:inline-flex;align-items:center;gap:6px;
-                         color:var(--color-interactive-primary);font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
+                         color:var(--color-primary);font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
         See our guideline
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
              xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

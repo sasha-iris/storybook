@@ -4,7 +4,7 @@
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
   track:       'var(--color-border-default)',
-  fill:        'var(--color-interactive-primary)',
+  fill:        'var(--color-primary)',
   fillVolume:  '#a4cafe',
   thumb:       'var(--color-bg-white)',
   thumbBorder: 'var(--color-border-default)',
@@ -241,11 +241,11 @@ export default {
 - More than 2 boundary values → use multiple separate inputs
 
 **Anatomy**
-- Track — \`height:8px\`, bg \`var(--color-border-default)\`, filled \`var(--color-interactive-primary)\`
+- Track — \`height:8px\`, bg \`var(--color-border-default)\`, filled \`var(--color-primary)\`
 - Thumb — \`22×22px\` circle, bg \`var(--color-bg-white)\`, border \`var(--color-border-default)\`
 - Tooltip (optional) — \`bg:#111928\`, appears above thumb
 - Data labels (optional) — tick values below track, \`color:#6b7280\`
-- Volume variant — volume-off / volume-up icons flank the track, active fill \`#a4cafe→var(--color-interactive-primary)\`
+- Volume variant — volume-off / volume-up icons flank the track, active fill \`#a4cafe→var(--color-primary)\`
         `,
       },
     },
@@ -287,11 +287,11 @@ export const Interactive = {
   render: (args) => {
     const val = args.value || 35;
 
-    const htmlCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value="${val}"\n  aria-label="Slider"\n  style="width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) ${val}%,var(--color-border-default) ${val}%,var(--color-border-default) 100%);"\n/>`;
+    const htmlCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value="${val}"\n  aria-label="Slider"\n  style="width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,var(--color-primary) 0%,var(--color-primary) ${val}%,var(--color-border-default) ${val}%,var(--color-border-default) 100%);"\n/>`;
 
-    const reactCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value={value}\n  onChange={(e) => setValue(e.target.value)}\n  aria-label="Slider"\n  style={{\n    width: '100%',\n    height: '8px',\n    borderRadius: '4px',\n    background: \`linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n    cursor: 'pointer',\n  }}\n/>`;
+    const reactCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value={value}\n  onChange={(e) => setValue(e.target.value)}\n  aria-label="Slider"\n  style={{\n    width: '100%',\n    height: '8px',\n    borderRadius: '4px',\n    background: \`linear-gradient(to right,var(--color-primary) 0%,var(--color-primary) \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n    cursor: 'pointer',\n  }}\n/>`;
 
-    const componentCode = `export function RangeSlider({ min = 0, max = 100, value, onChange }) {\n  return (\n    <input\n      type="range"\n      min={min}\n      max={max}\n      value={value}\n      onChange={(e) => onChange?.(e.target.value)}\n      aria-label="Range slider"\n      style={{\n        width: '100%',\n        height: '8px',\n        borderRadius: '4px',\n        background: \`linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n        cursor: 'pointer',\n      }}\n    />\n  );\n}`;
+    const componentCode = `export function RangeSlider({ min = 0, max = 100, value, onChange }) {\n  return (\n    <input\n      type="range"\n      min={min}\n      max={max}\n      value={value}\n      onChange={(e) => onChange?.(e.target.value)}\n      aria-label="Range slider"\n      style={{\n        width: '100%',\n        height: '8px',\n        borderRadius: '4px',\n        background: \`linear-gradient(to right,var(--color-primary) 0%,var(--color-primary) \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n        cursor: 'pointer',\n      }}\n    />\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -381,7 +381,7 @@ export const AllTypes = {
 <input type="range" min="0" max="100" value="35"
   style="
     appearance:none;width:100%;height:8px;border-radius:4px;
-    background:linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) 35%,var(--color-border-default) 35%,var(--color-border-default) 100%);
+    background:linear-gradient(to right,var(--color-primary) 0%,var(--color-primary) 35%,var(--color-border-default) 35%,var(--color-border-default) 100%);
   "
 />
 

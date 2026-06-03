@@ -29,10 +29,10 @@ import { ICON } from './card-icons.js';
 
 // ─── Inline icons from CardLayouts ──────────────────────────────────────────
 
-const checkCircleBlue = `<svg width="20" height="20" viewBox="0 0 20 20" fill="var(--color-interactive-primary)" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>`;
+const checkCircleBlue = `<svg width="20" height="20" viewBox="0 0 20 20" fill="var(--color-primary)" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>`;
 const checkCircleGray = `<svg width="20" height="20" viewBox="0 0 20 20" fill="var(--color-border-light)" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>`;
 const star = `<svg width="20" height="20" viewBox="0 0 20 20" fill="var(--color-warning-primary)" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>`;
-const chevronRight = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--color-interactive-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 5l5 5-5 5"/></svg>`;
+const chevronRight = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 5l5 5-5 5"/></svg>`;
 const dotsHorizontal = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`;
 const questionMark = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
 const mail = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>`;
@@ -280,8 +280,8 @@ export const ChipTagIcons = {
    INDICATORS ICONS  (Indicators.stories.js — commit 2c86436)
 ───────────────────────────────────────────── */
 
-const checkStrokeSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-interactive-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
-const dotSolidSvg    = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-interactive-primary)"/></svg>`;
+const checkStrokeSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
+const dotSolidSvg    = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-primary)"/></svg>`;
 const mailOutlineSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>`;
 const fireOutlineSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>`;
 
@@ -372,7 +372,7 @@ export const BannerIcons = {
   render: () => iconGrid([
     ['light-bulb (solid)', _ts(_LIGHT_BULB_PATH, '#6b7280')],
     ['receipt-tax (solid)', _ts(_RECEIPT_TAX_PATH, '#6b7280')],
-    ['arrow-narrow-right (solid)', _ts(_ARROW_NARROW_RIGHT, 'var(--color-interactive-primary)')],
+    ['arrow-narrow-right (solid)', _ts(_ARROW_NARROW_RIGHT, 'var(--color-primary)')],
     ['book-open (solid)', _ts(_BOOK_OPEN_PATH, 'var(--color-text-heading)')],
   ]),
 };
@@ -400,8 +400,8 @@ export const ToastIcons = {
     ['check-circle (solid)', _ts(_CHECK_CIRCLE_PATH, '#0e9f6e')],
     ['x-circle (solid)', _ts(_X_CIRCLE_PATH, '#e02424')],
     ['bell (outline)', _bellToastSvg],
-    ['paper-airplane (solid)', _ts(_PAPER_PLANE_PATH, 'var(--color-interactive-primary)')],
-    ['refresh (solid)', _ts(_REFRESH_PATH, 'var(--color-interactive-primary)')],
+    ['paper-airplane (solid)', _ts(_PAPER_PLANE_PATH, 'var(--color-primary)')],
+    ['refresh (solid)', _ts(_REFRESH_PATH, 'var(--color-primary)')],
   ]),
 };
 
