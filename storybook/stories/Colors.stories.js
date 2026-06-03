@@ -28,6 +28,104 @@ export default {
     docs: {
       description: {
         component: `
+# Color Tokens
+
+**All colors in Iris Library use CSS custom properties.** Never hardcode hex values — always use a token.
+
+## Quick Reference
+
+\`\`\`css
+/* Text colors */
+color: var(--color-text-body);           /* Primary body text */
+color: var(--color-text-heading);        /* Headings */
+color: var(--color-text-body-subtle);    /* Helper text, labels */
+color: var(--color-text-fg-disabled);    /* Disabled, muted, placeholder */
+
+/* Background colors */
+background: var(--color-bg-white);       /* White surfaces */
+background: var(--color-bg-secondary-soft); /* Light gray bg */
+background: var(--color-bg-brand);       /* Primary purple (brand) */
+
+/* Border colors */
+border-color: var(--color-border-base);  /* Default dividers */
+border-color: var(--color-border-strong); /* Input borders, focus ring */
+border-color: var(--color-border-danger); /* Error states */
+\`\`\`
+
+## HTML Usage
+
+\`\`\`html
+<!-- Primary body text -->
+<p style="color: var(--color-text-body);">Regular paragraph text</p>
+
+<!-- Heading -->
+<h2 style="color: var(--color-text-heading);">Page Title</h2>
+
+<!-- Disabled/muted state -->
+<span style="color: var(--color-text-fg-disabled);">Placeholder or inactive text</span>
+
+<!-- Background surface -->
+<div style="background: var(--color-bg-secondary-soft); padding: 16px;">
+  Card or container background
+</div>
+
+<!-- Border -->
+<input style="border: 1px solid var(--color-border-base);" />
+\`\`\`
+
+## React Usage
+
+\`\`\`jsx
+export function MyComponent() {
+  return (
+    <>
+      <h1 style={{ color: 'var(--color-text-heading)' }}>Title</h1>
+      <p style={{ color: 'var(--color-text-body)' }}>Body text</p>
+      <span style={{ color: 'var(--color-text-body-subtle)' }}>Helper text</span>
+      <div style={{ background: 'var(--color-bg-secondary-soft)', padding: '16px' }}>
+        Container
+      </div>
+    </>
+  );
+}
+\`\`\`
+
+## When to Use Each Group
+
+| Token Group | Purpose | Example |
+|------------|---------|---------|
+| \`--color-text-*\` | Foreground text, icons | Body text, labels, icons |
+| \`--color-bg-*\` | Surface fills, overlays | Card backgrounds, panels |
+| \`--color-border-*\` | Dividers, outlines, focus | Inputs, dividers, focus ring |
+
+## Token Naming Convention
+
+\`--color-{group}-{semantic?}-{shade?}\`
+
+**Examples:**
+- \`--color-text-body\` — primary text
+- \`--color-text-body-subtle\` — secondary text
+- \`--color-text-fg-disabled\` — muted/disabled text
+- \`--color-bg-white\` — white surface
+- \`--color-bg-secondary-soft\` — light background
+- \`--color-border-base\` — default border
+- \`--color-border-danger\` — error state border
+
+## ✅ Do
+
+- Always use \`var(--color-...)\` instead of hex values
+- Pair text colors with appropriate backgrounds (check contrast)
+- Use \`-subtle\` and \`-soft\` variants for secondary hierarchy
+- Use \`-disabled\` for any inactive or muted state
+
+## ❌ Don't
+
+- Don't hardcode hex values (breaks theming)
+- Don't use text colors as backgrounds (each group has a role)
+- Don't use accent colors for regular text without WCAG contrast check
+- Don't use legacy color names (\`--color-primary\`, \`--color-danger\`) — they're being replaced
+
+`
 **Color tokens** are the single source of truth for all colors in the Iris Library.
 They are CSS custom properties defined in \`:root\` inside \`styles.css\` and available globally
 via \`var(--color-<group>-<name>)\`.

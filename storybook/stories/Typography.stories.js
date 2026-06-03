@@ -29,25 +29,120 @@ export default {
     docs: {
       description: {
         component: `
-**Typography tokens** define the complete type system for the Iris Library.
-All tokens are CSS custom properties in \`:root\` inside \`styles.css\`, applied via \`var(--token)\`.
+# Typography Tokens
 
-**Token groups**
-- \`--text-h1\` → \`--text-caption\` — Figma named scale (preferred for new work)
-- \`--text-xs\` → \`--text-5xl\` — generic Tailwind-style scale (legacy, backward-compat)
-- \`--font-light\` → \`--font-extrabold\` — font-weight tokens
-- \`--leading-base\` — line-height (1.5 for all sizes)
-- \`--font-family-base\` — Inter, ui-sans-serif, system-ui
+**All typography in Iris uses CSS custom properties.** Never hardcode font-size or font-weight.
 
-**When to use**
-- Use the Figma named scale (\`--text-h1\` → \`--text-caption\`) for all new components and pages
-- Use \`--font-bold\` (700) for headings that need emphasis; use \`--font-normal\` (400) for body text
-- Use \`--text-caption\` for labels, helper text, and metadata below the main content hierarchy
-- Use \`--leading-base\` (1.5) as the default line-height to match the Figma spec
+## Quick Reference
 
-**When NOT to use**
-- Do not hardcode \`font-size: 16px\` — use \`var(--text-body-1)\` so the scale stays overridable
-- Do not use the legacy generic scale (\`--text-xs\` etc.) in new components — use the named Figma scale
+\`\`\`css
+/* Headings */
+font: var(--text-h1);    /* 30px, bold */
+font: var(--text-h2);    /* 24px, normal */
+font: var(--text-h3);    /* 20px, normal */
+font: var(--text-h4);    /* 18px, normal */
+
+/* Body text */
+font: var(--text-body-1); /* 16px, normal */
+font: var(--text-body-2); /* 14px, normal */
+font: var(--text-caption); /* 12px, normal */
+
+/* Font weights (can be mixed with any size) */
+font-weight: var(--font-normal);     /* 400 */
+font-weight: var(--font-medium);     /* 500 */
+font-weight: var(--font-semibold);   /* 600 */
+font-weight: var(--font-bold);       /* 700 */
+
+/* Line height (same for all sizes) */
+line-height: var(--leading-base);    /* 1.5 */
+\`\`\`
+
+## HTML Usage
+
+\`\`\`html
+<!-- Heading (30px, bold) -->
+<h1 style="font: var(--text-h1);">Page Title</h1>
+
+<!-- Subheading (24px) -->
+<h2 style="font: var(--text-h2);">Section Title</h2>
+
+<!-- Body text (16px) -->
+<p style="font: var(--text-body-1);">Regular paragraph text goes here.</p>
+
+<!-- Secondary text (14px) -->
+<p style="font: var(--text-body-2);">Secondary content or description.</p>
+
+<!-- Label/helper text (12px) -->
+<span style="font: var(--text-caption);">Optional helper text</span>
+
+<!-- Bold text with custom weight -->
+<strong style="font-weight: var(--font-bold);">Emphasis</strong>
+\`\`\`
+
+## React Usage
+
+\`\`\`jsx
+export function MyComponent() {
+  return (
+    <>
+      {/* Heading */}
+      <h1 style={{ font: 'var(--text-h1)' }}>Title</h1>
+
+      {/* Body text */}
+      <p style={{ font: 'var(--text-body-1)' }}>Paragraph</p>
+
+      {/* Caption/helper */}
+      <span style={{ font: 'var(--text-caption)' }}>Helper text</span>
+
+      {/* Bold emphasis */}
+      <strong style={{ fontWeight: 'var(--font-bold)' }}>Important</strong>
+
+      {/* Semantic HTML with tokens */}
+      <p style={{ font: 'var(--text-body-2)', color: 'var(--color-text-body-subtle)' }}>
+        Metadata or secondary info
+      </p>
+    </>
+  );
+}
+\`\`\`
+
+## Type Scale
+
+| Token | Size | Weight | Use For |
+|-------|------|--------|---------|
+| \`--text-h1\` | 30px | 700 (bold) | Page title, main heading |
+| \`--text-h2\` | 24px | 400 | Section heading, modal title |
+| \`--text-h3\` | 20px | 400 | Subsection, card title |
+| \`--text-h4\` | 18px | 400 | Minor heading, input label |
+| \`--text-body-1\` | 16px | 400 | Primary body text, paragraphs |
+| \`--text-body-2\` | 14px | 400 | Secondary text, metadata |
+| \`--text-caption\` | 12px | 400 | Labels, helpers, timestamps |
+
+## Font Weights
+
+| Token | Value | Use For |
+|-------|-------|---------|
+| \`--font-normal\` | 400 | Body text, most content |
+| \`--font-medium\` | 500 | Slightly emphasized text |
+| \`--font-semibold\` | 600 | Labels, tab names |
+| \`--font-bold\` | 700 | Headings, strong emphasis |
+| \`--font-extrabold\` | 800 | Maximum emphasis (rare) |
+
+## ✅ Do
+
+- Use the **Figma named scale** (\`--text-h1\` → \`--text-caption\`) for all new work
+- Always use \`var(--text-...)\` instead of hardcoding font-size
+- Combine size tokens with weight tokens when needed
+- Use \`--text-caption\` for labels, hints, and secondary metadata
+- Maintain \`line-height: var(--leading-base)\` (1.5) as default
+
+## ❌ Don't
+
+- Don't hardcode \`font-size: 16px\` — use \`var(--text-body-1)\`
+- Don't use the legacy generic scale (\`--text-xs\`, \`--text-sm\`) in new components
+- Don't change line-height unless the design specifically requires it
+- Don't use font-weight values outside the token set (use \`--font-bold\`, not 700)
+- Don't omit \`font-family: var(--font-family-base)\` from custom text components
 - Do not mix font sizes from different scales in the same component hierarchy
 
 **Naming convention**
