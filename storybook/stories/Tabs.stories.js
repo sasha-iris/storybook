@@ -15,10 +15,10 @@
  * Font: Inter 14px weight 500
  * Colors:
  *   default text  #4b5563
- *   hover text    #374151  border  #d1d5db
+ *   hover text    var(--color-text-primary)  border  #d1d5db
  *   active text   #42389d  border  #42389d
  *   counter bg    default/hover=#d1d5db  active=#42389d
- *   counter text  default/hover=#4b5563  active=#ffffff
+ *   counter text  default/hover=#4b5563  active=var(--color-bg-white)
  */
 
 export default {
@@ -47,7 +47,7 @@ export default {
 - **Counter badge** — optional; numeric badge showing count (e.g. unread items, results)
 - **Dropdown chevron** — optional; indicates the tab opens a sub-menu (chevron toggles down ↔ up)
 - **Active indicator** — 2 px bottom border in brand purple (\`#42389d\`) on the active tab
-- **Tab bar** — container row with a 1 px bottom separator (\`#e5e7eb\`)
+- **Tab bar** — container row with a 1 px bottom separator (\`var(--color-border-default)\`)
         `.trim(),
       },
     },
@@ -124,11 +124,11 @@ function tab({ label = 'Tab', state = 'default', counter = false, counterCount =
   const isActive  = state === 'active';
   const isHover   = state === 'hover';
 
-  const textColor   = isActive ? '#42389d' : isHover ? '#374151' : '#4b5563';
+  const textColor   = isActive ? '#42389d' : isHover ? 'var(--color-text-primary)' : '#4b5563';
   const borderColor = isActive ? '#42389d' : isHover ? '#d1d5db' : 'transparent';
 
   const counterBg   = isActive ? '#42389d' : '#d1d5db';
-  const counterText = isActive ? '#ffffff'  : '#4b5563';
+  const counterText = isActive ? 'var(--color-bg-white)'  : '#4b5563';
 
   const chevron = isActive && dropdown ? chevronUp : chevronDown;
 
@@ -201,9 +201,9 @@ export const Interactive = {
     const a = args;
     const isActive = a.state === 'active';
     const borderColor = isActive ? '#42389d' : a.state === 'hover' ? '#d1d5db' : 'transparent';
-    const textColor   = isActive ? '#42389d' : a.state === 'hover' ? '#374151' : '#4b5563';
+    const textColor   = isActive ? '#42389d' : a.state === 'hover' ? 'var(--color-text-primary)' : '#4b5563';
     const counterBg   = isActive ? '#42389d' : '#d1d5db';
-    const counterText = isActive ? '#ffffff'  : '#4b5563';
+    const counterText = isActive ? 'var(--color-bg-white)'  : '#4b5563';
 
     const htmlCode = `<div role="tablist" style="display:flex;border-bottom:1px solid var(--color-border-default);">\n  <button role="tab" aria-selected="${isActive}" style="padding:12px 16px;color:${textColor};border-bottom:2px solid ${borderColor};background:transparent;">${a.label}${a.counter ? `\n    <span style="background:${counterBg};color:${counterText};">${a.counterCount}</span>` : ''}</button>\n</div>`;
 
@@ -217,34 +217,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${tabBar([tab(args)])}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -261,8 +261,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -298,7 +298,7 @@ export const AllStates = {
         story: `
 All three states from Figma node \`10007:72664\`:
 - **Default** — no border indicator, muted gray text (\`#4b5563\`)
-- **Hover** — light gray bottom border (\`#d1d5db\`), slightly darker text (\`#374151\`)
+- **Hover** — light gray bottom border (\`#d1d5db\`), slightly darker text (\`var(--color-text-primary)\`)
 - **Active** — brand purple bottom border (\`#42389d\`), matching text colour; \`aria-selected="true"\`
 
 **✅ Do** — always include exactly one \`aria-selected="true"\` tab per tab list.
@@ -320,7 +320,7 @@ All three states from Figma node \`10007:72664\`:
   <!-- Hover (applied via :hover in CSS) -->
   <button role="tab" aria-selected="false"
     style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:#374151;border:none;border-bottom:2px solid #d1d5db;
+           color:var(--color-text-primary);border:none;border-bottom:2px solid #d1d5db;
            margin-bottom:-1px;background:transparent;">
     Transactions
   </button>
@@ -388,7 +388,7 @@ Badge colours per state (Figma node \`10007:72664\`):
            font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
            border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
     Pending
-    <span style="padding:0 4px;height:18px;min-width:16px;background:#42389d;color:#ffffff;
+    <span style="padding:0 4px;height:18px;min-width:16px;background:#42389d;color:var(--color-bg-white);
                  font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
                  display:inline-flex;align-items:center;justify-content:center;">12</span>
   </button>

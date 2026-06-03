@@ -17,14 +17,14 @@ const C = {
   borderErr:  '#f05252',
   captionOk:  '#057a55',
   captionErr: '#e02424',
-  tagBg:      '#f3f4f6',
+  tagBg:      'var(--color-bg-secondary)',
   tagText:    '#4b5563',
   btnDark:    '#1f2a37',
   btnBlue:    '#1447e6',
   sendBlue:   '#155dfc',
   toolbarBg:  '#f9fafb',
   footerBg:   '#f9fafb',
-  dragBorder: '#e5e7eb',
+  dragBorder: 'var(--color-border-default)',
   cloudIcon:  '#9ca3af',
 };
 
@@ -38,9 +38,9 @@ const icnCloud = (c='#9ca3af') => `<svg width="40" height="40" viewBox="0 0 40 4
 const icnPhoto = (c='#6b7280') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="${c}" stroke-width="1.5"/><circle cx="8" cy="10" r="2" stroke="${c}" stroke-width="1.5"/><path d="m2 17 5-4 4 3 3-3 5 4" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
 const icnEmoji = (c='#6b7280') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="${c}" stroke-width="1.5"/><path d="M8.5 14.5s1 2 3.5 2 3.5-2 3.5-2" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="10" r="1" fill="${c}"/><circle cx="15" cy="10" r="1" fill="${c}"/></svg>`;
 const icnPlane = (c='#155dfc') => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7Z" stroke="${c}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const icnBold = (c='#374151') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3h4.5a3 3 0 0 1 0 6H5V3ZM5 9h5a3 3 0 0 1 0 6H5V9Z" stroke="${c}" stroke-width="1.5"/></svg>`;
-const icnItalic = (c='#374151') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3H7M9 13H6M9 3 7 13" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const icnLink = (c='#374151') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6.5 9.5a3.54 3.54 0 0 0 5 0l2-2a3.54 3.54 0 0 0-5-5L7 4M9.5 6.5a3.54 3.54 0 0 0-5 0L2.5 8.5a3.54 3.54 0 0 0 5 5L9 12" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const icnBold = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3h4.5a3 3 0 0 1 0 6H5V3ZM5 9h5a3 3 0 0 1 0 6H5V9Z" stroke="${c}" stroke-width="1.5"/></svg>`;
+const icnItalic = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3H7M9 13H6M9 3 7 13" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const icnLink = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6.5 9.5a3.54 3.54 0 0 0 5 0l2-2a3.54 3.54 0 0 0-5-5L7 4M9.5 6.5a3.54 3.54 0 0 0-5 0L2.5 8.5a3.54 3.54 0 0 0 5 5L9 12" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 // ─── Input Field (84:19064) ───────────────────────────────────────────────────
 function inputField({ label = 'First name', placeholder = 'Input text', value = '', state = 'normal', size = 'regular', helpText = '', icon = false }) {
@@ -164,7 +164,7 @@ function textarea({ type = 'default', label = 'Your message', placeholder = 'Wri
     </div>`;
     const editor = `<div style="border:1px solid ${C.borderDef};border-radius:8px;overflow:hidden;">
       ${toolbar}
-      <textarea style="width:100%;height:120px;padding:10px 12px;background:#ffffff;border:none;font-size:14px;color:${C.placeholder};font-family:inherit;resize:none;box-sizing:border-box;outline:none;" placeholder="${placeholder}"></textarea>
+      <textarea style="width:100%;height:120px;padding:10px 12px;background:var(--color-bg-white);border:none;font-size:14px;color:${C.placeholder};font-family:inherit;resize:none;box-sizing:border-box;outline:none;" placeholder="${placeholder}"></textarea>
     </div>`;
     const sendBtn = `<div style="margin-top:8px;display:flex;justify-content:flex-end;">
       <button style="height:40px;padding:0 16px;background:${C.btnBlue};border:none;border-radius:8px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
@@ -184,7 +184,7 @@ function textarea({ type = 'default', label = 'Your message', placeholder = 'Wri
     return `<div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:${C.inputBg};border-top:1px solid ${C.borderDef};font-family:inherit;">
       <button style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;">${icnPhoto()}</button>
       <button style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;">${icnEmoji()}</button>
-      <div style="flex:1;background:#ffffff;border:1px solid ${C.borderDef};border-radius:8px;padding:10px 12px;">
+      <div style="flex:1;background:var(--color-bg-white);border:1px solid ${C.borderDef};border-radius:8px;padding:10px 12px;">
         <span style="font-size:14px;color:${C.placeholder};font-family:inherit;">${placeholder}</span>
       </div>
       <button style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;">${icnPlane()}</button>
@@ -205,8 +205,8 @@ function fileUpload({ type = 'default', size = 'default', label = 'Upload file',
       ${labelEl}
       <div style="display:flex;height:${h}px;border:1px solid ${C.borderDef};border-radius:8px;overflow:hidden;box-sizing:border-box;">
         <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;background:${C.btnDark};cursor:pointer;flex-shrink:0;">
-          <span style="font-size:14px;font-weight:500;color:#ffffff;white-space:nowrap;font-family:inherit;">Choose file</span>
-          ${icnChevronDown('#ffffff')}
+          <span style="font-size:14px;font-weight:500;color:var(--color-bg-white);white-space:nowrap;font-family:inherit;">Choose file</span>
+          ${icnChevronDown('var(--color-bg-white)')}
         </div>
         <div style="flex:1;display:flex;align-items:center;padding:0 12px;background:${C.inputBg};">
           <span style="font-size:14px;color:${C.placeholder};font-family:inherit;">No file chosen</span>
@@ -263,7 +263,7 @@ function tagInput({ label = true, help = false, tags = ['bonnie.green@company.co
   return `<div style="font-family:inherit;">
     ${labelEl}
     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;min-height:46px;
-      background:#ffffff;border:1px solid ${C.borderDef};border-radius:8px;box-sizing:border-box;">
+      background:var(--color-bg-white);border:1px solid ${C.borderDef};border-radius:8px;box-sizing:border-box;">
       ${tagEls}
       <input type="text" placeholder="Add tag..." style="border:none;outline:none;font-size:12px;color:${C.placeholder};background:transparent;min-width:80px;font-family:inherit;" />
     </div>
@@ -374,34 +374,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${fullForm(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -418,8 +418,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -554,7 +554,7 @@ export const FloatingLabels = {
     return `<div style="display:flex;flex-direction:column;gap:32px;font-family:inherit;">
       ${types.map(tp => `
         <div>
-          <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:16px;font-family:inherit;text-transform:uppercase;letter-spacing:0.05em;">
+          <div style="font-size:11px;font-weight:600;color:var(--color-text-primary);margin-bottom:16px;font-family:inherit;text-transform:uppercase;letter-spacing:0.05em;">
             ${tp === 'border-bottom' ? 'Border bottom' : 'Background fill'}
           </div>
           <div style="display:grid;grid-template-columns:repeat(5,180px);gap:16px;">
@@ -639,7 +639,7 @@ export const FileUploadTypes = {
 </label>
 
 <!-- Drag & Drop zone -->
-<div style="border:2px dashed #e5e7eb;border-radius:8px;background:#f9fafb;padding:32px;text-align:center;">
+<div style="border:2px dashed var(--color-border-default);border-radius:8px;background:#f9fafb;padding:32px;text-align:center;">
   <!-- cloud icon -->
   <p>Click to upload or drag and drop</p>
   <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800×400px)</p>

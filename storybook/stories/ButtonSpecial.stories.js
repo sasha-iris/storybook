@@ -9,31 +9,31 @@
  * ─── Chart Button (node 9705:152804) ─────────────────────────────
  * 24×24px container, 4px padding, border-radius 6px (note: 9px on hover in Figma).
  * Uses an arrow-right icon (16px). No border, no shadow in default state.
- * States: Default · Hover (bg #f3f4f6) · Disabled (icon fades to gray/300 #D1D5DB).
+ * States: Default · Hover (bg var(--color-bg-secondary)) · Disabled (icon fades to gray/300 #D1D5DB).
  *
  * Design specs:
  * - Size: 24×24px outer, p=4px, border-radius 6px (hover: 9px in Figma — approximated as 6px)
  * - Icon: 16px arrow-right
  * - Default: transparent bg, no border, icon = dark gray
- * - Hover: bg = #f3f4f6 (--color-bg-tertiary)
+ * - Hover: bg = var(--color-bg-secondary) (--color-bg-tertiary)
  * - Disabled: icon color = #D1D5DB (gray/300), no pointer events
  *
  * ─── Table Button (node 9287:163857) ─────────────────────────────
  * 28×28px container, 8px padding, border-radius 6px.
  * Uses an arrow-right icon (12px). Has border + shadow in all states.
- * States: Default · Hover (darker shadow) · Disabled (bg #f3f4f6, icon gray/300).
+ * States: Default · Hover (darker shadow) · Disabled (bg var(--color-bg-secondary), icon gray/300).
  *
  * Design specs:
  * - Size: 28×28px outer, p=8px, border-radius 6px
- * - Border: 1px solid #e5e7eb (--color-border-base)
+ * - Border: 1px solid var(--color-border-default) (--color-border-base)
  * - Shadow default: shadow-sm (0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1))
- * - Hover: bg = #f3f4f6, shadow-lg (0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05))
- * - Disabled: bg = #f3f4f6, no shadow, icon = gray/300
+ * - Hover: bg = var(--color-bg-secondary), shadow-lg (0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05))
+ * - Disabled: bg = var(--color-bg-secondary), no shadow, icon = gray/300
  * - Icon: 12px arrow-right
  *
  * ## QA notes (Chart Button)
  * - No visible border or shadow in Default/Hover state — transparent until hovered
- * - Hover bg = #f3f4f6, NOT a border color change
+ * - Hover bg = var(--color-bg-secondary), NOT a border color change
  * - Disabled icon must use gray/300 (#D1D5DB), not opacity trick
  *
  * ## QA notes (Table Button)
@@ -108,7 +108,7 @@ const ARROW_RIGHT = (size = 16) => `
 
 const chartBtn = ({ state = 'default' } = {}) => {
   const stateStyle = state === 'hover'
-    ? 'background:var(--color-bg-tertiary,#f3f4f6);border-radius:9px;'
+    ? 'background:var(--color-bg-tertiary,var(--color-bg-secondary));border-radius:9px;'
     : '';
   const dis = state === 'disabled' ? ' disabled' : '';
   return `<button class="btn-chart"${dis} aria-label="Navigate" style="${stateStyle}">${ARROW_RIGHT(16)}</button>`;
@@ -141,32 +141,32 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${preview}</div>
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${preview}</div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -182,7 +182,7 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
+              this.style.background = 'var(--color-bg-secondary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -201,7 +201,7 @@ export const Interactive = {
 
 /**
  * Chart button — switch between states using the `state` control.
- * QA: Default = transparent bg, no border. Hover = bg #f3f4f6. Disabled = icon #D1D5DB.
+ * QA: Default = transparent bg, no border. Hover = bg var(--color-bg-secondary). Disabled = icon #D1D5DB.
  */
 export const ChartButtonStates = {
     name: 'Chart Button — states',
@@ -215,8 +215,8 @@ Chart button (node 9705:152804) — 24×24px, transparent bg. Use **state** cont
 
 | State    | BG           | Icon color |
 |---------|--------------|------------|
-| Default  | transparent  | #374151    |
-| Hover    | #f3f4f6      | #374151    |
+| Default  | transparent  | var(--color-text-primary)    |
+| Hover    | var(--color-bg-secondary)      | var(--color-text-primary)    |
 | Disabled | transparent  | #D1D5DB    |
         `,
       },
@@ -250,7 +250,7 @@ export const ChartButtonToolbar = {
                 padding:4px;gap:2px;background:var(--color-bg-surface);">
       <button class="btn-chart" aria-label="Previous"
         style="transform:scaleX(-1);">${ARROW_RIGHT(16)}</button>
-      <button class="btn-chart" style="background:var(--color-bg-tertiary,#f3f4f6);border-radius:9px;"
+      <button class="btn-chart" style="background:var(--color-bg-tertiary,var(--color-bg-secondary));border-radius:9px;"
         aria-label="Next (hovered)">${ARROW_RIGHT(16)}</button>
       <button class="btn-chart" disabled aria-label="Disabled">${ARROW_RIGHT(16)}</button>
     </div>
@@ -275,9 +275,9 @@ Table button (node 9287:163857) — 28×28px, always bordered. Use **state** con
 
 | State    | BG       | Shadow    | Icon     |
 |---------|----------|-----------|----------|
-| Default  | #ffffff  | shadow-sm | #374151  |
-| Hover    | #f3f4f6  | shadow-lg | #374151  |
-| Disabled | #f3f4f6  | none      | #D1D5DB  |
+| Default  | var(--color-bg-white)  | shadow-sm | var(--color-text-primary)  |
+| Hover    | var(--color-bg-secondary)  | shadow-lg | var(--color-text-primary)  |
+| Disabled | var(--color-bg-secondary)  | none      | #D1D5DB  |
 
 QA: Icon is **12px** (smaller than chart button's 16px).
         `,
@@ -349,11 +349,11 @@ Both utility button types side-by-side for easy QA comparison.
 | Property        | Chart Button | Table Button |
 |----------------|-------------|-------------|
 | Size            | 24×24px     | 28×28px     |
-| Border          | none        | 1px #e5e7eb |
+| Border          | none        | 1px var(--color-border-default) |
 | Shadow          | none        | shadow-sm   |
 | Border-radius   | 6px         | 6px         |
 | Icon size       | 16px        | 12px        |
-| Hover bg        | #f3f4f6     | #f3f4f6     |
+| Hover bg        | var(--color-bg-secondary)     | var(--color-bg-secondary)     |
 | Disabled icon   | #D1D5DB     | #D1D5DB     |
       `,
       },
@@ -366,7 +366,7 @@ Both utility button types side-by-side for easy QA comparison.
                   color:#9CA3AF;margin:0 0 10px;">Chart Button (node 9705:152804)</p>
         <div style="display:flex;gap:12px;align-items:center;">
           <button class="btn-chart" aria-label="Default">${ARROW_RIGHT(16)}</button>
-          <button class="btn-chart" style="background:var(--color-bg-tertiary,#f3f4f6);"
+          <button class="btn-chart" style="background:var(--color-bg-tertiary,var(--color-bg-secondary));"
             aria-label="Hover">${ARROW_RIGHT(16)}</button>
           <button class="btn-chart" disabled aria-label="Disabled">${ARROW_RIGHT(16)}</button>
           <span style="font:11px/1 sans-serif;color:#9CA3AF;">Default · Hover · Disabled</span>

@@ -4,17 +4,17 @@
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const T = {
   // Light
-  bg:         '#ffffff',
-  border:     '#e5e7eb',
-  divider:    '#e5e7eb',
+  bg:         'var(--color-bg-white)',
+  border:     'var(--color-border-default)',
+  divider:    'var(--color-border-default)',
   text:       '#111928',
   iconFill:   '#111928',
   // Dark
-  dark_bg:    '#374151',
+  dark_bg:    'var(--color-text-primary)',
   dark_border:'#4b5563',
   dark_div:   '#4b5563',
-  dark_text:  '#ffffff',
-  dark_icon:  '#ffffff',
+  dark_text:  'var(--color-bg-white)',
+  dark_icon:  'var(--color-bg-white)',
 };
 
 // ─── SVG icons (16×16, matching Figma fills) ──────────────────────────────────
@@ -93,15 +93,15 @@ export default {
 - Multi-select → use **Multiselect** or **Tag Input**
 
 **Anatomy**
-- Container — \`bg:#ffffff\`, \`border:1px solid #e5e7eb\`, \`border-radius:8px\`, \`width:240px\`
-- List item — \`height:37px\`, \`padding:0 16px\`, separated by \`1px solid #e5e7eb\` dividers
-- Leading icon (optional) — \`16×16px\`, fill \`#111928\` (light) / \`#ffffff\` (dark)
+- Container — \`bg:var(--color-bg-white)\`, \`border:1px solid var(--color-border-default)\`, \`border-radius:8px\`, \`width:240px\`
+- List item — \`height:37px\`, \`padding:0 16px\`, separated by \`1px solid var(--color-border-default)\` dividers
+- Leading icon (optional) — \`16×16px\`, fill \`#111928\` (light) / \`var(--color-bg-white)\` (dark)
 - Label — \`font-size:14px\`, \`font-weight:500\`
 
 **Dark mode**
-- Container: \`bg:#374151\`, \`border:#4b5563\`
+- Container: \`bg:var(--color-text-primary)\`, \`border:#4b5563\`
 - Dividers: \`#4b5563\`
-- Text + icons: \`#ffffff\`
+- Text + icons: \`var(--color-bg-white)\`
         `,
       },
     },
@@ -115,7 +115,7 @@ export default {
     },
     dark: {
       control: 'boolean',
-      description: 'Dark theme. Container `bg:#374151`, dividers `#4b5563`, text/icons `#ffffff`. Use on dark surfaces or inside dark dropdowns.',
+      description: 'Dark theme. Container `bg:var(--color-text-primary)`, dividers `#4b5563`, text/icons `var(--color-bg-white)`. Use on dark surfaces or inside dark dropdowns.',
       table: { category: 'Appearance', defaultValue: { summary: false } },
     },
     width: {
@@ -135,21 +135,21 @@ export default {
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const bg = args.dark ? '#374151' : '#ffffff';
-    const border = args.dark ? '#4b5563' : '#e5e7eb';
-    const text = args.dark ? '#ffffff' : '#111928';
+    const bg = args.dark ? 'var(--color-text-primary)' : 'var(--color-bg-white)';
+    const border = args.dark ? '#4b5563' : 'var(--color-border-default)';
+    const text = args.dark ? 'var(--color-bg-white)' : '#111928';
 
     const htmlCode = `<ul style="width:240px;background:${bg};border:1px solid ${border};border-radius:8px;overflow:hidden;list-style:none;margin:0;padding:0;">\n  <li style="display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Profile</li>\n  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Settings</li>\n  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Messages</li>\n</ul>`;
 
     const reactCode = `<ul style={{ background: '${bg}', border: '1px solid ' + '${border}', borderRadius: '8px', listStyle: 'none' }}>\n  {items.map((item, i) => (\n    <li key={i} onClick={() => onSelect(item)} style={{\n      display: 'flex',\n      padding: '0 16px',\n      height: '37px',\n      borderTop: i > 0 ? '1px solid ${border}' : 'none',\n    }}>\n      {item}\n    </li>\n  ))}\n</ul>`;
 
-    const componentCode = `export function ListGroup({ items = [], dark = false, onSelect }) {\n  return (\n    <ul style={{\n      background: dark ? '#374151' : '#ffffff',\n      border: '1px solid ' + (dark ? '#4b5563' : '#e5e7eb'),\n      borderRadius: '8px',\n      listStyle: 'none',\n      margin: 0,\n      padding: 0,\n    }}>\n      {items.map((item, i) => (\n        <li\n          key={i}\n          onClick={() => onSelect?.(item)}\n          style={{\n            display: 'flex',\n            alignItems: 'center',\n            padding: '0 16px',\n            height: '37px',\n            borderTop: i > 0 ? '1px solid' + (dark ? '#4b5563' : '#e5e7eb') : 'none',\n            cursor: 'pointer',\n            color: dark ? '#ffffff' : '#111928',\n          }}\n        >\n          {item}\n        </li>\n      ))}\n    </ul>\n  );\n}`;
+    const componentCode = `export function ListGroup({ items = [], dark = false, onSelect }) {\n  return (\n    <ul style={{\n      background: dark ? 'var(--color-text-primary)' : 'var(--color-bg-white)',\n      border: '1px solid ' + (dark ? '#4b5563' : 'var(--color-border-default)'),\n      borderRadius: '8px',\n      listStyle: 'none',\n      margin: 0,\n      padding: 0,\n    }}>\n      {items.map((item, i) => (\n        <li\n          key={i}\n          onClick={() => onSelect?.(item)}\n          style={{\n            display: 'flex',\n            alignItems: 'center',\n            padding: '0 16px',\n            height: '37px',\n            borderTop: i > 0 ? '1px solid' + (dark ? '#4b5563' : 'var(--color-border-default)') : 'none',\n            cursor: 'pointer',\n            color: dark ? 'var(--color-bg-white)' : '#111928',\n          }}\n        >\n          {item}\n        </li>\n      ))}\n    </ul>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${listGroup({ ...args, items: DEFAULT_ITEMS })}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='#f3f4f6';},2000);});});</script>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${listGroup({ ...args, items: DEFAULT_ITEMS })}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='var(--color-bg-secondary)';},2000);});});</script>`;
   },
   parameters: {
     docs: {
@@ -238,14 +238,14 @@ export const InContext = {
     },
   },
   render: ({ dark }) => {
-    const bg      = dark ? '#1f2937' : '#f3f4f6';
-    const avatarBg = dark ? '#374151' : '#e5e7eb';
+    const bg      = dark ? 'var(--color-text-heading)' : 'var(--color-bg-secondary)';
+    const avatarBg = dark ? 'var(--color-text-primary)' : 'var(--color-border-default)';
     return `<div style="position:relative;display:inline-block;padding:16px;background:${bg};border-radius:12px;font-family:inherit;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="width:36px;height:36px;border-radius:50%;background:${avatarBg};display:flex;align-items:center;justify-content:center;cursor:pointer;">
           ${ICONS['user-circle'](dark ? '#9ca3af' : '#6b7280')}
         </div>
-        <span style="font-size:13px;font-weight:500;color:${dark ? '#d1d5db' : '#374151'};font-family:inherit;">bonnie.green</span>
+        <span style="font-size:13px;font-weight:500;color:${dark ? '#d1d5db' : 'var(--color-text-primary)'};font-family:inherit;">bonnie.green</span>
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m3 5 4 4 4-4" stroke="${dark ? '#9ca3af' : '#6b7280'}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       ${listGroup({ items: DEFAULT_ITEMS, showIcons: true, dark })}
@@ -264,7 +264,7 @@ export const CustomItems = {
         story: 'An 8-item list demonstrating that dividers and padding stay consistent regardless of item count.',
       },
       source: {
-        code: `<ul style="width:240px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        code: `<ul style="width:240px;background:#fff;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
   <!-- repeat list-item pattern for each entry -->
 </ul>`,
       },

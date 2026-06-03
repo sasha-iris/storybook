@@ -139,10 +139,10 @@ const group = (title, swatches) => `
               color:var(--color-text-fg-disabled,#99a1af);margin-bottom:14px;">${title}</p>
     <div style="display:flex;flex-wrap:wrap;gap:12px;">
       ${swatches.map(([cssVar, hex, label]) => `
-        <div style="width:120px;border:1px solid var(--color-border-base,#e5e7eb);
+        <div style="width:120px;border:1px solid var(--color-border-base,var(--color-border-default));
                     border-radius:8px;overflow:hidden;">
           <div style="height:64px;background:var(${cssVar},${hex});
-                      outline:${hex === '#ffffff' ? '1px solid #e5e7eb' : 'none'};
+                      outline:${hex === 'var(--color-bg-white)' ? '1px solid var(--color-border-default)' : 'none'};
                       outline-offset:-1px;"></div>
           <div style="padding:8px 10px;background:var(--color-bg-surface);">
             <div style="font-size:10px;font-weight:600;color:#101828;
@@ -195,7 +195,7 @@ Use these for any foreground text, icons, or labels.
     },
   },
   render: () => group('Text color variables — light mode', [
-    ['--color-text-white',            '#ffffff', 'text/white'],
+    ['--color-text-white',            'var(--color-bg-white)', 'text/white'],
     ['--color-text-black',            '#101828', 'text/black'],
     ['--color-text-heading',          '#101828', 'text/heading'],
     ['--color-text-body',             '#4a5565', 'text/body'],
@@ -259,15 +259,15 @@ Use these for surface fills, overlays, and state-driven backgrounds.
   },
   render: () => `
     ${group('Neutral', [
-      ['--color-bg-white',          '#ffffff', 'bg/white'],
-      ['--color-bg-primary-soft',   '#ffffff', 'bg/primary-soft'],
+      ['--color-bg-white',          'var(--color-bg-white)', 'bg/white'],
+      ['--color-bg-primary-soft',   'var(--color-bg-white)', 'bg/primary-soft'],
       ['--color-bg-secondary-soft', '#f9fafb', 'bg/secondary-soft'],
       ['--color-bg-secondary',      '#f9fafb', 'bg/secondary'],
-      ['--color-bg-tertiary-soft',  '#f3f4f6', 'bg/tertiary-soft'],
-      ['--color-bg-tertiary',       '#f3f4f6', 'bg/tertiary'],
-      ['--color-bg-quaternary',     '#e5e7eb', 'bg/quaternary'],
+      ['--color-bg-tertiary-soft',  'var(--color-bg-secondary)', 'bg/tertiary-soft'],
+      ['--color-bg-tertiary',       'var(--color-bg-secondary)', 'bg/tertiary'],
+      ['--color-bg-quaternary',     'var(--color-border-default)', 'bg/quaternary'],
       ['--color-bg-gray',           '#d1d5dc', 'bg/gray'],
-      ['--color-bg-disabled',       '#f3f4f6', 'bg/disabled'],
+      ['--color-bg-disabled',       'var(--color-bg-secondary)', 'bg/disabled'],
     ])}
     ${group('Brand', [
       ['--color-bg-brand-softer', '#eef6ff', 'bg/brand-softer'],
@@ -355,10 +355,10 @@ Use these for dividers, input outlines, focus rings, and card borders.
     ${group('Base', [
       ['--color-border-dark',        '#4a5565', 'border/dark'],
       ['--color-border-muted',       '#f9fafb', 'border/muted'],
-      ['--color-border-light-subtle','#f3f4f6', 'border/light-subtle'],
-      ['--color-border-light',       '#f3f4f6', 'border/light'],
-      ['--color-border-base-soft',   '#e5e7eb', 'border/base-soft'],
-      ['--color-border-base',        '#e5e7eb', 'border/base'],
+      ['--color-border-light-subtle','var(--color-bg-secondary)', 'border/light-subtle'],
+      ['--color-border-light',       'var(--color-bg-secondary)', 'border/light'],
+      ['--color-border-base-soft',   'var(--color-border-default)', 'border/base-soft'],
+      ['--color-border-base',        'var(--color-border-default)', 'border/base'],
       ['--color-border-dark-subtle', '#1e2939', 'border/dark-subtle'],
     ])}
     ${group('Brand', [

@@ -13,29 +13,29 @@
  * Icon slots: 12×12 px (left optional dot · right dismiss ×)
  *
  * ## Color tokens (default bg / text / icon / hover bg / disabled bg / disabled text)
- * light:  #f3f4f6 / #4a5565 / #6b7280 / #e5e7eb / #f3f4f6 / #99a1af
- * dark:   #4a5565 / #ffffff / #f3f4f6 / #1e2939 / #d1d5dc / #ffffff
- * indigo: #5850ec / #ffffff / #f3f4f6 / #42389d / #b4c6fc / #ffffff
- * green:  #009966 / #ffffff / #f3f4f6 / #006045 / #5ee9b5 / #ffffff
- * red:    #e7000b / #ffffff / #f3f4f6 / #9f0712 / #ffa2a2 / #ffffff
- * orange: #d03801 / #ffffff / #f3f4f6 / #8a2c0d / #fdba8c / #ffffff
- * teal:   #009689 / #ffffff / #f3f4f6 / #005f59 / #46ecd5 / #ffffff
- * blue:   #155dfc / #ffffff / #f3f4f6 / #193cb8 / #8ec5ff / #ffffff
- * purple: #9810fa / #ffffff / #f3f4f6 / #6e11b0 / #dab2ff / #ffffff
- * pink:   #e60076 / #ffffff / #f3f4f6 / #a3004c / #fda5d5 / #ffffff
+ * light:  var(--color-bg-secondary) / #4a5565 / #6b7280 / var(--color-border-default) / var(--color-bg-secondary) / #99a1af
+ * dark:   #4a5565 / var(--color-bg-white) / var(--color-bg-secondary) / #1e2939 / #d1d5dc / var(--color-bg-white)
+ * indigo: #5850ec / var(--color-bg-white) / var(--color-bg-secondary) / #42389d / #b4c6fc / var(--color-bg-white)
+ * green:  #009966 / var(--color-bg-white) / var(--color-bg-secondary) / #006045 / #5ee9b5 / var(--color-bg-white)
+ * red:    #e7000b / var(--color-bg-white) / var(--color-bg-secondary) / #9f0712 / #ffa2a2 / var(--color-bg-white)
+ * orange: #d03801 / var(--color-bg-white) / var(--color-bg-secondary) / #8a2c0d / #fdba8c / var(--color-bg-white)
+ * teal:   #009689 / var(--color-bg-white) / var(--color-bg-secondary) / #005f59 / #46ecd5 / var(--color-bg-white)
+ * blue:   #155dfc / var(--color-bg-white) / var(--color-bg-secondary) / #193cb8 / #8ec5ff / var(--color-bg-white)
+ * purple: #9810fa / var(--color-bg-white) / var(--color-bg-secondary) / #6e11b0 / #dab2ff / var(--color-bg-white)
+ * pink:   #e60076 / var(--color-bg-white) / var(--color-bg-secondary) / #a3004c / #fda5d5 / var(--color-bg-white)
  */
 
 const CHIP_COLORS = {
-  light:  { bg: '#f3f4f6', text: '#4a5565', icon: '#6b7280', hover: '#e5e7eb', disabledBg: '#f3f4f6', disabledText: '#99a1af' },
-  dark:   { bg: '#4a5565', text: '#ffffff', icon: '#f3f4f6', hover: '#1e2939', disabledBg: '#d1d5dc', disabledText: '#ffffff' },
-  indigo: { bg: '#5850ec', text: '#ffffff', icon: '#f3f4f6', hover: '#42389d', disabledBg: '#b4c6fc', disabledText: '#ffffff' },
-  green:  { bg: '#009966', text: '#ffffff', icon: '#f3f4f6', hover: '#006045', disabledBg: '#5ee9b5', disabledText: '#ffffff' },
-  red:    { bg: '#e7000b', text: '#ffffff', icon: '#f3f4f6', hover: '#9f0712',  disabledBg: '#ffa2a2', disabledText: '#ffffff' },
-  orange: { bg: '#d03801', text: '#ffffff', icon: '#f3f4f6', hover: '#8a2c0d', disabledBg: '#fdba8c', disabledText: '#ffffff' },
-  teal:   { bg: '#009689', text: '#ffffff', icon: '#f3f4f6', hover: '#005f59', disabledBg: '#46ecd5', disabledText: '#ffffff' },
-  blue:   { bg: '#155dfc', text: '#ffffff', icon: '#f3f4f6', hover: '#193cb8', disabledBg: '#8ec5ff', disabledText: '#ffffff' },
-  purple: { bg: '#9810fa', text: '#ffffff', icon: '#f3f4f6', hover: '#6e11b0', disabledBg: '#dab2ff', disabledText: '#ffffff' },
-  pink:   { bg: '#e60076', text: '#ffffff', icon: '#f3f4f6', hover: '#a3004c', disabledBg: '#fda5d5', disabledText: '#ffffff' },
+  light:  { bg: 'var(--color-bg-secondary)', text: '#4a5565', icon: '#6b7280', hover: 'var(--color-border-default)', disabledBg: 'var(--color-bg-secondary)', disabledText: '#99a1af' },
+  dark:   { bg: '#4a5565', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#1e2939', disabledBg: '#d1d5dc', disabledText: 'var(--color-bg-white)' },
+  indigo: { bg: '#5850ec', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#42389d', disabledBg: '#b4c6fc', disabledText: 'var(--color-bg-white)' },
+  green:  { bg: '#009966', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#006045', disabledBg: '#5ee9b5', disabledText: 'var(--color-bg-white)' },
+  red:    { bg: '#e7000b', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#9f0712',  disabledBg: '#ffa2a2', disabledText: 'var(--color-bg-white)' },
+  orange: { bg: '#d03801', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#8a2c0d', disabledBg: '#fdba8c', disabledText: 'var(--color-bg-white)' },
+  teal:   { bg: '#009689', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#005f59', disabledBg: '#46ecd5', disabledText: 'var(--color-bg-white)' },
+  blue:   { bg: '#155dfc', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#193cb8', disabledBg: '#8ec5ff', disabledText: 'var(--color-bg-white)' },
+  purple: { bg: '#9810fa', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#6e11b0', disabledBg: '#dab2ff', disabledText: 'var(--color-bg-white)' },
+  pink:   { bg: '#e60076', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#a3004c', disabledBg: '#fda5d5', disabledText: 'var(--color-bg-white)' },
 };
 
 const COLOR_NAMES = Object.keys(CHIP_COLORS);
@@ -154,34 +154,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${chip(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -198,8 +198,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -234,7 +234,7 @@ All 10 color themes in default state.
       },
       source: {
         code: `<!-- Light (neutral default) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#f3f4f6;color:#4a5565;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:var(--color-bg-secondary);color:#4a5565;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <span>Marketing</span>
   <button type="button" aria-label="Remove Marketing" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
     <svg width="12" height="12" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true">
@@ -244,10 +244,10 @@ All 10 color themes in default state.
 </span>
 
 <!-- Indigo -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <span>Design</span>
   <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true">
       <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
     </svg>
   </button>
@@ -284,18 +284,18 @@ Default, hover, and disabled states for the selected color. Use the **color** co
       },
       source: {
         code: `<!-- Default -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
   <span>Design</span>
   <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
   </button>
 </span>
 
 <!-- Disabled -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#b4c6fc;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;cursor:not-allowed;">
+<span style="display:inline-flex;align-items:center;gap:4px;background:#b4c6fc;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;cursor:not-allowed;">
   <span>Design</span>
   <button type="button" aria-label="Remove Design" aria-disabled="true" style="background:none;border:none;cursor:not-allowed;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
   </button>
 </span>`,
         language: 'html',
@@ -335,13 +335,13 @@ Chips with an optional leading dot indicator. Useful for category/status chips w
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:#ffffff;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#f3f4f6" aria-hidden="true">
+        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="var(--color-bg-secondary)" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
   </svg>
   <span>Design</span>
   <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#f3f4f6" aria-hidden="true">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true">
       <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
     </svg>
   </button>

@@ -23,21 +23,21 @@
  * - Bottom section (Help, Settings)
  *
  * ## Tokens used
- * - bg: var(--color-bg-tertiary) = #f3f4f6
- * - border: var(--color-border-base) = #e5e7eb
+ * - bg: var(--color-bg-tertiary) = var(--color-bg-secondary)
+ * - border: var(--color-border-base) = var(--color-border-default)
  * - text active: #42389d (old-colors/brand/800)
  * - text default: var(--color-text-heading) = #111928
- * - active bg: var(--color-bg-quaternary) = #e5e7eb
+ * - active bg: var(--color-bg-quaternary) = var(--color-border-default)
  *
  * ## QA notes
  * - Width: 256px (expanded) · 60px (contracted, node 1060:44)
- * - Contracted bg: #ffffff (white) — NOT #f3f4f6
+ * - Contracted bg: var(--color-bg-white) (white) — NOT var(--color-bg-secondary)
  * - Menu item height: 40px
  * - Border-radius on items: 8px
  * - Logo: Iris mark xs (24px) + wordmark, or sm (32px) standalone
- * - Active item: bg #e5e7eb, text #42389d
+ * - Active item: bg var(--color-border-default), text #42389d
  * - Sub-items: 28px left indent, no icon
- * - Divider: 1px #e5e7eb full width
+ * - Divider: 1px var(--color-border-default) full width
  */
 
 import { irisLogo, irisMarkImg } from './brand-assets.js';
@@ -187,8 +187,8 @@ function divider() {
 
 // ─── Contracted sidebar builder ──────────────────────────────────────────────
 // Figma: Type=Contracted, Icons=True, Color=White — node 1060:44
-// Width: 60px, bg: #ffffff (white, not #f3f4f6)
-// Active: 40×40px centered, bg #f3f4f6, radius 8px, icon #1f2a37
+// Width: 60px, bg: var(--color-bg-white) (white, not var(--color-bg-secondary))
+// Active: 40×40px centered, bg var(--color-bg-secondary), radius 8px, icon #1f2a37
 // Inactive: 60×32px full-width, transparent, icon #6b7280
 
 function contractedItem({ icon, label, active = false }) {
@@ -234,13 +234,13 @@ function contractedSidebar({ activeKey = 'chartPie' } = {}) {
       ${items.map(item => contractedItem({ ...item, active: item.key === activeKey })).join('')}
     </div>`;
 
-  const sep = () => `<div style="height:1px;background:#e5e7eb;flex-shrink:0;"></div>`;
+  const sep = () => `<div style="height:1px;background:var(--color-border-default);flex-shrink:0;"></div>`;
 
   return `
     <div style="
       width:60px;height:100%;min-height:600px;
-      background:#ffffff;
-      border-right:1px solid #e5e7eb;
+      background:var(--color-bg-white);
+      border-right:1px solid var(--color-border-default);
       display:flex;flex-direction:column;
       padding-top:16px;box-sizing:border-box;
     ">
@@ -254,13 +254,13 @@ function contractedSidebar({ activeKey = 'chartPie' } = {}) {
 
 // ─── Sidebar builder ─────────────────────────────────────────────────────────
 
-// color: 'white' = #ffffff | 'gray' = #f3f4f6  (both are light-mode variants per Figma 1057:2041)
+// color: 'white' = var(--color-bg-white) | 'gray' = var(--color-bg-secondary)  (both are light-mode variants per Figma 1057:2041)
 function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded = true, color = 'gray' } = {}) {
-  const bg = color === 'white' ? '#ffffff' : '#f3f4f6';
+  const bg = color === 'white' ? 'var(--color-bg-white)' : 'var(--color-bg-secondary)';
   return `
     <div style="
       background:${bg};
-      border-right:1px solid #e5e7eb;
+      border-right:1px solid var(--color-border-default);
       display:flex; flex-direction:column; gap:24px;
       width:256px; height:100%; min-height:600px;
       box-sizing:border-box;
@@ -316,8 +316,8 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
 **Light-mode variants (Color=White / Color=Gray)**
 | Variant | Background | Border/Separator |
 |---|---|---|
-| Color=Gray (default) | \`#f3f4f6\` | \`#e5e7eb\` |
-| Color=White | \`#ffffff\` | \`#e5e7eb\` |
+| Color=Gray (default) | \`var(--color-bg-secondary)\` | \`var(--color-border-default)\` |
+| Color=White | \`var(--color-bg-white)\` | \`var(--color-border-default)\` |
 
 **Menu item types (node \`9263:160845\`)**
 | Type | Description |
@@ -329,7 +329,7 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
 **Menu item states**
 | State | bg | text | icon | chevron |
 |---|---|---|---|---|
-| Selected | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | \`#1f2a37\` |
+| Selected | \`var(--color-border-default)\` | \`#42389d\` | \`#42389d\` | \`#1f2a37\` |
 | Default | transparent | \`#111928\` | \`#6b7280\` | \`#1f2a37\` |
 
 **When to use**
@@ -346,7 +346,7 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
 
 **QA checklist**
 - Width: 256px · Menu item height: 40px · border-radius: 8px
-- Active: bg \`#e5e7eb\`, text+icon \`#42389d\`, chevron always \`#1f2a37\`
+- Active: bg \`var(--color-border-default)\`, text+icon \`#42389d\`, chevron always \`#1f2a37\`
 - Sub-items: 28px left indent, no icon, \`#111928\` text
 - Active item requires \`aria-current="page"\` for accessibility
         `.trim(),
@@ -368,14 +368,14 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
     activeItem: {
       control: 'select',
       options: ['overview', 'metrics', 'pnl', 'budget', 'cohorts', 'cashflow', 'financial', 'help'],
-      description: 'Which nav item is in the active/selected state. Applies `#42389d` text + `#e5e7eb` bg.',
+      description: 'Which nav item is in the active/selected state. Applies `#42389d` text + `var(--color-border-default)` bg.',
       table: { category: 'Content', defaultValue: { summary: 'overview' } },
     },
     // ── Appearance ───────────────────────────────────────────
     color: {
       control: 'select',
       options: ['gray', 'white'],
-      description: 'Background color variant. `gray` = `#f3f4f6` (Figma Color=Gray). `white` = `#ffffff` (Figma Color=White). Ignored when `contracted` is true (always white per Figma).',
+      description: 'Background color variant. `gray` = `var(--color-bg-secondary)` (Figma Color=Gray). `white` = `var(--color-bg-white)` (Figma Color=White). Ignored when `contracted` is true (always white per Figma).',
       table: { category: 'Appearance', defaultValue: { summary: 'gray' } },
     },
     // ── State ────────────────────────────────────────────────
@@ -402,18 +402,18 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
  *
  * **QA checklist**
  * - Logo renders as hexagonal mark + "Iris" text
- * - Active item (Overview) has bg #e5e7eb, text #42389d
+ * - Active item (Overview) has bg var(--color-border-default), text #42389d
  * - Financial model shows chevron-up (expanded)
  * - Sub-items indented 28px, no icon
  */
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const bg = args.color === 'white' ? '#ffffff' : '#f3f4f6';
-    const h=`<aside style="width:256px;background:${bg};border:1px solid #e5e7eb;padding:16px;"><nav style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="padding:12px;border-radius:8px;background:${args.activeItem==='home'?'#e5e7eb':'transparent'}">Home</a></nav></aside>`;
-    const r=`<aside style={{width:'256px',background:color,borderRight:'1px solid #e5e7eb',padding:'16px'}}><nav>{items.map(item=>(<a key={item} style={{active:active===item}}>...</a>))}</nav></aside>`;
+    const bg = args.color === 'white' ? 'var(--color-bg-white)' : 'var(--color-bg-secondary)';
+    const h=`<aside style="width:256px;background:${bg};border:1px solid var(--color-border-default);padding:16px;"><nav style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="padding:12px;border-radius:8px;background:${args.activeItem==='home'?'var(--color-border-default)':'transparent'}">Home</a></nav></aside>`;
+    const r=`<aside style={{width:'256px',background:color,borderRight:'1px solid var(--color-border-default)',padding:'16px'}}><nav>{items.map(item=>(<a key={item} style={{active:active===item}}>...</a>))}</nav></aside>`;
     const c=`export function Sidebar({activeItem,showLogo,color='white'}){return(<aside style={{width:'256px'}}>{showLogo&&<div>Logo</div>}<nav>...</nav></aside>);}`;
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="width:256px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">${sidebar(args)}</div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div></div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div></div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="width:256px;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">${sidebar(args)}</div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div></div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div></div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
   },
   parameters: {
     docs: {
@@ -423,13 +423,13 @@ export const Interactive = {
       source: {
         transform: (_src, storyCtx) => {
           const { showLogo, activeItem, financialExpanded, color } = storyCtx.args;
-          const bg = color === 'white' ? '#ffffff' : '#f3f4f6';
+          const bg = color === 'white' ? 'var(--color-bg-white)' : 'var(--color-bg-secondary)';
           return `<!-- Sidebar — color:${color}, showLogo:${showLogo}, active:${activeItem}, expanded:${financialExpanded} -->
-<aside style="width:256px;height:100vh;background:${bg};border-right:1px solid #e5e7eb;
+<aside style="width:256px;height:100vh;background:${bg};border-right:1px solid var(--color-border-default);
               display:flex;flex-direction:column;padding:16px 0;box-sizing:border-box;">
   ${showLogo ? `<!-- Logo area -->\n  <div style="padding:0 16px 16px;"><!-- Iris mark + wordmark --></div>` : ''}
   <nav>
-    <!-- Menu items — active item gets bg:#e5e7eb; color:#42389d -->
+    <!-- Menu items — active item gets bg:var(--color-border-default); color:#42389d -->
     <!-- aria-current="page" on the active <a> for accessibility -->
   </nav>
 </aside>`;
@@ -459,7 +459,7 @@ export const Default = {
       source: {
         code: `<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">
   <!-- Logo -->
-  <!-- Nav items — active: bg:#e5e7eb; color:#42389d; aria-current="page" -->
+  <!-- Nav items — active: bg:var(--color-border-default); color:#42389d; aria-current="page" -->
 </aside>`,
         language: 'html',
       },
@@ -484,14 +484,14 @@ export const ActiveStates = {
     controls: { disable: true },
     docs: {
       description: {
-        story: 'Each sidebar item shown in its active state. Use to verify color (#42389d) and background (#e5e7eb) are applied correctly.',
+        story: 'Each sidebar item shown in its active state. Use to verify color (#42389d) and background (var(--color-border-default)) are applied correctly.',
       },
       source: {
         language: 'html',
-        code: `<!-- Active menu item: bg #e5e7eb, text #42389d, aria-current="page" -->
+        code: `<!-- Active menu item: bg var(--color-border-default), text #42389d, aria-current="page" -->
 <a href="#" aria-current="page"
    style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
-          border-radius:8px;background:#e5e7eb;width:100%;box-sizing:border-box;text-decoration:none;">
+          border-radius:8px;background:var(--color-border-default);width:100%;box-sizing:border-box;text-decoration:none;">
   <!-- icon: 24×24, color #42389d -->
   <span style="font-family:inherit;font-size:var(--text-base);font-weight:var(--font-medium);line-height:1.5;color:#42389d;">Overview</span>
 </a>
@@ -576,13 +576,13 @@ All 8 menu item states from Figma component set \`9263:160845\`.
 
 | Type | Selected | Expanded | bg | text | icon | chevron |
 |---|---|---|---|---|---|---|
-| Primary | ✅ | — | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | — |
+| Primary | ✅ | — | \`var(--color-border-default)\` | \`#42389d\` | \`#42389d\` | — |
 | Primary | ❌ | — | transparent | \`#111928\` | \`#6b7280\` | — |
-| Expandable | ✅ | ❌ | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | down · \`#1f2a37\` |
+| Expandable | ✅ | ❌ | \`var(--color-border-default)\` | \`#42389d\` | \`#42389d\` | down · \`#1f2a37\` |
 | Expandable | ❌ | ❌ | transparent | \`#111928\` | \`#6b7280\` | down · \`#1f2a37\` |
-| Expandable | ✅ | ✅ | \`#e5e7eb\` | \`#42389d\` | \`#42389d\` | up · \`#1f2a37\` |
+| Expandable | ✅ | ✅ | \`var(--color-border-default)\` | \`#42389d\` | \`#42389d\` | up · \`#1f2a37\` |
 | Expandable | ❌ | ✅ | transparent | \`#111928\` | \`#6b7280\` | up · \`#1f2a37\` |
-| Secondary | ✅ | — | \`#e5e7eb\` | \`#42389d\` | — | — |
+| Secondary | ✅ | — | \`var(--color-border-default)\` | \`#42389d\` | — | — |
 | Secondary | ❌ | — | transparent | \`#111928\` | — | — |
         `.trim(),
       },
@@ -590,7 +590,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
         language: 'html',
         code: `<!-- Primary — Selected (active) -->
 <div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
-            border-radius:8px;background:#e5e7eb;width:220px;box-sizing:border-box;">
+            border-radius:8px;background:var(--color-border-default);width:220px;box-sizing:border-box;">
   <span style="color:#42389d;"><!-- icon 24×24 --></span>
   <span style="font:500 16px/1.5 Inter,sans-serif;color:#42389d;">Label</span>
 </div>
@@ -604,7 +604,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
 
 <!-- Expandable — Selected, Collapsed -->
 <div style="display:flex;align-items:center;gap:4px;height:40px;padding:6px 8px;
-            border-radius:8px;background:#e5e7eb;width:220px;box-sizing:border-box;">
+            border-radius:8px;background:var(--color-border-default);width:220px;box-sizing:border-box;">
   <div style="display:flex;flex:1;gap:4px;align-items:center;">
     <span style="color:#42389d;"><!-- icon 24×24 --></span>
     <span style="font:500 16px/1.5 Inter,sans-serif;color:#42389d;">Label</span>
@@ -615,7 +615,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
 <!-- Secondary — Selected (sub-item, 28px indent) -->
 <div style="padding-left:28px;">
   <div style="display:flex;align-items:center;height:40px;padding:6px 8px;
-              border-radius:8px;background:#e5e7eb;width:192px;box-sizing:border-box;">
+              border-radius:8px;background:var(--color-border-default);width:192px;box-sizing:border-box;">
     <span style="font:500 16px/1.5 Inter,sans-serif;color:#42389d;">Sub-item</span>
   </div>
 </div>`,
@@ -655,10 +655,10 @@ export const ColorVariants = {
         story: `
 Both light-mode color variants side-by-side from Figma component set \`1057:2041\`.
 
-- **Color=Gray** (\`#f3f4f6\`) — default; use on white page backgrounds
-- **Color=White** (\`#ffffff\`) — use when the sidebar sits on an already-light or gray page background
+- **Color=Gray** (\`var(--color-bg-secondary)\`) — default; use on white page backgrounds
+- **Color=White** (\`var(--color-bg-white)\`) — use when the sidebar sits on an already-light or gray page background
 
-Both use identical menu item tokens and the same \`#e5e7eb\` right border.
+Both use identical menu item tokens and the same \`var(--color-border-default)\` right border.
         `.trim(),
       },
       source: {
@@ -667,18 +667,18 @@ Both use identical menu item tokens and the same \`#e5e7eb\` right border.
 <aside style="width:256px;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">...</aside>
 
 <!-- Color=White -->
-<aside style="width:256px;background:#ffffff;border-right:1px solid #e5e7eb;">...</aside>`,
+<aside style="width:256px;background:var(--color-bg-white);border-right:1px solid var(--color-border-default);">...</aside>`,
       },
     },
   },
   render: () => `
     <div style="height:100vh;display:flex;gap:0;">
       <div>
-        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid #e5e7eb;">Color=Gray · #f3f4f6</div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">Color=Gray · var(--color-bg-secondary)</div>
         ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'gray' })}
       </div>
       <div>
-        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid #e5e7eb;">Color=White · #ffffff</div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">Color=White · var(--color-bg-white)</div>
         ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'white' })}
       </div>
     </div>
@@ -696,31 +696,31 @@ export const ContractedSidebar = {
       description: {
         story: `
 Contracted sidebar — Figma node \`1060:44\` (\`Type=Contracted, Icons=True, Color=White\`).
-Width: **60px**. Background: **#ffffff** — intentionally different from the expanded sidebar's \`#f3f4f6\`.
+Width: **60px**. Background: **var(--color-bg-white)** — intentionally different from the expanded sidebar's \`var(--color-bg-secondary)\`.
 
 Hover any icon to see its label. All buttons carry \`aria-label\` for keyboard and screen reader access.
 
-Active item: **40×40px** centered square, bg \`#f3f4f6\`, radius 8px, icon \`#1f2a37\`.
+Active item: **40×40px** centered square, bg \`var(--color-bg-secondary)\`, radius 8px, icon \`#1f2a37\`.
 Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
 
 **✅ Do** — always include \`aria-label\` and \`title\` on icon-only buttons.
-**✅ Do** — keep the right border (1px \`#e5e7eb\`) — it is the only visual separator from page content.
-**❌ Don't** — use \`#f3f4f6\` as the contracted sidebar background — Figma spec is \`#ffffff\`.
+**✅ Do** — keep the right border (1px \`var(--color-border-default)\`) — it is the only visual separator from page content.
+**❌ Don't** — use \`var(--color-bg-secondary)\` as the contracted sidebar background — Figma spec is \`var(--color-bg-white)\`.
 **❌ Don't** — increase the width beyond 60px — the contracted state is intentionally compact.
         `.trim(),
       },
       source: {
         language: 'html',
         code: `<!-- Contracted sidebar: 60px wide, white bg, icon-only -->
-<aside style="width:60px;height:100vh;background:#ffffff;
-              border-right:1px solid #e5e7eb;
+<aside style="width:60px;height:100vh;background:var(--color-bg-white);
+              border-right:1px solid var(--color-border-default);
               display:flex;flex-direction:column;
               padding-top:16px;box-sizing:border-box;">
 
   <!-- First section (gap 16px) -->
   <nav style="display:flex;flex-direction:column;gap:16px;padding-bottom:12px;">
 
-    <!-- Active: 40×40 centered, bg #f3f4f6, radius 8px, icon #1f2a37 -->
+    <!-- Active: 40×40 centered, bg var(--color-bg-secondary), radius 8px, icon #1f2a37 -->
     <button aria-label="Overview" aria-current="page" title="Overview"
             style="width:40px;height:40px;margin:0 auto;background:var(--color-bg-muted);
                    border-radius:8px;border:none;display:flex;
@@ -738,14 +738,14 @@ Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
 
   </nav>
 
-  <div style="height:1px;background:#e5e7eb;"></div>
+  <div style="height:1px;background:var(--color-border-default);"></div>
 
   <!-- Second section (gap 8px, padding 12px top/bottom) -->
   <nav style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
     <!-- clipboard-list, collection, support icons -->
   </nav>
 
-  <div style="height:1px;background:#e5e7eb;"></div>
+  <div style="height:1px;background:var(--color-border-default);"></div>
 
   <!-- Bottom section (gap 8px, padding 12px top/bottom) -->
   <nav style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
@@ -824,13 +824,13 @@ function contractedSidebarWithLogo({ activeKey = 'chartPie' } = {}) {
       ${items.map(item => contractedItem({ ...item, active: item.key === activeKey })).join('')}
     </div>`;
 
-  const sep = () => `<div style="height:1px;background:#e5e7eb;flex-shrink:0;"></div>`;
+  const sep = () => `<div style="height:1px;background:var(--color-border-default);flex-shrink:0;"></div>`;
 
   return `
     <div style="
       width:60px;height:100%;min-height:600px;
-      background:#ffffff;
-      border-right:1px solid #e5e7eb;
+      background:var(--color-bg-white);
+      border-right:1px solid var(--color-border-default);
       display:flex;flex-direction:column;
       padding-top:16px;box-sizing:border-box;
     ">
@@ -867,8 +867,8 @@ Use this variant when the contracted sidebar is the only navigation element on t
       source: {
         language: 'html',
         code: `<!-- Contracted sidebar with logo mark: 60px wide, white bg -->
-<aside style="width:60px;height:100vh;background:#ffffff;
-              border-right:1px solid #e5e7eb;
+<aside style="width:60px;height:100vh;background:var(--color-bg-white);
+              border-right:1px solid var(--color-border-default);
               display:flex;flex-direction:column;
               padding-top:16px;box-sizing:border-box;">
 
@@ -879,11 +879,11 @@ Use this variant when the contracted sidebar is the only navigation element on t
 
   <!-- Nav sections: same structure as logo-less contracted sidebar -->
   <nav style="display:flex;flex-direction:column;gap:16px;padding-bottom:12px;">
-    <!-- Active icon: 40×40 centered, bg #f3f4f6, r=8px, icon #1f2a37 -->
+    <!-- Active icon: 40×40 centered, bg var(--color-bg-secondary), r=8px, icon #1f2a37 -->
     <!-- Inactive icon: 60×32 full-width, transparent, icon #6b7280 -->
   </nav>
 
-  <div style="height:1px;background:#e5e7eb;"></div>
+  <div style="height:1px;background:var(--color-border-default);"></div>
   <!-- Second and bottom nav sections... -->
 </aside>`,
       },
@@ -911,19 +911,19 @@ Full-page layout example — Figma node \`17:40413\`.
 
 Shows the expanded sidebar alongside a typical dashboard content area. Use this to verify the sidebar integrates correctly with the page background and content layout.
 
-**✅ Do** — pair the \`Color=Gray\` sidebar with a white (\`#ffffff\`) page background.
-**❌ Don't** — set the page background to the same \`#f3f4f6\` as the sidebar — they will visually merge.
+**✅ Do** — pair the \`Color=Gray\` sidebar with a white (\`var(--color-bg-white)\`) page background.
+**❌ Don't** — set the page background to the same \`var(--color-bg-secondary)\` as the sidebar — they will visually merge.
         `.trim(),
       },
       source: {
         language: 'html',
         code: `<!-- Full-page layout -->
 <div style="display:flex;height:100vh;">
-  <!-- Sidebar: 256px, bg #f3f4f6 -->
+  <!-- Sidebar: 256px, bg var(--color-bg-secondary) -->
   <aside style="width:256px;flex-shrink:0;"><!-- sidebar --></aside>
 
   <!-- Page content: fills remaining width, white bg -->
-  <main style="flex:1;background:#ffffff;padding:24px;overflow:auto;">
+  <main style="flex:1;background:var(--color-bg-white);padding:24px;overflow:auto;">
     <!-- Dashboard content -->
   </main>
 </div>`,
@@ -931,10 +931,10 @@ Shows the expanded sidebar alongside a typical dashboard content area. Use this 
     },
   },
   render: () => `
-    <div style="display:flex;height:100vh;background:#ffffff;">
+    <div style="display:flex;height:100vh;background:var(--color-bg-white);">
       ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'gray' })}
       <main style="
-        flex:1;background:#ffffff;padding:24px;overflow:auto;
+        flex:1;background:var(--color-bg-white);padding:24px;overflow:auto;
         display:flex;flex-direction:column;gap:16px;
       ">
         <div style="font:600 20px/1.4 inherit;color:#111928;">Overview</div>
@@ -954,7 +954,7 @@ Shows the expanded sidebar alongside a typical dashboard content area. Use this 
             ['Budget approved', 'Yesterday'],
             ['New cohort created', '3 days ago'],
           ].map(([text, time]) => `
-            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;">
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border-default);">
               <span style="font:400 14px/1.5 inherit;color:#111928;">${text}</span>
               <span style="font:400 12px/1.5 inherit;color:#9ca3af;">${time}</span>
             </div>

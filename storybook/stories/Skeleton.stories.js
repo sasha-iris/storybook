@@ -113,7 +113,7 @@ function skList({ animated }) {
 }
 
 function skSimpleText({ animated }) {
-  // From Figma: 7 rows at 8px. Most are #d1d5db; middle cells in 3-col rows are #e5e7eb.
+  // From Figma: 7 rows at 8px. Most are #d1d5db; middle cells in 3-col rows are var(--color-border-default).
   return `
 <div style="width:640px;padding:16px;background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.1);">
   <div style="display:flex;flex-direction:column;gap:16px;">
@@ -137,7 +137,7 @@ function skSimpleText({ animated }) {
 }
 
 function skWidget({ animated }) {
-  // From Figma: 7 bars × 17.7px wide × 229px tall, fill=#e5e7eb, gap ~24px
+  // From Figma: 7 bars × 17.7px wide × 229px tall, fill=var(--color-border-default), gap ~24px
   const bars = Array(7).fill(null).map(() =>
     `<div ${sk(animated, 'width:17px;height:229px;border-radius:2px;')}></div>`
   ).join('');
@@ -190,7 +190,7 @@ export default {
 
 **Anatomy**
 Skeleton blocks come in two weights: \`#d1d5db\` (darker, used for headings and image areas)
-and \`#e5e7eb\` (lighter, used for body text). Both support an optional shimmer animation.
+and \`var(--color-border-default)\` (lighter, used for body text). Both support an optional shimmer animation.
 The \`animated\` prop should be disabled when \`prefers-reduced-motion: reduce\` is detected.
         `,
       },
@@ -231,11 +231,11 @@ export const Interactive = {
   render: (args) => {
     const a = args;
 
-    const htmlCode = `<!-- Skeleton loader -->\n<div class="skeleton skeleton--${a.type}${a.animated ? '' : ' skeleton--static'}" style="min-height:100px;border-radius:8px;background:#e5e7eb${a.animated ? ';animation:pulse 2s infinite;' : ''}"></div>\n<!-- Replace with real content once data is loaded -->`;
+    const htmlCode = `<!-- Skeleton loader -->\n<div class="skeleton skeleton--${a.type}${a.animated ? '' : ' skeleton--static'}" style="min-height:100px;border-radius:8px;background:var(--color-border-default)${a.animated ? ';animation:pulse 2s infinite;' : ''}"></div>\n<!-- Replace with real content once data is loaded -->`;
 
-    const reactCode = `<div\n  className="skeleton skeleton--${a.type}${a.animated ? '' : ' skeleton--static'}"\n  style={{\n    minHeight: '100px',\n    borderRadius: '8px',\n    background: '#e5e7eb',\n    animation: ${a.animated ? "'pulse 2s infinite'" : 'none'},\n  }}\n/>\n{/* Replace with real content once data is loaded */}`;
+    const reactCode = `<div\n  className="skeleton skeleton--${a.type}${a.animated ? '' : ' skeleton--static'}"\n  style={{\n    minHeight: '100px',\n    borderRadius: '8px',\n    background: 'var(--color-border-default)',\n    animation: ${a.animated ? "'pulse 2s infinite'" : 'none'},\n  }}\n/>\n{/* Replace with real content once data is loaded */}`;
 
-    const componentCode = `export function SkeletonLoader({ type = 'text', animated = true, height = 100 }) {\n  return (\n    <div\n      className={\`skeleton skeleton--\${type}\${animated ? '' : ' skeleton--static'}\`}\n      style={{\n        minHeight: height,\n        borderRadius: '8px',\n        background: '#e5e7eb',\n        animation: animated ? 'pulse 2s infinite' : 'none',\n      }}\n    />\n  );\n}\n\n/* CSS */\n@keyframes pulse {\n  0%, 100% { opacity: 1; }\n  50% { opacity: 0.5; }\n}`;
+    const componentCode = `export function SkeletonLoader({ type = 'text', animated = true, height = 100 }) {\n  return (\n    <div\n      className={\`skeleton skeleton--\${type}\${animated ? '' : ' skeleton--static'}\`}\n      style={{\n        minHeight: height,\n        borderRadius: '8px',\n        background: 'var(--color-border-default)',\n        animation: animated ? 'pulse 2s infinite' : 'none',\n      }}\n    />\n  );\n}\n\n/* CSS */\n@keyframes pulse {\n  0%, 100% { opacity: 1; }\n  50% { opacity: 0.5; }\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -243,34 +243,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${skeleton(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -287,8 +287,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });

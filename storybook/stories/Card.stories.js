@@ -49,7 +49,7 @@ import { ICON } from './card-icons.js';
 function basicCard({ title = 'Card title', body = 'Body copy', showImage = false, showFooter = false }) {
   const imgSlot = showImage ? `\n  <img src="https://picsum.photos/seed/card/380/180" alt="Card image" style="width:100%;height:180px;object-fit:cover;display:block;">` : '';
   const footerSlot = showFooter ? `\n    <button class="btn btn-primary btn-sm">Read more</button>` : '';
-  return `<div class="card" style="max-width:380px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${imgSlot}\n  <div style="padding:20px;">\n    <h3 style="margin:0 0 12px 0;font-size:var(--text-lg);font-weight:var(--font-semibold);">${title}</h3>\n    <p style="margin:0 0 ${showFooter ? '16px' : '0'} 0;font-size:var(--text-sm);color:var(--color-text-body-subtle);">${body}</p>${footerSlot}\n  </div>\n</div>`;
+  return `<div class="card" style="max-width:380px;border:1px solid var(--color-border-default);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${imgSlot}\n  <div style="padding:20px;">\n    <h3 style="margin:0 0 12px 0;font-size:var(--text-lg);font-weight:var(--font-semibold);">${title}</h3>\n    <p style="margin:0 0 ${showFooter ? '16px' : '0'} 0;font-size:var(--text-sm);color:var(--color-text-body-subtle);">${body}</p>${footerSlot}\n  </div>\n</div>`;
 }
 
 export default {
@@ -143,11 +143,11 @@ export const Interactive = {
     const bodyClass = a.showImage ? 'card-body' : 'card-body-padded';
     const footerSlot = a.showFooter ? `\n    <button class="btn btn-primary btn-sm">Read more</button>` : '';
 
-    const htmlCode = `<div class="card" style="max-width:380px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${imgSlot}\n  <div style="padding:20px;">\n    <h3 style="margin:0 0 12px 0;font-size:var(--text-lg);font-weight:var(--font-semibold);">${a.title}</h3>\n    <p style="margin:0 0 ${a.showFooter ? '16px' : '0'} 0;font-size:var(--text-sm);color:var(--color-text-body-subtle);">${a.body}</p>${footerSlot}\n  </div>\n</div>`;
+    const htmlCode = `<div class="card" style="max-width:380px;border:1px solid var(--color-border-default);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${imgSlot}\n  <div style="padding:20px;">\n    <h3 style="margin:0 0 12px 0;font-size:var(--text-lg);font-weight:var(--font-semibold);">${a.title}</h3>\n    <p style="margin:0 0 ${a.showFooter ? '16px' : '0'} 0;font-size:var(--text-sm);color:var(--color-text-body-subtle);">${a.body}</p>${footerSlot}\n  </div>\n</div>`;
 
-    const reactCode = `<div\n  className="card\"\n  style={{\n    maxWidth: '380px',\n    border: '1px solid #e5e7eb',\n    borderRadius: '12px',\n    overflow: 'hidden',\n    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',\n  }}\n>\n  {image && <img src={image} alt="Card" style={{ width: '100%', height: '180px' }} />}\n  <div style={{ padding: '20px' }}>\n    <h3 style={{ margin: '0 0 12px 0' }}>{title}</h3>\n    <p style={{ margin: '0' }}>{body}</p>\n    {showFooter && <button className="btn btn-primary">Read more</button>}\n  </div>\n</div>`;
+    const reactCode = `<div\n  className="card\"\n  style={{\n    maxWidth: '380px',\n    border: '1px solid var(--color-border-default)',\n    borderRadius: '12px',\n    overflow: 'hidden',\n    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',\n  }}\n>\n  {image && <img src={image} alt="Card" style={{ width: '100%', height: '180px' }} />}\n  <div style={{ padding: '20px' }}>\n    <h3 style={{ margin: '0 0 12px 0' }}>{title}</h3>\n    <p style={{ margin: '0' }}>{body}</p>\n    {showFooter && <button className="btn btn-primary">Read more</button>}\n  </div>\n</div>`;
 
-    const componentCode = `export function Card({ title, body, image, showFooter = false, onClick }) {\n  return (\n    <div\n      className="card\"\n      style={{\n        maxWidth: '380px',\n        border: '1px solid #e5e7eb',\n        borderRadius: '12px',\n        overflow: 'hidden',\n        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',\n      }}\n      onClick={onClick}\n    >\n      {image && (\n        <img\n          src={image}\n          alt="Card"\n          style={{ width: '100%', height: '180px', objectFit: 'cover' }}\n        />\n      )}\n      <div style={{ padding: '20px' }}>\n        <h3 style={{ margin: '0 0 12px 0', fontWeight: 600 }}>{title}</h3>\n        <p style={{\n          margin: '0 0 ' + (showFooter ? '16px' : '0') + ' 0',\n          fontSize: 'var(--text-sm)',\n        }}>\n          {body}\n        </p>\n        {showFooter && (\n          <button className="btn btn-primary" onClick={(e) => {\n            e.stopPropagation();\n          }}>\n            Read more\n          </button>\n        )}\n      </div>\n    </div>\n  );\n}`;
+    const componentCode = `export function Card({ title, body, image, showFooter = false, onClick }) {\n  return (\n    <div\n      className="card\"\n      style={{\n        maxWidth: '380px',\n        border: '1px solid var(--color-border-default)',\n        borderRadius: '12px',\n        overflow: 'hidden',\n        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',\n      }}\n      onClick={onClick}\n    >\n      {image && (\n        <img\n          src={image}\n          alt="Card"\n          style={{ width: '100%', height: '180px', objectFit: 'cover' }}\n        />\n      )}\n      <div style={{ padding: '20px' }}>\n        <h3 style={{ margin: '0 0 12px 0', fontWeight: 600 }}>{title}</h3>\n        <p style={{\n          margin: '0 0 ' + (showFooter ? '16px' : '0') + ' 0',\n          fontSize: 'var(--text-sm)',\n        }}>\n          {body}\n        </p>\n        {showFooter && (\n          <button className="btn btn-primary" onClick={(e) => {\n            e.stopPropagation();\n          }}>\n            Read more\n          </button>\n        )}\n      </div>\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -155,34 +155,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${basicCard(a)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -199,8 +199,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });

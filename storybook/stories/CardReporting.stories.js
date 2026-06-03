@@ -19,14 +19,14 @@
  *
  * | State    | BG       | Border         | Shadow    |
  * |---------|----------|----------------|-----------|
- * | Default  | #ffffff  | transparent    | shadow-sm |
- * | Hovered  | #ffffff  | 1px #6875f5   | shadow-md |
+ * | Default  | var(--color-bg-white)  | transparent    | shadow-sm |
+ * | Hovered  | var(--color-bg-white)  | 1px #6875f5   | shadow-md |
  * | Inactive | #f9fafb  | transparent    | shadow-sm |
  *
  * ## QA notes
  * - **Hovered**: title color → #42389d (brand/800) + arrow-right icon appears next to title
  * - **Inactive**: toggle off (gray/300 bg), E-mail+Slack chips → gray/100,
- *   Amazon icon bg → gray/200 (#e5e7eb not yellow), schedule text = paused message
+ *   Amazon icon bg → gray/200 (var(--color-border-default) not yellow), schedule text = paused message
  * - **Owner=Iris**: Iris Smart mark (xs, 24px, real Figma asset) + "Iris Finance" label
  * - **Owner=User**: round avatar circle + user name ("Jese Leos")
  * - Channel chip icons (mail, slack) use fill="currentColor" → color follows chip bg
@@ -177,7 +177,7 @@ const ownerSection = (owner) => {
     : `<span aria-label="Jese Leos avatar"
              style="display:inline-flex;align-items:center;justify-content:center;
                     width:20px;height:20px;border-radius:100px;border:1px solid var(--color-border-default);
-                    background:var(--color-bg-muted);font-size:8px;font-weight:600;color:#374151;
+                    background:var(--color-bg-muted);font-size:8px;font-weight:600;color:var(--color-text-primary);
                     flex-shrink:0;">JL</span>
        <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;line-height:1.5;
                     white-space:nowrap;">Jese Leos</span>`;
@@ -257,45 +257,45 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
  */
 
 function cardReporting({ active = true, hovered = false, owner = 'iris' }) {
-  return `<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;width:280px;"><div style="font-size:14px;color:#1f2937;">Report Card — ${active ? 'Active' : 'Paused'}</div></div>`;
+  return `<div style="padding:20px;border:1px solid var(--color-border-default);border-radius:12px;background:#fff;width:280px;"><div style="font-size:14px;color:var(--color-text-heading);">Report Card — ${active ? 'Active' : 'Paused'}</div></div>`;
 }
 
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const h='<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;"><div>Report Card</div></div>';
-    const r='<div style={{padding:"20px",border:"1px solid #e5e7eb",borderRadius:"12px"}}>{children}</div>';
-    const c='export function ReportingCard({title,data}){return(<div style={{border:"1px solid #e5e7eb",padding:"20px"}}>{title}</div>);}';
+    const h='<div style="padding:20px;border:1px solid var(--color-border-default);border-radius:12px;background:#fff;"><div>Report Card</div></div>';
+    const r='<div style={{padding:"20px",border:"1px solid var(--color-border-default)",borderRadius:"12px"}}>{children}</div>';
+    const c='export function ReportingCard({title,data}){return(<div style={{border:"1px solid var(--color-border-default)",padding:"20px"}}>{title}</div>);}';
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${cardReporting(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -312,8 +312,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -374,7 +374,7 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
 
 | Property       | Value                    |
 |---------------|--------------------------|
-| Background     | #ffffff                  |
+| Background     | var(--color-bg-white)                  |
 | Border         | transparent (none)       |
 | Shadow         | shadow-sm                |
 | Toggle         | ON — #42389d (brand/800) |
@@ -492,7 +492,7 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
 /**
  * Inactive (paused) — toggle OFF, gray/50 bg, muted chips.
  * QA: bg #f9fafb, toggle off (gray/300 bg), both chips gray/100 + gray text,
- *     Amazon bg → #e5e7eb (not yellow), schedule text changes to paused message.
+ *     Amazon bg → var(--color-border-default) (not yellow), schedule text changes to paused message.
  */
 export const Inactive = {
     name: 'Inactive — paused',
@@ -504,11 +504,11 @@ Inactive state (active=no): report is paused.
 
 | Property          | Active                 | Inactive                    |
 |------------------|------------------------|-----------------------------|
-| Background        | #ffffff                | **#f9fafb** (gray/50)       |
+| Background        | var(--color-bg-white)                | **#f9fafb** (gray/50)       |
 | Toggle            | ON — brand/800 purple  | **OFF** — gray/300 (#d1d5db)|
-| E-mail chip bg    | #e60076 (pink/600)     | **#f3f4f6** (gray/100)      |
-| Slack chip bg     | #9810fa (purple/600)   | **#f3f4f6** (gray/100)      |
-| Amazon icon bg    | #fef9c2 (yellow/100)   | **#e5e7eb** (gray/200)      |
+| E-mail chip bg    | #e60076 (pink/600)     | **var(--color-bg-secondary)** (gray/100)      |
+| Slack chip bg     | #9810fa (purple/600)   | **var(--color-bg-secondary)** (gray/100)      |
+| Amazon icon bg    | #fef9c2 (yellow/100)   | **var(--color-border-default)** (gray/200)      |
 | Schedule text     | Time + frequency       | Paused message              |
         `,
       },
@@ -536,7 +536,7 @@ Inactive state (active=no): report is paused.
   <p style="font-size:var(--text-sm);color:#4b5563;margin:0;">
     Right now the report is paused. We'll send it to you at 7am tomorrow morning when you turn it on
   </p>
-  <!-- ③ Footer: Amazon bg changes to #e5e7eb (gray/200) when inactive -->
+  <!-- ③ Footer: Amazon bg changes to var(--color-border-default) (gray/200) when inactive -->
 </div>
 <!-- CSS for inactive modifier:
 .card-reporting--inactive {
@@ -574,11 +574,11 @@ instead of the Iris Finance logo mark.
 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
   <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);">Owned by</span>
   <div style="display:flex;align-items:center;gap:4px;">
-    <!-- Round avatar: initials circle, 20×20px, border 1px #e5e7eb -->
+    <!-- Round avatar: initials circle, 20×20px, border 1px var(--color-border-default) -->
     <span aria-label="Jese Leos avatar"
           style="display:inline-flex;align-items:center;justify-content:center;
                  width:20px;height:20px;border-radius:100px;border:1px solid var(--color-border-default);
-                 background:var(--color-bg-muted);font-size:8px;font-weight:600;color:#374151;
+                 background:var(--color-bg-muted);font-size:8px;font-weight:600;color:var(--color-text-primary);
                  flex-shrink:0;">JL</span>
     <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;white-space:nowrap;">Jese Leos</span>
   </div>

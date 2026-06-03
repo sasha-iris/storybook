@@ -151,7 +151,7 @@ These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--
  * Three-dots menu in the top-right corner.
  *
  * **QA checklist**
- * - Avatar: 96px circle, 1px border #e5e7eb, shadow-md
+ * - Avatar: 96px circle, 1px border var(--color-border-default), shadow-md
  * - "Add friend": bg #42389d (brand/800), rounded-12px, 12px medium, white
  * - "Message": no bg-fill, border 1px #f9fafb, text #1e2939, 12px medium
  * - Card pt-16px px-16px pb-40px (asymmetric padding — more space at bottom)
@@ -167,10 +167,10 @@ Social profile card. Centred avatar, name, role, and two action buttons.
 **Node:** 13559:76692 | Width: 384px | Shadow: shadow-md
 
 **✅ Do** — use for team member profiles, account pages, and "people" directory cards.
-**✅ Do** — keep the avatar 96 px circle with \`border: 1px solid #e5e7eb\` and shadow-md.
+**✅ Do** — keep the avatar 96 px circle with \`border: 1px solid var(--color-border-default)\` and shadow-md.
 **❌ Don't** — use this layout for showing metrics or data — use Card/KPI instead.
 
-**QA** — Avatar: 96 px circle, \`#e5e7eb\` border, shadow-md · "Add friend": bg \`#42389d\` (brand/800), rounded-12 px, 12 px medium · "Message": no fill, \`#f9fafb\` border, \`#1e2939\` text · Card padding: \`16px 16px 40px\` (asymmetric — more space at bottom).
+**QA** — Avatar: 96 px circle, \`var(--color-border-default)\` border, shadow-md · "Add friend": bg \`#42389d\` (brand/800), rounded-12 px, 12 px medium · "Message": no fill, \`#f9fafb\` border, \`#1e2939\` text · Card padding: \`16px 16px 40px\` (asymmetric — more space at bottom).
 
 **Approximations:** Three-dots icon is an inline SVG (Figma uses a raster vector).
         `,
@@ -472,7 +472,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
  * **QA checklist**
  * - Shadow: shadow-sm (lighter than most cards — no border in Figma)
  * - Avatar: 32px circle, object-fit cover
- * - Divider between rows: 1px solid #e5e7eb
+ * - Divider between rows: 1px solid var(--color-border-default)
  * - Amount: 16px semibold right-aligned
  * - "View all" link: #155dfc, 16px medium
  * - Title "Latest Customers": 18px extrabold #111928
@@ -488,10 +488,10 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
 **Node:** 13561:77786 | Width: 384px | Shadow: shadow-sm (no border in Figma)
 
 **✅ Do** — use for compact data rows inside a card (customers, transactions, recent activity).
-**✅ Do** — keep row dividers at \`1px solid #e5e7eb\` to maintain visual separation without weight.
+**✅ Do** — keep row dividers at \`1px solid var(--color-border-default)\` to maintain visual separation without weight.
 **❌ Don't** — use more than ~8 rows without pagination — the card should not become a scrollable list.
 
-**QA** — No border (shadow-sm only) · Avatar: 32 px circle, \`object-fit: cover\` · Row divider: \`1px solid #e5e7eb\` · Amount: 16 px semibold, right-aligned · "View all" link: \`#155dfc\`, 16 px medium · Title "Latest Customers": 18 px extrabold \`#111928\`.
+**QA** — No border (shadow-sm only) · Avatar: 32 px circle, \`object-fit: cover\` · Row divider: \`1px solid var(--color-border-default)\` · Amount: 16 px semibold, right-aligned · "View all" link: \`#155dfc\`, 16 px medium · Title "Latest Customers": 18 px extrabold \`#111928\`.
         `,
       },
       source: {
@@ -506,7 +506,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
   </div>
   <!-- Customer rows -->
   <div style="display:flex;flex-direction:column;">
-    <!-- Row: repeat for each customer, add 1px #e5e7eb divider between rows -->
+    <!-- Row: repeat for each customer, add 1px var(--color-border-default) divider between rows -->
     <div style="display:flex;align-items:center;padding:16px 0;">
       <div style="display:flex;flex:1;align-items:center;gap:8px;min-width:0;">
         <img src="…" alt="Neil Sims"
@@ -549,7 +549,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
       <!-- Customer rows -->
       <div style="display:flex;flex-direction:column;">
         ${customers.map((c, i) => `
-          ${i > 0 ? '<div style="height:1px;background:#e5e7eb;"></div>' : ''}
+          ${i > 0 ? '<div style="height:1px;background:var(--color-border-default);"></div>' : ''}
           <div style="display:flex;align-items:center;padding:${i === customers.length - 1 ? '16px 0 0' : '16px 0'};">
             <div style="display:flex;flex:1;align-items:center;gap:8px;min-width:0;">
               <img src="${c.img}" alt="${c.name}"
@@ -801,7 +801,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
  * Card with a simple top-tab navigation bar + body copy + "Learn more" link.
  *
  * **QA checklist**
- * - Tab row: bg #f9fafb, border-bottom 1px #e5e7eb, p-16px
+ * - Tab row: bg #f9fafb, border-bottom 1px var(--color-border-default), p-16px
  * - Active tab "Services": color #155dfc (blue/600), medium 14px
  * - Inactive tabs "About", "Facts": color #6b7280, medium 14px
  * - Tab gap: 32px
@@ -823,7 +823,7 @@ Card with simple tab navigation above the content body.
 **✅ Do** — use when a card needs to switch between 2–4 content sections (About / Services / Facts).
 **❌ Don't** — use more than 4–5 tabs in this pattern — use a full Tabs component at page level instead.
 
-**QA** — Tab strip: bg \`#f9fafb\`, border-bottom \`1px #e5e7eb\`, \`p-16 px\` · Active tab: color \`#155dfc\` (blue/600), 14 px medium · Inactive tabs: \`#6b7280\`, 14 px medium · Tab gap: 32 px · Body: \`p-32 px\`, heading 30 px extrabold, body 18 px regular · "Learn more" link + chevron-right: color \`#155dfc\`.
+**QA** — Tab strip: bg \`#f9fafb\`, border-bottom \`1px var(--color-border-default)\`, \`p-16 px\` · Active tab: color \`#155dfc\` (blue/600), 14 px medium · Inactive tabs: \`#6b7280\`, 14 px medium · Tab gap: 32 px · Body: \`p-32 px\`, heading 30 px extrabold, body 18 px regular · "Learn more" link + chevron-right: color \`#155dfc\`.
 
 Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
         `,
@@ -833,7 +833,7 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
         code: `<!-- Nav Tabs card (790px, shadow-md) -->
 <div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
-  <!-- Tab row: bg #f9fafb, border-bottom 1px #e5e7eb -->
+  <!-- Tab row: bg #f9fafb, border-bottom 1px var(--color-border-default) -->
   <div style="background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);padding:16px;">
     <div style="display:flex;gap:32px;">
       <!-- Inactive tab: color #6b7280, medium 14px -->
@@ -899,7 +899,7 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
  * Named "Type11" in Figma.
  *
  * **QA checklist**
- * - Tab row: 3 equal columns separated by 1px #e5e7eb vertical dividers
+ * - Tab row: 3 equal columns separated by 1px var(--color-border-default) vertical dividers
  * - Active tab "Statistics": bg #f9fafb, color #155dfc, medium 14px
  * - Inactive tabs: bg #f9fafb, color #6b7280, medium 14px
  * - Stats: 30px extrabold #111928 + 16px regular #6b7280 label, centered
@@ -919,7 +919,7 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
 **✅ Do** — keep stats to 6 (2 rows × 3 columns) — more than 6 items should use a separate Table.
 **❌ Don't** — use this pattern for a single metric — use Card/KPI instead.
 
-**QA** — Tab row: 3 equal columns, separated by \`1px #e5e7eb\` vertical dividers · Active tab: bg \`#f9fafb\`, color \`#155dfc\`, 14 px medium · Inactive tabs: bg \`#f9fafb\`, \`#6b7280\` · Stats: 30 px extrabold \`#111928\` value + 16 px regular \`#6b7280\` label, centered · Grid: 2 rows × 3 columns, gap 32 px.
+**QA** — Tab row: 3 equal columns, separated by \`1px var(--color-border-default)\` vertical dividers · Active tab: bg \`#f9fafb\`, color \`#155dfc\`, 14 px medium · Inactive tabs: bg \`#f9fafb\`, \`#6b7280\` · Stats: 30 px extrabold \`#111928\` value + 16 px regular \`#6b7280\` label, centered · Grid: 2 rows × 3 columns, gap 32 px.
         `,
       },
       source: {
@@ -927,13 +927,13 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
         code: `<!-- Stats card (790px, shadow-md) -->
 <div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
-  <!-- Segmented tab row: 3 equal columns with 1px #e5e7eb vertical dividers -->
+  <!-- Segmented tab row: 3 equal columns with 1px var(--color-border-default) vertical dividers -->
   <div style="display:flex;background:var(--color-bg-default);border-radius:8px 8px 0 0;overflow:hidden;">
     <!-- Active tab: color #155dfc -->
-    <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid #e5e7eb;">
+    <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid var(--color-border-default);">
       <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;">Statistics</span>
     </div>
-    <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid #e5e7eb;">
+    <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid var(--color-border-default);">
       <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">Services</span>
     </div>
     <div style="flex:1;display:flex;justify-content:center;padding:16px;">
@@ -977,10 +977,10 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
 
       <!-- Segmented tab row -->
       <div style="display:flex;background:var(--color-bg-default);box-shadow:0 1px 2px 0 rgba(0,0,0,.08);overflow:hidden;border-radius:8px 8px 0 0;">
-        <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid #e5e7eb;">
+        <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid var(--color-border-default);">
           <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;white-space:nowrap;">Statistics</span>
         </div>
-        <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid #e5e7eb;">
+        <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid var(--color-border-default);">
           <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);white-space:nowrap;">Services</span>
         </div>
         <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;">
@@ -1009,13 +1009,13 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
 ═══════════════════════════════════════════════════════════ */
 /**
  * 2×2 testimonial grid: quote title + body text + author avatar/name/role.
- * Cells divided by 1px #e5e7eb borders (vertical between columns, horizontal between rows).
+ * Cells divided by 1px var(--color-border-default) borders (vertical between columns, horizontal between rows).
  *
  * **QA checklist**
  * - Cell padding: 32px
  * - Title: 18px semibold #111928
  * - Quote: 16px regular #6b7280, text-center
- * - Author: 32px avatar (circle, border 1px #e5e7eb) + 18px semibold name + 14px medium role
+ * - Author: 32px avatar (circle, border 1px var(--color-border-default)) + 18px semibold name + 14px medium role
  * - Overall shadow: shadow-sm (lighter)
  */
 export const TestimonialCard = {
@@ -1032,7 +1032,7 @@ export const TestimonialCard = {
 **✅ Do** — vary quote length across the 4 cells to test layout stability at different text lengths.
 **❌ Don't** — truncate quotes with ellipsis — if a quote is too long, shorten it at the source.
 
-**QA** — Cell padding: 32 px · Title: 18 px semibold \`#111928\` · Quote: 16 px regular \`#6b7280\`, text-center · Author avatar: 32 px circle, \`border: 1px solid #e5e7eb\` · Author name: 18 px semibold · Author role: 14 px medium · Shadow: shadow-sm (lighter than shadow-md cards).
+**QA** — Cell padding: 32 px · Title: 18 px semibold \`#111928\` · Quote: 16 px regular \`#6b7280\`, text-center · Author avatar: 32 px circle, \`border: 1px solid var(--color-border-default)\` · Author name: 18 px semibold · Author role: 14 px medium · Shadow: shadow-sm (lighter than shadow-md cards).
         `,
       },
       source: {
@@ -1059,10 +1059,10 @@ export const TestimonialCard = {
         </div>
       </div>
     </div>
-    <div style="width:1px;background:#e5e7eb;flex-shrink:0;"></div>
+    <div style="width:1px;background:var(--color-border-default);flex-shrink:0;"></div>
     <!-- Second cell — same structure … -->
   </div>
-  <!-- Row 2: border-top 1px #e5e7eb + 2 more cells -->
+  <!-- Row 2: border-top 1px var(--color-border-default) + 2 more cells -->
 </div>`,
       },
     },
@@ -1100,14 +1100,14 @@ export const TestimonialCard = {
       <!-- Row 1 -->
       <div style="display:flex;border-radius:8px 8px 0 0;overflow:hidden;">
         ${cell(testimonials[0], '')}
-        <div style="width:1px;background:#e5e7eb;flex-shrink:0;"></div>
+        <div style="width:1px;background:var(--color-border-default);flex-shrink:0;"></div>
         ${cell(testimonials[1], '')}
       </div>
       <!-- Row 2 -->
       <div style="display:flex;border-radius:0 0 8px 8px;overflow:hidden;">
-        ${cell(testimonials[2], 'border-top:1px solid #e5e7eb;')}
-        <div style="width:1px;background:#e5e7eb;flex-shrink:0;"></div>
-        ${cell(testimonials[3], 'border-top:1px solid #e5e7eb;')}
+        ${cell(testimonials[2], 'border-top:1px solid var(--color-border-default);')}
+        <div style="width:1px;background:var(--color-border-default);flex-shrink:0;"></div>
+        ${cell(testimonials[3], 'border-top:1px solid var(--color-border-default);')}
       </div>
     </div>`;
   },
@@ -1124,7 +1124,7 @@ export const TestimonialCard = {
  * - Title: 18px semibold #111928
  * - Description: 14px regular #6b7280
  * - Wallet row: bg #f9fafb, p-12px, rounded-8px, icon (16–18px) + name bold
- * - MetaMask row has a "Popular" badge: bg #e5e7eb, rounded-6px, 12px medium #6b7280
+ * - MetaMask row has a "Popular" badge: bg var(--color-border-default), rounded-6px, 12px medium #6b7280
  * - Helper text: question icon + 12px regular #6b7280
  *
  * **Approximations:**
@@ -1145,7 +1145,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
 **✅ Do** — keep the "Popular" badge on the most-used provider to reduce decision friction.
 **❌ Don't** — add more than 6–7 wallet options without a search/filter — the list becomes unwieldy.
 
-**QA** — No border (shadow-sm only): \`box-shadow: 0 1px 2px rgba(0,0,0,.08)\` · Card: \`p-24 gap-16\` · Title: 18 px semibold \`#111928\` · Description: 14 px regular \`#6b7280\` · Wallet row: bg \`#f9fafb\`, \`p-12\`, rounded-8 px, icon 16–18 px + name bold · MetaMask "Popular" badge: bg \`#e5e7eb\`, rounded-6 px, 12 px medium \`#6b7280\` · Helper text: question icon + 12 px regular \`#6b7280\`.
+**QA** — No border (shadow-sm only): \`box-shadow: 0 1px 2px rgba(0,0,0,.08)\` · Card: \`p-24 gap-16\` · Title: 18 px semibold \`#111928\` · Description: 14 px regular \`#6b7280\` · Wallet row: bg \`#f9fafb\`, \`p-12\`, rounded-8 px, icon 16–18 px + name bold · MetaMask "Popular" badge: bg \`var(--color-border-default)\`, rounded-6 px, 12 px medium \`#6b7280\` · Helper text: question icon + 12 px regular \`#6b7280\`.
 
 **Approximations:** Question-circle icon is inline SVG. Wallet icons use SimpleIcons CDN (stable). Fortmatic uses a text-badge placeholder.
         `,
@@ -1168,8 +1168,8 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
                 padding:12px;border-radius:8px;cursor:pointer;">
       <img src="…metamask-icon…" alt="MetaMask" style="width:18px;height:17px;object-fit:contain;">
       <span style="flex:1;font-size:var(--text-base);font-weight:700;color:#111928;">MetaMask</span>
-      <!-- "Popular" badge: bg #e5e7eb, rounded-6px, 12px medium #6b7280 -->
-      <span style="background:#e5e7eb;font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);
+      <!-- "Popular" badge: bg var(--color-border-default), rounded-6px, 12px medium #6b7280 -->
+      <span style="background:var(--color-border-default);font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);
                    padding:2px 10px;border-radius:6px;">Popular</span>
     </div>
     <!-- … repeat for 4 more wallets (no Popular badge) … -->
@@ -1220,7 +1220,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
                   ${w.name}
                 </span>
               </div>
-              ${w.popular ? `<span style="background:#e5e7eb;font-size:var(--text-xs);font-weight:var(--font-medium);
+              ${w.popular ? `<span style="background:var(--color-border-default);font-size:var(--text-xs);font-weight:var(--font-medium);
                                          color:var(--color-text-secondary);padding:2px 10px;border-radius:6px;
                                          white-space:nowrap;line-height:1.5;">Popular</span>` : ''}
             </div>`).join('')}

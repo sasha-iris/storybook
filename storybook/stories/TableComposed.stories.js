@@ -29,10 +29,10 @@
  *
  * ## Row type used as a grid-level primitive
  * Each table row is a horizontal flex of cells that all share the same background:
- * - Default row:   #ffffff  (standard data rows)
+ * - Default row:   var(--color-bg-white)  (standard data rows)
  * - NonColl row:   #f9fafb  (section headers / non-collapsible rows)
  * - Derival row:   #fff8f1  (derived / sub-total)
- * - Total row:     #f3f4f6  (grand total)
+ * - Total row:     var(--color-bg-secondary)  (grand total)
  */
 
 /* ── Shared cell helpers (self-contained) ─────────────────────────────── */
@@ -40,7 +40,7 @@
 /** Row label cell — left-aligned text, first column */
 const lbl = ({
   text,
-  bg = '#ffffff',
+  bg = 'var(--color-bg-white)',
   color = '#111928',
   bold = false,
   width = 180,
@@ -57,7 +57,7 @@ const lbl = ({
 /** Column category header (horizontal) */
 const cHdr = ({
   text = 'Column',
-  bg = '#ffffff',
+  bg = 'var(--color-bg-white)',
   color = '#111928',
   bold = true,
   width = 146,
@@ -88,7 +88,7 @@ const val = ({
   amount = '—',
   currency = false,
   textColor = '#111928',
-  bg = '#ffffff',
+  bg = 'var(--color-bg-white)',
   width = 146,
   grey = false,   // grey = true renders em-dash in grey (empty/N/A cell)
 } = {}) => {
@@ -106,10 +106,10 @@ const val = ({
 };
 
 /** Horizontal divider between table rows */
-const DIV = `<div style="height:1px;background:#e5e7eb;flex-shrink:0;width:100%;"></div>`;
+const DIV = `<div style="height:1px;background:var(--color-border-default);flex-shrink:0;width:100%;"></div>`;
 
 /** Wrap a row's cells in a flex row with a bottom border */
-const row = (cells, bg = '#ffffff') => /* html */`
+const row = (cells, bg = 'var(--color-bg-white)') => /* html */`
   <div style="display:flex;align-items:stretch;background:${bg};">
     ${cells}
   </div>
@@ -157,10 +157,10 @@ Each table row is a horizontal flex of cells. All cells on a row share one backg
 
 | Row type | Background | Typical use |
 |---|---|---|
-| Default | \`#ffffff\` | Standard data rows |
+| Default | \`var(--color-bg-white)\` | Standard data rows |
 | NonCollapsible | \`#f9fafb\` | Section sub-header (non-collapsible) |
 | Derival | \`#fff8f1\` | Derived / sub-total |
-| Total | \`#f3f4f6\` | Grand total |
+| Total | \`var(--color-bg-secondary)\` | Grand total |
 
 ### Column category headers
 
@@ -170,7 +170,7 @@ Category semantics are encoded in the column header background and text colour:
 |---|---|---|
 | Income | \`#f3faf7\` | \`#057a55\` |
 | Disbursements | \`#fdf2f2\` | \`#e02424\` |
-| Total / Union | \`#f3f4f6\` | \`#111928\` / \`#42389d\` |
+| Total / Union | \`var(--color-bg-secondary)\` | \`#111928\` / \`#42389d\` |
 | Expand | \`#edebfe\` | \`#42389d\` |
 
 ### Period header columns
@@ -191,7 +191,7 @@ FORECAST columns use teal/200 (\`#96f7e4\`) header bg.`,
  * Row types demonstrated:
  * - Default (white): standard line items
  * - Derival (orange #fff8f1): Gross Profit sub-total
- * - Total (gray #f3f4f6): Net Income grand total
+ * - Total (gray var(--color-bg-secondary)): Net Income grand total
  *
  * Cell options demonstrated:
  * - Calculated (green): positive income values
@@ -203,9 +203,9 @@ FORECAST columns use teal/200 (\`#96f7e4\`) header bg.`,
  * **QA checklist**
  * - Header row has colored category backgrounds (Income=green, Disbursements=red, Total=gray)
  * - Derival row: orange bg #fff8f1 spans all columns including label
- * - Total row: gray bg #f3f4f6 spans all columns
+ * - Total row: gray bg var(--color-bg-secondary) spans all columns
  * - Bottom-left + bottom-right corners of the table are clipped to border-radius
- * - All cell heights: 38px; all dividers: 1px #e5e7eb
+ * - All cell heights: 38px; all dividers: 1px var(--color-border-default)
  * - Income column values: #0e9f6e (Calculated option)
  * - Disbursements column values: #e74694 (Waste option)
  * - Total column grand total: #42389d (Indigo option)
@@ -251,15 +251,15 @@ Demonstrates Derival (sub-total) and Total rows in context alongside standard De
 
   <!-- Total row (gray bg) -->
   <div style="display:flex;align-items:stretch;background:var(--color-bg-muted);">
-    <!-- all cells share #f3f4f6 background -->
+    <!-- all cells share var(--color-bg-secondary) background -->
   </div>
 </div>`,
       },
     },
   },
   render: () => {
-    const ROW_BG = { default: '#ffffff', derival: '#fff8f1', total: '#f3f4f6', noncoll: '#f9fafb' };
-    const COL = { income: { bg: '#f3faf7', color: '#057a55' }, disb: { bg: '#fdf2f2', color: '#e02424' }, total: { bg: '#f3f4f6', color: '#111928' } };
+    const ROW_BG = { default: 'var(--color-bg-white)', derival: '#fff8f1', total: 'var(--color-bg-secondary)', noncoll: '#f9fafb' };
+    const COL = { income: { bg: '#f3faf7', color: '#057a55' }, disb: { bg: '#fdf2f2', color: '#e02424' }, total: { bg: 'var(--color-bg-secondary)', color: '#111928' } };
 
     const headerRow = /* html */`
       <div style="display:flex;align-items:stretch;">
@@ -325,16 +325,16 @@ Demonstrates Derival (sub-total) and Total rows in context alongside standard De
  *
  * Row types:
  * - NonCollapsible (#f9fafb): "Operating Expenses" section header
- * - Default (#ffffff): individual line items
+ * - Default (var(--color-bg-white)): individual line items
  * - Derival (#fff8f1): sub-total for the section
- * - Total (#f3f4f6): grand total across all sections
+ * - Total (var(--color-bg-secondary)): grand total across all sections
  *
  * **QA checklist**
  * - NonCollapsible row: #f9fafb bg, label is bold 600
  * - Derival row: #fff8f1 warm orange tint
- * - Total row: #f3f4f6 cool gray — visually heavier than Derival
+ * - Total row: var(--color-bg-secondary) cool gray — visually heavier than Derival
  * - Section header row has no data values — all slots are blank/gray
- * - All dividers: 1px #e5e7eb
+ * - All dividers: 1px var(--color-border-default)
  * - Total row values: Indigo option (#42389d) bold
  */
 export const FinancialTableRowTypes = {
@@ -358,8 +358,8 @@ export const FinancialTableRowTypes = {
     <!-- empty value cells -->
   </div>
 
-  <!-- Default data row (#ffffff) — standard line item -->
-  <div style="display:flex;align-items:stretch;background:#ffffff;">
+  <!-- Default data row (var(--color-bg-white)) — standard line item -->
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-white);">
     <div style="width:220px;height:38px;padding:8px 16px 8px 32px;box-sizing:border-box;">
       <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Product sales</span>
     </div>
@@ -379,7 +379,7 @@ export const FinancialTableRowTypes = {
     <!-- … -->
   </div>
 
-  <!-- Total row (#f3f4f6) — cool gray, Indigo text (#42389d) -->
+  <!-- Total row (var(--color-bg-secondary)) — cool gray, Indigo text (#42389d) -->
   <div style="display:flex;align-items:stretch;background:var(--color-bg-muted);">
     <div style="width:220px;height:38px;padding:8px 16px;box-sizing:border-box;">
       <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);line-height:1.5;color:#111928;">Net Income</span>
@@ -396,8 +396,8 @@ export const FinancialTableRowTypes = {
     },
   },
   render: () => {
-    const B = { def: '#ffffff', nc: '#f9fafb', deriv: '#fff8f1', tot: '#f3f4f6' };
-    const COL = { expand: { bg: '#edebfe', color: '#42389d' }, def: { bg: '#ffffff', color: '#111928' }, total: { bg: '#f3f4f6', color: '#111928' } };
+    const B = { def: 'var(--color-bg-white)', nc: '#f9fafb', deriv: '#fff8f1', tot: 'var(--color-bg-secondary)' };
+    const COL = { expand: { bg: '#edebfe', color: '#42389d' }, def: { bg: 'var(--color-bg-white)', color: '#111928' }, total: { bg: 'var(--color-bg-secondary)', color: '#111928' } };
 
     const hRow = /* html */`
       <div style="display:flex;align-items:stretch;">
@@ -492,7 +492,7 @@ Scroll horizontally on narrow viewports.`,
     },
   },
   render: () => {
-    const B = { def: '#ffffff', deriv: '#fff8f1', tot: '#f3f4f6', nc: '#f9fafb' };
+    const B = { def: 'var(--color-bg-white)', deriv: '#fff8f1', tot: 'var(--color-bg-secondary)', nc: '#f9fafb' };
 
     const periodHRow = /* html */`
       <div style="display:flex;align-items:stretch;">
@@ -503,7 +503,7 @@ Scroll horizontally on narrow viewports.`,
         ${pHdr({ label: 'APR 2024', bg: '#96f7e4', color: '#4b5563' })}
         ${pHdr({ label: 'MAY 2024', bg: '#96f7e4', color: '#4b5563' })}
         ${pHdr({ label: 'JUN 2024', bg: '#96f7e4', color: '#4b5563' })}
-        ${cHdr({ text: 'H1 Total',  bg: '#f3f4f6', color: '#111928', bold: true })}
+        ${cHdr({ text: 'H1 Total',  bg: 'var(--color-bg-secondary)', color: '#111928', bold: true })}
       </div>
       ${DIV}`;
 
@@ -513,7 +513,7 @@ Scroll horizontally on narrow viewports.`,
         ${vals.map((v, i) => {
           const isActuals   = i < 3;
           const isForecast  = i >= 3 && i < 6;
-          const periodBg    = isActuals ? '#cddbfe' : isForecast ? '#96f7e4' : '#f3f4f6';
+          const periodBg    = isActuals ? '#cddbfe' : isForecast ? '#96f7e4' : 'var(--color-bg-secondary)';
           // For data rows, cells inherit the row bg — period header bg only applies to the header row
           const cellBg      = rowBg;
           const tc          = opts.tc || '#111928';
@@ -593,7 +593,7 @@ Use this story as a reference for when each option should appear.`,
   </div>
 
   <!-- Default row — Calculated option (positive actual, green) -->
-  <div style="display:flex;align-items:stretch;background:#ffffff;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-white);">
     <div style="width:200px;height:38px;padding:8px 16px;box-sizing:border-box;">
       <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Product sales</span>
     </div>
@@ -615,21 +615,21 @@ Use this story as a reference for when each option should appear.`,
   <!-- Waste option: Actual text:#e74694 — below-plan value -->
   <!-- Grey option: text:#6b7280 — zero variance (plan === actual) -->
   <!-- Derival sub-total row: background:#fff8f1 -->
-  <!-- Total row: background:#f3f4f6, all values Indigo (#42389d) -->
+  <!-- Total row: background:var(--color-bg-secondary), all values Indigo (#42389d) -->
 </div>`,
       },
     },
   },
   render: () => {
-    const B = { def: '#ffffff', deriv: '#fff8f1', tot: '#f3f4f6', nc: '#f9fafb' };
+    const B = { def: 'var(--color-bg-white)', deriv: '#fff8f1', tot: 'var(--color-bg-secondary)', nc: '#f9fafb' };
 
     const colHeaders = /* html */`
       <div style="display:flex;align-items:stretch;">
         ${lbl({ text: '',          bg: '#f9fafb', width: 200, bold: true })}
-        ${cHdr({ text: 'Budget',   bg: '#ffffff',  color: '#111928', bold: false })}
-        ${cHdr({ text: 'Actual',   bg: '#ffffff',  color: '#111928', bold: false })}
-        ${cHdr({ text: 'Variance', bg: '#ffffff',  color: '#111928', bold: false })}
-        ${cHdr({ text: '% Var',    bg: '#ffffff',  color: '#111928', bold: false })}
+        ${cHdr({ text: 'Budget',   bg: 'var(--color-bg-white)',  color: '#111928', bold: false })}
+        ${cHdr({ text: 'Actual',   bg: 'var(--color-bg-white)',  color: '#111928', bold: false })}
+        ${cHdr({ text: 'Variance', bg: 'var(--color-bg-white)',  color: '#111928', bold: false })}
+        ${cHdr({ text: '% Var',    bg: 'var(--color-bg-white)',  color: '#111928', bold: false })}
       </div>
       ${DIV}`;
 

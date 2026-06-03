@@ -5,7 +5,7 @@
  * Light mode only.
  *
  * ## Visual spec (all keys share one style)
- * fill: #f3f4f6 · stroke: #e5e7eb · border-radius: 8px
+ * fill: var(--color-bg-secondary) · stroke: var(--color-border-default) · border-radius: 8px
  * font: 12px/600 · text: #1f2a37
  *
  * ## Key widths (height always 30px)
@@ -124,12 +124,12 @@ export const Interactive = {
     const isArrow = !!arrowDir;
 
     const htmlCode = isArrow
-      ? `<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0;">\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">\n    <!-- ${arrowDir} arrow -->\n  </svg>\n</kbd>`
-      : `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:${w}px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-family:inherit;font-size:12px;font-weight:600;color:#1f2a37;white-space:nowrap;">${a.label}</kbd>`;
+      ? `<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0;">\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">\n    <!-- ${arrowDir} arrow -->\n  </svg>\n</kbd>`
+      : `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:${w}px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-family:inherit;font-size:12px;font-weight:600;color:#1f2a37;white-space:nowrap;">${a.label}</kbd>`;
 
     const reactCode = isArrow
-      ? `<kbd style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '30px', background: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '0' }}>\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" strokeWidth="2">{/* arrow icon */}</svg>\n</kbd>`
-      : `<kbd style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '${w}px', height: '30px', background: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '0 6px', fontFamily: 'inherit', fontSize: '12px', fontWeight: '600', color: '#1f2a37', whiteSpace: 'nowrap' }}>${a.label}</kbd>`;
+      ? `<kbd style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '30px', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)', borderRadius: '8px', padding: '0' }}>\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" strokeWidth="2">{/* arrow icon */}</svg>\n</kbd>`
+      : `<kbd style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '${w}px', height: '30px', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)', borderRadius: '8px', padding: '0 6px', fontFamily: 'inherit', fontSize: '12px', fontWeight: '600', color: '#1f2a37', whiteSpace: 'nowrap' }}>${a.label}</kbd>`;
 
     const componentCode = `export function KBD({ label = "${a.label}", size = "${a.size}" }) {\n  return (\n    <kbd className={\`kbd kbd-\${size}\`}>\n      {label}\n    </kbd>\n  );\n}`;
 
@@ -139,34 +139,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${kbd(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -183,8 +183,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -287,7 +287,7 @@ export const FunctionKeys = {
         story: 'All 12 function keys. Width: 32×30px.',
       },
       source: {
-        code: `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">F5</kbd>`,
+        code: `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">F5</kbd>`,
         language: 'html',
       },
     },
@@ -318,7 +318,7 @@ Arrow keys rendered as SVG vector icons (Figma-exact). Width: 32×30px.
       },
       source: {
         code: `<!-- Left arrow key -->
-<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:0;">
+<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0;">
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"/>
   </svg>

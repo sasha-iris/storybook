@@ -5,7 +5,7 @@
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const T = {
   // Light
-  bgCard:       '#ffffff',
+  bgCard:       'var(--color-bg-white)',
   bgInput:      '#f9fafb',
   borderInput:  '#d1d5db',
   titleColor:   '#111928',
@@ -13,17 +13,17 @@ const T = {
   dayText:      '#111928',
   selectedSimple: '#1447e6',
   selectedRange:  '#42389d',
-  inRange:        '#f3f4f6',
+  inRange:        'var(--color-bg-secondary)',
   btnOk:        '#42389d',
-  btnCancel:    '#ffffff',
+  btnCancel:    'var(--color-bg-white)',
   btnCancelText:'#1e2939',
   calIcon:      '#6b7280',
   placeholder:  '#6b7280',
   // Dark
-  dark_bgCard:  '#374151',
-  dark_dayText: '#ffffff',
+  dark_bgCard:  'var(--color-text-primary)',
+  dark_dayText: 'var(--color-bg-white)',
   dark_dayHdr:  '#9ca3af',
-  dark_title:   '#ffffff',
+  dark_title:   'var(--color-bg-white)',
   dark_btnCancel: '#4b5563',
   dark_calIcon: '#9ca3af',
 };
@@ -219,13 +219,13 @@ function monthPicker({ dark, selectedMonth = 'FEB' }) {
     const isSelected = m === selectedMonth;
     return `<div style="height:40px;display:flex;align-items:center;justify-content:center;
       font-size:12px;font-weight:${isSelected ? 700 : 400};
-      color:${isSelected ? '#ffffff' : text};
+      color:${isSelected ? 'var(--color-bg-white)' : text};
       background:${isSelected ? T.selectedRange : 'transparent'};
       border-radius:8px;cursor:pointer;">${m}</div>`;
   }).join('');
 
   const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
-  const cancelText = dark ? '#ffffff'         : T.btnCancelText;
+  const cancelText = dark ? 'var(--color-bg-white)'         : T.btnCancelText;
   const cancelBorder = dark ? 'none' : `1px solid ${T.borderInput}`;
 
   return `<div style="background:${bg};border-radius:8px;padding:12px;width:255px;
@@ -240,7 +240,7 @@ function monthPicker({ dark, selectedMonth = 'FEB' }) {
       <button style="height:37px;padding:0 16px;background:${cancelBg};border:${cancelBorder};
         border-radius:12px;font-size:12px;font-weight:500;color:${cancelText};cursor:pointer;font-family:inherit;">Cancel</button>
       <button style="height:37px;padding:0 16px;background:${T.btnOk};border:none;
-        border-radius:12px;font-size:12px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">Ok</button>
+        border-radius:12px;font-size:12px;font-weight:500;color:var(--color-bg-white);cursor:pointer;font-family:inherit;">Ok</button>
     </div>
   </div>`;
 }
@@ -257,13 +257,13 @@ function yearPicker({ dark, selectedYear = 2019 }) {
     const isSelected = y === selectedYear;
     return `<div style="height:40px;display:flex;align-items:center;justify-content:center;
       font-size:12px;font-weight:${isSelected ? 700 : 400};
-      color:${isSelected ? '#ffffff' : text};
+      color:${isSelected ? 'var(--color-bg-white)' : text};
       background:${isSelected ? T.selectedSimple : 'transparent'};
       border-radius:8px;cursor:pointer;">${y}</div>`;
   }).join('');
 
   const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
-  const cancelText = dark ? '#ffffff'         : T.btnCancelText;
+  const cancelText = dark ? 'var(--color-bg-white)'         : T.btnCancelText;
   const cancelBorder = dark ? 'none' : `1px solid ${T.borderInput}`;
 
   return `<div style="background:${bg};border-radius:8px;padding:12px;width:198px;
@@ -278,7 +278,7 @@ function yearPicker({ dark, selectedYear = 2019 }) {
       <button style="height:37px;padding:0 16px;background:${cancelBg};border:${cancelBorder};
         border-radius:12px;font-size:12px;font-weight:500;color:${cancelText};cursor:pointer;font-family:inherit;">Cancel</button>
       <button style="height:37px;padding:0 16px;background:${T.btnOk};border:none;
-        border-radius:12px;font-size:12px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">Ok</button>
+        border-radius:12px;font-size:12px;font-weight:500;color:var(--color-bg-white);cursor:pointer;font-family:inherit;">Ok</button>
     </div>
   </div>`;
 }
@@ -291,7 +291,7 @@ function dobPicker({ dark }) {
   const titleCl = dark ? T.dark_title  : T.titleColor;
   const arrow   = dark ? T.dark_title  : T.titleColor;
   const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
-  const cancelText = dark ? '#ffffff'         : T.btnCancelText;
+  const cancelText = dark ? 'var(--color-bg-white)'         : T.btnCancelText;
   const cancelBorder = dark ? 'none' : `1px solid ${T.borderInput}`;
 
   function scrollCol(label, items, selected) {
@@ -299,7 +299,7 @@ function dobPicker({ dark }) {
       const isSel = item === selected;
       return `<div style="height:40px;display:flex;align-items:center;justify-content:center;
         font-size:12px;font-weight:${isSel ? 700 : 400};
-        color:${isSel ? (dark ? '#ffffff' : T.titleColor) : dimmed};
+        color:${isSel ? (dark ? 'var(--color-bg-white)' : T.titleColor) : dimmed};
         background:${isSel ? (dark ? '#4b5563' : T.inRange) : 'transparent'};
         border-radius:4px;">${item}</div>`;
     }).join('');
@@ -327,7 +327,7 @@ function dobPicker({ dark }) {
       <button style="height:37px;padding:0 16px;background:${cancelBg};border:${cancelBorder};
         border-radius:12px;font-size:12px;font-weight:500;color:${cancelText};cursor:pointer;font-family:inherit;">Cancel</button>
       <button style="height:37px;padding:0 16px;background:${T.btnOk};border:none;
-        border-radius:12px;font-size:12px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">Ok</button>
+        border-radius:12px;font-size:12px;font-weight:500;color:var(--color-bg-white);cursor:pointer;font-family:inherit;">Ok</button>
     </div>
   </div>`;
 }
@@ -338,11 +338,11 @@ function tabPicker({ dark, activeTab = 'month' }) {
   const text    = dark ? T.dark_dayText : T.dayText;
   const dimmed  = dark ? '#6b7280' : '#9ca3af';
   const titleCl = dark ? T.dark_title  : T.titleColor;
-  const tabSelBg = '#f3f4f6';
+  const tabSelBg = 'var(--color-bg-secondary)';
   const tabSelText = T.selectedRange;
   const arrow   = dark ? T.dark_title  : T.titleColor;
   const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
-  const cancelText = dark ? '#ffffff'         : T.btnCancelText;
+  const cancelText = dark ? 'var(--color-bg-white)'         : T.btnCancelText;
   const cancelBorder = dark ? 'none' : `1px solid ${T.borderInput}`;
 
   const monthTab = `<button style="flex:1;height:32px;background:${activeTab === 'month' ? tabSelBg : 'transparent'};
@@ -361,7 +361,7 @@ function tabPicker({ dark, activeTab = 'month' }) {
   const listItems = items.map(item => {
     const isSel = item === selected;
     return `<div style="padding:8px 12px;font-size:12px;font-weight:${isSel ? 500 : 400};
-      color:${isSel ? T.selectedRange : (dark ? T.dark_dayText : '#374151')};cursor:pointer;">${item}</div>`;
+      color:${isSel ? T.selectedRange : (dark ? T.dark_dayText : 'var(--color-text-primary)')};cursor:pointer;">${item}</div>`;
   }).join('');
 
   return `<div style="background:${bg};border-radius:8px;padding:12px;width:328px;
@@ -381,7 +381,7 @@ function tabPicker({ dark, activeTab = 'month' }) {
       <button style="height:37px;padding:0 16px;background:${cancelBg};border:${cancelBorder};
         border-radius:12px;font-size:12px;font-weight:500;color:${cancelText};cursor:pointer;font-family:inherit;">Cancel</button>
       <button style="height:37px;padding:0 16px;background:${T.btnOk};border:none;
-        border-radius:12px;font-size:12px;font-weight:500;color:#ffffff;cursor:pointer;font-family:inherit;">Apply</button>
+        border-radius:12px;font-size:12px;font-weight:500;color:var(--color-bg-white);cursor:pointer;font-family:inherit;">Apply</button>
     </div>
   </div>`;
 }
@@ -429,7 +429,7 @@ export default {
 - Input trigger (calendar icon + placeholder/value, Default 42px / Large 52px)
 - Calendar panel (header with prev/next arrows + month-year title)
 - Day grid (7 columns, day names row + day number cells)
-- Selected state: single day (\`#1447e6\`) or range endpoints (\`#42389d\`) with in-range fill (\`#f3f4f6\`)
+- Selected state: single day (\`#1447e6\`) or range endpoints (\`#42389d\`) with in-range fill (\`var(--color-bg-secondary)\`)
 - Footer: Cancel + Ok/Apply buttons
         `,
       },
@@ -452,7 +452,7 @@ export default {
     // ── State ─────────────────────────────────────────────────
     dark: {
       control: 'boolean',
-      description: 'Dark theme. Card bg `#374151`, text `#ffffff`, cancel button `#4b5563`.',
+      description: 'Dark theme. Card bg `var(--color-text-primary)`, text `var(--color-bg-white)`, cancel button `#4b5563`.',
       table: { category: 'State', defaultValue: { summary: false } },
     },
   },
@@ -484,34 +484,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${fullWidget(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -528,8 +528,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });

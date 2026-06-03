@@ -146,7 +146,7 @@ const profileMenu = () => menu(`
   </div>
   <hr class="dropdown-divider">
   ${['Your profile', 'Settings', 'Sign out'].map((label, i) =>
-    `<button class="dropdown-item${i === 2 ? ' danger' : ''}" style="color:${i < 2 ? '#374151' : ''};">
+    `<button class="dropdown-item${i === 2 ? ' danger' : ''}" style="color:${i < 2 ? 'var(--color-text-primary)' : ''};">
       <span class="dropdown-item__text">${label}</span>
     </button>`
   ).join('')}
@@ -278,7 +278,7 @@ const appDropdownMenu = () => {
   return menu(`
   <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
     ${apps.map(({ icon, label, active }) => `
-    <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;background:${active ? '#f3f4f6' : 'transparent'};border:none;cursor:pointer;color:#374151;font-size:14px;font-weight:400;font-family:inherit;text-align:left;">
+    <button style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;background:${active ? 'var(--color-bg-secondary)' : 'transparent'};border:none;cursor:pointer;color:var(--color-text-primary);font-size:14px;font-weight:400;font-family:inherit;text-align:left;">
       <span style="color:#9ca3af;flex-shrink:0;">${icon}</span>
       ${label}
     </button>`).join('')}
@@ -393,11 +393,11 @@ export const Interactive = {
     const triggerCls = `dropdown-trigger${iconOnly ? ' dropdown-trigger--icon' : ''}`;
     const trigger = `<button class="${triggerCls}">${iconOnly ? PLUS : `${CHEVRON_DOWN} ${triggerLabel} ${CHEVRON_DOWN}`}</button>`;
 
-    const htmlCode = `<div style="position:relative;">\n  <button class="dropdown-trigger">\n    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"><polyline points="4 6 8 10 12 6"></polyline></svg>\n    ${triggerLabel}\n  </button>\n  <div class="dropdown-menu" style="position:absolute;top:100%;left:0;background:#fff;border:1px solid #e5e7eb;border-radius:8px;width:224px;margin-top:4px;z-index:10;">\n    <button style="width:100%;padding:8px 12px;text-align:left;border:none;background:transparent;cursor:pointer;">Option 1</button>\n    <button style="width:100%;padding:8px 12px;text-align:left;border:none;background:transparent;cursor:pointer;">Option 2</button>\n  </div>\n</div>`;
+    const htmlCode = `<div style="position:relative;">\n  <button class="dropdown-trigger">\n    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"><polyline points="4 6 8 10 12 6"></polyline></svg>\n    ${triggerLabel}\n  </button>\n  <div class="dropdown-menu" style="position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--color-border-default);border-radius:8px;width:224px;margin-top:4px;z-index:10;">\n    <button style="width:100%;padding:8px 12px;text-align:left;border:none;background:transparent;cursor:pointer;">Option 1</button>\n    <button style="width:100%;padding:8px 12px;text-align:left;border:none;background:transparent;cursor:pointer;">Option 2</button>\n  </div>\n</div>`;
 
-    const reactCode = `<div style={{ position: 'relative' }}>\n  <button\n    className="dropdown-trigger"\n    onClick={() => setOpen(!open)}\n  >\n    {open ? '▲' : '▼'} ${triggerLabel}\n  </button>\n  {open && (\n    <div className="dropdown-menu" style={{\n      position: 'absolute',\n      top: '100%',\n      left: 0,\n      background: '#fff',\n      border: '1px solid #e5e7eb',\n      borderRadius: '8px',\n      marginTop: '4px',\n      zIndex: 10,\n    }}>\n      {items.map((item) => (\n        <button\n          key={item}\n          onClick={() => {\n            onSelect(item);\n            setOpen(false);\n          }}\n          style={{ width: '100%', padding: '8px 12px', textAlign: 'left' }}\n        >\n          {item}\n        </button>\n      ))}\n    </div>\n  )}\n</div>`;
+    const reactCode = `<div style={{ position: 'relative' }}>\n  <button\n    className="dropdown-trigger"\n    onClick={() => setOpen(!open)}\n  >\n    {open ? '▲' : '▼'} ${triggerLabel}\n  </button>\n  {open && (\n    <div className="dropdown-menu" style={{\n      position: 'absolute',\n      top: '100%',\n      left: 0,\n      background: '#fff',\n      border: '1px solid var(--color-border-default)',\n      borderRadius: '8px',\n      marginTop: '4px',\n      zIndex: 10,\n    }}>\n      {items.map((item) => (\n        <button\n          key={item}\n          onClick={() => {\n            onSelect(item);\n            setOpen(false);\n          }}\n          style={{ width: '100%', padding: '8px 12px', textAlign: 'left' }}\n        >\n          {item}\n        </button>\n      ))}\n    </div>\n  )}\n</div>`;
 
-    const componentCode = `export function Dropdown({ items = [], triggerLabel, onSelect, iconOnly = false }) {\n  const [open, setOpen] = useState(false);\n\n  const handleSelect = (item) => {\n    onSelect?.(item);\n    setOpen(false);\n  };\n\n  const triggerClass = \`dropdown-trigger\${iconOnly ? ' dropdown-trigger--icon' : ''}\`;\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <button\n        className={triggerClass}\n        onClick={() => setOpen(!open)}\n        aria-expanded={open}\n        aria-haspopup="menu"\n      >\n        {iconOnly ? '+' : triggerLabel}\n      </button>\n      {open && (\n        <div\n          className="dropdown-menu\"\n          role="menu\"\n          style={{\n            position: 'absolute',\n            top: '100%',\n            left: 0,\n            background: '#fff',\n            border: '1px solid #e5e7eb',\n            borderRadius: '8px',\n            minWidth: '224px',\n            zIndex: 10,\n          }}\n        >\n          {items.map((item) => (\n            <button\n              key={item}\n              role="menuitem\"\n              onClick={() => handleSelect(item)}\n              style={{\n                width: '100%',\n                padding: '8px 12px',\n                textAlign: 'left',\n                border: 'none',\n                background: 'transparent',\n                cursor: 'pointer',\n              }}\n            >\n              {item}\n            </button>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
+    const componentCode = `export function Dropdown({ items = [], triggerLabel, onSelect, iconOnly = false }) {\n  const [open, setOpen] = useState(false);\n\n  const handleSelect = (item) => {\n    onSelect?.(item);\n    setOpen(false);\n  };\n\n  const triggerClass = \`dropdown-trigger\${iconOnly ? ' dropdown-trigger--icon' : ''}\`;\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <button\n        className={triggerClass}\n        onClick={() => setOpen(!open)}\n        aria-expanded={open}\n        aria-haspopup="menu"\n      >\n        {iconOnly ? '+' : triggerLabel}\n      </button>\n      {open && (\n        <div\n          className="dropdown-menu\"\n          role="menu\"\n          style={{\n            position: 'absolute',\n            top: '100%',\n            left: 0,\n            background: '#fff',\n            border: '1px solid var(--color-border-default)',\n            borderRadius: '8px',\n            minWidth: '224px',\n            zIndex: 10,\n          }}\n        >\n          {items.map((item) => (\n            <button\n              key={item}\n              role="menuitem\"\n              onClick={() => handleSelect(item)}\n              style={{\n                width: '100%',\n                padding: '8px 12px',\n                textAlign: 'left',\n                border: 'none',\n                background: 'transparent',\n                cursor: 'pointer',\n              }}\n            >\n              {item}\n            </button>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -405,37 +405,37 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start;">
             ${trigger}
             ${menuMap[menuType]?.() ?? defaultMenu()}
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -452,8 +452,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -490,7 +490,7 @@ All 9 variants from Figma node **9456:150381**.
 |-------|-----------|------------|-----|
 | Default | #101828 | gray/500 | — |
 | Selected | brand/800 #42389d | brand/600 #5145cd | — |
-| Hover | #101828 | gray/500 | gray/100 #f3f4f6 |
+| Hover | #101828 | gray/500 | gray/100 var(--color-bg-secondary) |
 | Selected hover | brand/900 #362f78 | brand/800 #42389d | gray/100 |
 | Destructive | danger/700 #c70036 | red/500 #f05252 | — |
 | Destructive hover | danger/900 #8b0836 | red/600 #e02424 | gray/100 |
@@ -873,7 +873,7 @@ export const FilterSelectDropdown = {
 **Specs (Figma):**
 - Height: 36px (\`btn-sm\`)
 - Icon: 16px (\`w-4 h-4\` in React)
-- Border: 1px solid \`#e5e7eb\`, radius 12px
+- Border: 1px solid \`var(--color-border-default)\`, radius 12px
 - Hover: \`var(--color-bg-muted)\`
 - Chevron flips when open
 

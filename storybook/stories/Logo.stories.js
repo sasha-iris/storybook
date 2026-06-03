@@ -22,7 +22,7 @@
  *
  * ## QA notes
  * - Light text color: #101828 (gray/900 — Figma-exact)
- * - Dark text color: #ffffff
+ * - Dark text color: var(--color-bg-white)
  * - Font: semibold (600), sans-serif
  * - No border-radius or additional styling on the mark itself — the raster already includes it
  * - Card usage: use xs mark-only via `irisMarkImg({ size: 'xs' })` from brand-assets.js
@@ -194,7 +194,7 @@ Full logo: Smart mark + "Iris" wordmark. Light mode. Used in nav bars, headers, 
  * xs dark falls back to the xs light raster.
  *
  * **QA checklist**
- * - Text color: #ffffff
+ * - Text color: var(--color-bg-white)
  * - Dark marks use dedicated Figma rasters (sm/md/lg)
  * - xs dark is the light raster — visually identical at this size in practice
  * - Verify no "white halo" around mark edges on the dark panel
@@ -213,14 +213,14 @@ Dark mode — sm, md, lg on a dark background. \`xs\` dark falls back to the lig
 **✅ Do** — verify no white halo around mark edges on the dark panel (transparent PNG edges matter here).
 **❌ Don't** — use the light logo on dark backgrounds — text \`#101828\` is invisible on dark surfaces.
 
-**QA** — Dark text color: \`#ffffff\` · Dark marks: dedicated rasters for sm/md/lg · xs dark = xs light raster fallback · No halo artifacts on \`#101828\` dark bg.
+**QA** — Dark text color: \`var(--color-bg-white)\` · Dark marks: dedicated rasters for sm/md/lg · xs dark = xs light raster fallback · No halo artifacts on \`#101828\` dark bg.
         `,
       },
       source: {
         code: `<!-- Dark logo — md (dark nav bar or panel header) -->
 <div style="display:inline-flex;align-items:center;gap:16px;">
   <img src="./assets/iris-mark-md-dark.svg" height="48" alt="Iris mark" style="display:block;width:auto;">
-  <span style="font-size:36px;font-weight:600;color:#ffffff;white-space:nowrap;">Iris</span>
+  <span style="font-size:36px;font-weight:600;color:var(--color-bg-white);white-space:nowrap;">Iris</span>
 </div>
 
 <!-- Dark mark only — sm (icon slot on dark panel) -->
@@ -281,7 +281,7 @@ irisLogo({ size: 'lg', dark: true }) // 64 px + wordmark, dark`,
       <!-- Light section -->
       <div>
         <p style="font:11px/1 700 sans-serif;text-transform:uppercase;letter-spacing:.12em;
-                  color:#6B7280;margin:0 0 20px;border-bottom:1px solid #e5e7eb;padding-bottom:8px;">
+                  color:#6B7280;margin:0 0 20px;border-bottom:1px solid var(--color-border-default);padding-bottom:8px;">
           Light mode
         </p>
         <div style="display:grid;grid-template-columns:60px repeat(4,auto);gap:16px 32px;align-items:center;">
@@ -301,7 +301,7 @@ irisLogo({ size: 'lg', dark: true }) // 64 px + wordmark, dark`,
       <!-- Dark section -->
       <div style="background:#101828;padding:24px;border-radius:12px;">
         <p style="font:11px/1 700 sans-serif;text-transform:uppercase;letter-spacing:.12em;
-                  color:#374151;margin:0 0 20px;border-bottom:1px solid #1f2937;padding-bottom:8px;">
+                  color:var(--color-text-primary);margin:0 0 20px;border-bottom:1px solid var(--color-text-heading);padding-bottom:8px;">
           Dark mode (sm · md · lg — xs falls back to light raster)
         </p>
         <div style="display:grid;grid-template-columns:60px repeat(4,auto);gap:16px 32px;align-items:center;">

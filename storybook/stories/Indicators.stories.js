@@ -37,7 +37,7 @@ const BADGE_VARIANTS = {
 };
 
 // Check icon — 16×16 stroke
-const CHECK_SVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
+const CHECK_SVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
 
 function dotIndicator({ label = 'Indicator text', dotColor = '#155dfc' }) {
   return `<span style="display:inline-flex;align-items:center;gap:4px;">
@@ -49,7 +49,7 @@ function dotIndicator({ label = 'Indicator text', dotColor = '#155dfc' }) {
 }
 
 function countIndicator({ count = 1 }) {
-  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;line-height:1;" aria-label="${count} notifications">${count}</span>`;
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-bg-white);line-height:1;" aria-label="${count} notifications">${count}</span>`;
 }
 
 function iconIndicator() {
@@ -162,7 +162,7 @@ export const Interactive = {
       case 'stepper': preview = stepperIndicator(); break;
       default:        preview = badgeIndicator({ label, variant });
     }
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${preview}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='#f3f4f6';},2000);});});</script>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${preview}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;cursor:pointer;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='var(--color-bg-secondary)';},2000);});});</script>`;
   },
   parameters: {
     docs: {
@@ -181,11 +181,11 @@ export const Interactive = {
 </span>`;
           }
           if (type === 'count') {
-            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;line-height:1;" aria-label="${count} notifications">${count}</span>`;
+            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-bg-white);line-height:1;" aria-label="${count} notifications">${count}</span>`;
           }
           if (type === 'icon') {
             return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Completed">
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M2.5 8.5L6 12L13.5 4"/>
   </svg>
 </span>`;
@@ -241,7 +241,7 @@ All 5 indicator types side by side.
 </span>
 
 <!-- Count -->
-<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;" aria-label="3 notifications">3</span>
+<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-bg-white);" aria-label="3 notifications">3</span>
 
 <!-- Badge: available -->
 <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;border-radius:99px;background:#def7ec;" role="status">
@@ -373,7 +373,7 @@ Count indicator overlaid on a button — the pattern from Figma node 110:22652.
   <button type="button" class="btn btn-primary btn-md">
     Messages
   </button>
-  <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-xs);font-weight:var(--font-medium);color:#ffffff;padding:0 4px;" aria-label="8 unread messages">8</span>
+  <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-bg-white);padding:0 4px;" aria-label="8 unread messages">8</span>
 </div>`,
         language: 'html',
       },
@@ -381,12 +381,12 @@ Count indicator overlaid on a button — the pattern from Figma node 110:22652.
   },
   render: () => `<div style="padding:16px;display:inline-flex;">
     <div style="position:relative;display:inline-flex;">
-      <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#42389d;border:none;border-radius:12px;font-size:var(--text-sm);font-weight:var(--font-medium);color:#ffffff;cursor:pointer;font-family:inherit;">
+      <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#42389d;border:none;border-radius:12px;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-bg-white);cursor:pointer;font-family:inherit;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
         Messages
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>
       </button>
-      <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid #ffffff;font-size:var(--text-xs);font-weight:var(--font-medium);color:#ffffff;padding:0 4px;" aria-label="8 unread messages">8</span>
+      <span style="position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-bg-white);padding:0 4px;" aria-label="8 unread messages">8</span>
     </div>
   </div>`,
 };
@@ -449,7 +449,7 @@ Badge indicators used as status labels in a customer list — the "Badge indicat
 
     return `<div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;max-width:480px;">
       <div style="padding:12px 16px;border-bottom:1px solid var(--color-border-default);background:var(--color-bg-default);">
-        <span style="font-size:13px;font-weight:var(--font-semibold);color:#374151;text-transform:uppercase;letter-spacing:.05em;">Support Team</span>
+        <span style="font-size:13px;font-weight:var(--font-semibold);color:var(--color-text-primary);text-transform:uppercase;letter-spacing:.05em;">Support Team</span>
       </div>
       ${rows}
     </div>`;
@@ -477,7 +477,7 @@ Stepper indicators used in a multi-step progress bar — the "Stepper" example f
         code: `<div style="display:flex;align-items:center;gap:0;">
   <!-- Completed step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Step 1: Completed">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>
   </span>
   <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Active step -->

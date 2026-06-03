@@ -29,17 +29,17 @@
  * The `type` (row level) sets the background all cells on that row share:
  * | Row type               | Background |
  * |------------------------|------------|
- * | Default                | #ffffff    |
+ * | Default                | var(--color-bg-white)    |
  * | Derival                | #fff8f1    |
- * | Total                  | #f3f4f6    |
+ * | Total                  | var(--color-bg-secondary)    |
  * | Defaul-non-collapsible | #f9fafb    |
  *
  * ## TableHeaderHorizontal — column category map
  * | Type            | Background | Text      |
  * |-----------------|------------|-----------|
- * | Default         | #ffffff    | #111928   |
+ * | Default         | var(--color-bg-white)    | #111928   |
  * | Derival         | #fff8f1    | #111928   |
- * | Total / Union   | #f3f4f6    | #111928 / #42389d |
+ * | Total / Union   | var(--color-bg-secondary)    | #111928 / #42389d |
  * | NonCollapsible  | #f9fafb    | #111928   |
  * | Expand          | #edebfe    | #42389d   |
  * | Income          | #f3faf7    | #057a55   |
@@ -82,7 +82,7 @@ const dataCell = ({
   amount = '500,00',
   currency = true,
   textColor = '#111928',
-  bg = '#ffffff',
+  bg = 'var(--color-bg-white)',
   caption = null,
   iconLeft = false,
   iconRight = false,
@@ -121,7 +121,7 @@ const editableCell = () => /* html */`
 /** Horizontal column header (category label, text left-aligned in the cell). */
 const hHeader = ({
   text = 'Label',
-  bg = '#ffffff',
+  bg = 'var(--color-bg-white)',
   color = '#111928',
   bold = false,
 } = {}) => /* html */`
@@ -171,9 +171,9 @@ const OPTION_COLORS = {
 };
 
 const ROW_BG = {
-  default:          '#ffffff',
+  default:          'var(--color-bg-white)',
   derival:          '#fff8f1',
-  total:            '#f3f4f6',
+  total:            'var(--color-bg-secondary)',
   'non-collapsible':'#f9fafb',
 };
 
@@ -221,9 +221,9 @@ Row backgrounds by type:
 
 | Row type | Background |
 |---|---|
-| Default | \`#ffffff\` |
+| Default | \`var(--color-bg-white)\` |
 | Derival | \`#fff8f1\` |
-| Total | \`#f3f4f6\` |
+| Total | \`var(--color-bg-secondary)\` |
 | Defaul-non-collapsible | \`#f9fafb\` |
 
 ### TableHeaderHorizontal
@@ -232,10 +232,10 @@ Column category encoded in background and text colour:
 
 | Type | Background | Text |
 |---|---|---|
-| Default | \`#ffffff\` | \`#111928\` |
+| Default | \`var(--color-bg-white)\` | \`#111928\` |
 | Derival | \`#fff8f1\` | \`#111928\` |
-| Total | \`#f3f4f6\` | \`#111928\` |
-| Union | \`#f3f4f6\` | \`#42389d\` |
+| Total | \`var(--color-bg-secondary)\` | \`#111928\` |
+| Union | \`var(--color-bg-secondary)\` | \`#42389d\` |
 | Defaul-non-collapsible | \`#f9fafb\` | \`#111928\` |
 | Expand | \`#edebfe\` | \`#42389d\` |
 | Income | \`#f3faf7\` | \`#057a55\` |
@@ -255,7 +255,7 @@ Period column headers (time-series, e.g. months):
 - All cells: \`height:38px\`, \`padding:8px 16px\`, \`box-sizing:border-box\`
 - Font: Inter 500 14px / 1.5, values right-aligned; bold headers use 600
 - Period headers: 700 12px uppercase, right-aligned
-- Editing state: inner container has \`border:1px solid #1c64f2; border-radius:4px\`; outer has \`border:1px solid #e5e7eb\`
+- Editing state: inner container has \`border:1px solid #1c64f2; border-radius:4px\`; outer has \`border:1px solid var(--color-border-default)\`
 - **check-circle icon** (APPROX — see JSDoc): Heroicons solid SVG approximation
 
 ### QA notes
@@ -315,13 +315,13 @@ export const Interactive = {
   },
   render: ({ option, rowType, amount, currency }) => {
     const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
-    const bg = cellBg || ROW_BG[rowType] || '#ffffff';
+    const bg = cellBg || ROW_BG[rowType] || 'var(--color-bg-white)';
 
-    const htmlCode = `<table style="width:100%;border-collapse:collapse;">\n  <thead>\n    <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;">\n      <th style="padding:12px 16px;text-align:left;font-weight:600;">Column</th>\n      <th style="padding:12px 16px;text-align:right;font-weight:600;">Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr style="background:${bg};border-bottom:1px solid #e5e7eb;">\n      <td style="padding:8px 16px;">Data</td>\n      <td style="padding:8px 16px;text-align:right;color:${textColor};">${currency ? '$' : ''}${amount}</td>\n    </tr>\n  </tbody>\n</table>`;
+    const htmlCode = `<table style="width:100%;border-collapse:collapse;">\n  <thead>\n    <tr style="background:#f9fafb;border-bottom:1px solid var(--color-border-default);">\n      <th style="padding:12px 16px;text-align:left;font-weight:600;">Column</th>\n      <th style="padding:12px 16px;text-align:right;font-weight:600;">Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr style="background:${bg};border-bottom:1px solid var(--color-border-default);">\n      <td style="padding:8px 16px;">Data</td>\n      <td style="padding:8px 16px;text-align:right;color:${textColor};">${currency ? '$' : ''}${amount}</td>\n    </tr>\n  </tbody>\n</table>`;
 
-    const reactCode = `<table style={{ width: '100%', borderCollapse: 'collapse' }}>\n  <thead>\n    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>\n      <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Column</th>\n      <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    {data.map((row) => (\n      <tr key={row.id} style={{ borderBottom: '1px solid #e5e7eb' }}>\n        <td>{row.label}</td>\n        <td style={{ textAlign: 'right', color: colors[option] }}>\n          {currency ? '$' : ''}{row.amount}\n        </td>\n      </tr>\n    ))}\n  </tbody>\n</table>`;
+    const reactCode = `<table style={{ width: '100%', borderCollapse: 'collapse' }}>\n  <thead>\n    <tr style={{ background: '#f9fafb', borderBottom: '1px solid var(--color-border-default)' }}>\n      <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Column</th>\n      <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    {data.map((row) => (\n      <tr key={row.id} style={{ borderBottom: '1px solid var(--color-border-default)' }}>\n        <td>{row.label}</td>\n        <td style={{ textAlign: 'right', color: colors[option] }}>\n          {currency ? '$' : ''}{row.amount}\n        </td>\n      </tr>\n    ))}\n  </tbody>\n</table>`;
 
-    const componentCode = `export function DataTable({ data = [], currency = false, rowType = 'default', option = 'default' }) {\n  const optionColors = {\n    default: '#374151',\n    positive: '#0e9f6e',\n    negative: '#f05252',\n    warning: '#e5a008',\n  };\n\n  return (\n    <table style={{ width: '100%', borderCollapse: 'collapse' }}>\n      <thead>\n        <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>\n          <th style={{ padding: '12px 16px', textAlign: 'left' }}>Label</th>\n          <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n        </tr>\n      </thead>\n      <tbody>\n        {data.map((row) => (\n          <tr key={row.id} style={{ borderBottom: '1px solid #e5e7eb' }}>\n            <td style={{ padding: '8px 16px' }}>{row.label}</td>\n            <td style={{\n              padding: '8px 16px',\n              textAlign: 'right',\n              color: optionColors[option],\n            }}>\n              {currency ? '$' : ''}\n              {row.amount}\n            </td>\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}`;
+    const componentCode = `export function DataTable({ data = [], currency = false, rowType = 'default', option = 'default' }) {\n  const optionColors = {\n    default: 'var(--color-text-primary)',\n    positive: '#0e9f6e',\n    negative: '#f05252',\n    warning: '#e5a008',\n  };\n\n  return (\n    <table style={{ width: '100%', borderCollapse: 'collapse' }}>\n      <thead>\n        <tr style={{ background: '#f9fafb', borderBottom: '1px solid var(--color-border-default)' }}>\n          <th style={{ padding: '12px 16px', textAlign: 'left' }}>Label</th>\n          <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n        </tr>\n      </thead>\n      <tbody>\n        {data.map((row) => (\n          <tr key={row.id} style={{ borderBottom: '1px solid var(--color-border-default)' }}>\n            <td style={{ padding: '8px 16px' }}>{row.label}</td>\n            <td style={{\n              padding: '8px 16px',\n              textAlign: 'right',\n              color: optionColors[option],\n            }}>\n              {currency ? '$' : ''}\n              {row.amount}\n            </td>\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -329,34 +329,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${dataCell({ amount, currency, textColor: textColor, bg })}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -373,8 +373,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -435,7 +435,7 @@ export const CellOptions = {
     },
   },
   render: ({ rowType }) => {
-    const rowBg = ROW_BG[rowType] || '#ffffff';
+    const rowBg = ROW_BG[rowType] || 'var(--color-bg-white)';
     const OPTIONS = [
       { label: 'Default',    key: 'default' },
       { label: 'Grey',       key: 'grey' },
@@ -468,9 +468,9 @@ export const CellOptions = {
  * The row background is the only difference — cell layout is identical.
  *
  * **QA checklist**
- * - Default (white): pure #ffffff
+ * - Default (white): pure var(--color-bg-white)
  * - Derival: warm cream #fff8f1 — subtle orange tint
- * - Total: cool light gray #f3f4f6
+ * - Total: cool light gray var(--color-bg-secondary)
  * - NonCollapsible: near-white #f9fafb — barely distinguishable from white in isolation
  */
 export const CellRowTypes = {
@@ -484,7 +484,7 @@ export const CellRowTypes = {
       },
       source: {
         code: `<!-- Default row -->
-<div style="background:#ffffff;width:146px;height:38px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:4px;">
+<div style="background:var(--color-bg-white);width:146px;height:38px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:4px;">
   <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">$</span>
   <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
 </div>
@@ -501,9 +501,9 @@ export const CellRowTypes = {
   render: ({ option }) => {
     const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
     const ROW_TYPES = [
-      { label: 'Default',                bg: '#ffffff' },
+      { label: 'Default',                bg: 'var(--color-bg-white)' },
       { label: 'Derival',                bg: '#fff8f1' },
-      { label: 'Total',                  bg: '#f3f4f6' },
+      { label: 'Total',                  bg: 'var(--color-bg-secondary)' },
       { label: 'Non-collapsible',        bg: '#f9fafb' },
     ];
     return /* html */`
@@ -524,7 +524,7 @@ export const CellRowTypes = {
  * Comparison of Editable option: not-editing vs editing.
  *
  * Editing state (editing=true):
- * - Outer container: 1px solid #e5e7eb
+ * - Outer container: 1px solid var(--color-border-default)
  * - Inner focus ring: 1px solid #1c64f2, border-radius 4px
  * - Text: #111928 (reverts to primary — not blue)
  * - Cursor character `|` appended to value
@@ -545,7 +545,7 @@ export const CellEditing = {
         language: 'html',
         code: `<!-- Editable, editing=true (focused state) -->
 <div style="display:flex;align-items:center;width:146px;height:38px;
-            background:var(--color-bg-surface);border:1px solid #e5e7eb;box-sizing:border-box;">
+            background:var(--color-bg-surface);border:1px solid var(--color-border-default);box-sizing:border-box;">
   <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
               border:1px solid #1c64f2;border-radius:4px;
               padding:8px 16px;overflow:hidden;box-sizing:border-box;">
@@ -610,10 +610,10 @@ export const CellWithCaption = {
   render: () => /* html */`
     <div style="display:inline-flex;flex-direction:column;gap:1px;">
       ${[
-        { label: 'Default + caption',    color: '#111928', bg: '#ffffff' },
-        { label: 'Calculated + caption', color: '#0e9f6e', bg: '#ffffff' },
-        { label: 'Waste + caption',      color: '#e74694', bg: '#ffffff' },
-        { label: 'Indigo + caption',     color: '#42389d', bg: '#ffffff' },
+        { label: 'Default + caption',    color: '#111928', bg: 'var(--color-bg-white)' },
+        { label: 'Calculated + caption', color: '#0e9f6e', bg: 'var(--color-bg-white)' },
+        { label: 'Waste + caption',      color: '#e74694', bg: 'var(--color-bg-white)' },
+        { label: 'Indigo + caption',     color: '#42389d', bg: 'var(--color-bg-white)' },
       ].map(({ label, color, bg }) => /* html */`
         <div style="display:flex;align-items:center;">
           ${rowLabel(label)}
@@ -632,8 +632,8 @@ export const CellWithCaption = {
  * **QA checklist**
  * - Default: white bg, #111928 — neutral
  * - Derival: #fff8f1 warm tint, #111928
- * - Total: #f3f4f6 gray, #111928
- * - Union: #f3f4f6 gray, #42389d brand purple (same bg as Total, different text)
+ * - Total: var(--color-bg-secondary) gray, #111928
+ * - Union: var(--color-bg-secondary) gray, #42389d brand purple (same bg as Total, different text)
  * - NonCollapsible: #f9fafb near-white, #111928
  * - Expand: #edebfe purple/100, #42389d — bright purple column
  * - Income: #f3faf7 green/50, #057a55 — green category
@@ -666,10 +666,10 @@ Column category (Income / Disbursements / Expand / Union) is communicated throug
   },
   render: () => {
     const TYPES = [
-      { label: 'Default',            bg: '#ffffff', color: '#111928' },
+      { label: 'Default',            bg: 'var(--color-bg-white)', color: '#111928' },
       { label: 'Derival',            bg: '#fff8f1', color: '#111928' },
-      { label: 'Total',              bg: '#f3f4f6', color: '#111928' },
-      { label: 'Union',              bg: '#f3f4f6', color: '#42389d' },
+      { label: 'Total',              bg: 'var(--color-bg-secondary)', color: '#111928' },
+      { label: 'Union',              bg: 'var(--color-bg-secondary)', color: '#42389d' },
       { label: 'NonCollapsible',     bg: '#f9fafb', color: '#111928' },
       { label: 'Expand',             bg: '#edebfe', color: '#42389d' },
       { label: 'Income',             bg: '#f3faf7', color: '#057a55' },
@@ -769,7 +769,7 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
  * | Prop    | Values                              |
  * |---------|-------------------------------------|
  * | percent | "10" "20" "30" "40" "50" "60" "70" "80" "90" "100" |
- * | white   | true (cell bg #fff) · false (cell bg #f3f4f6) |
+ * | white   | true (cell bg #fff) · false (cell bg var(--color-bg-secondary)) |
  * | hover   | "No" (only documented state)        |
  *
  * ## Badge colour ramp
@@ -780,13 +780,13 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
  * | 30%     | #cddbfe   | #111928 |
  * | 40%     | #b4c6fc   | #111928 |
  * | 50%     | #8da2fb   | #111928 |
- * | 60%     | #6875f5   | #ffffff |
- * | 70%     | #5850ec   | #ffffff |
- * | 80%     | #5145cd   | #ffffff |
- * | 90%     | #42389d   | #ffffff |
- * | 100%    | #362f78   | #ffffff |
+ * | 60%     | #6875f5   | var(--color-bg-white) |
+ * | 70%     | #5850ec   | var(--color-bg-white) |
+ * | 80%     | #5145cd   | var(--color-bg-white) |
+ * | 90%     | #42389d   | var(--color-bg-white) |
+ * | 100%    | #362f78   | var(--color-bg-white) |
  *
- * Text flips from `#111928` → `#ffffff` at 60% (brand/500).
+ * Text flips from `#111928` → `var(--color-bg-white)` at 60% (brand/500).
  *
  * ## Dimensions (Figma-exact)
  * Cell container: `width:auto · padding:8px 4px`
@@ -798,7 +798,7 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
  * - Text flips at exactly 60% — no step missed
  * - Badge: 62×42px, `border-radius:4px`
  * - Cell padding: 4px horizontal (not 16px)
- * - `white=false`: cell container bg = #f3f4f6; badge colours unchanged
+ * - `white=false`: cell container bg = var(--color-bg-secondary); badge colours unchanged
  */
 export const CellPercent = {
     name: 'Cell percent — badge ramp',
@@ -807,17 +807,17 @@ export const CellPercent = {
       description: {
         story: `Percentage badge cell (node 9372:85). A 10-step brand ramp badge used
 in cohort/heatmap table columns. Text flips from dark to white at 60%.
-Shown on both \`white\` (default) and \`grey\` (#f3f4f6) cell backgrounds.`,
+Shown on both \`white\` (default) and \`grey\` (var(--color-bg-secondary)) cell backgrounds.`,
       },
       source: {
         language: 'html',
         code: `<!-- TableCellPercent — 60% on white cell bg -->
 <div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:#ffffff;box-sizing:border-box;">
+            padding:8px 4px;background:var(--color-bg-white);box-sizing:border-box;">
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
               background:#6875f5;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#ffffff;
+    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:var(--color-bg-white);
                  white-space:nowrap;text-align:center;">60%</span>
   </div>
 </div>
@@ -838,11 +838,11 @@ Shown on both \`white\` (default) and \`grey\` (#f3f4f6) cell backgrounds.`,
   render: () => {
     /* Figma-exact 10-step ramp: percent → badge bg, text colour */
     const RAMP = [
-      { pct: '100%', bg: '#362f78', text: '#ffffff' },
-      { pct:  '90%', bg: '#42389d', text: '#ffffff' },
-      { pct:  '80%', bg: '#5145cd', text: '#ffffff' },
-      { pct:  '70%', bg: '#5850ec', text: '#ffffff' },
-      { pct:  '60%', bg: '#6875f5', text: '#ffffff' },
+      { pct: '100%', bg: '#362f78', text: 'var(--color-bg-white)' },
+      { pct:  '90%', bg: '#42389d', text: 'var(--color-bg-white)' },
+      { pct:  '80%', bg: '#5145cd', text: 'var(--color-bg-white)' },
+      { pct:  '70%', bg: '#5850ec', text: 'var(--color-bg-white)' },
+      { pct:  '60%', bg: '#6875f5', text: 'var(--color-bg-white)' },
       { pct:  '50%', bg: '#8da2fb', text: '#111928' },
       { pct:  '40%', bg: '#b4c6fc', text: '#111928' },
       { pct:  '30%', bg: '#cddbfe', text: '#111928' },
@@ -868,15 +868,15 @@ Shown on both \`white\` (default) and \`grey\` (#f3f4f6) cell backgrounds.`,
           ${label}
         </p>
         <div style="display:inline-flex;align-items:center;
-                    border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
+                    border:1px solid var(--color-border-default);border-radius:6px;overflow:hidden;">
           ${RAMP.map(r => badge({ ...r, cellBg })).join('')}
         </div>
       </div>`;
 
     return /* html */`
       <div style="display:flex;flex-direction:column;gap:20px;">
-        ${row('#ffffff', 'white = true (default)')}
-        ${row('#f3f4f6', 'white = false (grey cell bg)')}
+        ${row('var(--color-bg-white)', 'white = true (default)')}
+        ${row('var(--color-bg-secondary)', 'white = false (grey cell bg)')}
       </div>`;
   },
 };

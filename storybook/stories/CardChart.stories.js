@@ -56,8 +56,8 @@ const C_BD_LT = '#F8B4D9';
 
 // ── Bar heights in px from Figma ─────────────────────────────────────────────
 // barchart (602:20796 up / 602:20845 down): Charts frame [222x40]
-// barchart-vert (602:23611): Charts frame [222x40], bar 13 = 40 (full)
-// barchart-big (602:24711): Charts frame [222x58], bars 2,4,9,12 = 58 (full)
+// barchart-vert: Charts frame [222x40], bar 13 = 40 (full)
+// barchart-big: Charts frame [222x58], bars 2,4,9,12 = 58 (full)
 // Index 6 is always the lighter-shade bar (#B4C6FC up / #F8B4D9 down)
 // UP and DOWN differ at positions 12-13; VERT differs from UP at position 13
 const BARS_UP   = [15.54, 16.36, 27.86, 17.18, 40, 25.39, 19.64, 8.96, 29.5, 40, 19.64, 13.89, 25, 36.07];
@@ -125,7 +125,7 @@ function lineChartSvg(dir) {
 }
 
 // Bar chart: 14 bars × 3px, heights from Figma
-// Standard (602:20796 up / 602:20845 down): container 40px. Big (602:24711): container 58px.
+// Standard (602:20796 up / 602:20845 down): container 40px. Big: container 58px.
 function barChartHtml(dir, heights, containerH = 40) {
   const main = dir === 'up' ? C_BU : C_DN;
   const light = dir === 'up' ? C_BU_LT : C_BD_LT;
@@ -137,7 +137,7 @@ function barChartHtml(dir, heights, containerH = 40) {
   return `<div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:${containerH}px;flex-shrink:0;">${bars}</div>`;
 }
 
-// Segmented horizontal bar chart — barchart-segm-hor only (602:25133)
+// Segmented horizontal bar chart — barchart-segm-hor only
 // 12 columns × 6px, gap 10px, 50px tall container
 // Segment colors: gray #F2F4F7, green #22C55E, pink #EC4899, sky #33BFFF, blue #1D4ED8
 const SEGM_COLORS = ['#F2F4F7', '#22C55E', '#EC4899', '#33BEFF', '#1D4ED8'];
@@ -251,7 +251,7 @@ function cardBarchartVert(dir = 'up') {
   </div>`;
 }
 
-// barchart-big (602:24711) — Charts frame [222x58], bars at idx 2,4,9,12 are full height (58px)
+// barchart-big — Charts frame [222x58], bars at idx 2,4,9,12 are full height (58px)
 // Figma "top" row: "1st" col = title(18px)+value(36px) = 54px | "Card Body" col = trend(18px) | pill
 // Header must be exactly 54px so: 32(top-pad)+54(header)+40(gap)+58(chart)+16(bot-pad)=200px
 function cardBarchartBig(dir = 'up') {
@@ -284,7 +284,7 @@ function cardBarchartSegmHor() {
   </div>`;
 }
 
-// Credit (602:23265) — mostly flat line with a sharp V-dip at centre (286×168px, Charts 286×69px)
+// Credit — mostly flat line with a sharp V-dip at centre (286×168px, Charts 286×69px)
 // Exact SVG from Figma: 2 fill layers + 1 stroke. Dip goes from y≈18.8 down to y≈60.5 at x≈152.
 function cardCredit() {
   const FILL1 = 'M12.7111 18.5122L0 18.5122V61C0 65.4183 3.58173 69 8 69H278C282.418 69 286 65.4265 286 61.0082V18.5121C278.056 18.5121 279.644 23.561 273.289 23.561C266.933 23.561 266.933 18.5122 260.578 18.5122H247.867C241.511 18.5122 240.717 23.5609 235.156 23.561C229.594 23.561 228.8 35.5001 222.444 35.5001C216.089 35.5001 216.089 18.5122 209.733 18.5122L190.667 18.5122L177.956 18.5122C171.6 18.5122 169.5 17 165.244 18.5122C160.989 20.0243 158.889 60 152.533 60C146.178 60 146.178 18.5122 139.822 18.5122L127.111 18.5122L114.4 18.5122C108.044 18.5122 108.044 23.1402 101.689 23.1402C95.3334 23.1402 95.3333 18.5122 88.9778 18.5122C82.6222 18.5122 82.6222 28.6097 76.2667 28.6097C69.9111 28.6098 69.9111 18.5122 63.5555 18.5122C57.2 18.5122 57.2 23.561 50.8444 23.561C44.4889 23.561 44.4889 18.5122 38.1333 18.5122L25.4222 18.5122H12.7111Z';
@@ -405,7 +405,7 @@ The chart type (\`property3\`) and trend direction (\`property2\`) are the two F
 function chartCard({ direction = 'up', chartType = 'linechart' }) {
   const trendColor = direction === 'up' ? '#5850EC' : '#E74694';
   const trendLabel = direction === 'up' ? '+12.5%' : '−8.3%';
-  return `<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;position:relative;"><div style="display:flex;gap:16px;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Total Sales</div><div style="font-size:24px;font-weight:600;color:#1f2937;">$16,416</div></div><div style="background:#f3f4f6;border-radius:8px;padding:8px;display:flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 20 20" fill="${trendColor}"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg><span style="font-size:12px;font-weight:600;color:${trendColor};">${trendLabel}</span></div></div><div style="flex:1;position:relative;background:#f9fafb;border-radius:6px;overflow:hidden;"><div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to bottom, rgba(88,80,236,0.1), rgba(88,80,236,0.05));"/></div></div>`;
+  return `<div style="background:white;border:1px solid var(--color-border-default);border-radius:8px;width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;position:relative;"><div style="display:flex;gap:16px;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Total Sales</div><div style="font-size:24px;font-weight:600;color:var(--color-text-heading);">$16,416</div></div><div style="background:var(--color-bg-secondary);border-radius:8px;padding:8px;display:flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 20 20" fill="${trendColor}"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg><span style="font-size:12px;font-weight:600;color:${trendColor};">${trendLabel}</span></div></div><div style="flex:1;position:relative;background:#f9fafb;border-radius:6px;overflow:hidden;"><div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to bottom, rgba(88,80,236,0.1), rgba(88,80,236,0.05));"/></div></div>`;
 }
 
 /* ── Interactive (Controls) ─────────────────────────────────────────────────── */
@@ -425,40 +425,40 @@ export const Interactive = {
       default: previewHtml = cardLinechart(args.direction);
     }
 
-    const h = '<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;"><canvas></canvas></div>';
-    const r = '<div style={{padding:"20px",border:"1px solid #e5e7eb"}}><canvas ref={chartRef}></canvas></div>';
-    const c = 'export function ChartCard({chartType,direction}){return(<div style={{border:"1px solid #e5e7eb",padding:"20px"}}><canvas></canvas></div>);}';
+    const h = '<div style="padding:20px;border:1px solid var(--color-border-default);border-radius:12px;"><canvas></canvas></div>';
+    const r = '<div style={{padding:"20px",border:"1px solid var(--color-border-default)"}}><canvas ref={chartRef}></canvas></div>';
+    const c = 'export function ChartCard({chartType,direction}){return(<div style={{border:"1px solid var(--color-border-default)",padding:"20px"}}><canvas></canvas></div>);}';
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${previewHtml}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -475,8 +475,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -534,7 +534,7 @@ export const Interactive = {
 /* ── Linechart ──────────────────────────────────────────────────────────────── */
 
 export const LinechartUp = {
-    name: 'Linechart — Upwards (602:20753)',
+    name: 'Linechart — Upwards',
   parameters: {
     docs: {
       description: { story: 'Smooth line chart trending upward. Trend badge: **#5850EC** (brand purple). Area fill: 12% opacity.' },
@@ -580,7 +580,7 @@ export const LinechartUp = {
 };
 
 export const LinechartDown = {
-    name: 'Linechart — Downwards (602:20589)',
+    name: 'Linechart — Downwards',
   parameters: {
     docs: {
       description: { story: 'Smooth line chart trending downward. Trend badge: **#E74694** (pink).' },
@@ -619,7 +619,7 @@ export const LinechartDown = {
 /* ── Linechart-vert ─────────────────────────────────────────────────────────── */
 
 export const LinechartVertUp = {
-    name: 'Linechart-vert — Upwards (602:22376)',
+    name: 'Linechart-vert — Upwards',
   parameters: {
     docs: {
       description: { story: 'Line chart with "Compared to day prior" label. Up + down variants side by side.' },
@@ -657,7 +657,7 @@ export const LinechartVertUp = {
 /* ── barchart ───────────────────────────────────────────────────────────────── */
 
 export const BarchartUp = {
-    name: 'barchart — Upwards (602:20796)',
+    name: 'barchart — Upwards',
   parameters: {
     docs: {
       description: { story: '14 bars × 3px. Bar color: **#6875F5** (brand/500), bar at index 6 lighter: **#B4C6FC** (brand/300). Trend in header row.' },
@@ -699,7 +699,7 @@ export const BarchartUp = {
 /* ── barchart-vert ──────────────────────────────────────────────────────────── */
 
 export const BarchartVert = {
-    name: 'barchart-vert — Upwards (602:23611)',
+    name: 'barchart-vert — Upwards',
   parameters: {
     docs: {
       description: { story: 'Same 14-bar layout with "Compared to day prior" label above the chart.' },
@@ -740,7 +740,7 @@ export const BarchartVert = {
 /* ── barchart-big ───────────────────────────────────────────────────────────── */
 
 export const BarchartBig = {
-    name: 'barchart-big — Upwards (602:24711)',
+    name: 'barchart-big — Upwards',
   parameters: {
     docs: {
       description: { story: 'barchart with 4 bars at full container height instead of 2 (indexes 4, 9, 12, 13 = full).' },
@@ -781,7 +781,7 @@ export const BarchartBig = {
 /* ── barchart-segm-hor ──────────────────────────────────────────────────────── */
 
 export const BarchartSegmHor = {
-    name: 'barchart-segm-hor — Upwards (602:25133)',
+    name: 'barchart-segm-hor — Upwards',
   parameters: {
     docs: {
       description: { story: 'Wide horizontal card (449×104px). Left: 12 segmented columns with 5 color categories. Right: trend + subtitle.' },
@@ -829,7 +829,7 @@ export const BarchartSegmHor = {
 /* ── Credit ─────────────────────────────────────────────────────────────────── */
 
 export const CreditUp = {
-    name: 'Credit — Upwards (602:23265)',
+    name: 'Credit — Upwards',
   parameters: {
     docs: {
       description: { story: 'Credit-style variant with a distinct wave curve shape (different from standard Linechart).' },
@@ -895,7 +895,7 @@ export const AllVariants = {
     },
   },
   render: ({ direction }) => `
-    <div style="padding:32px;background:#f3f4f6;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;">
+    <div style="padding:32px;background:var(--color-bg-secondary);display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;">
       <div>
         <p style="font:600 11px/1.2 sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;">Linechart</p>
         ${cardLinechart(direction)}

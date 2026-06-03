@@ -14,8 +14,8 @@
  * - Border-radius: 8px (NOT the standard 12px — social buttons use 8px in Figma)
  * - Font-weight: 500 (Medium)
  * - Dark solid bg: #111928 (old-colors/gray/900) — text white
- * - Dark outline: border 1px solid #e5e7eb (#e5e7eb = gray/200), text #111928
- * - White solid bg: #ffffff — text #111928
+ * - Dark outline: border 1px solid var(--color-border-default) (var(--color-border-default) = gray/200), text #111928
+ * - White solid bg: var(--color-bg-white) — text #111928
  * - White outline: border 1px solid #fff, text white (for dark backgrounds)
  * - Icon: 20px (l), 18px (xs), left of label, gap 8px
  * - Figma shows Facebook as the example provider icon; real usage swaps the icon
@@ -29,7 +29,7 @@
  * | l     | 24px | 12px| 16px |
  *
  * ## QA notes
- * - Dark outline on light bg: border = #e5e7eb (gray/200), NOT the brand color
+ * - Dark outline on light bg: border = var(--color-border-default) (gray/200), NOT the brand color
  * - White outline is designed for dark/photo backgrounds (shown on dark panel)
  * - Provider icon scales with size (18px xs/sm, 20px base, 24px l)
  * - Text is "Sign in with {Provider}" — medium weight, single line
@@ -84,7 +84,7 @@ Social sign-in buttons — provider icon + text, 2 color modes, 2 outline modes,
     },
     outline: {
       control: 'boolean',
-      description: 'Outline mode. Dark outline: border #e5e7eb (gray/200). White outline: border #fff (use on dark backgrounds).',
+      description: 'Outline mode. Dark outline: border var(--color-border-default) (gray/200). White outline: border #fff (use on dark backgrounds).',
       table: { category: 'Appearance', defaultValue: { summary: false } },
     },
     size: {
@@ -171,34 +171,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${socialBtn(args)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -215,8 +215,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -235,8 +235,8 @@ export const Interactive = {
 
 /**
  * Dark color variant — all 4 sizes.
- * Use `outline` control to toggle between solid (bg #111928) and outline (border #e5e7eb).
- * QA: solid bg=#111928, text=white; outline border=#e5e7eb (NOT brand color); border-radius=8px.
+ * Use `outline` control to toggle between solid (bg #111928) and outline (border var(--color-border-default)).
+ * QA: solid bg=#111928, text=white; outline border=var(--color-border-default) (NOT brand color); border-radius=8px.
  */
 export const DarkSizes = {
     name: 'Dark — all sizes',
@@ -245,7 +245,7 @@ export const DarkSizes = {
     controls: { include: ['outline'] },
     docs: {
       description: {
-        story: 'Dark color at all 4 sizes. Toggle **outline** to switch between solid (bg #111928) and outline (border #e5e7eb).',
+        story: 'Dark color at all 4 sizes. Toggle **outline** to switch between solid (bg #111928) and outline (border var(--color-border-default)).',
       },
       source: {
         code: `<!-- Dark solid -->

@@ -12,7 +12,7 @@ const C = {
   inputBg:     '#f9fafb',
   inputBgError:'#fdf2f2',
   borderDef:   '#d1d5db',
-  borderDisabled: '#e5e7eb',
+  borderDisabled: 'var(--color-border-default)',
   borderHover: '#9ca3af',
   borderError: '#c81e1e',
   borderErrMs: '#f05252',
@@ -78,7 +78,7 @@ function multiselect(args) {
 
   const labelColor = isError ? C.errorTextMs : C.label;
   const border = isError ? C.borderErrMs : C.borderDef;
-  const inputBg = isError ? C.inputBgError : '#ffffff';
+  const inputBg = isError ? C.inputBgError : 'var(--color-bg-white)';
   const helperColor = isError ? C.errorTextMs : C.help;
 
   const selectedTags = selectedValues.map(v =>
@@ -174,13 +174,13 @@ export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
-    const border = a.state === 'error' ? '#c81e1e' : a.state === 'hovered' ? '#9ca3af' : a.state === 'disabled' ? '#e5e7eb' : '#d1d5db';
+    const border = a.state === 'error' ? '#c81e1e' : a.state === 'hovered' ? '#9ca3af' : a.state === 'disabled' ? 'var(--color-border-default)' : '#d1d5db';
 
     const htmlCode = `<div style="border:1px solid ${border};border-radius:8px;height:40px;background:#f9fafb;display:flex;align-items:center;padding:0 10px;gap:8px;">\n  ${a.type === 'default' ? '<label style="color:#6b7280;">Label:</label>' : ''}\n  <span style="flex:1;color:#111928;">${a.value}</span>\n  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4 6 8 10 12 6"></polyline></svg>\n</div>`;
 
     const reactCode = `<div\n  style={{\n    border: '1px solid ${border}',\n    borderRadius: '8px',\n    height: '40px',\n    background: '#f9fafb',\n    display: 'flex',\n    alignItems: 'center',\n    padding: '0 10px',\n    cursor: 'pointer',\n  }}\n  onClick={() => setOpen(!open)}\n>\n  <span style={{ flex: 1 }}>${a.value}</span>\n  <svg width="16" height="16" viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"></polyline></svg>\n</div>`;
 
-    const componentCode = `export function Select({ options = [], value, onChange, disabled = false, error = false }) {\n  const [open, setOpen] = useState(false);\n\n  const handleSelect = (option) => {\n    onChange?.(option);\n    setOpen(false);\n  };\n\n  const borderColor = error ? '#c81e1e' : '#d1d5db';\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        style={{\n          border: '1px solid ' + borderColor,\n          borderRadius: '8px',\n          height: '40px',\n          background: '#f9fafb',\n          display: 'flex',\n          alignItems: 'center',\n          padding: '0 10px',\n          cursor: 'pointer',\n        }}\n        onClick={() => !disabled && setOpen(!open)}\n      >\n        <span style={{ flex: 1 }}>{value}</span>\n        <svg width="16" height="16" viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"></polyline></svg>\n      </div>\n      {open && (\n        <div style={{\n          position: 'absolute',\n          top: '100%',\n          left: 0,\n          right: 0,\n          background: '#fff',\n          border: '1px solid #e5e7eb',\n          borderRadius: '8px',\n          marginTop: '4px',\n          zIndex: 1000,\n        }}>\n          {options.map((opt) => (\n            <div\n              key={opt}\n              onClick={() => handleSelect(opt)}\n              style={{\n                padding: '8px 10px',\n                cursor: 'pointer',\n                background: value === opt ? '#f3f4f6' : 'transparent',\n              }}\n            >\n              {opt}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
+    const componentCode = `export function Select({ options = [], value, onChange, disabled = false, error = false }) {\n  const [open, setOpen] = useState(false);\n\n  const handleSelect = (option) => {\n    onChange?.(option);\n    setOpen(false);\n  };\n\n  const borderColor = error ? '#c81e1e' : '#d1d5db';\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        style={{\n          border: '1px solid ' + borderColor,\n          borderRadius: '8px',\n          height: '40px',\n          background: '#f9fafb',\n          display: 'flex',\n          alignItems: 'center',\n          padding: '0 10px',\n          cursor: 'pointer',\n        }}\n        onClick={() => !disabled && setOpen(!open)}\n      >\n        <span style={{ flex: 1 }}>{value}</span>\n        <svg width="16" height="16" viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"></polyline></svg>\n      </div>\n      {open && (\n        <div style={{\n          position: 'absolute',\n          top: '100%',\n          left: 0,\n          right: 0,\n          background: '#fff',\n          border: '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          marginTop: '4px',\n          zIndex: 1000,\n        }}>\n          {options.map((opt) => (\n            <div\n              key={opt}\n              onClick={() => handleSelect(opt)}\n              style={{\n                padding: '8px 10px',\n                cursor: 'pointer',\n                background: value === opt ? 'var(--color-bg-secondary)' : 'transparent',\n              }}\n            >\n              {opt}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -188,34 +188,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
           <div style="max-width:360px;">${selectInput(args)}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -232,8 +232,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -268,7 +268,7 @@ export const AllStates = {
 <div style="border:1px solid #9ca3af;border-radius:8px;height:40px;"></div>
 
 <!-- Disabled -->
-<div style="border:1px solid #e5e7eb;border-radius:8px;height:40px;opacity:0.7;cursor:not-allowed;"></div>
+<div style="border:1px solid var(--color-border-default);border-radius:8px;height:40px;opacity:0.7;cursor:not-allowed;"></div>
 
 <!-- Error -->
 <div style="border:1px solid #c81e1e;border-radius:8px;height:40px;"></div>`,

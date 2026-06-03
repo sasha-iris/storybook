@@ -66,7 +66,7 @@ function iconGrid(items) {
     <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
       ${items.map(([name, svg, bg = '#fff']) => `
         <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:80px;">
-          <div style="width:48px;height:48px;background:${bg};border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:48px;height:48px;background:${bg};border:1px solid var(--color-border-default);border-radius:8px;display:flex;align-items:center;justify-content:center;">
             ${svg}
           </div>
           <span style="font:11px/1.3 sans-serif;color:var(--color-text-secondary);text-align:center;word-break:break-word;">${name}</span>
@@ -186,19 +186,19 @@ export const TrendIcons = {
   render: () => `
     <div style="display:flex;flex-wrap:wrap;gap:24px;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div style="width:48px;height:48px;background:#f0fdf4;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:48px;height:48px;background:#f0fdf4;border:1px solid var(--color-border-default);border-radius:8px;display:flex;align-items:center;justify-content:center;">
           ${trendUp()}
         </div>
         <span style="font:11px/1.3 sans-serif;color:var(--color-text-secondary);text-align:center;">trend up<br>#0E9F6E</span>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div style="width:48px;height:48px;background:#fef2f2;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:48px;height:48px;background:#fef2f2;border:1px solid var(--color-border-default);border-radius:8px;display:flex;align-items:center;justify-content:center;">
           ${trendDown()}
         </div>
         <span style="font:11px/1.3 sans-serif;color:var(--color-text-secondary);text-align:center;">trend down<br>#E02424</span>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div style="width:48px;height:48px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:48px;height:48px;background:#f9fafb;border:1px solid var(--color-border-default);border-radius:8px;display:flex;align-items:center;justify-content:center;">
           ${trendNeutral()}
         </div>
         <span style="font:11px/1.3 sans-serif;color:var(--color-text-secondary);text-align:center;">trend neutral<br>#6B7280</span>
@@ -322,7 +322,7 @@ export const SkeletonIcons = {
   render: () => `
     <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:120px;">
-        <div style="width:80px;height:56px;background:#d1d5db;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:80px;height:56px;background:#d1d5db;border:1px solid var(--color-border-default);border-radius:8px;display:flex;align-items:center;justify-content:center;">
           ${imagePlaceholderSvg}
         </div>
         <span style="font:11px/1.3 sans-serif;color:var(--color-text-secondary);text-align:center;">image-placeholder<br>(44×31, custom)</span>
@@ -552,7 +552,7 @@ export const ListGroupIcons = {
   parameters: {
     docs: {
       description: {
-        story: 'Custom stroke icons (16×16). Not from Heroicons — drawn to match the Figma List Group icon set. Color is passed as a parameter (`#111928` light / `#ffffff` dark).',
+        story: 'Custom stroke icons (16×16). Not from Heroicons — drawn to match the Figma List Group icon set. Color is passed as a parameter (`#111928` light / `var(--color-bg-white)` dark).',
       },
     },
   },

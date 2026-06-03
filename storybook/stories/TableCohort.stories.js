@@ -17,13 +17,13 @@
  * | 30%     | #cddbfe   | #111928  | brand/200   |
  * | 40%     | #b4c6fc   | #111928  | brand/300   |
  * | 50%     | #8da2fb   | #111928  | brand/400   |
- * | 60%     | #6875f5   | #ffffff  | brand/500   |
- * | 70%     | #5850ec   | #ffffff  | brand/600   |
- * | 80%     | #5145cd   | #ffffff  | brand/700   |
- * | 90%     | #42389d   | #ffffff  | brand/800   |
- * | 100%    | #362f78   | #ffffff  | brand/900   |
+ * | 60%     | #6875f5   | var(--color-bg-white)  | brand/500   |
+ * | 70%     | #5850ec   | var(--color-bg-white)  | brand/600   |
+ * | 80%     | #5145cd   | var(--color-bg-white)  | brand/700   |
+ * | 90%     | #42389d   | var(--color-bg-white)  | brand/800   |
+ * | 100%    | #362f78   | var(--color-bg-white)  | brand/900   |
  *
- * Text flips from #111928 → #ffffff at brand/500 (60%+).
+ * Text flips from #111928 → var(--color-bg-white) at brand/500 (60%+).
  *
  * ## Percent cell dimensions (Figma-exact)
  * Cell container: px: 4px, py: 8px · Badge: 62 × 42px, border-radius: 4px, padding: 10px
@@ -36,7 +36,7 @@
  * 4. Financial cells: $ per user, count, $ total, multiplier, $ amount, $ amount
  *
  * ## Row background
- * All rows: #ffffff. No zebra striping — the heatmap color ramp provides
+ * All rows: var(--color-bg-white). No zebra striping — the heatmap color ramp provides
  * sufficient visual structure. Zebra conflicts with light heatmap bands.
  */
 
@@ -48,11 +48,11 @@ const PERCENT_RAMP = [
   { pct: '30%',  bg: '#cddbfe', text: '#111928' },
   { pct: '40%',  bg: '#b4c6fc', text: '#111928' },
   { pct: '50%',  bg: '#8da2fb', text: '#111928' },
-  { pct: '60%',  bg: '#6875f5', text: '#ffffff' },
-  { pct: '70%',  bg: '#5850ec', text: '#ffffff' },
-  { pct: '80%',  bg: '#5145cd', text: '#ffffff' },
-  { pct: '90%',  bg: '#42389d', text: '#ffffff' },
-  { pct: '100%', bg: '#362f78', text: '#ffffff' },
+  { pct: '60%',  bg: '#6875f5', text: 'var(--color-bg-white)' },
+  { pct: '70%',  bg: '#5850ec', text: 'var(--color-bg-white)' },
+  { pct: '80%',  bg: '#5145cd', text: 'var(--color-bg-white)' },
+  { pct: '90%',  bg: '#42389d', text: 'var(--color-bg-white)' },
+  { pct: '100%', bg: '#362f78', text: 'var(--color-bg-white)' },
 ];
 
 /* ── Cell builders ──────────────────────────────────────────────────────── */
@@ -63,9 +63,9 @@ const PERCENT_RAMP = [
  * @param {string} p.pct      – label e.g. "60%"
  * @param {string} p.bg       – badge background from ramp
  * @param {string} p.text     – badge text colour
- * @param {string} p.cellBg   – cell container background (#fff or #f3f4f6)
+ * @param {string} p.cellBg   – cell container background (#fff or var(--color-bg-secondary))
  */
-const pctCell = ({ pct, bg, text, cellBg = '#ffffff' }) => /* html */`
+const pctCell = ({ pct, bg, text, cellBg = 'var(--color-bg-white)' }) => /* html */`
   <div style="display:flex;flex-direction:column;align-items:flex-start;
               padding:8px 4px;background:${cellBg};
               box-sizing:border-box;flex-shrink:0;">
@@ -90,7 +90,7 @@ const finCell = ({
   amount,
   currency = false,
   textCol = '#111928',
-  bg = '#ffffff',
+  bg = 'var(--color-bg-white)',
   width = 116,
 }) => /* html */`
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
@@ -131,12 +131,12 @@ Figma nodes: TableCellPercent \`9372:85\` · CohortRow \`9387:1751\`
 ### Percentage badge ramp
 
 10-step brand color ramp from brand/50 (\`#f0f5ff\`) to brand/900 (\`#362f78\`).
-Text flips from \`#111928\` to \`#ffffff\` at 60% (brand/500+).
+Text flips from \`#111928\` to \`var(--color-bg-white)\` at 60% (brand/500+).
 
 | Range | Text |
 |---|---|
 | 10% – 50% | \`#111928\` (dark) |
-| 60% – 100% | \`#ffffff\` (white) |
+| 60% – 100% | \`var(--color-bg-white)\` (white) |
 
 ### CohortRow
 
@@ -148,7 +148,7 @@ Each row contains left → right:
 
 ### Row background
 
-All rows use \`#ffffff\`. No zebra striping — the heatmap color ramp provides sufficient
+All rows use \`var(--color-bg-white)\`. No zebra striping — the heatmap color ramp provides sufficient
 visual structure. Alternating grey rows conflict with the lightest heatmap bands
 (\`#f0f5ff\`, \`#e5edff\`) and add visual noise on top of an already color-encoded table.
 
@@ -162,7 +162,7 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 - Verify smooth color progression: lightest (#f0f5ff) → darkest (#362f78)
 - Text contrast at 50% (#8da2fb badge): dark text (#111928) — confirm legibility
 - At 60% (#6875f5 badge): flips to white — check no intermediate step is missed
-- All rows: white background (#ffffff), no zebra striping`,
+- All rows: white background (var(--color-bg-white)), no zebra striping`,
       },
     },
   },
@@ -177,7 +177,7 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
     rowState: {
       control: 'select',
       options: ['white'],
-      description: 'Row background. Always white (#ffffff) — no zebra striping on cohort heatmap tables.',
+      description: 'Row background. Always white (var(--color-bg-white)) — no zebra striping on cohort heatmap tables.',
       table: { category: 'Appearance', defaultValue: { summary: 'white' } },
     },
   },
@@ -192,7 +192,7 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 ─────────────────────────────────────────────────────────────────────────── */
 export const Interactive = {
     name: 'Interactive (Controls)',
-  render: (args) => {const h='<table><tr><td style="padding:8px;"><div style="background:#e5e7eb;color:#374151;padding:4px 8px;border-radius:4px;">'+args.percentage+'%</div></td></tr></table>';const r='<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>';const c='export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${h}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${c}</pre></div></div>`;},
+  render: (args) => {const h='<table><tr><td style="padding:8px;"><div style="background:var(--color-border-default);color:var(--color-text-primary);padding:4px 8px;border-radius:4px;">'+args.percentage+'%</div></td></tr></table>';const r='<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>';const c='export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${h}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${c}</pre></div></div>`;},
   parameters: {
     docs: {
       description: {
@@ -202,7 +202,7 @@ export const Interactive = {
         transform: (_src, storyCtx) => {
           const { percentage, rowState } = storyCtx.args;
           const step = PERCENT_RAMP.find(r => r.pct === percentage) || PERCENT_RAMP[5];
-          const cellBg = rowState === 'grey' ? '#f3f4f6' : '#ffffff';
+          const cellBg = rowState === 'grey' ? 'var(--color-bg-secondary)' : 'var(--color-bg-white)';
           return `<div style="padding:8px 4px;background:${cellBg};box-sizing:border-box;">
   <div style="display:flex;align-items:center;justify-content:center;
               width:62px;height:42px;padding:10px;border-radius:4px;
@@ -218,7 +218,7 @@ export const Interactive = {
   },
   render: ({ percentage, rowState }) => {
     const step = PERCENT_RAMP.find(r => r.pct === percentage) || PERCENT_RAMP[5];
-    const cellBg = rowState === 'grey' ? '#f3f4f6' : '#ffffff';
+    const cellBg = rowState === 'grey' ? 'var(--color-bg-secondary)' : 'var(--color-bg-white)';
     return pctCell({ pct: step.pct, bg: step.bg, text: step.text, cellBg });
   },
 };
@@ -232,10 +232,10 @@ export const Interactive = {
  *
  * **QA checklist**
  * - 10 steps: 10% → 100%, evenly spaced on the brand scale
- * - Text flips from #111928 to #ffffff at 60%
+ * - Text flips from #111928 to var(--color-bg-white) at 60%
  * - Badge: 62×42px, border-radius 4px
  * - Cell container: px:4px (tighter than standard data cells)
- * - Grey bg row: badge colours unchanged, only cell container bg = #f3f4f6
+ * - Grey bg row: badge colours unchanged, only cell container bg = var(--color-bg-secondary)
  */
 export const PercentBadgeRamp = {
     name: 'Percent badge ramp — 10% → 100%',
@@ -275,23 +275,23 @@ export const PercentBadgeRamp = {
       <div>
         <p style="font-family:inherit;font-size:11px;font-weight:var(--font-bold);line-height:1;text-transform:uppercase;
                   letter-spacing:.12em;color:var(--color-text-secondary);margin:0 0 8px;
-                  border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
+                  border-bottom:1px solid var(--color-border-default);padding-bottom:6px;">
           On white cell bg (#fff)
         </p>
         <div style="display:flex;align-items:flex-end;flex-wrap:wrap;">
           ${PERCENT_RAMP.map(({ pct, bg, text }) =>
-            pctCell({ pct, bg, text, cellBg: '#ffffff' })).join('')}
+            pctCell({ pct, bg, text, cellBg: 'var(--color-bg-white)' })).join('')}
         </div>
       </div>
       <div>
         <p style="font-family:inherit;font-size:11px;font-weight:var(--font-bold);line-height:1;text-transform:uppercase;
                   letter-spacing:.12em;color:var(--color-text-secondary);margin:0 0 8px;
-                  border-bottom:1px solid #e5e7eb;padding-bottom:6px;">
-          On grey cell bg (#f3f4f6)
+                  border-bottom:1px solid var(--color-border-default);padding-bottom:6px;">
+          On grey cell bg (var(--color-bg-secondary))
         </p>
         <div style="display:flex;align-items:flex-end;flex-wrap:wrap;">
           ${PERCENT_RAMP.map(({ pct, bg, text }) =>
-            pctCell({ pct, bg, text, cellBg: '#f3f4f6' })).join('')}
+            pctCell({ pct, bg, text, cellBg: 'var(--color-bg-secondary)' })).join('')}
         </div>
       </div>
     </div>`,
@@ -302,7 +302,7 @@ export const PercentBadgeRamp = {
 ───────────────────────────────────────────────────────────────────────── */
 /**
  * Complete cohort row with realistic "Feb 2023" data from Figma.
- * All rows are white (#ffffff) — no zebra striping.
+ * All rows are white (var(--color-bg-white)) — no zebra striping.
  *
  * Row columns (Figma-exact widths):
  *   Row header (140px) · Count (116px) · 13× Percent cells
@@ -313,7 +313,7 @@ export const PercentBadgeRamp = {
  *   100%, 98%, 84%, 72%, 80%, 66%, 62%, 54%, 48%, 36%, 22%, 14%, 8%
  *
  * **QA checklist**
- * - All rows: white background (#ffffff), text #111928
+ * - All rows: white background (var(--color-bg-white)), text #111928
  * - Row height driven by badge cells (~58px); financial cells stretch to match
  * - Horizontal scroll on narrow viewports — do not truncate the row
  */
@@ -329,54 +329,54 @@ Scroll horizontally if the viewport is narrow.`,
       source: {
         language: 'html',
         code: `<!-- CohortRow — white row state -->
-<div style="display:flex;align-items:stretch;background:#ffffff;border-bottom:1px solid #e5e7eb;">
+<div style="display:flex;align-items:stretch;background:var(--color-bg-white);border-bottom:1px solid var(--color-border-default);">
 
   <!-- Row header (140px) -->
   <div style="display:flex;align-items:center;padding:8px 16px;
-              width:140px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
+              width:140px;flex-shrink:0;box-sizing:border-box;background:var(--color-bg-white);">
     <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Feb 2023</span>
   </div>
 
   <!-- Count cell (116px) -->
   <div style="display:flex;align-items:center;justify-content:flex-end;
-              padding:8px 16px;width:116px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
+              padding:8px 16px;width:116px;flex-shrink:0;box-sizing:border-box;background:var(--color-bg-white);">
     <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">1</span>
   </div>
 
   <!-- Percent badge cell (62×42px badge, px:4px container) -->
   <div style="display:flex;flex-direction:column;align-items:flex-start;
-              padding:8px 4px;background:#ffffff;box-sizing:border-box;flex-shrink:0;">
+              padding:8px 4px;background:var(--color-bg-white);box-sizing:border-box;flex-shrink:0;">
     <div style="display:flex;align-items:center;justify-content:center;
                 width:62px;height:42px;padding:10px;border-radius:4px;
                 background:#362f78;box-sizing:border-box;">
-      <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#ffffff;white-space:nowrap;">100%</span>
+      <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:var(--color-bg-white);white-space:nowrap;">100%</span>
     </div>
   </div>
   <!-- … more percent cells … -->
 
   <!-- Financial cell ($ per user, 140px) -->
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-              padding:8px 16px;width:140px;flex-shrink:0;box-sizing:border-box;background:#ffffff;">
+              padding:8px 16px;width:140px;flex-shrink:0;box-sizing:border-box;background:var(--color-bg-white);">
     <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
     <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">25.00</span>
   </div>
 </div>
 
-<!-- All rows use background:#ffffff — no zebra striping -->`,
+<!-- All rows use background:var(--color-bg-white) — no zebra striping -->`,
       },
     },
   },
   render: () => {
     /* Figma-exact percent values for the Feb 2023 row */
     const FEB_PCTS = [
-      { pct: '100%', bg: '#362f78', text: '#ffffff' },
-      { pct: '98%',  bg: '#362f78', text: '#ffffff' },
-      { pct: '84%',  bg: '#42389d', text: '#ffffff' },
-      { pct: '72%',  bg: '#5145cd', text: '#ffffff' },
-      { pct: '80%',  bg: '#5145cd', text: '#ffffff' },
-      { pct: '66%',  bg: '#5850ec', text: '#ffffff' },
-      { pct: '62%',  bg: '#5850ec', text: '#ffffff' },
-      { pct: '54%',  bg: '#6875f5', text: '#ffffff' },
+      { pct: '100%', bg: '#362f78', text: 'var(--color-bg-white)' },
+      { pct: '98%',  bg: '#362f78', text: 'var(--color-bg-white)' },
+      { pct: '84%',  bg: '#42389d', text: 'var(--color-bg-white)' },
+      { pct: '72%',  bg: '#5145cd', text: 'var(--color-bg-white)' },
+      { pct: '80%',  bg: '#5145cd', text: 'var(--color-bg-white)' },
+      { pct: '66%',  bg: '#5850ec', text: 'var(--color-bg-white)' },
+      { pct: '62%',  bg: '#5850ec', text: 'var(--color-bg-white)' },
+      { pct: '54%',  bg: '#6875f5', text: 'var(--color-bg-white)' },
       { pct: '48%',  bg: '#8da2fb', text: '#111928' },
       { pct: '36%',  bg: '#b4c6fc', text: '#111928' },
       { pct: '22%',  bg: '#cddbfe', text: '#111928' },
@@ -395,11 +395,11 @@ Scroll horizontally if the viewport is narrow.`,
     ];
 
     const cohortRow = () => {
-      const rowBg  = '#ffffff';
+      const rowBg  = 'var(--color-bg-white)';
       const textCol = '#111928';
       return /* html */`
         <div style="display:flex;align-items:stretch;background:${rowBg};
-                    border-bottom:1px solid #e5e7eb;">
+                    border-bottom:1px solid var(--color-border-default);">
           <!-- Row header: period label -->
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
                       padding:8px 16px;background:${rowBg};width:140px;
@@ -434,7 +434,7 @@ Scroll horizontally if the viewport is narrow.`,
                     overflow:hidden;display:inline-flex;flex-direction:column;min-width:max-content;">
           <!-- Column headers row for orientation -->
           <div style="display:flex;align-items:stretch;background:var(--color-bg-default);
-                      border-bottom:1px solid #e5e7eb;">
+                      border-bottom:1px solid var(--color-border-default);">
             <div style="width:140px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                         display:flex;align-items:center;">
               <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
@@ -505,8 +505,8 @@ Scroll horizontally if the viewport is narrow.`,
  * **QA checklist**
  * - Triangular shape: each newer cohort has exactly one fewer filled column
  * - All Month 1 cells: brand/900 (#362f78) — darkest badge on every row
- * - Empty cells: #f3f4f6 badge bg, #d1d5db dash glyph, no color badge
- * - All rows: white bg (#ffffff), text #111928 — no zebra striping
+ * - Empty cells: var(--color-bg-secondary) badge bg, #d1d5db dash glyph, no color badge
+ * - All rows: white bg (var(--color-bg-white)), text #111928 — no zebra striping
  * - Column headers: "Cohort" · "Users" · "Month 1" … "Month 7"
  * - Badge dimensions: 62×42px, border-radius:4px; cell container: px:4px
  * - Scroll horizontally on narrow viewports — do not truncate
@@ -530,7 +530,7 @@ fading toward brand/50 as retention drops in later months.`,
             border-radius:8px;overflow:hidden;min-width:max-content;">
 
   <!-- Header row -->
-  <div style="display:flex;align-items:stretch;background:var(--color-bg-default);border-bottom:1px solid #e5e7eb;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">
     <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
       <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                    letter-spacing:.08em;color:#9ca3af;">Cohort</span>
@@ -548,7 +548,7 @@ fading toward brand/50 as retention drops in later months.`,
   </div>
 
   <!-- Data row — white (even index) -->
-  <div style="display:flex;align-items:stretch;background:#ffffff;border-bottom:1px solid #e5e7eb;">
+  <div style="display:flex;align-items:stretch;background:var(--color-bg-white);border-bottom:1px solid var(--color-border-default);">
     <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
       <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">Aug 2023</span>
     </div>
@@ -556,19 +556,19 @@ fading toward brand/50 as retention drops in later months.`,
       <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">1,240</span>
     </div>
     <!-- 100% badge (brand/900) -->
-    <div style="padding:8px 4px;background:#ffffff;box-sizing:border-box;flex-shrink:0;">
+    <div style="padding:8px 4px;background:var(--color-bg-white);box-sizing:border-box;flex-shrink:0;">
       <div style="display:flex;align-items:center;justify-content:center;
                   width:62px;height:42px;border-radius:4px;background:#362f78;">
-        <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#ffffff;">100%</span>
+        <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:var(--color-bg-white);">100%</span>
       </div>
     </div>
     <!-- … remaining months … -->
   </div>
 
-  <!-- All rows: background #ffffff — no zebra striping -->
+  <!-- All rows: background var(--color-bg-white) — no zebra striping -->
 
   <!-- Empty cell placeholder (no data yet):
-    <div style="padding:8px 4px;background:#ffffff;">
+    <div style="padding:8px 4px;background:var(--color-bg-white);">
       <div style="width:62px;height:42px;border-radius:4px;background:var(--color-bg-muted);
                   display:flex;align-items:center;justify-content:center;">
         <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:#d1d5db;">—</span>
@@ -582,11 +582,11 @@ fading toward brand/50 as retention drops in later months.`,
   render: () => {
     /* Map a retention percentage to the closest ramp step */
     const PCT_MAP = [
-      { min: 95, bg: '#362f78', text: '#ffffff' },
-      { min: 85, bg: '#42389d', text: '#ffffff' },
-      { min: 75, bg: '#5145cd', text: '#ffffff' },
-      { min: 65, bg: '#5850ec', text: '#ffffff' },
-      { min: 55, bg: '#6875f5', text: '#ffffff' },
+      { min: 95, bg: '#362f78', text: 'var(--color-bg-white)' },
+      { min: 85, bg: '#42389d', text: 'var(--color-bg-white)' },
+      { min: 75, bg: '#5145cd', text: 'var(--color-bg-white)' },
+      { min: 65, bg: '#5850ec', text: 'var(--color-bg-white)' },
+      { min: 55, bg: '#6875f5', text: 'var(--color-bg-white)' },
       { min: 45, bg: '#8da2fb', text: '#111928' },
       { min: 35, bg: '#b4c6fc', text: '#111928' },
       { min: 25, bg: '#cddbfe', text: '#111928' },
@@ -622,7 +622,7 @@ fading toward brand/50 as retention drops in later months.`,
     /* Column header row */
     const headerRow = /* html */`
       <div style="display:flex;align-items:stretch;background:var(--color-bg-default);
-                  border-bottom:1px solid #e5e7eb;">
+                  border-bottom:1px solid var(--color-border-default);">
         <div style="width:140px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                     display:flex;align-items:center;">
           <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
@@ -644,12 +644,12 @@ fading toward brand/50 as retention drops in later months.`,
 
     /* Data rows */
     const dataRows = COHORTS.map(({ label, users, pcts }, idx) => {
-      const rowBg   = '#ffffff';
+      const rowBg   = 'var(--color-bg-white)';
       const textCol = '#111928';
 
       return /* html */`
         <div style="display:flex;align-items:stretch;background:${rowBg};
-                    border-bottom:1px solid #e5e7eb;">
+                    border-bottom:1px solid var(--color-border-default);">
           <div style="display:flex;align-items:center;padding:8px 16px;
                       width:140px;flex-shrink:0;box-sizing:border-box;background:${rowBg};">
             <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textCol};flex:1 0 0;">

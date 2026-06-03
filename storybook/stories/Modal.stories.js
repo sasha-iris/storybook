@@ -62,13 +62,13 @@ const questionIcon = `<svg width="14" height="14" viewBox="0 0 20 20" fill="none
 function darkTokens(dark) {
   return dark
     ? {
-        bg:        '#374151',
-        title:     '#ffffff',
+        bg:        'var(--color-text-primary)',
+        title:     'var(--color-bg-white)',
         body:      '#9ca3af',
         border:    '#4b5563',
         closeClr:  '#9ca3af',
         walletRow: '#4b5563',
-        badgeBg:   '#374151',
+        badgeBg:   'var(--color-text-primary)',
         badgeClr:  '#9ca3af',
       }
     : {
@@ -364,34 +364,34 @@ export const Interactive = {
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;position:relative;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;position:relative;">
           ${preview}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -408,8 +408,8 @@ export const Interactive = {
             this.style.borderColor = '#bbf7d0';
             setTimeout(() => {
               this.innerHTML = originalText;
-              this.style.background = '#f3f4f6';
-              this.style.color = '#374151';
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
               this.style.borderColor = '#d1d5db';
             }, 2000);
           });
@@ -621,7 +621,7 @@ export const DarkMode = {
         story: `
 All 4 modal types in dark mode — Figma: \`Dark mode=True\`.
 
-Dark mode tokens: \`bg:#374151\`, \`title:#ffffff\`, \`body:#9ca3af\`, \`separator:#4b5563\`.
+Dark mode tokens: \`bg:var(--color-text-primary)\`, \`title:var(--color-bg-white)\`, \`body:#9ca3af\`, \`separator:#4b5563\`.
 
 **✅ Do** — apply dark tokens consistently to header, body, and footer.
 **❌ Don't** — mix light and dark tokens within the same modal instance.
@@ -630,9 +630,9 @@ Dark mode tokens: \`bg:#374151\`, \`title:#ffffff\`, \`body:#9ca3af\`, \`separat
       source: {
         language: 'html',
         code: `<!-- Dark mode: inline style overrides for bg, text, and border colors -->
-<div class="modal-dialog" style="background:#374151;">
+<div class="modal-dialog" style="background:var(--color-text-primary);">
   <div class="modal-header" style="border-color:#4b5563;">
-    <h2 class="modal-title" style="color:#ffffff;">Terms of Service</h2>
+    <h2 class="modal-title" style="color:var(--color-bg-white);">Terms of Service</h2>
     <button class="modal-close" style="color:#9ca3af;"><!-- × --></button>
   </div>
   <div class="modal-body" style="color:#9ca3af;">...</div>
@@ -699,7 +699,7 @@ All four size variants — Figma: \`Size=SM/Default/LG/XL\`. All use the Info ty
     },
   },
   render: () => `
-    <div style="display:flex;flex-direction:column;gap:24px;padding:32px;background:#374151;">
+    <div style="display:flex;flex-direction:column;gap:24px;padding:32px;background:var(--color-text-primary);">
       ${[
         ['SM · 320px',      modalInfo({ size: 'sm',      darkMode: false, showOverlay: false })],
         ['Default · 512px', modalInfo({ size: 'default', darkMode: false, showOverlay: false })],
