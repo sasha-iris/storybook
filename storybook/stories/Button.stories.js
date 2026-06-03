@@ -80,7 +80,7 @@ Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
 </button>
 \`\`\`
 
-See [SETUP.md](../../SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/SETUP.md) for complete installation instructions.
         `,
       },
     },
