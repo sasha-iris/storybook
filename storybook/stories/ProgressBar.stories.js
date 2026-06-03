@@ -138,30 +138,22 @@ export const Interactive = {
     let reactCode = '';
 
     if (labelBelow) {
-      htmlCode = `<div class="progress-container">
-  <div class="progress">
-    <div class="progress-bar progress-bar-${color}" style="width:${pct}%"></div>
-  </div>
-  <div class="progress-label">${pct}%</div>
-</div>`;
-      reactCode = `<div className="progress-container">
-  <div className="progress">
-    <div className="progress-bar progress-bar-${color}" style={{ width: '${pct}%' }} />
-  </div>
-  <div className="progress-label">${pct}%</div>
-</div>`;
+      htmlCode = `<div class="progress">
+  <div class="progress-bar progress-bar-${color}"></div>
+</div>
+<div class="progress-label">${pct}%</div>`;
+      reactCode = `<div className="progress">
+  <div className="progress-bar progress-bar-${color}" />
+</div>
+<div className="progress-label">${pct}%</div>`;
     } else {
-      htmlCode = `<div class="progress-container">
-  <div class="progress-label">${pct}%</div>
-  <div class="progress">
-    <div class="progress-bar progress-bar-${color}" style="width:${pct}%"></div>
-  </div>
+      htmlCode = `<div class="progress-label">${pct}%</div>
+<div class="progress">
+  <div class="progress-bar progress-bar-${color}"></div>
 </div>`;
-      reactCode = `<div className="progress-container">
-  <div className="progress-label">${pct}%</div>
-  <div className="progress">
-    <div className="progress-bar progress-bar-${color}" style={{ width: '${pct}%' }} />
-  </div>
+      reactCode = `<div className="progress-label">${pct}%</div>
+<div className="progress">
+  <div className="progress-bar progress-bar-${color}" />
 </div>`;
     }
 
