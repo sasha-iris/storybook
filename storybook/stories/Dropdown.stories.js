@@ -369,6 +369,7 @@ a list item, a menu panel, and a trigger button.
       control: { type: 'text' },
       description: 'Label shown on the trigger button (text trigger only).',
       table: { category: 'Content', defaultValue: { summary: 'Menu' } },
+      if: { arg: 'iconOnly', eq: false },
     },
     iconOnly: {
       name: 'Icon-only trigger',

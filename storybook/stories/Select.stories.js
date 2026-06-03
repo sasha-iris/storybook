@@ -153,11 +153,13 @@ export default {
       control: 'boolean',
       description: 'Show "(Optional)" after the label in with-label type.',
       table: { category: 'Content', defaultValue: { summary: false } },
+      if: { arg: 'type', eq: 'with-label' },
     },
     infoIcon: {
       control: 'boolean',
       description: 'Show info icon next to the label in with-label type.',
       table: { category: 'Appearance', defaultValue: { summary: false } },
+      if: { arg: 'type', eq: 'with-label' },
     },
   },
   args: {
