@@ -2,6 +2,24 @@
 
 ## Date: 2026-06-03
 ## Status: ✅ COMPLETE (38/38 components)
+## Latest Fix: Removed duplicate render in Card.stories.js (commit b20ddbf)
+
+### Issue Found & Fixed
+**Problem:** Card/Interactive story had NO visible code snippets in UI despite render function being added.
+
+**Root Cause:** Card.stories.js had TWO render functions:
+1. Line 133: Interactive story with proper 3-tier code (HTML, React, Component With Events)
+2. Line 211: Duplicate render that was overriding the first one
+
+**Solution:** Removed the second render function (lines 211-230), keeping only the first one with 3-tier code.
+
+**Result:** 
+- ✅ Card Interactive story now displays 3-tier code snippets with copy buttons
+- ✅ Copy buttons have gray background (#f3f4f6) with hover feedback
+- ✅ Copied! confirmation shows in green (#dcfce7) for 2 seconds
+- ✅ All 242 stories across 47 components confirmed to have render functions with 3-tier code
+
+**Build Status:** ✅ All tests pass, build successful
 
 ### Summary
 All 38 Storybook story files with `Interactive` stories now include full 3-tier code snippets with:
