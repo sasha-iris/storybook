@@ -141,7 +141,7 @@ Status badges for labeling content, categorizing items, and indicating state.
 </span>
 \`\`\`
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

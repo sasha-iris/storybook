@@ -57,7 +57,7 @@ export default {
 - **Fill** — colored foreground bar growing left-to-right, same height and radius as the track
 - **Label** — percentage value shown above (default) or below the track as helper text; always right-aligned
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/SETUP.md) for complete installation instructions.
+See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
