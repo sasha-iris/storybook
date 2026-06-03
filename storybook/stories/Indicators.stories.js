@@ -113,24 +113,28 @@ Five distinct types — all light mode only:
     },
     label: {
       control: 'text',
-      description: 'Text label. Used by `dot` and `badge` types. Ignored by `count`, `icon`, `stepper`.',
+      description: 'Text label. Used by `dot` and `badge` types only.',
       table: { category: 'Content', defaultValue: { summary: 'Available' } },
+      if: { arg: 'type', match: /^(dot|badge)$/ },
     },
     variant: {
       control: 'select',
       options: ['available', 'unavailable'],
       description: 'Color variant for the **badge** type only. `available` = green, `unavailable` = red.',
       table: { category: 'Appearance', defaultValue: { summary: 'available' } },
+      if: { arg: 'type', eq: 'badge' },
     },
     dotColor: {
       control: 'color',
       description: 'Dot fill for the **dot (legend)** type. Use one of the standard legend colors: blue `var(--color-primary)`, purple `#9061f9`, indigo `#6875f5`, teal `#00bba7`.',
       table: { category: 'Appearance', defaultValue: { summary: 'var(--color-primary)' } },
+      if: { arg: 'type', eq: 'dot' },
     },
     count: {
       control: { type: 'number', min: 1, max: 99 },
       description: 'Number shown inside the **count** indicator. Pairs with `aria-label` for screen readers.',
       table: { category: 'Content', defaultValue: { summary: 1 } },
+      if: { arg: 'type', eq: 'count' },
     },
   },
   args: {
