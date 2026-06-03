@@ -133,18 +133,21 @@ Use them to let users turn features on/off or choose from a set of options.
       control: { type: 'boolean' },
       description: 'Toggle only — `true` = ON (brand/800 purple), `false` = OFF (gray/300). Maps to `aria-checked`.',
       table: { category: 'State', defaultValue: { summary: 'false' } },
+      if: { arg: 'type', eq: 'toggle' },
     },
     checked: {
       name: 'Checked',
       control: { type: 'boolean' },
       description: 'Checkbox / Radio — whether the control is selected. Maps to `aria-checked="true"`.',
       table: { category: 'State', defaultValue: { summary: 'false' } },
+      if: { arg: 'type', neq: 'toggle' },
     },
     intermediate: {
       name: 'Intermediate',
       control: { type: 'boolean' },
       description: 'Checkbox only — indeterminate state (partial selection). Maps to `aria-checked="mixed"`. Overrides `checked`.',
       table: { category: 'State', defaultValue: { summary: 'false' } },
+      if: { arg: 'type', eq: 'checkbox' },
     },
     destructive: {
       name: 'Destructive',
