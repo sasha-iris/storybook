@@ -219,10 +219,12 @@ export const Interactive = {
 
     let htmlCode = '';
     let reactCode = '';
+    let componentCode = '';
 
     if (a.iconOnly) {
       htmlCode = `<button class="${classes}" aria-label="${a.label}">\n  <!-- icon svg here -->\n</button>`;
       reactCode = `<button className="${classes}" aria-label="${a.label}">\n  {/* icon here */}\n</button>`;
+      componentCode = `export function ${classes.split(' ')[1].charAt(0).toUpperCase() + classes.split(' ')[1].slice(1)}({ label, onClick, disabled }) {\n  return (\n    <button\n      className="${classes}"\n      aria-label={label}\n      onClick={onClick}\n      disabled={disabled}\n    >\n      {/* icon here */}\n    </button>\n  );\n}`;
     } else {
       const left  = a.iconLeft  ? '\n  {/* left icon */}' : '';
       const right = a.iconRight ? '\n  {/* right icon */}' : '';
@@ -230,13 +232,15 @@ export const Interactive = {
 
       htmlCode = `<button class="${classes}"${dis}>\n  <span>${a.label}</span>${a.iconLeft ? '\n  <!-- left icon -->' : ''}${a.iconRight ? '\n  <!-- right icon -->' : ''}\n</button>`;
       reactCode = `<button className="${classes}"${dis}>${left}\n  <span>${a.label}</span>${right}\n</button>`;
+      componentCode = `export function Button({ label = "${a.label}", onClick, disabled = ${a.disabled} }) {\n  return (\n    <button\n      className="${classes}"\n      onClick={onClick}\n      disabled={disabled}\n    >\n      <span>{label}</span>\n    </button>\n  );\n}`;
     }
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     return `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
           ${btn(args)}
         </div>
@@ -260,6 +264,19 @@ export const Interactive = {
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
             <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="8" height="8" rx="1"/>
+                <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
+              </svg>
+              Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (с событиями)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="2" y="2" width="8" height="8" rx="1"/>
                 <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
