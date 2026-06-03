@@ -96,11 +96,13 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
       control: 'boolean',
       description: 'Prepend a left icon (star placeholder). Size: 16px for xs/sm, 20px for md/lg/xl.',
       table: { category: 'Content', defaultValue: { summary: false } },
+      if: { arg: 'iconOnly', eq: false },
     },
     iconRight: {
       control: 'boolean',
-      description: 'Append a right icon (arrow). Ignored when `iconOnly` is true.',
+      description: 'Append a right icon (arrow).',
       table: { category: 'Content', defaultValue: { summary: false } },
+      if: { arg: 'iconOnly', eq: false },
     },
     iconOnly: {
       control: 'boolean',
