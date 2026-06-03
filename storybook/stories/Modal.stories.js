@@ -344,67 +344,87 @@ Pop-up and With forms types have no \`.modal-title\` in the header — only the 
 export const Interactive = {
   name: 'Interactive (Controls)',
   render: ({ type, size, darkMode, showOverlay }) => {
-    if (type === 'popup')  return modalPopUp({ size, darkMode, showOverlay });
-    if (type === 'forms')  return modalWithForms({ size, darkMode, showOverlay });
-    if (type === 'wallet') return modalCryptoWallet({ size, darkMode, showOverlay });
-    return modalInfo({ size, darkMode, showOverlay });
+    const sizeClass = size === 'sm' ? 'modal-dialog-sm' : size === 'lg' ? 'modal-dialog-lg' : size === 'xl' ? 'modal-dialog-xl' : '';
+
+    const htmlCode = `<div class="modal-backdrop">\n  <div role="dialog" class="modal-dialog ${sizeClass}">\n    <div class="modal-header">\n      <h2>Modal Title</h2>\n      <button aria-label="Close">&times;</button>\n    </div>\n    <div class="modal-body">\n      <p>Modal content goes here</p>\n    </div>\n    <div class="modal-footer">\n      <button class="btn btn-outline">Cancel</button>\n      <button class="btn btn-primary">Confirm</button>\n    </div>\n  </div>\n</div>`;
+
+    const reactCode = `<div\n  className="modal-backdrop"\n  onClick={onClose}\n>\n  <div\n    role="dialog"\n    className={\`modal-dialog \${sizeClass}\`}\n    onClick={(e) => e.stopPropagation()}\n  >\n    <div className="modal-header">\n      <h2>{title}</h2>\n      <button onClick={onClose}>&times;</button>\n    </div>\n    <div className="modal-body">{children}</div>\n    <div className="modal-footer">\n      <button onClick={onClose}>Cancel</button>\n      <button onClick={onConfirm}>Confirm</button>\n    </div>\n  </div>\n</div>`;
+
+    const componentCode = `export function Modal({ isOpen, title, children, onClose, onConfirm, size = 'default', type = 'info' }) {\n  if (!isOpen) return null;\n\n  const sizeClass = size === 'sm' ? 'modal-dialog-sm' : size === 'lg' ? 'modal-dialog-lg' : size === 'xl' ? 'modal-dialog-xl' : '';\n\n  return (\n    <div className="modal-backdrop" onClick={onClose}>\n      <div\n        role="dialog"\n        aria-modal="true"\n        className={\`modal-dialog \${sizeClass}\`}\n        onClick={(e) => e.stopPropagation()}\n      >\n        <div className="modal-header">\n          <h2>{title}</h2>\n          <button onClick={onClose} aria-label="Close dialog\">&times;</button>\n        </div>\n        <div className="modal-body\">{children}</div>\n        <div className="modal-footer\">\n          <button onClick={onClose} className="btn btn-outline\">Cancel</button>\n          <button onClick={onConfirm} className="btn btn-primary\">Confirm</button>\n        </div>\n      </div>\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    let preview;
+    if (type === 'popup')  preview = modalPopUp({ size, darkMode, showOverlay });
+    else if (type === 'forms')  preview = modalWithForms({ size, darkMode, showOverlay });
+    else if (type === 'wallet') preview = modalCryptoWallet({ size, darkMode, showOverlay });
+    else preview = modalInfo({ size, darkMode, showOverlay });
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;position:relative;">
+          ${preview}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
   },
   parameters: {
     docs: {
       description: {
-        story: 'Use **Controls** to switch between all 4 modal types, all 4 sizes, and light/dark mode.',
+        story: 'Use **Controls** to switch between modal types, sizes, and light/dark mode.',
       },
-      source: {
-        transform: (_src, ctx) => {
-          const { type, size } = ctx.args;
-          const sc = size === 'sm' ? ' modal-dialog-sm' : size === 'lg' ? ' modal-dialog-lg' : size === 'xl' ? ' modal-dialog-xl' : '';
-          if (type === 'popup') return `<!-- Pop-up: no title in header, icon + question in body -->
-<div class="modal-backdrop">
-  <div role="dialog" aria-modal="true" aria-labelledby="popup-title" class="modal-dialog${sc}">
-    <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
-      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
-    </div>
-    <div class="modal-body" style="text-align:center;">
-      <!-- exclamation-circle icon 42×42 -->
-      <p id="popup-title">Are you sure you want to delete this product?</p>
-    </div>
-    <div class="modal-footer" style="justify-content:center;">
-      <button class="btn btn-red btn-md">Yes, I'm sure</button>
-      <button class="btn btn-alternative btn-md">No, cancel</button>
-    </div>
-  </div>
-</div>`;
-          if (type === 'forms') return `<!-- With forms: no title in header, form in body -->
-<div class="modal-backdrop">
-  <div role="dialog" aria-modal="true" aria-labelledby="form-modal-title" class="modal-dialog${sc}">
-    <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
-      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
-    </div>
-    <div class="modal-body">
-      <h3 id="form-modal-title">Sign in to our platform</h3>
-      <div class="form-group">
-        <label class="form-label">Your email</label>
-        <input class="form-input" type="email" placeholder="name@flowbite.com">
-        <span class="form-helper">We'll never share your details.</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-input" type="password" placeholder="••••••••••">
-      </div>
-      <button class="btn btn-primary btn-md" style="width:100%;">Create account</button>
-    </div>
-  </div>
-</div>`;
-          if (type === 'wallet') return `<!-- Crypto wallet: title header + wallet list body -->
-<div class="modal-backdrop">
-  <div role="dialog" aria-modal="true" aria-labelledby="wallet-title" class="modal-dialog${sc}">
-    <div class="modal-header">
-      <h2 class="modal-title" id="wallet-title">Connect wallet</h2>
-      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
-    </div>
-    <div class="modal-body">
-      <p>Connect with one of our available wallet providers or create a new one.</p>
-      <!-- wallet list items -->
+    },
+  },
+};
     </div>
     <div class="modal-footer">
       <button class="btn btn-primary btn-md">I accept</button>

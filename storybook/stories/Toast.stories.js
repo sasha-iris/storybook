@@ -215,7 +215,12 @@ The \`cta\` flag switches from the compact single-line layout to the expanded la
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => `<div style="padding:40px;display:inline-flex;">${toast(args)}</div>`,
+  render: (args) => {
+    const h=`<div class="toast" role="alert"><p>${args.title||'Toast'}</p></div>`;
+    const r=`<div role="alert" style={{padding:'16px',borderRadius:'8px',background:'#ecfdf5'}}>${args.title}</div>`;
+    const c=`export function Toast({type='success',title,onDismiss}){return(<div role="alert">{title}</div>);}`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div>${toast(args)}</div><div><pre>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div><div><pre>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div><div><pre>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
+  },
   parameters: {
     docs: {
       description: {

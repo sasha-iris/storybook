@@ -206,21 +206,78 @@ export default {
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => `<div style="background:var(--color-bg-surface);padding-bottom:1px;">${banner(args)}</div>`,
+  render: (args) => {
+    const a = args;
+
+    const htmlCode = `<div role="banner" class="banner banner--${a.type}" style="padding:16px 20px;display:flex;align-items:center;gap:12px;background:${a.type === 'info' ? '#ebf5ff' : a.type === 'success' ? '#ecfdf5' : a.type === 'warning' ? '#fef3c7' : '#fee2e2'};">\n  <span>Banner message</span>\n  ${a.dismissible ? '<button aria-label="Dismiss" style="margin-left:auto;background:none;border:none;cursor:pointer;">&times;</button>' : ''}\n</div>`;
+
+    const reactCode = `<div\n  role="banner"\n  className={\`banner banner--\${type}\`}\n  style={{\n    padding: '16px 20px',\n    display: 'flex',\n    alignItems: 'center',\n    background: bgColor[type],\n  }}\n>\n  <span>{message}</span>\n  {dismissible && (\n    <button\n      onClick={() => onDismiss?.()}\n      style={{ marginLeft: 'auto', background: 'none', border: 'none' }}\n    >\n      ×\n    </button>\n  )}\n</div>`;
+
+    const componentCode = `export function Banner({ type = 'info', message, dismissible = false, onDismiss }) {\n  const [visible, setVisible] = useState(true);\n\n  const bgColors = {\n    info: '#ebf5ff',\n    success: '#ecfdf5',\n    warning: '#fef3c7',\n    error: '#fee2e2',\n  };\n\n  if (!visible) return null;\n\n  return (\n    <div\n      role="banner\"\n      className={\`banner banner--\${type}\`}\n      style={{\n        padding: '16px 20px',\n        display: 'flex',\n        alignItems: 'center',\n        gap: '12px',\n        background: bgColors[type],\n      }}\n    >\n      <span>{message}</span>\n      {dismissible && (\n        <button\n          onClick={() => {\n            setVisible(false);\n            onDismiss?.();\n          }}\n          style={{\n            marginLeft: 'auto',\n            background: 'none',\n            border: 'none',\n            cursor: 'pointer',\n          }}\n        >\n          ×\n        </button>\n      )}\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="background:var(--color-bg-surface);padding-bottom:1px;">
+          ${banner(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
         story: 'Use **Controls** to switch banner type, edit text content, and toggle the dismiss button.',
-      },
-      source: {
-        transform: (_src, ctx) => {
-          const { type, dismissible } = ctx.args;
-          return `<!-- Banner: ${type}${dismissible ? ' / dismissible' : ''} -->
-<div role="banner" class="banner banner--${type}">
-  <!-- icon / logo / text / CTA per type -->
-  ${dismissible ? '<button class="banner__dismiss" aria-label="Dismiss"><!-- × --></button>' : ''}
-</div>`;
-        },
       },
     },
   },

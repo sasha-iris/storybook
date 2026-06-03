@@ -126,20 +126,74 @@ const tableBtn = ({ state = 'default' } = {}) => {
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: ({ variant, state }) => variant === 'chart' ? chartBtn({ state }) : tableBtn({ state }),
+  render: ({ variant, state }) => {
+    const htmlCode = `<button class="btn-${variant}" aria-label="Navigate"${state === 'disabled' ? ' disabled' : ''}>\n  <svg width="${variant === 'chart' ? '16' : '12'}" height="${variant === 'chart' ? '16' : '12'}" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>\n</button>`;
+
+    const reactCode = `<button\n  className="btn-${variant}"\n  onClick={onClick}\n  disabled={state === 'disabled'}\n  aria-label="Navigate"\n>\n  <svg width="${variant === 'chart' ? '16' : '12'}" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>\n</button>`;
+
+    const componentCode = `export function SpecialButton({ variant = 'chart', disabled = false, onClick }) {\n  const size = variant === 'chart' ? 16 : 12;\n  return (\n    <button\n      className={\`btn-\${variant}\`}\n      onClick={onClick}\n      disabled={disabled}\n      aria-label="Navigate"\n    >\n      <svg width={size} height={size} viewBox="0 0 24 24">\n        <path d="M5 12h14M12 5l7 7-7 7" />\n      </svg>\n    </button>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    let preview = variant === 'chart' ? chartBtn({ state }) : tableBtn({ state });
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${preview}</div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
         story: 'Use **variant** to switch between chart and table button. Use **state** to simulate default / hover / disabled.',
-      },
-      source: {
-        transform: (_src, storyCtx) => {
-          const { variant, state } = storyCtx.args;
-          const cls = variant === 'chart' ? 'btn-chart' : 'btn-table';
-          const iconPx = variant === 'chart' ? 16 : 12;
-          const dis = state === 'disabled' ? ' disabled' : '';
-          return `<button class="${cls}" aria-label="Navigate"${dis}>\n  <!-- ${iconPx}px arrow-right icon -->\n</button>`;
-        },
       },
     },
   },

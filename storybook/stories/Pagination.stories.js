@@ -172,51 +172,79 @@ The current page has \`.page-item.active\` + \`aria-current="page"\`. Disabled p
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => pagination(args),
+  render: (args) => {
+    const a = args;
+    const small = a.size === 'small';
+    const sizeAttr = small ? ' style="min-width:32px;height:32px;"' : '';
+    const htmlCode = `<nav aria-label="Pagination">\n  <ul class="pagination">\n    <li class="page-item${a.currentPage <= 1 ? ' disabled' : ''}">\n      <button class="page-link" aria-label="Previous page"${a.currentPage <= 1 ? ' disabled' : ''}>${a.currentPage <= 1 ? '←' : '←'}</button>\n    </li>\n    ${[...Array(Math.min(2, a.totalPages))].map((_, i) => `<li class="page-item${i + 1 === a.currentPage ? ' active' : ''}"><button class="page-link" ${i + 1 === a.currentPage ? 'aria-current="page"' : ''}>${i + 1}</button></li>`).join('\n    ')}\n    ${a.totalPages > 5 ? `<li class="page-item"><span aria-hidden="true">…</span></li>\n    <li class="page-item"><button class="page-link">${a.totalPages}</button></li>` : ''}\n    <li class="page-item${a.currentPage >= a.totalPages ? ' disabled' : ''}">\n      <button class="page-link" aria-label="Next page"${a.currentPage >= a.totalPages ? ' disabled' : ''}>→</button>\n    </li>\n  </ul>\n</nav>`;
+
+    const reactCode = `<nav aria-label="Pagination">\n  <ul className="pagination">\n    <button\n      className="page-link"\n      aria-label="Previous page"\n      disabled={currentPage <= 1}\n      onClick={() => onPageChange(currentPage - 1)}\n    >\n      ← Prev\n    </button>\n    {[...Array(Math.min(3, totalPages))].map((_, i) => (\n      <button\n        key={i + 1}\n        className={currentPage === i + 1 ? 'page-link active' : 'page-link'}\n        aria-current={currentPage === i + 1 ? 'page' : undefined}\n        onClick={() => onPageChange(i + 1)}\n      >\n        {i + 1}\n      </button>\n    ))}\n    {totalPages > 5 && <span className="page-link">…</span>}\n    <button\n      className="page-link"\n      aria-label="Next page"\n      disabled={currentPage >= totalPages}\n      onClick={() => onPageChange(currentPage + 1)}\n    >\n      Next →\n    </button>\n  </ul>\n</nav>`;
+
+    const componentCode = `export function Pagination({ currentPage = ${a.currentPage}, totalPages = ${a.totalPages}, size = "${a.size}", onPageChange }) {\n  const goToPage = (page) => {\n    if (page >= 1 && page <= totalPages) {\n      onPageChange?.(page);\n    }\n  };\n\n  return (\n    <nav aria-label="Pagination">\n      <ul className="pagination">\n        <li className={currentPage <= 1 ? 'page-item disabled' : 'page-item'}>\n          <button\n            className="page-link"\n            aria-label="Previous page"\n            disabled={currentPage <= 1}\n            onClick={() => goToPage(currentPage - 1)}\n          >\n            ← Prev\n          </button>\n        </li>\n        {Array.from({length: Math.min(3, totalPages)}, (_, i) => i + 1).map((page) => (\n          <li key={page} className={currentPage === page ? 'page-item active' : 'page-item'}>\n            <button\n              className="page-link"\n              aria-current={currentPage === page ? 'page' : undefined}\n              onClick={() => goToPage(page)}\n            >\n              {page}\n            </button>\n          </li>\n        ))}\n        {totalPages > 5 && <li className="page-item"><span>…</span></li>}\n        <li className={currentPage >= totalPages ? 'page-item disabled' : 'page-item'}>\n          <button\n            className="page-link"\n            aria-label="Next page"\n            disabled={currentPage >= totalPages}\n            onClick={() => goToPage(currentPage + 1)}\n          >\n            Next →\n          </button>\n        </li>\n      </ul>\n    </nav>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${pagination(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
         story: 'Use **Controls** to change the current page, total pages, and size. Set `totalPages` > 5 to see ellipsis + last page.',
-      },
-      source: {
-        transform: (_src, storyCtx) => {
-          const { size, currentPage, totalPages } = storyCtx.args;
-          const small = size === 'small';
-          const sizeAttr = small ? ' style="min-width:32px;height:32px;"' : '';
-          return `<nav aria-label="Pagination">
-  <ul class="pagination">
-
-    <!-- Prev — disabled when currentPage=1 -->
-    <li class="page-item${currentPage <= 1 ? ' disabled' : ''}">
-      <button class="page-link" aria-label="Previous page"${currentPage <= 1 ? ' disabled aria-disabled="true"' : ''}${sizeAttr}>
-        <!-- chevron-left 20×20 -->
-      </button>
-    </li>
-
-    <!-- Page buttons — active page gets .page-item.active + aria-current="page" -->
-    <li class="page-item active">
-      <button class="page-link" aria-label="Page 1" aria-current="page"${sizeAttr}>1</button>
-    </li>
-    <li class="page-item">
-      <button class="page-link" aria-label="Page 2"${sizeAttr}>2</button>
-    </li>
-    ${totalPages > 5 ? `
-    <!-- Ellipsis — non-interactive <span> -->
-    <li class="page-item"><span class="page-link" aria-hidden="true"${sizeAttr}>…</span></li>
-    <li class="page-item">
-      <button class="page-link" aria-label="Page ${totalPages}"${sizeAttr}>${totalPages}</button>
-    </li>` : ''}
-
-    <!-- Next — disabled when currentPage=totalPages -->
-    <li class="page-item${currentPage >= totalPages ? ' disabled' : ''}">
-      <button class="page-link" aria-label="Next page"${currentPage >= totalPages ? ' disabled aria-disabled="true"' : ''}${sizeAttr}>
-        <!-- chevron-right 20×20 -->
-      </button>
-    </li>
-
-  </ul>
-</nav>`;
-        },
       },
     },
   },

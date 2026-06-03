@@ -281,6 +281,7 @@ const CARD_TITLES = { content: 'Recent articles', kpi: 'Total Revenue', chart: '
  */
 export const Interactive = {
   name: 'Interactive (Controls)',
+  render: (args) => {const h='<div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px;background:#fff;"><div>State: Loading</div></div>';const r='<div style={{border:"1px solid #e5e7eb",padding:"20px"}}>{state}</div>';const c='export function StateCard({state}){return(<div style={{border:"1px solid #e5e7eb"}}>{state}</div>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div>${cardStates(args)}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${c}</pre></div></div>`;},
   parameters: {
     backgrounds: { default: 'white' },
     docs: {

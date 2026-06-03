@@ -311,24 +311,76 @@ export const Interactive = {
       description: {
         story: 'Configure a single cell with **option** (semantic colour), **rowType** (row background), **amount**, and **currency** Controls. The Blue option overrides rowType background with `#ebf5ff`.',
       },
-      source: {
-        transform: (_src, storyCtx) => {
-          const { option, rowType, amount, currency } = storyCtx.args;
-          const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
-          const bg = cellBg || ROW_BG[rowType] || '#ffffff';
-          return `<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-     width:146px;height:38px;padding:8px 16px;background:${bg};box-sizing:border-box;">
-  ${currency ? `<span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};flex-shrink:0;">$</span>` : ''}
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};text-align:right;">${amount}</span>
-</div>`;
-        },
-      },
     },
   },
   render: ({ option, rowType, amount, currency }) => {
     const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
     const bg = cellBg || ROW_BG[rowType] || '#ffffff';
-    return dataCell({ amount, currency, textColor, bg });
+
+    const htmlCode = `<table style="width:100%;border-collapse:collapse;">\n  <thead>\n    <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;">\n      <th style="padding:12px 16px;text-align:left;font-weight:600;">Column</th>\n      <th style="padding:12px 16px;text-align:right;font-weight:600;">Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr style="background:${bg};border-bottom:1px solid #e5e7eb;">\n      <td style="padding:8px 16px;">Data</td>\n      <td style="padding:8px 16px;text-align:right;color:${textColor};">${currency ? '$' : ''}${amount}</td>\n    </tr>\n  </tbody>\n</table>`;
+
+    const reactCode = `<table style={{ width: '100%', borderCollapse: 'collapse' }}>\n  <thead>\n    <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>\n      <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Column</th>\n      <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    {data.map((row) => (\n      <tr key={row.id} style={{ borderBottom: '1px solid #e5e7eb' }}>\n        <td>{row.label}</td>\n        <td style={{ textAlign: 'right', color: colors[option] }}>\n          {currency ? '$' : ''}{row.amount}\n        </td>\n      </tr>\n    ))}\n  </tbody>\n</table>`;
+
+    const componentCode = `export function DataTable({ data = [], currency = false, rowType = 'default', option = 'default' }) {\n  const optionColors = {\n    default: '#374151',\n    positive: '#0e9f6e',\n    negative: '#f05252',\n    warning: '#e5a008',\n  };\n\n  return (\n    <table style={{ width: '100%', borderCollapse: 'collapse' }}>\n      <thead>\n        <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>\n          <th style={{ padding: '12px 16px', textAlign: 'left' }}>Label</th>\n          <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n        </tr>\n      </thead>\n      <tbody>\n        {data.map((row) => (\n          <tr key={row.id} style={{ borderBottom: '1px solid #e5e7eb' }}>\n            <td style={{ padding: '8px 16px' }}>{row.label}</td>\n            <td style={{\n              padding: '8px 16px',\n              textAlign: 'right',\n              color: optionColors[option],\n            }}>\n              {currency ? '$' : ''}\n              {row.amount}\n            </td>\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${dataCell({ amount, currency, textColor: textColor, bg })}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
   },
 };
 

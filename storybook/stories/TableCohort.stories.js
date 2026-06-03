@@ -192,6 +192,7 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 ─────────────────────────────────────────────────────────────────────────── */
 export const Interactive = {
   name: 'Interactive (Controls)',
+  render: (args) => {const h='<table><tr><td style="padding:8px;"><div style="background:#e5e7eb;color:#374151;padding:4px 8px;border-radius:4px;">'+args.percentage+'%</div></td></tr></table>';const r='<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>';const c='export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${cohortCell(args)}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${c}</pre></div></div>`;},
   parameters: {
     docs: {
       description: {

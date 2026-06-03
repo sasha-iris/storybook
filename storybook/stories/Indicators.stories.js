@@ -148,14 +148,21 @@ Five distinct types — all light mode only:
 export const Interactive = {
   name: 'Interactive (Controls)',
   render: ({ type, label, variant, dotColor, count }) => {
+    const htmlCode = `<div style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dotColor || '#155dfc'};"></div>`;
+    const reactCode = `<div style={{\n  display: 'inline-block',\n  width: '12px',\n  height: '12px',\n  borderRadius: '50%',\n  background: color,\n}} />`;
+    const componentCode = `export function Indicator({ type = 'dot', color = '#155dfc', label, count }) {\n  return (\n    <div style={{\n      display: 'inline-block',\n      width: '12px',\n      height: '12px',\n      borderRadius: '50%',\n      background: color,\n    }} />\n  );\n}`;
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let preview;
     switch (type) {
-      case 'dot':     return dotIndicator({ label, dotColor });
-      case 'count':   return countIndicator({ count });
-      case 'icon':    return iconIndicator();
-      case 'stepper': return stepperIndicator();
-      case 'badge':   return badgeIndicator({ label, variant });
-      default:        return badgeIndicator({ label, variant });
+      case 'dot':     preview = dotIndicator({ label, dotColor }); break;
+      case 'count':   preview = countIndicator({ count }); break;
+      case 'icon':    preview = iconIndicator(); break;
+      case 'stepper': preview = stepperIndicator(); break;
+      default:        preview = badgeIndicator({ label, variant });
     }
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${preview}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;cursor:pointer;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='#f3f4f6';},2000);});});</script>`;
   },
   parameters: {
     docs: {

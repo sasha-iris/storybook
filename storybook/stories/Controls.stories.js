@@ -188,8 +188,86 @@ Use them to let users turn features on/off or choose from a set of options.
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: ({ type, on, checked, intermediate, destructive, disabled, label, helper }) =>
-    controlRow({ type, on, checked, intermediate, destructive, disabled, label, helper }),
+  render: (args) => {
+    const a = args;
+    const wrapCls = ['iris-control', a.destructive && 'iris-control--destructive', a.disabled && 'iris-control--disabled'].filter(Boolean).join(' ');
+    let ctrlHtml = '';
+    if (a.type === 'toggle') {
+      const cls = ['iris-toggle', a.on ? 'iris-toggle--on' : 'iris-toggle--off', a.destructive && 'iris-toggle--destructive', a.disabled && 'iris-toggle--disabled'].filter(Boolean).join(' ');
+      ctrlHtml = `<span class="${cls}" role="switch" aria-checked="${a.on}"><span class="iris-toggle__thumb"></span></span>`;
+    } else if (a.type === 'checkbox') {
+      const cls = ['iris-checkbox', a.checked && 'iris-checkbox--checked', a.intermediate && 'iris-checkbox--intermediate', a.destructive && 'iris-checkbox--destructive', a.disabled && 'iris-checkbox--disabled'].filter(Boolean).join(' ');
+      ctrlHtml = `<span class="${cls}" role="checkbox" aria-checked="${a.intermediate ? 'mixed' : a.checked}"></span>`;
+    } else {
+      const cls = ['iris-radio', a.checked && 'iris-radio--checked', a.destructive && 'iris-radio--destructive', a.disabled && 'iris-radio--disabled'].filter(Boolean).join(' ');
+      ctrlHtml = `<span class="${cls}" role="radio" aria-checked="${a.checked}"></span>`;
+    }
+
+    const htmlCode = `<label class="${wrapCls}">\n  <span class="iris-control__check">${ctrlHtml}</span>\n  <span class="iris-control__body">\n    <span class="iris-control__label">${a.label}</span>\n    <span class="iris-control__helper">${a.helper}</span>\n  </span>\n</label>`;
+
+    const reactCode = `<label className={\`iris-control\${destructive ? ' iris-control--destructive' : ''}\${disabled ? ' iris-control--disabled' : ''}\`}>\n  <span className="iris-control__check">\n    ${a.type === 'toggle' ? `<span className={\`iris-toggle iris-toggle--\${on ? 'on' : 'off'}\`} role="switch" aria-checked={on}><span className="iris-toggle__thumb" /></span>` : a.type === 'checkbox' ? `<span className="iris-checkbox" role="checkbox" aria-checked={checked} />` : `<span className="iris-radio" role="radio" aria-checked={checked} />`}\n  </span>\n  <span className="iris-control__body">\n    <span className="iris-control__label">{label}</span>\n    <span className="iris-control__helper">{helper}</span>\n  </span>\n</label>`;
+
+    const componentCode = `export function Control({ type = "${a.type}", label = "${a.label}", helper = "${a.helper}", checked = ${a.checked}, on = ${a.on}, disabled = ${a.disabled}, destructive = ${a.destructive}, onChange }) {\n  const isChecked = type === 'toggle' ? on : checked;\n  const wrapCls = [\n    'iris-control',\n    destructive && 'iris-control--destructive',\n    disabled && 'iris-control--disabled'\n  ].filter(Boolean).join(' ');\n\n  return (\n    <label className={wrapCls}>\n      <span className="iris-control__check">\n        {type === 'toggle' && (\n          <span\n            className={\`iris-toggle iris-toggle--\${isChecked ? 'on' : 'off'}\`}\n            role="switch"\n            aria-checked={isChecked}\n            onClick={() => onChange?.(!isChecked)}\n          >\n            <span className="iris-toggle__thumb" />\n          </span>\n        )}\n        {type === 'checkbox' && (\n          <span\n            className="iris-checkbox"\n            role="checkbox"\n            aria-checked={isChecked}\n            onClick={() => onChange?.(!isChecked)}\n          />\n        )}\n        {type === 'radio' && (\n          <span\n            className="iris-radio"\n            role="radio"\n            aria-checked={isChecked}\n            onClick={() => onChange?.(true)}\n          />\n        )}\n      </span>\n      <span className="iris-control__body">\n        <span className="iris-control__label">{label}</span>\n        {helper && <span className="iris-control__helper">{helper}</span>}\n      </span>\n    </label>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${controlRow(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
@@ -202,30 +280,6 @@ Use the Controls panel to explore all state combinations.
 
 ❌ Don't use placeholder text like "Label" or "Toggle label" in production
         `,
-      },
-      source: {
-        transform: (_src, ctx) => {
-          const { type, on, checked, intermediate, destructive, disabled, label, helper } = ctx.args;
-          const wrapCls = ['iris-control', destructive && 'iris-control--destructive', disabled && 'iris-control--disabled'].filter(Boolean).join(' ');
-          let ctrlHtml = '';
-          if (type === 'toggle') {
-            const cls = ['iris-toggle', on ? 'iris-toggle--on' : 'iris-toggle--off', destructive && 'iris-toggle--destructive', disabled && 'iris-toggle--disabled'].filter(Boolean).join(' ');
-            ctrlHtml = `<span class="${cls}" role="switch" aria-checked="${on}"><span class="iris-toggle__thumb"></span></span>`;
-          } else if (type === 'checkbox') {
-            const cls = ['iris-checkbox', checked && 'iris-checkbox--checked', intermediate && 'iris-checkbox--intermediate', destructive && 'iris-checkbox--destructive', disabled && 'iris-checkbox--disabled'].filter(Boolean).join(' ');
-            ctrlHtml = `<span class="${cls}" role="checkbox" aria-checked="${intermediate ? 'mixed' : checked}"></span>`;
-          } else {
-            const cls = ['iris-radio', checked && 'iris-radio--checked', destructive && 'iris-radio--destructive', disabled && 'iris-radio--disabled'].filter(Boolean).join(' ');
-            ctrlHtml = `<span class="${cls}" role="radio" aria-checked="${checked}"></span>`;
-          }
-          return `<label class="${wrapCls}">
-  <span class="iris-control__check">${ctrlHtml}</span>
-  <span class="iris-control__body">
-    <span class="iris-control__label">${label}</span>
-    <span class="iris-control__helper">${helper}</span>
-  </span>
-</label>`;
-        },
       },
     },
   },

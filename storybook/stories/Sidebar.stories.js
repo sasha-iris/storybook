@@ -408,6 +408,13 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
  */
 export const Interactive = {
   name: 'Interactive (Controls)',
+  render: (args) => {
+    const bg = args.color === 'white' ? '#ffffff' : '#f3f4f6';
+    const h=`<aside style="width:256px;background:${bg};border:1px solid #e5e7eb;padding:16px;"><nav style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="padding:12px;border-radius:8px;background:${args.activeItem==='home'?'#e5e7eb':'transparent'}">Home</a></nav></aside>`;
+    const r=`<aside style={{width:'256px',background:color,borderRight:'1px solid #e5e7eb',padding:'16px'}}><nav>{items.map(item=>(<a key={item} style={{active:active===item}}>...</a>))}</nav></aside>`;
+    const c=`export function Sidebar({activeItem,showLogo,color='white'}){return(<aside style={{width:'256px'}}>{showLogo&&<div>Logo</div>}<nav>...</nav></aside>);}`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="width:256px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">${sidebar(args)}</div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div></div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div></div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
+  },
   parameters: {
     docs: {
       description: {

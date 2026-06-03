@@ -165,45 +165,82 @@ Figma source: component set \`2370:20939\`.
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => accordion(args),
+  render: (args) => {
+    const a = args;
+
+    const htmlCode = `<div style="display:flex;flex-direction:column;gap:16px;">\n  <div class="accordion">\n    <button\n      class="accordion-header"\n      aria-expanded="${a.openIndex === 0}"\n      style="width:100%;padding:12px;text-align:left;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;"\n    >\n      ${a.showIcon ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>' : ''}\n      <span>Item Title</span>\n      <svg style="transform:rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"></polyline></svg>\n    </button>\n    <div class="accordion-body" style="padding:12px;display:${a.openIndex === 0 ? 'block' : 'none'};">Body content</div>\n  </div>\n</div>`;
+
+    const reactCode = `<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  {items.map((item, idx) => (\n    <div key={idx} className="accordion">\n      <button\n        className="accordion-header"\n        onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}\n        aria-expanded={openIndex === idx}\n        style={{\n          width: '100%',\n          padding: '12px',\n          textAlign: 'left',\n          background: '#f9fafb',\n          border: '1px solid #e5e7eb',\n          borderRadius: '8px',\n          cursor: 'pointer',\n        }}\n      >\n        <span>{item.title}</span>\n        <svg\n          style={{\n            transform: openIndex === idx ? 'rotate(0deg)' : 'rotate(180deg)',\n            transition: 'transform 0.2s',\n          }}\n        >\n          {/* chevron icon */}\n        </svg>\n      </button>\n      {openIndex === idx && (\n        <div className="accordion-body\" style={{ padding: '12px' }}>\n          {item.body}\n        </div>\n      )}\n    </div>\n  ))}\n</div>`;
+
+    const componentCode = `export function Accordion({ items = [], showIcon = false, openIndex = 0 }) {\n  const [open, setOpen] = useState(openIndex);\n\n  return (\n    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n      {items.map((item, idx) => (\n        <div key={idx} className="accordion">\n          <button\n            className="accordion-header\"\n            onClick={() => setOpen(open === idx ? -1 : idx)}\n            aria-expanded={open === idx}\n            style={{\n              width: '100%',\n              padding: '12px',\n              textAlign: 'left',\n              background: '#f9fafb',\n              border: '1px solid #e5e7eb',\n              borderRadius: '8px',\n              cursor: 'pointer',\n              display: 'flex',\n              alignItems: 'center',\n              gap: '8px',\n            }}\n          >\n            {showIcon && <span>❓</span>}\n            <span style={{ flex: 1 }}>{item.title}</span>\n            <svg\n              style={{\n                transform: open === idx ? 'rotate(0deg)' : 'rotate(180deg)',\n                transition: 'transform 0.2s',\n              }}\n            />\n          </button>\n          {open === idx && (\n            <div className="accordion-body\" style={{ padding: '12px', borderTop: '1px solid #e5e7eb' }}>\n              {item.body}\n            </div>\n          )}\n        </div>\n      ))}\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${accordion(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
         story: 'Use **Controls** to switch styles, toggle the icon, and change which item is expanded.',
       },
-      source: {
-        transform: (_src, storyCtx) => {
-          const { style, showIcon, openIndex } = storyCtx.args;
-          const flushClass = style === 'links' ? ' accordion-flush' : '';
-          if (style === 'separate') {
-            return `<!-- Accordion — style:separate, gap:16px -->
-<div style="display:flex;flex-direction:column;gap:16px;">
-
-  <!-- Each item is its own .accordion -->
-  <div class="accordion">
-    <div class="accordion-item open">
-      <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-        ${showIcon ? '<svg width="18" height="18"><!-- question-mark-circle --></svg>' : ''}
-        <span style="flex:1;">Can I use FlowBite in open-source projects?</span>
-        <svg class="accordion-chevron" viewBox="0 0 24 24"><!-- chevron --></svg>
-      </button>
-      <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">
-        Body text content…
-      </div>
-    </div>
-  </div>
-
-  <div class="accordion">
-    <div class="accordion-item">
-      <button class="accordion-header" aria-expanded="false" aria-controls="body-1" id="header-1">
-        <span style="flex:1;">How do you achieve the blurry effect?</span>
-        <svg class="accordion-chevron" viewBox="0 0 24 24"><!-- chevron --></svg>
-      </button>
-      <div class="accordion-body" id="body-1" role="region" aria-labelledby="header-1">
-        Body text content…
-      </div>
-    </div>
-  </div>
+    },
+  },
+};
 
 </div>`;
           }

@@ -466,35 +466,81 @@ export default {
 // ─── Interactive (Controls) ────────────────────────────────────────────────────
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => fullWidget(args),
+  render: (args) => {
+    const a = args;
+    const placeholder = a.type === 'range' ? 'Select period' : 'Select date';
+    const lgCls = a.size === 'large' ? ' iris-datepicker-input--lg' : '';
+    const darkCal = a.dark ? ' iris-cal--dark' : '';
+
+    const htmlCode = `<div class="iris-datepicker-input${lgCls}">\n  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M2 6h12"/></svg>\n  <span>${placeholder}</span>\n</div>\n\n<div class="iris-cal${a.type === 'range' ? ' iris-cal--range' : ''}${darkCal}">\n  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;">\n    <button>&lt;</button>\n    <span>May 2024</span>\n    <button>&gt;</button>\n  </div>\n  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:12px;">\n    <!-- Calendar days -->\n  </div>\n</div>`;
+
+    const reactCode = `<div className="iris-datepicker">\n  <div\n    className="iris-datepicker-input${a.size === 'large' ? ' iris-datepicker-input--lg' : ''}"\n    onClick={() => setOpen(!open)}\n  >\n    <span>{selectedDate || '${placeholder}'}</span>\n  </div>\n  {open && (\n    <div className="iris-cal${a.type === 'range' ? ' iris-cal--range' : ''}${a.dark ? ' iris-cal--dark' : ''}">\n      <div style={{ display: 'flex', justifyContent: 'space-between' }}>\n        <button onClick={() => goToPrevMonth()}>prev</button>\n        <span>{monthYear}</span>\n        <button onClick={() => goToNextMonth()}>next</button>\n      </div>\n      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>\n        {days.map((day) => (\n          <div\n            key={day}\n            onClick={() => onDateSelect(day)}\n            className={day === selected ? 'selected' : ''}\n          >\n            {day}\n          </div>\n        ))}\n      </div>\n    </div>\n  )}\n</div>`;
+
+    const componentCode = `export function Datepicker({ type = 'single', size = 'default', dark = false, onDateSelect }) {\n  const [open, setOpen] = useState(false);\n  const [selectedDate, setSelectedDate] = useState(null);\n  const [currentMonth, setCurrentMonth] = useState(new Date());\n\n  const handleDateClick = (day) => {\n    setSelectedDate(day);\n    onDateSelect?.(day);\n    if (type === 'single') setOpen(false);\n  };\n\n  const goToPrevMonth = () => {\n    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));\n  };\n\n  const goToNextMonth = () => {\n    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));\n  };\n\n  const placeholder = type === 'range' ? 'Select period' : 'Select date';\n  const sizeClass = size === 'large' ? ' iris-datepicker-input--lg' : '';\n  const darkClass = dark ? ' iris-cal--dark' : '';\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        className={\`iris-datepicker-input\${sizeClass}\`}\n        onClick={() => setOpen(!open)}\n        style={{ cursor: 'pointer', padding: '8px 12px' }}\n      >\n        <span>{selectedDate || placeholder}</span>\n      </div>\n      {open && (\n        <div className={\`iris-cal\${type === 'range' ? ' iris-cal--range' : ''}\${darkClass}\`}>\n          {/* Calendar implementation */}\n        </div>\n      )}\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${fullWidget(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
-      source: {
-        transform: (_src, ctx) => {
-          const { type, dark, size } = ctx.args;
-          const placeholder = type === 'range' ? 'Select period' : 'Select date';
-          const lgCls = size === 'large' ? ' iris-datepicker-input--lg' : '';
-          const darkCal = dark ? ' iris-cal--dark' : '';
-          return `<!-- Input trigger -->
-<div class="iris-datepicker-input${lgCls}">
-  <span class="iris-datepicker-input__icon"><!-- calendar icon --></span>
-  <span class="iris-datepicker-input__value">${placeholder}</span>
-</div>
-
-<!-- Calendar popup (type="${type}") -->
-<div class="iris-cal${type === 'range' ? ' iris-cal--range' : ''}${darkCal}">
-  <div class="iris-cal__header">
-    <button class="iris-cal__nav"><!-- chevron-left --></button>
-    <span class="iris-cal__title">May 2024</span>
-    <button class="iris-cal__nav"><!-- chevron-right --></button>
-  </div>
-  <div class="iris-cal__grid">
-    <!-- day headers: iris-cal__day-header -->
-    <!-- day cells: iris-cal__day, iris-cal__day--selected, iris-cal__day--in-range, iris-cal__day--muted -->
-  </div>
-  ${type === 'range' ? `<!-- presets -->\n<div class="iris-cal__presets">\n  <span class="iris-cal__preset iris-cal__preset--active">Last 30 days</span>\n  <span class="iris-cal__preset">This month</span>\n</div>` : `<div class="iris-cal__footer">\n  <button class="btn btn-outline-gray btn-sm">Cancel</button>\n  <button class="btn btn-primary btn-sm">Ok</button>\n</div>`}
-</div>`;
-        },
+      description: {
+        story: 'Use **Controls** to switch between single date and date range modes, and test dark theme.',
       },
     },
   },

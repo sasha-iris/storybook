@@ -237,59 +237,81 @@ Maps to \`aria-expanded\` on the input wrapper.`,
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => autocomplete(args),
+  render: (args) => {
+    const a = args;
+    const isOpen = a.state !== 'initial';
+    const border = isOpen ? '#155dfc' : '#e5e7eb';
+    const height = a.size === 'large' ? '52px' : '42px';
+
+    const htmlCode = `<div role="combobox" style="position:relative;width:400px;">\n  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:${height};background:#f9fafb;border:1px solid ${border};border-radius:8px;">\n    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="4"/><path d="m10 10 3 3"/></svg>\n    <input type="text" placeholder="${a.placeholder}" style="flex:1;border:none;background:transparent;" />\n  </div>\n  ${isOpen ? `<div role="listbox" style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:8px;margin-top:4px;padding:12px;z-index:10;">\n    <div style="font-weight:600;color:#111928;">Recent</div>\n    <div role="option" style="padding:8px 0;color:#6b7280;">Customizing colors</div>\n  </div>` : ''}\n</div>`;
+
+    const reactCode = `<div role="combobox" style={{ position: 'relative' }}>\n  <div\n    style={{\n      display: 'flex',\n      alignItems: 'center',\n      gap: '8px',\n      padding: '0 12px',\n      height: '${height}',\n      background: '#f9fafb',\n      border: \`1px solid \${isOpen ? '#155dfc' : '#e5e7eb'}\`,\n      borderRadius: '8px',\n    }}\n  >\n    <input\n      type="text"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      onFocus={() => setOpen(true)}\n      placeholder="${a.placeholder}"\n      role="combobox"\n      aria-expanded={isOpen}\n    />\n  </div>\n  {isOpen && (\n    <div role="listbox\" style={{ position: 'absolute', top: '100%', zIndex: 10 }}>\n      {results.map((item) => (\n        <div key={item} role="option\" onClick={() => onSelect(item)}>\n          {item}\n        </div>\n      ))}\n    </div>\n  )}\n</div>`;
+
+    const componentCode = `export function Autocomplete({ items = [], placeholder, onSelect, size = 'default' }) {\n  const [open, setOpen] = useState(false);\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState(items);\n\n  const handleChange = (value) => {\n    setQuery(value);\n    setResults(items.filter((item) => item.toLowerCase().includes(value.toLowerCase())));\n  };\n\n  const handleSelect = (item) => {\n    setQuery(item);\n    setOpen(false);\n    onSelect?.(item);\n  };\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        style={{\n          display: 'flex',\n          alignItems: 'center',\n          height: size === 'large' ? '52px' : '42px',\n          border: open ? '1px solid #155dfc' : '1px solid #e5e7eb',\n          borderRadius: '8px',\n          padding: '0 12px',\n          background: '#f9fafb',\n        }}\n      >\n        <input\n          type="text"\n          value={query}\n          onChange={(e) => handleChange(e.target.value)}\n          onFocus={() => setOpen(true)}\n          placeholder={placeholder}\n          role="combobox"\n          aria-expanded={open}\n          style={{ flex: 1, border: 'none', background: 'transparent' }}\n        />\n      </div>\n      {open && (\n        <div style={{\n          position: 'absolute',\n          top: '100%',\n          left: 0,\n          right: 0,\n          background: '#fff',\n          border: '1px solid #e5e7eb',\n          borderRadius: '8px',\n          marginTop: '4px',\n          zIndex: 1000,\n        }}>\n          {results.map((item) => (\n            <div\n              key={item}\n              role="option\"\n              onClick={() => handleSelect(item)}\n              style={{ padding: '8px 12px', cursor: 'pointer' }}\n            >\n              {item}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${autocomplete(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
-        story: `Use **type** to switch Default ↔ Advanced. Use **state** to walk through all four interaction stages. Use **size** for Default vs Large.
-
-✅ Always show suggestions immediately on focus (Active state) — do not wait for the user to type
-❌ Do not use Autocomplete as a plain text input — if results are not available, disable it or use a plain Input instead`,
-      },
-      source: {
-        transform: (_src, ctx) => {
-          const { type, state, size, placeholder, query } = ctx.args;
-          const isOpen   = state !== 'initial';
-          const isTyping = state === 'typing' || state === 'withCta';
-          const border   = isOpen ? '#155dfc' : '#e5e7eb';
-          const height   = size === 'large' ? '52px' : '42px';
-          const val      = isTyping ? query : (isOpen ? `|${placeholder}` : '');
-          return `<!-- Autocomplete wrapper: role="combobox", aria-expanded="${isOpen}", aria-haspopup="listbox" -->
-<div class="autocomplete" style="width:400px;">
-
-  <!-- Input field: border turns #155dfc on focus -->
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:${height};background:#f9fafb;border:1px solid ${border};border-radius:8px;">
-    <!-- search icon (color: ${isOpen ? '#155dfc' : '#6b7280'}) -->
-    <input
-      type="text"
-      value="${val}"
-      placeholder="${placeholder}"
-      aria-autocomplete="list"
-      aria-expanded="${isOpen}"
-      role="combobox"
-      style="flex:1;border:none;background:transparent;font-size:${size === 'large' ? '16px' : '14px'};"
-    />
-    ${isTyping ? `<!-- × clear button: aria-label="Clear search" -->` : ''}
-  </div>
-
-  ${isOpen ? `<!-- Dropdown: role="listbox" -->
-  <div role="listbox" style="background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-    <div style="font-size:14px;font-weight:600;color:#111928;">Recent</div>
-    <!-- Result row: role="option" -->
-    <div role="option" style="display:flex;align-items:center;gap:8px;padding:3px 0;">
-      <!-- ${type === 'advanced' ? 'category icon' : 'search icon'} (14px, color:#9ca3af) -->
-      <span style="font-size:14px;color:#6b7280;">Customizing colors</span>
-      ${type === 'advanced' ? `<!-- dismiss × or navigate → (14px, color:#6b7280) -->` : ''}
-    </div>
-    ${state === 'withCta' ? `<!-- CTA row -->
-    <div style="border-top:1px solid #e5e7eb;padding-top:8px;margin-top:8px;display:flex;align-items:center;gap:6px;">
-      <!-- plus icon (color:#1f2a37) -->
-      <span style="font-size:14px;font-weight:500;color:#155dfc;">Add new</span>
-    </div>` : ''}
-  </div>` : ''}
-
-</div>`;
-        },
+        story: 'Use **Controls** to test different states and sizes. Always show suggestions on focus.',
       },
     },
   },

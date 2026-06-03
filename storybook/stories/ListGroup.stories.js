@@ -134,30 +134,27 @@ export default {
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => listGroup({ ...args, items: DEFAULT_ITEMS }),
+  render: (args) => {
+    const bg = args.dark ? '#374151' : '#ffffff';
+    const border = args.dark ? '#4b5563' : '#e5e7eb';
+    const text = args.dark ? '#ffffff' : '#111928';
+
+    const htmlCode = `<ul style="width:240px;background:${bg};border:1px solid ${border};border-radius:8px;overflow:hidden;list-style:none;margin:0;padding:0;">\n  <li style="display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Profile</li>\n  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Settings</li>\n  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Messages</li>\n</ul>`;
+
+    const reactCode = `<ul style={{ background: '${bg}', border: '1px solid ' + '${border}', borderRadius: '8px', listStyle: 'none' }}>\n  {items.map((item, i) => (\n    <li key={i} onClick={() => onSelect(item)} style={{\n      display: 'flex',\n      padding: '0 16px',\n      height: '37px',\n      borderTop: i > 0 ? '1px solid ${border}' : 'none',\n    }}>\n      {item}\n    </li>\n  ))}\n</ul>`;
+
+    const componentCode = `export function ListGroup({ items = [], dark = false, onSelect }) {\n  return (\n    <ul style={{\n      background: dark ? '#374151' : '#ffffff',\n      border: '1px solid ' + (dark ? '#4b5563' : '#e5e7eb'),\n      borderRadius: '8px',\n      listStyle: 'none',\n      margin: 0,\n      padding: 0,\n    }}>\n      {items.map((item, i) => (\n        <li\n          key={i}\n          onClick={() => onSelect?.(item)}\n          style={{\n            display: 'flex',\n            alignItems: 'center',\n            padding: '0 16px',\n            height: '37px',\n            borderTop: i > 0 ? '1px solid' + (dark ? '#4b5563' : '#e5e7eb') : 'none',\n            cursor: 'pointer',\n            color: dark ? '#ffffff' : '#111928',\n          }}\n        >\n          {item}\n        </li>\n      ))}\n    </ul>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${listGroup({ ...args, items: DEFAULT_ITEMS })}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;text-transform:uppercase;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-size:12px;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='#f3f4f6';},2000);});});</script>`;
+  },
   parameters: {
     docs: {
-      source: {
-        transform: (_src, ctx) => {
-          const { showIcons, dark } = ctx.args;
-          const bg     = dark ? '#374151' : '#ffffff';
-          const border = dark ? '#4b5563' : '#e5e7eb';
-          const text   = dark ? '#ffffff' : '#111928';
-          return `<ul style="width:240px;background:${bg};border:1px solid ${border};border-radius:8px;overflow:hidden;list-style:none;margin:0;padding:0;">
-  <li style="display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;font-size:14px;font-weight:500;color:${text};">
-    ${showIcons ? '<!-- 16×16 icon -->' : ''}Profile
-  </li>
-  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;font-size:14px;font-weight:500;color:${text};">
-    ${showIcons ? '<!-- 16×16 icon -->' : ''}Settings
-  </li>
-  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;font-size:14px;font-weight:500;color:${text};">
-    ${showIcons ? '<!-- 16×16 icon -->' : ''}Messages
-  </li>
-  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;font-size:14px;font-weight:500;color:${text};">
-    ${showIcons ? '<!-- 16×16 icon -->' : ''}Download
-  </li>
-</ul>`;
-        },
+      description: {
+        story: 'Use **Controls** to test dark theme and icon variants.',
       },
     },
   },

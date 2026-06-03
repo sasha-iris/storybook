@@ -357,25 +357,80 @@ export default {
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => fullForm(args),
+  render: (args) => {
+    const a = args;
+    const h = a.size === 'small' ? 37 : a.size === 'large' ? 52 : 42;
+    const border = a.fieldState === 'error' ? '#f05252' : a.fieldState === 'success' ? '#0e9f6e' : a.fieldState === 'typing' || a.fieldState === 'active' ? '#155dfc' : '#d1d5db';
+
+    const htmlCode = `<div style="margin-bottom:16px;">\n  <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:4px;">First name</label>\n  <input type="text"\n    style="height:${h}px;border-color:${border};padding:0 12px;width:100%;background:#f9fafb;border:1px solid;border-radius:8px;"\n    placeholder="Enter your first name"\n    ${a.fieldState === 'disabled' ? 'disabled' : ''}\n  />\n  <p style="font-size:var(--text-xs);color:#6b7280;margin-top:4px;">Helper text</p>\n</div>`;
+
+    const reactCode = `<div style={{ marginBottom: '16px' }}>\n  <label style={{ fontWeight: 'var(--font-medium)' }}>First name</label>\n  <input\n    type="text"\n    value={name}\n    onChange={(e) => setName(e.target.value)}\n    placeholder="Enter your first name"\n    style={{\n      height: '${h}px',\n      borderColor: '${border}',\n      borderRadius: '8px',\n    }}\n    disabled={${a.fieldState === 'disabled'}}\n  />\n  <p style={{ fontSize: 'var(--text-xs)' }}>Helper text</p>\n</div>`;
+
+    const componentCode = `export function FormField({ label, value, onChange, fieldState = 'default', size = 'regular', disabled = false }) {\n  const h = size === 'small' ? 37 : size === 'large' ? 52 : 42;\n  const borderColor = fieldState === 'error' ? '#f05252' : fieldState === 'success' ? '#0e9f6e' : fieldState === 'active' ? '#155dfc' : '#d1d5db';\n\n  return (\n    <div style={{ marginBottom: '16px' }}>\n      <label style={{ fontWeight: 'var(--font-medium)' }}>{label}</label>\n      <input\n        type="text"\n        value={value}\n        onChange={(e) => onChange?.(e.target.value)}\n        style={{\n          height: h,\n          borderColor: borderColor,\n          width: '100%',\n          padding: '0 12px',\n          borderRadius: '8px',\n        }}\n        disabled={disabled}\n      />\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${fullForm(args)}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = '#dcfce7';
+            this.style.color = '#166534';
+            this.style.borderColor = '#bbf7d0';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = '#f3f4f6';
+              this.style.color = '#374151';
+              this.style.borderColor = '#d1d5db';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
-      source: {
-        transform: (_src, ctx) => {
-          const { fieldState, size, showIcon } = ctx.args;
-          const h = size === 'small' ? 37 : size === 'large' ? 52 : 42;
-          const border = fieldState === 'error' ? '#f05252' : fieldState === 'success' ? '#0e9f6e' : fieldState === 'typing' || fieldState === 'active' ? '#155dfc' : '#d1d5db';
-          return `<div class="mb-4">
-  <label class="block text-sm font-medium text-gray-900 mb-1">First name</label>
-  <input type="text"
-    style="height:${h}px;border-color:${border};"
-    class="w-full px-3 bg-gray-50 border rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none"
-    placeholder="Enter your first name"
-    ${fieldState === 'disabled' ? 'disabled' : ''}
-  />
-  <p class="text-xs text-gray-500 mt-1">Helper text</p>
-</div>`;
-        },
+      description: {
+        story: 'Use **Controls** to test different field states: default, active, typing, success, error, disabled.',
       },
     },
   },
