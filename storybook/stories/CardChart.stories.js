@@ -401,6 +401,13 @@ The chart type (\`property3\`) and trend direction (\`property2\`) are the two F
   },
 };
 
+/* ── Helper function for Interactive story ────────────────────────────────── */
+function chartCard({ direction = 'up', chartType = 'linechart' }) {
+  const trendColor = direction === 'up' ? '#5850EC' : '#E74694';
+  const trendLabel = direction === 'up' ? '+12.5%' : '−8.3%';
+  return `<div style="background:white;border:1px solid #e5e7eb;border-radius:8px;width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;position:relative;"><div style="display:flex;gap:16px;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Total Sales</div><div style="font-size:24px;font-weight:600;color:#1f2937;">$16,416</div></div><div style="background:#f3f4f6;border-radius:8px;padding:8px;display:flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 20 20" fill="${trendColor}"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg><span style="font-size:12px;font-weight:600;color:${trendColor};">${trendLabel}</span></div></div><div style="flex:1;position:relative;background:#f9fafb;border-radius:6px;overflow:hidden;"><div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to bottom, rgba(88,80,236,0.1), rgba(88,80,236,0.05));"/></div></div>`;
+}
+
 /* ── Interactive (Controls) ─────────────────────────────────────────────────── */
 
 export const Interactive = {

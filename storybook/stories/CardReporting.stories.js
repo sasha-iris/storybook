@@ -255,6 +255,11 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
  * - `active:false`               → gray/50 bg, toggle OFF, chips gray, paused text
  * - `owner:user`                 → avatar circle + "Jese Leos" in owner section
  */
+
+function cardReporting({ active = true, hovered = false, owner = 'iris' }) {
+  return `<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;width:280px;"><div style="font-size:14px;color:#1f2937;">Report Card — ${active ? 'Active' : 'Paused'}</div></div>`;
+}
+
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {const h='<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;"><div>Report Card</div></div>';const r='<div style={{padding:"20px",border:"1px solid #e5e7eb",borderRadius:"12px"}}>{children}</div>';const c='export function ReportingCard({title,data}){return(<div style={{border:"1px solid #e5e7eb",padding:"20px"}}>{title}</div>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${h}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${c}</pre></div></div>`;},
