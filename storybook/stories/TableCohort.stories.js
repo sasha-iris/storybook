@@ -192,7 +192,73 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 ─────────────────────────────────────────────────────────────────────────── */
 export const Interactive = {
     name: 'Interactive (Controls)',
-  render: (args) => {const h='<table><tr><td style="padding:8px;"><div style="background:var(--color-border-default);color:var(--color-text-primary);padding:4px 8px;border-radius:4px;">'+args.percentage+'%</div></td></tr></table>';const r='<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>';const c='export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${h}</div><div><pre style="background:var(--color-bg-tertiary);padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${h}</pre></div><div><pre style="background:var(--color-bg-tertiary);padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${r}</pre></div><div><pre style="background:var(--color-bg-tertiary);padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${c}</pre></div></div>`;},
+  render: (args) => {
+    const h = `<table><tr><td style="padding:8px;"><div style="background:var(--color-border-default);color:var(--color-text-primary);padding:4px 8px;border-radius:4px;">${args.percentage}</div></td></tr></table>`;
+    const r = `<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>`;
+    const c = `export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}`;
+
+    const htmlEscaped = h.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const reactEscaped = r.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const componentEscaped = c.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    const step = PERCENT_RAMP.find(r => r.pct === args.percentage) || PERCENT_RAMP[5];
+    const cellBg = args.rowState === 'grey' ? 'var(--color-bg-secondary)' : 'var(--color-bg-white)';
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          ${pctCell({ pct: step.pct, bg: step.bg, text: step.text, cellBg })}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
+            </div>
+            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
+            </div>
+            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
+            </div>
+            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
+            </button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelectorAll('.storybook-copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.copy);
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.style.background = 'var(--color-bg-secondary)';
+              this.style.color = 'var(--color-text-primary)';
+              this.style.borderColor = 'var(--color-border-default)';
+            }, 2000);
+          });
+        });
+      </script>
+    `;
+  },
   parameters: {
     docs: {
       description: {
@@ -215,11 +281,6 @@ export const Interactive = {
         },
       },
     },
-  },
-  render: ({ percentage, rowState }) => {
-    const step = PERCENT_RAMP.find(r => r.pct === percentage) || PERCENT_RAMP[5];
-    const cellBg = rowState === 'grey' ? 'var(--color-bg-secondary)' : 'var(--color-bg-white)';
-    return pctCell({ pct: step.pct, bg: step.bg, text: step.text, cellBg });
   },
 };
 
