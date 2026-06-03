@@ -26,16 +26,16 @@
  */
 
 const CHIP_COLORS = {
-  light:  { bg: 'var(--color-bg-secondary)', text: '#4a5565', icon: '#6b7280', hover: 'var(--color-border-default)', disabledBg: 'var(--color-bg-secondary)', disabledText: '#99a1af' },
-  dark:   { bg: '#4a5565', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-text-heading)', disabledBg: '#d1d5dc', disabledText: 'var(--color-bg-white)' },
-  indigo: { bg: '#5850ec', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#42389d', disabledBg: '#b4c6fc', disabledText: 'var(--color-bg-white)' },
-  green:  { bg: '#009966', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#006045', disabledBg: '#5ee9b5', disabledText: 'var(--color-bg-white)' },
-  red:    { bg: '#e7000b', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#9f0712',  disabledBg: '#ffa2a2', disabledText: 'var(--color-bg-white)' },
-  orange: { bg: '#d03801', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#8a2c0d', disabledBg: '#fdba8c', disabledText: 'var(--color-bg-white)' },
-  teal:   { bg: '#009689', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#005f59', disabledBg: '#46ecd5', disabledText: 'var(--color-bg-white)' },
-  blue:   { bg: 'var(--color-interactive-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#193cb8', disabledBg: '#8ec5ff', disabledText: 'var(--color-bg-white)' },
-  purple: { bg: '#9810fa', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#6e11b0', disabledBg: '#dab2ff', disabledText: 'var(--color-bg-white)' },
-  pink:   { bg: '#e60076', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#a3004c', disabledBg: '#fda5d5', disabledText: 'var(--color-bg-white)' },
+  light:  { bg: 'var(--color-bg-secondary)', text: 'var(--color-text-secondary)', icon: 'var(--color-border-light)', hover: 'var(--color-border-default)', disabledBg: 'var(--color-bg-secondary)', disabledText: 'var(--color-text-disabled)' },
+  dark:   { bg: 'var(--color-text-secondary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-text-heading)', disabledBg: 'var(--color-border-default)', disabledText: 'var(--color-bg-white)' },
+  indigo: { bg: 'var(--color-brand-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-brand-dark)', disabledBg: 'var(--color-brand-light)', disabledText: 'var(--color-bg-white)' },
+  green:  { bg: 'var(--color-success-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-success-dark)', disabledBg: 'var(--color-success-lighter)', disabledText: 'var(--color-bg-white)' },
+  red:    { bg: 'var(--color-danger-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-danger-dark)', disabledBg: 'var(--color-danger-light)', disabledText: 'var(--color-bg-white)' },
+  orange: { bg: 'var(--color-warning-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-warning-dark)', disabledBg: 'var(--color-warning-light)', disabledText: 'var(--color-bg-white)' },
+  teal:   { bg: 'var(--color-info-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-info-dark)', disabledBg: 'var(--color-info-light)', disabledText: 'var(--color-bg-white)' },
+  blue:   { bg: 'var(--color-interactive-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-interactive-dark)', disabledBg: 'var(--color-interactive-light)', disabledText: 'var(--color-bg-white)' },
+  purple: { bg: 'var(--color-accent-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-accent-dark)', disabledBg: 'var(--color-accent-light)', disabledText: 'var(--color-bg-white)' },
+  pink:   { bg: 'var(--color-pink-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-pink-dark)', disabledBg: 'var(--color-pink-light)', disabledText: 'var(--color-bg-white)' },
 };
 
 const COLOR_NAMES = Object.keys(CHIP_COLORS);
