@@ -48,7 +48,7 @@ background: var(--color-bg-brand);       /* Primary purple (brand) */
 
 /* Border colors */
 border-color: var(--color-border-base);  /* Default dividers */
-border-color: var(--color-border-strong); /* Input borders, focus ring */
+border-color: var(--color-border-dark); /* Input borders, focus ring */
 border-color: var(--color-border-danger); /* Error states */
 \`\`\`
 

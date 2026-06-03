@@ -70,7 +70,7 @@ const YOUTUBE_ORIGINAL = `<svg width="48" height="48" viewBox="0 0 48 48" fill="
 function brandCard(name, svgConst) {
   const label = name.replace(/-original$/, '').replace(/-dark$/, ' (dark)').replace(/-/g, ' ');
   const isDark = name.endsWith('-dark');
-  return `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:8px;border:1px solid var(--color-border-primary);background:${isDark ? '#1f2a37' : 'var(--color-bg-white)'};">
+  return `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:8px;border:1px solid var(--color-border-default);background:${isDark ? '#1f2a37' : 'var(--color-bg-white)'};">
     <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;">${svgConst}</div>
     <span style="font-size:10px;color:${isDark ? 'var(--color-border-light)' : 'var(--color-text-secondary)'};text-align:center;line-height:1.3;">${label}</span>
   </div>`;
@@ -112,7 +112,7 @@ export const AllBrandIcons = {
     const sections = Object.entries(groups).map(([title, icons]) => {
       const cards = icons.map(([name, svg]) => brandCard(name, svg)).join('');
       return `<div style="margin-bottom:32px;">
-        <h3 style="font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--color-border-primary);">${title} <span style="font-weight:var(--font-normal);opacity:.6;">(${icons.length})</span></h3>
+        <h3 style="font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--color-border-default);">${title} <span style="font-weight:var(--font-normal);opacity:.6;">(${icons.length})</span></h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;">${cards}</div>
       </div>`;
     });

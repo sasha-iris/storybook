@@ -373,7 +373,7 @@ function renderIcon(name) {
 }
 
 function iconCard(name) {
-  return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;border:1px solid var(--color-border-primary);min-width:0;cursor:default;" title="${name}">
+  return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;border:1px solid var(--color-border-default);min-width:0;cursor:default;" title="${name}">
     <span style="color:var(--color-text-primary);">${renderIcon(name)}</span>
     <span style="font-size:10px;color:var(--color-text-secondary);text-align:center;word-break:break-all;line-height:1.3;">${name}</span>
   </div>`;
@@ -381,7 +381,7 @@ function iconCard(name) {
 
 function iconSection(title, names) {
   return `<div style="margin-bottom:32px;">
-    <h3 style="font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--color-border-primary);">${title} <span style="font-weight:var(--font-normal);opacity:.6;">(${names.length})</span></h3>
+    <h3 style="font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--color-border-default);">${title} <span style="font-weight:var(--font-normal);opacity:.6;">(${names.length})</span></h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;">
       ${names.map(iconCard).join('')}
     </div>
