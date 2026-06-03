@@ -208,28 +208,6 @@ export const Interactive = {
       },
     },
   },
-  render: ({ title, body, showImage, showFooter, compareText }) => `
-    <div class="card" style="max-width:380px;">
-      ${showImage ? `
-        <div style="height:180px;background:var(--color-bg-tertiary);display:flex;
-                    align-items:center;justify-content:center;
-                    color:var(--color-text-fg-disabled);font-size:var(--text-sm);">
-          Image — 180px · object-fit:cover
-        </div>` : ''}
-      <div class="card-body-padded">
-        <h5 style="font-size:var(--text-lg);font-weight:var(--font-semibold);
-                   color:var(--color-text-heading);line-height:1.3;margin-bottom:8px;">
-          ${title}</h5>
-        <p style="font-size:var(--text-sm);color:var(--color-text-body-subtle);
-                  line-height:1.6;margin-bottom:${showFooter ? '16px' : '0'};">
-          ${body}</p>
-        ${showFooter ? `<button class="btn btn-primary btn-sm">Read more</button>` : ''}
-      </div>
-      ${compareText ? `
-      <div class="card-footer">
-        <span style="font-size:var(--text-xs);color:var(--color-text-body-subtle);">${compareText}</span>
-      </div>` : ''}
-    </div>`
 };
 
 /* ─────────────────────────────────────────────
