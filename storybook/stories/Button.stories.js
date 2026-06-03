@@ -274,11 +274,58 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: [
-          'Use the **Controls** panel to configure any combination of color, size, and modifiers.',
-          '',
-          '**Actions tab** logs: `click` · `focus` · `blur` · `keydown`.',
-        ].join('\n'),
+        story: `
+## Button Snippet Reference
+
+Use the **Controls** panel to experiment with all combinations. The code below updates live.
+
+### Basic Syntax
+
+\`\`\`
+<button class="btn btn-{color} btn-{size}">Label</button>
+\`\`\`
+
+### Color Variants
+
+- **Solid:** \`btn-primary\`, \`btn-dark\`, \`btn-green\`, \`btn-red\`, \`btn-yellow\`, \`btn-blue\`, \`btn-gray\`
+- **Outline:** \`btn-outline-{color}\` (replaces \`btn-{color}\`)
+
+### Sizes
+
+\`btn-xs\` (34px) · \`btn-sm\` (36px) · \`btn-md\` (40px) · \`btn-lg\` (48px) · \`btn-xl\` (52px)
+
+### Modifiers
+
+- \`btn-pill\` — full border-radius
+- \`btn-icon\` — square aspect ratio (icon-only buttons)
+- \`disabled aria-disabled="true"\` — disabled state
+
+### When to Use Each Color
+
+| Color | Use Case | Example |
+|-------|----------|---------|
+| **primary** (purple) | Main action, call-to-action | Submit form, Save, Create |
+| **dark** | Secondary/neutral actions | Cancel, Close, Back |
+| **green** | Success, approval, confirm | Approve, Activate, Enable |
+| **red** | Danger, destructive action | Delete, Revoke, Remove |
+| **yellow** (orange) | Warning, caution | Restart, Retry, Important |
+| **blue** | Info, secondary | Learn more, View details |
+| **gray** | Disabled-like, de-emphasized | Archived, Inactive |
+
+### ✅ Do
+
+- Use \`btn-primary\` for the main action on a page (only ONE primary button)
+- Use \`btn-outline-primary\` for secondary actions
+- Use \`btn-gray\` for grouped, less important actions
+- Always provide \`aria-label\` for icon-only buttons
+
+### ❌ Don't
+
+- Don't use multiple primary buttons on one page
+- Don't use inline styles — all styling via CSS classes
+- Don't hardcode colors (use btn-{color} class)
+- Don't forget \`disabled aria-disabled="true"\` attribute for disabled buttons
+        `.trim(),
       },
       source: {
         transform: (_src, storyCtx) => {

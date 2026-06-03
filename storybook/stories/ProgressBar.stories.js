@@ -216,6 +216,69 @@ export const Interactive = {
   },
   parameters: {
     docs: {
+      description: {
+        story: `
+## Progress Bar Snippet Reference
+
+Use the **Controls** panel to experiment. Code updates live.
+
+### Basic Syntax
+
+\`\`\`
+<div class="progress">
+  <div class="progress-bar progress-bar-{color}" style="width:{value}%"></div>
+</div>
+\`\`\`
+
+### Colors (Semantic)
+
+- **primary** (purple) — neutral progress, default
+- **green** — success, healthy, on-track
+- **orange** — warning, attention needed
+- **red** — error, failed, critical
+- **blue** — info, secondary metric
+- **yellow** — caution, needs review
+- **purple** — custom, alternative
+- **pink** — highlight, special
+- **indigo** — secondary info
+
+### With Label
+
+#### Label Above (default)
+\`\`\`
+<div style="...">
+  <div class="progress-label">50%</div>
+  <div class="progress">
+    <div class="progress-bar progress-bar-primary" style="width:50%"></div>
+  </div>
+</div>
+\`\`\`
+
+#### Label Below
+\`\`\`
+<div style="...">
+  <div class="progress">
+    <div class="progress-bar progress-bar-primary" style="width:50%"></div>
+  </div>
+  <div class="progress-label">50%</div>
+</div>
+\`\`\`
+
+### ✅ Do
+
+- Use semantic color (green = success, orange/red = warning/error)
+- Always show the value (percentage or label)
+- Use in context (task progress, completion %, health metrics)
+- Pair with descriptive text ("Upload in progress", "4 of 8 steps")
+
+### ❌ Don't
+
+- Don't use to show current time or buffering (use Skeleton instead)
+- Don't hide the percentage value
+- Don't use multiple progress bars for unrelated metrics in same space
+- Don't hardcode width values outside of JavaScript — use \`style="width:{value}%"\` only
+        `.trim(),
+      },
       source: {
         transform: (_src, ctx) => {
           const { value, color, labelBelow } = ctx.args;

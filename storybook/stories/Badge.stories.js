@@ -263,7 +263,55 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use the **Controls** panel to configure any combination of color, size, icon, and dismiss button.',
+        story: `
+## Badge Snippet Reference
+
+Use the **Controls** panel to experiment. Code updates live.
+
+### Basic Syntax
+
+\`\`\`
+<span class="badge badge-{size} badge-{color}">Label</span>
+\`\`\`
+
+### Sizes
+
+- \`badge-lg\` — 25px height, 14px text (default, use in most cases)
+- \`badge-sm\` — 22px height, 12px text (dense tables, compact lists)
+
+### Colors (Semantic)
+
+| Color | Meaning | Use For |
+|-------|---------|---------|
+| **gray** | Neutral, unknown | Default status, N/A |
+| **blue** | Info, assigned | Assigned to user, In queue |
+| **indigo** | Primary, in progress | In review, Processing |
+| **purple** | Custom, scheduled | Scheduled, Queued |
+| **pink** | Draft, preliminary | Draft, Incomplete |
+| **green** | Success, active | Active, Approved, Live |
+| **yellow** | Warning, pending | Pending, Needs attention |
+| **red** | Error, critical | Failed, Error, Critical |
+
+### Modifiers
+
+- **With icon:** \`<ClockIcon className="w-4 h-4" />\` — reinforces meaning
+- **Dismissible:** Add \`<button aria-label="Remove [label]">...</button>\` — for filter chips
+- **Metric chip:** \`badge--metric\` with \`badge--metric__sub\` for two-line layout
+
+### ✅ Do
+
+- Use semantic color (green = success, red = error, yellow = warning)
+- Pair icon with label when using icons
+- Use \`badge-lg\` by default
+- Set \`aria-label="Remove ..."\" on dismiss button
+
+### ❌ Don't
+
+- Don't use color alone to convey meaning (always use label)
+- Don't mix badge sizes in the same list
+- Don't dismiss non-interactive status badges (use for filter chips only)
+- Don't hardcode colors (use badge-{color} class)
+        `.trim(),
       },
       source: {
         transform: (_src, ctx) => {
