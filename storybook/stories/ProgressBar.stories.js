@@ -138,29 +138,29 @@ export const Interactive = {
     let reactCode = '';
 
     if (labelBelow) {
-      htmlCode = `<div style="width:100%;">
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
+      htmlCode = `<div class="progress-container">
+  <div class="progress">
+    <div class="progress-bar progress-bar-${color}" style="width:${pct}%"></div>
   </div>
-  ${labelHtml}
+  <div class="progress-label">${pct}%</div>
 </div>`;
-      reactCode = `<div style={{ width: '100%' }}>
-  <div style={{ position: 'relative', height: '6px', background: 'var(--color-border-default)', borderRadius: '2px', overflow: 'hidden' }}>
-    <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '${pct}%', background: '${fillColor}', borderRadius: '2px' }} />
+      reactCode = `<div className="progress-container">
+  <div className="progress">
+    <div className="progress-bar progress-bar-${color}" style={{ width: '${pct}%' }} />
   </div>
-  <div style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)', color: 'var(--color-text-secondary)', textAlign: 'right' }}>${pct}%</div>
+  <div className="progress-label">${pct}%</div>
 </div>`;
     } else {
-      htmlCode = `<div style="width:100%;">
-  ${labelHtml}
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
+      htmlCode = `<div class="progress-container">
+  <div class="progress-label">${pct}%</div>
+  <div class="progress">
+    <div class="progress-bar progress-bar-${color}" style="width:${pct}%"></div>
   </div>
 </div>`;
-      reactCode = `<div style={{ width: '100%' }}>
-  <div style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)', color: 'var(--color-text-secondary)', textAlign: 'right' }}>${pct}%</div>
-  <div style={{ position: 'relative', height: '6px', background: 'var(--color-border-default)', borderRadius: '2px', overflow: 'hidden' }}>
-    <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '${pct}%', background: '${fillColor}', borderRadius: '2px' }} />
+      reactCode = `<div className="progress-container">
+  <div className="progress-label">${pct}%</div>
+  <div className="progress">
+    <div className="progress-bar progress-bar-${color}" style={{ width: '${pct}%' }} />
   </div>
 </div>`;
     }

@@ -200,8 +200,8 @@ export const Interactive = {
       ? `\n  <button type="button" aria-label="Remove ${a.label}">\n    <XMarkIcon className="w-4 h-4" />\n  </button>`
       : '';
 
-    const htmlCode = `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};font-size:${fs};font-weight:${fw};border-radius:6px;padding:${pad};white-space:nowrap;line-height:1.5;">${iconPartHtml}\n  <span>${a.label}</span>${dismissPartHtml}\n</span>`;
-    const reactCode = `${a.icon ? "import { ClockIcon } from '@heroicons/react/24/outline';\n\n" : ""}${a.dismissible ? "import { XMarkIcon } from '@heroicons/react/24/outline';\n\n" : ""}<span className="badge badge-${a.size} badge-${a.color}">${iconPartReact}\n  <span>${a.label}</span>${dismissPartReact}\n</span>`;
+    const htmlCode = `<span class="badge badge-${a.size} badge-${a.color}">${a.icon ? '\n  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n    <!-- icon -->\n  </svg>' : ''}\n  <span>${a.label}</span>${a.dismissible ? '\n  <button type="button" aria-label="Remove ' + a.label + '">\n    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n      <!-- x icon -->\n    </svg>\n  </button>' : ''}\n</span>`;
+    const reactCode = `${a.icon ? "import { ClockIcon } from '@heroicons/react/24/outline';\n" : ""}${a.dismissible ? "import { XMarkIcon } from '@heroicons/react/24/outline';\n" : ""}${a.icon || a.dismissible ? "\n" : ""}<span className="badge badge-${a.size} badge-${a.color}">${a.icon ? '\n  <ClockIcon className="w-4 h-4" />' : ''}\n  <span>${a.label}</span>${a.dismissible ? '\n  <button type="button" aria-label="Remove ' + a.label + '">\n    <XMarkIcon className="w-4 h-4" />\n  </button>' : ''}\n</span>`;
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
