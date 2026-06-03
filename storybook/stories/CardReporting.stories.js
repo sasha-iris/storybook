@@ -280,7 +280,6 @@ export const Interactive = {
       },
     },
   },
-  render: (args) => reportingCard(args),
   play: async ({ canvasElement }) => {
     // Clean up previous listener to prevent duplicates on args re-render
     if (canvasElement._reportingToggleHandler) {

@@ -333,12 +333,6 @@ export const Interactive = {
       },
     },
   },
-  render: ({ state, variant }) => {
-    const bodies = { loaded: loadedBodies, loading: skeletonBodies, empty: emptyBodies, error: errorBodies };
-    const body = bodies[state]?.[variant] ?? loadedBodies.content;
-    const width = variant === 'chart' ? '400px' : variant === 'kpi' ? '260px' : '380px';
-    return `<div class="card" style="max-width:${width};">${body}</div>`;
-  },
 };
 
 /* ─────────────────────────────────────────────

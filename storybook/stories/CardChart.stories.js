@@ -458,17 +458,6 @@ export const Interactive = {
       },
     },
   },
-  render: ({ direction, chartType }) => {
-    switch (chartType) {
-      case 'linechart-vert':   return cardLinechartVert(direction);
-      case 'barchart':         return cardBarchart(direction);
-      case 'barchart-vert':    return cardBarchartVert(direction);
-      case 'barchart-big':     return cardBarchartBig(direction);
-      case 'barchart-segm-hor': return cardBarchartSegmHor();
-      case 'credit':           return cardCredit();
-      default:                 return cardLinechart(direction);
-    }
-  },
 };
 
 /* ── Linechart ──────────────────────────────────────────────────────────────── */
