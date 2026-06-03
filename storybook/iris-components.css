@@ -29,74 +29,53 @@
    Install: npm install @heroicons/react
    Import: import { ArrowRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 
-   MODAL FORM PATTERNS — CRITICAL:
-   Whenever creating modal dialogs with form fields (input, select, calendar),
-   ALWAYS use the exact patterns below. Never use Shadcn defaults or Tailwind
-   input/select styles directly. All modals must follow Iris Library styling.
+   FORM COMPONENT PATTERNS — GLOBAL (applies EVERYWHERE in the app):
+   For ANY input, select, checkbox, calendar, or dropdown field ANYWHERE
+   (modals, sidebars, main forms, dialogs, popovers) — ALWAYS use these patterns.
+   Never use Shadcn defaults or Tailwind input/select utilities.
 
-   PATTERN 1: TEXT INPUT
+   PATTERN 1: TEXT INPUT (everywhere)
    <input className="form-input" type="text" placeholder="..." />
-   (uses: form-input class, border-radius 8px, no inline Tailwind)
+   Classes: form-input (includes border-radius 8px, padding, colors from Iris tokens)
+   Never: Tailwind classes like rounded-lg, border, text-sm, etc.
 
-   PATTERN 2: SELECT DROPDOWN (single-select in modal)
+   PATTERN 2: SELECT DROPDOWN (single-choice, everywhere)
    <select className="form-select">
      <option>Option 1</option>
      <option>Option 2</option>
    </select>
-   (uses: form-select class, NOT Shadcn Select, NOT custom dropdown trigger)
+   Classes: form-select (NOT Shadcn Select component)
+   Use for: Vendor, Ship method, Assignee, Status, any dropdown pick
 
-   PATTERN 3: MULTI-SELECT DROPDOWN (multi-checkbox in modal)
+   PATTERN 3: MULTI-SELECT with CHECKBOXES (filter lists, everywhere)
    <div className="dropdown-menu dropdown-menu--checkbox">
      <label className="iris-control">
        <span className="iris-control__check">
          <span className="iris-checkbox [iris-checkbox--checked]"></span>
        </span>
        <span className="iris-control__body">
-         <span className="iris-control__label">Option</span>
+         <span className="iris-control__label">Option text</span>
        </span>
      </label>
    </div>
-   (uses: dropdown-menu--checkbox + iris-checkbox, NOT Shadcn Popover)
+   Classes: dropdown-menu--checkbox + iris-control + iris-checkbox
+   Use for: Category, Location, Cover filters, or any multi-select in modals/popovers
 
-   PATTERN 4: DATE PICKER CALENDAR
-   Use Shadcn Calendar component BUT apply Iris styles:
-   - Use iris-cal__day--selected { border-radius: 8px } for selected date
-   - Never override with Tailwind rounded-full or custom classes
-   - Calendar must display exactly as in Iris Library Storybook
+   PATTERN 4: DATE PICKER (everywhere date input needed)
+   <input className="form-input" type="date" />
+   OR for calendar popover: Shadcn Calendar with iris-cal__day--selected applied
+   Rule: Selected day must have border-radius: 8px (never 50%, never Tailwind rounded-full)
 
-   MODAL FORM LAYOUT:
-   <div className="modal">
-     <div style={{padding: '24px'}}>
-       <h2>Form Title</h2>
-       <div style={{display: 'grid', gap: '16px'}}>
-         <div>
-           <label style={{fontSize: '12px', fontWeight: '600'}}>Label</label>
-           <input className="form-input" />
-         </div>
-         <div>
-           <label style={{fontSize: '12px', fontWeight: '600'}}>Select</label>
-           <select className="form-select">
-             <option>Option 1</option>
-           </select>
-         </div>
-         <div>
-           <label style={{fontSize: '12px', fontWeight: '600'}}>Date</label>
-           <Calendar /> {/* with iris-cal styles applied */}
-         </div>
-       </div>
-       <div style={{display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end'}}>
-         <button className="btn btn-link">Cancel</button>
-         <button className="btn btn-primary">Save</button>
-       </div>
-     </div>
-   </div>
+   PATTERN 5: TEXTAREA
+   <textarea className="form-input"></textarea>
+   (form-input class applies to both input and textarea)
 
-   CRITICAL RULES:
-   - Never use Tailwind input/select utility classes (text-sm, rounded-lg, border, etc.)
-   - Never use Shadcn Select/Popover components for filter dropdowns
-   - Always use form-input, form-select, or dropdown-menu--checkbox from Iris Library
-   - Calendar picker: apply iris-cal__day--selected border-radius 8px rule
-   - Before creating ANY modal form, check this file for the patterns above
+   CRITICAL GLOBAL RULES:
+   1. NEVER use Tailwind input/select utilities (rounded-lg, border-2, text-sm, etc.)
+   2. NEVER use Shadcn Select, Shadcn Popover for form fields
+   3. ALWAYS use form-input, form-select, iris-control, iris-checkbox from this file
+   4. Before creating ANY form field in ANY location, check this FORM COMPONENT PATTERNS section
+   5. All form fields must look identical whether they're in modals, sidebars, or main page
    ─────────────────────────────────────────────────────────────────
    Full icon list: https://heroicons.com
    ============================================================= */
