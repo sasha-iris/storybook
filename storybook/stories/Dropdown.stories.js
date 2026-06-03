@@ -353,7 +353,7 @@ a list item, a menu panel, and a trigger button.
 - **List item** (.dropdown-item) — 37px, 14px/400; left icon + text + right chevron
 - **Divider** (.dropdown-divider) — 1px gray/200 separator
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

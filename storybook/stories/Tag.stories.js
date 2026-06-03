@@ -84,7 +84,7 @@ Inline text labels with a colored dot indicator — no background, purely typogr
 
 **Colors** — 9 themes. Note: dot and text use slightly different shades for Green, Red, Purple, Pink (Figma-exact values preserved).
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

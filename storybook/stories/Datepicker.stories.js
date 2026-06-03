@@ -432,7 +432,7 @@ export default {
 - Selected state: single day (\`#1447e6\`) or range endpoints (\`#42389d\`) with in-range fill (\`var(--color-bg-secondary)\`)
 - Footer: Cancel + Ok/Apply buttons
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

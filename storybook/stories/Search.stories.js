@@ -113,7 +113,7 @@ export default {
 - Search button — icon-only (\`bg:#42389d\`) or labeled (\`bg:#1447e6\`)
 - Flag + country code (optional) — for geo-search
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

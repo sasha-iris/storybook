@@ -75,7 +75,7 @@ irisLogo({ size: 'lg', dark: true })
 - Mark PNGs are locally hosted in \`public/assets/\` (served via \`staticDirs\` in \`.storybook/main.js\`) — no TTL.
 - \`xs\` dark falls back to \`xs\` light (the Figma xs dark is a raw vector assembly with no composite raster).
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

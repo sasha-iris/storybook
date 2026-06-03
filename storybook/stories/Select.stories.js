@@ -128,7 +128,7 @@ export default {
 - Input area: dismissible tag pills + placeholder + chevron
 - Helper text (optional)
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

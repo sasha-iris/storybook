@@ -179,7 +179,7 @@ ACTUALS columns use brand/200 (\`#cddbfe\`) header bg.
 FORECAST columns use teal/200 (\`#96f7e4\`) header bg.
 
 See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+`,
       },
     },
   },

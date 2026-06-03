@@ -124,6 +124,8 @@ export function MyComponent() {
 - Don't use text colors as backgrounds (each group has a role)
 - Don't use accent colors for regular text without WCAG contrast check
 - Don't use legacy color names (\`--color-primary\`, \`--color-danger\`) — they're being replaced
+
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
@@ -189,10 +191,7 @@ Use these for any foreground text, icons, or labels.
 .warning-msg  { color: var(--color-text-fg-warning); }
 
 /* Disabled */
-.label--disabled { color: var(--color-text-fg-disabled); }
-
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+.label--disabled { color: var(--color-text-fg-disabled); }`,
         language: 'css',
       },
     },

@@ -165,7 +165,7 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 - All rows: white background (var(--color-bg-white)), no zebra striping
 
 See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+`,
       },
     },
   },

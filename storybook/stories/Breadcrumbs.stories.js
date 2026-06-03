@@ -126,6 +126,8 @@ The last item is always the current page — it carries \`aria-current="page"\` 
 - Container: \`<nav aria-label="Breadcrumb">\` wrapping an \`<ol class="breadcrumb">\`
 - Current item: \`aria-current="page"\` on a \`<span>\` inside \`.breadcrumb-item.active\`
 - Separator chevrons: \`aria-hidden="true"\` on \`.breadcrumb-sep\`
+
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
@@ -291,10 +293,7 @@ Default breadcrumb — Figma: \`Type=Default\` (node \`3284:24211\`).
     </li>
 
   </ol>
-</nav>
-
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+</nav>`,
       },
     },
   },

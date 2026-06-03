@@ -129,6 +129,8 @@ Figma source: component set \`2370:20939\`.
 - \`aria-expanded\` on every \`.accordion-header\` button
 - \`role="region"\` + \`aria-labelledby\` on every \`.accordion-body\` panel
 - Keyboard: Tab focuses headers; Enter/Space toggles open/closed
+
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
@@ -288,10 +290,7 @@ Uses \`.accordion\` wrapper. Active item gets \`.accordion-item.open\` — heade
     </div>
   </div>
 
-</div>
-
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+</div>`,
       },
     },
   },

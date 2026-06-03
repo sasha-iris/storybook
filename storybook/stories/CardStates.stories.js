@@ -66,7 +66,7 @@ All states use the same \`.card\` shell — only the body content changes. The c
 **❌ Don't** — show an empty state and an error state with the same message.
 
 See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+`,
       },
     },
   },

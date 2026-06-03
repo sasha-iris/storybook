@@ -148,6 +148,8 @@ export function MyComponent() {
 **Naming convention**
 Named scale: \`--text-{role}\` → \`--text-h1\`, \`--text-body-2\`, \`--text-caption\`
 Weight tokens: \`--font-{weight-name}\` → \`--font-bold\`, \`--font-semibold\`
+
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
@@ -229,10 +231,7 @@ Tokens map to \`--text-h1\` through \`--text-caption\` in \`styles.css\`.
 <!-- Label / hint -->
 <span style="font-size: var(--text-caption); color: var(--color-text-fg-disabled);">
   Required field
-</span>
-
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+</span>`,
         language: 'html',
       },
     },

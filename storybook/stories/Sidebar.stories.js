@@ -349,6 +349,8 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
 - Active: bg \`var(--color-border-default)\`, text+icon \`#42389d\`, chevron always \`#1f2a37\`
 - Sub-items: 28px left indent, no icon, \`#111928\` text
 - Active item requires \`aria-current="page"\` for accessibility
+
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
@@ -460,10 +462,7 @@ export const Default = {
         code: `<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">
   <!-- Logo -->
   <!-- Nav items — active: bg:var(--color-border-default); color:#42389d; aria-current="page" -->
-</aside>
-
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+</aside>`,
         language: 'html',
       },
     },

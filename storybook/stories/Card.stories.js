@@ -87,8 +87,8 @@ It provides the border, background, border-radius, and \`overflow:hidden\` clip.
 - Card width is set by the **parent container**, not the card itself.
   Recommended: \`max-width:380px\` for standalone; \`1fr\` grid for grids.
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+  See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+  `,
       },
     },
   },

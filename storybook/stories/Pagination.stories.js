@@ -137,6 +137,8 @@ The current page has \`.page-item.active\` + \`aria-current="page"\`. Disabled p
 - Each \`.page-link\` button has \`aria-label="Page N"\`
 - Active page button has \`aria-current="page"\`
 - Disabled prev/next have \`disabled\` + \`aria-disabled="true"\`
+
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },
@@ -284,10 +286,7 @@ Pagination with ≤ 5 pages — all page numbers shown, no ellipsis. Figma: \`Si
       <button class="page-link" aria-label="Next page"><!-- chevron-right --></button>
     </li>
   </ul>
-</nav>
-
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+</nav>`,
       },
     },
   },

@@ -90,7 +90,7 @@ Keyboard key badge — visually represents a physical key or keyboard shortcut.
 **Accessibility**
 Wrap key labels in \`<kbd>\` for semantic meaning. Screen readers will announce "keyboard" before the key label, which is appropriate.
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },

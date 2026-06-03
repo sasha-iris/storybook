@@ -266,7 +266,7 @@ Period column headers (time-series, e.g. months):
 - Bold header (600) vs regular (500): check visual weight difference in the type column story
 
 See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+`,
       },
     },
   },

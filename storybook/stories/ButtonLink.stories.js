@@ -66,8 +66,8 @@ three sizes, optional left icon.
 </a>
 \`\`\`
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
-        `,
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+      `,
       },
     },
   },

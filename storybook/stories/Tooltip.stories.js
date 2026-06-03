@@ -75,7 +75,7 @@ export default {
 
 **Colors**: \`dark\` (default) suits most page backgrounds; \`white\` suits dark-background contexts or when the tooltip sits on a dark card.
 
-See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
+        See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
       },
     },
