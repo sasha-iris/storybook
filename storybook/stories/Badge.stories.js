@@ -113,7 +113,23 @@ Status badges for labeling content, categorizing items, and indicating state.
 **Sizes** — \`lg\` (14 px text, 25 px height) for default usage; \`sm\` (12 px, 22 px) for dense tables and compact lists.
 
 **Colors** — 8 themes: gray (neutral), blue, indigo, purple, pink, green, yellow, red.
-Each theme has a matched background, text, and dismiss-icon color confirmed from Figma.
+
+\`\`\`jsx
+// Basic usage
+<span className="badge badge-lg badge-indigo">In review</span>
+
+// With icon
+<span className="badge badge-lg badge-green">
+  <CheckIcon className="w-4 h-4" />
+  <span>Active</span>
+</span>
+
+// Dismissible
+<span className="badge badge-lg badge-red">
+  <span>Failed</span>
+  <button aria-label="Remove"><XMarkIcon className="w-4 h-4" /></button>
+</span>
+\`\`\`
         `,
       },
     },
@@ -209,18 +225,18 @@ All 8 color themes. Use the **size** control to compare at either size.
         `,
       },
       source: {
-        code: `<!-- Gray — neutral status -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#f3f4f6;color:#101828;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Neutral</span>
+        code: `// Gray — neutral status
+<span className="badge badge-lg badge-gray">Neutral</span>
 
-<!-- Green — success / active -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#d0fae5;color:#006045;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Active</span>
+// Green — success / active
+<span className="badge badge-lg badge-green">Active</span>
 
-<!-- Red — error / failed -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#ffe2e2;color:#9f0712;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Failed</span>
+// Red — error / failed
+<span className="badge badge-lg badge-red">Failed</span>
 
-<!-- Yellow — warning / pending -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#fef9c2;color:#894b00;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">Pending</span>`,
-        language: 'html',
+// Yellow — warning / pending
+<span className="badge badge-lg badge-yellow">Pending</span>`,
+        language: 'jsx',
       },
     },
   },
@@ -255,12 +271,12 @@ export const AllSizes = {
         `,
       },
       source: {
-        code: `<!-- lg (default) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">In review</span>
+        code: `// lg (default) — 25px height, 14px text
+<span className="badge badge-lg badge-indigo">In review</span>
 
-<!-- sm (compact) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:6px;padding:2px 10px;white-space:nowrap;line-height:1.5;">In review</span>`,
-        language: 'html',
+// sm (compact) — 22px height, 12px text
+<span className="badge badge-sm badge-indigo">In review</span>`,
+        language: 'jsx',
       },
     },
   },
@@ -295,13 +311,13 @@ All 8 themes with a leading icon. Use the **size** control to compare.
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">
-  <svg width="16" height="16" viewBox="0 0 20 20" fill="#42389d" aria-hidden="true" style="flex-shrink:0;">
-    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5H10.75V5z" clip-rule="evenodd"/>
-  </svg>
+        code: `import { ClockIcon } from '@heroicons/react/24/outline';
+
+<span className="badge badge-lg badge-indigo">
+  <ClockIcon className="w-4 h-4" />
   <span>Scheduled</span>
 </span>`,
-        language: 'html',
+        language: 'jsx',
       },
     },
   },
@@ -336,16 +352,15 @@ All 8 themes with a dismiss × button. The × uses a brighter variant of the the
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#e5edff;color:#42389d;font-size:var(--text-sm);font-weight:400;border-radius:6px;padding:2px 12px;white-space:nowrap;line-height:1.5;">
+        code: `import { XMarkIcon } from '@heroicons/react/24/outline';
+
+<span className="badge badge-lg badge-indigo">
   <span>In review</span>
-  <button type="button" aria-label="Remove In review"
-    style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="#6875f5" aria-hidden="true">
-      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-    </svg>
+  <button type="button" aria-label="Remove In review" className="badge-dismiss">
+    <XMarkIcon className="w-4 h-4" />
   </button>
 </span>`,
-        language: 'html',
+        language: 'jsx',
       },
     },
   },
@@ -389,41 +404,21 @@ CSS: \`<span class="badge badge-red badge--metric">\`
         `,
       },
       source: {
-        code: `<!-- Critical -->
-<span class="badge badge-red badge--metric">
+        code: `import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+
+// Basic metric chip
+<span className="badge badge-red badge--metric">
   Critical
-  <span class="badge--metric__sub">11.0% rev</span>
+  <span className="badge--metric__sub">11.0% rev</span>
 </span>
 
-<!-- Critical — with icon -->
-<span class="badge badge-red badge--metric">
-  <span style="display:flex;align-items:center;gap:3px;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-    </svg>
-    Critical
-  </span>
-  <span class="badge--metric__sub">11.0% rev</span>
-</span>
-
-<!-- High -->
-<span class="badge badge-yellow badge--metric">
-  High
-  <span class="badge--metric__sub">6.9% rev</span>
-</span>
-
-<!-- Medium -->
-<span class="badge badge-blue badge--metric">
-  Medium
-  <span class="badge--metric__sub">3.1% rev</span>
-</span>
-
-<!-- Low -->
-<span class="badge badge-green badge--metric">
-  Low
-  <span class="badge--metric__sub">1.4% rev</span>
+// With leading icon
+<span className="badge badge-red badge--metric">
+  <ExclamationCircleIcon className="w-3 h-3" />
+  <span>Critical</span>
+  <span className="badge--metric__sub">11.0% rev</span>
 </span>`,
-        language: 'html',
+        language: 'jsx',
       },
     },
   },
