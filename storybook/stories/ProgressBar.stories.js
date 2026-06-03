@@ -33,7 +33,16 @@ export default {
         component: `
 **Progress Bar** communicates the completion status of a task or process as a fraction of a total.
 
-**When to use**
+## Quick Start
+
+**1. Import styles** — Copy \`iris-components.css\` from the repository:
+\`\`\`html
+<link rel="stylesheet" href="iris-components.css">
+\`\`\`
+
+**2. Copy component code** — Use the "Interactive (Controls)" story to generate HTML/React.
+
+## When to use
 - Show upload, export, or processing progress with a known total
 - Visualise a metric against a target (e.g. storage used, budget consumed, goal completion)
 - Represent a step completion percentage in a multi-step flow
@@ -47,6 +56,8 @@ export default {
 - **Track** — full-width gray background bar (6 px, \`#e5e7eb\`, border-radius 2 px)
 - **Fill** — colored foreground bar growing left-to-right, same height and radius as the track
 - **Label** — percentage value shown above (default) or below the track as helper text; always right-aligned
+
+See [SETUP.md](../../SETUP.md) for complete installation instructions.
         `.trim(),
       },
     },

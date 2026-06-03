@@ -107,8 +107,18 @@ Status badges for labeling content, categorizing items, and indicating state.
 - Long explanatory text → use an Alert or inline notice
 - Navigation indicators → use a Tab with a counter instead
 
-**Anatomy**
-\`[icon?] label [×?]\` — icon and dismiss button are both optional.
+## Quick Start
+
+**1. Import styles** — Copy \`iris-components.css\` from the repository:
+\`\`\`html
+<link rel="stylesheet" href="iris-components.css">
+\`\`\`
+
+**2. Copy component code** — Use the "Interactive (Controls)" story to generate HTML/React.
+
+## Usage
+
+**Anatomy** — \`[icon?] label [×?]\` — icon and dismiss button are both optional.
 
 **Sizes** — \`lg\` (14 px text, 25 px height) for default usage; \`sm\` (12 px, 22 px) for dense tables and compact lists.
 
@@ -130,6 +140,8 @@ Status badges for labeling content, categorizing items, and indicating state.
   <button aria-label="Remove"><XMarkIcon className="w-4 h-4" /></button>
 </span>
 \`\`\`
+
+See [SETUP.md](../../SETUP.md) for complete installation instructions.
         `,
       },
     },

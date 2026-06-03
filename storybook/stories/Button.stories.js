@@ -54,6 +54,19 @@ export default {
         component: `
 Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
 
+## Quick Start
+
+**1. Import styles** — Copy \`iris-components.css\` from the repository:
+\`\`\`html
+<link rel="stylesheet" href="iris-components.css">
+\`\`\`
+
+**2. Copy component code** — Use the "Interactive (Controls)" story:
+- Adjust size, color, and modifiers using Controls
+- Click "Copy" to get HTML or React code
+
+## Usage
+
 **CSS classes:** \`btn btn-{color} btn-{size}\`
 **Outline:** swap \`btn-{color}\` for \`btn-outline-{color}\`
 **Icon-only:** add \`btn-icon\` modifier (removes padding, sets square dimensions)
@@ -66,6 +79,8 @@ Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
   {/* icon here */}
 </button>
 \`\`\`
+
+See [SETUP.md](../../SETUP.md) for complete installation instructions.
         `,
       },
     },
