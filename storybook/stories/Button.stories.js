@@ -194,7 +194,32 @@ const btn = ({
 /* ── Interactive story (Controls + Actions) ─────────────────── */
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => btn(args),
+  render: (args) => {
+    const a = args;
+    const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;
+    const classes = ['btn', colorClass, `btn-${a.size}`, a.pill ? 'btn-pill' : '', a.iconOnly ? 'btn-icon' : ''].filter(Boolean).join(' ');
+    let code = '';
+    if (a.iconOnly) {
+      code = `<button class="${classes}" aria-label="${a.label}">\n  <!-- icon svg here -->\n</button>`;
+    } else {
+      const left  = a.iconLeft  ? '\n  <!-- left icon -->' : '';
+      const right = a.iconRight ? '\n  <!-- right icon -->' : '';
+      const dis   = a.disabled  ? ' disabled aria-disabled="true"' : '';
+      code = `<button class="${classes}"${dis}>${left}\n  <span>${a.label}</span>${right}\n</button>`;
+    }
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${btn(args)}
+        </div>
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;">
+          <pre style="margin:0;white-space:pre-wrap;word-break:break-word;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+          <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+        </div>
+      </div>
+    `;
+  },
   parameters: {
     docs: {
       description: {
@@ -205,7 +230,6 @@ export const Interactive = {
         ].join('\n'),
       },
       source: {
-        state: 'open',
         transform: (_src, storyCtx) => {
           const a = storyCtx.args;
           const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;

@@ -128,11 +128,43 @@ function progressBar({ value = 50, color = 'primary', labelBelow = false } = {})
 
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => `<div style="max-width:480px;">${progressBar(args)}</div>`,
+  render: (args) => {
+    const { value, color, labelBelow } = args;
+    const fillColor = COLORS[color] ?? COLORS.primary;
+    const pct = Math.min(100, Math.max(0, value));
+    const labelHtml = `<div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">${pct}%</div>`;
+    let code = '';
+    if (labelBelow) {
+      code = `<div style="width:100%;">
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
+    <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
+  </div>
+  ${labelHtml}
+</div>`;
+    } else {
+      code = `<div style="width:100%;">
+  ${labelHtml}
+  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
+    <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
+  </div>
+</div>`;
+    }
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          <div style="max-width:480px;">${progressBar(args)}</div>
+        </div>
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;">
+          <pre style="margin:0;white-space:pre-wrap;word-break:break-word;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+          <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+        </div>
+      </div>
+    `;
+  },
   parameters: {
     docs: {
       source: {
-        state: 'open',
         transform: (_src, ctx) => {
           const { value, color, labelBelow } = ctx.args;
           const fillColor = COLORS[color] ?? COLORS.primary;

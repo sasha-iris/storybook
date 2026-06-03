@@ -177,14 +177,42 @@ Status badges for labeling content, categorizing items, and indicating state.
 ───────────────────────────────────────────── */
 export const Interactive = {
   name: 'Interactive (Controls)',
-  render: (args) => badge(args),
+  render: (args) => {
+    const a = args;
+    const { bg, text, dismiss } = BADGE_COLORS[a.color] ?? BADGE_COLORS.indigo;
+    const isLg = a.size === 'lg';
+    const fs = isLg ? 'var(--text-sm)' : 'var(--text-xs)';
+    const fw = isLg ? '400' : 'var(--font-medium)';
+    const pad = isLg ? '2px 12px' : '2px 10px';
+    const iconSz = isLg ? 16 : 14;
+
+    const iconPart = a.icon
+      ? `\n  <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${text}" aria-hidden="true">\n    <path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/>\n  </svg>`
+      : '';
+    const dismissPart = a.dismissible
+      ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${dismiss}" aria-hidden="true">\n      <path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/>\n    </svg>\n  </button>`
+      : '';
+
+    const code = `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};font-size:${fs};font-weight:${fw};border-radius:6px;padding:${pad};white-space:nowrap;line-height:1.5;">${iconPart}\n  <span>${a.label}</span>${dismissPart}\n</span>`;
+
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+          ${badge(args)}
+        </div>
+        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;">
+          <pre style="margin:0;white-space:pre-wrap;word-break:break-word;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+          <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+        </div>
+      </div>
+    `;
+  },
   parameters: {
     docs: {
       description: {
         story: 'Use the **Controls** panel to configure any combination of color, size, icon, and dismiss button.',
       },
       source: {
-        state: 'open',
         transform: (_src, ctx) => {
           const a = ctx.args;
           const { bg, text, dismiss } = BADGE_COLORS[a.color] ?? BADGE_COLORS.indigo;
