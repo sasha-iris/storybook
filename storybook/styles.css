@@ -48,6 +48,17 @@
   --color-danger:          #E02424;
   --color-info:            #1C64F2;
 
+  /* Semantic — Light/Dark variations (for UI feedback, copy buttons, etc.) */
+  --color-success-light:   #ecfdf5;
+  --color-success-dark:    #0E9F6E;
+  --color-success-lighter: #ecfdf5;
+  --color-danger-light:    #fef0f2;
+  --color-danger-dark:     #c70036;
+  --color-danger-lighter:  #ffe4e6;
+  --color-warning-light:   #fff8f1;
+  --color-warning-dark:    #b43403;
+  --color-warning-lighter: #feecdc;
+
   /* ── PRIMITIVES: Typography Tokens ───────── */
   /* Mapped from Figma: [T] sizes + [T] weight frames */
   --font-family-base:      'Inter', ui-sans-serif, system-ui, sans-serif;
