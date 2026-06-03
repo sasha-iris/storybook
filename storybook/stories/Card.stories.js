@@ -45,6 +45,13 @@ import { ICON } from './card-icons.js';
  * | Header padding | `16px 20px 12px` | — |
  * | Body padding | `0 20px 16px` (`.card-body`) or `16px 20px` (`.card-body-padded`) | — |
  */
+
+function basicCard({ title = 'Card title', body = 'Body copy', showImage = false, showFooter = false }) {
+  const imgSlot = showImage ? `\n  <img src="https://picsum.photos/seed/card/380/180" alt="Card image" style="width:100%;height:180px;object-fit:cover;display:block;">` : '';
+  const footerSlot = showFooter ? `\n    <button class="btn btn-primary btn-sm">Read more</button>` : '';
+  return `<div class="card" style="max-width:380px;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${imgSlot}\n  <div style="padding:20px;">\n    <h3 style="margin:0 0 12px 0;font-size:var(--text-lg);font-weight:var(--font-semibold);">${title}</h3>\n    <p style="margin:0 0 ${showFooter ? '16px' : '0'} 0;font-size:var(--text-sm);color:var(--color-text-body-subtle);">${body}</p>${footerSlot}\n  </div>\n</div>`;
+}
+
 export default {
   title: 'Iris Library/Card/Basics',
   tags: ['autodocs', 'stable'],
@@ -149,7 +156,7 @@ export const Interactive = {
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-          ${htmlCode}
+          ${basicCard(a)}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
