@@ -124,6 +124,52 @@ export function MyComponent() {
 - Don't use text colors as backgrounds (each group has a role)
 - Don't use accent colors for regular text without WCAG contrast check
 - Don't use legacy color names (\`--color-primary\`, \`--color-danger\`) — they're being replaced
+
+`
+**Color tokens** are the single source of truth for all colors in the Iris Library.
+They are CSS custom properties defined in \`:root\` inside \`styles.css\` and available globally
+via \`var(--color-<group>-<name>)\`.
+
+**Token groups**
+- \`--color-text-*\` — foreground: text, icons, labels
+- \`--color-bg-*\` — surface fills, overlays, state-driven backgrounds
+- \`--color-border-*\` — dividers, input outlines, focus rings
+- \`--color-*\` (no group) — legacy semantic aliases (kept for backward compatibility)
+
+**When to use**
+- Always reference a token instead of a raw hex value in component styles
+- Use \`-soft\` and \`-subtle\` variants for tinted backgrounds and borders in alerts, badges, and inline callouts
+- Use \`-strong\` variants for filled, high-contrast surfaces (e.g. primary buttons, danger banners)
+- Use \`-disabled\` tokens for any disabled UI state to stay consistent across the system
+
+**When NOT to use**
+- Do not hardcode hex values in component CSS — use a token so overrides propagate automatically
+- Do not use \`--color-bg-*\` tokens as text colors or vice versa — each group is scoped to its role
+- Do not use legacy \`--color-primary\`, \`--color-danger\`, etc. for new work — migrate to the Figma-sourced tokens
+
+**Naming convention**
+\`--color-{group}-{semantic?}-{shade?}\`
+Examples: \`--color-text-fg-brand\`, \`--color-bg-success-soft\`, \`--color-border-danger\`
+
+---
+
+> ⚠️ **Important for developers — token coverage gap**
+>
+> This page documents the **primitive token layer** (text / bg / border variables from the Figma Primitives frame).
+> Component families — Badge, Chip, Tag, Tabs, Progress Bar, and others — are built directly from
+> **Figma component nodes** and use additional hex values that are not yet mapped to CSS custom properties.
+>
+> **What this means in practice:**
+> - Component source snippets in this Storybook show raw hex values (e.g. \`#5850ec\`, \`#e7000b\`).
+>   These are Figma-exact and visually correct, but they bypass the token layer.
+> - Until a full token audit maps every component color to a \`--color-*\` variable,
+>   raw hex values in components should be treated as **provisional** — do not copy them into new work without checking against this page first.
+>
+> **Action required (design + engineering):**
+> Audit each component family against this token page and replace raw hex values with the corresponding
+> \`--color-*\` CSS variable. Tracked as a known debt item.
+>
+> **Affected families (as of May 2026):** Badge · Chip · Tag · Button · Tabs · Progress Bar
         `.trim(),
       },
     },
