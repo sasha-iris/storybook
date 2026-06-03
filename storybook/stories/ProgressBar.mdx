@@ -1,0 +1,178 @@
+import { Meta, Source } from '@storybook/blocks';
+import * as ProgressBarStories from './ProgressBar.stories';
+
+<Meta of={ProgressBarStories} />
+
+# Progress Bar
+
+Communicates the completion status of a task or process as a fraction of a total.
+
+## Basic Usage
+
+### HTML
+
+<Source code={`<div style="width:100%;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">50%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:50%;background:#5850ec;border-radius:2px;"></div>
+  </div>
+</div>`} language="html" />
+
+### React
+
+<Source code={`<div style={{ width: '100%' }}>
+  <div style={{ fontSize: '12px', fontWeight: 500, color: '#6b7280', textAlign: 'right' }}>
+    50%
+  </div>
+  <div style={{ height: '6px', background: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}>
+    <div style={{ height: '100%', width: '50%', background: '#5850ec', borderRadius: '2px' }} />
+  </div>
+</div>`} language="jsx" />
+
+## All Colors
+
+9 color variants (Orange, Primary, Green, Purple, Yellow, Pink, Indigo, Dark, Blue) at 75% progress.
+
+### HTML
+
+<Source code={`<!-- Primary (neutral progress) -->
+<div style="width:100%;margin-bottom:20px;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
+  </div>
+</div>
+
+<!-- Green (success) -->
+<div style="width:100%;margin-bottom:20px;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:75%;background:#31c48d;border-radius:2px;"></div>
+  </div>
+</div>
+
+<!-- Orange (warning) -->
+<div style="width:100%;margin-bottom:20px;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:75%;background:#ff8a4c;border-radius:2px;"></div>
+  </div>
+</div>
+
+<!-- Blue -->
+<div style="width:100%;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:75%;background:#1c64f2;border-radius:2px;"></div>
+  </div>
+</div>`} language="html" />
+
+### React
+
+<Source code={`const colors = {
+  primary: '#5850ec',
+  green: '#31c48d',
+  orange: '#ff8a4c',
+  blue: '#1c64f2',
+};
+
+const ProgressBar = ({ value, color }) => (
+  <div style={{ width: '100%' }}>
+    <div style={{ fontSize: '12px', fontWeight: 500, color: '#6b7280', textAlign: 'right' }}>
+      {value}%
+    </div>
+    <div style={{ height: '6px', background: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}>
+      <div style={{ height: '100%', width: \`\${value}%\`, background: colors[color], borderRadius: '2px' }} />
+    </div>
+  </div>
+);
+
+// Usage
+<ProgressBar value={75} color="primary" />
+<ProgressBar value={75} color="green" />
+<ProgressBar value={75} color="orange" />
+<ProgressBar value={75} color="blue" />`} language="jsx" />
+
+## Progress Values
+
+### HTML
+
+<Source code={`<!-- 25% -->
+<div style="width:100%;margin-bottom:16px;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">25%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:25%;background:#5850ec;border-radius:2px;"></div>
+  </div>
+</div>
+
+<!-- 50% -->
+<div style="width:100%;margin-bottom:16px;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">50%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:50%;background:#5850ec;border-radius:2px;"></div>
+  </div>
+</div>
+
+<!-- 75% -->
+<div style="width:100%;margin-bottom:16px;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
+  </div>
+</div>
+
+<!-- 100% -->
+<div style="width:100%;">
+  <div style="font-size:12px;font-weight:500;color:#6b7280;text-align:right;">100%</div>
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:100%;background:#5850ec;border-radius:2px;"></div>
+  </div>
+</div>`} language="html" />
+
+### React
+
+<Source code={`<ProgressBar value={25} color="primary" />
+<ProgressBar value={50} color="primary" />
+<ProgressBar value={75} color="primary" />
+<ProgressBar value={100} color="primary" />`} language="jsx" />
+
+## Label Below
+
+Label positioned below the progress bar instead of above.
+
+### HTML
+
+<Source code={`<div style="width:100%;">
+  <div style="height:6px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:75%;background:#31c48d;border-radius:2px;"></div>
+  </div>
+  <div style="margin-top:6px;font-size:12px;font-weight:500;color:#6b7280;text-align:right;">75%</div>
+</div>`} language="html" />
+
+### React
+
+<Source code={`<div style={{ width: '100%' }}>
+  <div style={{ height: '6px', background: '#e5e7eb', borderRadius: '2px', overflow: 'hidden' }}>
+    <div style={{ height: '100%', width: '75%', background: '#31c48d', borderRadius: '2px' }} />
+  </div>
+  <div style={{ marginTop: '6px', fontSize: '12px', fontWeight: 500, color: '#6b7280', textAlign: 'right' }}>
+    75%
+  </div>
+</div>`} language="jsx" />
+
+## All Color Options
+
+**9 colors available:**
+- `primary` — #5850ec (neutral progress)
+- `green` — #31c48d (success)
+- `orange` — #ff8a4c (warning)
+- `blue` — #1c64f2 (info)
+- `purple` — #7e3af2 (accent)
+- `yellow` — #ffdf20 (caution, low contrast on light backgrounds)
+- `pink` — #e74694 (highlight)
+- `indigo` — #5850ec (alternate neutral)
+- `dark` — #111928 (dark backgrounds)
+
+## Interactive Playground
+
+Use the **Interactive (Controls)** story to adjust value (0–100) and color in real time.
