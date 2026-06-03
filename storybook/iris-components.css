@@ -3543,8 +3543,23 @@ kbd.kbd-dark {
 .iris-cal__day:hover { background: #f3f4f6; }
 .iris-cal__day--today { font-weight: var(--font-semibold); }
 /* Single selected — Figma: border-radius 8px (NOT circle) */
-.iris-cal__day--selected { background: #1447e6; color: #ffffff; border-radius: 8px; }
-.iris-cal__day--selected:hover { background: #193cb8; border-radius: 8px; }
+/* ── CALENDAR SELECTED DAY — CRITICAL ─────────────────────────
+   Selected day styling is GLOBAL and applies EVERYWHERE in the app.
+
+   CRITICAL RULES:
+   - NEVER use border-radius: 50% (circle) for selected day
+   - ALWAYS use border-radius: 8px (rounded rectangle)
+   - Applies to ALL calendars (modals, popovers, inline, everywhere)
+   - Overrides any Shadcn Calendar default styling
+
+   Even if Shadcn Calendar comes with border-radius: 50%,
+   our !important rule MUST win.
+   ─────────────────────────────────────────────────────────── */
+.iris-cal__day--selected { background: #1447e6; color: #ffffff; border-radius: 8px !important; }
+.iris-cal__day--selected:hover { background: #193cb8; border-radius: 8px !important; }
+/* Override Shadcn Calendar classes that try to make it circular */
+[data-selected="true"] { border-radius: 8px !important; }
+.day[aria-selected="true"] { border-radius: 8px !important; }
 /* Range selected */
 .iris-cal__day--range-selected { background: #42389d; color: #ffffff; }
 /* In range (between start and end) */
