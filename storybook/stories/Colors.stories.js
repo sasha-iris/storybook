@@ -158,7 +158,7 @@ const group = (title, swatches) => `
 /* ── stories ──────────────────────────────────────────────────── */
 
 export const TextColors = {
-  name: 'Text color variables',
+    name: 'Text color variables',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -221,7 +221,7 @@ Use these for any foreground text, icons, or labels.
 };
 
 export const BackgroundColors = {
-  name: 'Background color variables',
+    name: 'Background color variables',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -312,7 +312,7 @@ Use these for surface fills, overlays, and state-driven backgrounds.
 };
 
 export const BorderColors = {
-  name: 'Border color variables',
+    name: 'Border color variables',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -382,7 +382,7 @@ Use these for dividers, input outlines, focus rings, and card borders.
 };
 
 export const SemanticColors = {
-  name: 'Semantic aliases (legacy)',
+    name: 'Semantic aliases (legacy)',
   parameters: {
     controls: { disable: true },
     docs: {

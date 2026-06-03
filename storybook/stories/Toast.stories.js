@@ -214,7 +214,7 @@ The \`cta\` flag switches from the compact single-line layout to the expanded la
 // ─── 1. Interactive ───────────────────────────────────────────────────────────
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const h=`<div class="toast" role="alert"><p>${args.title||'Toast'}</p></div>`;
     const r=`<div role="alert" style={{padding:'16px',borderRadius:'8px',background:'#ecfdf5'}}>${args.title}</div>`;
@@ -247,7 +247,7 @@ export const Interactive = {
 // ─── 2. All Types ─────────────────────────────────────────────────────────────
 
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -312,7 +312,7 @@ export const AllTypes = {
 // ─── 3. With CTA ─────────────────────────────────────────────────────────────
 
 export const WithCTA = {
-  name: 'With CTA button',
+    name: 'With CTA button',
   args: { type: 'success' },
   parameters: {
     controls: { include: ['type'] },

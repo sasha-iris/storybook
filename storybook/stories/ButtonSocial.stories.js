@@ -152,7 +152,7 @@ const socialBtn = ({ label = 'Sign in with Facebook', color = 'dark', outline = 
 /* ── Stories ─────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const colorClass = a.color === 'dark'
@@ -239,7 +239,7 @@ export const Interactive = {
  * QA: solid bg=#111928, text=white; outline border=#e5e7eb (NOT brand color); border-radius=8px.
  */
 export const DarkSizes = {
-  name: 'Dark — all sizes',
+    name: 'Dark — all sizes',
   args: { outline: false },
   parameters: {
     controls: { include: ['outline'] },
@@ -280,7 +280,7 @@ export const DarkSizes = {
  * QA: White solid on dark bg, white outline with white border, border-radius=8px.
  */
 export const WhiteVariants = {
-  name: 'White variants (on dark background)',
+    name: 'White variants (on dark background)',
   args: { size: 'md' },
   parameters: {
     backgrounds: { default: 'dark' },
@@ -327,7 +327,7 @@ export const WhiteVariants = {
  * Figma uses Facebook as the representative example icon.
  */
 export const MultiProvider = {
-  name: 'Multi-provider showcase',
+    name: 'Multi-provider showcase',
   args: { size: 'md', outline: false },
   parameters: {
     controls: { include: ['size', 'outline'] },

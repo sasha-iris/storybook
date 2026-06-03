@@ -188,7 +188,7 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
    INTERACTIVE
 ───────────────────────────────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const { bg, text, dismiss } = BADGE_COLORS[a.color] ?? BADGE_COLORS.indigo;
@@ -368,7 +368,7 @@ Use the **Controls** panel to experiment. Code updates live.
    ALL COLORS
 ───────────────────────────────────────────── */
 export const AllColors = {
-  name: 'Colors — all 8 themes',
+    name: 'Colors — all 8 themes',
   args: { size: 'lg' },
   parameters: {
     controls: { include: ['size'] },
@@ -413,7 +413,7 @@ All 8 color themes. Use the **size** control to compare at either size.
    ALL SIZES
 ───────────────────────────────────────────── */
 export const AllSizes = {
-  name: 'Sizes — lg and sm',
+    name: 'Sizes — lg and sm',
   args: { color: 'indigo' },
   parameters: {
     controls: { include: ['color'] },
@@ -454,7 +454,7 @@ export const AllSizes = {
    WITH ICON
 ───────────────────────────────────────────── */
 export const WithIcon = {
-  name: 'With icon — all themes',
+    name: 'With icon — all themes',
   args: { size: 'lg' },
   parameters: {
     controls: { include: ['size'] },
@@ -494,7 +494,7 @@ All 8 themes with a leading icon. Use the **size** control to compare.
    DISMISSIBLE
 ───────────────────────────────────────────── */
 export const Dismissible = {
-  name: 'Dismissible — with × button',
+    name: 'Dismissible — with × button',
   args: { size: 'lg' },
   parameters: {
     controls: { include: ['size'] },
@@ -545,7 +545,7 @@ const METRIC_SAMPLES = {
 };
 
 export const MetricChip = {
-  name: 'Metric chip — priority levels',
+    name: 'Metric chip — priority levels',
   args: { icon: false },
   parameters: {
     controls: { include: ['icon'] },

@@ -407,7 +407,7 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
  * - Sub-items indented 28px, no icon
  */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const bg = args.color === 'white' ? '#ffffff' : '#f3f4f6';
     const h=`<aside style="width:256px;background:${bg};border:1px solid #e5e7eb;padding:16px;"><nav style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="padding:12px;border-radius:8px;background:${args.activeItem==='home'?'#e5e7eb':'transparent'}">Home</a></nav></aside>`;
@@ -451,7 +451,7 @@ export const Interactive = {
 };
 
 export const Default = {
-  name: 'Default — light, logo, overview active',
+    name: 'Default — light, logo, overview active',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -479,7 +479,7 @@ export const Default = {
  * All active states — shows each menu item in its selected state.
  */
 export const ActiveStates = {
-  name: 'Active states — all items',
+    name: 'Active states — all items',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -525,7 +525,7 @@ export const ActiveStates = {
  * Financial model section collapsed — chevron points down.
  */
 export const Collapsed = {
-  name: 'Financial model — collapsed',
+    name: 'Financial model — collapsed',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -566,7 +566,7 @@ export const Collapsed = {
    MENU ITEM STATES — all 8 from node 9263:160845
 ───────────────────────────────────────────── */
 export const MenuItemStates = {
-  name: 'Menu item states — all variants',
+    name: 'Menu item states — all variants',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -647,7 +647,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
    COLOR VARIANTS — White vs Gray (light theme)
 ───────────────────────────────────────────── */
 export const ColorVariants = {
-  name: 'Color variants — White vs Gray',
+    name: 'Color variants — White vs Gray',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -689,7 +689,7 @@ Both use identical menu item tokens and the same \`#e5e7eb\` right border.
    CONTRACTED — icon-only 60px variant
 ───────────────────────────────────────────── */
 export const ContractedSidebar = {
-  name: 'Contracted — icon only (60px)',
+    name: 'Contracted — icon only (60px)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -764,7 +764,7 @@ Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
 };
 
 export const NoLogo = {
-  name: 'Without logo',
+    name: 'Without logo',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -848,7 +848,7 @@ function contractedSidebarWithLogo({ activeKey = 'chartPie' } = {}) {
 }
 
 export const ContractedWithLogo = {
-  name: 'Contracted — with logo (60px)',
+    name: 'Contracted — with logo (60px)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -901,7 +901,7 @@ Use this variant when the contracted sidebar is the only navigation element on t
    Figma: node 17:40413 (Example frame — sidebar + content)
 ───────────────────────────────────────────── */
 export const InContext = {
-  name: 'In context — full page layout',
+    name: 'In context — full page layout',
   parameters: {
     controls: { disable: true },
     docs: {

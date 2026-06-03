@@ -146,7 +146,7 @@ Five distinct types — all light mode only:
    INTERACTIVE
 ───────────────────────────────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: ({ type, label, variant, dotColor, count }) => {
     const htmlCode = `<div style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dotColor || '#155dfc'};"></div>`;
     const reactCode = `<div style={{\n  display: 'inline-block',\n  width: '12px',\n  height: '12px',\n  borderRadius: '50%',\n  background: color,\n}} />`;
@@ -213,7 +213,7 @@ export const Interactive = {
    ALL TYPES
 ───────────────────────────────────────────── */
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -280,7 +280,7 @@ All 5 indicator types side by side.
    LEGEND COLORS
 ───────────────────────────────────────────── */
 export const LegendColors = {
-  name: 'Dot — legend colors',
+    name: 'Dot — legend colors',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -316,7 +316,7 @@ The 4 standard chart legend colors from Figma. Use these dots to label series in
    BADGE VARIANTS
 ───────────────────────────────────────────── */
 export const BadgeVariants = {
-  name: 'Badge — availability status',
+    name: 'Badge — availability status',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -355,7 +355,7 @@ Two badge indicator variants for user availability status (from Figma node 110:2
    IN CONTEXT — BUTTON WITH COUNT
 ───────────────────────────────────────────── */
 export const InContextButton = {
-  name: 'In context — button with count',
+    name: 'In context — button with count',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -395,7 +395,7 @@ Count indicator overlaid on a button — the pattern from Figma node 110:22652.
    IN CONTEXT — CUSTOMER TABLE WITH STATUS
 ───────────────────────────────────────────── */
 export const InContextTable = {
-  name: 'In context — customer table',
+    name: 'In context — customer table',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -460,7 +460,7 @@ Badge indicators used as status labels in a customer list — the "Badge indicat
    IN CONTEXT — STEPPER
 ───────────────────────────────────────────── */
 export const InContextStepper = {
-  name: 'In context — stepper',
+    name: 'In context — stepper',
   parameters: {
     controls: { disable: true },
     docs: {

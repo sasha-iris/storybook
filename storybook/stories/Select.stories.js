@@ -171,7 +171,7 @@ export default {
 
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const border = a.state === 'error' ? '#c81e1e' : a.state === 'hovered' ? '#9ca3af' : a.state === 'disabled' ? '#e5e7eb' : '#d1d5db';
@@ -252,7 +252,7 @@ export const Interactive = {
 
 // ─── Gallery: All states ──────────────────────────────────────────────────────
 export const AllStates = {
-  name: 'Select — all states',
+    name: 'Select — all states',
   args: { type: 'default' },
   parameters: {
     controls: { include: ['type'] },
@@ -293,7 +293,7 @@ export const AllStates = {
 
 // ─── Gallery: Multiselect ─────────────────────────────────────────────────────
 export const MultiselectVariants = {
-  name: 'Multiselect — variants',
+    name: 'Multiselect — variants',
   args: {},
   parameters: {
     controls: { disable: true },

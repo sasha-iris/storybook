@@ -116,7 +116,7 @@ Wrap key labels in \`<kbd>\` for semantic meaning. Screen readers will announce 
    INTERACTIVE
 ───────────────────────────────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const w = keyWidth(a.label);
@@ -205,7 +205,7 @@ export const Interactive = {
    LETTER KEYS
 ───────────────────────────────────────────── */
 export const LetterKeys = {
-  name: 'Letter keys — A–Z',
+    name: 'Letter keys — A–Z',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -235,7 +235,7 @@ All 26 letter keys. Width: 29×30px.
    MODIFIER / SPECIAL KEYS
 ───────────────────────────────────────────── */
 export const SpecialKeys = {
-  name: 'Special keys — modifiers & control',
+    name: 'Special keys — modifiers & control',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -279,7 +279,7 @@ Modifier and control keys with Figma-spec widths.
    FUNCTION KEYS
 ───────────────────────────────────────────── */
 export const FunctionKeys = {
-  name: 'Function keys — F1–F12',
+    name: 'Function keys — F1–F12',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -304,7 +304,7 @@ export const FunctionKeys = {
    ARROW KEYS
 ───────────────────────────────────────────── */
 export const ArrowKeys = {
-  name: 'Arrow keys — ←→↑↓',
+    name: 'Arrow keys — ←→↑↓',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -339,7 +339,7 @@ Arrow keys rendered as SVG vector icons (Figma-exact). Width: 32×30px.
    IN CONTEXT — SHORTCUT COMBOS
 ───────────────────────────────────────────── */
 export const InContext = {
-  name: 'In context — shortcut combos',
+    name: 'In context — shortcut combos',
   parameters: {
     controls: { disable: true },
     docs: {

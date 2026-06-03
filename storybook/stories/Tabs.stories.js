@@ -196,7 +196,7 @@ function tabBar(tabs) {
 /* ── stories ────────────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const isActive = a.state === 'active';
@@ -290,7 +290,7 @@ export const Interactive = {
  * **❌ Don't** — show a hover state on the currently active tab.
  */
 export const AllStates = {
-  name: 'All states',
+    name: 'All states',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -353,7 +353,7 @@ All three states from Figma node \`10007:72664\`:
  * **❌ Don't** — add counters to every tab — it creates visual noise.
  */
 export const WithCounter = {
-  name: 'With counter badge',
+    name: 'With counter badge',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -413,7 +413,7 @@ Badge colours per state (Figma node \`10007:72664\`):
  * **❌ Don't** — use dropdown tabs as the primary navigation pattern; prefer sidebar nav for deep hierarchies.
  */
 export const WithDropdown = {
-  name: 'With dropdown chevron',
+    name: 'With dropdown chevron',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -473,7 +473,7 @@ Dropdown tabs (Figma \`dropdown=yes\`) indicate that clicking the tab opens a su
  * **❌ Don't** — use more than 6–7 tabs in a single bar — add a "More" dropdown or switch to sidebar nav.
  */
 export const FullBar = {
-  name: 'Full tab bar (realistic)',
+    name: 'Full tab bar (realistic)',
   parameters: {
     controls: { disable: true },
     docs: {

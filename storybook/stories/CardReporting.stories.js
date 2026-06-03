@@ -256,7 +256,7 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
  * - `owner:user`                 → avatar circle + "Jese Leos" in owner section
  */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {const h='<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;"><div>Report Card</div></div>';const r='<div style={{padding:"20px",border:"1px solid #e5e7eb",borderRadius:"12px"}}>{children}</div>';const c='export function ReportingCard({title,data}){return(<div style={{border:"1px solid #e5e7eb",padding:"20px"}}>{title}</div>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${cardReporting(args)}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${c}</pre></div></div>`;},
   parameters: {
     docs: {
@@ -303,7 +303,7 @@ export const Interactive = {
  * QA: white bg, shadow-sm, no visible border, toggle ON, E-mail + Slack chips colored.
  */
 export const Default = {
-  name: 'Default — active, Iris owner',
+    name: 'Default — active, Iris owner',
   parameters: {
     docs: {
       description: {
@@ -376,7 +376,7 @@ Default state: **active=yes, owner=Iris**. White bg, shadow-sm, no border, toggl
  * QA: border 1px solid #6875f5, title color #42389d, arrow-right icon visible next to title.
  */
 export const Hovered = {
-  name: 'Hovered — active, Iris owner',
+    name: 'Hovered — active, Iris owner',
   parameters: {
     docs: {
       description: {
@@ -433,7 +433,7 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
  *     Amazon bg → #e5e7eb (not yellow), schedule text changes to paused message.
  */
 export const Inactive = {
-  name: 'Inactive — paused',
+    name: 'Inactive — paused',
   parameters: {
     docs: {
       description: {
@@ -491,7 +491,7 @@ Inactive state (active=no): report is paused.
  * QA: "Owned by" section shows initials circle + "Jese Leos", NOT the Iris Finance logo.
  */
 export const UserOwner = {
-  name: 'User owner',
+    name: 'User owner',
   parameters: {
     docs: {
       description: {
@@ -533,7 +533,7 @@ instead of the Iris Finance logo mark.
  *     inactive (gray bg) vs user owner (different owner section).
  */
 export const AllVariants = {
-  name: 'All variants — overview',
+    name: 'All variants — overview',
   parameters: {
     docs: {
       description: {

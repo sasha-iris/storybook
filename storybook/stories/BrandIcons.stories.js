@@ -391,7 +391,7 @@ function iconSection(title, names) {
 // ─── Stories ──────────────────────────────────────────────────────────────────
 
 export const AllIcons = {
-  name: 'All icons — outline 24px',
+    name: 'All icons — outline 24px',
   parameters: {
     controls: { disable: true },
     docs: {

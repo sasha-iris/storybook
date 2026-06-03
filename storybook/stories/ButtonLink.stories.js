@@ -139,7 +139,7 @@ const linkBtn = ({ label = 'Sign In', type = 'semibold', size = 'sm', showIconLe
 /* ── Stories ─────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const weightClass = `btn-link-${a.type}`;
@@ -226,7 +226,7 @@ export const Interactive = {
  * QA: color must be #42389d (NOT blue), underline on hover via border-bottom.
  */
 export const Semibold = {
-  name: 'Semibold — brand purple',
+    name: 'Semibold — brand purple',
   args: { hover: false, showIconLeft: false },
   parameters: {
     controls: { include: ['hover', 'showIconLeft'] },
@@ -257,7 +257,7 @@ Use **hover** and **showIconLeft** controls to preview states across all 3 sizes
  * QA: default color is --color-text-body-subtle (#6b7280), NOT brand color.
  */
 export const Medium = {
-  name: 'Medium — subtle gray',
+    name: 'Medium — subtle gray',
   args: { hover: false, showIconLeft: false },
   parameters: {
     controls: { include: ['hover', 'showIconLeft'] },
@@ -289,7 +289,7 @@ Use **hover** and **showIconLeft** controls to preview states across all 3 sizes
  * QA: Semibold should appear visibly darker/more prominent than Medium.
  */
 export const TypeComparison = {
-  name: 'Type comparison — Semibold vs Medium',
+    name: 'Type comparison — Semibold vs Medium',
   args: { showIconLeft: false },
   parameters: {
     controls: { include: ['showIconLeft'] },

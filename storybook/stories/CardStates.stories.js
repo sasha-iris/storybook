@@ -280,7 +280,7 @@ const CARD_TITLES = { content: 'Recent articles', kpi: 'Total Revenue', chart: '
  * - `variant:chart` → period selector visible in all states (header stays constant)
  */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {const h='<div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px;background:#fff;"><div>State: Loading</div></div>';const r='<div style={{border:"1px solid #e5e7eb",padding:"20px"}}>{state}</div>';const c='export function StateCard({state}){return(<div style={{border:"1px solid #e5e7eb"}}>{state}</div>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div>${cardStates(args)}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;">${c}</pre></div></div>`;},
   parameters: {
     backgrounds: { default: 'white' },
@@ -351,7 +351,7 @@ export const Interactive = {
  * - Chart card footer (legend) also skeletonised
  */
 export const Loading = {
-  name: 'Loading (skeleton)',
+    name: 'Loading (skeleton)',
   parameters: {
     backgrounds: { default: 'white' },
     docs: {
@@ -430,7 +430,7 @@ export const Loading = {
  * - Text hierarchy: semibold heading → secondary supporting copy
  */
 export const Empty = {
-  name: 'Empty state',
+    name: 'Empty state',
   parameters: {
     backgrounds: { default: 'white' },
     docs: {
@@ -511,7 +511,7 @@ export const Empty = {
  * - Do not use a full `.alert` component inside a card — use inline error styling instead
  */
 export const Error = {
-  name: 'Error state',
+    name: 'Error state',
   parameters: {
     backgrounds: { default: 'white' },
     docs: {
@@ -624,7 +624,7 @@ export const Error = {
  * - No content leaks between state columns
  */
 export const AllStates = {
-  name: 'All states — side by side',
+    name: 'All states — side by side',
   parameters: {
     backgrounds: { default: 'light' },
     docs: {

@@ -113,7 +113,7 @@ export default {
 // ─── 1. Interactive ───────────────────────────────────────────────────────────
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const htmlCode = `<!-- Tooltip: ${a.color} / ${a.position} -->
@@ -210,7 +210,7 @@ export const Interactive = {
 // ─── 2. All Positions ─────────────────────────────────────────────────────────
 
 export const AllPositions = {
-  name: 'All positions',
+    name: 'All positions',
   args: { color: 'dark' },
   parameters: {
     controls: { include: ['color'] },
@@ -267,7 +267,7 @@ export const AllPositions = {
 // ─── 3. Both Colors ───────────────────────────────────────────────────────────
 
 export const BothColors = {
-  name: 'Both colors',
+    name: 'Both colors',
   args: { position: 'top' },
   parameters: {
     controls: { include: ['position'] },

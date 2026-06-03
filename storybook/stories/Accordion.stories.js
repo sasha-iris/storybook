@@ -164,7 +164,7 @@ Figma source: component set \`2370:20939\`.
 // ─── Interactive ──────────────────────────────────────────────────────────────
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
 
@@ -245,7 +245,7 @@ export const Interactive = {
 // ─── Card style ───────────────────────────────────────────────────────────────
 
 export const CardStyle = {
-  name: 'Card — shared container',
+    name: 'Card — shared container',
   parameters: {
     docs: {
       description: {
@@ -298,7 +298,7 @@ Uses \`.accordion\` wrapper. Active item gets \`.accordion-item.open\` — heade
 // ─── Card with icon ───────────────────────────────────────────────────────────
 
 export const CardWithIcon = {
-  name: 'Card — with icon',
+    name: 'Card — with icon',
   parameters: {
     docs: {
       description: {
@@ -335,7 +335,7 @@ Icon: 18×18, placed inside \`.accordion-header\` before the title span. Gap: 8p
 // ─── Separate cards ───────────────────────────────────────────────────────────
 
 export const SeparateCards = {
-  name: 'Separate cards',
+    name: 'Separate cards',
   parameters: {
     docs: {
       description: {
@@ -387,7 +387,7 @@ Gap: **16px** between \`.accordion\` wrappers (flex column gap on parent div). E
 // ─── Only links ───────────────────────────────────────────────────────────────
 
 export const OnlyLinks = {
-  name: 'Only links — minimal',
+    name: 'Only links — minimal',
   parameters: {
     docs: {
       description: {
@@ -434,7 +434,7 @@ Uses \`.accordion.accordion-flush\` — removes outer border and border-radius. 
 // ─── All styles ───────────────────────────────────────────────────────────────
 
 export const AllStyles = {
-  name: 'All styles',
+    name: 'All styles',
   args: { showIcon: false, openIndex: 0 },
   parameters: {
     controls: { include: ['showIcon', 'openIndex'] },

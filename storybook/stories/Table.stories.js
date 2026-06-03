@@ -305,7 +305,7 @@ Period column headers (time-series, e.g. months):
    INTERACTIVE
 ─────────────────────────────────────────────────────────────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   parameters: {
     docs: {
       description: {
@@ -401,7 +401,7 @@ export const Interactive = {
  * - $ symbol colour must match value colour in every row
  */
 export const CellOptions = {
-  name: 'Cell options — all variants',
+    name: 'Cell options — all variants',
   args: { rowType: 'default' },
   parameters: {
     controls: { include: ['rowType'] },
@@ -474,7 +474,7 @@ export const CellOptions = {
  * - NonCollapsible: near-white #f9fafb — barely distinguishable from white in isolation
  */
 export const CellRowTypes = {
-  name: 'Cell × row type backgrounds',
+    name: 'Cell × row type backgrounds',
   args: { option: 'default' },
   parameters: {
     controls: { include: ['option'] },
@@ -535,7 +535,7 @@ export const CellRowTypes = {
  * - Both cells: 146px wide, 38px tall
  */
 export const CellEditing = {
-  name: 'Editable — not-editing vs editing',
+    name: 'Editable — not-editing vs editing',
   parameters: {
     docs: {
       description: {
@@ -586,7 +586,7 @@ export const CellEditing = {
  * - Caption text is independent from option colour
  */
 export const CellWithCaption = {
-  name: 'Cell with caption (secondary line)',
+    name: 'Cell with caption (secondary line)',
   parameters: {
     docs: {
       description: {
@@ -641,7 +641,7 @@ export const CellWithCaption = {
  * - Bold (600) vs regular (500): weight difference must be visible at 14px
  */
 export const HeaderHorizontal = {
-  name: 'Column headers (horizontal) — all types',
+    name: 'Column headers (horizontal) — all types',
   parameters: {
     docs: {
       description: {
@@ -716,7 +716,7 @@ Column category (Income / Disbursements / Expand / Union) is communicated throug
  * - Text is right-aligned (unlike horizontal headers which are left-aligned)
  */
 export const HeaderVertical = {
-  name: 'Period headers (vertical) — all types',
+    name: 'Period headers (vertical) — all types',
   parameters: {
     docs: {
       description: {
@@ -801,7 +801,7 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
  * - `white=false`: cell container bg = #f3f4f6; badge colours unchanged
  */
 export const CellPercent = {
-  name: 'Cell percent — badge ramp',
+    name: 'Cell percent — badge ramp',
   parameters: {
     docs: {
       description: {

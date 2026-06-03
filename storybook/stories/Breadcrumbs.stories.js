@@ -161,7 +161,7 @@ The last item is always the current page — it carries \`aria-current="page"\` 
 // ─── Interactive ──────────────────────────────────────────────────────────────
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const isBg = a.type === 'with-background';
@@ -255,7 +255,7 @@ export const Interactive = {
 // ─── Default ──────────────────────────────────────────────────────────────────
 
 export const Default = {
-  name: 'Default — no background',
+    name: 'Default — no background',
   parameters: {
     docs: {
       description: {
@@ -301,7 +301,7 @@ Default breadcrumb — Figma: \`Type=Default\` (node \`3284:24211\`).
 // ─── With Background ─────────────────────────────────────────────────────────
 
 export const WithBackground = {
-  name: 'With background',
+    name: 'With background',
   parameters: {
     docs: {
       description: {
@@ -344,7 +344,7 @@ The pill is a plain wrapper div with inline styles (padding:12px 20px, backgroun
 // ─── Both types ───────────────────────────────────────────────────────────────
 
 export const BothTypes = {
-  name: 'Both types',
+    name: 'Both types',
   args: { showHomeIcon: true },
   parameters: {
     controls: { include: ['showHomeIcon'] },
@@ -381,7 +381,7 @@ export const BothTypes = {
 // ─── Depth variants ───────────────────────────────────────────────────────────
 
 export const DepthVariants = {
-  name: 'Depth variants — 2 to 4 items',
+    name: 'Depth variants — 2 to 4 items',
   args: { type: 'default' },
   parameters: {
     controls: { include: ['type'] },
@@ -417,7 +417,7 @@ Breadcrumbs at 2, 3, and 4 levels deep. Use the **type** control to switch betwe
 // ─── Without home icon ────────────────────────────────────────────────────────
 
 export const WithoutHomeIcon = {
-  name: 'Without home icon',
+    name: 'Without home icon',
   args: { type: 'default' },
   parameters: {
     controls: { include: ['type'] },

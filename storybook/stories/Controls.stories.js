@@ -187,7 +187,7 @@ Use them to let users turn features on/off or choose from a set of options.
 /* ── Interactive ─────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const wrapCls = ['iris-control', a.destructive && 'iris-control--destructive', a.disabled && 'iris-control--disabled'].filter(Boolean).join(' ');
@@ -288,7 +288,7 @@ Use the Controls panel to explore all state combinations.
 /* ── Toggle — all states ─────────────────────────────────────── */
 
 export const TogglesGallery = {
-  name: 'Toggle — all states',
+    name: 'Toggle — all states',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -356,7 +356,7 @@ All Toggle variants from Figma node **9479:135603**.
 /* ── Checkbox — all states ───────────────────────────────────── */
 
 export const CheckboxesGallery = {
-  name: 'Checkbox — all states',
+    name: 'Checkbox — all states',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -421,7 +421,7 @@ All Checkbox variants from Figma node **9462:787**.
 /* ── Radio — all states ──────────────────────────────────────── */
 
 export const RadiosGallery = {
-  name: 'Radio — all states',
+    name: 'Radio — all states',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -476,7 +476,7 @@ All Radiobutton variants from Figma node **9675:152295**.
 /* ── Controls wrapper — all types ────────────────────────────── */
 
 export const ControlsGallery = {
-  name: 'Controls — all types',
+    name: 'Controls — all types',
   args: {},
   parameters: {
     controls: { disable: true },

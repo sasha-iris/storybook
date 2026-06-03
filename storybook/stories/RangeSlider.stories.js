@@ -283,7 +283,7 @@ export default {
 
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const val = args.value || 35;
 
@@ -363,7 +363,7 @@ export const Interactive = {
 
 // ─── Gallery: All types ───────────────────────────────────────────────────────
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: {},
   parameters: {
     controls: { disable: true },

@@ -125,7 +125,7 @@ const tableBtn = ({ state = 'default' } = {}) => {
 /* ── Stories ─────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: ({ variant, state }) => {
     const htmlCode = `<button class="btn-${variant}" aria-label="Navigate"${state === 'disabled' ? ' disabled' : ''}>\n  <svg width="${variant === 'chart' ? '16' : '12'}" height="${variant === 'chart' ? '16' : '12'}" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></svg>\n</button>`;
 
@@ -204,7 +204,7 @@ export const Interactive = {
  * QA: Default = transparent bg, no border. Hover = bg #f3f4f6. Disabled = icon #D1D5DB.
  */
 export const ChartButtonStates = {
-  name: 'Chart Button — states',
+    name: 'Chart Button — states',
   args: { state: 'default' },
   parameters: {
     controls: { include: ['state'] },
@@ -236,7 +236,7 @@ Chart button (node 9705:152804) — 24×24px, transparent bg. Use **state** cont
  * QA: No border, no bg in default. Hover fills bg only. Disabled icon = gray/300.
  */
 export const ChartButtonToolbar = {
-  name: 'Chart Button — toolbar context',
+    name: 'Chart Button — toolbar context',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -264,7 +264,7 @@ export const ChartButtonToolbar = {
  * QA: Shadow always present in default. Hover = amplified shadow. Disabled = no shadow, bg gray.
  */
 export const TableButtonStates = {
-  name: 'Table Button — states',
+    name: 'Table Button — states',
   args: { state: 'default' },
   parameters: {
     controls: { include: ['state'] },
@@ -297,7 +297,7 @@ QA: Icon is **12px** (smaller than chart button's 16px).
  * Table button — in a realistic table row context.
  */
 export const TableButtonInContext = {
-  name: 'Table Button — table row context',
+    name: 'Table Button — table row context',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -338,7 +338,7 @@ export const TableButtonInContext = {
  * Both utility button types side-by-side for QA comparison.
  */
 export const BothUtilityButtons = {
-  name: 'Overview — Chart vs Table button',
+    name: 'Overview — Chart vs Table button',
   parameters: {
     controls: { disable: true },
     docs: {

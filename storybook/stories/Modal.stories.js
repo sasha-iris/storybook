@@ -342,7 +342,7 @@ Pop-up and With forms types have no \`.modal-title\` in the header — only the 
 // ─── Interactive ──────────────────────────────────────────────────────────────
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: ({ type, size, darkMode, showOverlay }) => {
     const sizeClass = size === 'sm' ? 'modal-dialog-sm' : size === 'lg' ? 'modal-dialog-lg' : size === 'xl' ? 'modal-dialog-xl' : '';
 
@@ -429,7 +429,7 @@ export const Interactive = {
 // ─── Info ─────────────────────────────────────────────────────────────────────
 
 export const Info = {
-  name: 'Info — Terms of Service',
+    name: 'Info — Terms of Service',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -467,7 +467,7 @@ Informational modal — Figma: \`Type=Info\`. Presents legal or consent content 
 // ─── Pop-up ───────────────────────────────────────────────────────────────────
 
 export const PopUp = {
-  name: 'Pop-up — delete confirmation',
+    name: 'Pop-up — delete confirmation',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -506,7 +506,7 @@ Destructive confirmation modal — Figma: \`Type=Pop-up\`. No title in header; b
 // ─── With forms ───────────────────────────────────────────────────────────────
 
 export const WithForms = {
-  name: 'With forms — sign in',
+    name: 'With forms — sign in',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -564,7 +564,7 @@ Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from
 // ─── Crypto wallet ────────────────────────────────────────────────────────────
 
 export const CryptoWallet = {
-  name: 'Crypto wallet — connect wallet',
+    name: 'Crypto wallet — connect wallet',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -613,7 +613,7 @@ Wallet selection modal — Figma: \`Type=Crypto wallet\`. Title in header; walle
 // ─── Dark mode ────────────────────────────────────────────────────────────────
 
 export const DarkMode = {
-  name: 'Dark mode — all types',
+    name: 'Dark mode — all types',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -673,7 +673,7 @@ Dark mode tokens: \`bg:#374151\`, \`title:#ffffff\`, \`body:#9ca3af\`, \`separat
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
 export const Sizes = {
-  name: 'Sizes — SM / Default / LG / XL',
+    name: 'Sizes — SM / Default / LG / XL',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -718,7 +718,7 @@ All four size variants — Figma: \`Size=SM/Default/LG/XL\`. All use the Info ty
 // ─── All types ────────────────────────────────────────────────────────────────
 
 export const AllTypes = {
-  name: 'All types — light mode',
+    name: 'All types — light mode',
   parameters: {
     controls: { disable: true },
     docs: {

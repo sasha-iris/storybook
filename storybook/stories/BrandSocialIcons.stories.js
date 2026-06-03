@@ -85,7 +85,7 @@ const ENTERPRISE_ICONS = [["sps-commerce-original", SPS_COMMERCE_ORIGINAL], ["sp
 // ─── Stories ──────────────────────────────────────────────────────────────────
 
 export const AllBrandIcons = {
-  name: 'All brand icons',
+    name: 'All brand icons',
   parameters: {
     controls: { disable: true },
     docs: {

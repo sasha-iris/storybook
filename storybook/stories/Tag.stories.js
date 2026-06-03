@@ -116,7 +116,7 @@ Inline text labels with a colored dot indicator — no background, purely typogr
    INTERACTIVE
 ───────────────────────────────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const { dot, text } = TAG_COLORS[a.color] ?? TAG_COLORS.grey;
@@ -214,7 +214,7 @@ export const Interactive = {
    ALL COLORS
 ───────────────────────────────────────────── */
 export const AllColors = {
-  name: 'Colors — all 9 themes',
+    name: 'Colors — all 9 themes',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -261,7 +261,7 @@ All 9 color themes. Tags have no background — the dot and text carry the color
    DISMISSIBLE
 ───────────────────────────────────────────── */
 export const Dismissible = {
-  name: 'Dismissible — with × button',
+    name: 'Dismissible — with × button',
   parameters: {
     controls: { disable: true },
     docs: {

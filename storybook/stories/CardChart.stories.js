@@ -404,7 +404,7 @@ The chart type (\`property3\`) and trend direction (\`property2\`) are the two F
 /* ── Interactive (Controls) ─────────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {const h='<div style="padding:20px;border:1px solid #e5e7eb;border-radius:12px;"><canvas></canvas></div>';const r='<div style={{padding:"20px",border:"1px solid #e5e7eb"}}><canvas ref={chartRef}></canvas></div>';const c='export function ChartCard({chartType,direction}){return(<div style={{border:"1px solid #e5e7eb",padding:"20px"}}><canvas></canvas></div>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">${chartCard(args)}</div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div></div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div></div><div><div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div></div></div>`;},
   parameters: {
     docs: {
@@ -467,7 +467,7 @@ export const Interactive = {
 /* ── Linechart ──────────────────────────────────────────────────────────────── */
 
 export const LinechartUp = {
-  name: 'Linechart — Upwards (602:20753)',
+    name: 'Linechart — Upwards (602:20753)',
   parameters: {
     docs: {
       description: { story: 'Smooth line chart trending upward. Trend badge: **#5850EC** (brand purple). Area fill: 12% opacity.' },
@@ -513,7 +513,7 @@ export const LinechartUp = {
 };
 
 export const LinechartDown = {
-  name: 'Linechart — Downwards (602:20589)',
+    name: 'Linechart — Downwards (602:20589)',
   parameters: {
     docs: {
       description: { story: 'Smooth line chart trending downward. Trend badge: **#E74694** (pink).' },
@@ -552,7 +552,7 @@ export const LinechartDown = {
 /* ── Linechart-vert ─────────────────────────────────────────────────────────── */
 
 export const LinechartVertUp = {
-  name: 'Linechart-vert — Upwards (602:22376)',
+    name: 'Linechart-vert — Upwards (602:22376)',
   parameters: {
     docs: {
       description: { story: 'Line chart with "Compared to day prior" label. Up + down variants side by side.' },
@@ -590,7 +590,7 @@ export const LinechartVertUp = {
 /* ── barchart ───────────────────────────────────────────────────────────────── */
 
 export const BarchartUp = {
-  name: 'barchart — Upwards (602:20796)',
+    name: 'barchart — Upwards (602:20796)',
   parameters: {
     docs: {
       description: { story: '14 bars × 3px. Bar color: **#6875F5** (brand/500), bar at index 6 lighter: **#B4C6FC** (brand/300). Trend in header row.' },
@@ -632,7 +632,7 @@ export const BarchartUp = {
 /* ── barchart-vert ──────────────────────────────────────────────────────────── */
 
 export const BarchartVert = {
-  name: 'barchart-vert — Upwards (602:23611)',
+    name: 'barchart-vert — Upwards (602:23611)',
   parameters: {
     docs: {
       description: { story: 'Same 14-bar layout with "Compared to day prior" label above the chart.' },
@@ -673,7 +673,7 @@ export const BarchartVert = {
 /* ── barchart-big ───────────────────────────────────────────────────────────── */
 
 export const BarchartBig = {
-  name: 'barchart-big — Upwards (602:24711)',
+    name: 'barchart-big — Upwards (602:24711)',
   parameters: {
     docs: {
       description: { story: 'barchart with 4 bars at full container height instead of 2 (indexes 4, 9, 12, 13 = full).' },
@@ -714,7 +714,7 @@ export const BarchartBig = {
 /* ── barchart-segm-hor ──────────────────────────────────────────────────────── */
 
 export const BarchartSegmHor = {
-  name: 'barchart-segm-hor — Upwards (602:25133)',
+    name: 'barchart-segm-hor — Upwards (602:25133)',
   parameters: {
     docs: {
       description: { story: 'Wide horizontal card (449×104px). Left: 12 segmented columns with 5 color categories. Right: trend + subtitle.' },
@@ -762,7 +762,7 @@ export const BarchartSegmHor = {
 /* ── Credit ─────────────────────────────────────────────────────────────────── */
 
 export const CreditUp = {
-  name: 'Credit — Upwards (602:23265)',
+    name: 'Credit — Upwards (602:23265)',
   parameters: {
     docs: {
       description: { story: 'Credit-style variant with a distinct wave curve shape (different from standard Linechart).' },
@@ -812,7 +812,7 @@ export const CreditUp = {
 /* ── All variants overview ──────────────────────────────────────────────────── */
 
 export const AllVariants = {
-  name: 'All variants — overview',
+    name: 'All variants — overview',
   args: { direction: 'up' },
   parameters: {
     controls: { include: ['direction'] },

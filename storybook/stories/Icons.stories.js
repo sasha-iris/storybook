@@ -120,7 +120,7 @@ No extras, no speculative additions.
    CARD BADGE ICONS
 ───────────────────────────────────────────── */
 export const CardBadgeIcons = {
-  name: 'Card badge icons — used in KPI & Reporting cards',
+    name: 'Card badge icons — used in KPI & Reporting cards',
   parameters: {
     docs: {
       description: {
@@ -152,7 +152,7 @@ export const CardBadgeIcons = {
    INLINE CARD ICONS
 ───────────────────────────────────────────── */
 export const InlineCardIcons = {
-  name: 'Inline icons — used in Card/Layouts',
+    name: 'Inline icons — used in Card/Layouts',
   parameters: {
     docs: {
       description: {
@@ -175,7 +175,7 @@ export const InlineCardIcons = {
    TREND ICONS
 ───────────────────────────────────────────── */
 export const TrendIcons = {
-  name: 'Trend icons — used in Card/KPI',
+    name: 'Trend icons — used in Card/KPI',
   parameters: {
     docs: {
       description: {
@@ -211,7 +211,7 @@ export const TrendIcons = {
    SIDEBAR NAV ICONS
 ───────────────────────────────────────────── */
 export const SidebarIcons = {
-  name: 'Sidebar nav icons — used in Navigation/Sidebar',
+    name: 'Sidebar nav icons — used in Navigation/Sidebar',
   parameters: {
     docs: {
       description: {
@@ -239,7 +239,7 @@ const clockSvg = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#42389d"
 const xMarkSvg = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true"><path fill-rule="evenodd" d="${xMarkPath}" clip-rule="evenodd"/></svg>`;
 
 export const BadgeIcons = {
-  name: 'Badge icons — used in Badge',
+    name: 'Badge icons — used in Badge',
   parameters: {
     docs: {
       description: {
@@ -261,7 +261,7 @@ export const BadgeIcons = {
 const dotSmSvg  = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3" fill="#5850ec"/></svg>`;
 
 export const ChipTagIcons = {
-  name: 'Chip / Tag icons — used in Chip, Tag',
+    name: 'Chip / Tag icons — used in Chip, Tag',
   parameters: {
     docs: {
       description: {
@@ -286,7 +286,7 @@ const mailOutlineSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="no
 const fireOutlineSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>`;
 
 export const IndicatorsIcons = {
-  name: 'Indicators icons — used in Indicators',
+    name: 'Indicators icons — used in Indicators',
   parameters: {
     docs: {
       description: {
@@ -311,7 +311,7 @@ export const IndicatorsIcons = {
 const imagePlaceholderSvg = `<svg width="44" height="31" viewBox="0 0 44 31" fill="none" opacity="0.6" aria-hidden="true"><circle cx="7" cy="8" r="4" fill="#6b7280"/><path d="M0 31 L14 12 L27 24 L35 15 L44 31 Z" fill="#6b7280"/></svg>`;
 
 export const SkeletonIcons = {
-  name: 'Skeleton icons — used in Skeleton',
+    name: 'Skeleton icons — used in Skeleton',
   parameters: {
     docs: {
       description: {
@@ -354,7 +354,7 @@ const _ARROW_NARROW_RIGHT = 'M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-
 const _BOOK_OPEN_PATH     = 'M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z';
 
 export const BannerIcons = {
-  name: 'Banner icons — used in Banner',
+    name: 'Banner icons — used in Banner',
   parameters: {
     docs: {
       description: {
@@ -378,7 +378,7 @@ export const BannerIcons = {
 };
 
 export const ToastIcons = {
-  name: 'Toast icons — used in Toast',
+    name: 'Toast icons — used in Toast',
   parameters: {
     docs: {
       description: {
@@ -413,7 +413,7 @@ const homeIconSvg = `<svg width="16" height="16" viewBox="0 0 20 20" fill="curre
 const breadcrumbChevronSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>`;
 
 export const BreadcrumbsIcons = {
-  name: 'Breadcrumbs icons — used in Breadcrumbs',
+    name: 'Breadcrumbs icons — used in Breadcrumbs',
   parameters: {
     docs: {
       description: {
@@ -453,7 +453,7 @@ const DD_CURRENCY       = _dd(`<path d="M8.433 7.418c.155-.103.346-.196.567-.267
 const DD_DOCUMENT       = _dd(`<path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>`);
 
 export const DropdownIcons = {
-  name: 'Dropdown icons — used in Dropdown',
+    name: 'Dropdown icons — used in Dropdown',
   parameters: {
     docs: {
       description: {
@@ -495,7 +495,7 @@ const AC_X           = _ac(`M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 
 const AC_ARROW_RIGHT = _ac(`M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z`);
 
 export const AutocompleteIcons = {
-  name: 'Autocomplete icons — used in Autocomplete',
+    name: 'Autocomplete icons — used in Autocomplete',
   parameters: {
     docs: {
       description: {
@@ -521,7 +521,7 @@ const DP_CHEV_RIGHT = `<svg width="20" height="20" viewBox="0 0 20 20" fill="non
 const DP_CALENDAR   = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="3" width="14" height="12" rx="2" stroke="#6b7280" stroke-width="1.5"/><path d="M1 7H15" stroke="#6b7280" stroke-width="1.5"/><path d="M5 1V5" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/><path d="M11 1V5" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 export const DatepickerIcons = {
-  name: 'Datepicker icons — used in Datepicker',
+    name: 'Datepicker icons — used in Datepicker',
   parameters: {
     docs: {
       description: {
@@ -548,7 +548,7 @@ const LG_INBOX          = _lg(`<rect x="1" y="1" width="14" height="14" rx="2" s
 const LG_CLOUD_DOWNLOAD = _lg(`<path d="M5.5 12.5H4a3 3 0 0 1 0-6h.15A4.5 4.5 0 0 1 13 7.5a3 3 0 0 1-1 5.5h-1.5" stroke="#111928" stroke-width="1.3" stroke-linecap="round"/><path d="M8 8.5v5M6 11.5l2 2 2-2" stroke="#111928" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>`);
 
 export const ListGroupIcons = {
-  name: 'List Group icons — used in List Group',
+    name: 'List Group icons — used in List Group',
   parameters: {
     docs: {
       description: {
@@ -575,7 +575,7 @@ const ML_LOCK        = `<svg width="16" height="16" viewBox="0 0 20 20" fill="no
 const ML_QUESTION    = `<svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#6b7280" stroke-width="1.5"/><path d="M10 13v1M10 7a2 2 0 012 2c0 1.1-.9 1.7-1.5 2.2-.5.4-.5.6-.5.8" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 export const ModalIcons = {
-  name: 'Modal icons — used in Modal',
+    name: 'Modal icons — used in Modal',
   parameters: {
     docs: {
       description: {

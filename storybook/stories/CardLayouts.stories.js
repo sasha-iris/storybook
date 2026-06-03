@@ -157,7 +157,7 @@ These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--
  * - Card pt-16px px-16px pb-40px (asymmetric padding — more space at bottom)
  */
 export const UserProfileCard = {
-  name: 'User profile card',
+    name: 'User profile card',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -249,7 +249,7 @@ Social profile card. Centred avatar, name, role, and two action buttons.
  * - "Lost Password?" color: #155dfc (blue/600), not brand purple
  */
 export const WithFormInputs = {
-  name: 'With form inputs',
+    name: 'With form inputs',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -374,7 +374,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
  * - "Add to cart": bg #42389d (brand/800), rounded-12px, 14px medium white, h-36px
  */
 export const EcommerceCard = {
-  name: 'E-commerce card',
+    name: 'E-commerce card',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -478,7 +478,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
  * - Title "Latest Customers": 18px extrabold #111928
  */
 export const CardWithList = {
-  name: 'Card with list',
+    name: 'Card with list',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -584,7 +584,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
  * **Approximations:** Check-circle icons are inline SVG (Figma uses raster vectors).
  */
 export const PricingCard = {
-  name: 'Pricing card',
+    name: 'Pricing card',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -697,7 +697,7 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
  * - Button text: two lines — "Download on the" (12px reg) + brand name (18px bold)
  */
 export const CTACard = {
-  name: 'CTA card',
+    name: 'CTA card',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -811,7 +811,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
  * **Approximations:** Chevron-right is inline SVG.
  */
 export const NavTabsCard = {
-  name: 'Nav tabs card',
+    name: 'Nav tabs card',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -906,7 +906,7 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
  * - Stats grid: 2 rows × 3 columns, gap 32px
  */
 export const StatsCard = {
-  name: 'Stats card (segmented tabs)',
+    name: 'Stats card (segmented tabs)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -1019,7 +1019,7 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
  * - Overall shadow: shadow-sm (lighter)
  */
 export const TestimonialCard = {
-  name: 'Testimonial card',
+    name: 'Testimonial card',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -1132,7 +1132,7 @@ export const TestimonialCard = {
  * - Question-circle is inline SVG
  */
 export const CryptoCard = {
-  name: 'Crypto card — connect wallet',
+    name: 'Crypto card — connect wallet',
   parameters: {
     controls: { disable: true },
     docs: {

@@ -133,7 +133,7 @@ export default {
 
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const bg = args.dark ? '#374151' : '#ffffff';
     const border = args.dark ? '#4b5563' : '#e5e7eb';
@@ -162,7 +162,7 @@ export const Interactive = {
 
 // ─── Gallery: All variants ────────────────────────────────────────────────────
 export const AllVariants = {
-  name: 'All variants',
+    name: 'All variants',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -213,7 +213,7 @@ export const AllVariants = {
 
 // ─── Gallery: In context (user dropdown) ─────────────────────────────────────
 export const InContext = {
-  name: 'In context — user dropdown',
+    name: 'In context — user dropdown',
   args: { dark: false },
   parameters: {
     controls: { include: ['dark'] },
@@ -255,7 +255,7 @@ export const InContext = {
 
 // ─── Gallery: Custom items ────────────────────────────────────────────────────
 export const CustomItems = {
-  name: 'Custom items — longer list',
+    name: 'Custom items — longer list',
   args: { showIcons: true, dark: false },
   parameters: {
     controls: { include: ['showIcons', 'dark'] },

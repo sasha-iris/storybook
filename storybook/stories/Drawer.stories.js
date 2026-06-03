@@ -309,7 +309,7 @@ export default {
 
 // ─── Interactive (Controls) ────────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const bg = a.dark ? '#1f2a37' : '#ffffff';
@@ -391,7 +391,7 @@ export const Interactive = {
 
 // ─── Gallery: All types ────────────────────────────────────────────────────────
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: { dark: false },
   parameters: {
     controls: { include: ['dark'] },

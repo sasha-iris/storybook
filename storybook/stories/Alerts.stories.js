@@ -159,7 +159,7 @@ export default {
 // 1. Interactive
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const htmlCode = `<!-- Alert: ${a.color} / ${a.type}${a.cta ? ' / with CTA' : ''} -->
@@ -293,7 +293,7 @@ export const Interactive = {
 // 2. All Colors
 
 export const AllColors = {
-  name: 'All colors',
+    name: 'All colors',
   args: { type: 'medium', cta: false },
   parameters: {
     controls: { include: ['type', 'cta'] },
@@ -355,7 +355,7 @@ export const AllColors = {
 // 3. All Types
 
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: { color: 'info', cta: false },
   parameters: {
     controls: { include: ['color', 'cta'] },
@@ -401,7 +401,7 @@ export const AllTypes = {
 // 4. With CTA
 
 export const WithCTA = {
-  name: 'With CTA',
+    name: 'With CTA',
   args: { color: 'warning', type: 'medium', cta: true },
   parameters: {
     controls: { include: ['color', 'type'] },

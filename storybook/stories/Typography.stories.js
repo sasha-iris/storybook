@@ -190,7 +190,7 @@ const row = (sample, cssVar, px, weight, figmaStyle, isLast) => `
  * Figma style name for design–dev traceability.
  */
 export const TypeScale = {
-  name: 'Type scale (H1 – Caption)',
+    name: 'Type scale (H1 – Caption)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -256,7 +256,7 @@ Tokens map to \`--text-h1\` through \`--text-caption\` in \`styles.css\`.
  * New work should use the named Figma scale above.
  */
 export const GenericScale = {
-  name: 'Generic size scale (legacy)',
+    name: 'Generic size scale (legacy)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -319,7 +319,7 @@ Migration guide:
 };
 
 export const FontWeights = {
-  name: 'Font weights',
+    name: 'Font weights',
   parameters: {
     controls: { disable: true },
     docs: {

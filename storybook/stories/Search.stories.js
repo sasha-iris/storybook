@@ -131,7 +131,7 @@ export default {
 
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const t = args.type || 'input-btn';
     const fn = TYPES[t] || TYPES['input-btn'];
@@ -212,7 +212,7 @@ export const Interactive = {
 
 // ─── Gallery: All types ───────────────────────────────────────────────────────
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: {},
   parameters: {
     controls: { disable: true },

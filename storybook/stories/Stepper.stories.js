@@ -14,7 +14,7 @@ export default {
 };
 
 export const ComingSoon = {
-  name: 'Coming soon',
+    name: 'Coming soon',
   parameters: { controls: { disable: true } },
   render: () => `<p style="font-family:inherit;font-size:var(--text-sm);color:var(--color-text-secondary);">Stepper component — placeholder. No stories yet.</p>`,
 };

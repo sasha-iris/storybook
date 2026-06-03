@@ -205,7 +205,7 @@ export default {
 // 1. Interactive
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
 
@@ -287,7 +287,7 @@ export const Interactive = {
 // 2. All Types
 
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: { dismissible: true },
   parameters: {
     controls: { include: ['dismissible'] },
@@ -341,7 +341,7 @@ export const AllTypes = {
 // 3. Non-dismissible
 
 export const NonDismissible = {
-  name: 'Non-dismissible',
+    name: 'Non-dismissible',
   args: { type: 'default', dismissible: false },
   parameters: {
     controls: { include: ['type'] },

@@ -129,7 +129,7 @@ It provides the border, background, border-radius, and \`overflow:hidden\` clip.
  * - No numeric metric in body — if a number is the hero, use Card/KPI instead
  */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const imgSlot = a.showImage ? `\n  <img src="https://picsum.photos/seed/card/380/180" alt="Card image" style="width:100%;height:180px;object-fit:cover;display:block;">` : '';
@@ -245,7 +245,7 @@ export const Interactive = {
  * - No padding between image bottom and body top
  */
 export const WithImage = {
-  args: { showImage: true, showFooter: true },
+    args: { showImage: true, showFooter: true },
   parameters: {
     docs: {
       description: { story: 'Card with a flush image at the top. The `.card` `overflow:hidden` clips the image to the card border-radius automatically — do not add `border-radius` to the `<img>` itself.' },
@@ -280,7 +280,7 @@ export const WithImage = {
  * - "See details" link colour is `--color-text-link`
  */
 export const WithHeaderControls = {
-  parameters: {
+    parameters: {
     backgrounds: { default: 'white' },
     docs: {
       description: { story: 'Demonstrates the `.card-header` + `.card-footer` shell. This header pattern is shared across all card sub-families (KPI, Metric, Chart).' },
@@ -350,7 +350,7 @@ export const WithHeaderControls = {
  * - No header or footer chrome — body-only card
  */
 export const CardWithButton = {
-  name: 'Card with button',
+    name: 'Card with button',
   parameters: {
     docs: {
       description: {
@@ -433,7 +433,7 @@ Button colour is brand/800 (\`#42389d\`).
  * - Card width: 384px; padding: 24px
  */
 export const WithLink = {
-  name: 'Card with link',
+    name: 'Card with link',
   parameters: {
     docs: {
       description: {
@@ -538,7 +538,7 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
  * - No footer or CTA in this variant
  */
 export const HorizontalCard = {
-  name: 'Horizontal card',
+    name: 'Horizontal card',
   parameters: {
     docs: {
       description: {

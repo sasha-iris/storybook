@@ -211,7 +211,7 @@ FORECAST columns use teal/200 (\`#96f7e4\`) header bg.`,
  * - Total column grand total: #42389d (Indigo option)
  */
 export const FinancialTableBasic = {
-  name: 'Financial table — P&L excerpt',
+    name: 'Financial table — P&L excerpt',
   parameters: {
     docs: {
       description: {
@@ -338,7 +338,7 @@ Demonstrates Derival (sub-total) and Total rows in context alongside standard De
  * - Total row values: Indigo option (#42389d) bold
  */
 export const FinancialTableRowTypes = {
-  name: 'Financial table — all row types',
+    name: 'Financial table — all row types',
   parameters: {
     docs: {
       description: {
@@ -458,7 +458,7 @@ export const FinancialTableRowTypes = {
  * - Default row bg white; Derival row bg #fff8f1
  */
 export const FinancialTablePeriods = {
-  name: 'Financial table — ACTUALS vs FORECAST',
+    name: 'Financial table — ACTUALS vs FORECAST',
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -567,7 +567,7 @@ Scroll horizontally on narrow viewports.`,
  * - Each row type (Default/Derival/Total) uses its correct background
  */
 export const MixedOptionTable = {
-  name: 'Financial table — all cell options in context',
+    name: 'Financial table — all cell options in context',
   parameters: {
     docs: {
       description: {

@@ -388,7 +388,7 @@ a list item, a menu panel, and a trigger button.
 /* ── Interactive ─────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: ({ menuType, triggerLabel, iconOnly }) => {
     const triggerCls = `dropdown-trigger${iconOnly ? ' dropdown-trigger--icon' : ''}`;
     const trigger = `<button class="${triggerCls}">${iconOnly ? PLUS : `${CHEVRON_DOWN} ${triggerLabel} ${CHEVRON_DOWN}`}</button>`;
@@ -478,7 +478,7 @@ Use **Menu type** to switch between all Figma menu variants. Use **Icon-only tri
 /* ── List Items — all states ─────────────────────────────────── */
 
 export const ListItemsGallery = {
-  name: 'List Items — all states',
+    name: 'List Items — all states',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -575,7 +575,7 @@ All 9 variants from Figma node **9456:150381**.
 /* ── Menus — all types ───────────────────────────────────────── */
 
 export const MenusGallery = {
-  name: 'Menus — all types',
+    name: 'Menus — all types',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -683,7 +683,7 @@ Complete menu panels from Figma node **3283:21147**.
 /* ── Notification menu (standalone, full width) ──────────────── */
 
 export const NotificationMenu = {
-  name: 'Notification panel',
+    name: 'Notification panel',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -731,7 +731,7 @@ Header: 16px/500 on gray/50 bg. Each row: 44×44 avatar + message body + blue ti
 /* ── Trigger buttons ─────────────────────────────────────────── */
 
 export const TriggersGallery = {
-  name: 'Triggers — all variants',
+    name: 'Triggers — all variants',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -809,7 +809,7 @@ const ICON_CATEGORY = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewB
 const ICON_LOCATION = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>`;
 
 export const FilterSelectDropdown = {
-  name: 'Filter Select — Interactive (Controls)',
+    name: 'Filter Select — Interactive (Controls)',
   argTypes: {
     label: {
       control: 'text',
@@ -930,7 +930,7 @@ export const FilterSelectDropdown = {
 
 /* ── Filter Select Gallery — states ───────────────────────────── */
 export const FilterSelectStates = {
-  name: 'Filter Select — all states',
+    name: 'Filter Select — all states',
   parameters: {
     controls: { disable: true },
     docs: {

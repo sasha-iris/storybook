@@ -98,7 +98,7 @@ const sizeLabel = (size) =>
  * - All sizes should have equal visual weight (same hex proportion, same shadow depth)
  */
 export const MarkOnly = {
-  name: 'Mark only — all sizes (light)',
+    name: 'Mark only — all sizes (light)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -145,7 +145,7 @@ Smart mark only (no wordmark), light mode. Used in constrained slots such as car
  * - Text and mark are vertically centered
  */
 export const WithText = {
-  name: 'Logo with text — all sizes (light)',
+    name: 'Logo with text — all sizes (light)',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -200,7 +200,7 @@ Full logo: Smart mark + "Iris" wordmark. Light mode. Used in nav bars, headers, 
  * - Verify no "white halo" around mark edges on the dark panel
  */
 export const DarkVariants = {
-  name: 'Dark variants — sm / md / lg',
+    name: 'Dark variants — sm / md / lg',
   parameters: {
     controls: { disable: true },
     backgrounds: { default: 'dark' },
@@ -246,7 +246,7 @@ Dark mode — sm, md, lg on a dark background. \`xs\` dark falls back to the lig
  * Full QA reference grid: all sizes × mark-only and with-text × light and dark.
  */
 export const ReferenceGrid = {
-  name: 'Reference grid — all sizes × modes',
+    name: 'Reference grid — all sizes × modes',
   parameters: {
     controls: { disable: true },
     docs: {

@@ -171,7 +171,7 @@ The current page has \`.page-item.active\` + \`aria-current="page"\`. Disabled p
 // ─── Interactive ──────────────────────────────────────────────────────────────
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const small = a.size === 'small';
@@ -253,7 +253,7 @@ export const Interactive = {
 // ─── Few pages (no ellipsis) ──────────────────────────────────────────────────
 
 export const FewPages = {
-  name: 'Few pages — no ellipsis',
+    name: 'Few pages — no ellipsis',
   parameters: {
     docs: {
       description: {
@@ -294,7 +294,7 @@ Pagination with ≤ 5 pages — all page numbers shown, no ellipsis. Figma: \`Si
 // ─── Many pages (ellipsis) ────────────────────────────────────────────────────
 
 export const ManyPages = {
-  name: 'Many pages — with ellipsis',
+    name: 'Many pages — with ellipsis',
   parameters: {
     docs: {
       description: {
@@ -336,7 +336,7 @@ Pagination with > 5 pages — shows first 3, an ellipsis, and the last page. Fig
 // ─── Both sizes ───────────────────────────────────────────────────────────────
 
 export const BothSizes = {
-  name: 'Both sizes',
+    name: 'Both sizes',
   args: { currentPage: 1, totalPages: 100 },
   parameters: {
     controls: { include: ['currentPage', 'totalPages'] },
@@ -371,7 +371,7 @@ export const BothSizes = {
 // ─── Button states ────────────────────────────────────────────────────────────
 
 export const ButtonStates = {
-  name: 'Button states — all variants',
+    name: 'Button states — all variants',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -427,7 +427,7 @@ All button states from Figma node \`9426:125610\`.
 // ─── Showing indicator ────────────────────────────────────────────────────────
 
 export const ShowingIndicator = {
-  name: 'Showing indicator — both sizes',
+    name: 'Showing indicator — both sizes',
   args: { size: 'default' },
   parameters: {
     controls: { include: ['size'] },
@@ -466,7 +466,7 @@ Typically placed to the left of the pagination strip to orient users within the 
 // ─── In context ───────────────────────────────────────────────────────────────
 
 export const InContext = {
-  name: 'In context — with Showing indicator',
+    name: 'In context — with Showing indicator',
   args: { size: 'default', currentPage: 1, totalPages: 10 },
   parameters: {
     controls: { include: ['size', 'currentPage', 'totalPages'] },

@@ -137,7 +137,7 @@ const BOOKMARK_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 2
 /* ── Stories ─────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const cls = ['btn-group', a.primary && 'btn-group--primary', a.size === 'sm' && 'btn-group--sm'].filter(Boolean).join(' ');
@@ -227,7 +227,7 @@ export const Interactive = {
  * QA: Each segment is 40px tall. Active segment gets #f3f4f6 bg.
  */
 export const Default = {
-  name: 'Default — text segments (Years / Months / Days)',
+    name: 'Default — text segments (Years / Months / Days)',
   args: { activeIndex: 2 },
   parameters: {
     controls: { include: ['activeIndex'] },
@@ -258,7 +258,7 @@ export const Default = {
  * QA: Segments are square, icon centered, 40×40px.
  */
 export const OnlyIcon = {
-  name: 'Only Icon — prev / next',
+    name: 'Only Icon — prev / next',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -286,7 +286,7 @@ export const OnlyIcon = {
  * QA: Right slot text is smaller, muted color (#6a7282). No pill around the count.
  */
 export const WithStat = {
-  name: 'With stat — action + count',
+    name: 'With stat — action + count',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -324,7 +324,7 @@ export const WithStat = {
  * QA: Right segment is icon-only square. Hover state darkens both independently.
  */
 export const WithDropdown = {
-  name: 'With dropdown — text + icon slot',
+    name: 'With dropdown — text + icon slot',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -367,7 +367,7 @@ export const WithDropdown = {
  *     Tooltip arrow points down toward the triggering segment.
  */
 export const WithTooltip = {
-  name: 'With tooltip',
+    name: 'With tooltip',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -411,7 +411,7 @@ Figma specs: bg \`#111928\`, border-radius 4px, shadow-xs, arrow pointing down.
  * Plain UI filters and toolbars should use the default btn-group (grey active).
  */
 export const Primary = {
-  name: 'Primary — chart & visualisation toggles',
+    name: 'Primary — chart & visualisation toggles',
   args: { size: 'sm' },
   parameters: {
     controls: { include: ['size'] },
@@ -482,7 +482,7 @@ Use the **size** control below to compare sm vs default height across all exampl
  * All group types side by side for a quick QA scan.
  */
 export const AllTypes = {
-  name: 'All types — overview',
+    name: 'All types — overview',
   parameters: {
     controls: { disable: true },
     docs: {

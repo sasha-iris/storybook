@@ -356,7 +356,7 @@ export default {
 
 // ─── Interactive (Controls) ───────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const h = a.size === 'small' ? 37 : a.size === 'large' ? 52 : 42;
@@ -438,7 +438,7 @@ export const Interactive = {
 
 // ─── Gallery: All states ──────────────────────────────────────────────────────
 export const AllStates = {
-  name: 'Input — all states',
+    name: 'Input — all states',
   args: { size: 'regular' },
   parameters: {
     controls: { include: ['size'] },
@@ -488,7 +488,7 @@ export const AllStates = {
 
 // ─── Gallery: All sizes ───────────────────────────────────────────────────────
 export const AllSizes = {
-  name: 'Input — all sizes',
+    name: 'Input — all sizes',
   args: { fieldState: 'normal' },
   parameters: {
     controls: { include: ['fieldState'] },
@@ -522,7 +522,7 @@ export const AllSizes = {
 
 // ─── Gallery: Floating Label ──────────────────────────────────────────────────
 export const FloatingLabels = {
-  name: 'Floating Label — all states',
+    name: 'Floating Label — all states',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -571,7 +571,7 @@ export const FloatingLabels = {
 
 // ─── Gallery: Textarea types ──────────────────────────────────────────────────
 export const TextareaTypes = {
-  name: 'Textarea — all types',
+    name: 'Textarea — all types',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -618,7 +618,7 @@ export const TextareaTypes = {
 
 // ─── Gallery: File Upload types ───────────────────────────────────────────────
 export const FileUploadTypes = {
-  name: 'File Upload — all types',
+    name: 'File Upload — all types',
   args: { size: 'default' },
   parameters: {
     controls: { include: ['size'] },
@@ -665,7 +665,7 @@ export const FileUploadTypes = {
 
 // ─── Gallery: Tag Input ───────────────────────────────────────────────────────
 export const TagInputVariants = {
-  name: 'Tag Input — variants',
+    name: 'Tag Input — variants',
   args: {},
   parameters: {
     controls: { disable: true },
@@ -705,7 +705,7 @@ export const TagInputVariants = {
 
 // ─── Gallery: Read-only ───────────────────────────────────────────────────────
 export const ReadOnlyField = {
-  name: 'Read-only field',
+    name: 'Read-only field',
   args: {},
   parameters: {
     controls: { disable: true },

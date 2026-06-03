@@ -227,7 +227,7 @@ The \`animated\` prop should be disabled when \`prefers-reduced-motion: reduce\`
 // 1. Interactive
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
 
@@ -309,7 +309,7 @@ export const Interactive = {
 // 2. All Types
 
 export const AllTypes = {
-  name: 'All types',
+    name: 'All types',
   args: { animated: true },
   parameters: {
     controls: { include: ['animated'] },
@@ -368,7 +368,7 @@ export const AllTypes = {
 // 3. Static (no animation)
 
 export const StaticNoAnimation = {
-  name: 'Static — no animation',
+    name: 'Static — no animation',
   args: { animated: false },
   parameters: {
     controls: { include: ['type'] },

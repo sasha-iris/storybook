@@ -138,7 +138,7 @@ function progressBar({ value = 50, color = 'primary', labelBelow = false } = {})
 /* ── stories ────────────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const { value, color, labelBelow } = args;
     const fillColor = COLORS[color] ?? COLORS.primary;
@@ -342,7 +342,7 @@ Use the **Controls** panel to experiment. Code updates live.
  *   (yellow is low-contrast on light backgrounds; pair it with a dark label or dark container).
  */
 export const AllColors = {
-  name: 'All colors',
+    name: 'All colors',
   args: { value: 75 },
   parameters: {
     controls: { include: ['value'] },
@@ -404,7 +404,7 @@ Use the **Value** control to see how width scales across the palette.
  * **❌ Don't** — hardcode widths in px; use `%` so the bar adapts to its container.
  */
 export const AllValues = {
-  name: 'All values (25 / 50 / 75 / 100)',
+    name: 'All values (25 / 50 / 75 / 100)',
   args: { color: 'primary' },
   parameters: {
     controls: { include: ['color'] },
@@ -445,7 +445,7 @@ Use the **Color** control to preview a different fill across all steps.
  * **❌ Don't** — show both a top label and a bottom helper text simultaneously — pick one position.
  */
 export const LabelBelow = {
-  name: 'Label below (helper text)',
+    name: 'Label below (helper text)',
   args: { value: 75 },
   parameters: {
     controls: { include: ['value'] },
@@ -481,7 +481,7 @@ Use in compact layouts (cards, table rows) where space above the track is unavai
  * as seen in dashboards tracking resource consumption or project milestones.
  */
 export const InContext = {
-  name: 'In context — dashboard card',
+    name: 'In context — dashboard card',
   parameters: {
     controls: { disable: true },
     docs: {

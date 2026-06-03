@@ -211,7 +211,7 @@ const btn = ({
 
 /* ── Interactive story (Controls + Actions) ─────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;
@@ -381,7 +381,7 @@ Use the **Controls** panel to experiment with all combinations. The code below u
 /* ── Colors ──────────────────────────────────────────────────
    All 7 colors. Control: size — changes all buttons at once  */
 export const FigmaColors = {
-  name: 'Colors — all Figma colors',
+    name: 'Colors — all Figma colors',
   args: { size: 'md' },
   parameters: {
     controls: { include: ['size'] },
@@ -436,7 +436,7 @@ All 7 Figma colors shown solid + outline. Use **size** control to preview all co
 /* ── Sizes ───────────────────────────────────────────────────
    All 5 sizes. Controls: color, outline — change the color   */
 export const FigmaSizes = {
-  name: 'Sizes — xs to xl',
+    name: 'Sizes — xs to xl',
   args: { color: 'primary', outline: false },
   parameters: {
     controls: { include: ['color', 'outline'] },
@@ -488,7 +488,7 @@ Use **color** and **outline** controls to preview the full size scale in any col
    Default / Disabled / Outline / Outline-disabled.
    Control: size — see states at any size                      */
 export const FigmaStates = {
-  name: 'States — default / disabled',
+    name: 'States — default / disabled',
   args: { size: 'md' },
   parameters: {
     controls: { include: ['size'] },
@@ -519,7 +519,7 @@ Use **size** control to verify states render correctly at all sizes.
 /* ── With Icons ──────────────────────────────────────────────
    Left / right / icon-only. Controls: color + size           */
 export const IconPlacement = {
-  name: 'With Icons',
+    name: 'With Icons',
   args: { color: 'primary', size: 'md' },
   parameters: {
     controls: { include: ['color', 'size'] },
@@ -576,7 +576,7 @@ Icon size: 20px for md/lg/xl, 16px for xs/sm.
 /* ── Pill ────────────────────────────────────────────────────
    Pill border-radius. Controls: color + size                  */
 export const Pill = {
-  name: 'Pill — rounded corners',
+    name: 'Pill — rounded corners',
   args: { size: 'md' },
   parameters: {
     controls: { include: ['size'] },
@@ -609,7 +609,7 @@ export const Pill = {
 /* ── Disabled ────────────────────────────────────────────────
    Disabled state across colors. Control: size                 */
 export const Disabled = {
-  name: 'Disabled state',
+    name: 'Disabled state',
   args: { size: 'md' },
   parameters: {
     controls: { include: ['size'] },

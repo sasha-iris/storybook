@@ -236,7 +236,7 @@ Maps to \`aria-expanded\` on the input wrapper.`,
 /* ── 1. Interactive ──────────────────────────────────────────────────────── */
 
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const isOpen = a.state !== 'initial';
@@ -320,7 +320,7 @@ export const Interactive = {
 /* ── 2. States — Default type ────────────────────────────────────────────── */
 
 export const StatesDefault = {
-  name: 'States — Default type',
+    name: 'States — Default type',
   args: { size: 'default' },
   parameters: {
     controls: { include: ['size'] },
@@ -383,7 +383,7 @@ export const StatesDefault = {
 /* ── 3. States — Advanced type ───────────────────────────────────────────── */
 
 export const StatesAdvanced = {
-  name: 'States — Advanced type',
+    name: 'States — Advanced type',
   args: { size: 'default' },
   parameters: {
     controls: { include: ['size'] },
@@ -441,7 +441,7 @@ export const StatesAdvanced = {
 /* ── 4. Sizes ────────────────────────────────────────────────────────────── */
 
 export const Sizes = {
-  name: 'Sizes — Default vs Large',
+    name: 'Sizes — Default vs Large',
   args: { type: 'default' },
   parameters: {
     controls: { include: ['type'] },

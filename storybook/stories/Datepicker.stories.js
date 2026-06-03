@@ -465,7 +465,7 @@ export default {
 
 // ─── Interactive (Controls) ────────────────────────────────────────────────────
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const placeholder = a.type === 'range' ? 'Select period' : 'Select date';
@@ -548,7 +548,7 @@ export const Interactive = {
 
 // ─── Gallery: All types (light) ───────────────────────────────────────────────
 export const AllTypesLight = {
-  name: 'All types — light',
+    name: 'All types — light',
   args: { dark: false },
   parameters: {
     controls: { include: ['dark'] },
@@ -627,7 +627,7 @@ export const AllTypesLight = {
 
 // ─── Gallery: Input sizes ─────────────────────────────────────────────────────
 export const InputSizes = {
-  name: 'Input sizes',
+    name: 'Input sizes',
   args: { dark: false },
   parameters: {
     controls: { include: ['dark'] },
@@ -674,7 +674,7 @@ export const InputSizes = {
 
 // ─── Gallery: Day cell states ─────────────────────────────────────────────────
 export const DayCellStates = {
-  name: 'Day cell states',
+    name: 'Day cell states',
   args: { dark: false },
   parameters: {
     controls: { include: ['dark'] },

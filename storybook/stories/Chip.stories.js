@@ -133,7 +133,7 @@ Filter chips for interactive selections — removable tags attached to filters, 
    INTERACTIVE
 ───────────────────────────────────────────── */
 export const Interactive = {
-  name: 'Interactive (Controls)',
+    name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
     const c = CHIP_COLORS[a.color] ?? CHIP_COLORS.light;
@@ -220,7 +220,7 @@ export const Interactive = {
    ALL COLORS
 ───────────────────────────────────────────── */
 export const AllColors = {
-  name: 'Colors — all 10 themes',
+    name: 'Colors — all 10 themes',
   parameters: {
     controls: { disable: true },
     docs: {
@@ -268,7 +268,7 @@ All 10 color themes in default state.
    STATES
 ───────────────────────────────────────────── */
 export const States = {
-  name: 'States — default / hover / disabled',
+    name: 'States — default / hover / disabled',
   args: { color: 'indigo' },
   parameters: {
     controls: { include: ['color'] },
@@ -322,7 +322,7 @@ Default, hover, and disabled states for the selected color. Use the **color** co
    WITH DOT
 ───────────────────────────────────────────── */
 export const WithDot = {
-  name: 'With dot indicator',
+    name: 'With dot indicator',
   parameters: {
     controls: { disable: true },
     docs: {
