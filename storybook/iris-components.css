@@ -113,7 +113,9 @@
   --color-text-body:                 #4a5565;
   --color-text-body-subtle:          #6a7282;
   --color-text-fg-brand:             #1447e6;
+  --color-text-fg-brand-strong:      #1c398e;
   --color-text-fg-success:           #007a55;
+  --color-text-fg-warning-subtle:    #d03801;
   --color-text-fg-danger:            #c70036;
   --color-text-fg-danger-strong:     #8b0836;
 
@@ -129,6 +131,9 @@
   --color-bg-dark-strong:            #101828;
   --color-bg-brand:                  #5145cd;
   --color-bg-brand-soft:             #dbeafe;
+  --color-bg-success:                #007a55;
+  --color-bg-success-strong:         #006045;
+  --color-bg-warning-strong:         #b43403;
   --color-bg-disabled:               #f3f4f6;
 
   /* Border colors */
@@ -139,22 +144,15 @@
   /* Semantic */
   --color-danger:                    #e02424;
 
-  /* Button tokens */
+  /* Button tokens — Primary/Dark/Gray are custom; Green/Red/Yellow/Blue use Foundation */
   --btn-primary-bg:    #42389d;
   --btn-primary-hover: #362f78;
   --btn-dark-hover:    #111928;
-  --btn-green-bg:      #007a55;
-  --btn-green-hover:   #005e3e;
-  --btn-red-bg:        #c10007;
-  --btn-red-hover:     #a30006;
-  --btn-yellow-bg:     #d03801;
-  --btn-yellow-hover:  #b43100;
-  --btn-blue-bg:       #1447e6;
-  --btn-blue-hover:    #0f3bc0;
   --btn-gray-bg:       #f9fafb;
   --btn-gray-text:     #1e2939;
   --btn-gray-border:   #e5e7eb;
   --btn-gray-hover-bg: #f3f4f6;
+  /* Note: --btn-green/red/yellow/blue now reference Foundation colors below */
 
   /* Controls: Toggle · Checkbox · Radio */
   --color-ctrl-off:                  #d1d5db;
@@ -256,29 +254,29 @@ a:hover { text-decoration: underline; }
   text-decoration: none;
 }
 
-/* Green — Figma colors/emerald/700 = #007a55 (= --color-text-fg-success) */
+/* Green — uses Foundation --color-bg-success (#007a55) */
 .btn-green {
-  background: var(--btn-green-bg);
+  background: var(--color-bg-success);
   color: #fff;
-  border-color: var(--btn-green-bg);
+  border-color: var(--color-bg-success);
 }
-.btn-green:hover { background: var(--btn-green-hover); border-color: var(--btn-green-hover); text-decoration: none; color: #fff; }
+.btn-green:hover { background: var(--color-bg-success-strong); border-color: var(--color-bg-success-strong); text-decoration: none; color: #fff; }
 
-/* Red — Figma colors/red/700 = #c10007 */
+/* Red — uses Foundation --color-ctrl-danger-strong (#c10007) */
 .btn-red {
-  background: var(--btn-red-bg);
+  background: var(--color-ctrl-danger-strong);
   color: #fff;
-  border-color: var(--btn-red-bg);
+  border-color: var(--color-ctrl-danger-strong);
 }
-.btn-red:hover { background: var(--btn-red-hover); border-color: var(--btn-red-hover); text-decoration: none; color: #fff; }
+.btn-red:hover { background: var(--color-ctrl-danger-hover); border-color: var(--color-ctrl-danger-hover); text-decoration: none; color: #fff; }
 
-/* Yellow — Figma name "Yellow"; actual token = colors/orange/600 (#d03801) */
+/* Yellow — uses Foundation --color-text-fg-warning-subtle (#d03801) */
 .btn-yellow {
-  background: var(--btn-yellow-bg);
+  background: var(--color-text-fg-warning-subtle);
   color: #fff;
-  border-color: var(--btn-yellow-bg);
+  border-color: var(--color-text-fg-warning-subtle);
 }
-.btn-yellow:hover { background: var(--btn-yellow-hover); border-color: var(--btn-yellow-hover); text-decoration: none; color: #fff; }
+.btn-yellow:hover { background: var(--color-bg-warning-strong); border-color: var(--color-bg-warning-strong); text-decoration: none; color: #fff; }
 
 /* Purple — legacy, not in current Figma Buttons page; kept for backward compat */
 .btn-purple {
@@ -288,13 +286,13 @@ a:hover { text-decoration: underline; }
 }
 .btn-purple:hover { background: #6C2BD9; text-decoration: none; color: #fff; }
 
-/* Blue — Figma colors/blue/700 (#1447e6); new in this pass */
+/* Blue — uses Foundation --color-text-fg-brand (#1447e6) */
 .btn-blue {
-  background: var(--btn-blue-bg);
+  background: var(--color-text-fg-brand);
   color: #fff;
-  border-color: var(--btn-blue-bg);
+  border-color: var(--color-text-fg-brand);
 }
-.btn-blue:hover { background: var(--btn-blue-hover); border-color: var(--btn-blue-hover); text-decoration: none; color: #fff; }
+.btn-blue:hover { background: var(--color-text-fg-brand-strong); border-color: var(--color-text-fg-brand-strong); text-decoration: none; color: #fff; }
 
 /* Gray — Figma "Gray" = light surface button; new in this pass */
 .btn-gray {
@@ -329,32 +327,32 @@ a:hover { text-decoration: underline; }
 
 .btn-outline-green {
   background: transparent;
-  color: var(--btn-green-bg);
-  border-color: var(--btn-green-bg);
+  color: var(--color-bg-success);
+  border-color: var(--color-bg-success);
 }
-.btn-outline-green:hover { background: var(--btn-green-bg); color: #fff; text-decoration: none; }
+.btn-outline-green:hover { background: var(--color-bg-success); color: #fff; text-decoration: none; }
 
 .btn-outline-red {
   background: transparent;
-  color: var(--btn-red-bg);
-  border-color: var(--btn-red-bg);
+  color: var(--color-ctrl-danger-strong);
+  border-color: var(--color-ctrl-danger-strong);
 }
-.btn-outline-red:hover { background: var(--btn-red-bg); color: #fff; text-decoration: none; }
+.btn-outline-red:hover { background: var(--color-ctrl-danger-strong); color: #fff; text-decoration: none; }
 
-/* Yellow/Blue/Gray outlines — new in this pass */
+/* Yellow/Blue/Gray outlines — using Foundation colors */
 .btn-outline-yellow {
   background: transparent;
-  color: var(--btn-yellow-bg);
-  border-color: var(--btn-yellow-bg);
+  color: var(--color-text-fg-warning-subtle);
+  border-color: var(--color-text-fg-warning-subtle);
 }
-.btn-outline-yellow:hover { background: var(--btn-yellow-bg); color: #fff; text-decoration: none; }
+.btn-outline-yellow:hover { background: var(--color-text-fg-warning-subtle); color: #fff; text-decoration: none; }
 
 .btn-outline-blue {
   background: transparent;
-  color: var(--btn-blue-bg);
-  border-color: var(--btn-blue-bg);
+  color: var(--color-text-fg-brand);
+  border-color: var(--color-text-fg-brand);
 }
-.btn-outline-blue:hover { background: var(--btn-blue-bg); color: #fff; text-decoration: none; }
+.btn-outline-blue:hover { background: var(--color-text-fg-brand); color: #fff; text-decoration: none; }
 
 .btn-outline-gray {
   background: transparent;
