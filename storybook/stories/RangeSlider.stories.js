@@ -4,7 +4,7 @@
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
   track:       'var(--color-border-default)',
-  fill:        '#155dfc',
+  fill:        'var(--color-interactive-primary)',
   fillVolume:  '#a4cafe',
   thumb:       'var(--color-bg-white)',
   thumbBorder: 'var(--color-border-default)',
@@ -241,11 +241,11 @@ export default {
 - More than 2 boundary values → use multiple separate inputs
 
 **Anatomy**
-- Track — \`height:8px\`, bg \`var(--color-border-default)\`, filled \`#155dfc\`
+- Track — \`height:8px\`, bg \`var(--color-border-default)\`, filled \`var(--color-interactive-primary)\`
 - Thumb — \`22×22px\` circle, bg \`var(--color-bg-white)\`, border \`var(--color-border-default)\`
 - Tooltip (optional) — \`bg:#111928\`, appears above thumb
 - Data labels (optional) — tick values below track, \`color:#6b7280\`
-- Volume variant — volume-off / volume-up icons flank the track, active fill \`#a4cafe→#155dfc\`
+- Volume variant — volume-off / volume-up icons flank the track, active fill \`#a4cafe→var(--color-interactive-primary)\`
         `,
       },
     },
@@ -287,11 +287,11 @@ export const Interactive = {
   render: (args) => {
     const val = args.value || 35;
 
-    const htmlCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value="${val}"\n  aria-label="Slider"\n  style="width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,#155dfc 0%,#155dfc ${val}%,var(--color-border-default) ${val}%,var(--color-border-default) 100%);"\n/>`;
+    const htmlCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value="${val}"\n  aria-label="Slider"\n  style="width:100%;height:8px;border-radius:4px;background:linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) ${val}%,var(--color-border-default) ${val}%,var(--color-border-default) 100%);"\n/>`;
 
-    const reactCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value={value}\n  onChange={(e) => setValue(e.target.value)}\n  aria-label="Slider"\n  style={{\n    width: '100%',\n    height: '8px',\n    borderRadius: '4px',\n    background: \`linear-gradient(to right,#155dfc 0%,#155dfc \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n    cursor: 'pointer',\n  }}\n/>`;
+    const reactCode = `<input\n  type="range"\n  min="0"\n  max="100"\n  value={value}\n  onChange={(e) => setValue(e.target.value)}\n  aria-label="Slider"\n  style={{\n    width: '100%',\n    height: '8px',\n    borderRadius: '4px',\n    background: \`linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n    cursor: 'pointer',\n  }}\n/>`;
 
-    const componentCode = `export function RangeSlider({ min = 0, max = 100, value, onChange }) {\n  return (\n    <input\n      type="range"\n      min={min}\n      max={max}\n      value={value}\n      onChange={(e) => onChange?.(e.target.value)}\n      aria-label="Range slider"\n      style={{\n        width: '100%',\n        height: '8px',\n        borderRadius: '4px',\n        background: \`linear-gradient(to right,#155dfc 0%,#155dfc \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n        cursor: 'pointer',\n      }}\n    />\n  );\n}`;
+    const componentCode = `export function RangeSlider({ min = 0, max = 100, value, onChange }) {\n  return (\n    <input\n      type="range"\n      min={min}\n      max={max}\n      value={value}\n      onChange={(e) => onChange?.(e.target.value)}\n      aria-label="Range slider"\n      style={{\n        width: '100%',\n        height: '8px',\n        borderRadius: '4px',\n        background: \`linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) \${value}%,var(--color-border-default) \${value}%,var(--color-border-default) 100%)\`,\n        cursor: 'pointer',\n      }}\n    />\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -305,28 +305,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -338,14 +338,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -381,7 +381,7 @@ export const AllTypes = {
 <input type="range" min="0" max="100" value="35"
   style="
     appearance:none;width:100%;height:8px;border-radius:4px;
-    background:linear-gradient(to right,#155dfc 0%,#155dfc 35%,var(--color-border-default) 35%,var(--color-border-default) 100%);
+    background:linear-gradient(to right,var(--color-interactive-primary) 0%,var(--color-interactive-primary) 35%,var(--color-border-default) 35%,var(--color-border-default) 100%);
   "
 />
 

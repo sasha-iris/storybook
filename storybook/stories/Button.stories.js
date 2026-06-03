@@ -18,12 +18,12 @@
  * | Figma color | Hex     | Foundation token (CSS variable)        | Note        |
  * |------------|---------|-------------------------------------  |-------------|
  * | Primary    | #42389d | `--btn-primary-bg` (custom)           | Figma only  |
- * | Dark       | #1e2939 | `--btn-dark-hover` (custom)           | Figma only  |
+ * | Dark       | var(--color-text-heading) | `--btn-dark-hover` (custom)           | Figma only  |
  * | Green      | #007a55 | `--color-bg-success`                  | ✓ Foundation |
  * | Red        | #c10007 | `--color-ctrl-danger-strong`          | ✓ Foundation |
  * | Yellow     | #d03801 | `--color-text-fg-warning-subtle`      | ✓ Foundation |
  * | Blue       | #1447e6 | `--color-text-fg-brand`               | ✓ Foundation |
- * | Gray       | #f9fafb | `--btn-gray-bg` (custom)              | Light surface |
+ * | Gray       | var(--color-bg-tertiary) | `--btn-gray-bg` (custom)              | Light surface |
  *
  * ## Border radius
  * All buttons: 12px — Figma token `border/border-radius/rounded-xl`
@@ -35,7 +35,7 @@
  * - **Custom colors:** Primary (#42389d), Dark, Gray are NOT in Foundation
  * - Primary is PURPLE (#42389d), NOT the legacy blue (#1C64F2)
  * - "Yellow" in Figma renders ORANGE (#d03801) — intentional, from Foundation
- * - Gray button has dark text (#1e2939) + light border (var(--color-border-default))
+ * - Gray button has dark text (var(--color-text-heading)) + light border (var(--color-border-default))
  * - Outline variants: border + text match the fill color; no background
  * - Hover state darkens the fill (uses stronger Foundation variant or darker hex)
  * - Disabled: 50% opacity, pointer-events none
@@ -113,7 +113,7 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
       options: ['primary','dark','green','red','yellow','blue','gray',
                 'alternative','light','purple'],
       description: [
-        'Figma colors: **primary** `#42389d` · **dark** `#1e2939` · **green** `#007a55` ·',
+        'Figma colors: **primary** `#42389d` · **dark** `var(--color-text-heading)` · **green** `#007a55` ·',
         '**red** `#c10007` · **yellow** `#d03801` (renders orange) · **blue** `#1447e6` ·',
         '**gray** light surface w/ dark text.',
         '',
@@ -247,10 +247,10 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="2" y="2" width="8" height="8" rx="1"/>
                 <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
@@ -260,10 +260,10 @@ export const Interactive = {
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="2" y="2" width="8" height="8" rx="1"/>
                 <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
@@ -273,10 +273,10 @@ export const Interactive = {
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect x="2" y="2" width="8" height="8" rx="1"/>
                 <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
@@ -292,14 +292,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -390,7 +390,7 @@ export const FigmaColors = {
         story: `
 All 7 Figma colors shown solid + outline. Use **size** control to preview all colors at any size.
 
-**QA:** Primary = \`#42389d\` (purple, not blue). "Yellow" = \`#d03801\` (orange — intentional). Gray = light surface \`#f9fafb\` with dark text \`#1e2939\`.
+**QA:** Primary = \`#42389d\` (purple, not blue). "Yellow" = \`#d03801\` (orange — intentional). Gray = light surface \`var(--color-bg-tertiary)\` with dark text \`var(--color-text-heading)\`.
         `,
       },
       source: {

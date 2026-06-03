@@ -9,12 +9,12 @@
  * ## Indicator types (from Figma)
  * Default        — 12×12 dot + label text (legend / status row)
  * Count          — 24×24 circle #f05252 with number (notification badge)
- * Icon           — 24×24 circle #155dfc with check icon
- * Stepper        — outer 24×24 #bedbff + inner 12×12 #155dfc
+ * Icon           — 24×24 circle var(--color-interactive-primary) with check icon
+ * Stepper        — outer 24×24 #bedbff + inner 12×12 var(--color-interactive-primary)
  * Badge          — pill h=22 br=99 (available / unavailable status)
  *
  * ## Legend colors (node 110:22652)
- * blue:   #155dfc
+ * blue:   var(--color-interactive-primary)
  * purple: #9061f9
  * indigo: #6875f5
  * teal:   #00bba7
@@ -25,7 +25,7 @@
  */
 
 const LEGEND_COLORS = {
-  blue:   '#155dfc',
+  blue:   'var(--color-interactive-primary)',
   purple: '#9061f9',
   indigo: '#6875f5',
   teal:   '#00bba7',
@@ -39,7 +39,7 @@ const BADGE_VARIANTS = {
 // Check icon — 16×16 stroke
 const CHECK_SVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>`;
 
-function dotIndicator({ label = 'Indicator text', dotColor = '#155dfc' }) {
+function dotIndicator({ label = 'Indicator text', dotColor = 'var(--color-interactive-primary)' }) {
   return `<span style="display:inline-flex;align-items:center;gap:4px;">
   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
     <circle cx="6" cy="6" r="6" fill="${dotColor}"/>
@@ -53,12 +53,12 @@ function countIndicator({ count = 1 }) {
 }
 
 function iconIndicator() {
-  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Completed">${CHECK_SVG}</span>`;
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-interactive-primary);" aria-label="Completed">${CHECK_SVG}</span>`;
 }
 
 function stepperIndicator() {
   return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-hidden="true">
-  <span style="width:12px;height:12px;border-radius:50%;background:#155dfc;display:block;"></span>
+  <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
 </span>`;
 }
 
@@ -98,7 +98,7 @@ Five distinct types — all light mode only:
 - \`Dot\` — 12×12 dot + label (var(--text-sm)/var(--font-medium)). Used for chart legends and status rows.
 - \`Count\` — 24×24 red circle with a number. Overlaid on buttons or nav items.
 - \`Icon\` — 24×24 blue circle with a check mark. Marks a completed step.
-- \`Stepper\` — 24×24 outer ring (#bedbff) with 12×12 inner dot (#155dfc). Active/pending step in a stepper.
+- \`Stepper\` — 24×24 outer ring (#bedbff) with 12×12 inner dot (var(--color-interactive-primary)). Active/pending step in a stepper.
 - \`Badge\` — pill shape (h=22, br=99). Green = available, red = unavailable.
         `,
       },
@@ -124,8 +124,8 @@ Five distinct types — all light mode only:
     },
     dotColor: {
       control: 'color',
-      description: 'Dot fill for the **dot (legend)** type. Use one of the standard legend colors: blue `#155dfc`, purple `#9061f9`, indigo `#6875f5`, teal `#00bba7`.',
-      table: { category: 'Appearance', defaultValue: { summary: '#155dfc' } },
+      description: 'Dot fill for the **dot (legend)** type. Use one of the standard legend colors: blue `var(--color-interactive-primary)`, purple `#9061f9`, indigo `#6875f5`, teal `#00bba7`.',
+      table: { category: 'Appearance', defaultValue: { summary: 'var(--color-interactive-primary)' } },
     },
     count: {
       control: { type: 'number', min: 1, max: 99 },
@@ -137,7 +137,7 @@ Five distinct types — all light mode only:
     type: 'badge',
     label: 'Available',
     variant: 'available',
-    dotColor: '#155dfc',
+    dotColor: 'var(--color-interactive-primary)',
     count: 3,
   },
 };
@@ -148,9 +148,9 @@ Five distinct types — all light mode only:
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: ({ type, label, variant, dotColor, count }) => {
-    const htmlCode = `<div style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dotColor || '#155dfc'};"></div>`;
+    const htmlCode = `<div style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dotColor || 'var(--color-interactive-primary)'};"></div>`;
     const reactCode = `<div style={{\n  display: 'inline-block',\n  width: '12px',\n  height: '12px',\n  borderRadius: '50%',\n  background: color,\n}} />`;
-    const componentCode = `export function Indicator({ type = 'dot', color = '#155dfc', label, count }) {\n  return (\n    <div style={{\n      display: 'inline-block',\n      width: '12px',\n      height: '12px',\n      borderRadius: '50%',\n      background: color,\n    }} />\n  );\n}`;
+    const componentCode = `export function Indicator({ type = 'dot', color = 'var(--color-interactive-primary)', label, count }) {\n  return (\n    <div style={{\n      display: 'inline-block',\n      width: '12px',\n      height: '12px',\n      borderRadius: '50%',\n      background: color,\n    }} />\n  );\n}`;
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -162,7 +162,7 @@ export const Interactive = {
       case 'stepper': preview = stepperIndicator(); break;
       default:        preview = badgeIndicator({ label, variant });
     }
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${preview}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid #d1d5db;cursor:pointer;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='#dcfce7';setTimeout(()=>{this.innerHTML='Copy';this.style.background='var(--color-bg-secondary)';},2000);});});</script>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${preview}</div><div style="display:flex;flex-direction:column;gap:24px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${htmlEscaped}</code></pre></div><button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${reactEscaped}</code></pre></div><button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);cursor:pointer;">Copy</button></div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;"><pre style="margin:0;font-family:monospace;font-size:13px;"><code>${componentEscaped}</code></pre></div><button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);cursor:pointer;">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>{b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';this.style.background='var(--color-success-light)';setTimeout(()=>{this.innerHTML='Copy';this.style.background='var(--color-bg-secondary)';},2000);});});</script>`;
   },
   parameters: {
     docs: {
@@ -184,7 +184,7 @@ export const Interactive = {
             return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f05252;border:2px solid var(--color-bg-white);font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-bg-white);line-height:1;" aria-label="${count} notifications">${count}</span>`;
           }
           if (type === 'icon') {
-            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Completed">
+            return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-interactive-primary);" aria-label="Completed">
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M2.5 8.5L6 12L13.5 4"/>
   </svg>
@@ -192,7 +192,7 @@ export const Interactive = {
           }
           if (type === 'stepper') {
             return `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-hidden="true">
-  <span style="width:12px;height:12px;border-radius:50%;background:#155dfc;display:block;"></span>
+  <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
 </span>`;
           }
           // badge
@@ -236,7 +236,7 @@ All 5 indicator types side by side.
       source: {
         code: `<!-- Dot (legend) -->
 <span style="display:inline-flex;align-items:center;gap:4px;">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>
+  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-interactive-primary)"/></svg>
   <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
 </span>
 
@@ -255,7 +255,7 @@ All 5 indicator types side by side.
   render: () => `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:24px;">
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
       <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Dot</span>
-      ${dotIndicator({ label: 'Revenue', dotColor: '#155dfc' })}
+      ${dotIndicator({ label: 'Revenue', dotColor: 'var(--color-interactive-primary)' })}
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
       <span style="font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;">Count</span>
@@ -295,7 +295,7 @@ The 4 standard chart legend colors from Figma. Use these dots to label series in
       },
       source: {
         code: `<span style="display:inline-flex;align-items:center;gap:4px;">
-  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="#155dfc"/></svg>
+  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="6" fill="var(--color-interactive-primary)"/></svg>
   <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-heading);">Revenue</span>
 </span>`,
         language: 'html',
@@ -476,18 +476,18 @@ Stepper indicators used in a multi-step progress bar — the "Stepper" example f
       source: {
         code: `<div style="display:flex;align-items:center;gap:0;">
   <!-- Completed step -->
-  <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#155dfc;" aria-label="Step 1: Completed">
+  <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--color-interactive-primary);" aria-label="Step 1: Completed">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--color-bg-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>
   </span>
   <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Active step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-current="step" aria-label="Step 2: Current">
-    <span style="width:12px;height:12px;border-radius:50%;background:#155dfc;display:block;"></span>
+    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
   </span>
   <span style="flex:1;height:1px;background:var(--color-border-default);"></span>
   <!-- Pending step -->
   <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#bedbff;" aria-label="Step 3: Pending">
-    <span style="width:12px;height:12px;border-radius:50%;background:#155dfc;display:block;"></span>
+    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-interactive-primary);display:block;"></span>
   </span>
 </div>`,
         language: 'html',

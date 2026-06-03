@@ -261,8 +261,8 @@ Use these for surface fills, overlays, and state-driven backgrounds.
     ${group('Neutral', [
       ['--color-bg-white',          'var(--color-bg-white)', 'bg/white'],
       ['--color-bg-primary-soft',   'var(--color-bg-white)', 'bg/primary-soft'],
-      ['--color-bg-secondary-soft', '#f9fafb', 'bg/secondary-soft'],
-      ['--color-bg-secondary',      '#f9fafb', 'bg/secondary'],
+      ['--color-bg-secondary-soft', 'var(--color-bg-tertiary)', 'bg/secondary-soft'],
+      ['--color-bg-secondary',      'var(--color-bg-tertiary)', 'bg/secondary'],
       ['--color-bg-tertiary-soft',  'var(--color-bg-secondary)', 'bg/tertiary-soft'],
       ['--color-bg-tertiary',       'var(--color-bg-secondary)', 'bg/tertiary'],
       ['--color-bg-quaternary',     'var(--color-border-default)', 'bg/quaternary'],
@@ -296,7 +296,7 @@ Use these for surface fills, overlays, and state-driven backgrounds.
     ])}
     ${group('Dark', [
       ['--color-bg-dark-strong', '#101828', 'bg/dark-strong'],
-      ['--color-bg-dark',        '#1e2939', 'bg/dark'],
+      ['--color-bg-dark',        'var(--color-text-heading)', 'bg/dark'],
     ])}
     ${group('Accent', [
       ['--color-bg-purple',  '#ad46ff', 'bg/purple'],
@@ -354,12 +354,12 @@ Use these for dividers, input outlines, focus rings, and card borders.
   render: () => `
     ${group('Base', [
       ['--color-border-dark',        '#4a5565', 'border/dark'],
-      ['--color-border-muted',       '#f9fafb', 'border/muted'],
+      ['--color-border-muted',       'var(--color-bg-tertiary)', 'border/muted'],
       ['--color-border-light-subtle','var(--color-bg-secondary)', 'border/light-subtle'],
       ['--color-border-light',       'var(--color-bg-secondary)', 'border/light'],
       ['--color-border-base-soft',   'var(--color-border-default)', 'border/base-soft'],
       ['--color-border-base',        'var(--color-border-default)', 'border/base'],
-      ['--color-border-dark-subtle', '#1e2939', 'border/dark-subtle'],
+      ['--color-border-dark-subtle', 'var(--color-text-heading)', 'border/dark-subtle'],
     ])}
     ${group('Brand', [
       ['--color-border-brand-subtle', '#bedbff', 'border/brand-subtle'],

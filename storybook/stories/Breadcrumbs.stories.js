@@ -7,7 +7,7 @@
  * | Type            | CSS wrapper                       | Notes                      |
  * |-----------------|-----------------------------------|----------------------------|
  * | Default         | none (just .breadcrumb)           | white bg, no padding       |
- * | With background | inline bg pill + .breadcrumb      | #f9fafb, r=8px, p=12px 20px |
+ * | With background | inline bg pill + .breadcrumb      | var(--color-bg-tertiary), r=8px, p=12px 20px |
  *
  * CSS classes used (from styles.css):
  *   .breadcrumb         — <ol> list container
@@ -147,7 +147,7 @@ The last item is always the current page — it carries \`aria-current="page"\` 
     type: {
       control: 'select',
       options: ['default', 'with-background'],
-      description: '`default` — no background, uses `.breadcrumb` on white bg. `with-background` — wrapped in a `#f9fafb` pill (inline style, no CSS class).',
+      description: '`default` — no background, uses `.breadcrumb` on white bg. `with-background` — wrapped in a `var(--color-bg-tertiary)` pill (inline style, no CSS class).',
       table: { category: 'Appearance', defaultValue: { summary: 'default' } },
     },
   },
@@ -166,7 +166,7 @@ export const Interactive = {
     const a = args;
     const isBg = a.type === 'with-background';
     const labels = PATHS[a.depth] || PATHS[3];
-    const wrapOpen = isBg ? '<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">' : '';
+    const wrapOpen = isBg ? '<div style="display:inline-flex;background:var(--color-bg-tertiary);border-radius:8px;padding:12px 20px;">' : '';
     const wrapClose = isBg ? '</div>' : '';
     const items = labels.map((label, i) => {
       const isCurrent = i === labels.length - 1;
@@ -196,28 +196,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -229,14 +229,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -308,10 +308,10 @@ export const WithBackground = {
         story: `
 Breadcrumb with a light pill background — Figma: \`Type=With background\` (node \`3284:24211\`).
 
-The pill is a plain wrapper div with inline styles (padding:12px 20px, background:#f9fafb, border-radius:8px). The inner breadcrumb uses the same \`.breadcrumb\` classes.
+The pill is a plain wrapper div with inline styles (padding:12px 20px, background:var(--color-bg-tertiary), border-radius:8px). The inner breadcrumb uses the same \`.breadcrumb\` classes.
 
 **✅ Do** — use when the breadcrumb needs to stand out against a busy or image-based background.
-**❌ Don't** — use on \`#f9fafb\` page backgrounds — the pill will be invisible.
+**❌ Don't** — use on \`var(--color-bg-tertiary)\` page backgrounds — the pill will be invisible.
         `.trim(),
       },
       source: {
@@ -358,7 +358,7 @@ export const BothTypes = {
 <nav aria-label="Breadcrumb"><ol class="breadcrumb"><!-- ... --></ol></nav>
 
 <!-- With background: pill wrapper + .breadcrumb -->
-<div style="display:inline-flex;background:#f9fafb;border-radius:8px;padding:12px 20px;">
+<div style="display:inline-flex;background:var(--color-bg-tertiary);border-radius:8px;padding:12px 20px;">
   <nav aria-label="Breadcrumb"><ol class="breadcrumb"><!-- ... --></ol></nav>
 </div>`,
       },
@@ -367,11 +367,11 @@ export const BothTypes = {
   render: ({ showHomeIcon }) => `
     <div style="display:flex;flex-direction:column;gap:24px;padding:24px;">
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Default</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Default</div>
         ${breadcrumb({ type: 'default', showHomeIcon, depth: 3 })}
       </div>
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">With background</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">With background</div>
         ${breadcrumb({ type: 'with-background', showHomeIcon, depth: 3 })}
       </div>
     </div>
@@ -406,7 +406,7 @@ Breadcrumbs at 2, 3, and 4 levels deep. Use the **type** control to switch betwe
     <div style="display:flex;flex-direction:column;gap:20px;padding:24px;">
       ${[2, 3, 4].map(depth => `
         <div>
-          <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${depth} items</div>
+          <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${depth} items</div>
           ${breadcrumb({ type, showHomeIcon: true, depth })}
         </div>
       `).join('')}
@@ -442,11 +442,11 @@ Breadcrumb with a text "Home" label instead of the house icon.
   render: ({ type }) => `
     <div style="display:flex;flex-direction:column;gap:20px;padding:24px;">
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">With icon</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">With icon</div>
         ${breadcrumb({ type, showHomeIcon: true, depth: 3 })}
       </div>
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Without icon</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Without icon</div>
         ${breadcrumb({ type, showHomeIcon: false, depth: 3 })}
       </div>
     </div>

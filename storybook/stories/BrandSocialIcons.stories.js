@@ -72,7 +72,7 @@ function brandCard(name, svgConst) {
   const isDark = name.endsWith('-dark');
   return `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border-radius:8px;border:1px solid var(--color-border-primary);background:${isDark ? '#1f2a37' : 'var(--color-bg-white)'};">
     <div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;">${svgConst}</div>
-    <span style="font-size:10px;color:${isDark ? '#9ca3af' : 'var(--color-text-secondary)'};text-align:center;line-height:1.3;">${label}</span>
+    <span style="font-size:10px;color:${isDark ? 'var(--color-border-light)' : 'var(--color-text-secondary)'};text-align:center;line-height:1.3;">${label}</span>
   </div>`;
 }
 

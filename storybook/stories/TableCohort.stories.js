@@ -192,7 +192,7 @@ visual structure. Alternating grey rows conflict with the lightest heatmap bands
 ─────────────────────────────────────────────────────────────────────────── */
 export const Interactive = {
     name: 'Interactive (Controls)',
-  render: (args) => {const h='<table><tr><td style="padding:8px;"><div style="background:var(--color-border-default);color:var(--color-text-primary);padding:4px 8px;border-radius:4px;">'+args.percentage+'%</div></td></tr></table>';const r='<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>';const c='export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${h}</div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${h}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${r}</pre></div><div><pre style="background:#f9fafb;padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${c}</pre></div></div>`;},
+  render: (args) => {const h='<table><tr><td style="padding:8px;"><div style="background:var(--color-border-default);color:var(--color-text-primary);padding:4px 8px;border-radius:4px;">'+args.percentage+'%</div></td></tr></table>';const r='<table><tr><td><Badge percentage={percentage} variant={rowState} /></td></tr></table>';const c='export function CohortTable({data}){return(<table>{data.map(r=>(<tr key={r.id}><td>{r.percentage}%</td></tr>))}</table>);}';return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${h}</div><div><pre style="background:var(--color-bg-tertiary);padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${h}</pre></div><div><pre style="background:var(--color-bg-tertiary);padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${r}</pre></div><div><pre style="background:var(--color-bg-tertiary);padding:20px;border-radius:8px;font-size:12px;overflow:auto;max-height:400px;">${c}</pre></div></div>`;},
   parameters: {
     docs: {
       description: {
@@ -438,12 +438,12 @@ Scroll horizontally if the viewport is narrow.`,
             <div style="width:140px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                         display:flex;align-items:center;">
               <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                           letter-spacing:.08em;color:#9ca3af;">Cohort</span>
+                           letter-spacing:.08em;color:var(--color-border-light);">Cohort</span>
             </div>
             <div style="width:116px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                         display:flex;align-items:center;justify-content:flex-end;">
               <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                           letter-spacing:.08em;color:#9ca3af;">Users</span>
+                           letter-spacing:.08em;color:var(--color-border-light);">Users</span>
             </div>
             <div style="display:flex;align-items:center;padding:0 4px;">
               ${['Month 1','Month 2','Month 3','Month 4','Month 5',
@@ -453,7 +453,7 @@ Scroll horizontally if the viewport is narrow.`,
                   <div style="width:70px;flex-shrink:0;padding:8px 4px;box-sizing:border-box;
                               display:flex;align-items:center;justify-content:center;">
                     <span style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                                 letter-spacing:.06em;color:#9ca3af;text-align:center;
+                                 letter-spacing:.06em;color:var(--color-border-light);text-align:center;
                                  white-space:nowrap;">${m}</span>
                   </div>`).join('')}
             </div>
@@ -468,14 +468,14 @@ Scroll horizontally if the viewport is narrow.`,
               <div style="width:${w}px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                           display:flex;align-items:center;justify-content:flex-end;">
                 <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                             letter-spacing:.08em;color:#9ca3af;">${label}</span>
+                             letter-spacing:.08em;color:var(--color-border-light);">${label}</span>
               </div>`).join('')}
           </div>
           ${cohortRow()}
           ${cohortRow()}
           ${cohortRow()}
         </div>
-        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;">
+        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:var(--color-border-light);margin:8px 0 0;">
           3 rows shown. All rows white — no zebra. Scroll horizontally to see all columns.
         </p>
       </div>`;
@@ -505,7 +505,7 @@ Scroll horizontally if the viewport is narrow.`,
  * **QA checklist**
  * - Triangular shape: each newer cohort has exactly one fewer filled column
  * - All Month 1 cells: brand/900 (#362f78) — darkest badge on every row
- * - Empty cells: var(--color-bg-secondary) badge bg, #d1d5db dash glyph, no color badge
+ * - Empty cells: var(--color-bg-secondary) badge bg, var(--color-border-default) dash glyph, no color badge
  * - All rows: white bg (var(--color-bg-white)), text #111928 — no zebra striping
  * - Column headers: "Cohort" · "Users" · "Month 1" … "Month 7"
  * - Badge dimensions: 62×42px, border-radius:4px; cell container: px:4px
@@ -533,16 +533,16 @@ fading toward brand/50 as retention drops in later months.`,
   <div style="display:flex;align-items:stretch;background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">
     <div style="width:140px;padding:8px 16px;box-sizing:border-box;">
       <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                   letter-spacing:.08em;color:#9ca3af;">Cohort</span>
+                   letter-spacing:.08em;color:var(--color-border-light);">Cohort</span>
     </div>
     <div style="width:116px;padding:8px 16px;box-sizing:border-box;display:flex;justify-content:flex-end;">
       <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                   letter-spacing:.08em;color:#9ca3af;">Users</span>
+                   letter-spacing:.08em;color:var(--color-border-light);">Users</span>
     </div>
     <!-- Month headers (70px each) -->
     <div style="width:70px;padding:8px 4px;box-sizing:border-box;display:flex;justify-content:center;">
       <span style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                   letter-spacing:.06em;color:#9ca3af;">Month 1</span>
+                   letter-spacing:.06em;color:var(--color-border-light);">Month 1</span>
     </div>
     <!-- … Month 2 … Month 7 … -->
   </div>
@@ -571,7 +571,7 @@ fading toward brand/50 as retention drops in later months.`,
     <div style="padding:8px 4px;background:var(--color-bg-white);">
       <div style="width:62px;height:42px;border-radius:4px;background:var(--color-bg-muted);
                   display:flex;align-items:center;justify-content:center;">
-        <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:#d1d5db;">—</span>
+        <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:var(--color-border-default);">—</span>
       </div>
     </div>
   -->
@@ -615,7 +615,7 @@ fading toward brand/50 as retention drops in later months.`,
         <div style="display:flex;align-items:center;justify-content:center;
                     width:62px;height:42px;padding:10px;border-radius:4px;
                     background:var(--color-bg-muted);box-sizing:border-box;">
-          <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:#d1d5db;">—</span>
+          <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;color:var(--color-border-default);">—</span>
         </div>
       </div>`;
 
@@ -626,18 +626,18 @@ fading toward brand/50 as retention drops in later months.`,
         <div style="width:140px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                     display:flex;align-items:center;">
           <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                       letter-spacing:.08em;color:#9ca3af;">Cohort</span>
+                       letter-spacing:.08em;color:var(--color-border-light);">Cohort</span>
         </div>
         <div style="width:116px;flex-shrink:0;padding:8px 16px;box-sizing:border-box;
                     display:flex;align-items:center;justify-content:flex-end;">
           <span style="font-family:inherit;font-size:11px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                       letter-spacing:.08em;color:#9ca3af;">Users</span>
+                       letter-spacing:.08em;color:var(--color-border-light);">Users</span>
         </div>
         ${MONTHS.map(m => /* html */`
           <div style="width:70px;flex-shrink:0;padding:8px 4px;box-sizing:border-box;
                       display:flex;align-items:center;justify-content:center;">
             <span style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
-                         letter-spacing:.06em;color:#9ca3af;text-align:center;
+                         letter-spacing:.06em;color:var(--color-border-light);text-align:center;
                          white-space:nowrap;">${m}</span>
           </div>`).join('')}
       </div>`;
@@ -679,7 +679,7 @@ fading toward brand/50 as retention drops in later months.`,
           ${headerRow}
           ${dataRows}
         </div>
-        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:#9ca3af;margin:8px 0 0;">
+        <p style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:var(--color-border-light);margin:8px 0 0;">
           7 cohort periods · triangular fill · all rows white · scroll horizontally on narrow viewports
         </p>
       </div>`;

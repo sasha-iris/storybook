@@ -6,8 +6,8 @@
 const T = {
   // Light
   bgCard:       'var(--color-bg-white)',
-  bgInput:      '#f9fafb',
-  borderInput:  '#d1d5db',
+  bgInput:      'var(--color-bg-tertiary)',
+  borderInput:  'var(--color-border-default)',
   titleColor:   '#111928',
   dayHeader:    '#6b7280',
   dayText:      '#111928',
@@ -16,16 +16,16 @@ const T = {
   inRange:        'var(--color-bg-secondary)',
   btnOk:        '#42389d',
   btnCancel:    'var(--color-bg-white)',
-  btnCancelText:'#1e2939',
+  btnCancelText:'var(--color-text-heading)',
   calIcon:      '#6b7280',
   placeholder:  '#6b7280',
   // Dark
   dark_bgCard:  'var(--color-text-primary)',
   dark_dayText: 'var(--color-bg-white)',
-  dark_dayHdr:  '#9ca3af',
+  dark_dayHdr:  'var(--color-border-light)',
   dark_title:   'var(--color-bg-white)',
   dark_btnCancel: '#4b5563',
-  dark_calIcon: '#9ca3af',
+  dark_calIcon: 'var(--color-border-light)',
 };
 
 // ─── SVG helpers ───────────────────────────────────────────────────────────────
@@ -287,7 +287,7 @@ function yearPicker({ dark, selectedYear = 2019 }) {
 function dobPicker({ dark }) {
   const bg      = dark ? T.dark_bgCard : T.bgCard;
   const text    = dark ? T.dark_dayText : T.dayText;
-  const dimmed  = dark ? '#6b7280' : '#9ca3af';
+  const dimmed  = dark ? '#6b7280' : 'var(--color-border-light)';
   const titleCl = dark ? T.dark_title  : T.titleColor;
   const arrow   = dark ? T.dark_title  : T.titleColor;
   const cancelBg   = dark ? T.dark_btnCancel : T.btnCancel;
@@ -336,7 +336,7 @@ function dobPicker({ dark }) {
 function tabPicker({ dark, activeTab = 'month' }) {
   const bg      = dark ? T.dark_bgCard : T.bgCard;
   const text    = dark ? T.dark_dayText : T.dayText;
-  const dimmed  = dark ? '#6b7280' : '#9ca3af';
+  const dimmed  = dark ? '#6b7280' : 'var(--color-border-light)';
   const titleCl = dark ? T.dark_title  : T.titleColor;
   const tabSelBg = 'var(--color-bg-secondary)';
   const tabSelText = T.selectedRange;
@@ -371,7 +371,7 @@ function tabPicker({ dark, activeTab = 'month' }) {
       <span style="font-size:12px;font-weight:700;color:${titleCl};">FEB 2024</span>
       <button style="background:none;border:none;cursor:pointer;padding:0;">${chevronRight(arrow)}</button>
     </div>
-    <div style="display:flex;gap:4px;background:${dark ? '#4b5563' : '#f9fafb'};border-radius:8px;padding:4px;margin-bottom:8px;">
+    <div style="display:flex;gap:4px;background:${dark ? '#4b5563' : 'var(--color-bg-tertiary)'};border-radius:8px;padding:4px;margin-bottom:8px;">
       ${monthTab}${yearTab}
     </div>
     <div style="max-height:240px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;">
@@ -490,28 +490,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -523,14 +523,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });

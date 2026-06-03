@@ -413,7 +413,7 @@ export const Interactive = {
     const h=`<aside style="width:256px;background:${bg};border:1px solid var(--color-border-default);padding:16px;"><nav style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="padding:12px;border-radius:8px;background:${args.activeItem==='home'?'var(--color-border-default)':'transparent'}">Home</a></nav></aside>`;
     const r=`<aside style={{width:'256px',background:color,borderRight:'1px solid var(--color-border-default)',padding:'16px'}}><nav>{items.map(item=>(<a key={item} style={{active:active===item}}>...</a>))}</nav></aside>`;
     const c=`export function Sidebar({activeItem,showLogo,color='white'}){return(<aside style={{width:'256px'}}>{showLogo&&<div>Logo</div>}<nav>...</nav></aside>);}`;
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="width:256px;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">${sidebar(args)}</div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div></div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div></div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:#f9fafb;padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="width:256px;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">${sidebar(args)}</div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div></div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div></div><div><div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
   },
   parameters: {
     docs: {
@@ -625,7 +625,7 @@ All 8 menu item states from Figma component set \`9263:160845\`.
   render: () => {
     const labeledItem = (label, html) => `
       <div style="display:flex;flex-direction:column;gap:4px;">
-        <div style="font:10px/1 600 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;">${label}</div>
+        <div style="font:10px/1 600 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.06em;">${label}</div>
         <div style="background:var(--color-bg-default);padding:8px;border-radius:8px;">${html}</div>
       </div>`;
 
@@ -956,7 +956,7 @@ Shows the expanded sidebar alongside a typical dashboard content area. Use this 
           ].map(([text, time]) => `
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--color-border-default);">
               <span style="font:400 14px/1.5 inherit;color:#111928;">${text}</span>
-              <span style="font:400 12px/1.5 inherit;color:#9ca3af;">${time}</span>
+              <span style="font:400 12px/1.5 inherit;color:var(--color-border-light);">${time}</span>
             </div>
           `).join('')}
         </div>

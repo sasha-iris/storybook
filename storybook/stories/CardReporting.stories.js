@@ -21,7 +21,7 @@
  * |---------|----------|----------------|-----------|
  * | Default  | var(--color-bg-white)  | transparent    | shadow-sm |
  * | Hovered  | var(--color-bg-white)  | 1px #6875f5   | shadow-md |
- * | Inactive | #f9fafb  | transparent    | shadow-sm |
+ * | Inactive | var(--color-bg-tertiary)  | transparent    | shadow-sm |
  *
  * ## QA notes
  * - **Hovered**: title color → #42389d (brand/800) + arrow-right icon appears next to title
@@ -274,28 +274,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
             </div>
-            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -307,14 +307,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -491,7 +491,7 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
 
 /**
  * Inactive (paused) — toggle OFF, gray/50 bg, muted chips.
- * QA: bg #f9fafb, toggle off (gray/300 bg), both chips gray/100 + gray text,
+ * QA: bg var(--color-bg-tertiary), toggle off (gray/300 bg), both chips gray/100 + gray text,
  *     Amazon bg → var(--color-border-default) (not yellow), schedule text changes to paused message.
  */
 export const Inactive = {
@@ -504,8 +504,8 @@ Inactive state (active=no): report is paused.
 
 | Property          | Active                 | Inactive                    |
 |------------------|------------------------|-----------------------------|
-| Background        | var(--color-bg-white)                | **#f9fafb** (gray/50)       |
-| Toggle            | ON — brand/800 purple  | **OFF** — gray/300 (#d1d5db)|
+| Background        | var(--color-bg-white)                | **var(--color-bg-tertiary)** (gray/50)       |
+| Toggle            | ON — brand/800 purple  | **OFF** — gray/300 (var(--color-border-default))|
 | E-mail chip bg    | #e60076 (pink/600)     | **var(--color-bg-secondary)** (gray/100)      |
 | Slack chip bg     | #9810fa (purple/600)   | **var(--color-bg-secondary)** (gray/100)      |
 | Amazon icon bg    | #fef9c2 (yellow/100)   | **var(--color-border-default)** (gray/200)      |
@@ -540,7 +540,7 @@ Inactive state (active=no): report is paused.
 </div>
 <!-- CSS for inactive modifier:
 .card-reporting--inactive {
-  background: #f9fafb;
+  background: var(--color-bg-tertiary);
 } -->`,
       },
     },

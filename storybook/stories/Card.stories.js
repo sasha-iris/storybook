@@ -161,28 +161,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -194,14 +194,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -412,9 +412,9 @@ Button colour is brand/800 (\`#42389d\`).
  * (Figma uses a 2-vector raster with no composite asset).
  *
  * **QA checklist**
- * - Link colour: #155dfc (blue/600)
+ * - Link colour: var(--color-interactive-primary) (blue/600)
  * - External-link icon is inline SVG; verify it aligns with the link text baseline
- * - Gift icon container: 40px × 40px, background #f9fafb, border-radius 8px
+ * - Gift icon container: 40px × 40px, background var(--color-bg-tertiary), border-radius 8px
  * - Card width: 384px; padding: 24px
  */
 export const WithLink = {
@@ -423,7 +423,7 @@ export const WithLink = {
     docs: {
       description: {
         story: `Content card with a top icon, body copy, and an external-link CTA.
-Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Figma source is a 2-vector raster.
+Link colour is blue/600 (\`var(--color-interactive-primary)\`). Gift icon is approximated (APPROX) — Figma source is a 2-vector raster.
 
 \`\`\`html
 <div style="…padding:24px;max-width:384px;">
@@ -431,7 +431,7 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
   <div style="width:40px;height:40px;background:var(--color-bg-default);border-radius:8px;…">…gift svg…</div>
   <h5>Terms of Service</h5>
   <p>Review our full terms…</p>
-  <a href="#" style="color:#155dfc;">See our guideline →</a>
+  <a href="#" style="color:var(--color-interactive-primary);">See our guideline →</a>
 </div>
 \`\`\``,
       },
@@ -458,7 +458,7 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
     when using the Iris platform.
   </p>
   <a href="#" style="display:inline-flex;align-items:center;gap:6px;
-                     color:#155dfc;font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
+                     color:var(--color-interactive-primary);font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
     See our guideline
     <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
          xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -495,7 +495,7 @@ Link colour is blue/600 (\`#155dfc\`). Gift icon is approximated (APPROX) — Fi
         when using the Iris platform.
       </p>
       <a href="#" style="display:inline-flex;align-items:center;gap:6px;
-                         color:#155dfc;font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
+                         color:var(--color-interactive-primary);font-size:var(--text-sm);font-weight:var(--font-medium);text-decoration:none;">
         See our guideline
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none"
              xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

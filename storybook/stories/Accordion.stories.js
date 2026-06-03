@@ -168,11 +168,11 @@ export const Interactive = {
   render: (args) => {
     const a = args;
 
-    const htmlCode = `<div style="display:flex;flex-direction:column;gap:16px;">\n  <div class="accordion">\n    <button\n      class="accordion-header"\n      aria-expanded="${a.openIndex === 0}"\n      style="width:100%;padding:12px;text-align:left;background:#f9fafb;border:1px solid var(--color-border-default);border-radius:8px;cursor:pointer;"\n    >\n      ${a.showIcon ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>' : ''}\n      <span>Item Title</span>\n      <svg style="transform:rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"></polyline></svg>\n    </button>\n    <div class="accordion-body" style="padding:12px;display:${a.openIndex === 0 ? 'block' : 'none'};">Body content</div>\n  </div>\n</div>`;
+    const htmlCode = `<div style="display:flex;flex-direction:column;gap:16px;">\n  <div class="accordion">\n    <button\n      class="accordion-header"\n      aria-expanded="${a.openIndex === 0}"\n      style="width:100%;padding:12px;text-align:left;background:var(--color-bg-tertiary);border:1px solid var(--color-border-default);border-radius:8px;cursor:pointer;"\n    >\n      ${a.showIcon ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>' : ''}\n      <span>Item Title</span>\n      <svg style="transform:rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"></polyline></svg>\n    </button>\n    <div class="accordion-body" style="padding:12px;display:${a.openIndex === 0 ? 'block' : 'none'};">Body content</div>\n  </div>\n</div>`;
 
-    const reactCode = `<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  {items.map((item, idx) => (\n    <div key={idx} className="accordion">\n      <button\n        className="accordion-header"\n        onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}\n        aria-expanded={openIndex === idx}\n        style={{\n          width: '100%',\n          padding: '12px',\n          textAlign: 'left',\n          background: '#f9fafb',\n          border: '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          cursor: 'pointer',\n        }}\n      >\n        <span>{item.title}</span>\n        <svg\n          style={{\n            transform: openIndex === idx ? 'rotate(0deg)' : 'rotate(180deg)',\n            transition: 'transform 0.2s',\n          }}\n        >\n          {/* chevron icon */}\n        </svg>\n      </button>\n      {openIndex === idx && (\n        <div className="accordion-body\" style={{ padding: '12px' }}>\n          {item.body}\n        </div>\n      )}\n    </div>\n  ))}\n</div>`;
+    const reactCode = `<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n  {items.map((item, idx) => (\n    <div key={idx} className="accordion">\n      <button\n        className="accordion-header"\n        onClick={() => setOpenIndex(openIndex === idx ? -1 : idx)}\n        aria-expanded={openIndex === idx}\n        style={{\n          width: '100%',\n          padding: '12px',\n          textAlign: 'left',\n          background: 'var(--color-bg-tertiary)',\n          border: '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          cursor: 'pointer',\n        }}\n      >\n        <span>{item.title}</span>\n        <svg\n          style={{\n            transform: openIndex === idx ? 'rotate(0deg)' : 'rotate(180deg)',\n            transition: 'transform 0.2s',\n          }}\n        >\n          {/* chevron icon */}\n        </svg>\n      </button>\n      {openIndex === idx && (\n        <div className="accordion-body\" style={{ padding: '12px' }}>\n          {item.body}\n        </div>\n      )}\n    </div>\n  ))}\n</div>`;
 
-    const componentCode = `export function Accordion({ items = [], showIcon = false, openIndex = 0 }) {\n  const [open, setOpen] = useState(openIndex);\n\n  return (\n    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n      {items.map((item, idx) => (\n        <div key={idx} className="accordion">\n          <button\n            className="accordion-header\"\n            onClick={() => setOpen(open === idx ? -1 : idx)}\n            aria-expanded={open === idx}\n            style={{\n              width: '100%',\n              padding: '12px',\n              textAlign: 'left',\n              background: '#f9fafb',\n              border: '1px solid var(--color-border-default)',\n              borderRadius: '8px',\n              cursor: 'pointer',\n              display: 'flex',\n              alignItems: 'center',\n              gap: '8px',\n            }}\n          >\n            {showIcon && <span>❓</span>}\n            <span style={{ flex: 1 }}>{item.title}</span>\n            <svg\n              style={{\n                transform: open === idx ? 'rotate(0deg)' : 'rotate(180deg)',\n                transition: 'transform 0.2s',\n              }}\n            />\n          </button>\n          {open === idx && (\n            <div className="accordion-body\" style={{ padding: '12px', borderTop: '1px solid var(--color-border-default)' }}>\n              {item.body}\n            </div>\n          )}\n        </div>\n      ))}\n    </div>\n  );\n}`;
+    const componentCode = `export function Accordion({ items = [], showIcon = false, openIndex = 0 }) {\n  const [open, setOpen] = useState(openIndex);\n\n  return (\n    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>\n      {items.map((item, idx) => (\n        <div key={idx} className="accordion">\n          <button\n            className="accordion-header\"\n            onClick={() => setOpen(open === idx ? -1 : idx)}\n            aria-expanded={open === idx}\n            style={{\n              width: '100%',\n              padding: '12px',\n              textAlign: 'left',\n              background: 'var(--color-bg-tertiary)',\n              border: '1px solid var(--color-border-default)',\n              borderRadius: '8px',\n              cursor: 'pointer',\n              display: 'flex',\n              alignItems: 'center',\n              gap: '8px',\n            }}\n          >\n            {showIcon && <span>❓</span>}\n            <span style={{ flex: 1 }}>{item.title}</span>\n            <svg\n              style={{\n                transform: open === idx ? 'rotate(0deg)' : 'rotate(180deg)',\n                transition: 'transform 0.2s',\n              }}\n            />\n          </button>\n          {open === idx && (\n            <div className="accordion-body\" style={{ padding: '12px', borderTop: '1px solid var(--color-border-default)' }}>\n              {item.body}\n            </div>\n          )}\n        </div>\n      ))}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -186,28 +186,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -219,14 +219,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -453,15 +453,15 @@ export const AllStyles = {
   render: ({ showIcon, openIndex }) => `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;align-items:start;padding:8px 0;">
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Card</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Card</div>
         ${accordion({ style: 'card', showIcon, openIndex })}
       </div>
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Separate Cards</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Separate Cards</div>
         ${accordion({ style: 'separate', showIcon, openIndex })}
       </div>
       <div>
-        <div style="font:700 10px/1.5 ui-monospace,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Only Links</div>
+        <div style="font:700 10px/1.5 ui-monospace,monospace;color:var(--color-border-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Only Links</div>
         ${accordion({ style: 'links', showIcon: false, openIndex })}
       </div>
     </div>

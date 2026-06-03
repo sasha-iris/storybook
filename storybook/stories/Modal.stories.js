@@ -64,12 +64,12 @@ function darkTokens(dark) {
     ? {
         bg:        'var(--color-text-primary)',
         title:     'var(--color-bg-white)',
-        body:      '#9ca3af',
+        body:      'var(--color-border-light)',
         border:    '#4b5563',
-        closeClr:  '#9ca3af',
+        closeClr:  'var(--color-border-light)',
         walletRow: '#4b5563',
         badgeBg:   'var(--color-text-primary)',
-        badgeClr:  '#9ca3af',
+        badgeClr:  'var(--color-border-light)',
       }
     : {
         bg:        'var(--color-bg-surface)',
@@ -192,14 +192,14 @@ function modalWithForms({ size = 'sm', darkMode = false, showOverlay = true } = 
         <span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
         Remember me
       </label>
-      <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>
+      <a href="#" style="font-size:var(--text-sm);color:var(--color-interactive-primary);text-decoration:none;">Lost Password?</a>
     </div>
 
     <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;margin-bottom:12px;">
       Create account
     </button>
     <p style="text-align:center;font-size:var(--text-sm);margin:0;">
-      <a href="#" style="color:#155dfc;font-weight:var(--font-medium);text-decoration:none;">Not registered? Create account</a>
+      <a href="#" style="color:var(--color-interactive-primary);font-weight:var(--font-medium);text-decoration:none;">Not registered? Create account</a>
     </p>
   </div>
 </div>`;
@@ -370,28 +370,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -403,14 +403,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -546,12 +546,12 @@ Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from
       <label style="display:flex;align-items:center;gap:8px;">
         <input type="checkbox"> Remember me
       </label>
-      <a href="#" style="color:#155dfc;">Lost Password?</a>
+      <a href="#" style="color:var(--color-interactive-primary);">Lost Password?</a>
     </div>
 
     <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">Create account</button>
     <p style="text-align:center;margin-top:12px;">
-      <a href="#" style="color:#155dfc;">Not registered? Create account</a>
+      <a href="#" style="color:var(--color-interactive-primary);">Not registered? Create account</a>
     </p>
   </div>
 </div>`,
@@ -621,7 +621,7 @@ export const DarkMode = {
         story: `
 All 4 modal types in dark mode — Figma: \`Dark mode=True\`.
 
-Dark mode tokens: \`bg:var(--color-text-primary)\`, \`title:var(--color-bg-white)\`, \`body:#9ca3af\`, \`separator:#4b5563\`.
+Dark mode tokens: \`bg:var(--color-text-primary)\`, \`title:var(--color-bg-white)\`, \`body:var(--color-border-light)\`, \`separator:#4b5563\`.
 
 **✅ Do** — apply dark tokens consistently to header, body, and footer.
 **❌ Don't** — mix light and dark tokens within the same modal instance.
@@ -633,9 +633,9 @@ Dark mode tokens: \`bg:var(--color-text-primary)\`, \`title:var(--color-bg-white
 <div class="modal-dialog" style="background:var(--color-text-primary);">
   <div class="modal-header" style="border-color:#4b5563;">
     <h2 class="modal-title" style="color:var(--color-bg-white);">Terms of Service</h2>
-    <button class="modal-close" style="color:#9ca3af;"><!-- × --></button>
+    <button class="modal-close" style="color:var(--color-border-light);"><!-- × --></button>
   </div>
-  <div class="modal-body" style="color:#9ca3af;">...</div>
+  <div class="modal-body" style="color:var(--color-border-light);">...</div>
   <div class="modal-footer" style="border-color:#4b5563;">
     <button class="btn btn-primary btn-md">I accept</button>
   </div>
@@ -647,22 +647,22 @@ Dark mode tokens: \`bg:var(--color-text-primary)\`, \`title:var(--color-bg-white
     <div style="display:flex;flex-wrap:wrap;gap:24px;padding:32px;
                 background:rgba(17,25,40,0.9);justify-content:center;">
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Info</div>
         ${modalInfo({ size: 'sm', darkMode: true, showOverlay: false })}
       </div>
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Pop-up</div>
         ${modalPopUp({ size: 'sm', darkMode: true, showOverlay: false })}
       </div>
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">With forms</div>
         ${modalWithForms({ size: 'sm', darkMode: true, showOverlay: false })}
       </div>
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Crypto wallet</div>
         ${modalCryptoWallet({ size: 'sm', darkMode: true, showOverlay: false })}
       </div>
@@ -707,7 +707,7 @@ All four size variants — Figma: \`Size=SM/Default/LG/XL\`. All use the Info ty
         ['XL · 1024px',     modalInfo({ size: 'xl',      darkMode: false, showOverlay: false })],
       ].map(([label, html]) => `
         <div>
-          <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+          <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                       text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">${label}</div>
           ${html}
         </div>`).join('')}
@@ -738,22 +738,22 @@ export const AllTypes = {
     <div style="display:flex;flex-wrap:wrap;gap:24px;padding:32px;
                 background:rgba(17,25,40,0.82);justify-content:center;">
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Info</div>
         ${modalInfo({ size: 'sm', darkMode: false, showOverlay: false })}
       </div>
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Pop-up</div>
         ${modalPopUp({ size: 'sm', darkMode: false, showOverlay: false })}
       </div>
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">With forms</div>
         ${modalWithForms({ size: 'sm', darkMode: false, showOverlay: false })}
       </div>
       <div>
-        <div style="font-family:ui-monospace,monospace;font-size:10px;color:#9ca3af;
+        <div style="font-family:ui-monospace,monospace;font-size:10px;color:var(--color-border-light);
                     text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Crypto wallet</div>
         ${modalCryptoWallet({ size: 'sm', darkMode: false, showOverlay: false })}
       </div>

@@ -66,17 +66,17 @@ const CARD_SHELL_SM = `background:var(--color-bg-surface);border:1px solid var(-
 /* ── Inline SVG helpers ───────────────────────────────────── */
 /* Heroicons check-circle — filled blue (enabled) or gray (disabled) */
 const CHECK = (on = true) =>
-  `<svg width="20" height="20" viewBox="0 0 20 20" fill="${on ? '#155dfc' : '#9ca3af'}" aria-hidden="true" style="flex-shrink:0;">
+  `<svg width="20" height="20" viewBox="0 0 20 20" fill="${on ? 'var(--color-interactive-primary)' : 'var(--color-border-light)'}" aria-hidden="true" style="flex-shrink:0;">
     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
   </svg>`;
 
 /* Yellow star — Heroicons solid star */
-const STAR = `<svg width="20" height="20" viewBox="0 0 20 20" fill="#FFDF20" aria-hidden="true">
+const STAR = `<svg width="20" height="20" viewBox="0 0 20 20" fill="var(--color-warning-primary)" aria-hidden="true">
   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
 </svg>`;
 
 /* Heroicons chevron-right (outline) */
-const CHEVRON_RIGHT = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#155dfc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 5l5 5-5 5"/></svg>`;
+const CHEVRON_RIGHT = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--color-interactive-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 5l5 5-5 5"/></svg>`;
 
 /* Heroicons dots-horizontal (menu) */
 const DOTS_H = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`;
@@ -153,7 +153,7 @@ These Figma variants use \`border-radius: 8px\`, which differs from the \`var(--
  * **QA checklist**
  * - Avatar: 96px circle, 1px border var(--color-border-default), shadow-md
  * - "Add friend": bg #42389d (brand/800), rounded-12px, 12px medium, white
- * - "Message": no bg-fill, border 1px #f9fafb, text #1e2939, 12px medium
+ * - "Message": no bg-fill, border 1px var(--color-bg-tertiary), text var(--color-text-heading), 12px medium
  * - Card pt-16px px-16px pb-40px (asymmetric padding — more space at bottom)
  */
 export const UserProfileCard = {
@@ -170,7 +170,7 @@ Social profile card. Centred avatar, name, role, and two action buttons.
 **✅ Do** — keep the avatar 96 px circle with \`border: 1px solid var(--color-border-default)\` and shadow-md.
 **❌ Don't** — use this layout for showing metrics or data — use Card/KPI instead.
 
-**QA** — Avatar: 96 px circle, \`var(--color-border-default)\` border, shadow-md · "Add friend": bg \`#42389d\` (brand/800), rounded-12 px, 12 px medium · "Message": no fill, \`#f9fafb\` border, \`#1e2939\` text · Card padding: \`16px 16px 40px\` (asymmetric — more space at bottom).
+**QA** — Avatar: 96 px circle, \`var(--color-border-default)\` border, shadow-md · "Add friend": bg \`#42389d\` (brand/800), rounded-12 px, 12 px medium · "Message": no fill, \`var(--color-bg-tertiary)\` border, \`var(--color-text-heading)\` text · Card padding: \`16px 16px 40px\` (asymmetric — more space at bottom).
 
 **Approximations:** Three-dots icon is an inline SVG (Figma uses a raster vector).
         `,
@@ -194,7 +194,7 @@ Social profile card. Centred avatar, name, role, and two action buttons.
   <div style="display:flex;gap:12px;justify-content:center;padding-top:24px;">
     <button style="background:#42389d;color:#fff;font-size:var(--text-xs);font-weight:var(--font-medium);
                    padding:8px 12px;border-radius:12px;border:none;cursor:pointer;">Add friend</button>
-    <button style="background:transparent;border:1px solid #f9fafb;color:#1e2939;
+    <button style="background:transparent;border:1px solid var(--color-bg-tertiary);color:var(--color-text-heading);
                    font-size:var(--text-xs);font-weight:var(--font-medium);padding:8px 12px;border-radius:12px;cursor:pointer;">Message</button>
   </div>
 </div>`,
@@ -224,7 +224,7 @@ Social profile card. Centred avatar, name, role, and two action buttons.
                        padding:8px 12px;border-radius:12px;border:none;cursor:pointer;white-space:nowrap;">
           Add friend
         </button>
-        <button style="background:transparent;border:1px solid #f9fafb;color:#1e2939;
+        <button style="background:transparent;border:1px solid var(--color-bg-tertiary);color:var(--color-text-heading);
                        font-size:var(--text-xs);font-weight:var(--font-medium);line-height:1.5;
                        padding:8px 12px;border-radius:12px;cursor:pointer;white-space:nowrap;">
           Message
@@ -241,12 +241,12 @@ Social profile card. Centred avatar, name, role, and two action buttons.
  * lost-password link, primary CTA button, and "not registered" helper text.
  *
  * **QA checklist**
- * - Input bg: #f9fafb, border: 1px solid #d1d5db, border-radius: 8px, px-16px py-12px
+ * - Input bg: var(--color-bg-tertiary), border: 1px solid var(--color-border-default), border-radius: 8px, px-16px py-12px
  * - Email input has a mail icon (16px) left of the placeholder
- * - Checkbox: 16px square, bg #f9fafb, border 0.5px solid #d1d5db, border-radius 4px
+ * - Checkbox: 16px square, bg var(--color-bg-tertiary), border 0.5px solid var(--color-border-default), border-radius 4px
  * - "Create account" button: bg #1447e6 (blue/700, NOT brand/800 purple), full width
  * - Shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.1) — slightly different from other cards
- * - "Lost Password?" color: #155dfc (blue/600), not brand purple
+ * - "Lost Password?" color: var(--color-interactive-primary) (blue/600), not brand purple
  */
 export const WithFormInputs = {
     name: 'With form inputs',
@@ -261,9 +261,9 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 **✅ Do** — use for authentication, onboarding, and sign-in flows embedded in a page layout.
 **❌ Don't** — place this inside a modal — the card itself acts as the visual container.
 
-**Key token differences vs other cards:** CTA button is \`#1447e6\` (blue/700) — **not** brand/800 purple · shadow-sm variant (lighter) · checkbox border: \`0.5 px solid #d1d5db\`.
+**Key token differences vs other cards:** CTA button is \`#1447e6\` (blue/700) — **not** brand/800 purple · shadow-sm variant (lighter) · checkbox border: \`0.5 px solid var(--color-border-default)\`.
 
-**QA** — Input: bg \`#f9fafb\`, border \`1px solid #d1d5db\`, rounded-8 px, \`px-16 py-12\` · Email input has a 16 px mail icon · "Create account" button: bg \`#1447e6\`, full width · "Lost Password?" link: \`#155dfc\` (blue/600).
+**QA** — Input: bg \`var(--color-bg-tertiary)\`, border \`1px solid var(--color-border-default)\`, rounded-8 px, \`px-16 py-12\` · Email input has a 16 px mail icon · "Create account" button: bg \`#1447e6\`, full width · "Lost Password?" link: \`var(--color-interactive-primary)\` (blue/600).
 
 **Approximations:** Mail icon is Heroicons envelope inline SVG (Figma uses a 2-vector raster assembly).
         `,
@@ -293,7 +293,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
       <span class="iris-checkbox iris-checkbox--checked" role="checkbox" aria-checked="true"></span>
       Remember me
     </label>
-    <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;">Lost Password?</a>
+    <a href="#" style="font-size:var(--text-sm);color:var(--color-interactive-primary);text-decoration:none;">Lost Password?</a>
   </div>
   <!-- CTA -->
   <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;margin-bottom:16px;">
@@ -301,7 +301,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
   </button>
   <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;">
     <span style="color:var(--color-text-secondary);">Not registered? </span>
-    <a href="#" style="color:#155dfc;text-decoration:none;">Create account</a>
+    <a href="#" style="color:var(--color-interactive-primary);text-decoration:none;">Create account</a>
   </p>
 </div>`,
       },
@@ -341,7 +341,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
           <span class="iris-checkbox" role="checkbox" aria-checked="false"></span>
           <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#101828;">Remember me</span>
         </label>
-        <a href="#" style="font-size:var(--text-sm);color:#155dfc;text-decoration:none;white-space:nowrap;">
+        <a href="#" style="font-size:var(--text-sm);color:var(--color-interactive-primary);text-decoration:none;white-space:nowrap;">
           Lost Password?
         </a>
       </div>
@@ -353,7 +353,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
         </button>
         <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;line-height:1.5;">
           <span style="color:var(--color-text-secondary);">Not registered?</span>
-          <a href="#" style="color:#155dfc;text-decoration:none;"> Create account</a>
+          <a href="#" style="color:var(--color-interactive-primary);text-decoration:none;"> Create account</a>
         </p>
       </div>
 
@@ -368,8 +368,8 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
  *
  * **QA checklist**
  * - Image: 275×174px, centered in a padded header area (px-16px py-24px)
- * - Stars: 5× yellow (#FFDF20)
- * - Badge: "5.0" — bg #155dfc (blue/600), rounded-4px, 12px semibold white
+ * - Stars: 5× yellow (var(--color-warning-primary))
+ * - Badge: "5.0" — bg var(--color-interactive-primary) (blue/600), rounded-4px, 12px semibold white
  * - Price: 30px extrabold #111928
  * - "Add to cart": bg #42389d (brand/800), rounded-12px, 14px medium white, h-36px
  */
@@ -387,9 +387,9 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
 **✅ Do** — keep the product image at 275 × 174 px with \`px-16 py-24\` header padding.
 **❌ Don't** — use this card when the primary action is navigation rather than a purchase — use Card/Basics with a link instead.
 
-**QA** — Image area: 275 × 174 px, centered, \`px-16 py-24\` · Stars: 5 × yellow \`#FFDF20\` · Rating badge: bg \`#155dfc\` (blue/600), rounded-4 px, 12 px semibold white · Price: 30 px extrabold \`#111928\` · "Add to cart": bg \`#42389d\` (brand/800), rounded-12 px, 14 px medium, h-36 px.
+**QA** — Image area: 275 × 174 px, centered, \`px-16 py-24\` · Stars: 5 × yellow \`var(--color-warning-primary)\` · Rating badge: bg \`var(--color-interactive-primary)\` (blue/600), rounded-4 px, 12 px semibold white · Price: 30 px extrabold \`#111928\` · "Add to cart": bg \`#42389d\` (brand/800), rounded-12 px, 14 px medium, h-36 px.
 
-**Approximations:** Stars are inline SVG (Figma uses a raster star asset). Star color: \`#FFDF20\` (old-colors/yellow/300).
+**Approximations:** Stars are inline SVG (Figma uses a raster star asset). Star color: \`var(--color-warning-primary)\` (old-colors/yellow/300).
         `,
       },
       source: {
@@ -407,8 +407,8 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
     <div style="display:flex;flex-direction:column;gap:8px;">
       <p style="font-size:var(--text-xl);font-weight:var(--font-semibold);color:#111928;margin:0;">Apple Watch Series 7 GPS</p>
       <div style="display:flex;align-items:center;gap:12px;">
-        <!-- 5× yellow star SVGs (#FFDF20) -->
-        <span style="background:#155dfc;color:#fff;font-size:var(--text-xs);font-weight:var(--font-semibold);
+        <!-- 5× yellow star SVGs (var(--color-warning-primary)) -->
+        <span style="background:var(--color-interactive-primary);color:#fff;font-size:var(--text-xs);font-weight:var(--font-semibold);
                      padding:2px 4px;border-radius:4px;">5.0</span>
       </div>
     </div>
@@ -444,7 +444,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
           </p>
           <div style="display:flex;align-items:center;gap:12px;">
             <div style="display:flex;gap:4px;">${STAR.repeat(5)}</div>
-            <span style="background:#155dfc;color:#fff;font-size:var(--text-xs);font-weight:var(--font-semibold);
+            <span style="background:var(--color-interactive-primary);color:#fff;font-size:var(--text-xs);font-weight:var(--font-semibold);
                          padding:2px 4px;border-radius:4px;line-height:12px;white-space:nowrap;">5.0</span>
           </div>
         </div>
@@ -474,7 +474,7 @@ Product card for e-commerce. Centered product photo, star rating with badge, pri
  * - Avatar: 32px circle, object-fit cover
  * - Divider between rows: 1px solid var(--color-border-default)
  * - Amount: 16px semibold right-aligned
- * - "View all" link: #155dfc, 16px medium
+ * - "View all" link: var(--color-interactive-primary), 16px medium
  * - Title "Latest Customers": 18px extrabold #111928
  */
 export const CardWithList = {
@@ -491,7 +491,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
 **✅ Do** — keep row dividers at \`1px solid var(--color-border-default)\` to maintain visual separation without weight.
 **❌ Don't** — use more than ~8 rows without pagination — the card should not become a scrollable list.
 
-**QA** — No border (shadow-sm only) · Avatar: 32 px circle, \`object-fit: cover\` · Row divider: \`1px solid var(--color-border-default)\` · Amount: 16 px semibold, right-aligned · "View all" link: \`#155dfc\`, 16 px medium · Title "Latest Customers": 18 px extrabold \`#111928\`.
+**QA** — No border (shadow-sm only) · Avatar: 32 px circle, \`object-fit: cover\` · Row divider: \`1px solid var(--color-border-default)\` · Amount: 16 px semibold, right-aligned · "View all" link: \`var(--color-interactive-primary)\`, 16 px medium · Title "Latest Customers": 18 px extrabold \`#111928\`.
         `,
       },
       source: {
@@ -502,7 +502,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;">
     <p style="font-size:18px;font-weight:800;color:#111928;margin:0;">Latest Customers</p>
-    <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;">View all</a>
+    <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-interactive-primary);text-decoration:none;">View all</a>
   </div>
   <!-- Customer rows -->
   <div style="display:flex;flex-direction:column;">
@@ -542,7 +542,7 @@ Customer list card. Header with "View all" link, then 6 rows: avatar + name/emai
         <p style="font-size:18px;font-weight:800;color:#111928;line-height:1.5;margin:0;">
           Latest Customers
         </p>
-        <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;
+        <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-interactive-primary);text-decoration:none;
                            white-space:nowrap;">View all</a>
       </div>
 
@@ -621,12 +621,12 @@ Standard pricing plan card. Plan name, price, feature checklist with enabled/dis
     <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
       <!-- Enabled item -->
       <div style="display:flex;align-items:center;gap:12px;">
-        <!-- check-circle SVG fill:#155dfc -->
+        <!-- check-circle SVG fill:var(--color-interactive-primary) -->
         <span style="font-size:var(--text-base);color:var(--color-text-secondary);">2 team members</span>
       </div>
       <!-- Disabled item -->
       <div style="display:flex;align-items:center;gap:12px;">
-        <!-- check-circle SVG fill:#9ca3af -->
+        <!-- check-circle SVG fill:var(--color-border-light) -->
         <span style="font-size:var(--text-base);color:var(--color-text-secondary);text-decoration:line-through;">Sketch Files</span>
       </div>
     </div>
@@ -801,12 +801,12 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
  * Card with a simple top-tab navigation bar + body copy + "Learn more" link.
  *
  * **QA checklist**
- * - Tab row: bg #f9fafb, border-bottom 1px var(--color-border-default), p-16px
- * - Active tab "Services": color #155dfc (blue/600), medium 14px
+ * - Tab row: bg var(--color-bg-tertiary), border-bottom 1px var(--color-border-default), p-16px
+ * - Active tab "Services": color var(--color-interactive-primary) (blue/600), medium 14px
  * - Inactive tabs "About", "Facts": color #6b7280, medium 14px
  * - Tab gap: 32px
  * - Body: p-32px, heading 30px extrabold, body 18px regular
- * - "Learn more" link + chevron-right: color #155dfc
+ * - "Learn more" link + chevron-right: color var(--color-interactive-primary)
  *
  * **Approximations:** Chevron-right is inline SVG.
  */
@@ -823,9 +823,9 @@ Card with simple tab navigation above the content body.
 **✅ Do** — use when a card needs to switch between 2–4 content sections (About / Services / Facts).
 **❌ Don't** — use more than 4–5 tabs in this pattern — use a full Tabs component at page level instead.
 
-**QA** — Tab strip: bg \`#f9fafb\`, border-bottom \`1px var(--color-border-default)\`, \`p-16 px\` · Active tab: color \`#155dfc\` (blue/600), 14 px medium · Inactive tabs: \`#6b7280\`, 14 px medium · Tab gap: 32 px · Body: \`p-32 px\`, heading 30 px extrabold, body 18 px regular · "Learn more" link + chevron-right: color \`#155dfc\`.
+**QA** — Tab strip: bg \`var(--color-bg-tertiary)\`, border-bottom \`1px var(--color-border-default)\`, \`p-16 px\` · Active tab: color \`var(--color-interactive-primary)\` (blue/600), 14 px medium · Inactive tabs: \`#6b7280\`, 14 px medium · Tab gap: 32 px · Body: \`p-32 px\`, heading 30 px extrabold, body 18 px regular · "Learn more" link + chevron-right: color \`var(--color-interactive-primary)\`.
 
-Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
+Active tab color: \`var(--color-interactive-primary)\` (blue/600). Tab strip bg: \`var(--color-bg-tertiary)\`.
         `,
       },
       source: {
@@ -833,13 +833,13 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
         code: `<!-- Nav Tabs card (790px, shadow-md) -->
 <div style="width:790px;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
-  <!-- Tab row: bg #f9fafb, border-bottom 1px var(--color-border-default) -->
+  <!-- Tab row: bg var(--color-bg-tertiary), border-bottom 1px var(--color-border-default) -->
   <div style="background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);padding:16px;">
     <div style="display:flex;gap:32px;">
       <!-- Inactive tab: color #6b7280, medium 14px -->
       <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);cursor:pointer;">About</span>
-      <!-- Active tab: color #155dfc (blue/600) -->
-      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;cursor:pointer;">Services</span>
+      <!-- Active tab: color var(--color-interactive-primary) (blue/600) -->
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-interactive-primary);cursor:pointer;">Services</span>
       <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);cursor:pointer;">Facts</span>
     </div>
   </div>
@@ -848,10 +848,10 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
     <p style="font-size:30px;font-weight:800;color:#111928;margin:0 0 8px;">
       Powering innovation at 200,000+ companies</p>
     <p style="font-size:18px;color:var(--color-text-secondary);line-height:1.5;margin:0 0 12px;">Body copy here.</p>
-    <!-- "Learn more" + chevron-right: color #155dfc -->
+    <!-- "Learn more" + chevron-right: color var(--color-interactive-primary) -->
     <div style="display:flex;align-items:center;gap:4px;">
-      <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;">Learn more</a>
-      <!-- chevron-right SVG, stroke #155dfc -->
+      <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-interactive-primary);text-decoration:none;">Learn more</a>
+      <!-- chevron-right SVG, stroke var(--color-interactive-primary) -->
     </div>
   </div>
 </div>`,
@@ -865,7 +865,7 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
       <div style="background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);padding:16px;">
         <div style="display:flex;gap:32px;">
           <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;cursor:pointer;">About</span>
-          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;line-height:1.5;cursor:pointer;">Services</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-interactive-primary);line-height:1.5;cursor:pointer;">Services</span>
           <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);line-height:1.5;cursor:pointer;">Facts</span>
         </div>
       </div>
@@ -881,7 +881,7 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
             Respond to changes and deliver great customer and employee service experiences fast.
           </p>
           <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
-            <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:#155dfc;text-decoration:none;
+            <a href="#" style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-interactive-primary);text-decoration:none;
                                white-space:nowrap;">Learn more</a>
             ${CHEVRON_RIGHT}
           </div>
@@ -900,8 +900,8 @@ Active tab color: \`#155dfc\` (blue/600). Tab strip bg: \`#f9fafb\`.
  *
  * **QA checklist**
  * - Tab row: 3 equal columns separated by 1px var(--color-border-default) vertical dividers
- * - Active tab "Statistics": bg #f9fafb, color #155dfc, medium 14px
- * - Inactive tabs: bg #f9fafb, color #6b7280, medium 14px
+ * - Active tab "Statistics": bg var(--color-bg-tertiary), color var(--color-interactive-primary), medium 14px
+ * - Inactive tabs: bg var(--color-bg-tertiary), color #6b7280, medium 14px
  * - Stats: 30px extrabold #111928 + 16px regular #6b7280 label, centered
  * - Stats grid: 2 rows × 3 columns, gap 32px
  */
@@ -919,7 +919,7 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
 **✅ Do** — keep stats to 6 (2 rows × 3 columns) — more than 6 items should use a separate Table.
 **❌ Don't** — use this pattern for a single metric — use Card/KPI instead.
 
-**QA** — Tab row: 3 equal columns, separated by \`1px var(--color-border-default)\` vertical dividers · Active tab: bg \`#f9fafb\`, color \`#155dfc\`, 14 px medium · Inactive tabs: bg \`#f9fafb\`, \`#6b7280\` · Stats: 30 px extrabold \`#111928\` value + 16 px regular \`#6b7280\` label, centered · Grid: 2 rows × 3 columns, gap 32 px.
+**QA** — Tab row: 3 equal columns, separated by \`1px var(--color-border-default)\` vertical dividers · Active tab: bg \`var(--color-bg-tertiary)\`, color \`var(--color-interactive-primary)\`, 14 px medium · Inactive tabs: bg \`var(--color-bg-tertiary)\`, \`#6b7280\` · Stats: 30 px extrabold \`#111928\` value + 16 px regular \`#6b7280\` label, centered · Grid: 2 rows × 3 columns, gap 32 px.
         `,
       },
       source: {
@@ -929,9 +929,9 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
             box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.05);overflow:hidden;">
   <!-- Segmented tab row: 3 equal columns with 1px var(--color-border-default) vertical dividers -->
   <div style="display:flex;background:var(--color-bg-default);border-radius:8px 8px 0 0;overflow:hidden;">
-    <!-- Active tab: color #155dfc -->
+    <!-- Active tab: color var(--color-interactive-primary) -->
     <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid var(--color-border-default);">
-      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;">Statistics</span>
+      <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-interactive-primary);">Statistics</span>
     </div>
     <div style="flex:1;display:flex;justify-content:center;padding:16px;border-right:1px solid var(--color-border-default);">
       <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">Services</span>
@@ -978,7 +978,7 @@ Named "Type11" in Figma. **Node:** 13561:77668 | Width: 790px | Shadow: shadow-m
       <!-- Segmented tab row -->
       <div style="display:flex;background:var(--color-bg-default);box-shadow:0 1px 2px 0 rgba(0,0,0,.08);overflow:hidden;border-radius:8px 8px 0 0;">
         <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid var(--color-border-default);">
-          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:#155dfc;white-space:nowrap;">Statistics</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-interactive-primary);white-space:nowrap;">Statistics</span>
         </div>
         <div style="flex:1;display:flex;justify-content:center;align-items:center;padding:16px;border-right:1px solid var(--color-border-default);">
           <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);white-space:nowrap;">Services</span>
@@ -1123,7 +1123,7 @@ export const TestimonialCard = {
  * - Card: no border (shadow-sm only), p-24px, gap-16px
  * - Title: 18px semibold #111928
  * - Description: 14px regular #6b7280
- * - Wallet row: bg #f9fafb, p-12px, rounded-8px, icon (16–18px) + name bold
+ * - Wallet row: bg var(--color-bg-tertiary), p-12px, rounded-8px, icon (16–18px) + name bold
  * - MetaMask row has a "Popular" badge: bg var(--color-border-default), rounded-6px, 12px medium #6b7280
  * - Helper text: question icon + 12px regular #6b7280
  *
@@ -1145,7 +1145,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
 **✅ Do** — keep the "Popular" badge on the most-used provider to reduce decision friction.
 **❌ Don't** — add more than 6–7 wallet options without a search/filter — the list becomes unwieldy.
 
-**QA** — No border (shadow-sm only): \`box-shadow: 0 1px 2px rgba(0,0,0,.08)\` · Card: \`p-24 gap-16\` · Title: 18 px semibold \`#111928\` · Description: 14 px regular \`#6b7280\` · Wallet row: bg \`#f9fafb\`, \`p-12\`, rounded-8 px, icon 16–18 px + name bold · MetaMask "Popular" badge: bg \`var(--color-border-default)\`, rounded-6 px, 12 px medium \`#6b7280\` · Helper text: question icon + 12 px regular \`#6b7280\`.
+**QA** — No border (shadow-sm only): \`box-shadow: 0 1px 2px rgba(0,0,0,.08)\` · Card: \`p-24 gap-16\` · Title: 18 px semibold \`#111928\` · Description: 14 px regular \`#6b7280\` · Wallet row: bg \`var(--color-bg-tertiary)\`, \`p-12\`, rounded-8 px, icon 16–18 px + name bold · MetaMask "Popular" badge: bg \`var(--color-border-default)\`, rounded-6 px, 12 px medium \`#6b7280\` · Helper text: question icon + 12 px regular \`#6b7280\`.
 
 **Approximations:** Question-circle icon is inline SVG. Wallet icons use SimpleIcons CDN (stable). Fortmatic uses a text-badge placeholder.
         `,
@@ -1163,7 +1163,7 @@ Wallet-connect modal card. Lists 5 provider options; MetaMask has a "Popular" ba
   </div>
   <!-- Wallet list -->
   <div style="display:flex;flex-direction:column;gap:12px;">
-    <!-- Wallet row: bg #f9fafb, padding 12px, rounded-8px -->
+    <!-- Wallet row: bg var(--color-bg-tertiary), padding 12px, rounded-8px -->
     <div style="display:flex;align-items:center;gap:12px;background:var(--color-bg-default);
                 padding:12px;border-radius:8px;cursor:pointer;">
       <img src="…metamask-icon…" alt="MetaMask" style="width:18px;height:17px;object-fit:contain;">

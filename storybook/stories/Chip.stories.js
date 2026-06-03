@@ -14,26 +14,26 @@
  *
  * ## Color tokens (default bg / text / icon / hover bg / disabled bg / disabled text)
  * light:  var(--color-bg-secondary) / #4a5565 / #6b7280 / var(--color-border-default) / var(--color-bg-secondary) / #99a1af
- * dark:   #4a5565 / var(--color-bg-white) / var(--color-bg-secondary) / #1e2939 / #d1d5dc / var(--color-bg-white)
+ * dark:   #4a5565 / var(--color-bg-white) / var(--color-bg-secondary) / var(--color-text-heading) / #d1d5dc / var(--color-bg-white)
  * indigo: #5850ec / var(--color-bg-white) / var(--color-bg-secondary) / #42389d / #b4c6fc / var(--color-bg-white)
  * green:  #009966 / var(--color-bg-white) / var(--color-bg-secondary) / #006045 / #5ee9b5 / var(--color-bg-white)
  * red:    #e7000b / var(--color-bg-white) / var(--color-bg-secondary) / #9f0712 / #ffa2a2 / var(--color-bg-white)
  * orange: #d03801 / var(--color-bg-white) / var(--color-bg-secondary) / #8a2c0d / #fdba8c / var(--color-bg-white)
  * teal:   #009689 / var(--color-bg-white) / var(--color-bg-secondary) / #005f59 / #46ecd5 / var(--color-bg-white)
- * blue:   #155dfc / var(--color-bg-white) / var(--color-bg-secondary) / #193cb8 / #8ec5ff / var(--color-bg-white)
+ * blue:   var(--color-interactive-primary) / var(--color-bg-white) / var(--color-bg-secondary) / #193cb8 / #8ec5ff / var(--color-bg-white)
  * purple: #9810fa / var(--color-bg-white) / var(--color-bg-secondary) / #6e11b0 / #dab2ff / var(--color-bg-white)
  * pink:   #e60076 / var(--color-bg-white) / var(--color-bg-secondary) / #a3004c / #fda5d5 / var(--color-bg-white)
  */
 
 const CHIP_COLORS = {
   light:  { bg: 'var(--color-bg-secondary)', text: '#4a5565', icon: '#6b7280', hover: 'var(--color-border-default)', disabledBg: 'var(--color-bg-secondary)', disabledText: '#99a1af' },
-  dark:   { bg: '#4a5565', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#1e2939', disabledBg: '#d1d5dc', disabledText: 'var(--color-bg-white)' },
+  dark:   { bg: '#4a5565', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: 'var(--color-text-heading)', disabledBg: '#d1d5dc', disabledText: 'var(--color-bg-white)' },
   indigo: { bg: '#5850ec', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#42389d', disabledBg: '#b4c6fc', disabledText: 'var(--color-bg-white)' },
   green:  { bg: '#009966', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#006045', disabledBg: '#5ee9b5', disabledText: 'var(--color-bg-white)' },
   red:    { bg: '#e7000b', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#9f0712',  disabledBg: '#ffa2a2', disabledText: 'var(--color-bg-white)' },
   orange: { bg: '#d03801', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#8a2c0d', disabledBg: '#fdba8c', disabledText: 'var(--color-bg-white)' },
   teal:   { bg: '#009689', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#005f59', disabledBg: '#46ecd5', disabledText: 'var(--color-bg-white)' },
-  blue:   { bg: '#155dfc', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#193cb8', disabledBg: '#8ec5ff', disabledText: 'var(--color-bg-white)' },
+  blue:   { bg: 'var(--color-interactive-primary)', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#193cb8', disabledBg: '#8ec5ff', disabledText: 'var(--color-bg-white)' },
   purple: { bg: '#9810fa', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#6e11b0', disabledBg: '#dab2ff', disabledText: 'var(--color-bg-white)' },
   pink:   { bg: '#e60076', text: 'var(--color-bg-white)', icon: 'var(--color-bg-secondary)', hover: '#a3004c', disabledBg: '#fda5d5', disabledText: 'var(--color-bg-white)' },
 };
@@ -160,28 +160,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -193,14 +193,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -311,7 +311,7 @@ Default, hover, and disabled states for the selected color. Use the **color** co
     return `<div style="display:flex;flex-direction:column;gap:12px;">
       ${rows.map(({ state, label }) => `
         <div style="display:flex;align-items:center;gap:16px;">
-          <span style="width:64px;font:11px/1 sans-serif;color:#9ca3af;">${label}</span>
+          <span style="width:64px;font:11px/1 sans-serif;color:var(--color-border-light);">${label}</span>
           ${chip({ label: 'Design', color, state })}
         </div>`).join('')}
     </div>`;

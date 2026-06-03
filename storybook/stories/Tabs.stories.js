@@ -15,9 +15,9 @@
  * Font: Inter 14px weight 500
  * Colors:
  *   default text  #4b5563
- *   hover text    var(--color-text-primary)  border  #d1d5db
+ *   hover text    var(--color-text-primary)  border  var(--color-border-default)
  *   active text   #42389d  border  #42389d
- *   counter bg    default/hover=#d1d5db  active=#42389d
+ *   counter bg    default/hover=var(--color-border-default)  active=#42389d
  *   counter text  default/hover=#4b5563  active=var(--color-bg-white)
  */
 
@@ -125,9 +125,9 @@ function tab({ label = 'Tab', state = 'default', counter = false, counterCount =
   const isHover   = state === 'hover';
 
   const textColor   = isActive ? '#42389d' : isHover ? 'var(--color-text-primary)' : '#4b5563';
-  const borderColor = isActive ? '#42389d' : isHover ? '#d1d5db' : 'transparent';
+  const borderColor = isActive ? '#42389d' : isHover ? 'var(--color-border-default)' : 'transparent';
 
-  const counterBg   = isActive ? '#42389d' : '#d1d5db';
+  const counterBg   = isActive ? '#42389d' : 'var(--color-border-default)';
   const counterText = isActive ? 'var(--color-bg-white)'  : '#4b5563';
 
   const chevron = isActive && dropdown ? chevronUp : chevronDown;
@@ -200,9 +200,9 @@ export const Interactive = {
   render: (args) => {
     const a = args;
     const isActive = a.state === 'active';
-    const borderColor = isActive ? '#42389d' : a.state === 'hover' ? '#d1d5db' : 'transparent';
+    const borderColor = isActive ? '#42389d' : a.state === 'hover' ? 'var(--color-border-default)' : 'transparent';
     const textColor   = isActive ? '#42389d' : a.state === 'hover' ? 'var(--color-text-primary)' : '#4b5563';
-    const counterBg   = isActive ? '#42389d' : '#d1d5db';
+    const counterBg   = isActive ? '#42389d' : 'var(--color-border-default)';
     const counterText = isActive ? 'var(--color-bg-white)'  : '#4b5563';
 
     const htmlCode = `<div role="tablist" style="display:flex;border-bottom:1px solid var(--color-border-default);">\n  <button role="tab" aria-selected="${isActive}" style="padding:12px 16px;color:${textColor};border-bottom:2px solid ${borderColor};background:transparent;">${a.label}${a.counter ? `\n    <span style="background:${counterBg};color:${counterText};">${a.counterCount}</span>` : ''}</button>\n</div>`;
@@ -223,28 +223,28 @@ export const Interactive = {
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:#f9fafb;padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
+            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid #d1d5db;border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
@@ -256,14 +256,14 @@ export const Interactive = {
             navigator.clipboard.writeText(this.dataset.copy);
             const originalText = this.innerHTML;
             this.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>Copied!';
-            this.style.background = '#dcfce7';
-            this.style.color = '#166534';
-            this.style.borderColor = '#bbf7d0';
+            this.style.background = 'var(--color-success-light)';
+            this.style.color = 'var(--color-success-dark)';
+            this.style.borderColor = 'var(--color-success-lighter)';
             setTimeout(() => {
               this.innerHTML = originalText;
               this.style.background = 'var(--color-bg-secondary)';
               this.style.color = 'var(--color-text-primary)';
-              this.style.borderColor = '#d1d5db';
+              this.style.borderColor = 'var(--color-border-default)';
             }, 2000);
           });
         });
@@ -298,7 +298,7 @@ export const AllStates = {
         story: `
 All three states from Figma node \`10007:72664\`:
 - **Default** — no border indicator, muted gray text (\`#4b5563\`)
-- **Hover** — light gray bottom border (\`#d1d5db\`), slightly darker text (\`var(--color-text-primary)\`)
+- **Hover** — light gray bottom border (\`var(--color-border-default)\`), slightly darker text (\`var(--color-text-primary)\`)
 - **Active** — brand purple bottom border (\`#42389d\`), matching text colour; \`aria-selected="true"\`
 
 **✅ Do** — always include exactly one \`aria-selected="true"\` tab per tab list.
@@ -320,7 +320,7 @@ All three states from Figma node \`10007:72664\`:
   <!-- Hover (applied via :hover in CSS) -->
   <button role="tab" aria-selected="false"
     style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:var(--color-text-primary);border:none;border-bottom:2px solid #d1d5db;
+           color:var(--color-text-primary);border:none;border-bottom:2px solid var(--color-border-default);
            margin-bottom:-1px;background:transparent;">
     Transactions
   </button>
@@ -362,7 +362,7 @@ export const WithCounter = {
 Counter badges (Figma \`Counter=yes\`) indicate the number of items in each tab's content.
 
 Badge colours per state (Figma node \`10007:72664\`):
-- **Default / hover** — gray background \`#d1d5db\`, gray text \`#4b5563\`
+- **Default / hover** — gray background \`var(--color-border-default)\`, gray text \`#4b5563\`
 - **Active** — brand purple background \`#42389d\`, white text
 
 **✅ Do** — use counters only when the number adds meaningful context (pending items, new entries).
@@ -377,7 +377,7 @@ Badge colours per state (Figma node \`10007:72664\`):
            font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Inbox
-    <span style="padding:0 4px;height:18px;min-width:16px;background:#d1d5db;color:#4b5563;
+    <span style="padding:0 4px;height:18px;min-width:16px;background:var(--color-border-default);color:#4b5563;
                  font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
                  display:inline-flex;align-items:center;justify-content:center;">5</span>
   </button>
@@ -499,7 +499,7 @@ transaction lists, team dashboards, or approval queues.
            font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
            border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
     Pending
-    <span style="padding:0 4px;height:18px;min-width:16px;background:#d1d5db;color:#4b5563;
+    <span style="padding:0 4px;height:18px;min-width:16px;background:var(--color-border-default);color:#4b5563;
                  font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
                  display:inline-flex;align-items:center;justify-content:center;">8</span>
   </button>

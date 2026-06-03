@@ -69,7 +69,7 @@ function toastDanger({ cta, title, description, ctaLabel }) {
 function toastDefault({ title }) {
   return `
 <div class="toast">
-  ${iconBox('#dbeafe', iconSvg(CHECK_PATH, 20, '#155dfc'))}
+  ${iconBox('#dbeafe', iconSvg(CHECK_PATH, 20, 'var(--color-interactive-primary)'))}
   <p class="toast-body" style="margin:0;">${title}</p>
   <button type="button" class="toast-close" aria-label="Dismiss">×</button>
 </div>`;
@@ -78,7 +78,7 @@ function toastDefault({ title }) {
 function toastSimple({ title }) {
   return `
 <div class="toast">
-  ${iconSvg(PAPER_PLANE_PATH, 24, '#155dfc')}
+  ${iconSvg(PAPER_PLANE_PATH, 24, 'var(--color-interactive-primary)')}
   <div class="toast-body" style="border-left:1px solid var(--color-border-default);padding-left:12px;">
     <p style="margin:0;">${title}</p>
   </div>
@@ -98,7 +98,7 @@ function toastPush({ title, description }) {
     <div class="toast-body" style="min-width:0;">
       <p class="toast-title" style="margin:0 0 2px;">${title}</p>
       <p class="toast-message" style="margin:0 0 4px;line-height:1.4;">${description}</p>
-      <p style="margin:0;font-size:var(--text-xs);font-weight:var(--font-medium);color:#155dfc;">a few seconds ago</p>
+      <p style="margin:0;font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-interactive-primary);">a few seconds ago</p>
     </div>
   </div>
 </div>`;
@@ -108,7 +108,7 @@ function toastInteractive({ title, description, ctaLabel }) {
   return `
 <div class="toast" style="flex-direction:column;align-items:stretch;">
   <div style="display:flex;gap:12px;align-items:flex-start;">
-    ${iconBox('#dbeafe', iconSvg(REFRESH_PATH, 20, '#155dfc'))}
+    ${iconBox('#dbeafe', iconSvg(REFRESH_PATH, 20, 'var(--color-interactive-primary)'))}
     <div class="toast-body" style="min-width:0;">
       <p class="toast-title" style="margin:0 0 2px;">${title}</p>
       <p class="toast-message" style="margin:0 0 12px;line-height:1.4;">${description}</p>
