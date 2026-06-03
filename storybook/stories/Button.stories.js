@@ -56,10 +56,12 @@ Iris button component — 7 colors × 5 sizes × 2 outline modes × icon-only.
 **Icon-only:** add \`btn-icon\` modifier (removes padding, sets square dimensions)
 **Group:** wrap in \`.btn-group\` container
 
-\`\`\`html
-<button class="btn btn-primary btn-md">Button text</button>
-<button class="btn btn-outline-primary btn-md">Button text</button>
-<button class="btn btn-icon btn-primary btn-md" aria-label="Action"><!-- icon --></button>
+\`\`\`jsx
+<button className="btn btn-primary btn-md">Button text</button>
+<button className="btn btn-outline-primary btn-md">Button text</button>
+<button className="btn btn-icon btn-primary btn-md" aria-label="Action">
+  {/* icon here */}
+</button>
 \`\`\`
         `,
       },
@@ -234,17 +236,19 @@ All 7 Figma colors shown solid + outline. Use **size** control to preview all co
         `,
       },
       source: {
-        code: `<button class="btn btn-primary btn-md">Primary</button>
-<button class="btn btn-dark btn-md">Dark</button>
-<button class="btn btn-green btn-md">Green</button>
-<button class="btn btn-red btn-md">Red</button>
-<button class="btn btn-yellow btn-md">Yellow</button>
-<button class="btn btn-blue btn-md">Blue</button>
-<button class="btn btn-gray btn-md">Gray</button>
+        code: `// Solid colors
+<button className="btn btn-primary btn-md">Primary</button>
+<button className="btn btn-dark btn-md">Dark</button>
+<button className="btn btn-green btn-md">Green</button>
+<button className="btn btn-red btn-md">Red</button>
+<button className="btn btn-yellow btn-md">Yellow</button>
+<button className="btn btn-blue btn-md">Blue</button>
+<button className="btn btn-gray btn-md">Gray</button>
 
-<!-- Outline -->
-<button class="btn btn-outline-primary btn-md">Primary</button>`,
-        language: 'html',
+// Outline variants
+<button className="btn btn-outline-primary btn-md">Primary</button>
+<button className="btn btn-outline-dark btn-md">Dark</button>`,
+        language: 'jsx',
       },
     },
   },
@@ -286,12 +290,12 @@ Use **color** and **outline** controls to preview the full size scale in any col
         `,
       },
       source: {
-        code: `<button class="btn btn-primary btn-xs">xs</button>
-<button class="btn btn-primary btn-sm">sm</button>
-<button class="btn btn-primary btn-md">md</button>
-<button class="btn btn-primary btn-lg">lg</button>
-<button class="btn btn-primary btn-xl">xl</button>`,
-        language: 'html',
+        code: `<button className="btn btn-primary btn-xs">xs</button>
+<button className="btn btn-primary btn-sm">sm</button>
+<button className="btn btn-primary btn-md">md</button>
+<button className="btn btn-primary btn-lg">lg</button>
+<button className="btn btn-primary btn-xl">xl</button>`,
+        language: 'jsx',
       },
     },
   },
@@ -369,23 +373,25 @@ Icon size: 20px for md/lg/xl, 16px for xs/sm.
         `,
       },
       source: {
-        code: `<!-- Left icon -->
-<button class="btn btn-primary btn-md">
-  <svg><!-- heroicon 20px --></svg>
+        code: `import { StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+
+// Left icon
+<button className="btn btn-primary btn-md">
+  <StarIcon className="w-5 h-5" />
   <span>Label</span>
 </button>
 
-<!-- Right icon -->
-<button class="btn btn-primary btn-md">
+// Right icon
+<button className="btn btn-primary btn-md">
   <span>Label</span>
-  <svg><!-- heroicon 20px --></svg>
+  <ArrowRightIcon className="w-5 h-5" />
 </button>
 
-<!-- Icon only -->
-<button class="btn btn-primary btn-icon btn-md" aria-label="Action">
-  <svg><!-- heroicon 20px --></svg>
+// Icon only
+<button className="btn btn-primary btn-icon btn-md" aria-label="Action">
+  <StarIcon className="w-5 h-5" />
 </button>`,
-        language: 'html',
+        language: 'jsx',
       },
     },
   },
@@ -421,9 +427,9 @@ export const Pill = {
         story: 'Full pill border-radius via `.btn-pill`. Use **size** to see pill at any size.',
       },
       source: {
-        code: `<button class="btn btn-primary btn-pill btn-md">Primary</button>
-<button class="btn btn-outline-primary btn-pill btn-md">Primary outline</button>`,
-        language: 'html',
+        code: `<button className="btn btn-primary btn-pill btn-md">Primary</button>
+<button className="btn btn-outline-primary btn-pill btn-md">Primary outline</button>`,
+        language: 'jsx',
       },
     },
   },
@@ -454,9 +460,9 @@ export const Disabled = {
         story: 'Disabled renders at 50% opacity with `pointer-events: none`. Use **size** to verify across sizes.',
       },
       source: {
-        code: `<button class="btn btn-primary btn-md" disabled aria-disabled="true">Disabled</button>
-<button class="btn btn-outline-primary btn-md" disabled aria-disabled="true">Outline disabled</button>`,
-        language: 'html',
+        code: `<button className="btn btn-primary btn-md" disabled aria-disabled="true">Disabled</button>
+<button className="btn btn-outline-primary btn-md" disabled aria-disabled="true">Outline disabled</button>`,
+        language: 'jsx',
       },
     },
   },
