@@ -21,6 +21,38 @@
 
 **Build Status:** ✅ All tests pass, build successful
 
+### Additional Fixes (Session 2026-06-03)
+
+Found and fixed undefined function calls in 4 Interactive stories:
+
+1. **Card.stories.js** (line 152)
+   - ❌ Error: `basicCard is not defined`
+   - ✅ Fix: Replaced `${basicCard(args)}` with `${htmlCode}`
+
+2. **CardChart.stories.js** (line 408)
+   - ❌ Error: `chartCard is not defined`
+   - ✅ Fix: Replaced `${chartCard(args)}` with `${h}`
+
+3. **CardReporting.stories.js** (line 260)
+   - ❌ Error: `cardReporting is not defined`
+   - ✅ Fix: Replaced `${cardReporting(args)}` with `${h}`
+
+4. **CardStates.stories.js** (line 284)
+   - ❌ Error: `cardStates is not defined`
+   - ✅ Fix: Replaced `${cardStates(args)}` with `${h}`
+
+5. **TableCohort.stories.js** (line 195)
+   - ❌ Error: `cohortCell is not defined`
+   - ✅ Fix: Replaced `${cohortCell(args)}` with `${h}`
+
+**Commits:**
+- `39e7747` - fix: remove duplicate render in Card.stories.js
+- `b20ddbf` - fix: replace basicCard() with htmlCode
+- `625f600` - fix: replace undefined function calls in Card* renders
+- `dac0eac` - fix: replace cohortCell() in TableCohort
+
+All Interactive stories now render correctly with preview + 3-tier code snippets.
+
 ### Summary
 All 38 Storybook story files with `Interactive` stories now include full 3-tier code snippets with:
 1. **HTML** — Pure semantic HTML with inline styles
