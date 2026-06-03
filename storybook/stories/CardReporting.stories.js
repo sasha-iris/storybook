@@ -257,7 +257,40 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
  */
 
 function cardReporting({ active = true, hovered = false, owner = 'iris' }) {
-  return `<div style="padding:20px;border:1px solid var(--color-border-default);border-radius:12px;background:#fff;width:280px;"><div style="font-size:14px;color:var(--color-text-heading);">Report Card — ${active ? 'Active' : 'Paused'}</div></div>`;
+  const mod = hovered ? ' card-reporting--hovered' : (!active ? ' card-reporting--inactive' : '');
+  const toggleClass = active ? 'iris-toggle--on' : 'iris-toggle--off';
+  const toggleAriaLabel = active ? 'Report enabled' : 'Report disabled';
+
+  return `<div class="card-reporting${mod}" style="min-width:362px;">
+  <div style="display:flex;gap:12px;align-items:flex-start;">
+    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:var(--color-text-heading);margin:0;">${hovered ? '→ Daily Report' : 'Daily Report'}</p>
+        <span class="iris-toggle ${toggleClass}" role="switch" aria-checked="${active}" aria-label="${toggleAriaLabel}">
+          <span class="iris-toggle__thumb"></span>
+        </span>
+      </div>
+      <div style="display:flex;gap:4px;">
+        <span class="rpt-chip rpt-chip--email" style="background:${active ? '#e60076' : 'var(--color-border-light)'};color:white;padding:4px 8px;border-radius:4px;font-size:12px;">✉ Email</span>
+        <span class="rpt-chip rpt-chip--slack" style="background:${active ? '#9810fa' : 'var(--color-border-light)'};color:white;padding:4px 8px;border-radius:4px;font-size:12px;">⚡ Slack</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+    <p style="font-size:var(--text-sm);color:var(--color-text-heading);margin:0;">Every day at 7am (PST)</p>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+      <span class="rpt-chip" style="background:var(--color-bg-tertiary);color:var(--color-text-secondary);padding:4px 8px;border-radius:4px;font-size:12px;">example@gmail.com</span>
+      <span class="rpt-chip" style="background:var(--color-bg-tertiary);color:var(--color-text-secondary);padding:4px 8px;border-radius:4px;font-size:12px;">+2</span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--color-border-light);">
+    <div style="display:flex;gap:8px;">
+      <div style="width:24px;height:24px;background:${active ? '#fef9c2' : 'var(--color-border-default)'};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;">🟨</div>
+      <div style="width:24px;height:24px;background:var(--color-bg-tertiary);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;">☑</div>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary);">By ${owner === 'iris' ? 'Iris Finance' : 'You'}</div>
+  </div>
+</div>`;
 }
 
 export const Interactive = {
