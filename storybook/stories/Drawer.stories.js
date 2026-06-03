@@ -290,8 +290,9 @@ export default {
     position: {
       control: 'select',
       options: ['right', 'left'],
-      description: 'Side from which the panel slides in. `textBottom` ignores this.',
+      description: 'Side from which the panel slides in.',
       table: { category: 'Appearance', defaultValue: { summary: 'right' } },
+      if: { arg: 'type', neq: 'textBottom' },
     },
     showOverlay: {
       control: 'boolean',
