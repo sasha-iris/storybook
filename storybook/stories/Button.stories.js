@@ -14,27 +14,30 @@
  * | l         | lg        | 48px   | 12px / 20px  | 16px |
  * | xl        | xl        | 52px   | 14px / 24px  | 16px |
  *
- * ## Figma color values (Buttons page tokens)
- * | Figma color | BG hex  | Token / note                        |
- * |------------|---------|-------------------------------------|
- * | Primary    | #42389d | colors/brand/800 — purple           |
- * | Dark       | #1e2939 | colors/border/border-dark           |
- * | Green      | #007a55 | colors/emerald/700                  |
- * | Red        | #c10007 | colors/red/700                      |
- * | Yellow     | #d03801 | colors/orange/600 (Figma calls it Yellow) |
- * | Blue       | #1447e6 | colors/blue/700                     |
- * | Gray       | #f9fafb | colors/background/bg-secondary-medium; text: #1e2939 |
+ * ## Figma color values & Foundation tokens
+ * | Figma color | Hex     | Foundation token (CSS variable)        | Note        |
+ * |------------|---------|-------------------------------------  |-------------|
+ * | Primary    | #42389d | `--btn-primary-bg` (custom)           | Figma only  |
+ * | Dark       | #1e2939 | `--btn-dark-hover` (custom)           | Figma only  |
+ * | Green      | #007a55 | `--color-bg-success`                  | ✓ Foundation |
+ * | Red        | #c10007 | `--color-ctrl-danger-strong`          | ✓ Foundation |
+ * | Yellow     | #d03801 | `--color-text-fg-warning-subtle`      | ✓ Foundation |
+ * | Blue       | #1447e6 | `--color-text-fg-brand`               | ✓ Foundation |
+ * | Gray       | #f9fafb | `--btn-gray-bg` (custom)              | Light surface |
  *
  * ## Border radius
  * All buttons: 12px — Figma token `border/border-radius/rounded-xl`
  * CSS: `var(--radius-lg)` = 0.75rem = 12px
  *
  * ## QA notes
+ * - **Foundation tokens:** Green, Red, Yellow, Blue use Foundation color system
+ *   (--color-bg-success, --color-ctrl-danger-strong, etc.)
+ * - **Custom colors:** Primary (#42389d), Dark, Gray are NOT in Foundation
  * - Primary is PURPLE (#42389d), NOT the legacy blue (#1C64F2)
- * - "Yellow" in Figma renders ORANGE (#d03801) — this is intentional
+ * - "Yellow" in Figma renders ORANGE (#d03801) — intentional, from Foundation
  * - Gray button has dark text (#1e2939) + light border (#e5e7eb)
  * - Outline variants: border + text match the fill color; no background
- * - Hover state darkens the fill by one palette step
+ * - Hover state darkens the fill (uses stronger Foundation variant or darker hex)
  * - Disabled: 50% opacity, pointer-events none
  * - Focus ring: 2px outline, color = --btn-primary-bg, offset 2px
  * - Icon-only: same sizes, aspect-ratio 1:1 via `.btn-icon`
