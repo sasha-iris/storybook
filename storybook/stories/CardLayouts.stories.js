@@ -312,7 +312,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
   render: () => `
     <div style="width:384px;padding:32px;background:#fff;border-radius:8px;
                 box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.1);
-                display:flex;flex-direction:column;gap:24px;">
+                display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
 
       <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;line-height:1.5;margin:0;">
         Sign in to our platform
@@ -1079,7 +1079,7 @@ export const TestimonialCard = {
     const cell = (t, border) => `
       <div style="flex:1;display:flex;flex-direction:column;justify-content:center;
                   padding:32px;${border}">
-        <div style="display:flex;flex-direction:column;gap:24px;align-items:center;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;align-items:center;">
           <div style="display:flex;flex-direction:column;gap:16px;align-items:center;width:100%;">
             <p style="font-size:18px;font-weight:600;color:#111928;line-height:1.25;
                       margin:0;text-align:center;">${t.title}</p>

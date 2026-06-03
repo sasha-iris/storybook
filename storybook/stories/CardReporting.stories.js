@@ -302,12 +302,12 @@ export const Interactive = {
     const r='<div style={{padding:"20px",border:"1px solid var(--color-border-default)",borderRadius:"12px"}}>{children}</div>';
     const c='export function ReportingCard({title,data}){return(<div style={{border:"1px solid var(--color-border-default)",padding:"20px"}}>{title}</div>);}';
     return `
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${cardReporting(args)}
         </div>
-        <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
@@ -316,7 +316,7 @@ export const Interactive = {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
@@ -325,7 +325,7 @@ export const Interactive = {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>

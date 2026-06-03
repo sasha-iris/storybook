@@ -241,51 +241,27 @@ export const Interactive = {
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+    const copyIcon = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>`;
+    const snippet = (title, code, escaped, raw) => `
+      <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;display:flex;flex-direction:column;gap:12px;min-width:0;">
+        <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px;">${title}</div>
+        <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;flex:1;">
+          <pre style="margin:0;font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;line-height:1.5;"><code>${escaped}</code></pre>
+        </div>
+        <button data-copy="${raw.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:6px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;align-self:flex-start;">
+          ${copyIcon}Copy
+        </button>
+      </div>`;
+
     return `
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="padding:24px;border:1px solid var(--color-border-default);border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:80px;">
           ${btn(args)}
         </div>
-        <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
-            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
-            </div>
-            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="2" y="2" width="8" height="8" rx="1"/>
-                <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
-              </svg>
-              Copy
-            </button>
-          </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
-            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
-            </div>
-            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="2" y="2" width="8" height="8" rx="1"/>
-                <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
-              </svg>
-              Copy
-            </button>
-          </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
-            <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
-            <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
-            </div>
-            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="2" y="2" width="8" height="8" rx="1"/>
-                <path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/>
-              </svg>
-              Copy
-            </button>
-          </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
+          ${snippet('HTML', htmlCode, htmlEscaped, htmlCode)}
+          ${snippet('React', reactCode, reactEscaped, reactCode)}
+          ${snippet('Component (Events)', componentCode, componentEscaped, componentCode)}
         </div>
       </div>
       <script>

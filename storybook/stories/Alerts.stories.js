@@ -216,12 +216,12 @@ export const Interactive = {
     const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     return `
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
           ${renderAlert(args)}
         </div>
-        <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
@@ -234,7 +234,7 @@ export const Interactive = {
               Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
@@ -247,7 +247,7 @@ export const Interactive = {
               Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>

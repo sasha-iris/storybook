@@ -142,10 +142,10 @@ export const Interactive = {
     let preview = variant === 'chart' ? chartBtn({ state }) : tableBtn({ state });
 
     return `
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
-        <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">${preview}</div>
-        <div style="display:flex;flex-direction:column;gap:24px;">
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">${preview}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;">HTML</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${htmlEscaped}</code></pre>
@@ -154,7 +154,7 @@ export const Interactive = {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;">React</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${reactEscaped}</code></pre>
@@ -163,7 +163,7 @@ export const Interactive = {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
-          <div style="padding:20px;border:1px solid var(--color-border-default);border-radius:8px;">
+          <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;">Component (With Events)</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
               <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;"><code>${componentEscaped}</code></pre>
@@ -362,7 +362,7 @@ Both utility button types side-by-side for easy QA comparison.
     },
   },
   render: () => `
-    <div style="display:flex;flex-direction:column;gap:24px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
       <div>
         <p style="font:11px/1 600 sans-serif;text-transform:uppercase;letter-spacing:.1em;
                   color:#9CA3AF;margin:0 0 10px;">Chart Button (node 9705:152804)</p>

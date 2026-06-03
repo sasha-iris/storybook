@@ -179,7 +179,7 @@ Full logo: Smart mark + "Iris" wordmark. Light mode. Used in nav bars, headers, 
     },
   },
   render: () => `
-    <div style="display:flex;flex-direction:column;gap:24px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
       ${SIZES.map(size => `
         <div style="display:flex;align-items:center;gap:24px;">
           <span style="width:32px;font:10px/1 sans-serif;color:#9CA3AF;">${size}</span>
@@ -232,7 +232,7 @@ Dark mode — sm, md, lg on a dark background. \`xs\` dark falls back to the lig
     },
   },
   render: () => `
-    <div style="background:#101828;padding:32px;border-radius:12px;display:flex;flex-direction:column;gap:24px;">
+    <div style="background:#101828;padding:32px;border-radius:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
       ${['sm','md','lg'].map(size => `
         <div style="display:flex;align-items:center;gap:24px;">
           <span style="width:32px;font:10px/1 sans-serif;color:#6B7280;">${size}</span>
