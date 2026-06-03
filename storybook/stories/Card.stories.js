@@ -149,7 +149,7 @@ export const Interactive = {
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;align-items:start;">
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
-          ${basicCard(args)}
+          ${htmlCode}
         </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
           <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
