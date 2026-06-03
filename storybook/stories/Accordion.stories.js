@@ -242,41 +242,6 @@ export const Interactive = {
   },
 };
 
-</div>`;
-          }
-          return `<!-- Accordion — style:${style}, showIcon:${showIcon}, openIndex:${openIndex} -->
-<div class="accordion${flushClass}">
-
-  <!-- Active item (index ${openIndex}) — add class "open" -->
-  <div class="accordion-item open">
-    <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-      ${showIcon ? '<svg width="18" height="18"><!-- question-mark-circle --></svg>' : ''}
-      <span style="flex:1;">Can I use FlowBite in open-source projects?</span>
-      <svg class="accordion-chevron" viewBox="0 0 24 24"><!-- chevron --></svg>
-    </button>
-    <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">
-      Body text content…
-    </div>
-  </div>
-
-  <!-- Collapsed item — no "open" class -->
-  <div class="accordion-item">
-    <button class="accordion-header" aria-expanded="false" aria-controls="body-1" id="header-1">
-      <span style="flex:1;">How do you achieve the blurry effect?</span>
-      <svg class="accordion-chevron" viewBox="0 0 24 24"><!-- chevron --></svg>
-    </button>
-    <div class="accordion-body" id="body-1" role="region" aria-labelledby="header-1">
-      Body text content…
-    </div>
-  </div>
-
-</div>`;
-        },
-      },
-    },
-  },
-};
-
 // ─── Card style ───────────────────────────────────────────────────────────────
 
 export const CardStyle = {

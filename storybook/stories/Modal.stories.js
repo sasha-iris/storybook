@@ -425,33 +425,6 @@ export const Interactive = {
     },
   },
 };
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary btn-md">I accept</button>
-    </div>
-  </div>
-</div>`;
-          return `<!-- Info: title header + scrollable body paragraphs + single button footer -->
-<div class="modal-backdrop">
-  <div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog${sc}">
-    <div class="modal-header">
-      <h2 class="modal-title" id="modal-title">Terms of Service</h2>
-      <button class="modal-close" aria-label="Close dialog"><!-- × SVG --></button>
-    </div>
-    <div class="modal-body">
-      <p>The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25...</p>
-      <p>With less than a month to go before the European Union enacts new consumer privacy laws...</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary btn-md">I accept</button>
-    </div>
-  </div>
-</div>`;
-        },
-      },
-    },
-  },
-};
 
 // ─── Info ─────────────────────────────────────────────────────────────────────
 

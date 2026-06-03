@@ -1,1 +1,0 @@
-const a={parameters:{layout:"padded",backgrounds:{default:"light",values:[{name:"light",value:"#F9FAFB"},{name:"white",value:"#FFFFFF"},{name:"dark",value:"#1F2A37"}]},docs:{source:{language:"html"}}}};export{a as default};

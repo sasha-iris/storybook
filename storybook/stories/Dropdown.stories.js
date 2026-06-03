@@ -474,31 +474,6 @@ Use **Menu type** to switch between all Figma menu variants. Use **Icon-only tri
     },
   },
 };
-  <div class="dropdown-label">ACTIONS <span class="dropdown-count">5</span></div>
-
-  <!-- Items -->
-  <button class="dropdown-item">
-    <span class="dropdown-item__icon"><!-- icon --></span>
-    <span class="dropdown-item__text">First Action</span>
-    <span class="dropdown-item__chevron"><!-- chevron-right --></span>
-  </button>
-
-  <!-- Divider -->
-  <hr class="dropdown-divider">
-
-  <!-- Destructive item -->
-  <button class="dropdown-item danger">
-    <span class="dropdown-item__icon"><!-- icon --></span>
-    <span class="dropdown-item__text">Sign Out</span>
-    <span class="dropdown-item__chevron"><!-- chevron-right --></span>
-  </button>
-
-</div>`;
-        },
-      },
-    },
-  },
-};
 
 /* ── List Items — all states ─────────────────────────────────── */
 
