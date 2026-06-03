@@ -42,7 +42,7 @@
 
 export default {
   title: 'Iris Library/Button',
-  tags: [],
+  tags: ['autodocs'],
   parameters: {
     layout: 'padded',
     backgrounds: { default: 'light' },

@@ -89,7 +89,7 @@ function badge({ label = 'Badge', color = 'indigo', size = 'lg', icon = false, d
 
 export default {
   title: 'Iris Library/Badge',
-  tags: ['stable'],
+  tags: ['autodocs', 'stable'],
   parameters: {
     layout: 'padded',
     docs: {
