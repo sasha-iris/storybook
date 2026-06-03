@@ -205,6 +205,7 @@ export const Interactive = {
         ].join('\n'),
       },
       source: {
+        state: 'open',
         transform: (_src, storyCtx) => {
           const a = storyCtx.args;
           const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;

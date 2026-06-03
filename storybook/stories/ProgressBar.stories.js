@@ -132,6 +132,7 @@ export const Interactive = {
   parameters: {
     docs: {
       source: {
+        state: 'open',
         transform: (_src, ctx) => {
           const { value, color, labelBelow } = ctx.args;
           const fillColor = COLORS[color] ?? COLORS.primary;

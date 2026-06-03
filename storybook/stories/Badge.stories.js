@@ -184,6 +184,7 @@ export const Interactive = {
         story: 'Use the **Controls** panel to configure any combination of color, size, icon, and dismiss button.',
       },
       source: {
+        state: 'open',
         transform: (_src, ctx) => {
           const a = ctx.args;
           const { bg, text, dismiss } = BADGE_COLORS[a.color] ?? BADGE_COLORS.indigo;
