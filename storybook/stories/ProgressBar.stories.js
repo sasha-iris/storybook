@@ -133,19 +133,34 @@ export const Interactive = {
     const fillColor = COLORS[color] ?? COLORS.primary;
     const pct = Math.min(100, Math.max(0, value));
     const labelHtml = `<div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">${pct}%</div>`;
-    let code = '';
+
+    let htmlCode = '';
+    let reactCode = '';
+
     if (labelBelow) {
-      code = `<div style="width:100%;">
+      htmlCode = `<div style="width:100%;">
   <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
   </div>
   ${labelHtml}
 </div>`;
+      reactCode = `<div style={{ width: '100%' }}>
+  <div style={{ position: 'relative', height: '6px', background: 'var(--color-border-default)', borderRadius: '2px', overflow: 'hidden' }}>
+    <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '${pct}%', background: '${fillColor}', borderRadius: '2px' }} />
+  </div>
+  <div style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)', color: 'var(--color-text-secondary)', textAlign: 'right' }}>${pct}%</div>
+</div>`;
     } else {
-      code = `<div style="width:100%;">
+      htmlCode = `<div style="width:100%;">
   ${labelHtml}
   <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
     <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
+  </div>
+</div>`;
+      reactCode = `<div style={{ width: '100%' }}>
+  <div style={{ fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)', color: 'var(--color-text-secondary)', textAlign: 'right' }}>${pct}%</div>
+  <div style={{ position: 'relative', height: '6px', background: 'var(--color-border-default)', borderRadius: '2px', overflow: 'hidden' }}>
+    <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: '${pct}%', background: '${fillColor}', borderRadius: '2px' }} />
   </div>
 </div>`;
     }
@@ -155,9 +170,17 @@ export const Interactive = {
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
           <div style="max-width:480px;">${progressBar(args)}</div>
         </div>
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;">
-          <pre style="margin:0;white-space:pre-wrap;word-break:break-word;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
-          <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;overflow:auto;"><code>${htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            <button onclick="navigator.clipboard.writeText(\`${htmlCode.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;overflow:auto;"><code>${reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            <button onclick="navigator.clipboard.writeText(\`${reactCode.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+          </div>
         </div>
       </div>
     `;

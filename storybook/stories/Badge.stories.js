@@ -186,23 +186,39 @@ export const Interactive = {
     const pad = isLg ? '2px 12px' : '2px 10px';
     const iconSz = isLg ? 16 : 14;
 
-    const iconPart = a.icon
+    const iconPartHtml = a.icon
       ? `\n  <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${text}" aria-hidden="true">\n    <path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/>\n  </svg>`
       : '';
-    const dismissPart = a.dismissible
-      ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${dismiss}" aria-hidden="true">\n      <path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/>\n    </svg>\n  </button>`
+    const iconPartReact = a.icon
+      ? `\n  <ClockIcon className="w-4 h-4" />`
       : '';
 
-    const code = `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};font-size:${fs};font-weight:${fw};border-radius:6px;padding:${pad};white-space:nowrap;line-height:1.5;">${iconPart}\n  <span>${a.label}</span>${dismissPart}\n</span>`;
+    const dismissPartHtml = a.dismissible
+      ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${dismiss}" aria-hidden="true">\n      <path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/>\n    </svg>\n  </button>`
+      : '';
+    const dismissPartReact = a.dismissible
+      ? `\n  <button type="button" aria-label="Remove ${a.label}">\n    <XMarkIcon className="w-4 h-4" />\n  </button>`
+      : '';
+
+    const htmlCode = `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};font-size:${fs};font-weight:${fw};border-radius:6px;padding:${pad};white-space:nowrap;line-height:1.5;">${iconPartHtml}\n  <span>${a.label}</span>${dismissPartHtml}\n</span>`;
+    const reactCode = `${a.icon ? "import { ClockIcon } from '@heroicons/react/24/outline';\n\n" : ""}${a.dismissible ? "import { XMarkIcon } from '@heroicons/react/24/outline';\n\n" : ""}<span className="badge badge-${a.size} badge-${a.color}">${iconPartReact}\n  <span>${a.label}</span>${dismissPartReact}\n</span>`;
 
     return `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
           ${badge(args)}
         </div>
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;">
-          <pre style="margin:0;white-space:pre-wrap;word-break:break-word;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
-          <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;overflow:auto;"><code>${htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            <button onclick="navigator.clipboard.writeText(\`${htmlCode.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;overflow:auto;"><code>${reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            <button onclick="navigator.clipboard.writeText(\`${reactCode.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+          </div>
         </div>
       </div>
     `;

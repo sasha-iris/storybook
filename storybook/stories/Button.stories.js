@@ -198,14 +198,20 @@ export const Interactive = {
     const a = args;
     const colorClass = a.outline ? `btn-outline-${a.color}` : `btn-${a.color}`;
     const classes = ['btn', colorClass, `btn-${a.size}`, a.pill ? 'btn-pill' : '', a.iconOnly ? 'btn-icon' : ''].filter(Boolean).join(' ');
-    let code = '';
+
+    let htmlCode = '';
+    let reactCode = '';
+
     if (a.iconOnly) {
-      code = `<button class="${classes}" aria-label="${a.label}">\n  <!-- icon svg here -->\n</button>`;
+      htmlCode = `<button class="${classes}" aria-label="${a.label}">\n  <!-- icon svg here -->\n</button>`;
+      reactCode = `<button className="${classes}" aria-label="${a.label}">\n  {/* icon here */}\n</button>`;
     } else {
-      const left  = a.iconLeft  ? '\n  <!-- left icon -->' : '';
-      const right = a.iconRight ? '\n  <!-- right icon -->' : '';
+      const left  = a.iconLeft  ? '\n  {/* left icon */}' : '';
+      const right = a.iconRight ? '\n  {/* right icon */}' : '';
       const dis   = a.disabled  ? ' disabled aria-disabled="true"' : '';
-      code = `<button class="${classes}"${dis}>${left}\n  <span>${a.label}</span>${right}\n</button>`;
+
+      htmlCode = `<button class="${classes}"${dis}>\n  <span>${a.label}</span>${a.iconLeft ? '\n  <!-- left icon -->' : ''}${a.iconRight ? '\n  <!-- right icon -->' : ''}\n</button>`;
+      reactCode = `<button className="${classes}"${dis}>${left}\n  <span>${a.label}</span>${right}\n</button>`;
     }
 
     return `
@@ -213,9 +219,17 @@ export const Interactive = {
         <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
           ${btn(args)}
         </div>
-        <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;font-family:monospace;font-size:13px;overflow:auto;">
-          <pre style="margin:0;white-space:pre-wrap;word-break:break-word;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
-          <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
+            <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;overflow:auto;"><code>${htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            <button onclick="navigator.clipboard.writeText(\`${htmlCode.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+          </div>
+          <div style="padding:20px;border:1px solid #e5e7eb;border-radius:8px;">
+            <div style="font-weight:600;font-size:12px;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
+            <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;overflow:auto;"><code>${reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            <button onclick="navigator.clipboard.writeText(\`${reactCode.replace(/`/g, '\\`')}\`)" style="margin-top:12px;padding:8px 12px;background:#42389d;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;">Copy</button>
+          </div>
         </div>
       </div>
     `;
