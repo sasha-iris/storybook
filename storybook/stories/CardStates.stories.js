@@ -281,7 +281,23 @@ const CARD_TITLES = { content: 'Recent articles', kpi: 'Total Revenue', chart: '
  */
 
 function cardStates({ state = 'loaded', variant = 'content' }) {
-  return `<div style="border:1px solid var(--color-border-default);border-radius:12px;padding:20px;background:#fff;width:280px;"><div style="font-size:14px;color:var(--color-text-heading);">State: ${state}</div></div>`;
+  let body = '';
+
+  if (state === 'loaded') {
+    body = variant === 'kpi'
+      ? '<div style="font-size:28px;font-weight:600;color:var(--color-text-heading);margin:0 0 8px 0;">$24,556</div><div style="font-size:12px;color:var(--color-text-secondary);">+12.5% vs last month</div>'
+      : variant === 'chart'
+      ? '<div style="height:80px;background:var(--color-bg-tertiary);border-radius:6px;margin-bottom:12px;"></div><div style="font-size:12px;color:var(--color-text-secondary);">Weekly trend</div>'
+      : '<p style="margin:0 0 12px 0;font-size:14px;color:var(--color-text-heading);font-weight:600;">Card Title</p><p style="margin:0 0 12px 0;font-size:13px;color:var(--color-text-secondary);">This is the loaded content state. All data is ready to display.</p>';
+  } else if (state === 'loading') {
+    body = '<div style="height:40px;background:var(--color-bg-tertiary);border-radius:6px;margin-bottom:8px;animation:skeleton-pulse 1.5s ease-in-out infinite;"></div><div style="height:24px;background:var(--color-bg-tertiary);border-radius:6px;animation:skeleton-pulse 1.5s ease-in-out infinite;"></div>';
+  } else if (state === 'empty') {
+    body = '<div style="text-align:center;"><div style="font-size:32px;margin-bottom:8px;">📭</div><p style="margin:0 0 4px 0;font-size:14px;font-weight:600;color:var(--color-text-heading);">No data available</p><p style="margin:0;font-size:12px;color:var(--color-text-secondary);">Start by adding your first item</p></div>';
+  } else if (state === 'error') {
+    body = '<div style="text-align:center;"><div style="font-size:32px;margin-bottom:8px;">⚠️</div><p style="margin:0 0 4px 0;font-size:14px;font-weight:600;color:var(--color-text-heading);">Failed to load</p><p style="margin:0;font-size:12px;color:var(--color-text-secondary);">Please try again later</p></div>';
+  }
+
+  return `<div class="card" style="width:${variant === 'kpi' ? '240px' : variant === 'chart' ? '380px' : '300px'};min-height:120px;padding:20px;border:1px solid var(--color-border-default);border-radius:12px;background:var(--color-bg-white);">${body}</div>`;
 }
 
 export const Interactive = {
