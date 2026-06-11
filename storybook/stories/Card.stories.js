@@ -265,7 +265,7 @@ export const WithImage = {
  * **QA checklist**
  * - Title and sub-label left-aligned; controls right-aligned; both vertically centred
  * - `.card-footer` border-top is `1px solid --color-border-default`
- * - "See details" link colour is `--color-text-link`
+ * - "See details" link colour is `#42389d` brand purple (`.card-footer-link`)
  */
 export const WithHeaderControls = {
     parameters: {
@@ -318,8 +318,7 @@ export const WithHeaderControls = {
       <div class="card-footer">
         <span style="font-size:var(--text-xs);color:var(--color-text-body-subtle);">
           Updated just now</span>
-        <a href="#" style="font-size:var(--text-xs);color:var(--color-text-fg-brand);
-                           font-weight:var(--font-medium);">See details →</a>
+        <a href="#" class="card-footer-link">See details →</a>
       </div>
     </div>`,
 };

@@ -164,49 +164,60 @@ export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
+    // Mirror renderAlert(): medium = pure CSS class; dark/light carry the same
+    // inline overrides the preview uses (no dedicated CSS class for those types yet)
+    const cssColor = CSS_COLOR[a.color] || 'dark';
+    const tok = COLOR_MAP[a.color];
+    const alertCls = a.type === 'dark' ? 'alert' : `alert alert-${cssColor}`;
+    const typeStyle = a.type === 'dark'
+      ? ` style="background:${tok.darkBg};color:#fff;border-color:${tok.darkBg};"`
+      : a.type === 'light'
+        ? ' style="background:#fff;"'
+        : '';
+    const ctaHtmlSnip = a.cta ? `
+    <div style="margin-top:8px;">
+      <button type="button" class="btn btn-xs">View more</button>
+    </div>` : '';
     const htmlCode = `<!-- Alert: ${a.color} / ${a.type}${a.cta ? ' / with CTA' : ''} -->
-<div role="alert" class="alert alert--${a.color} alert--${a.type}">
-  <div class="alert__content">
-    <div class="alert__header">
-      <svg class="alert__icon" aria-hidden="true"><!-- check-circle --></svg>
-      <span class="alert__heading">${a.heading}</span>
-      <button class="alert__dismiss" aria-label="Dismiss"><!-- × --></button>
-    </div>
-    <p class="alert__body">${a.body}</p>${a.cta ? '\n    <button class="alert__cta">View more</button>' : ''}
+<div role="alert" class="${alertCls}"${typeStyle}>
+  <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- check-circle path --></svg>
+  <div class="alert-body">
+    <div class="alert-title">${a.heading}</div>
+    <p style="margin:0;">${a.body}</p>${ctaHtmlSnip}
   </div>
+  <button type="button" class="alert-dismiss" aria-label="Dismiss">×</button>
 </div>`;
 
-    const reactCode = `<div role="alert" className="alert alert--${a.color} alert--${a.type}">
-  <div className="alert__content">
-    <div className="alert__header">
-      <svg className="alert__icon" aria-hidden="true">{/* check-circle */}</svg>
-      <span className="alert__heading">${a.heading}</span>
-      <button className="alert__dismiss" aria-label="Dismiss">{/* × */}</button>
-    </div>
-    <p className="alert__body">${a.body}</p>${a.cta ? '\n    <button className="alert__cta">View more</button>' : ''}
+    const reactCode = `<div role="alert" className="${alertCls}"${a.type === 'dark' ? ` style={{ background: '${tok.darkBg}', color: '#fff', borderColor: '${tok.darkBg}' }}` : a.type === 'light' ? ` style={{ background: '#fff' }}` : ''}>
+  <svg className="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">{/* check-circle path */}</svg>
+  <div className="alert-body">
+    <div className="alert-title">${a.heading}</div>
+    <p style={{ margin: 0 }}>${a.body}</p>${a.cta ? `
+    <div style={{ marginTop: 8 }}>
+      <button type="button" className="btn btn-xs">View more</button>
+    </div>` : ''}
   </div>
+  <button type="button" className="alert-dismiss" aria-label="Dismiss">×</button>
 </div>`;
 
-    const componentCode = `export function Alert({ heading = "${a.heading}", body = "${a.body}", color = "${a.color}", type = "${a.type}", cta = ${a.cta}, onDismiss, onCTA }) {
+    const componentCode = `// Color name → CSS class (.alert-{color}); "default" maps to .alert-dark
+const ALERT_CLASS = { success: 'alert-success', danger: 'alert-danger', info: 'alert-info', warning: 'alert-warning', default: 'alert-dark' };
+
+export function Alert({ heading = "${a.heading}", body = "${a.body}", color = "${a.color}", cta = ${a.cta}, onDismiss, onCTA }) {
+  // type="dark"/"light" need inline overrides — see the HTML tab
   return (
-    <div role="alert" className={\`alert alert--\${color} alert--\${type}\`}>
-      <div className="alert__content">
-        <div className="alert__header">
-          <svg className="alert__icon" aria-hidden="true">{/* check-circle */}</svg>
-          <span className="alert__heading">{heading}</span>
-          <button
-            className="alert__dismiss"
-            aria-label="Dismiss"
-            onClick={onDismiss}
-          >{/* × */}</button>
-        </div>
-        <p className="alert__body">{body}</p>
+    <div role="alert" className={\`alert \${ALERT_CLASS[color]}\`}>
+      <svg className="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">{/* check-circle path */}</svg>
+      <div className="alert-body">
+        <div className="alert-title">{heading}</div>
+        <p style={{ margin: 0 }}>{body}</p>
         {cta && (
-          <button className="alert__cta" onClick={onCTA}>
-            View more
-          </button>
+          <div style={{ marginTop: 8 }}>
+            <button type="button" className="btn btn-xs" onClick={onCTA}>View more</button>
+          </div>
         )}
       </div>
+      <button type="button" className="alert-dismiss" aria-label="Dismiss" onClick={onDismiss}>×</button>
     </div>
   );
 }`;
@@ -287,6 +298,31 @@ export const Interactive = {
       description: {
         story: 'Use **Controls** to switch color, type, and content, and to toggle the CTA button.',
       },
+      source: {
+        transform: (_src, storyCtx) => {
+          const a = storyCtx.args;
+          const cssColor = CSS_COLOR[a.color] || 'dark';
+          const tok = COLOR_MAP[a.color];
+          const alertCls = a.type === 'dark' ? 'alert' : `alert alert-${cssColor}`;
+          const typeStyle = a.type === 'dark'
+            ? ` style="background:${tok.darkBg};color:#fff;border-color:${tok.darkBg};"`
+            : a.type === 'light'
+              ? ' style="background:#fff;"'
+              : '';
+          const cta = a.cta ? `
+    <div style="margin-top:8px;">
+      <button type="button" class="btn btn-xs">View more</button>
+    </div>` : '';
+          return `<div role="alert" class="${alertCls}"${typeStyle}>
+  <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- check-circle path --></svg>
+  <div class="alert-body">
+    <div class="alert-title">${a.heading}</div>
+    <p style="margin:0;">${a.body}</p>${cta}
+  </div>
+  <button type="button" class="alert-dismiss" aria-label="Dismiss">×</button>
+</div>`;
+        },
+      },
     },
   },
 };
@@ -309,19 +345,19 @@ export const AllColors = {
       },
       source: {
         code: `<!-- Success -->
-<div role="alert" class="alert alert--success alert--medium"> … </div>
+<div role="alert" class="alert alert-success"> … </div>
 
 <!-- Danger -->
-<div role="alert" class="alert alert--danger alert--medium"> … </div>
+<div role="alert" class="alert alert-danger"> … </div>
 
 <!-- Info -->
-<div role="alert" class="alert alert--info alert--medium"> … </div>
+<div role="alert" class="alert alert-info"> … </div>
 
 <!-- Warning -->
-<div role="alert" class="alert alert--warning alert--medium"> … </div>
+<div role="alert" class="alert alert-warning"> … </div>
 
-<!-- Default -->
-<div role="alert" class="alert alert--default alert--medium"> … </div>`,
+<!-- Default (maps to .alert-dark) -->
+<div role="alert" class="alert alert-dark"> … </div>`,
         language: 'html',
       },
     },
@@ -371,14 +407,14 @@ export const AllTypes = {
 **❌ Don't** — mix types within the same page section — pick one type and use it consistently.`,
       },
       source: {
-        code: `<!-- Medium — tinted background -->
-<div role="alert" class="alert alert--info alert--medium"> … </div>
+        code: `<!-- Medium — tinted background (pure CSS class) -->
+<div role="alert" class="alert alert-info"> … </div>
 
-<!-- Dark — solid accent background -->
-<div role="alert" class="alert alert--info alert--dark"> … </div>
+<!-- Dark — solid accent background (inline override; no dedicated class yet) -->
+<div role="alert" class="alert" style="background:#1447e6;color:#fff;border-color:#1447e6;"> … </div>
 
-<!-- Light — white background with shadow -->
-<div role="alert" class="alert alert--info alert--light"> … </div>`,
+<!-- Light — white background override on top of the color class -->
+<div role="alert" class="alert alert-info" style="background:#fff;"> … </div>`,
         language: 'html',
       },
     },
@@ -416,16 +452,16 @@ export const WithCTA = {
 **❌ Don't** — use generic labels like "Click here" — the button label should describe the destination or action.`,
       },
       source: {
-        code: `<div role="alert" class="alert alert--warning alert--medium">
-  <div class="alert__content">
-    <div class="alert__header">
-      <svg class="alert__icon" aria-hidden="true"><!-- check-circle --></svg>
-      <span class="alert__heading">Your free trial ends in 3 days</span>
-      <button class="alert__dismiss" aria-label="Dismiss"><!-- × --></button>
+        code: `<div role="alert" class="alert alert-warning">
+  <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- check-circle path --></svg>
+  <div class="alert-body">
+    <div class="alert-title">Your free trial ends in 3 days</div>
+    <p style="margin:0;">Upgrade to a paid plan to keep all features and avoid data loss.</p>
+    <div style="margin-top:8px;">
+      <button type="button" class="btn btn-xs">View more</button>
     </div>
-    <p class="alert__body">Upgrade to a paid plan to keep all features and avoid data loss.</p>
-    <button class="alert__cta">View more</button>
   </div>
+  <button type="button" class="alert-dismiss" aria-label="Dismiss">×</button>
 </div>`,
         language: 'html',
       },

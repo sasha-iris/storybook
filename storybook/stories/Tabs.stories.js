@@ -122,75 +122,26 @@ const chevronUp = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16
 
 /* ── helpers ────────────────────────────────────────────────────── */
 
+// Built on the real `.iris-tab-bar` / `.iris-tab` / `.iris-tab--active` /
+// `.iris-tab__counter` classes. The "hover" gallery state simulates the CSS
+// :hover colours inline (preview-only) — real hover comes from the class.
 function tab({ label = 'Tab', state = 'default', counter = false, counterCount = 0, dropdown = false } = {}) {
-  const isActive  = state === 'active';
-  const isHover   = state === 'hover';
-
-  const textColor   = isActive ? '#42389d' : isHover ? 'var(--color-text-primary)' : '#4b5563';
-  const borderColor = isActive ? '#42389d' : isHover ? 'var(--color-border-default)' : 'transparent';
-
-  const counterBg   = isActive ? '#42389d' : 'var(--color-border-default)';
-  const counterText = isActive ? 'var(--color-bg-white)'  : '#4b5563';
-
-  const chevron = isActive && dropdown ? chevronUp : chevronDown;
+  const isActive = state === 'active';
+  const isHover  = state === 'hover';
+  const hoverSim = isHover ? ' style="color:#374151;border-bottom-color:#d1d5db;"' : '';
+  const chevron  = isActive && dropdown ? chevronUp : chevronDown;
 
   return `
-    <button
-      role="tab"
-      aria-selected="${isActive}"
-      style="
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 12px 16px;
-        height: 45px;
-        background: transparent;
-        border: none;
-        border-bottom: 2px solid ${borderColor};
-        margin-bottom: -1px;
-        font-family: inherit;
-        font-size: var(--text-sm);
-        font-weight: var(--font-medium);
-        color: ${textColor};
-        cursor: pointer;
-        white-space: nowrap;
-        line-height: 1.5;
-        transition: color 0.15s, border-color 0.15s;
-      "
-    >
+    <button class="iris-tab${isActive ? ' iris-tab--active' : ''}" role="tab" aria-selected="${isActive}"${hoverSim}>
       ${label}
-      ${counter ? `
-        <span style="
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 4px;
-          min-width: 16px;
-          height: 18px;
-          background: ${counterBg};
-          color: ${counterText};
-          font-size: var(--text-xs);
-          font-weight: var(--font-medium);
-          border-radius: 4px;
-          line-height: 1;
-        ">${counterCount}</span>
-      ` : ''}
-      ${dropdown ? `<span style="display:inline-flex;align-items:center;color:${textColor};">${chevron}</span>` : ''}
+      ${counter ? `<span class="iris-tab__counter">${counterCount}</span>` : ''}
+      ${dropdown ? `<span style="display:inline-flex;align-items:center;">${chevron}</span>` : ''}
     </button>`;
 }
 
 function tabBar(tabs) {
   return `
-    <div
-      role="tablist"
-      style="
-        display: flex;
-        align-items: flex-end;
-        background: var(--color-bg-surface);
-        border-bottom: 1px solid var(--color-border-default);
-        gap: 0;
-      "
-    >
+    <div class="iris-tab-bar" role="tablist">
       ${tabs.join('')}
     </div>`;
 }
@@ -202,16 +153,13 @@ export const Interactive = {
   render: (args) => {
     const a = args;
     const isActive = a.state === 'active';
-    const borderColor = isActive ? '#42389d' : a.state === 'hover' ? 'var(--color-border-default)' : 'transparent';
-    const textColor   = isActive ? '#42389d' : a.state === 'hover' ? 'var(--color-text-primary)' : '#4b5563';
-    const counterBg   = isActive ? '#42389d' : 'var(--color-border-default)';
-    const counterText = isActive ? 'var(--color-bg-white)'  : '#4b5563';
+    const tabClass = `iris-tab${isActive ? ' iris-tab--active' : ''}`;
 
-    const htmlCode = `<div role="tablist" style="display:flex;border-bottom:1px solid var(--color-border-default);">\n  <button role="tab" aria-selected="${isActive}" style="padding:12px 16px;color:${textColor};border-bottom:2px solid ${borderColor};background:transparent;">${a.label}${a.counter ? `\n    <span style="background:${counterBg};color:${counterText};">${a.counterCount}</span>` : ''}</button>\n</div>`;
+    const htmlCode = `<div class="iris-tab-bar" role="tablist">\n  <button class="${tabClass}" role="tab" aria-selected="${isActive}">${a.label}${a.counter ? `\n    <span class="iris-tab__counter">${a.counterCount}</span>` : ''}</button>\n</div>`;
 
-    const reactCode = `<div role="tablist" className="tabs">\n  <button\n    role="tab"\n    aria-selected={activeTab === '${a.label}'}\n    onClick={() => setActiveTab('${a.label}')}\n    className={activeTab === '${a.label}' ? 'tab active' : 'tab'}\n  >\n    ${a.label}\n    {${a.counter} && <span className="tab-counter">{count}</span>}\n  </button>\n</div>`;
+    const reactCode = `<div className="iris-tab-bar" role="tablist">\n  <button\n    role="tab"\n    aria-selected={activeTab === '${a.label}'}\n    onClick={() => setActiveTab('${a.label}')}\n    className={activeTab === '${a.label}' ? 'iris-tab iris-tab--active' : 'iris-tab'}\n  >\n    ${a.label}\n    {${a.counter} && <span className="iris-tab__counter">{count}</span>}\n  </button>\n</div>`;
 
-    const componentCode = `export function Tabs({ tabs = ["${a.label}", "Tab 2", "Tab 3"], onTabChange, counter = ${a.counter} }) {\n  const [activeTab, setActiveTab] = useState(tabs[0]);\n\n  const handleTabClick = (tabName) => {\n    setActiveTab(tabName);\n    onTabChange?.(tabName);\n  };\n\n  return (\n    <div role="tablist" className="tabs">\n      {tabs.map((tabName) => (\n        <button\n          key={tabName}\n          role="tab"\n          aria-selected={activeTab === tabName}\n          onClick={() => handleTabClick(tabName)}\n          className={activeTab === tabName ? 'tab active' : 'tab'}\n        >\n          {tabName}\n          {counter && <span className="tab-counter">5</span>}\n        </button>\n      ))}\n    </div>\n  );\n}`;
+    const componentCode = `export function Tabs({ tabs = ["${a.label}", "Tab 2", "Tab 3"], onTabChange, counts = {} }) {\n  const [activeTab, setActiveTab] = useState(tabs[0]);\n\n  const handleTabClick = (tabName) => {\n    setActiveTab(tabName);\n    onTabChange?.(tabName);\n  };\n\n  return (\n    <div className="iris-tab-bar" role="tablist">\n      {tabs.map((tabName) => (\n        <button\n          key={tabName}\n          role="tab"\n          aria-selected={activeTab === tabName}\n          onClick={() => handleTabClick(tabName)}\n          className={activeTab === tabName ? 'iris-tab iris-tab--active' : 'iris-tab'}\n        >\n          {tabName}\n          {counts[tabName] != null && <span className="iris-tab__counter">{counts[tabName]}</span>}\n        </button>\n      ))}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -275,7 +223,14 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use **Controls** to switch between active/hover/default states, toggle counter and dropdown.',
+        story: 'Use **Controls** to switch between active/hover/default states, toggle counter and dropdown. Preview and snippets emit the real `.iris-tab` classes.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const a = ctx.args;
+          const isActive = a.state === 'active';
+          return `<div class="iris-tab-bar" role="tablist">\n  <button class="iris-tab${isActive ? ' iris-tab--active' : ''}" role="tab" aria-selected="${isActive}">\n    ${a.label}${a.counter ? `\n    <span class="iris-tab__counter">${a.counterCount}</span>` : ''}${a.dropdown ? '\n    <!-- chevron -->' : ''}\n  </button>\n</div>`;
+        },
       },
     },
   },
@@ -310,30 +265,13 @@ All three states from Figma node \`10007:72664\`:
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
-  <!-- Default -->
-  <button role="tab" aria-selected="false"
-    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:#4b5563;border:none;border-bottom:2px solid transparent;
-           margin-bottom:-1px;background:transparent;">
-    Overview
-  </button>
-
-  <!-- Hover (applied via :hover in CSS) -->
-  <button role="tab" aria-selected="false"
-    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:var(--color-text-primary);border:none;border-bottom:2px solid var(--color-border-default);
-           margin-bottom:-1px;background:transparent;">
-    Transactions
-  </button>
+        code: `<div class="iris-tab-bar" role="tablist">
+  <!-- Default (hover handled by .iris-tab:hover) -->
+  <button class="iris-tab" role="tab" aria-selected="false">Overview</button>
+  <button class="iris-tab" role="tab" aria-selected="false">Transactions</button>
 
   <!-- Active -->
-  <button role="tab" aria-selected="true"
-    style="padding:12px 16px;height:45px;font-size:var(--text-sm);font-weight:var(--font-medium);
-           color:#42389d;border:none;border-bottom:2px solid #42389d;
-           margin-bottom:-1px;background:transparent;">
-    Reports
-  </button>
+  <button class="iris-tab iris-tab--active" role="tab" aria-selected="true">Reports</button>
 </div>`,
         language: 'html',
       },
@@ -373,26 +311,16 @@ Badge colours per state (Figma node \`10007:72664\`):
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
-  <button role="tab" aria-selected="false"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
-           border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
+        code: `<div class="iris-tab-bar" role="tablist">
+  <button class="iris-tab" role="tab" aria-selected="false">
     Inbox
-    <span style="padding:0 4px;height:18px;min-width:16px;background:var(--color-border-default);color:#4b5563;
-                 font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
-                 display:inline-flex;align-items:center;justify-content:center;">5</span>
+    <span class="iris-tab__counter">5</span>
   </button>
 
-  <!-- Active tab — badge uses brand purple background -->
-  <button role="tab" aria-selected="true"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
-           border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
+  <!-- Active tab — counter flips to brand purple via the class -->
+  <button class="iris-tab iris-tab--active" role="tab" aria-selected="true">
     Pending
-    <span style="padding:0 4px;height:18px;min-width:16px;background:#42389d;color:var(--color-bg-white);
-                 font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
-                 display:inline-flex;align-items:center;justify-content:center;">12</span>
+    <span class="iris-tab__counter">12</span>
   </button>
 </div>`,
         language: 'html',
@@ -431,27 +359,21 @@ Dropdown tabs (Figma \`dropdown=yes\`) indicate that clicking the tab opens a su
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
-  <button role="tab" aria-selected="false"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
-           border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
+        code: `<div class="iris-tab-bar" role="tablist">
+  <button class="iris-tab" role="tab" aria-selected="false">
     Reports
-    <!-- chevron-down when closed -->
+    <!-- chevron-down when closed (stroke=currentColor inherits tab colour) -->
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="6 9 12 15 18 9"/>
     </svg>
   </button>
 
   <!-- Active / open — chevron-up -->
-  <button role="tab" aria-selected="true"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
-           border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
+  <button class="iris-tab iris-tab--active" role="tab" aria-selected="true">
     Filters
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="#42389d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="18 15 12 9 6 15"/>
     </svg>
   </button>
@@ -489,35 +411,17 @@ transaction lists, team dashboards, or approval queues.
         `.trim(),
       },
       source: {
-        code: `<div role="tablist" style="display:flex;align-items:flex-end;border-bottom:1px solid var(--color-border-default);">
-  <button role="tab" aria-selected="true"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#42389d;border:none;
-           border-bottom:2px solid #42389d;margin-bottom:-1px;background:transparent;">
-    All transactions
-  </button>
-  <button role="tab" aria-selected="false"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
-           border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
+        code: `<div class="iris-tab-bar" role="tablist">
+  <button class="iris-tab iris-tab--active" role="tab" aria-selected="true">All transactions</button>
+  <button class="iris-tab" role="tab" aria-selected="false">
     Pending
-    <span style="padding:0 4px;height:18px;min-width:16px;background:var(--color-border-default);color:#4b5563;
-                 font-size:var(--text-xs);font-weight:var(--font-medium);border-radius:4px;
-                 display:inline-flex;align-items:center;justify-content:center;">8</span>
+    <span class="iris-tab__counter">8</span>
   </button>
-  <button role="tab" aria-selected="false"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
-           border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
-    Completed
-  </button>
-  <button role="tab" aria-selected="false"
-    style="display:inline-flex;align-items:center;gap:6px;padding:12px 16px;height:45px;
-           font-size:var(--text-sm);font-weight:var(--font-medium);color:#4b5563;border:none;
-           border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;">
+  <button class="iris-tab" role="tab" aria-selected="false">Completed</button>
+  <button class="iris-tab" role="tab" aria-selected="false">
     Exports
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="#4b5563" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
   </button>
 </div>`,
         language: 'html',

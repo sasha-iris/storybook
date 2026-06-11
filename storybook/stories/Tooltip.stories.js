@@ -227,25 +227,25 @@ export const AllPositions = {
         code: `<!-- Top -->
 <div class="tooltip-wrap tooltip-top" data-tooltip>
   <button class="btn btn-primary btn-sm" aria-describedby="tip-top">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-top"> … </div>
+  <div class="tooltip-bubble" role="tooltip" id="tip-top"> … </div>
 </div>
 
 <!-- Right -->
 <div class="tooltip-wrap tooltip-right" data-tooltip>
   <button class="btn btn-primary btn-sm" aria-describedby="tip-right">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-right"> … </div>
+  <div class="tooltip-bubble" role="tooltip" id="tip-right"> … </div>
 </div>
 
 <!-- Bottom -->
 <div class="tooltip-wrap tooltip-bottom" data-tooltip>
   <button class="btn btn-primary btn-sm" aria-describedby="tip-bottom">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-bottom"> … </div>
+  <div class="tooltip-bubble" role="tooltip" id="tip-bottom"> … </div>
 </div>
 
 <!-- Left -->
 <div class="tooltip-wrap tooltip-left" data-tooltip>
   <button class="btn btn-primary btn-sm" aria-describedby="tip-left">Trigger</button>
-  <div class="tooltip-bubble tooltip-dark" role="tooltip" id="tip-left"> … </div>
+  <div class="tooltip-bubble" role="tooltip" id="tip-left"> … </div>
 </div>`,
         language: 'html',
       },
@@ -283,7 +283,7 @@ export const BothColors = {
       },
       source: {
         code: `<!-- Dark tooltip -->
-<div class="tooltip-bubble tooltip-dark" role="tooltip">
+<div class="tooltip-bubble" role="tooltip">
   <strong style="font-weight:var(--font-medium);font-size:var(--text-sm);color:var(--color-bg-white);">More information</strong>
   <div style="height:1px;background:#4b5563;margin:6px 0;"></div>
   <p style="font-size:var(--text-xs);color:var(--color-bg-muted);">The user wants to find a specific page or site.</p>

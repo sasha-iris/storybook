@@ -16,20 +16,20 @@ function sk(animated, extra = '') {
   const anim = animated ? '' : 'animation:none;';
   return `class="skeleton" style="${anim}${extra}"`;
 }
-// Darker variant (headings, image frames)
+// Darker variant (headings, image frames) — .skeleton bg (#E5E7EB) comes from CSS
 function skd(animated, extra = '') {
   const anim = animated ? '' : 'animation:none;';
-  return `class="skeleton" style="background:var(--color-border-default);${anim}${extra}"`;
+  return `class="skeleton" style="${anim}${extra}"`;
 }
 // Avatar placeholder (circle)
 function ska(animated, extra = '') {
   const anim = animated ? '' : 'animation:none;';
   return `class="skeleton-avatar" style="${anim}${extra}"`;
 }
-// Image placeholder (rounded rect)
+// Image placeholder (rounded rect) — .skeleton-image bg comes from CSS
 function ski(animated, extra = '') {
   const anim = animated ? '' : 'animation:none;';
-  return `class="skeleton-image" style="background:var(--color-border-default);${anim}${extra}"`;
+  return `class="skeleton-image" style="${anim}${extra}"`;
 }
 
 function skCardImage({ animated }) {
@@ -233,11 +233,14 @@ export const Interactive = {
   render: (args) => {
     const a = args;
 
-    const htmlCode = `<!-- Skeleton loader -->\n<div class="skeleton skeleton--${a.type}${a.animated ? '' : ' skeleton--static'}" style="min-height:100px;border-radius:8px;background:var(--color-border-default)${a.animated ? ';animation:pulse 2s infinite;' : ''}"></div>\n<!-- Replace with real content once data is loaded -->`;
+    // HTML snippet = the actual builder output → preview and snippet can never diverge.
+    // Skeletons are composed from .skeleton / .skeleton-avatar / .skeleton-image; sizes are data (inline).
+    const htmlCode = `<!-- Skeleton: ${a.type}${a.animated ? '' : ' (static)'} -->\n${skeleton(a).trim()}\n<!-- Replace with real content once data is loaded -->`;
 
-    const reactCode = `<div\n  className="skeleton skeleton--${a.type}${a.animated ? '' : ' skeleton--static'}"\n  style={{\n    minHeight: '100px',\n    borderRadius: '8px',\n    background: 'var(--color-border-default)',\n    animation: ${a.animated ? "'pulse 2s infinite'" : 'none'},\n  }}\n/>\n{/* Replace with real content once data is loaded */}`;
+    const anim = a.animated ? '' : `, animation: 'none'`;
+    const reactCode = `{/* Compose .skeleton / .skeleton-avatar / .skeleton-image — sizes are data */}\n<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }} role="status" aria-label="Loading">\n  <div className="skeleton" style={{ height: 8, borderRadius: 12${anim} }} />\n  <div className="skeleton" style={{ height: 8, borderRadius: 12, width: '88%'${anim} }} />\n  <div className="skeleton" style={{ height: 8, borderRadius: 12, width: '75%'${anim} }} />\n</div>`;
 
-    const componentCode = `export function SkeletonLoader({ type = 'text', animated = true, height = 100 }) {\n  return (\n    <div\n      className={\`skeleton skeleton--\${type}\${animated ? '' : ' skeleton--static'}\`}\n      style={{\n        minHeight: height,\n        borderRadius: '8px',\n        background: 'var(--color-border-default)',\n        animation: animated ? 'pulse 2s infinite' : 'none',\n      }}\n    />\n  );\n}\n\n/* CSS */\n@keyframes pulse {\n  0%, 100% { opacity: 1; }\n  50% { opacity: 0.5; }\n}`;
+    const componentCode = `export function SkeletonTextBlock({ rows = 4, animated = true }) {\n  const widths = ['100%', '88%', '75%', '60%'];\n  return (\n    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }} role="status" aria-label="Loading">\n      {Array.from({ length: rows }).map((_, i) => (\n        <div\n          key={i}\n          className="skeleton"\n          style={{\n            height: 8,\n            borderRadius: 12,\n            width: widths[i % widths.length],\n            animation: animated ? undefined : 'none',\n          }}\n        />\n      ))}\n    </div>\n  );\n}\n\n/* Avatars: <div className="skeleton-avatar" style={{ width: 32, height: 32 }} /> */\n/* Images:  <div className="skeleton-image"  style={{ height: 95 }} /> */`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -303,6 +306,10 @@ export const Interactive = {
       description: {
         story: 'Use **Controls** to switch between skeleton layouts and toggle the shimmer animation.',
       },
+      source: {
+        // Snippet = the actual builder output → always matches the preview
+        transform: (_src, ctx) => skeleton(ctx.args).trim(),
+      },
     },
   },
 };
@@ -324,23 +331,24 @@ export const AllTypes = {
 **❌ Don't** — leave skeletons visible after data loads; always replace them immediately.`,
       },
       source: {
-        code: `<!-- Card + Image skeleton -->
-<div class="skeleton skeleton--card-image"> … </div>
+        code: `<!-- Skeleton layouts are COMPOSED from three primitives;
+     layout wrappers and sizes are inline (they are data, not classes) -->
 
-<!-- Image + Text skeleton -->
-<div class="skeleton skeleton--image-text"> … </div>
+<!-- Text rows -->
+<div class="skeleton" style="height:8px;border-radius:12px;"></div>
+<div class="skeleton" style="height:8px;border-radius:12px;width:88%;"></div>
 
-<!-- Text skeleton -->
-<div class="skeleton skeleton--text"> … </div>
+<!-- Avatar + name -->
+<div style="display:flex;align-items:center;gap:8px;">
+  <div class="skeleton-avatar" style="width:32px;height:32px;"></div>
+  <div class="skeleton" style="width:70px;height:8px;border-radius:6px;"></div>
+</div>
 
-<!-- List skeleton (5 rows) -->
-<div class="skeleton skeleton--list"> … </div>
+<!-- Image placeholder -->
+<div class="skeleton-image" style="height:95px;"></div>
 
-<!-- Simple text skeleton (7 rows) -->
-<div class="skeleton skeleton--simple-text"> … </div>
-
-<!-- Widget (bar chart) skeleton -->
-<div class="skeleton skeleton--widget"> … </div>`,
+<!-- Full layouts (card-image, image-text, text, list, simple-text, widget):
+     open the story preview — its markup IS the copy-paste source -->`,
         language: 'html',
       },
     },
@@ -387,8 +395,10 @@ export const StaticNoAnimation = {
   const animated = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 </script>
 
-<!-- Pass animated=false when reduced motion is preferred -->
-<div class="skeleton skeleton--card-image skeleton--static"> … </div>`,
+<!-- animated=false → disable the shimmer with inline animation:none on each block -->
+<div class="skeleton" style="animation:none;height:8px;border-radius:12px;"></div>
+<div class="skeleton-avatar" style="animation:none;width:32px;height:32px;"></div>
+<div class="skeleton-image" style="animation:none;height:95px;"></div>`,
         language: 'html',
       },
     },

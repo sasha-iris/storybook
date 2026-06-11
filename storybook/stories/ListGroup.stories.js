@@ -1,22 +1,6 @@
 // Figma node: 3284:24121 (List — Type=Default × Icons=True/False × Dark=True/False)
 // File key: ZKtEULdYKaXe5uQl1J6ijI
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
-const T = {
-  // Light
-  bg:         'var(--color-bg-white)',
-  border:     'var(--color-border-default)',
-  divider:    'var(--color-border-default)',
-  text:       '#111928',
-  iconFill:   '#111928',
-  // Dark
-  dark_bg:    'var(--color-text-primary)',
-  dark_border:'#4b5563',
-  dark_div:   '#4b5563',
-  dark_text:  'var(--color-bg-white)',
-  dark_icon:  'var(--color-bg-white)',
-};
-
 // ─── SVG icons (16×16, matching Figma fills) ──────────────────────────────────
 const ICONS = {
   'user-circle': (c) => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,28 +32,18 @@ const DEFAULT_ITEMS = [
 ];
 
 // ─── List Group renderer ───────────────────────────────────────────────────────
+// All styling comes from the real .list-group* classes; width inline = data.
 function listGroup({ items = DEFAULT_ITEMS, showIcons = false, dark = false, width = 240 }) {
-  const bg      = dark ? T.dark_bg     : T.bg;
-  const border  = dark ? T.dark_border : T.border;
-  const divider = dark ? T.dark_div    : T.divider;
-  const text    = dark ? T.dark_text   : T.text;
-  const iconClr = dark ? T.dark_icon   : T.iconFill;
-
-  const rows = items.map((item, i) => {
-    const borderTop = i > 0 ? `border-top:1px solid ${divider};` : '';
+  const rows = items.map((item) => {
     const iconEl = showIcons && item.icon
-      ? `<span style="flex-shrink:0;display:flex;align-items:center;">${(ICONS[item.icon] || ICONS['user-circle'])(iconClr)}</span>`
+      ? `<span class="list-group-item__icon">${(ICONS[item.icon] || ICONS['user-circle'])('currentColor')}</span>`
       : '';
-    return `<div style="display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;
-      box-sizing:border-box;cursor:pointer;${borderTop}
-      font-family:inherit;">
-      ${iconEl}
-      <span style="font-size:14px;font-weight:500;color:${text};font-family:inherit;">${item.label}</span>
-    </div>`;
-  }).join('');
+    return `  <li class="list-group-item">${iconEl}${item.label}</li>`;
+  }).join('\n');
 
-  return `<div style="width:${width}px;background:${bg};border:1px solid ${border};
-    border-radius:8px;overflow:hidden;font-family:inherit;">${rows}</div>`;
+  return `<ul class="list-group${dark ? ' list-group--dark' : ''}" style="width:${width}px;">
+${rows}
+</ul>`;
 }
 
 // ─── Default export ────────────────────────────────────────────────────────────
@@ -92,16 +66,16 @@ export default {
 - Mutually exclusive choices → use **Radio** or **Select**
 - Multi-select → use **Multiselect** or **Tag Input**
 
-**Anatomy**
-- Container — \`bg:var(--color-bg-white)\`, \`border:1px solid var(--color-border-default)\`, \`border-radius:8px\`, \`width:240px\`
-- List item — \`height:37px\`, \`padding:0 16px\`, separated by \`1px solid var(--color-border-default)\` dividers
-- Leading icon (optional) — \`16×16px\`, fill \`#111928\` (light) / \`var(--color-bg-white)\` (dark)
-- Label — \`font-size:14px\`, \`font-weight:500\`
+**Anatomy** (CSS classes — Figma 3284:24121)
+- Container — \`.list-group\`: white bg, \`1px solid var(--color-border-default)\`, radius 8px. Width is data — Figma default 240px, set inline.
+- List item — \`.list-group-item\`: padding \`8px 16px\` (37px row), gap 6px, divider \`1px solid var(--color-border-default)\`
+- Leading icon (optional) — \`.list-group-item__icon\`, 16×16px, \`currentColor\` (inherits item text color)
+- Label — \`font-size:14px\`, \`font-weight:500\`, color \`#111928\`
 
-**Dark mode**
-- Container: \`bg:var(--color-text-primary)\`, \`border:#4b5563\`
+**Dark mode** — add \`.list-group--dark\` to the container
+- Container: \`bg:#374151\` (gray-700), border \`#4b5563\`
 - Dividers: \`#4b5563\`
-- Text + icons: \`var(--color-bg-white)\`
+- Text + icons: white (icons inherit via \`currentColor\`)
 
 See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) for complete installation instructions.
         `,
@@ -117,7 +91,7 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
     },
     dark: {
       control: 'boolean',
-      description: 'Dark theme. Container `bg:var(--color-text-primary)`, dividers `#4b5563`, text/icons `var(--color-bg-white)`. Use on dark surfaces or inside dark dropdowns.',
+      description: 'Dark theme. CSS class: `.list-group--dark` — container `#374151`, border/dividers `#4b5563`, text/icons white. Use on dark surfaces or inside dark dropdowns.',
       table: { category: 'Appearance', defaultValue: { summary: false } },
     },
     width: {
@@ -137,15 +111,14 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const bg = args.dark ? 'var(--color-text-primary)' : 'var(--color-bg-white)';
-    const border = args.dark ? '#4b5563' : 'var(--color-border-default)';
-    const text = args.dark ? 'var(--color-bg-white)' : '#111928';
+    const darkCls = args.dark ? ' list-group--dark' : '';
 
-    const htmlCode = `<ul style="width:240px;background:${bg};border:1px solid ${border};border-radius:8px;overflow:hidden;list-style:none;margin:0;padding:0;">\n  <li style="display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Profile</li>\n  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Settings</li>\n  <li style="border-top:1px solid ${border};display:flex;align-items:center;gap:10px;height:37px;padding:0 16px;color:${text};">Messages</li>\n</ul>`;
+    // HTML snippet = simplified builder output → preview and snippet share the same classes
+    const htmlCode = `<ul class="list-group${darkCls}" style="width:${args.width}px;">\n  <li class="list-group-item">Profile</li>\n  <li class="list-group-item">Settings</li>\n  <li class="list-group-item">Messages</li>\n  <li class="list-group-item">Download</li>\n</ul>`;
 
-    const reactCode = `<ul style={{ background: '${bg}', border: '1px solid ' + '${border}', borderRadius: '8px', listStyle: 'none' }}>\n  {items.map((item, i) => (\n    <li key={i} onClick={() => onSelect(item)} style={{\n      display: 'flex',\n      padding: '0 16px',\n      height: '37px',\n      borderTop: i > 0 ? '1px solid ${border}' : 'none',\n    }}>\n      {item}\n    </li>\n  ))}\n</ul>`;
+    const reactCode = `<ul className="list-group${darkCls}" style={{ width: ${args.width} }}>\n  {items.map((item) => (\n    <li key={item.label} className="list-group-item" onClick={() => onSelect(item)}>\n      ${args.showIcons ? '<span className="list-group-item__icon">{item.icon}</span>\n      ' : ''}{item.label}\n    </li>\n  ))}\n</ul>`;
 
-    const componentCode = `export function ListGroup({ items = [], dark = false, onSelect }) {\n  return (\n    <ul style={{\n      background: dark ? 'var(--color-text-primary)' : 'var(--color-bg-white)',\n      border: '1px solid ' + (dark ? '#4b5563' : 'var(--color-border-default)'),\n      borderRadius: '8px',\n      listStyle: 'none',\n      margin: 0,\n      padding: 0,\n    }}>\n      {items.map((item, i) => (\n        <li\n          key={i}\n          onClick={() => onSelect?.(item)}\n          style={{\n            display: 'flex',\n            alignItems: 'center',\n            padding: '0 16px',\n            height: '37px',\n            borderTop: i > 0 ? '1px solid' + (dark ? '#4b5563' : 'var(--color-border-default)') : 'none',\n            cursor: 'pointer',\n            color: dark ? 'var(--color-bg-white)' : '#111928',\n          }}\n        >\n          {item}\n        </li>\n      ))}\n    </ul>\n  );\n}`;
+    const componentCode = `// Layout and colors come from the real .list-group* classes (iris-components.css)\nexport function ListGroup({ items = [], showIcons = false, dark = false, width = 240, onSelect }) {\n  return (\n    <ul className={\`list-group\${dark ? ' list-group--dark' : ''}\`} style={{ width }}>\n      {items.map((item) => (\n        <li key={item.label} className="list-group-item" onClick={() => onSelect?.(item)}>\n          {showIcons && item.icon && (\n            <span className="list-group-item__icon">{item.icon}</span>\n          )}\n          {item.label}\n        </li>\n      ))}\n    </ul>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -158,6 +131,10 @@ export const Interactive = {
       description: {
         story: 'Use **Controls** to test dark theme and icon variants.',
       },
+      source: {
+        // Snippet = the actual builder output → always matches the preview
+        transform: (_src, ctx) => listGroup({ ...ctx.args, items: DEFAULT_ITEMS }).trim(),
+      },
     },
   },
 };
@@ -165,12 +142,12 @@ export const Interactive = {
 // ─── Gallery: All variants ────────────────────────────────────────────────────
 export const AllVariants = {
     name: 'All variants',
-  args: {},
+  args: { width: 240 },
   parameters: {
-    controls: { disable: true },
+    controls: { include: ['width'] },
     docs: {
       description: {
-        story: `All 4 Figma variants in a 2×2 grid: icons on/off × light/dark.
+        story: `All 4 Figma variants in a 2×2 grid: icons on/off × light/dark. Use the **width** control to preview all variants at any container width.
 
 ✅ Always use icons consistently — either all items have icons or none do
 ✅ In dark dropdowns, make sure the container background matches the surrounding dark surface
@@ -178,24 +155,30 @@ export const AllVariants = {
       },
       source: {
         code: `<!-- Light, no icons -->
-<ul class="list-group">
+<ul class="list-group" style="width:240px;">
   <li class="list-group-item">Profile</li>
   <li class="list-group-item">Settings</li>
   <li class="list-group-item">Messages</li>
   <li class="list-group-item">Download</li>
 </ul>
 
-<!-- Light, with icons -->
-<ul class="list-group">
+<!-- Light, with icons (16×16, currentColor) -->
+<ul class="list-group" style="width:240px;">
   <li class="list-group-item">
-    <svg><!-- user-circle --></svg> Profile
+    <span class="list-group-item__icon"><svg><!-- user-circle --></svg></span>Profile
   </li>
+  ...
+</ul>
+
+<!-- Dark -->
+<ul class="list-group list-group--dark" style="width:240px;">
+  <li class="list-group-item">Profile</li>
   ...
 </ul>`,
       },
     },
   },
-  render: () => {
+  render: ({ width }) => {
     const variants = [
       { showIcons: false, dark: false, label: 'Light — no icons' },
       { showIcons: true,  dark: false, label: 'Light — with icons' },
@@ -206,7 +189,7 @@ export const AllVariants = {
       ${variants.map(v =>
         `<div>
           <div style="font-size:11px;color:#6b7280;margin-bottom:8px;font-family:inherit;">${v.label}</div>
-          ${listGroup({ ...v, items: DEFAULT_ITEMS })}
+          ${listGroup({ ...v, width, items: DEFAULT_ITEMS })}
         </div>`
       ).join('')}
     </div>`;
@@ -224,17 +207,17 @@ export const InContext = {
         story: `Shows the List Group as a user-account dropdown triggered from an avatar button — the most common usage pattern. Toggle **dark** to preview the dark-mode variant.`,
       },
       source: {
-        code: `<!-- Avatar trigger button -->
-<button class="avatar-btn">
-  <img src="avatar.jpg" alt="User avatar" class="w-8 h-8 rounded-full" />
+        code: `<!-- Avatar trigger (demo — not a library component) -->
+<button type="button" aria-haspopup="menu" style="background:none;border:none;padding:0;cursor:pointer;">
+  <img src="avatar.jpg" alt="User avatar" style="width:32px;height:32px;border-radius:50%;" />
 </button>
 
 <!-- Dropdown panel (shown on click) -->
 <ul class="list-group" style="position:absolute;top:100%;right:0;width:240px;z-index:50;">
-  <li class="list-group-item"><svg>user-circle</svg> Profile</li>
-  <li class="list-group-item"><svg>adjustments</svg> Settings</li>
-  <li class="list-group-item"><svg>inbox</svg> Messages</li>
-  <li class="list-group-item"><svg>cloud-download</svg> Download</li>
+  <li class="list-group-item"><span class="list-group-item__icon"><!-- user-circle svg --></span>Profile</li>
+  <li class="list-group-item"><span class="list-group-item__icon"><!-- adjustments svg --></span>Settings</li>
+  <li class="list-group-item"><span class="list-group-item__icon"><!-- inbox svg --></span>Messages</li>
+  <li class="list-group-item"><span class="list-group-item__icon"><!-- cloud-download svg --></span>Download</li>
 </ul>`,
       },
     },
@@ -266,8 +249,8 @@ export const CustomItems = {
         story: 'An 8-item list demonstrating that dividers and padding stay consistent regardless of item count.',
       },
       source: {
-        code: `<ul style="width:240px;background:#fff;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
-  <!-- repeat list-item pattern for each entry -->
+        code: `<ul class="list-group" style="width:240px;">
+  <!-- repeat <li class="list-group-item"> for each entry -->
 </ul>`,
       },
     },

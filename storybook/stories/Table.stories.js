@@ -78,72 +78,56 @@ const CHECK_ICON = /* html */`<svg width="20" height="20" viewBox="0 0 20 20" fi
  * @param {boolean} p.iconLeft  – show check-circle left of $
  * @param {boolean} p.iconRight – show check-circle right of value
  */
-const dataCell = ({
-  amount = '500,00',
-  currency = true,
-  textColor = '#111928',
-  bg = 'var(--color-bg-white)',
-  caption = null,
-  iconLeft = false,
-  iconRight = false,
-} = {}) => /* html */`
-  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-              width:146px;height:38px;padding:8px 16px;background:${bg};
-              box-sizing:border-box;flex-shrink:0;">
-    ${iconLeft ? `<span style="display:flex;align-items:center;flex-shrink:0;color:${textColor};">${CHECK_ICON}</span>` : ''}
-    ${currency ? `<span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};flex-shrink:0;">$</span>` : ''}
-    <div style="flex:1 0 0;display:flex;flex-direction:column;align-items:flex-end;
-                justify-content:center;min-width:1px;">
-      <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:${textColor};
-                   text-align:right;white-space:nowrap;">${amount}</span>
-      ${caption
-        ? `<span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:var(--color-text-secondary);text-align:right;">${caption}</span>`
-        : ''}
-    </div>
-    ${iconRight ? `<span style="display:flex;align-items:center;flex-shrink:0;color:${textColor};">${CHECK_ICON}</span>` : ''}
-  </div>`;
+// option → real .iris-cell--* modifier (Figma-verified node 9279:163646)
+const OPTION_CLASS = {
+  default: 'iris-cell--default', grey: 'iris-cell--grey', editable: 'iris-cell--editable',
+  blue: 'iris-cell--blue', calculated: 'iris-cell--calculated', waste: 'iris-cell--waste', indigo: 'iris-cell--indigo',
+};
+// rowType → real .iris-cell--row-* modifier
+const ROW_CLASS = {
+  default: 'iris-cell--row-default', derival: 'iris-cell--row-derived',
+  total: 'iris-cell--row-total', 'non-collapsible': 'iris-cell--row-noncoll',
+};
 
-/** Editable cell in the focused / editing state (editing=true). */
+/**
+ * Right-aligned numeric data cell — built on real .iris-cell classes.
+ * `option` sets text colour; `rowType` sets the row background (Blue carries its
+ * own #ebf5ff and ignores rowType, per Figma).
+ */
+const dataCell = ({ amount = '500,00', currency = true, option = 'default', rowType = 'default', caption = null } = {}) => {
+  const rowCls = option === 'blue' ? '' : ` ${ROW_CLASS[rowType] || ROW_CLASS.default}`;
+  const cls = `iris-cell iris-cell--num ${OPTION_CLASS[option] || OPTION_CLASS.default}${rowCls}`;
+  return /* html */`
+  <div class="${cls}">
+    ${currency ? `<span style="flex-shrink:0;">$</span>` : ''}
+    <div style="display:flex;flex-direction:column;align-items:flex-end;min-width:1px;">
+      <span style="white-space:nowrap;">${amount}</span>
+      ${caption ? `<span class="iris-caption-xs">${caption}</span>` : ''}
+    </div>
+  </div>`;
+};
+
+/** Editable cell in the focused / editing state (editing=true). Inner focus ring + .iris-cell base. */
 const editableCell = () => /* html */`
-  <div style="display:flex;align-items:center;width:146px;height:38px;
-              background:var(--color-bg-surface);border:1px solid var(--color-border-default);
-              box-sizing:border-box;flex-shrink:0;">
+  <div class="iris-cell iris-cell--num iris-cell--editable iris-cell--row-default" style="padding:0;">
     <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
                 border:1px solid #1c64f2;border-radius:4px;padding:8px 16px;
-                overflow:hidden;box-sizing:border-box;">
-      <span style="flex:1 0 0;font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;
-                   color:#111928;text-align:right;white-space:nowrap;">500,00|</span>
+                overflow:hidden;box-sizing:border-box;color:#111928;">
+      <span style="white-space:nowrap;">500,00|</span>
     </div>
   </div>`;
 
 /* ── Header builders ────────────────────────────────────────────────────── */
 
-/** Horizontal column header (category label, text left-aligned in the cell). */
-const hHeader = ({
-  text = 'Label',
-  bg = 'var(--color-bg-white)',
-  color = '#111928',
-  bold = false,
-} = {}) => /* html */`
-  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-              width:146px;height:38px;padding:8px 16px;background:${bg};
-              box-sizing:border-box;flex-shrink:0;">
-    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:${bold ? 'var(--font-semibold)' : 'var(--font-medium)'};line-height:1.5;
-                 color:${color};flex:1 0 0;">${text}</span>
+/** Horizontal column header — real .iris-th-h--{type} class (Figma node 9279:163718). */
+const hHeader = ({ text = 'Label', type = 'default', bold = false } = {}) => /* html */`
+  <div class="iris-th-h iris-th-h--${type}${bold ? ' iris-th-h--bold' : ''}">
+    <span class="iris-th-h__label">${text}</span>
   </div>`;
 
-/** Vertical period header (uppercase 12px bold, right-aligned). */
-const vHeader = ({
-  label = 'LABEL',
-  bg = 'var(--color-bg-tertiary)',
-  color = '#6b7280',
-} = {}) => /* html */`
-  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-              width:146px;height:38px;padding:8px 16px;background:${bg};
-              box-sizing:border-box;flex-shrink:0;">
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;
-                 color:${color};flex:1 0 0;text-align:right;">${label}</span>
-  </div>`;
+/** Vertical period header — real .iris-th-v--{type} class (Figma node 9279:163779). */
+const vHeader = ({ label = 'LABEL', type = 'default' } = {}) => /* html */`
+  <div class="iris-th-v iris-th-v--${type}">${label}</div>`;
 
 /* ── Layout helpers ─────────────────────────────────────────────────────── */
 
@@ -159,23 +143,8 @@ const sectionHead = (text) =>
 
 /* ── Default export ─────────────────────────────────────────────────────── */
 
-// ── Option → color map (used by Interactive story) ───────────────────────────
-const OPTION_COLORS = {
-  default:    { textColor: '#111928', cellBg: null },
-  grey:       { textColor: '#6b7280', cellBg: null },
-  editable:   { textColor: '#1c64f2', cellBg: null },
-  blue:       { textColor: '#1c64f2', cellBg: '#ebf5ff' },
-  calculated: { textColor: '#0e9f6e', cellBg: null },
-  waste:      { textColor: '#e74694', cellBg: null },
-  indigo:     { textColor: '#42389d', cellBg: null },
-};
-
-const ROW_BG = {
-  default:          'var(--color-bg-white)',
-  derival:          '#fff8f1',
-  total:            'var(--color-bg-secondary)',
-  'non-collapsible':'var(--color-bg-tertiary)',
-};
+// Colour/background are now driven by real .iris-cell--* / .iris-cell--row-* classes
+// (see OPTION_CLASS / ROW_CLASS near dataCell). Figma-verified node 9279:163646.
 
 export default {
   title: 'Iris Library/Table/Cells',
@@ -235,11 +204,13 @@ Column category encoded in background and text colour:
 | Default | \`var(--color-bg-white)\` | \`#111928\` |
 | Derival | \`#fff8f1\` | \`#111928\` |
 | Total | \`var(--color-bg-secondary)\` | \`#111928\` |
-| Union | \`var(--color-bg-secondary)\` | \`#42389d\` |
+| Union | \`var(--color-bg-secondary)\` | \`#111928\` * |
 | Defaul-non-collapsible | \`var(--color-bg-tertiary)\` | \`#111928\` |
 | Expand | \`#edebfe\` | \`#42389d\` |
 | Income | \`#f3faf7\` | \`#057a55\` |
 | Disbursements | \`#fdf2f2\` | \`#e02424\` |
+
+\\* **Union** currently renders identical to Total (\`#111928\` on \`var(--color-bg-secondary)\`) per Figma node 9279:163718. A distinct brand-purple text was proposed but is **pending designer confirmation** — the docs reflect what actually ships today.
 
 ### TableHeaderVertical
 
@@ -312,19 +283,28 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Configure a single cell with **option** (semantic colour), **rowType** (row background), **amount**, and **currency** Controls. The Blue option overrides rowType background with `#ebf5ff`.',
+        story: 'Configure a single cell with **option** (semantic colour), **rowType** (row background), **amount**, and **currency** Controls. Built on the real `.iris-cell` classes — the preview, the HTML/React panels and **Show code** all emit `class="iris-cell …"`. Blue carries its own `#ebf5ff` and ignores rowType.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const { option, rowType, amount, currency } = ctx.args;
+          const optCls = OPTION_CLASS[option] || OPTION_CLASS.default;
+          const rowCls = option === 'blue' ? '' : ` ${ROW_CLASS[rowType] || ROW_CLASS.default}`;
+          return `<div class="iris-cell iris-cell--num ${optCls}${rowCls}">\n  ${currency ? '<span>$</span>' : ''}<span>${amount}</span>\n</div>`;
+        },
       },
     },
   },
   render: ({ option, rowType, amount, currency }) => {
-    const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
-    const bg = cellBg || ROW_BG[rowType] || 'var(--color-bg-white)';
+    const optCls = OPTION_CLASS[option] || OPTION_CLASS.default;
+    const rowCls = option === 'blue' ? '' : ` ${ROW_CLASS[rowType] || ROW_CLASS.default}`;
+    const cellClass = `iris-cell iris-cell--num ${optCls}${rowCls}`;
 
-    const htmlCode = `<table style="width:100%;border-collapse:collapse;">\n  <thead>\n    <tr style="background:var(--color-bg-tertiary);border-bottom:1px solid var(--color-border-default);">\n      <th style="padding:12px 16px;text-align:left;font-weight:600;">Column</th>\n      <th style="padding:12px 16px;text-align:right;font-weight:600;">Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr style="background:${bg};border-bottom:1px solid var(--color-border-default);">\n      <td style="padding:8px 16px;">Data</td>\n      <td style="padding:8px 16px;text-align:right;color:${textColor};">${currency ? '$' : ''}${amount}</td>\n    </tr>\n  </tbody>\n</table>`;
+    const htmlCode = `<div class="${cellClass}">\n  ${currency ? '<span>$</span>' : ''}<span>${amount}</span>\n</div>`;
 
-    const reactCode = `<table style={{ width: '100%', borderCollapse: 'collapse' }}>\n  <thead>\n    <tr style={{ background: 'var(--color-bg-tertiary)', borderBottom: '1px solid var(--color-border-default)' }}>\n      <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Column</th>\n      <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n    </tr>\n  </thead>\n  <tbody>\n    {data.map((row) => (\n      <tr key={row.id} style={{ borderBottom: '1px solid var(--color-border-default)' }}>\n        <td>{row.label}</td>\n        <td style={{ textAlign: 'right', color: colors[option] }}>\n          {currency ? '$' : ''}{row.amount}\n        </td>\n      </tr>\n    ))}\n  </tbody>\n</table>`;
+    const reactCode = `<div className="${cellClass}">\n  ${currency ? '<span>$</span>' : ''}<span>{amount}</span>\n</div>`;
 
-    const componentCode = `export function DataTable({ data = [], currency = false, rowType = 'default', option = 'default' }) {\n  const optionColors = {\n    default: 'var(--color-text-primary)',\n    positive: '#0e9f6e',\n    negative: '#f05252',\n    warning: '#e5a008',\n  };\n\n  return (\n    <table style={{ width: '100%', borderCollapse: 'collapse' }}>\n      <thead>\n        <tr style={{ background: 'var(--color-bg-tertiary)', borderBottom: '1px solid var(--color-border-default)' }}>\n          <th style={{ padding: '12px 16px', textAlign: 'left' }}>Label</th>\n          <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>\n        </tr>\n      </thead>\n      <tbody>\n        {data.map((row) => (\n          <tr key={row.id} style={{ borderBottom: '1px solid var(--color-border-default)' }}>\n            <td style={{ padding: '8px 16px' }}>{row.label}</td>\n            <td style={{\n              padding: '8px 16px',\n              textAlign: 'right',\n              color: optionColors[option],\n            }}>\n              {currency ? '$' : ''}\n              {row.amount}\n            </td>\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}`;
+    const componentCode = `const ROW = { default: 'default', derival: 'derived', total: 'total', 'non-collapsible': 'noncoll' };\n\nexport function DataCell({ amount, option = 'default', rowType = 'default', currency = true }) {\n  const optionClass = 'iris-cell--' + option;\n  // Blue carries its own background; other options take the row background.\n  const rowClass = option === 'blue' ? '' : ' iris-cell--row-' + (ROW[rowType] || 'default');\n\n  return (\n    <div className={'iris-cell iris-cell--num ' + optionClass + rowClass}>\n      {currency && <span>$</span>}\n      <span>{amount}</span>\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -333,7 +313,7 @@ export const Interactive = {
     return `
       <div style="display:flex;flex-direction:column;gap:24px;">
         <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
-          ${dataCell({ amount, currency, textColor: textColor, bg })}
+          ${dataCell({ amount, currency, option, rowType })}
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
@@ -414,51 +394,32 @@ export const CellOptions = {
       },
       source: {
         language: 'html',
-        code: `<!-- Default option -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
+        code: `<!-- Default option on a default row -->
+<div class="iris-cell iris-cell--num iris-cell--default iris-cell--row-default">
+  <span>$</span><span>500,00</span>
 </div>
 
-<!-- Blue option — cell bg + text both blue -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#ebf5ff;box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#1c64f2;flex-shrink:0;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#1c64f2;text-align:right;">500,00</span>
+<!-- Blue option — carries its own #ebf5ff background (ignores row) -->
+<div class="iris-cell iris-cell--num iris-cell--blue">
+  <span>$</span><span>500,00</span>
 </div>
 
-<!-- Calculated option -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;flex-shrink:0;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#0e9f6e;text-align:right;">500,00</span>
+<!-- Calculated option (green) on a total row -->
+<div class="iris-cell iris-cell--num iris-cell--calculated iris-cell--row-total">
+  <span>$</span><span>500,00</span>
 </div>`,
       },
     },
   },
   render: ({ rowType }) => {
-    const rowBg = ROW_BG[rowType] || 'var(--color-bg-white)';
-    const OPTIONS = [
-      { label: 'Default',    key: 'default' },
-      { label: 'Grey',       key: 'grey' },
-      { label: 'Editable',   key: 'editable' },
-      { label: 'Blue',       key: 'blue' },
-      { label: 'Calculated', key: 'calculated' },
-      { label: 'Waste',      key: 'waste' },
-      { label: 'Indigo',     key: 'indigo' },
-    ];
+    const OPTIONS = ['default', 'grey', 'editable', 'blue', 'calculated', 'waste', 'indigo'];
     return /* html */`
       <div style="display:inline-flex;flex-direction:column;gap:1px;">
-        ${OPTIONS.map(({ label, key }) => {
-          const { textColor, cellBg } = OPTION_COLORS[key];
-          const bg = cellBg || rowBg;
-          return /* html */`
-            <div style="display:flex;align-items:center;">
-              ${rowLabel(label)}
-              ${dataCell({ textColor, bg })}
-            </div>`;
-        }).join('')}
+        ${OPTIONS.map((key) => /* html */`
+          <div style="display:flex;align-items:center;">
+            ${rowLabel(key.charAt(0).toUpperCase() + key.slice(1))}
+            ${dataCell({ option: key, rowType })}
+          </div>`).join('')}
       </div>`;
   },
 };
@@ -486,35 +447,28 @@ export const CellRowTypes = {
         story: 'All 4 row backgrounds with the same cell. Use the **option** control to see how different semantic colours look across each row type.',
       },
       source: {
-        code: `<!-- Default row -->
-<div style="background:var(--color-bg-white);width:146px;height:38px;padding:8px 16px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;">$</span>
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
-</div>
-<!-- Derival row -->
-<div style="background:#fff8f1;…">…</div>
-<!-- Total row -->
-<div style="background:var(--color-bg-muted);…">…</div>
-<!-- Non-collapsible row -->
-<div style="background:var(--color-bg-default);…">…</div>`,
+        code: `<!-- Same Default-option cell across all 4 row backgrounds -->
+<div class="iris-cell iris-cell--num iris-cell--default iris-cell--row-default"><span>$</span><span>500,00</span></div>
+<div class="iris-cell iris-cell--num iris-cell--default iris-cell--row-derived"><span>$</span><span>500,00</span></div>
+<div class="iris-cell iris-cell--num iris-cell--default iris-cell--row-total"><span>$</span><span>500,00</span></div>
+<div class="iris-cell iris-cell--num iris-cell--default iris-cell--row-noncoll"><span>$</span><span>500,00</span></div>`,
         language: 'html',
       },
     },
   },
   render: ({ option }) => {
-    const { textColor, cellBg } = OPTION_COLORS[option] || OPTION_COLORS.default;
     const ROW_TYPES = [
-      { label: 'Default',                bg: 'var(--color-bg-white)' },
-      { label: 'Derival',                bg: '#fff8f1' },
-      { label: 'Total',                  bg: 'var(--color-bg-secondary)' },
-      { label: 'Non-collapsible',        bg: 'var(--color-bg-tertiary)' },
+      { label: 'Default',         key: 'default' },
+      { label: 'Derival',         key: 'derival' },
+      { label: 'Total',           key: 'total' },
+      { label: 'Non-collapsible', key: 'non-collapsible' },
     ];
     return /* html */`
       <div style="display:inline-flex;flex-direction:column;gap:1px;">
-        ${ROW_TYPES.map(({ label, bg }) => /* html */`
+        ${ROW_TYPES.map(({ label, key }) => /* html */`
           <div style="display:flex;align-items:center;">
             ${rowLabel(label)}
-            ${dataCell({ textColor, bg: cellBg || bg })}
+            ${dataCell({ option, rowType: key })}
           </div>`).join('')}
       </div>`;
   },
@@ -540,21 +494,23 @@ export const CellRowTypes = {
 export const CellEditing = {
     name: 'Editable — not-editing vs editing',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Editable option in both states. In `editing=true` state the focus ring is `#1c64f2`; text reverts to `#111928` (not blue).',
       },
       source: {
         language: 'html',
-        code: `<!-- Editable, editing=true (focused state) -->
-<div style="display:flex;align-items:center;width:146px;height:38px;
-            background:var(--color-bg-surface);border:1px solid var(--color-border-default);box-sizing:border-box;">
+        code: `<!-- Editable, not editing -->
+<div class="iris-cell iris-cell--num iris-cell--editable iris-cell--row-default">
+  <span>$</span><span>500,00</span>
+</div>
+
+<!-- Editable, editing=true (inner focus ring) -->
+<div class="iris-cell iris-cell--num iris-cell--editable iris-cell--row-default" style="padding:0;">
   <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;
-              border:1px solid #1c64f2;border-radius:4px;
-              padding:8px 16px;overflow:hidden;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">
-      500,00|
-    </span>
+              border:1px solid #1c64f2;border-radius:4px;padding:8px 16px;color:#111928;">
+    <span>500,00|</span>
   </div>
 </div>`,
       },
@@ -564,7 +520,7 @@ export const CellEditing = {
     <div style="display:inline-flex;flex-direction:column;gap:1px;">
       <div style="display:flex;align-items:center;">
         ${rowLabel('Editable (not editing)')}
-        ${dataCell({ textColor: '#1c64f2' })}
+        ${dataCell({ option: 'editable' })}
       </div>
       <div style="display:flex;align-items:center;">
         ${rowLabel('Editable (editing=true)')}
@@ -591,20 +547,19 @@ export const CellEditing = {
 export const CellWithCaption = {
     name: 'Cell with caption (secondary line)',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: 'Optional `showCaption` adds a secondary `12px` line below the value. Caption colour is always `#6b7280` regardless of option.',
       },
       source: {
         language: 'html',
-        code: `<!-- Cell with caption — Default option -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:var(--color-bg-surface);box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;flex-shrink:0;">$</span>
-  <div style="flex:1 0 0;display:flex;flex-direction:column;align-items:flex-end;
-              justify-content:center;min-width:1px;">
-    <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#111928;text-align:right;">500,00</span>
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-normal);line-height:1.5;color:var(--color-text-secondary);text-align:right;">500,00</span>
+        code: `<!-- Cell with caption — secondary line uses .iris-caption-xs (#6b7280) -->
+<div class="iris-cell iris-cell--num iris-cell--default iris-cell--row-default">
+  <span>$</span>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;">
+    <span>500,00</span>
+    <span class="iris-caption-xs">500,00</span>
   </div>
 </div>`,
       },
@@ -613,14 +568,14 @@ export const CellWithCaption = {
   render: () => /* html */`
     <div style="display:inline-flex;flex-direction:column;gap:1px;">
       ${[
-        { label: 'Default + caption',    color: '#111928', bg: 'var(--color-bg-white)' },
-        { label: 'Calculated + caption', color: '#0e9f6e', bg: 'var(--color-bg-white)' },
-        { label: 'Waste + caption',      color: '#e74694', bg: 'var(--color-bg-white)' },
-        { label: 'Indigo + caption',     color: '#42389d', bg: 'var(--color-bg-white)' },
-      ].map(({ label, color, bg }) => /* html */`
+        { label: 'Default + caption',    option: 'default' },
+        { label: 'Calculated + caption', option: 'calculated' },
+        { label: 'Waste + caption',      option: 'waste' },
+        { label: 'Indigo + caption',     option: 'indigo' },
+      ].map(({ label, option }) => /* html */`
         <div style="display:flex;align-items:center;">
           ${rowLabel(label)}
-          ${dataCell({ textColor: color, bg, caption: '500,00' })}
+          ${dataCell({ option, caption: '500,00' })}
         </div>`).join('')}
     </div>`,
 };
@@ -636,7 +591,7 @@ export const CellWithCaption = {
  * - Default: white bg, #111928 — neutral
  * - Derival: #fff8f1 warm tint, #111928
  * - Total: var(--color-bg-secondary) gray, #111928
- * - Union: var(--color-bg-secondary) gray, #42389d brand purple (same bg as Total, different text)
+ * - Union: var(--color-bg-secondary) gray, #111928 text — currently identical to Total (purple text pending designer confirmation)
  * - NonCollapsible: var(--color-bg-tertiary) near-white, #111928
  * - Expand: #edebfe purple/100, #42389d — bright purple column
  * - Income: #f3faf7 green/50, #057a55 — green category
@@ -646,60 +601,63 @@ export const CellWithCaption = {
 export const HeaderHorizontal = {
     name: 'Column headers (horizontal) — all types',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
-        story: `All 8 **TableHeaderHorizontal** type variants in regular (500) and bold (600).
-Column category (Income / Disbursements / Expand / Union) is communicated through background + text colour.`,
+        story: `All 8 **TableHeaderHorizontal** type variants in regular (500) and bold (600),
+built on the real \`.iris-th-h--{type}\` classes. Column category (Income / Disbursements /
+Expand / Union) is communicated through background + text colour.
+
+**✅ Do** — pick the type that matches the column's financial meaning (Income → green, Disbursements → red).
+**❌ Don't** — hardcode the hex values inline; the colour map lives in \`.iris-th-h--{type}\` so it stays in sync.`,
       },
       source: {
         language: 'html',
-        code: `<!-- Income — regular -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#f3faf7;box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-medium);line-height:1.5;color:#057a55;flex:1 0 0;">Income</span>
+        code: `<!-- Income column header (regular weight) -->
+<div class="iris-th-h iris-th-h--income">
+  <span class="iris-th-h__label">Income</span>
 </div>
 
-<!-- Income — bold -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#f3faf7;box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-sm);font-weight:var(--font-semibold);line-height:1.5;color:#057a55;flex:1 0 0;">Income</span>
+<!-- Income column header (bold — e.g. a totals row) -->
+<div class="iris-th-h iris-th-h--income iris-th-h--bold">
+  <span class="iris-th-h__label">Income</span>
+</div>
+
+<!-- Swap the modifier for any of the 8 types: -->
+<!-- default · derival · total · union · noncollapsible · expand · income · disbursements -->
+<div class="iris-th-h iris-th-h--disbursements">
+  <span class="iris-th-h__label">Disbursements</span>
 </div>`,
       },
     },
   },
   render: () => {
+    // label = displayed header text + variant name · type = real .iris-th-h--{type} modifier
     const TYPES = [
-      { label: 'Default',            bg: 'var(--color-bg-white)', color: '#111928' },
-      { label: 'Derival',            bg: '#fff8f1', color: '#111928' },
-      { label: 'Total',              bg: 'var(--color-bg-secondary)', color: '#111928' },
-      { label: 'Union',              bg: 'var(--color-bg-secondary)', color: '#42389d' },
-      { label: 'NonCollapsible',     bg: 'var(--color-bg-tertiary)', color: '#111928' },
-      { label: 'Expand',             bg: '#edebfe', color: '#42389d' },
-      { label: 'Income',             bg: '#f3faf7', color: '#057a55' },
-      { label: 'Disbursements',      bg: '#fdf2f2', color: '#e02424' },
+      { label: 'Default',        type: 'default'        },
+      { label: 'Derival',        type: 'derival'        },
+      { label: 'Total',          type: 'total'          },
+      { label: 'Union',          type: 'union'          },
+      { label: 'NonCollapsible', type: 'noncollapsible' },
+      { label: 'Expand',         type: 'expand'         },
+      { label: 'Income',         type: 'income'         },
+      { label: 'Disbursements',  type: 'disbursements'  },
     ];
+    const column = (title, bold) => /* html */`
+      <div>
+        ${sectionHead(title)}
+        <div style="display:inline-flex;flex-direction:column;gap:1px;">
+          ${TYPES.map(({ label, type }) => /* html */`
+            <div style="display:flex;align-items:center;">
+              ${rowLabel(label)}
+              ${hHeader({ text: label, type, bold })}
+            </div>`).join('')}
+        </div>
+      </div>`;
     return /* html */`
       <div style="display:flex;gap:40px;align-items:flex-start;">
-        <div>
-          ${sectionHead('Regular (500)')}
-          <div style="display:inline-flex;flex-direction:column;gap:1px;">
-            ${TYPES.map(({ label, bg, color }) => /* html */`
-              <div style="display:flex;align-items:center;">
-                ${rowLabel(label)}
-                ${hHeader({ text: label, bg, color, bold: false })}
-              </div>`).join('')}
-          </div>
-        </div>
-        <div>
-          ${sectionHead('Bold (600)')}
-          <div style="display:inline-flex;flex-direction:column;gap:1px;">
-            ${TYPES.map(({ label, bg, color }) => /* html */`
-              <div style="display:flex;align-items:center;">
-                ${rowLabel(label)}
-                ${hHeader({ text: label, bg, color, bold: true })}
-              </div>`).join('')}
-          </div>
-        </div>
+        ${column('Regular (500)', false)}
+        ${column('Bold (600)', true)}
       </div>`;
   },
 };
@@ -721,37 +679,43 @@ Column category (Income / Disbursements / Expand / Union) is communicated throug
 export const HeaderVertical = {
     name: 'Period headers (vertical) — all types',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
-        story: `**TableHeaderVertical** — column headers for time-period columns (e.g. months in a cohort or budget table).
-ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
+        story: `**TableHeaderVertical** — column headers for time-period columns (e.g. months in a cohort
+or budget table), built on the real \`.iris-th-v--{type}\` classes. ACTUALS use brand/200
+(\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).
+
+**✅ Do** — use ACTUALS / FORECAST bands to separate realised vs projected period columns.
+**❌ Don't** — mix these 12px uppercase period headers with the 14px \`.iris-th-h\` category headers in the same row.`,
       },
       source: {
         language: 'html',
-        code: `<!-- ACTUALS period header -->
-<div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;
-            width:146px;height:38px;padding:8px 16px;background:#cddbfe;box-sizing:border-box;">
-  <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-bold);line-height:1.5;color:#4b5563;
-               flex:1 0 0;text-align:right;">ACTUALS</span>
-</div>`,
+        code: `<!-- ACTUALS period header (text is uppercased by the class) -->
+<div class="iris-th-v iris-th-v--actuals">ACTUALS</div>
+
+<!-- Swap the modifier: default · actuals · forecast -->
+<div class="iris-th-v iris-th-v--forecast">FORECAST</div>
+<div class="iris-th-v iris-th-v--default">LABEL</div>`,
       },
     },
   },
   render: () => {
+    // label = variant name (caption) · text = displayed content · type = real .iris-th-v--{type} modifier
     const TYPES = [
-      { label: 'Default',  bg: 'var(--color-bg-tertiary)', color: '#6b7280', text: 'LABEL'    },
-      { label: 'ACTUALS',  bg: '#cddbfe', color: '#4b5563', text: 'ACTUALS'  },
-      { label: 'FORECAST', bg: '#96f7e4', color: '#4b5563', text: 'FORECAST' },
+      { label: 'Default',  type: 'default',  text: 'LABEL'    },
+      { label: 'ACTUALS',  type: 'actuals',  text: 'ACTUALS'  },
+      { label: 'FORECAST', type: 'forecast', text: 'FORECAST' },
     ];
     return /* html */`
       <div style="display:flex;gap:12px;align-items:flex-end;">
-        ${TYPES.map(({ label, bg, color, text }) => /* html */`
+        ${TYPES.map(({ label, type, text }) => /* html */`
           <div>
             <p style="font-family:inherit;font-size:10px;font-weight:var(--font-semibold);line-height:1;text-transform:uppercase;
                       letter-spacing:.08em;color:var(--color-border-light);margin:0 0 6px;text-align:center;">
               ${label}
             </p>
-            ${vHeader({ label: text, bg, color })}
+            ${vHeader({ label: text, type })}
           </div>`).join('')}
       </div>`;
   },
@@ -806,6 +770,7 @@ ACTUALS use brand/200 (\`#cddbfe\`); FORECAST use teal/200 (\`#96f7e4\`).`,
 export const CellPercent = {
     name: 'Cell percent — badge ramp',
   parameters: {
+    controls: { disable: true },
     docs: {
       description: {
         story: `Percentage badge cell (node 9372:85). A 10-step brand ramp badge used
@@ -814,54 +779,25 @@ Shown on both \`white\` (default) and \`grey\` (var(--color-bg-secondary)) cell 
       },
       source: {
         language: 'html',
-        code: `<!-- TableCellPercent — 60% on white cell bg -->
-<div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:var(--color-bg-white);box-sizing:border-box;">
-  <div style="display:flex;align-items:center;justify-content:center;
-              width:62px;height:42px;padding:10px;border-radius:4px;
-              background:#6875f5;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:var(--color-bg-white);
-                 white-space:nowrap;text-align:center;">60%</span>
-  </div>
+        code: `<!-- TableCellPercent — 60% (text auto-flips white at 60%+) -->
+<div class="iris-cohort-cell">
+  <div class="iris-cohort-badge iris-cohort-badge--60">60%</div>
 </div>
 
-<!-- TableCellPercent — 40% on grey cell bg (white=false) -->
-<div style="display:flex;flex-direction:column;align-items:flex-start;
-            padding:8px 4px;background:var(--color-bg-muted);box-sizing:border-box;">
-  <div style="display:flex;align-items:center;justify-content:center;
-              width:62px;height:42px;padding:10px;border-radius:4px;
-              background:#b4c6fc;box-sizing:border-box;">
-    <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:#111928;
-                 white-space:nowrap;text-align:center;">40%</span>
-  </div>
+<!-- 40% on a grey cell (white=false) -->
+<div class="iris-cohort-cell" style="background:#f3f4f6;">
+  <div class="iris-cohort-badge iris-cohort-badge--40">40%</div>
 </div>`,
       },
     },
   },
   render: () => {
-    /* Figma-exact 10-step ramp: percent → badge bg, text colour */
-    const RAMP = [
-      { pct: '100%', bg: '#362f78', text: 'var(--color-bg-white)' },
-      { pct:  '90%', bg: '#42389d', text: 'var(--color-bg-white)' },
-      { pct:  '80%', bg: '#5145cd', text: 'var(--color-bg-white)' },
-      { pct:  '70%', bg: '#5850ec', text: 'var(--color-bg-white)' },
-      { pct:  '60%', bg: '#6875f5', text: 'var(--color-bg-white)' },
-      { pct:  '50%', bg: '#8da2fb', text: '#111928' },
-      { pct:  '40%', bg: '#b4c6fc', text: '#111928' },
-      { pct:  '30%', bg: '#cddbfe', text: '#111928' },
-      { pct:  '20%', bg: '#e5edff', text: '#111928' },
-      { pct:  '10%', bg: '#f0f5ff', text: '#111928' },
-    ];
+    // Figma 10-step ramp → real .iris-cohort-badge--{step} classes (text flips white at 60%).
+    const STEPS = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
 
-    const badge = ({ pct, bg, text, cellBg }) => /* html */`
-      <div style="display:flex;flex-direction:column;align-items:flex-start;
-                  padding:8px 4px;background:${cellBg};box-sizing:border-box;flex-shrink:0;">
-        <div style="display:flex;align-items:center;justify-content:center;
-                    width:62px;height:42px;padding:10px;border-radius:4px;
-                    background:${bg};box-sizing:border-box;">
-          <span style="font-family:inherit;font-size:var(--text-xs);font-weight:var(--font-semibold);line-height:1.5;color:${text};
-                       white-space:nowrap;text-align:center;">${pct}</span>
-        </div>
+    const badge = (n, cellBg) => /* html */`
+      <div class="iris-cohort-cell" style="background:${cellBg};">
+        <div class="iris-cohort-badge iris-cohort-badge--${n}">${n}%</div>
       </div>`;
 
     const row = (cellBg, label) => /* html */`
@@ -872,14 +808,14 @@ Shown on both \`white\` (default) and \`grey\` (var(--color-bg-secondary)) cell 
         </p>
         <div style="display:inline-flex;align-items:center;
                     border:1px solid var(--color-border-default);border-radius:6px;overflow:hidden;">
-          ${RAMP.map(r => badge({ ...r, cellBg })).join('')}
+          ${STEPS.map(n => badge(n, cellBg)).join('')}
         </div>
       </div>`;
 
     return /* html */`
       <div style="display:flex;flex-direction:column;gap:20px;">
-        ${row('var(--color-bg-white)', 'white = true (default)')}
-        ${row('var(--color-bg-secondary)', 'white = false (grey cell bg)')}
+        ${row('#ffffff', 'white = true (default)')}
+        ${row('#f3f4f6', 'white = false (grey cell bg)')}
       </div>`;
   },
 };

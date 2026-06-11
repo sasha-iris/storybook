@@ -16,19 +16,21 @@ function iconSvg(path, size, color) {
 }
 
 function dismissBtn(size = 16) {
-  return `<button type="button" aria-label="Dismiss" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0;">${iconSvg(X_PATH, size, 'var(--color-text-secondary)')}</button>`;
+  return `<button type="button" class="banner__dismiss" aria-label="Dismiss">${iconSvg(X_PATH, size, 'currentColor')}</button>`;
 }
 
 // ─── Type renderers ───────────────────────────────────────────────────────────
+// All visual styling comes from the real .banner* classes (styles.css /
+// iris-components.css). Inline styles below are layout-only wrappers or data.
 
 function bannerDefault({ text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:var(--color-bg-default);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
-  <div style="display:flex;align-items:center;gap:8px;">
-    <div style="width:24px;height:24px;border-radius:50%;background:var(--color-border-default);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-      ${iconSvg(LIGHT_BULB_PATH, 14, 'var(--color-text-secondary)')}
+<div role="banner" class="banner banner--default">
+  <div class="banner__icon-text">
+    <div class="banner__icon-circle">
+      ${iconSvg(LIGHT_BULB_PATH, 14, 'currentColor')}
     </div>
-    <span style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-heading);line-height:1.5;">${text}</span>
+    <span class="banner__text">${text}</span>
   </div>
   ${dismissible ? dismissBtn(16) : ''}
 </div>`;
@@ -36,8 +38,8 @@ function bannerDefault({ text, dismissible }) {
 
 function bannerContainerCTA({ text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:var(--color-bg-muted);padding:16px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;">
-  <div style="background:var(--color-bg-surface);border:1px solid var(--color-bg-muted);border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1280px;width:100%;">
+<div role="banner" class="banner banner--container-cta">
+  <div class="banner__container">
     <div style="display:flex;align-items:center;gap:16px;flex:1;min-width:0;">
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
         <div style="width:24px;height:24px;background:#4208e5;border-radius:4px;display:flex;align-items:center;justify-content:center;">
@@ -45,11 +47,11 @@ function bannerContainerCTA({ text, dismissible }) {
         </div>
         <span style="font-size:var(--text-sm);font-weight:var(--font-bold);color:var(--color-text-heading);">Smart</span>
       </div>
-      <div style="border-left:1px solid var(--color-border-default);padding-left:16px;flex:1;min-width:0;">
-        <span style="font-size:var(--text-base);font-weight:var(--font-normal);color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">${text}</span>
+      <div class="banner__divider-text">
+        <span class="banner__tagline">${text}</span>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+    <div class="banner__actions" style="gap:12px;">
       <button type="button" class="btn btn-primary btn-xs">Sign up for free</button>
       ${dismissible ? dismissBtn(16) : ''}
     </div>
@@ -59,15 +61,15 @@ function bannerContainerCTA({ text, dismissible }) {
 
 function bannerBottom({ text, link, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:var(--color-bg-default);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;">
+<div role="banner" class="banner banner--bottom">
   <div style="display:flex;align-items:center;gap:24px;flex:1;">
     <div style="display:flex;align-items:center;gap:6px;">
       ${iconSvg(RECEIPT_TAX_PATH, 16, 'var(--color-text-secondary)')}
-      <span style="font-size:var(--text-base);font-weight:var(--font-medium);color:#4b5563;">${text}</span>
+      <span class="banner__label">${text}</span>
     </div>
-    <a href="#" style="display:flex;align-items:center;gap:4px;font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-primary);text-decoration:none;">
+    <a href="#" class="banner__link">
       ${link}
-      ${iconSvg(ARROW_NARROW_RIGHT, 16, 'var(--color-primary)')}
+      ${iconSvg(ARROW_NARROW_RIGHT, 16, 'currentColor')}
     </a>
   </div>
   ${dismissible ? dismissBtn(16) : ''}
@@ -76,13 +78,13 @@ function bannerBottom({ text, link, dismissible }) {
 
 function bannerCTA({ heading, text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:var(--color-bg-default);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;">
+<div role="banner" class="banner banner--cta">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;flex:1;min-width:0;">
     <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;">
-      <span style="font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-heading);line-height:1.5;">${heading}</span>
-      <span style="font-size:var(--text-sm);font-weight:var(--font-normal);color:var(--color-text-secondary);line-height:1.5;">${text}</span>
+      <span class="banner__heading">${heading}</span>
+      <span class="banner__desc">${text}</span>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+    <div class="banner__actions">
       <button type="button" class="btn btn-light btn-xs" style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
         ${iconSvg(BOOK_OPEN_PATH, 16, 'currentColor')}Learn more
       </button>
@@ -97,10 +99,10 @@ function bannerCTA({ heading, text, dismissible }) {
 
 function bannerNewsletter({ text, dismissible }) {
   return `
-<div role="banner" style="width:100%;background:var(--color-bg-surface);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-sizing:border-box;border-bottom:1px solid var(--color-bg-muted);">
+<div role="banner" class="banner banner--newsletter">
   <div style="display:flex;align-items:center;gap:32px;flex:1;min-width:0;">
-    <span style="font-size:var(--text-base);font-weight:var(--font-medium);color:var(--color-text-secondary);flex-shrink:0;">${text}</span>
-    <div style="display:flex;align-items:flex-end;gap:16px;flex:1;min-width:0;">
+    <span class="banner__label banner__label--secondary" style="flex-shrink:0;">${text}</span>
+    <div class="banner__form">
       <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
         <label class="form-label" style="margin-bottom:0;">First name</label>
         <input type="text" class="form-input" placeholder="e.g. John" style="min-width:200px;" />
@@ -211,11 +213,12 @@ export const Interactive = {
   render: (args) => {
     const a = args;
 
-    const htmlCode = `<div role="banner" class="banner banner--${a.type}" style="padding:16px 20px;display:flex;align-items:center;gap:12px;background:${a.type === 'info' ? '#ebf5ff' : a.type === 'success' ? '#ecfdf5' : a.type === 'warning' ? '#fef3c7' : '#fee2e2'};">\n  <span>Banner message</span>\n  ${a.dismissible ? '<button aria-label="Dismiss" style="margin-left:auto;background:none;border:none;cursor:pointer;">&times;</button>' : ''}\n</div>`;
+    // HTML snippet = the actual builder output → preview and snippet can never diverge
+    const htmlCode = banner(a).trim();
 
-    const reactCode = `<div\n  role="banner"\n  className={\`banner banner--\${type}\`}\n  style={{\n    padding: '16px 20px',\n    display: 'flex',\n    alignItems: 'center',\n    background: bgColor[type],\n  }}\n>\n  <span>{message}</span>\n  {dismissible && (\n    <button\n      onClick={() => onDismiss?.()}\n      style={{ marginLeft: 'auto', background: 'none', border: 'none' }}\n    >\n      ×\n    </button>\n  )}\n</div>`;
+    const reactCode = `<div role="banner" className="banner banner--${a.type}">\n  <div className="banner__icon-text">\n    <div className="banner__icon-circle">{/* icon */}</div>\n    <span className="banner__text">{message}</span>\n  </div>\n  ${a.dismissible ? '{dismissible && (\n    <button type="button" className="banner__dismiss" aria-label="Dismiss" onClick={onDismiss}>×</button>\n  )}' : '{/* non-dismissible */}'}\n</div>`;
 
-    const componentCode = `export function Banner({ type = 'info', message, dismissible = false, onDismiss }) {\n  const [visible, setVisible] = useState(true);\n\n  const bgColors = {\n    info: '#ebf5ff',\n    success: '#ecfdf5',\n    warning: '#fef3c7',\n    error: '#fee2e2',\n  };\n\n  if (!visible) return null;\n\n  return (\n    <div\n      role="banner\"\n      className={\`banner banner--\${type}\`}\n      style={{\n        padding: '16px 20px',\n        display: 'flex',\n        alignItems: 'center',\n        gap: '12px',\n        background: bgColors[type],\n      }}\n    >\n      <span>{message}</span>\n      {dismissible && (\n        <button\n          onClick={() => {\n            setVisible(false);\n            onDismiss?.();\n          }}\n          style={{\n            marginLeft: 'auto',\n            background: 'none',\n            border: 'none',\n            cursor: 'pointer',\n          }}\n        >\n          ×\n        </button>\n      )}\n    </div>\n  );\n}`;
+    const componentCode = `// Layout and colors come from the real .banner* classes (iris-components.css)\nexport function Banner({ type = 'default', message, dismissible = false, onDismiss }) {\n  const [visible, setVisible] = useState(true);\n  if (!visible) return null;\n\n  return (\n    <div role="banner" className={\`banner banner--\${type}\`}>\n      <div className="banner__icon-text">\n        <div className="banner__icon-circle">{/* icon */}</div>\n        <span className="banner__text">{message}</span>\n      </div>\n      {dismissible && (\n        <button\n          type="button"\n          className="banner__dismiss"\n          aria-label="Dismiss"\n          onClick={() => {\n            setVisible(false);\n            onDismiss?.();\n          }}\n        >\n          ×\n        </button>\n      )}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -223,7 +226,7 @@ export const Interactive = {
 
     return `
       <div style="display:flex;flex-direction:column;gap:24px;">
-        <div style="background:var(--color-bg-surface);padding-bottom:1px;">
+        <div style="background:var(--color-bg-muted);padding:12px 0;">
           ${banner(args)}
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
@@ -280,6 +283,10 @@ export const Interactive = {
     docs: {
       description: {
         story: 'Use **Controls** to switch banner type, edit text content, and toggle the dismiss button.',
+      },
+      source: {
+        // Snippet = the actual builder output → always matches the preview
+        transform: (_src, ctx) => banner(ctx.args).trim(),
       },
     },
   },
@@ -359,7 +366,7 @@ export const NonDismissible = {
         code: `<!-- Non-dismissible: omit the × button entirely -->
 <div role="banner" class="banner banner--default">
   <div class="banner__icon-text">
-    <svg class="banner__icon" aria-hidden="true"><!-- lightbulb --></svg>
+    <div class="banner__icon-circle"><!-- lightbulb icon, 14px, currentColor --></div>
     <span class="banner__text">New brand identity has been launched for our Flowbite library.</span>
   </div>
   <!-- no dismiss button -->

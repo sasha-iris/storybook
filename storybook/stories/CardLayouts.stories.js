@@ -243,11 +243,11 @@ Social profile card. Centred avatar, name, role, and two action buttons.
  * lost-password link, primary CTA button, and "not registered" helper text.
  *
  * **QA checklist**
+ * - Container: .card-auth — 384px, p-32px, bg #fff, rounded-8px, shadow 0 1px 3px + 0 1px 2px rgba(0,0,0,.1)
  * - Input bg: var(--color-bg-tertiary), border: 1px solid var(--color-border-default), border-radius: 8px, px-16px py-12px
  * - Email input has a mail icon (16px) left of the placeholder
  * - Checkbox: 16px square, bg var(--color-bg-tertiary), border 0.5px solid var(--color-border-default), border-radius 4px
- * - "Create account" button: bg #1447e6 (blue/700, NOT brand/800 purple), full width
- * - Shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.1) — slightly different from other cards
+ * - "Create account" button: .btn-blue — bg #1447e6 (blue/700, NOT brand/800 purple; .btn-primary renders purple), full width
  * - "Lost Password?" color: var(--color-primary) (blue/600), not brand purple
  */
 export const WithFormInputs = {
@@ -263,17 +263,19 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 **✅ Do** — use for authentication, onboarding, and sign-in flows embedded in a page layout.
 **❌ Don't** — place this inside a modal — the card itself acts as the visual container.
 
-**Key token differences vs other cards:** CTA button is \`#1447e6\` (blue/700) — **not** brand/800 purple · shadow-sm variant (lighter) · checkbox border: \`0.5 px solid var(--color-border-default)\`.
+**Key token differences vs other cards:** CTA button uses \`.btn-blue\` → \`#1447e6\` (blue/700) — **not** \`.btn-primary\` (renders brand/800 purple \`#42389d\`) · shadow-sm variant (lighter) · checkbox border: \`0.5 px solid var(--color-border-default)\`.
 
-**QA** — Input: bg \`var(--color-bg-tertiary)\`, border \`1px solid var(--color-border-default)\`, rounded-8 px, \`px-16 py-12\` · Email input has a 16 px mail icon · "Create account" button: bg \`#1447e6\`, full width · "Lost Password?" link: \`var(--color-primary)\` (blue/600).
+**Container:** \`.card-auth\` — 384 px, \`p-32\`, bg \`#fff\`, rounded-8 px, shadow \`0 1px 3px + 0 1px 2px rgba(0,0,0,.1)\`. Same class is used by the signup page in iris-examples.
+
+**QA** — Input: bg \`var(--color-bg-tertiary)\`, border \`1px solid var(--color-border-default)\`, rounded-8 px, \`px-16 py-12\` · Email input has a 16 px mail icon · "Create account" button: \`.btn-blue\`, bg \`#1447e6\`, full width · "Lost Password?" link: \`var(--color-primary)\` (blue/600).
 
 **Approximations:** Mail icon is Heroicons envelope inline SVG (Figma uses a 2-vector raster assembly).
         `,
       },
       source: {
         language: 'html',
-        code: `<div style="width:384px;padding:32px;background:#fff;border-radius:8px;
-             box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.1);">
+        code: `<!-- .card-auth = 384px, p-32, bg #fff, rounded-8px, shadow-sm (0 1px 3px + 0 1px 2px) -->
+<div class="card-auth">
   <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;margin:0 0 24px;">Sign in to our platform</p>
   <!-- Email -->
   <div class="form-group">
@@ -297,8 +299,8 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
     </label>
     <a href="#" style="font-size:var(--text-sm);color:var(--color-primary);text-decoration:none;">Lost Password?</a>
   </div>
-  <!-- CTA -->
-  <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;margin-bottom:16px;">
+  <!-- CTA: .btn-blue = #1447e6 (blue/700) — NOT .btn-primary (brand purple) -->
+  <button class="btn btn-blue btn-md" style="width:100%;justify-content:center;margin-bottom:16px;">
     Create account
   </button>
   <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;">
@@ -310,9 +312,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
     },
   },
   render: () => `
-    <div style="width:384px;padding:32px;background:#fff;border-radius:8px;
-                box-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.1);
-                display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
+    <div class="card-auth" style="display:flex;flex-direction:column;gap:24px;">
 
       <p style="font-size:var(--text-xl);font-weight:var(--font-medium);color:#111928;line-height:1.5;margin:0;">
         Sign in to our platform
@@ -350,7 +350,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
 
       <!-- Button + helper -->
       <div style="display:flex;flex-direction:column;gap:16px;">
-        <button class="btn btn-primary btn-md" style="width:100%;justify-content:center;">
+        <button class="btn btn-blue btn-md" style="width:100%;justify-content:center;">
           Create account
         </button>
         <p style="font-size:var(--text-sm);font-weight:var(--font-medium);margin:0;line-height:1.5;">

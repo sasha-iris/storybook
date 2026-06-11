@@ -71,48 +71,50 @@ const DATA_ADVANCED = {
 
 /* ── Builders ────────────────────────────────────────────────────────────── */
 
+// All builders emit the real `.iris-autocomplete*` + `.form-search-wrap` /
+// `.form-input` classes. The menu's `position:absolute` is overridden to static
+// in gallery previews (layout-only) so stacked examples don't overlap.
 function inputField({ size, state, placeholder, query }) {
   const isOpen   = state !== 'initial';
   const isTyping = state === 'typing' || state === 'withCta';
-  const height   = size === 'large' ? '52px' : '42px';
-  const fontSize = size === 'large' ? '16px' : '14px';
-  const borderColor = isOpen ? 'var(--color-primary)' : 'var(--color-border-default)';
-  const iconColor   = isOpen ? 'var(--color-primary)' : '#6b7280';
-  const displayText = isTyping
-    ? `${query}|`
-    : (isOpen ? `|${placeholder}` : placeholder);
-  const textColor = isOpen ? '#111928' : '#6b7280';
+  const sizeClass = size === 'large' ? ' form-input-lg' : '';
+  const focusStyle = isOpen ? ' style="border-color:var(--color-primary);"' : '';
+  const valAttr = isTyping ? ` value="${query}"` : '';
 
   return `
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:${height};background:var(--color-bg-tertiary);border:1px solid ${borderColor};border-radius:8px;box-sizing:border-box;">
-  <span style="color:${iconColor};flex-shrink:0;display:flex;">${ico(P_SEARCH, 18)}</span>
-  <span style="flex:1;font-size:${fontSize};color:${textColor};font-family:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${displayText}</span>
-  ${isTyping ? `<span style="color:var(--color-border-light);flex-shrink:0;display:flex;cursor:pointer;">${ico(P_X_CIRCLE, 18)}</span>` : ''}
+<div class="form-search-wrap">
+  <span class="form-search-icon"${isOpen ? ' style="color:var(--color-primary);"' : ''}>${ico(P_SEARCH, 18)}</span>
+  <input type="text" class="form-input${sizeClass}" placeholder="${placeholder}"${valAttr}${focusStyle} />
+  ${isTyping ? `<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--color-border-light);display:flex;cursor:pointer;">${ico(P_X_CIRCLE, 18)}</span>` : ''}
 </div>`;
 }
+
+/* Menu shell — real .iris-autocomplete__menu; static positioning for gallery flow */
+const menuShell = (inner) => `
+<div class="iris-autocomplete__menu" style="position:static;margin-top:4px;border:1px solid var(--color-border-default);">
+  ${inner}
+</div>`;
 
 function dropdownDefault(state) {
   const d = DATA_DEFAULT[state];
   if (!d) return '';
 
   const itemsHtml = d.items.map(text => `
-  <div style="display:flex;align-items:center;gap:8px;padding:3px 0;">
+  <div class="iris-autocomplete__item">
     <span style="color:var(--color-border-light);flex-shrink:0;display:flex;">${ico(P_SEARCH, 14)}</span>
-    <span style="font-size:14px;color:#6b7280;font-family:inherit;">${text}</span>
+    <span style="color:#6b7280;">${text}</span>
   </div>`).join('');
 
   const ctaHtml = d.cta ? `
-  <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--color-border-default);display:flex;align-items:center;gap:6px;cursor:pointer;">
+  <div class="iris-autocomplete__cta">
     <span style="color:#1f2a37;flex-shrink:0;display:flex;">${ico(P_PLUS, 14)}</span>
-    <span style="font-size:14px;font-weight:500;color:var(--color-primary);font-family:inherit;">${d.cta}</span>
+    ${d.cta}
   </div>` : '';
 
-  return `
-<div style="background:var(--color-bg-white);border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-  <div style="font-size:14px;font-weight:600;color:#111928;font-family:inherit;margin-bottom:6px;">${d.heading}</div>
+  return menuShell(`
+  <div class="iris-autocomplete__heading">${d.heading}</div>
   ${itemsHtml}
-  ${ctaHtml}
-</div>`;
+  ${ctaHtml}`);
 }
 
 function dropdownAdvanced(state) {
@@ -122,22 +124,19 @@ function dropdownAdvanced(state) {
   const isActive = state === 'active';
   const rightIcon = isActive ? ico(P_X, 14) : ico(P_ARROW_RIGHT, 14);
 
-  return `
-<div style="background:var(--color-bg-white);border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-  ${sections.map((s, si) => `
-  <div style="font-size:14px;font-weight:600;color:#111928;font-family:inherit;${si > 0 ? 'margin-top:10px;' : ''}margin-bottom:6px;">${s.heading}</div>
+  return menuShell(sections.map((s) => `
+  <div class="iris-autocomplete__heading">${s.heading}</div>
   ${s.items.map(({ icon, text }) => `
-  <div style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;background:var(--color-bg-tertiary);margin-bottom:4px;">
+  <div class="iris-autocomplete__item iris-autocomplete__item--pill">
     <span style="color:var(--color-border-light);flex-shrink:0;display:flex;">${ico(icon, 14)}</span>
-    <span style="flex:1;font-size:14px;color:#6b7280;font-family:inherit;">${text}</span>
+    <span style="flex:1;">${text}</span>
     <span style="color:#6b7280;flex-shrink:0;display:flex;cursor:pointer;">${rightIcon}</span>
   </div>`).join('')}
   ${s.cta ? `
-  <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--color-border-default);display:flex;align-items:center;gap:6px;cursor:pointer;">
+  <div class="iris-autocomplete__cta">
     <span style="color:#1f2a37;flex-shrink:0;display:flex;">${ico(P_PLUS, 14)}</span>
-    <span style="font-size:14px;font-weight:500;color:var(--color-primary);font-family:inherit;">${s.cta}</span>
-  </div>` : ''}`).join('')}
-</div>`;
+    ${s.cta}
+  </div>` : ''}`).join(''));
 }
 
 function autocomplete({ type = 'default', state = 'initial', size = 'default', placeholder = 'Quick search for anything', query = 'gri' }) {
@@ -146,7 +145,7 @@ function autocomplete({ type = 'default', state = 'initial', size = 'default', p
     type === 'advanced' ? dropdownAdvanced(state) : dropdownDefault(state);
 
   return `
-<div style="width:400px;">
+<div class="iris-autocomplete" style="width:400px;">
   ${inputField({ size, state, placeholder, query })}
   ${dropdown}
 </div>`;
@@ -245,11 +244,13 @@ export const Interactive = {
     const border = isOpen ? 'var(--color-primary)' : 'var(--color-border-default)';
     const height = a.size === 'large' ? '52px' : '42px';
 
-    const htmlCode = `<div role="combobox" style="position:relative;width:400px;">\n  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:${height};background:var(--color-bg-tertiary);border:1px solid ${border};border-radius:8px;">\n    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="6" cy="6" r="4"/><path d="m10 10 3 3"/></svg>\n    <input type="text" placeholder="${a.placeholder}" style="flex:1;border:none;background:transparent;" />\n  </div>\n  ${isOpen ? `<div role="listbox" style="position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px;z-index:10;">\n    <div style="font-weight:600;color:#111928;">Recent</div>\n    <div role="option" style="padding:8px 0;color:#6b7280;">Customizing colors</div>\n  </div>` : ''}\n</div>`;
+    const sizeClass = a.size === 'large' ? ' form-input-lg' : '';
 
-    const reactCode = `<div role="combobox" style={{ position: 'relative' }}>\n  <div\n    style={{\n      display: 'flex',\n      alignItems: 'center',\n      gap: '8px',\n      padding: '0 12px',\n      height: '${height}',\n      background: 'var(--color-bg-tertiary)',\n      border: \`1px solid \${isOpen ? 'var(--color-primary)' : 'var(--color-border-default)'}\`,\n      borderRadius: '8px',\n    }}\n  >\n    <input\n      type="text"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      onFocus={() => setOpen(true)}\n      placeholder="${a.placeholder}"\n      role="combobox"\n      aria-expanded={isOpen}\n    />\n  </div>\n  {isOpen && (\n    <div role="listbox\" style={{ position: 'absolute', top: '100%', zIndex: 10 }}>\n      {results.map((item) => (\n        <div key={item} role="option\" onClick={() => onSelect(item)}>\n          {item}\n        </div>\n      ))}\n    </div>\n  )}\n</div>`;
+    const htmlCode = `<div class="iris-autocomplete" role="combobox" aria-expanded="${isOpen}">\n  <div class="form-search-wrap">\n    <span class="form-search-icon"><!-- search icon --></span>\n    <input type="text" class="form-input${sizeClass}" placeholder="${a.placeholder}" />\n  </div>\n  ${isOpen ? `<div class="iris-autocomplete__menu" role="listbox">\n    <div class="iris-autocomplete__heading">Recent</div>\n    <div class="iris-autocomplete__item" role="option">Customizing colors</div>\n  </div>` : ''}\n</div>`;
 
-    const componentCode = `export function Autocomplete({ items = [], placeholder, onSelect, size = 'default' }) {\n  const [open, setOpen] = useState(false);\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState(items);\n\n  const handleChange = (value) => {\n    setQuery(value);\n    setResults(items.filter((item) => item.toLowerCase().includes(value.toLowerCase())));\n  };\n\n  const handleSelect = (item) => {\n    setQuery(item);\n    setOpen(false);\n    onSelect?.(item);\n  };\n\n  return (\n    <div style={{ position: 'relative' }}>\n      <div\n        style={{\n          display: 'flex',\n          alignItems: 'center',\n          height: size === 'large' ? '52px' : '42px',\n          border: open ? '1px solid var(--color-primary)' : '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          padding: '0 12px',\n          background: 'var(--color-bg-tertiary)',\n        }}\n      >\n        <input\n          type="text"\n          value={query}\n          onChange={(e) => handleChange(e.target.value)}\n          onFocus={() => setOpen(true)}\n          placeholder={placeholder}\n          role="combobox"\n          aria-expanded={open}\n          style={{ flex: 1, border: 'none', background: 'transparent' }}\n        />\n      </div>\n      {open && (\n        <div style={{\n          position: 'absolute',\n          top: '100%',\n          left: 0,\n          right: 0,\n          background: '#fff',\n          border: '1px solid var(--color-border-default)',\n          borderRadius: '8px',\n          marginTop: '4px',\n          zIndex: 1000,\n        }}>\n          {results.map((item) => (\n            <div\n              key={item}\n              role="option\"\n              onClick={() => handleSelect(item)}\n              style={{ padding: '8px 12px', cursor: 'pointer' }}\n            >\n              {item}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
+    const reactCode = `<div className="iris-autocomplete" role="combobox" aria-expanded={open}>\n  <div className="form-search-wrap">\n    <span className="form-search-icon">{/* search icon */}</span>\n    <input\n      type="text"\n      className="form-input${sizeClass}"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      onFocus={() => setOpen(true)}\n      placeholder="${a.placeholder}"\n    />\n  </div>\n  {open && (\n    <div className="iris-autocomplete__menu" role="listbox">\n      {results.map((item) => (\n        <div key={item} className="iris-autocomplete__item" role="option" onClick={() => onSelect(item)}>\n          {item}\n        </div>\n      ))}\n    </div>\n  )}\n</div>`;
+
+    const componentCode = `export function Autocomplete({ items = [], placeholder, onSelect, size = 'default' }) {\n  const [open, setOpen] = useState(false);\n  const [query, setQuery] = useState('');\n\n  const results = items.filter((item) =>\n    item.toLowerCase().includes(query.toLowerCase())\n  );\n\n  const handleSelect = (item) => {\n    setQuery(item);\n    setOpen(false);\n    onSelect?.(item);\n  };\n\n  return (\n    <div className="iris-autocomplete" role="combobox" aria-expanded={open}>\n      <div className="form-search-wrap">\n        <span className="form-search-icon">{/* search icon */}</span>\n        <input\n          type="text"\n          className={'form-input' + (size === 'large' ? ' form-input-lg' : '')}\n          value={query}\n          onChange={(e) => setQuery(e.target.value)}\n          onFocus={() => setOpen(true)}\n          onBlur={() => setTimeout(() => setOpen(false), 150)}\n          placeholder={placeholder}\n        />\n      </div>\n      {open && (\n        <div className="iris-autocomplete__menu" role="listbox">\n          {results.length === 0 && <div className="iris-autocomplete__empty">No results</div>}\n          {results.map((item) => (\n            <div key={item} className="iris-autocomplete__item" role="option" onClick={() => handleSelect(item)}>\n              {item}\n            </div>\n          ))}\n        </div>\n      )}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -313,7 +314,15 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use **Controls** to test different states and sizes. Always show suggestions on focus.',
+        story: 'Use **Controls** to test different states and sizes. Always show suggestions on focus. Preview and snippets emit the real `.iris-autocomplete*` + `.form-search-wrap` classes.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const a = ctx.args;
+          const isOpen = a.state !== 'initial';
+          const sizeClass = a.size === 'large' ? ' form-input-lg' : '';
+          return `<div class="iris-autocomplete" role="combobox" aria-expanded="${isOpen}">\n  <div class="form-search-wrap">\n    <span class="form-search-icon"><!-- search icon --></span>\n    <input type="text" class="form-input${sizeClass}" placeholder="${a.placeholder}" />\n  </div>${isOpen ? `\n  <div class="iris-autocomplete__menu" role="listbox">\n    <div class="iris-autocomplete__heading">Recent</div>\n    <div class="iris-autocomplete__item" role="option">Customizing colors</div>\n  </div>` : ''}\n</div>`;
+        },
       },
     },
   },
@@ -337,29 +346,28 @@ export const StatesDefault = {
       source: {
         language: 'html',
         code: `<!-- Initial: closed -->
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-border-default);border-radius:8px;">
-  <!-- search icon #6b7280 -->
-  <input placeholder="Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#6b7280;"/>
+<div class="iris-autocomplete">
+  <div class="form-search-wrap">
+    <span class="form-search-icon"><!-- search icon --></span>
+    <input type="text" class="form-input" placeholder="Quick search for anything" />
+  </div>
 </div>
 
-<!-- Active: open, focus ring var(--color-primary) -->
-<div style="width:400px;">
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-primary);border-radius:8px;">
-    <!-- search icon var(--color-primary) -->
-    <input placeholder="Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#111928;"/>
+<!-- Active: open -->
+<div class="iris-autocomplete">
+  <div class="form-search-wrap">
+    <span class="form-search-icon"><!-- search icon --></span>
+    <input type="text" class="form-input" placeholder="Quick search for anything" />
   </div>
-  <div role="listbox" style="background:var(--color-bg-white);border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-    <div style="font-size:14px;font-weight:600;color:#111928;margin-bottom:6px;">Recent</div>
-    <div role="option" style="display:flex;align-items:center;gap:8px;padding:3px 0;">
-      <!-- search icon 14px var(--color-border-light) -->
-      <span style="font-size:14px;color:#6b7280;">Customizing colors</span>
-    </div>
+  <div class="iris-autocomplete__menu" role="listbox">
+    <div class="iris-autocomplete__heading">Recent</div>
+    <div class="iris-autocomplete__item" role="option">Customizing colors</div>
     <!-- more rows... -->
   </div>
 </div>
 
-<!-- Typing: × clear button, filtered results -->
-<!-- With CTA: last row has divider + plus + "Add new" in var(--color-primary) -->`,
+<!-- With CTA: divider + plus + "Add new" -->
+<div class="iris-autocomplete__cta">+ Add new</div>`,
       },
     },
   },
@@ -403,18 +411,18 @@ export const StatesAdvanced = {
       source: {
         language: 'html',
         code: `<!-- Advanced type — Active state (dismiss × on each item) -->
-<div style="width:400px;">
-  <div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-primary);border-radius:8px;">
-    <!-- search icon var(--color-primary) -->
-    <input value="|Quick search for anything" style="flex:1;border:none;background:transparent;font-size:14px;color:#111928;"/>
+<div class="iris-autocomplete">
+  <div class="form-search-wrap">
+    <span class="form-search-icon"><!-- search icon --></span>
+    <input type="text" class="form-input" placeholder="Quick search for anything" />
   </div>
-  <div role="listbox" style="background:var(--color-bg-white);border:1px solid var(--color-border-default);border-radius:8px;margin-top:4px;padding:12px 16px 8px;">
-    <div style="font-size:14px;font-weight:600;color:#111928;margin-bottom:6px;">Recent</div>
-    <!-- Advanced result row: pill bg var(--color-bg-tertiary), r:8px -->
-    <div role="option" style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;background:var(--color-bg-tertiary);margin-bottom:4px;">
-      <!-- category icon 14px var(--color-border-light) (e.g. color-swatch, view-grid, user-circle) -->
-      <span style="flex:1;font-size:14px;color:#6b7280;">Customizing colors</span>
-      <!-- dismiss × icon 14px #6b7280 (active) or navigate → (typing) -->
+  <div class="iris-autocomplete__menu" role="listbox">
+    <div class="iris-autocomplete__heading">Recent</div>
+    <!-- Advanced result row: pill modifier -->
+    <div class="iris-autocomplete__item iris-autocomplete__item--pill" role="option">
+      <!-- category icon (e.g. color-swatch, view-grid, user-circle) -->
+      <span style="flex:1;">Customizing colors</span>
+      <!-- dismiss × (active) or navigate → (typing) -->
     </div>
   </div>
 </div>`,
@@ -457,16 +465,16 @@ export const Sizes = {
       },
       source: {
         language: 'html',
-        code: `<!-- Default size: 42px height, 14px font -->
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:42px;background:var(--color-bg-tertiary);border:1px solid var(--color-border-default);border-radius:8px;">
-  <!-- search icon 18px -->
-  <input placeholder="Quick search for anything" style="font-size:14px;border:none;background:transparent;"/>
+        code: `<!-- Default size -->
+<div class="form-search-wrap">
+  <span class="form-search-icon"><!-- search icon --></span>
+  <input type="text" class="form-input" placeholder="Quick search for anything" />
 </div>
 
-<!-- Large size: 52px height, 16px font -->
-<div style="display:flex;align-items:center;gap:8px;padding:0 12px;height:52px;background:var(--color-bg-tertiary);border:1px solid var(--color-border-default);border-radius:8px;">
-  <!-- search icon 18px -->
-  <input placeholder="Quick search for anything" style="font-size:16px;border:none;background:transparent;"/>
+<!-- Large size -->
+<div class="form-search-wrap">
+  <span class="form-search-icon"><!-- search icon --></span>
+  <input type="text" class="form-input form-input-lg" placeholder="Quick search for anything" />
 </div>`,
       },
     },

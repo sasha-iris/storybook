@@ -113,13 +113,14 @@ const COLORS = {
 /* ── helpers ────────────────────────────────────────────────────── */
 
 function progressBar({ value = 50, color = 'primary', labelBelow = false } = {}) {
-  const fillColor = COLORS[color] ?? COLORS.primary;
   const pct = Math.min(100, Math.max(0, value));
 
-  // .progress provides: overflow:hidden, width:100% — override height/bg/radius for Figma spec
+  // .progress / .progress-bar / .progress-bar-{color} carry the Figma spec
+  // (track 6px, bg border-default, radius 2px) — CSS aligned 2026-06-11.
+  // Only the fill width stays inline: it is the data value.
   const track = `
-    <div class="progress" style="height:6px;background:var(--color-border-default);border-radius:2px;">
-      <div class="progress-bar" style="width:${pct}%;background:${fillColor};border-radius:2px;"></div>
+    <div class="progress">
+      <div class="progress-bar progress-bar-${color}" style="width:${pct}%;"></div>
     </div>`;
 
   const label = `
@@ -141,34 +142,25 @@ export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
     const { value, color, labelBelow } = args;
-    const fillColor = COLORS[color] ?? COLORS.primary;
     const pct = Math.min(100, Math.max(0, value));
-    const labelHtml = `<div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">${pct}%</div>`;
 
-    let htmlCode = '';
-    let reactCode = '';
-
-    if (labelBelow) {
-      htmlCode = `<div class="progress">
-  <div class="progress-bar progress-bar-${color}"></div>
-</div>
-<div class="progress-label">${pct}%</div>`;
-      reactCode = `<div className="progress">
-  <div className="progress-bar progress-bar-${color}" />
-</div>
-<div className="progress-label">${pct}%</div>`;
-    } else {
-      htmlCode = `<div class="progress-label">${pct}%</div>
-<div class="progress">
-  <div class="progress-bar progress-bar-${color}"></div>
+    const labelSnippetHtml = `<div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">${pct}%</div>`;
+    const labelSnippetJsx = `<div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-secondary)', textAlign: 'right' }}>${pct}%</div>`;
+    const trackSnippetHtml = `<div class="progress">
+  <div class="progress-bar progress-bar-${color}" style="width:${pct}%;"></div>
 </div>`;
-      reactCode = `<div className="progress-label">${pct}%</div>
-<div className="progress">
-  <div className="progress-bar progress-bar-${color}" />
+    const trackSnippetJsx = `<div className="progress">
+  <div className="progress-bar progress-bar-${color}" style={{ width: '${pct}%' }} />
 </div>`;
-    }
 
-    const componentCode = `export function ProgressBar({ value = ${pct}, color = "${color}", labelBelow = ${labelBelow} }) {\n  return (\n    <>\n      {!labelBelow && <div className="progress-label">{value}%</div>}\n      <div className="progress">\n        <div className="progress-bar progress-bar-\${color}" style={{ width: \`\${value}%\` }} />\n      </div>\n      {labelBelow && <div className="progress-label">{value}%</div>}\n    </>\n  );\n}`;
+    const htmlCode = labelBelow
+      ? `${trackSnippetHtml}\n${labelSnippetHtml}`
+      : `${labelSnippetHtml}\n${trackSnippetHtml}`;
+    const reactCode = labelBelow
+      ? `${trackSnippetJsx}\n${labelSnippetJsx}`
+      : `${labelSnippetJsx}\n${trackSnippetJsx}`;
+
+    const componentCode = `export function ProgressBar({ value = ${pct}, color = "${color}", labelBelow = ${labelBelow} }) {\n  const label = (\n    <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-secondary)', textAlign: 'right' }}>\n      {value}%\n    </div>\n  );\n  return (\n    <>\n      {!labelBelow && label}\n      <div className="progress">\n        <div className={\`progress-bar progress-bar-\${color}\`} style={{ width: \`\${value}%\` }} />\n      </div>\n      {labelBelow && label}\n    </>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -274,7 +266,8 @@ Use the **Controls** panel to experiment. Code updates live.
 #### Label Above (default)
 \`\`\`
 <div style="...">
-  <div class="progress-label">50%</div>
+  <!-- value label: 12px / 500 / text-secondary, right-aligned -->
+  <div style="font-size:var(--text-xs);font-weight:500;color:var(--color-text-secondary);text-align:right;">50%</div>
   <div class="progress">
     <div class="progress-bar progress-bar-primary" style="width:50%"></div>
   </div>
@@ -287,9 +280,11 @@ Use the **Controls** panel to experiment. Code updates live.
   <div class="progress">
     <div class="progress-bar progress-bar-primary" style="width:50%"></div>
   </div>
-  <div class="progress-label">50%</div>
+  <div style="font-size:var(--text-xs);font-weight:500;color:var(--color-text-secondary);text-align:right;">50%</div>
 </div>
 \`\`\`
+
+> Note: \`.progress-label\` exists in CSS but is a **white in-bar label** (10px, #fff) — do not use it for labels outside the track.
 
 ### ✅ Do
 
@@ -309,22 +304,20 @@ Use the **Controls** panel to experiment. Code updates live.
       source: {
         transform: (_src, ctx) => {
           const { value, color, labelBelow } = ctx.args;
-          const fillColor = COLORS[color] ?? COLORS.primary;
           const pct = Math.min(100, Math.max(0, value));
           const labelHtml = `<div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">${pct}%</div>`;
+          const trackHtml = `<div class="progress">
+    <div class="progress-bar progress-bar-${color}" style="width:${pct}%;"></div>
+  </div>`;
           if (labelBelow) {
             return `<div style="width:100%;">
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
-  </div>
+  ${trackHtml}
   ${labelHtml}
 </div>`;
           }
           return `<div style="width:100%;">
   ${labelHtml}
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${fillColor};border-radius:2px;"></div>
-  </div>
+  ${trackHtml}
 </div>`;
         },
       },
@@ -358,27 +351,18 @@ Use the **Value** control to see how width scales across the palette.
       },
       source: {
         code: `<!-- Primary -->
-<div style="width:100%;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
-  </div>
+<div class="progress">
+  <div class="progress-bar progress-bar-primary" style="width:75%;"></div>
 </div>
 
 <!-- Green -->
-<div style="width:100%;margin-top:16px;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#31c48d;border-radius:2px;"></div>
-  </div>
+<div class="progress" style="margin-top:16px;">
+  <div class="progress-bar progress-bar-green" style="width:75%;"></div>
 </div>
 
 <!-- Orange -->
-<div style="width:100%;margin-top:16px;">
-  <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#ff8a4c;border-radius:2px;"></div>
-  </div>
+<div class="progress" style="margin-top:16px;">
+  <div class="progress-bar progress-bar-orange" style="width:75%;"></div>
 </div>`,
         language: 'html',
       },
@@ -422,8 +406,8 @@ Use the **Color** control to preview a different fill across all steps.
         code: `<div role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
   style="width:100%;">
   <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;">75%</div>
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
+  <div class="progress">
+    <div class="progress-bar progress-bar-primary" style="width:75%;"></div>
   </div>
 </div>`,
         language: 'html',
@@ -461,8 +445,8 @@ Use in compact layouts (cards, table rows) where space above the track is unavai
       },
       source: {
         code: `<div style="width:100%;">
-  <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-    <div style="position:absolute;left:0;top:0;height:100%;width:75%;background:#5850ec;border-radius:2px;"></div>
+  <div class="progress">
+    <div class="progress-bar progress-bar-primary" style="width:75%;"></div>
   </div>
   <div style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);text-align:right;margin-top:6px;">75%</div>
 </div>`,
@@ -501,8 +485,8 @@ This shows how bars at different values and colors sit together with labels and 
       <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:6px;">
         <span>Storage</span><span>82%</span>
       </div>
-      <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-        <div style="position:absolute;left:0;top:0;height:100%;width:82%;background:#ff8a4c;border-radius:2px;"></div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-orange" style="width:82%;"></div>
       </div>
     </div>
 
@@ -511,8 +495,8 @@ This shows how bars at different values and colors sit together with labels and 
       <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:6px;">
         <span>API quota</span><span>45%</span>
       </div>
-      <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-        <div style="position:absolute;left:0;top:0;height:100%;width:45%;background:#5850ec;border-radius:2px;"></div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-primary" style="width:45%;"></div>
       </div>
     </div>
 
@@ -521,8 +505,8 @@ This shows how bars at different values and colors sit together with labels and 
       <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:6px;">
         <span>Compute</span><span>23%</span>
       </div>
-      <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-        <div style="position:absolute;left:0;top:0;height:100%;width:23%;background:#31c48d;border-radius:2px;"></div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-green" style="width:23%;"></div>
       </div>
     </div>
   </div>
@@ -548,9 +532,8 @@ This shows how bars at different values and colors sit together with labels and 
                         font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);margin-bottom:6px;">
               <span>${label}</span><span>${value}%</span>
             </div>
-            <div style="position:relative;height:6px;background:var(--color-border-default);border-radius:2px;overflow:hidden;">
-              <div style="position:absolute;left:0;top:0;height:100%;width:${value}%;
-                          background:${COLORS[color]};border-radius:2px;"></div>
+            <div class="progress">
+              <div class="progress-bar progress-bar-${color}" style="width:${value}%;"></div>
             </div>
           </div>`).join('')}
       </div>

@@ -41,12 +41,15 @@ const COLOR_NAMES = Object.keys(TAG_COLORS);
 // Heroicons mini — x-mark (20×20 solid)
 const X_PATH = 'M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z';
 
+// Built on the real `.iris-tag` + `.iris-tag--{color}` + `.iris-tag__dot` classes.
+// Text colour comes from the class; the dot keeps its Figma-exact fill (some
+// colours use a slightly different dot shade — content-level SVG attribute).
 function tag({ label = 'Label', color = 'grey', dismissible = false }) {
-  const { dot, text } = TAG_COLORS[color] ?? TAG_COLORS.grey;
+  const { dot } = TAG_COLORS[color] ?? TAG_COLORS.grey;
 
-  const dotHtml = `<svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true" style="flex-shrink:0;">
+  const dotHtml = `<span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
-  </svg>`;
+  </svg></span>`;
 
   const dismissHtml = dismissible
     ? `<button type="button" aria-label="Remove ${label}" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;line-height:0;">
@@ -56,7 +59,7 @@ function tag({ label = 'Label', color = 'grey', dismissible = false }) {
        </button>`
     : '';
 
-  return `<span style="display:inline-flex;align-items:center;gap:4px;color:${text};font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;font-family:inherit;">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
+  return `<span class="iris-tag iris-tag--${color}">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
 }
 
 export default {
@@ -126,23 +129,23 @@ export const Interactive = {
       ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="${dot}" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>\n  </button>`
       : '';
 
-    const htmlCode = `<span style="display:inline-flex;align-items:center;gap:4px;color:${text};font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true">
+    const htmlCode = `<span class="iris-tag iris-tag--${a.color}">
+  <span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
-  </svg>
+  </svg></span>
   <span>${a.label}</span>${dismissPart}
 </span>`;
 
-    const reactCode = `<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '${text}', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true">
+    const reactCode = `<span className="iris-tag iris-tag--${a.color}">
+  <span className="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
-  </svg>
+  </svg></span>
   <span>${a.label}</span>${a.dismissible ? `\n  <button type="button" aria-label={\`Remove \${label}\`} onClick={onDismiss}>
     <svg width="12" height="12" viewBox="0 0 20 20" fill="${dot}" aria-hidden="true">{/* x icon */}</svg>
   </button>` : ''}
 </span>`;
 
-    const componentCode = `export function Tag({ label = "${a.label}", color = "${a.color}", dismissible = ${a.dismissible}, onDismiss }) {\n  return (\n    <span className={\`tag tag--\${color}\`}>\n      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">\n        <circle cx="6" cy="6" r="3"/>\n      </svg>\n      <span>{label}</span>\n      {dismissible && (\n        <button\n          type="button"\n          aria-label={\`Remove \${label}\`}\n          onClick={onDismiss}\n        >\n          <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true">{/* x icon */}</svg>\n        </button>\n      )}\n    </span>\n  );\n}`;
+    const componentCode = `// Dot fill is Figma-exact and can differ slightly from the text colour\nconst DOT = { grey: '#4b5563', indigo: '#5850ec', green: '#057a55', red: '#e02424', orange: '#d03801', teal: '#009689', blue: 'var(--color-primary)', purple: '#7e3af2', pink: '#d61f69' };\n\nexport function Tag({ label = "${a.label}", color = "${a.color}", dismissible = ${a.dismissible}, onDismiss }) {\n  return (\n    <span className={\`iris-tag iris-tag--\${color}\`}>\n      <span className="iris-tag__dot">\n        <svg width="12" height="12" viewBox="0 0 12 12" fill={DOT[color]} aria-hidden="true">\n          <circle cx="6" cy="6" r="3"/>\n        </svg>\n      </span>\n      <span>{label}</span>\n      {dismissible && (\n        <button\n          type="button"\n          aria-label={\`Remove \${label}\`}\n          onClick={onDismiss}\n        >\n          <svg width="12" height="12" viewBox="0 0 20 20" fill={DOT[color]} aria-hidden="true">{/* x icon */}</svg>\n        </button>\n      )}\n    </span>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -206,7 +209,14 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use the **Controls** panel to configure color, label, and dismiss button.',
+        story: 'Use the **Controls** panel to configure color, label, and dismiss button. Preview and snippets emit the real `.iris-tag` classes.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const a = ctx.args;
+          const { dot } = TAG_COLORS[a.color] ?? TAG_COLORS.grey;
+          return `<span class="iris-tag iris-tag--${a.color}">\n  <span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="${dot}"><circle cx="6" cy="6" r="3"/></svg></span>\n  <span>${a.label}</span>${a.dismissible ? `\n  <button type="button" aria-label="Remove ${a.label}"><!-- x icon --></button>` : ''}\n</span>`;
+        },
       },
     },
   },
@@ -231,20 +241,20 @@ All 9 color themes. Tags have no background — the dot and text carry the color
       },
       source: {
         code: `<!-- Grey (neutral) -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#4a5565;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#4b5563" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
+<span class="iris-tag iris-tag--grey">
+  <span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="#4b5563" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg></span>
   <span>Neutral</span>
 </span>
 
-<!-- Green -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#009966;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#057a55" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
+<!-- Green (dot is Figma-exact #057a55, text from the class) -->
+<span class="iris-tag iris-tag--green">
+  <span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="#057a55" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg></span>
   <span>Active</span>
 </span>
 
 <!-- Red -->
-<span style="display:inline-flex;align-items:center;gap:4px;color:#e7000b;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#e02424" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>
+<span class="iris-tag iris-tag--red">
+  <span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="#e02424" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg></span>
   <span>Failed</span>
 </span>`,
         language: 'html',
@@ -277,15 +287,13 @@ All 9 themes with a dismiss × button. The × uses the same color as the dot.
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;color:#5850ec;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="#5850ec" aria-hidden="true">
+        code: `<span class="iris-tag iris-tag--indigo">
+  <span class="iris-tag__dot"><svg width="12" height="12" viewBox="0 0 12 12" fill="#5850ec" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
-  </svg>
+  </svg></span>
   <span>Design</span>
   <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#5850ec" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="#5850ec" aria-hidden="true"><!-- x icon --></svg>
   </button>
 </span>`,
         language: 'html',

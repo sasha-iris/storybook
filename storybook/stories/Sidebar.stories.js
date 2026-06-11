@@ -23,7 +23,7 @@
  * - Bottom section (Help, Settings)
  *
  * ## Tokens used
- * - bg: var(--color-bg-tertiary) = var(--color-bg-secondary)
+ * - bg: .sidebar = white (Color=White) · .sidebar--gray = var(--color-bg-muted) #f3f4f6 (Color=Gray)
  * - border: var(--color-border-base) = var(--color-border-default)
  * - text active: #42389d (old-colors/brand/800)
  * - text default: var(--color-text-heading) = #111928
@@ -141,27 +141,20 @@ const icons = {
 
 // ─── Building blocks ─────────────────────────────────────────────────────────
 
-// Figma-specific sidebar item values that differ from .sidebar-item CSS defaults:
-//   padding: 6px 8px (CSS: 9px 16px)
-//   gap: 4px (CSS: 10px)
-//   border-radius: 8px (CSS: 0)
-//   height: 40px (not in CSS)
-//   active color: #42389d (CSS: #1f2a37)
-// Use .sidebar-item/.sidebar-item.active for structural base; inline overrides for Figma values.
+// .sidebar-item / .sidebar-item.active carry the full Figma spec (node 9263:160934):
+// pad 6×8, gap 4, h40, radius 8, font 16/500, text #111928; active bg #e5e7eb, text+icon #42389d.
+// CSS was aligned to Figma 2026-06-11 — no inline visual overrides needed.
 
-const ITEM_OVERRIDE = 'padding:6px 8px;gap:4px;border-radius:8px;height:40px;box-sizing:border-box;';
-
-function menuItem({ icon, label, active = false, expandable = false, expanded = false, color = '#111928' }) {
-  const activeColor = '#42389d';
-  const textColor = active ? activeColor : color;
+function menuItem({ icon, label, active = false, expandable = false, expanded = false, color = '' }) {
   // Chevron stroke is always #1f2a37 per Figma (node 9263:160845)
   const chevronColor = '#1f2a37';
+  const colorOverride = color && !active ? ` style="color:${color};"` : '';
 
   return `
-    <div class="sidebar-item${active ? ' active' : ''}" style="${ITEM_OVERRIDE}color:${textColor};">
+    <div class="sidebar-item${active ? ' active' : ''}"${colorOverride}>
       <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
-        ${icon ? `<span class="sidebar-item-icon" style="width:24px;height:24px;display:flex;align-items:center;color:${textColor};">${icon}</span>` : ''}
-        <span style="font:500 16px/1.5 inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
+        ${icon ? `<span class="sidebar-item-icon" style="display:flex;align-items:center;">${icon}</span>` : ''}
+        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
       </div>
       ${expandable ? `<span style="flex-shrink:0;color:${chevronColor};">${expanded ? icons.chevronUp : icons.chevronDown}</span>` : ''}
     </div>
@@ -169,45 +162,32 @@ function menuItem({ icon, label, active = false, expandable = false, expanded = 
 }
 
 function subItem({ label, active = false }) {
-  const textColor = active ? '#42389d' : '#111928';
-  // padding-left:0 overrides ITEM_OVERRIDE's 8px left — indent comes from wrapper only (28px)
+  // padding-left:0 — indent comes from wrapper only (28px)
   // Total from sidebar edge: 28px (nav section) + 28px (wrapper) = 56px — matches Figma node 9272:163206
   return `
     <div style="padding-left:28px;">
-      <div class="sidebar-item${active ? ' active' : ''}" style="${ITEM_OVERRIDE}padding-left:0;color:${textColor};">
-        <span style="font:500 16px/1.5 inherit;">${label}</span>
+      <div class="sidebar-item${active ? ' active' : ''}" style="padding-left:0;">
+        <span>${label}</span>
       </div>
     </div>
   `;
 }
 
 function divider() {
-  return `<div style="padding:4px 0;width:100%;"><div style="height:1px;background:var(--color-border-default);width:100%;"></div></div>`;
+  return `<div class="sidebar-divider"></div>`;
 }
 
 // ─── Contracted sidebar builder ──────────────────────────────────────────────
 // Figma: Type=Contracted, Icons=True, Color=White — node 1060:44
 // Width: 60px, bg: var(--color-bg-white) (white, not var(--color-bg-secondary))
-// Active: 40×40px centered, bg var(--color-bg-secondary), radius 8px, icon #1f2a37
+// Active: 40×40px centered, bg #f3f4f6 (--color-bg-muted), radius 8px, icon #1f2a37
 // Inactive: 60×32px full-width, transparent, icon #6b7280
 
 function contractedItem({ icon, label, active = false }) {
   if (active) {
-    return `
-      <button title="${label}" aria-label="${label}" aria-current="page" style="
-        width:40px;height:40px;margin:0 auto;
-        background:var(--color-bg-muted);border-radius:8px;border:none;
-        display:flex;align-items:center;justify-content:center;
-        color:#1f2a37;cursor:pointer;flex-shrink:0;
-      ">${icon}</button>`;
+    return `<button type="button" class="sidebar-contracted-item active" title="${label}" aria-label="${label}" aria-current="page">${icon}</button>`;
   }
-  return `
-    <button title="${label}" aria-label="${label}" style="
-      width:60px;height:32px;padding:4px 0;
-      background:transparent;border:none;
-      display:flex;align-items:center;justify-content:center;
-      color:var(--color-text-secondary);cursor:pointer;flex-shrink:0;
-    ">${icon}</button>`;
+  return `<button type="button" class="sidebar-contracted-item" title="${label}" aria-label="${label}">${icon}</button>`;
 }
 
 function contractedSidebar({ activeKey = 'chartPie' } = {}) {
@@ -234,45 +214,33 @@ function contractedSidebar({ activeKey = 'chartPie' } = {}) {
       ${items.map(item => contractedItem({ ...item, active: item.key === activeKey })).join('')}
     </div>`;
 
-  const sep = () => `<div style="height:1px;background:var(--color-border-default);flex-shrink:0;"></div>`;
+  const sep = () => `<div class="sidebar-divider" style="margin:0;"></div>`;
 
   return `
-    <div style="
-      width:60px;height:100%;min-height:600px;
-      background:var(--color-bg-white);
-      border-right:1px solid var(--color-border-default);
-      display:flex;flex-direction:column;
-      padding-top:16px;box-sizing:border-box;
-    ">
+    <aside class="sidebar sidebar--collapsed">
       ${section(firstMenu, 16, 0, 12)}
       ${sep()}
       ${section(secondMenu, 8, 12, 12)}
       ${sep()}
       ${section(bottomMenu, 8, 12, 12)}
-    </div>`;
+    </aside>`;
 }
 
 // ─── Sidebar builder ─────────────────────────────────────────────────────────
 
-// color: 'white' = var(--color-bg-white) | 'gray' = var(--color-bg-secondary)  (both are light-mode variants per Figma 1057:2041)
+// Shell styling comes from the real .sidebar* classes.
+// color: 'white' = .sidebar base | 'gray' = .sidebar--gray (#f3f4f6 — Figma Color=Gray)
 function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded = true, color = 'gray' } = {}) {
-  const bg = color === 'white' ? 'var(--color-bg-white)' : 'var(--color-bg-secondary)';
   return `
-    <div style="
-      background:${bg};
-      border-right:1px solid var(--color-border-default);
-      display:flex; flex-direction:column; gap:24px;
-      width:256px; height:100%; min-height:600px;
-      box-sizing:border-box;
-    ">
+    <aside class="sidebar${color === 'white' ? '' : ' sidebar--gray'}">
       ${showLogo ? `
-        <div style="padding:24px 8px 0 28px;">
+        <div class="sidebar-brand">
           ${irisLogo({ size: 'sm', dark: false })}
         </div>
       ` : ''}
 
       <!-- Main nav -->
-      <div style="display:flex;flex-direction:column;gap:8px;padding:0 8px 0 28px;width:100%;box-sizing:border-box;">
+      <nav class="sidebar-nav">
         ${menuItem({ icon: icons.viewGrid, label: 'Overview', active: activeItem === 'overview' })}
         ${menuItem({ icon: icons.documentReport, label: 'Metrics Library', active: activeItem === 'metrics' })}
         ${menuItem({ icon: icons.chartPie, label: 'Profit & Loss', active: activeItem === 'pnl' })}
@@ -287,15 +255,15 @@ function sidebar({ showLogo = true, activeItem = 'overview', financialExpanded =
           ${subItem({ label: 'Balance Sheet', active: activeItem === 'bs' })}
           ${subItem({ label: 'Drivers', active: activeItem === 'drivers' })}
         ` : ''}
-      </div>
+      </nav>
 
       ${divider()}
 
       <!-- Bottom nav -->
-      <div style="display:flex;flex-direction:column;gap:8px;padding:0 8px 24px 28px;width:100%;box-sizing:border-box;">
+      <nav class="sidebar-nav sidebar-nav--bottom">
         ${menuItem({ icon: icons.help, label: 'Help', active: activeItem === 'help' })}
-      </div>
-    </div>
+      </nav>
+    </aside>
   `;
 }
 
@@ -316,8 +284,8 @@ Figma sources: component set \`1057:2041\`, menu-item states \`9263:160845\`, li
 **Light-mode variants (Color=White / Color=Gray)**
 | Variant | Background | Border/Separator |
 |---|---|---|
-| Color=Gray (default) | \`var(--color-bg-secondary)\` | \`var(--color-border-default)\` |
-| Color=White | \`var(--color-bg-white)\` | \`var(--color-border-default)\` |
+| Color=Gray (default) | \`.sidebar--gray\` (#f3f4f6) | \`var(--color-border-default)\` |
+| Color=White | \`.sidebar\` base (white) | \`var(--color-border-default)\` |
 
 **Menu item types (node \`9263:160845\`)**
 | Type | Description |
@@ -377,7 +345,7 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
     color: {
       control: 'select',
       options: ['gray', 'white'],
-      description: 'Background color variant. `gray` = `var(--color-bg-secondary)` (Figma Color=Gray). `white` = `var(--color-bg-white)` (Figma Color=White). Ignored when `contracted` is true (always white per Figma).',
+      description: 'Background color variant. `gray` = `.sidebar--gray` (#f3f4f6, Figma Color=Gray). `white` = `.sidebar` base (Figma Color=White). Ignored when `contracted` is true (always white per Figma).',
       table: { category: 'Appearance', defaultValue: { summary: 'gray' } },
     },
     // ── State ────────────────────────────────────────────────
@@ -410,31 +378,22 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
  */
 export const Interactive = {
     name: 'Interactive (Controls)',
-  render: (args) => {
-    const bg = args.color === 'white' ? 'var(--color-bg-white)' : 'var(--color-bg-secondary)';
-    const h=`<aside style="width:256px;background:${bg};border:1px solid var(--color-border-default);padding:16px;"><nav style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="padding:12px;border-radius:8px;background:${args.activeItem==='home'?'var(--color-border-default)':'transparent'}">Home</a></nav></aside>`;
-    const r=`<aside style={{width:'256px',background:color,borderRight:'1px solid var(--color-border-default)',padding:'16px'}}><nav>{items.map(item=>(<a key={item} style={{active:active===item}}>...</a>))}</nav></aside>`;
-    const c=`export function Sidebar({activeItem,showLogo,color='white'}){return(<aside style={{width:'256px'}}>{showLogo&&<div>Logo</div>}<nav>...</nav></aside>);}`;
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div style="width:256px;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">${sidebar(args)}</div><div><div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">HTML</div><pre style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div></div><div><div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">React</div><pre style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div></div><div><div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;"><div style="font-weight:600;font-size:12px;margin-bottom:12px;">Component</div><pre style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;overflow:auto;font-size:12px;">${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
-  },
   parameters: {
     docs: {
       description: {
         story: 'Use **Controls** to configure any sidebar combination: background color, active item, logo visibility, Financial model expanded.',
       },
       source: {
+        // Snippet = the actual builder output → always matches the preview
         transform: (_src, storyCtx) => {
-          const { showLogo, activeItem, financialExpanded, color } = storyCtx.args;
-          const bg = color === 'white' ? 'var(--color-bg-white)' : 'var(--color-bg-secondary)';
-          return `<!-- Sidebar — color:${color}, showLogo:${showLogo}, active:${activeItem}, expanded:${financialExpanded} -->
-<aside style="width:256px;height:100vh;background:${bg};border-right:1px solid var(--color-border-default);
-              display:flex;flex-direction:column;padding:16px 0;box-sizing:border-box;">
-  ${showLogo ? `<!-- Logo area -->\n  <div style="padding:0 16px 16px;"><!-- Iris mark + wordmark --></div>` : ''}
-  <nav>
-    <!-- Menu items — active item gets bg:var(--color-border-default); color:#42389d -->
-    <!-- aria-current="page" on the active <a> for accessibility -->
-  </nav>
-</aside>`;
+          const a = storyCtx.args;
+          if (a.contracted === true) return contractedSidebar().trim();
+          return sidebar({
+            showLogo: a.showLogo !== false,
+            activeItem: a.activeItem || 'overview',
+            financialExpanded: a.financialExpanded !== false,
+            color: a.color || 'gray',
+          }).trim();
         },
       },
     },
@@ -459,9 +418,15 @@ export const Default = {
     docs: {
       description: { story: 'Default sidebar state: logo visible, Financial model expanded, Overview active.' },
       source: {
-        code: `<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">
-  <!-- Logo -->
-  <!-- Nav items — active: bg:var(--color-border-default); color:#42389d; aria-current="page" -->
+        code: `<aside class="sidebar sidebar--gray">
+  <div class="sidebar-brand"><!-- Iris mark + wordmark --></div>
+  <nav class="sidebar-nav">
+    <!-- .sidebar-item rows — active: class="sidebar-item active" + aria-current="page" -->
+  </nav>
+  <div class="sidebar-divider"></div>
+  <nav class="sidebar-nav sidebar-nav--bottom">
+    <!-- Help / Settings items -->
+  </nav>
 </aside>`,
         language: 'html',
       },
@@ -657,8 +622,8 @@ export const ColorVariants = {
         story: `
 Both light-mode color variants side-by-side from Figma component set \`1057:2041\`.
 
-- **Color=Gray** (\`var(--color-bg-secondary)\`) — default; use on white page backgrounds
-- **Color=White** (\`var(--color-bg-white)\`) — use when the sidebar sits on an already-light or gray page background
+- **Color=Gray** (\`.sidebar--gray\`, \`#f3f4f6\`) — default; use on white page backgrounds
+- **Color=White** (\`.sidebar\` base, white) — use when the sidebar sits on an already-light or gray page background
 
 Both use identical menu item tokens and the same \`var(--color-border-default)\` right border.
         `.trim(),
@@ -666,21 +631,21 @@ Both use identical menu item tokens and the same \`var(--color-border-default)\`
       source: {
         language: 'html',
         code: `<!-- Color=Gray (default) -->
-<aside style="width:256px;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);">...</aside>
+<aside class="sidebar sidebar--gray">...</aside>
 
 <!-- Color=White -->
-<aside style="width:256px;background:var(--color-bg-white);border-right:1px solid var(--color-border-default);">...</aside>`,
+<aside class="sidebar">...</aside>`,
       },
     },
   },
   render: () => `
     <div style="height:100vh;display:flex;gap:0;">
       <div>
-        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">Color=Gray · var(--color-bg-secondary)</div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">Color=Gray · .sidebar--gray (#f3f4f6)</div>
         ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'gray' })}
       </div>
       <div>
-        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">Color=White · var(--color-bg-white)</div>
+        <div style="padding:8px 12px;font:11px/1.5 600 ui-monospace,monospace;color:var(--color-text-secondary);background:var(--color-bg-default);border-bottom:1px solid var(--color-border-default);">Color=White · .sidebar base</div>
         ${sidebar({ showLogo: true, activeItem: 'overview', financialExpanded: true, color: 'white' })}
       </div>
     </div>
@@ -698,12 +663,12 @@ export const ContractedSidebar = {
       description: {
         story: `
 Contracted sidebar — Figma node \`1060:44\` (\`Type=Contracted, Icons=True, Color=White\`).
-Width: **60px**. Background: **var(--color-bg-white)** — intentionally different from the expanded sidebar's \`var(--color-bg-secondary)\`.
+Width: **60px**. Background: **var(--color-bg-white)** — intentionally different from the expanded sidebar's \`.sidebar--gray\` (#f3f4f6).
 
 Hover any icon to see its label. All buttons carry \`aria-label\` for keyboard and screen reader access.
 
-Active item: **40×40px** centered square, bg \`var(--color-bg-secondary)\`, radius 8px, icon \`#1f2a37\`.
-Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
+Active item: \`.sidebar-contracted-item.active\` — **40×40px** centered square, bg \`#f3f4f6\`, radius 8px, icon \`#1f2a37\`.
+Inactive: \`.sidebar-contracted-item\` — **60×32px** full width, transparent bg, icon \`#6b7280\`.
 
 **✅ Do** — always include \`aria-label\` and \`title\` on icon-only buttons.
 **✅ Do** — keep the right border (1px \`var(--color-border-default)\`) — it is the only visual separator from page content.
@@ -713,41 +678,34 @@ Inactive: **60×32px** full width, transparent bg, icon \`#6b7280\`.
       },
       source: {
         language: 'html',
-        code: `<!-- Contracted sidebar: 60px wide, white bg, icon-only -->
-<aside style="width:60px;height:100vh;background:var(--color-bg-white);
-              border-right:1px solid var(--color-border-default);
-              display:flex;flex-direction:column;
-              padding-top:16px;box-sizing:border-box;">
+        code: `<!-- Contracted sidebar: .sidebar--collapsed = layout only (60px, gap 6, pad-top 16) -->
+<aside class="sidebar sidebar--collapsed">
 
   <!-- First section (gap 16px) -->
   <nav style="display:flex;flex-direction:column;gap:16px;padding-bottom:12px;">
 
-    <!-- Active: 40×40 centered, bg var(--color-bg-secondary), radius 8px, icon #1f2a37 -->
-    <button aria-label="Overview" aria-current="page" title="Overview"
-            style="width:40px;height:40px;margin:0 auto;background:var(--color-bg-muted);
-                   border-radius:8px;border:none;display:flex;
-                   align-items:center;justify-content:center;color:#1f2a37;cursor:pointer;">
+    <!-- Active: .sidebar-contracted-item.active — 40×40 centered, bg #f3f4f6, r8, icon #1f2a37 -->
+    <button type="button" class="sidebar-contracted-item active"
+            aria-label="Overview" aria-current="page" title="Overview">
       <!-- chart-pie icon 24×24 -->
     </button>
 
-    <!-- Inactive: 60×32 full width, transparent, icon #6b7280 -->
-    <button aria-label="Metrics Library" title="Metrics Library"
-            style="width:60px;height:32px;background:transparent;border:none;
-                   display:flex;align-items:center;justify-content:center;
-                   color:var(--color-text-secondary);cursor:pointer;">
+    <!-- Inactive: .sidebar-contracted-item — 60×32 full width, transparent, icon #6b7280 -->
+    <button type="button" class="sidebar-contracted-item"
+            aria-label="Metrics Library" title="Metrics Library">
       <!-- document-report icon 24×24 -->
     </button>
 
   </nav>
 
-  <div style="height:1px;background:var(--color-border-default);"></div>
+  <div class="sidebar-divider" style="margin:0;"></div>
 
   <!-- Second section (gap 8px, padding 12px top/bottom) -->
   <nav style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
     <!-- clipboard-list, collection, support icons -->
   </nav>
 
-  <div style="height:1px;background:var(--color-border-default);"></div>
+  <div class="sidebar-divider" style="margin:0;"></div>
 
   <!-- Bottom section (gap 8px, padding 12px top/bottom) -->
   <nav style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
@@ -775,11 +733,10 @@ export const NoLogo = {
       },
       source: {
         language: 'html',
-        code: `<!-- Sidebar without logo: omit the logo div entirely; nav starts at top -->
-<aside style="width:256px;height:100vh;background:var(--color-bg-muted);border-right:1px solid var(--color-border-default);
-              display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;box-sizing:border-box;">
+        code: `<!-- Sidebar without logo: omit .sidebar-brand entirely; nav starts at top -->
+<aside class="sidebar sidebar--gray">
   <!-- No logo area -->
-  <nav style="display:flex;flex-direction:column;gap:8px;padding:24px 8px 0 28px;">
+  <nav class="sidebar-nav" style="padding-top:24px;">
     <!-- Menu items here -->
   </nav>
 </aside>`,
@@ -826,18 +783,12 @@ function contractedSidebarWithLogo({ activeKey = 'chartPie' } = {}) {
       ${items.map(item => contractedItem({ ...item, active: item.key === activeKey })).join('')}
     </div>`;
 
-  const sep = () => `<div style="height:1px;background:var(--color-border-default);flex-shrink:0;"></div>`;
+  const sep = () => `<div class="sidebar-divider" style="margin:0;"></div>`;
 
   return `
-    <div style="
-      width:60px;height:100%;min-height:600px;
-      background:var(--color-bg-white);
-      border-right:1px solid var(--color-border-default);
-      display:flex;flex-direction:column;
-      padding-top:16px;box-sizing:border-box;
-    ">
+    <aside class="sidebar sidebar--collapsed">
       <!-- Logo: Iris mark xs (24×24px), centered -->
-      <div style="width:60px;height:24px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0;">
+      <div style="width:60px;height:24px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;flex-shrink:0;">
         ${irisMarkImg({ size: 'xs' })}
       </div>
 
@@ -846,7 +797,7 @@ function contractedSidebarWithLogo({ activeKey = 'chartPie' } = {}) {
       ${section(secondMenu, 8, 12, 12)}
       ${sep()}
       ${section(bottomMenu, 8, 12, 12)}
-    </div>`;
+    </aside>`;
 }
 
 export const ContractedWithLogo = {
@@ -881,7 +832,7 @@ Use this variant when the contracted sidebar is the only navigation element on t
 
   <!-- Nav sections: same structure as logo-less contracted sidebar -->
   <nav style="display:flex;flex-direction:column;gap:16px;padding-bottom:12px;">
-    <!-- Active icon: 40×40 centered, bg var(--color-bg-secondary), r=8px, icon #1f2a37 -->
+    <!-- Active icon: .sidebar-contracted-item.active — 40×40 centered, bg #f3f4f6, r=8px, icon #1f2a37 -->
     <!-- Inactive icon: 60×32 full-width, transparent, icon #6b7280 -->
   </nav>
 
@@ -914,14 +865,14 @@ Full-page layout example — Figma node \`17:40413\`.
 Shows the expanded sidebar alongside a typical dashboard content area. Use this to verify the sidebar integrates correctly with the page background and content layout.
 
 **✅ Do** — pair the \`Color=Gray\` sidebar with a white (\`var(--color-bg-white)\`) page background.
-**❌ Don't** — set the page background to the same \`var(--color-bg-secondary)\` as the sidebar — they will visually merge.
+**❌ Don't** — set the page background to the same \`#f3f4f6\` as the gray sidebar — they will visually merge.
         `.trim(),
       },
       source: {
         language: 'html',
         code: `<!-- Full-page layout -->
 <div style="display:flex;height:100vh;">
-  <!-- Sidebar: 256px, bg var(--color-bg-secondary) -->
+  <!-- Sidebar: <aside class="sidebar sidebar--gray"> -->
   <aside style="width:256px;flex-shrink:0;"><!-- sidebar --></aside>
 
   <!-- Page content: fills remaining width, white bg -->

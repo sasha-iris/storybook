@@ -42,204 +42,167 @@ const icnBold = (c='var(--color-text-primary)') => `<svg width="16" height="16" 
 const icnItalic = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3H7M9 13H6M9 3 7 13" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const icnLink = (c='var(--color-text-primary)') => `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6.5 9.5a3.54 3.54 0 0 0 5 0l2-2a3.54 3.54 0 0 0-5-5L7 4M9.5 6.5a3.54 3.54 0 0 0-5 0L2.5 8.5a3.54 3.54 0 0 0 5 5L9 12" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
-// ─── Input Field (84:19064) ───────────────────────────────────────────────────
+// ─── Input Field (84:19064) — built on the real .form-input class ──────────────
+// Renders a real <input class="form-input">, NOT an inline-styled mockup, so the
+// Storybook preview === the shippable component === the copyable snippet.
+// Real classes used: form-group · form-label · form-input · form-input-sm/-lg ·
+// is-error/is-success · form-helper · form-feedback-error/-success · form-search-wrap.
 function inputField({ label = 'First name', placeholder = 'Input text', value = '', state = 'normal', size = 'regular', helpText = '', icon = false }) {
-  const h = size === 'small' ? 37 : size === 'large' ? 52 : 42;
-  const isDisabled = state === 'disabled';
-  const isError    = state === 'error';
-  const isSuccess  = state === 'success';
-  const isFocus    = state === 'typing' || state === 'active';
-  const textColor  = isDisabled ? C.disabled : (value ? C.value : C.placeholder);
-  const border     = isError ? C.borderErr : isSuccess ? C.borderOk : isFocus ? C.borderFocus : C.borderDef;
-  const opacity    = isDisabled ? '0.6' : '1';
-  const iconColor  = isDisabled ? C.disabled : C.placeholder;
-  const displayVal = value || placeholder;
+  const sizeClass  = size === 'small' ? ' form-input-sm' : size === 'large' ? ' form-input-lg' : '';
+  const stateClass = state === 'error' ? ' is-error' : state === 'success' ? ' is-success' : '';
+  const disAttr    = state === 'disabled' ? ' disabled' : '';
+  const valAttr    = value ? ` value="${value}"` : '';
 
-  const labelEl = label ? `<div style="font-size:14px;font-weight:500;color:${C.label};margin-bottom:6px;font-family:inherit;">${label}</div>` : '';
-  const leftIcon = icon ? `<span style="flex-shrink:0;display:flex;align-items:center;">${icnUser(iconColor)}</span>` : '';
-  const clearIcon = (value && !isDisabled) ? `<span style="flex-shrink:0;display:flex;align-items:center;cursor:pointer;">${icnX(C.label)}</span>` : '';
+  const labelEl = label ? `<label class="form-label">${label}</label>` : '';
+  const feedbackCls = state === 'error' ? 'form-feedback-error' : state === 'success' ? 'form-feedback-success' : 'form-helper';
+  const helpEl = helpText ? `<p class="${feedbackCls}">${helpText}</p>` : '';
 
-  const helpColor = isError ? C.captionErr : isSuccess ? C.captionOk : C.help;
-  const helpEl = helpText ? `<div style="font-size:12px;color:${helpColor};margin-top:4px;font-family:inherit;">${helpText}</div>` : '';
+  const inputEl = icon
+    ? `<div class="form-search-wrap">
+      <span class="form-search-icon">${icnUser()}</span>
+      <input type="text" class="form-input${sizeClass}${stateClass}" placeholder="${placeholder}"${valAttr}${disAttr} />
+    </div>`
+    : `<input type="text" class="form-input${sizeClass}${stateClass}" placeholder="${placeholder}"${valAttr}${disAttr} />`;
 
-  return `<div style="font-family:inherit;opacity:${opacity};">
+  return `<div class="form-group">
     ${labelEl}
-    <div style="display:flex;align-items:center;gap:8px;height:${h}px;padding:0 12px;
-      background:${C.inputBg};border:1px solid ${border};border-radius:8px;
-      box-sizing:border-box;width:100%;">
-      ${leftIcon}
-      <span style="flex:1;font-size:14px;color:${textColor};font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${isFocus && value ? value + '|' : displayVal}</span>
-      ${clearIcon}
-    </div>
+    ${inputEl}
     ${helpEl}
   </div>`;
 }
 
-// ─── Floating Label (84:20015) ────────────────────────────────────────────────
+// ─── Floating Label (84:20015) — real .form-floating classes ─────────────────
+// `.form-floating` (background style) / `.form-floating--underline` (border-bottom
+// style) + real `.form-input` + `.form-float-label`. Float-up is CSS-driven via
+// :focus / :not(:placeholder-shown) — the input needs placeholder=" ".
 function floatingLabel({ state = 'initial', type = 'border-bottom', placeholder = 'Placeholder text' }) {
-  const isActive  = state === 'active' || state === 'typing';
-  const isSuccess = state === 'success';
-  const isDanger  = state === 'danger';
-  const isDisabled = state === 'disabled';
-
-  const borderColor = isDanger ? C.captionErr : isSuccess ? C.captionOk : isActive ? C.borderFocus : C.borderDef;
-  const labelColor  = isDanger ? C.captionErr : isSuccess ? C.captionOk : isActive ? C.borderFocus : C.placeholder;
-  const captionText = isDanger ? 'Oh, snapp! Some helper message' : isSuccess ? 'Oh, snapp! Some helper message' : '';
-  const captionColor = isDanger ? C.captionErr : C.captionOk;
-
-  const isBg = type === 'background';
-  const inputBg = isBg ? (isActive ? '#eff6ff' : C.inputBg) : 'transparent';
-  const borderStyle = isBg ? `border:1px solid ${borderColor};border-radius:8px;` : `border-bottom:2px solid ${borderColor};`;
-  const opacity = isDisabled ? '0.5' : '1';
-
-  const floatLabel = isActive || isSuccess || isDanger
-    ? `<div style="font-size:12px;font-weight:500;color:${labelColor};margin-bottom:2px;font-family:inherit;">${placeholder}</div>` : '';
-
-  const textColor = isDisabled ? C.disabled : (isActive || isSuccess || isDanger ? C.value : C.placeholder);
-  const displayText = isActive ? (type === 'border-bottom' ? 'Typing |' : placeholder) : placeholder;
-
-  return `<div style="opacity:${opacity};font-family:inherit;">
-    <div style="position:relative;${borderStyle}background:${inputBg};padding:${isActive || isSuccess || isDanger ? '6px 12px 8px' : '12px 12px'};box-sizing:border-box;">
-      ${floatLabel}
-      <div style="display:flex;align-items:center;gap:8px;">
-        ${icnSearch(isDisabled ? C.disabled : C.placeholder)}
-        <span style="font-size:14px;color:${textColor};font-family:inherit;">${displayText}</span>
-        ${icnX(isDisabled ? C.disabled : C.placeholder)}
-      </div>
+  const underline  = type === 'border-bottom' ? ' form-floating--underline' : '';
+  const stateClass = state === 'danger' ? ' is-error' : state === 'success' ? ' is-success' : '';
+  const disAttr    = state === 'disabled' ? ' disabled' : '';
+  const hasValue   = state === 'typing' || state === 'active' || state === 'success' || state === 'danger';
+  const valAttr    = hasValue ? ' value="Typing"' : '';
+  const caption = state === 'danger'
+    ? '<p class="form-feedback-error">Oh, snapp! Some helper message</p>'
+    : state === 'success'
+      ? '<p class="form-feedback-success">Oh, snapp! Some helper message</p>'
+      : '';
+  return `<div>
+    <div class="form-floating${underline}">
+      <input type="text" class="form-input${stateClass}" placeholder=" "${valAttr}${disAttr} />
+      <label class="form-float-label">${placeholder}</label>
     </div>
-    ${captionText ? `<div style="font-size:12px;color:${captionColor};margin-top:4px;font-family:inherit;">${captionText}</div>` : ''}
+    ${caption}
   </div>`;
 }
 
-// ─── Textarea (84:19693) ──────────────────────────────────────────────────────
+// ─── Textarea (84:19693) — real .form-textarea + .form-label/.form-helper + .btn ──
+// The textarea itself is always the real `.form-textarea`. Composite frames
+// (CTA footer, WYSIWYG toolbar, chatroom bar) are layout wrappers; their buttons
+// are real `.btn` classes. Inline styles carry layout only.
 function textarea({ type = 'default', label = 'Your message', placeholder = 'Write text here ...', help = 'A note for extra info' }) {
-  const base = (content, footer = '') => `<div style="font-family:inherit;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-      <span style="font-size:14px;font-weight:500;color:${C.label};font-family:inherit;">${label}</span>
-      <span style="font-size:12px;color:${C.help};font-family:inherit;">${help}</span>
-    </div>
-    ${content}
-    ${footer}
-  </div>`;
+  const head = `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+      <label class="form-label" style="margin:0;">${label}</label>
+      <span class="form-helper" style="margin:0;">${help}</span>
+    </div>`;
 
-  const textareaBox = `<textarea style="width:100%;height:120px;padding:10px 12px;background:${C.inputBg};border:1px solid ${C.borderDef};border-radius:8px;font-size:14px;color:${C.placeholder};font-family:inherit;resize:vertical;box-sizing:border-box;outline:none;" placeholder="${placeholder}"></textarea>`;
+  const textareaBox = `<textarea class="form-textarea" placeholder="${placeholder}"></textarea>`;
 
   if (type === 'default') {
-    return base(textareaBox);
+    return `<div>${head}${textareaBox}</div>`;
   }
 
   if (type === 'cta') {
-    const footer = `<div style="border-top:1px solid ${C.borderDef};padding:10px 12px;background:${C.footerBg};display:flex;justify-content:space-between;align-items:center;border-radius:0 0 8px 8px;">
-      <div style="display:flex;gap:8px;">
-        <button style="background:none;border:none;cursor:pointer;padding:4px;">${icnBold()}</button>
-        <button style="background:none;border:none;cursor:pointer;padding:4px;">${icnItalic()}</button>
-        <button style="background:none;border:none;cursor:pointer;padding:4px;">${icnLink()}</button>
+    return `<div>
+      ${head}
+      <div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
+        <textarea class="form-textarea" style="border:none;border-radius:0;resize:none;" placeholder="${placeholder}"></textarea>
+        <div style="border-top:1px solid var(--color-border-default);padding:10px 12px;background:var(--color-bg-tertiary);display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;gap:8px;">
+            <button class="btn-icon" aria-label="Bold">${icnBold()}</button>
+            <button class="btn-icon" aria-label="Italic">${icnItalic()}</button>
+            <button class="btn-icon" aria-label="Insert link">${icnLink()}</button>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline-dark btn-sm">Preview</button>
+            <button class="btn btn-blue btn-sm">Post comment</button>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button style="height:34px;padding:0 14px;background:transparent;border:1px solid ${C.borderDef};border-radius:8px;font-size:12px;font-weight:500;color:${C.label};cursor:pointer;font-family:inherit;">Preview</button>
-        <button style="height:34px;padding:0 14px;background:${C.btnBlue};border:none;border-radius:8px;font-size:12px;font-weight:500;color:#fff;cursor:pointer;font-family:inherit;">Post comment</button>
-      </div>
-    </div>`;
-    const box = `<div style="border:1px solid ${C.borderDef};border-radius:8px;overflow:hidden;">
-      <textarea style="width:100%;height:120px;padding:10px 12px;background:${C.inputBg};border:none;font-size:14px;color:${C.placeholder};font-family:inherit;resize:none;box-sizing:border-box;outline:none;" placeholder="${placeholder}"></textarea>
-      ${footer}
-    </div>`;
-    return `<div style="font-family:inherit;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-        <span style="font-size:14px;font-weight:500;color:${C.label};font-family:inherit;">${label}</span>
-        <span style="font-size:12px;color:${C.help};font-family:inherit;">${help}</span>
-      </div>
-      ${box}
     </div>`;
   }
 
   if (type === 'wysiwyg') {
-    const toolbar = `<div style="display:flex;align-items:center;gap:6px;padding:8px 12px;background:${C.toolbarBg};border-bottom:1px solid ${C.borderDef};">
-      <button style="background:none;border:none;cursor:pointer;padding:3px;">${icnBold()}</button>
-      <button style="background:none;border:none;cursor:pointer;padding:3px;">${icnItalic()}</button>
-      <div style="width:1px;height:16px;background:${C.borderDef};margin:0 2px;"></div>
-      <button style="background:none;border:none;cursor:pointer;padding:3px;">${icnLink()}</button>
-      <div style="width:1px;height:16px;background:${C.borderDef};margin:0 2px;"></div>
-      <button style="background:none;border:none;cursor:pointer;padding:3px;">${icnSearch(C.label)}</button>
-    </div>`;
-    const editor = `<div style="border:1px solid ${C.borderDef};border-radius:8px;overflow:hidden;">
-      ${toolbar}
-      <textarea style="width:100%;height:120px;padding:10px 12px;background:var(--color-bg-white);border:none;font-size:14px;color:${C.placeholder};font-family:inherit;resize:none;box-sizing:border-box;outline:none;" placeholder="${placeholder}"></textarea>
-    </div>`;
-    const sendBtn = `<div style="margin-top:8px;display:flex;justify-content:flex-end;">
-      <button style="height:40px;padding:0 16px;background:${C.btnBlue};border:none;border-radius:8px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
-        ${icnPlane('#fff')} Send message
-      </button>
-    </div>`;
-    return `<div style="font-family:inherit;">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-        <span style="font-size:14px;font-weight:500;color:${C.label};font-family:inherit;">${label}</span>
-        <span style="font-size:12px;color:${C.help};font-family:inherit;">${help}</span>
+    return `<div>
+      ${head}
+      <div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--color-bg-tertiary);border-bottom:1px solid var(--color-border-default);">
+          <button class="btn-icon" aria-label="Bold">${icnBold()}</button>
+          <button class="btn-icon" aria-label="Italic">${icnItalic()}</button>
+          <div style="width:1px;height:16px;background:var(--color-border-default);margin:0 2px;"></div>
+          <button class="btn-icon" aria-label="Insert link">${icnLink()}</button>
+          <div style="width:1px;height:16px;background:var(--color-border-default);margin:0 2px;"></div>
+          <button class="btn-icon" aria-label="Search">${icnSearch(C.label)}</button>
+        </div>
+        <textarea class="form-textarea" style="background:var(--color-bg-white);border:none;border-radius:0;resize:none;" placeholder="${placeholder}"></textarea>
       </div>
-      ${editor}${sendBtn}
+      <div style="margin-top:8px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-blue btn-md" style="display:flex;align-items:center;gap:6px;">${icnPlane('#fff')} Send message</button>
+      </div>
     </div>`;
   }
 
   if (type === 'chatroom') {
-    return `<div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:${C.inputBg};border-top:1px solid ${C.borderDef};font-family:inherit;">
-      <button style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;">${icnPhoto()}</button>
-      <button style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;">${icnEmoji()}</button>
-      <div style="flex:1;background:var(--color-bg-white);border:1px solid ${C.borderDef};border-radius:8px;padding:10px 12px;">
-        <span style="font-size:14px;color:${C.placeholder};font-family:inherit;">${placeholder}</span>
-      </div>
-      <button style="background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;display:flex;">${icnPlane()}</button>
+    return `<div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--color-bg-tertiary);border-top:1px solid var(--color-border-default);">
+      <button class="btn-icon" aria-label="Attach photo">${icnPhoto()}</button>
+      <button class="btn-icon" aria-label="Insert emoji">${icnEmoji()}</button>
+      <input type="text" class="form-input" style="background:var(--color-bg-white);" placeholder="${placeholder}" />
+      <button class="btn-icon" aria-label="Send">${icnPlane()}</button>
     </div>`;
   }
 
   return textareaBox;
 }
 
-// ─── File Upload (84:19626) ───────────────────────────────────────────────────
+// ─── File Upload (84:19626) — real .form-file-* classes ──────────────────────
+// Default = `.form-file-label` + `.form-file-btn` + `.form-file-placeholder`.
+// Drag zones = `.form-file-drop` (+ `__hint` / `__formats`). Buttons = real `.btn`.
 function fileUpload({ type = 'default', size = 'default', label = 'Upload file', help = 'A note for extra info' }) {
-  const h = size === 'lg' ? 52 : 42;
-  const labelEl = `<div style="font-size:14px;font-weight:500;color:${C.label};margin-bottom:6px;font-family:inherit;">${label}</div>`;
-  const helpEl  = `<div style="font-size:12px;color:${C.help};margin-top:4px;font-family:inherit;">${help}</div>`;
+  const labelEl = `<label class="form-label">${label}</label>`;
+  const helpEl  = `<p class="form-helper">${help}</p>`;
+  const lgStyle = size === 'lg' ? ' style="padding-top:15px;padding-bottom:15px;"' : '';
 
   if (type === 'default') {
-    return `<div style="font-family:inherit;">
+    return `<div>
       ${labelEl}
-      <div style="display:flex;height:${h}px;border:1px solid ${C.borderDef};border-radius:8px;overflow:hidden;box-sizing:border-box;">
-        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:0 16px;background:${C.btnDark};cursor:pointer;flex-shrink:0;">
-          <span style="font-size:14px;font-weight:500;color:var(--color-bg-white);white-space:nowrap;font-family:inherit;">Choose file</span>
-          ${icnChevronDown('var(--color-bg-white)')}
-        </div>
-        <div style="flex:1;display:flex;align-items:center;padding:0 12px;background:${C.inputBg};">
-          <span style="font-size:14px;color:${C.placeholder};font-family:inherit;">No file chosen</span>
-        </div>
-      </div>
+      <label class="form-file-label">
+        <input type="file" style="display:none;" />
+        <span class="form-file-btn"${lgStyle}>Choose file ${icnChevronDown('currentColor')}</span>
+        <span class="form-file-placeholder"${lgStyle}>No file chosen</span>
+      </label>
       ${helpEl}
     </div>`;
   }
 
   if (type === 'drag') {
-    return `<div style="font-family:inherit;">
+    return `<div>
       ${labelEl}
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:32px;
-        background:${C.inputBg};border:2px dashed ${C.dragBorder};border-radius:8px;text-align:center;">
+      <div class="form-file-drop">
         ${icnCloud()}
-        <div style="font-size:14px;color:${C.help};font-family:inherit;">Click to upload or drag and drop</div>
-        <div style="font-size:12px;color:${C.help};font-family:inherit;">SVG, PNG, JPG or GIF (MAX. 800×400px)</div>
+        <div class="form-file-drop__hint">Click to upload or drag and drop</div>
+        <div class="form-file-drop__formats">SVG, PNG, JPG or GIF (MAX. 800×400px)</div>
       </div>
       ${helpEl}
     </div>`;
   }
 
   if (type === 'drag-btn') {
-    return `<div style="font-family:inherit;">
+    return `<div>
       ${labelEl}
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:32px;
-        background:${C.inputBg};border:2px dashed ${C.dragBorder};border-radius:8px;text-align:center;">
+      <div class="form-file-drop">
         ${icnCloud()}
-        <div style="font-size:14px;color:${C.help};font-family:inherit;">Click to upload or drag and drop</div>
-        <div style="font-size:12px;font-weight:600;color:${C.help};font-family:inherit;">Max. File Size: 30MB</div>
-        <button style="height:34px;padding:0 14px;background:${C.btnBlue};border:none;border-radius:8px;font-size:12px;font-weight:500;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
-          ${icnSearch('#fff')} Browse File
-        </button>
+        <div class="form-file-drop__hint">Click to upload or drag and drop</div>
+        <div class="form-file-drop__formats" style="font-weight:var(--font-semibold);">Max. File Size: 30MB</div>
+        <button class="btn btn-blue btn-sm" style="display:flex;align-items:center;gap:6px;">${icnSearch('#fff')} Browse File</button>
       </div>
       ${helpEl}
     </div>`;
@@ -248,35 +211,32 @@ function fileUpload({ type = 'default', size = 'default', label = 'Upload file',
   return '';
 }
 
-// ─── Tag Input (13731:79044) ──────────────────────────────────────────────────
+// ─── Tag Input (13731:79044) — real .form-tag-* classes ───────────────────────
 function tagInput({ label = true, help = false, tags = ['bonnie.green@company.com', 'jese.leos@company.com'] }) {
-  const labelEl = label ? `<div style="font-size:16px;font-weight:500;color:${C.label};margin-bottom:6px;font-family:inherit;">Tags</div>` : '';
-  const helpEl  = help  ? `<div style="font-size:12px;color:${C.help};margin-top:4px;font-family:inherit;">A note for extra info</div>` : '';
+  // Figma: label "Tags" is 16px (not the 14px form-label default)
+  const labelEl = label ? `<label class="form-label" style="font-size:16px;">Tags</label>` : '';
+  const helpEl  = help  ? `<p class="form-helper">A note for extra info</p>` : '';
 
   const tagEls = tags.map(t =>
-    `<div style="display:inline-flex;align-items:center;gap:6px;padding:2px 8px;background:${C.tagBg};border-radius:4px;">
-      <span style="font-size:12px;font-weight:500;color:${C.tagText};font-family:inherit;">${t}</span>
-      <span style="cursor:pointer;display:flex;align-items:center;">${icnXSm(C.tagText)}</span>
-    </div>`
+    `<span class="form-tag">${t}<button class="form-tag__x" aria-label="Remove ${t}">${icnXSm('#6b7280')}</button></span>`
   ).join('');
 
-  return `<div style="font-family:inherit;">
+  return `<div>
     ${labelEl}
-    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;min-height:46px;
-      background:var(--color-bg-white);border:1px solid ${C.borderDef};border-radius:8px;box-sizing:border-box;">
+    <div class="form-tag-wrap">
       ${tagEls}
-      <input type="text" placeholder="Add tag..." style="border:none;outline:none;font-size:12px;color:${C.placeholder};background:transparent;min-width:80px;font-family:inherit;" />
+      <input type="text" class="form-tag-input" placeholder="Add tag..." />
     </div>
     ${helpEl}
   </div>`;
 }
 
-// ─── Read-only (9481:135673) ──────────────────────────────────────────────────
+// ─── Read-only (9481:135673) — real .form-readonly classes ───────────────────
 function readOnly({ fieldLabel = 'Email:', value = 'namesurname@company.com' }) {
-  return `<div style="display:inline-flex;align-items:center;gap:8px;font-family:inherit;">
-    <span style="font-size:14px;font-weight:500;color:${C.label};white-space:nowrap;">${fieldLabel}</span>
-    <span style="font-size:14px;color:${C.value};">${value}</span>
-    ${icnChevronDown(C.borderDef)}
+  return `<div class="form-readonly">
+    <span class="form-readonly__label">${fieldLabel}</span>
+    <span class="form-readonly__value">${value}</span>
+    ${icnChevronDown('#d1d5db')}
   </div>`;
 }
 
@@ -361,14 +321,16 @@ export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
-    const h = a.size === 'small' ? 37 : a.size === 'large' ? 52 : 42;
-    const border = a.fieldState === 'error' ? '#f05252' : a.fieldState === 'success' ? '#0e9f6e' : a.fieldState === 'typing' || a.fieldState === 'active' ? 'var(--color-primary)' : 'var(--color-border-default)';
+    const sizeCls  = a.size === 'small' ? ' form-input-sm' : a.size === 'large' ? ' form-input-lg' : '';
+    const stateCls = a.fieldState === 'error' ? ' is-error' : a.fieldState === 'success' ? ' is-success' : '';
+    const disAttr  = a.fieldState === 'disabled' ? ' disabled' : '';
+    const feedback = a.fieldState === 'error' ? 'form-feedback-error' : a.fieldState === 'success' ? 'form-feedback-success' : 'form-helper';
 
-    const htmlCode = `<div style="margin-bottom:16px;">\n  <label style="display:block;font-size:var(--text-sm);font-weight:var(--font-medium);margin-bottom:4px;">First name</label>\n  <input type="text"\n    style="height:${h}px;border-color:${border};padding:0 12px;width:100%;background:var(--color-bg-tertiary);border:1px solid;border-radius:8px;"\n    placeholder="Enter your first name"\n    ${a.fieldState === 'disabled' ? 'disabled' : ''}\n  />\n  <p style="font-size:var(--text-xs);color:#6b7280;margin-top:4px;">Helper text</p>\n</div>`;
+    const htmlCode = `<div class="form-group">\n  <label class="form-label">First name</label>\n  <input type="text" class="form-input${sizeCls}${stateCls}" placeholder="Enter your first name"${disAttr} />\n  <p class="${feedback}">We'll never share your details.</p>\n</div>`;
 
-    const reactCode = `<div style={{ marginBottom: '16px' }}>\n  <label style={{ fontWeight: 'var(--font-medium)' }}>First name</label>\n  <input\n    type="text"\n    value={name}\n    onChange={(e) => setName(e.target.value)}\n    placeholder="Enter your first name"\n    style={{\n      height: '${h}px',\n      borderColor: '${border}',\n      borderRadius: '8px',\n    }}\n    disabled={${a.fieldState === 'disabled'}}\n  />\n  <p style={{ fontSize: 'var(--text-xs)' }}>Helper text</p>\n</div>`;
+    const reactCode = `<div className="form-group">\n  <label className="form-label">First name</label>\n  <input\n    type="text"\n    className="form-input${sizeCls}${stateCls}"\n    value={name}\n    onChange={(e) => setName(e.target.value)}\n    placeholder="Enter your first name"${a.fieldState === 'disabled' ? '\n    disabled' : ''}\n  />\n  <p className="${feedback}">We'll never share your details.</p>\n</div>`;
 
-    const componentCode = `export function FormField({ label, value, onChange, fieldState = 'default', size = 'regular', disabled = false }) {\n  const h = size === 'small' ? 37 : size === 'large' ? 52 : 42;\n  const borderColor = fieldState === 'error' ? '#f05252' : fieldState === 'success' ? '#0e9f6e' : fieldState === 'active' ? 'var(--color-primary)' : 'var(--color-border-default)';\n\n  return (\n    <div style={{ marginBottom: '16px' }}>\n      <label style={{ fontWeight: 'var(--font-medium)' }}>{label}</label>\n      <input\n        type="text"\n        value={value}\n        onChange={(e) => onChange?.(e.target.value)}\n        style={{\n          height: h,\n          borderColor: borderColor,\n          width: '100%',\n          padding: '0 12px',\n          borderRadius: '8px',\n        }}\n        disabled={disabled}\n      />\n    </div>\n  );\n}`;
+    const componentCode = `export function FormField({ label, value, onChange, helpText, fieldState = 'default', size = 'regular', disabled = false }) {\n  const sizeClass  = size === 'small' ? ' form-input-sm' : size === 'large' ? ' form-input-lg' : '';\n  const stateClass = fieldState === 'error' ? ' is-error' : fieldState === 'success' ? ' is-success' : '';\n  const feedback   = fieldState === 'error' ? 'form-feedback-error' : fieldState === 'success' ? 'form-feedback-success' : 'form-helper';\n\n  return (\n    <div className="form-group">\n      <label className="form-label">{label}</label>\n      <input\n        type="text"\n        className={"form-input" + sizeClass + stateClass}\n        value={value}\n        onChange={(e) => onChange?.(e.target.value)}\n        disabled={disabled}\n      />\n      {helpText && <p className={feedback}>{helpText}</p>}\n    </div>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -432,7 +394,17 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use **Controls** to test different field states: default, active, typing, success, error, disabled.',
+        story: 'Use **Controls** to configure the field. The preview, the HTML/React panels, and the **Show code** snippet all render the real `form-input` class — copy any of them and you get the shippable component.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const a = ctx.args;
+          const sizeCls  = a.size === 'small' ? ' form-input-sm' : a.size === 'large' ? ' form-input-lg' : '';
+          const stateCls = a.fieldState === 'error' ? ' is-error' : a.fieldState === 'success' ? ' is-success' : '';
+          const disAttr  = a.fieldState === 'disabled' ? ' disabled' : '';
+          const feedback = a.fieldState === 'error' ? 'form-feedback-error' : a.fieldState === 'success' ? 'form-feedback-success' : 'form-helper';
+          return `<div class="form-group">\n  <label class="form-label">First name</label>\n  <input type="text" class="form-input${sizeCls}${stateCls}" placeholder="Enter your first name"${disAttr} />\n  <p class="${feedback}">We'll never share your details.</p>\n</div>`;
+        },
       },
     },
   },
@@ -446,7 +418,7 @@ export const AllStates = {
     controls: { include: ['size'] },
     docs: {
       description: {
-        story: `All 6 input states side-by-side at the selected size.
+        story: `Class-based input states at the selected size. \`success\`→\`is-success\`, \`error\`→\`is-error\`. Focus is a live \`:focus\` state (click a field) — it is not a class.
 
 ✅ Use \`error\` state together with a helper message explaining what went wrong
 ✅ Use \`success\` for real-time validation (email, username availability)
@@ -454,30 +426,36 @@ export const AllStates = {
       },
       source: {
         code: `<!-- Normal -->
-<div><input style="border:1px solid var(--color-border-default);" /></div>
-
-<!-- Focus / typing -->
-<div><input style="border:1px solid var(--color-primary);" /></div>
+<div class="form-group">
+  <input class="form-input" placeholder="First name" />
+</div>
 
 <!-- Success -->
-<div><input style="border:1px solid #0e9f6e;" /></div>
+<div class="form-group">
+  <input class="form-input is-success" value="John" />
+  <p class="form-feedback-success">Great, that username is available!</p>
+</div>
 
 <!-- Error -->
-<div><input style="border:1px solid #f05252;" /></div>
+<div class="form-group">
+  <input class="form-input is-error" placeholder="First name" />
+  <p class="form-feedback-error">Please enter your first name.</p>
+</div>
 
 <!-- Disabled -->
-<div><input disabled style="border:1px solid var(--color-border-default);opacity:0.6;" /></div>`,
+<div class="form-group">
+  <input class="form-input" disabled />
+</div>`,
       },
     },
   },
   render: ({ size }) => {
     const states = [
       { state: 'normal',   label: 'Normal',   value: '',       help: "We'll never share your details." },
-      { state: 'typing',   label: 'Typing',   value: 'John',   help: '' },
+      { state: 'normal',   label: 'Filled',   value: 'John',   help: '' },
       { state: 'success',  label: 'Success',  value: 'John',   help: 'Great, that username is available!' },
       { state: 'error',    label: 'Error',    value: '',       help: 'Please enter your first name.' },
       { state: 'disabled', label: 'Disabled', value: '',       help: '' },
-      { state: 'active',   label: 'Active',   value: '',       help: '' },
     ];
     return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:800px;font-family:inherit;">
       ${states.map(s => `<div>
@@ -499,14 +477,14 @@ export const AllSizes = {
         story: 'Three input heights from Figma. **Small** (37px) for dense data tables; **Regular** (42px) for standard forms; **Large** (52px) for prominent CTAs or hero sections.',
       },
       source: {
-        code: `<!-- Small 37px -->
-<input style="height:37px;" class="..." />
+        code: `<!-- Small -->
+<input class="form-input form-input-sm" placeholder="First name" />
 
-<!-- Regular 42px (default) -->
-<input style="height:42px;" class="..." />
+<!-- Regular (default) -->
+<input class="form-input" placeholder="First name" />
 
-<!-- Large 52px -->
-<input style="height:52px;" class="..." />`,
+<!-- Large -->
+<input class="form-input form-input-lg" placeholder="First name" />`,
       },
     },
   },
@@ -537,16 +515,25 @@ export const FloatingLabels = {
 ❌ Don't mix border-bottom and background styles within a single form`,
       },
       source: {
-        code: `<!-- Border bottom — initial -->
-<div style="border-bottom:2px solid var(--color-border-default);padding:12px;">
-  <span style="color:#6b7280;font-size:14px;">Placeholder text</span>
+        language: 'html',
+        code: `<!-- Background style — label floats on focus / value -->
+<div class="form-floating">
+  <input type="text" class="form-input" placeholder=" " />
+  <label class="form-float-label">Placeholder text</label>
 </div>
 
-<!-- Border bottom — active (label floated) -->
-<div style="border-bottom:2px solid var(--color-primary);padding:6px 0 8px;">
-  <div style="font-size:12px;font-weight:500;color:var(--color-primary);">Placeholder text</div>
-  <span style="color:#111928;font-size:14px;">Typing |</span>
-</div>`,
+<!-- Underline (border-bottom) style -->
+<div class="form-floating form-floating--underline">
+  <input type="text" class="form-input" placeholder=" " value="Typing" />
+  <label class="form-float-label">Placeholder text</label>
+</div>
+
+<!-- Error state -->
+<div class="form-floating">
+  <input type="text" class="form-input is-error" placeholder=" " value="Typing" />
+  <label class="form-float-label">Placeholder text</label>
+</div>
+<p class="form-feedback-error">Oh, snapp! Some helper message</p>`,
       },
     },
   },
@@ -590,14 +577,28 @@ export const TextareaTypes = {
 ❌ Don't use **WYSIWYG** for short user inputs like names or addresses`,
       },
       source: {
+        language: 'html',
         code: `<!-- Default textarea -->
-<textarea class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm resize-y"></textarea>
+<label class="form-label">Your message</label>
+<textarea class="form-textarea" placeholder="Write text here ..."></textarea>
 
-<!-- Chatroom bar -->
-<div class="flex items-center gap-2 p-3 bg-gray-50 border-t border-gray-200">
-  <!-- photo / emoji icons -->
-  <textarea class="flex-1 bg-white border border-gray-300 rounded-lg p-2 text-sm resize-none"></textarea>
-  <!-- send icon -->
+<!-- CTA + Button footer (composite) -->
+<div style="border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
+  <textarea class="form-textarea" style="border:none;border-radius:0;resize:none;"></textarea>
+  <div style="border-top:1px solid var(--color-border-default);padding:10px 12px;background:var(--color-bg-tertiary);display:flex;justify-content:space-between;">
+    <!-- .btn-icon formatting buttons -->
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline-dark btn-sm">Preview</button>
+      <button class="btn btn-blue btn-sm">Post comment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Chatroom bar (composite) -->
+<div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--color-bg-tertiary);border-top:1px solid var(--color-border-default);">
+  <button class="btn-icon" aria-label="Attach photo"><!-- icon --></button>
+  <input type="text" class="form-input" style="background:var(--color-bg-white);" placeholder="Write text here ..." />
+  <button class="btn-icon" aria-label="Send"><!-- icon --></button>
 </div>`,
       },
     },
@@ -633,18 +634,28 @@ export const FileUploadTypes = {
 ❌ Don't use drag-and-drop in compact forms or mobile-first layouts — use the default style instead`,
       },
       source: {
+        language: 'html',
         code: `<!-- Default file input -->
-<input type="file" class="hidden" id="file" />
-<label for="file" style="height:42px;display:flex;border:1px solid var(--color-border-default);border-radius:8px;overflow:hidden;">
-  <span style="background:#1f2a37;color:#fff;padding:0 16px;display:flex;align-items:center;">Choose file</span>
-  <span style="background:var(--color-bg-tertiary);padding:0 12px;display:flex;align-items:center;color:#6b7280;">No file chosen</span>
+<label class="form-label">Upload file</label>
+<label class="form-file-label">
+  <input type="file" style="display:none;" />
+  <span class="form-file-btn">Choose file</span>
+  <span class="form-file-placeholder">No file chosen</span>
 </label>
+<p class="form-helper">A note for extra info</p>
 
 <!-- Drag & Drop zone -->
-<div style="border:2px dashed var(--color-border-default);border-radius:8px;background:var(--color-bg-tertiary);padding:32px;text-align:center;">
+<div class="form-file-drop">
   <!-- cloud icon -->
-  <p>Click to upload or drag and drop</p>
-  <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800×400px)</p>
+  <div class="form-file-drop__hint">Click to upload or drag and drop</div>
+  <div class="form-file-drop__formats">SVG, PNG, JPG or GIF (MAX. 800×400px)</div>
+</div>
+
+<!-- Drag & Drop + Button -->
+<div class="form-file-drop">
+  <!-- cloud icon -->
+  <div class="form-file-drop__hint">Click to upload or drag and drop</div>
+  <button class="btn btn-blue btn-sm">Browse File</button>
 </div>`,
       },
     },
@@ -679,13 +690,16 @@ export const TagInputVariants = {
 ❌ Don't use for mutually-exclusive options — use Radio or Select instead`,
       },
       source: {
-        code: `<div class="flex flex-wrap gap-1 p-2 border border-gray-300 rounded-lg min-h-[46px]">
-  <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-xs font-medium text-gray-600">
+        language: 'html',
+        code: `<label class="form-label" style="font-size:16px;">Tags</label>
+<div class="form-tag-wrap">
+  <span class="form-tag">
     bonnie.green@company.com
-    <button>×</button>
+    <button class="form-tag__x" aria-label="Remove bonnie.green@company.com">×</button>
   </span>
-  <input class="text-xs outline-none flex-1 min-w-[80px]" placeholder="Add tag..." />
-</div>`,
+  <input type="text" class="form-tag-input" placeholder="Add tag..." />
+</div>
+<p class="form-helper">A note for extra info</p>`,
       },
     },
   },
@@ -719,10 +733,11 @@ export const ReadOnlyField = {
 ❌ Don't use inside dense data tables — use plain text cells instead`,
       },
       source: {
-        code: `<div class="flex items-center gap-2">
-  <span class="text-sm font-medium text-gray-900">Email:</span>
-  <span class="text-sm text-gray-900">namesurname@company.com</span>
-  <!-- disabled chevron -->
+        language: 'html',
+        code: `<div class="form-readonly">
+  <span class="form-readonly__label">Email:</span>
+  <span class="form-readonly__value">namesurname@company.com</span>
+  <!-- disabled chevron (#d1d5db) -->
 </div>`,
       },
     },

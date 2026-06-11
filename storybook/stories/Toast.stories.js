@@ -218,10 +218,42 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const h=`<div class="toast" role="alert"><p>${args.title||'Toast'}</p></div>`;
-    const r=`<div role="alert" style={{padding:'16px',borderRadius:'8px',background:'#ecfdf5'}}>${args.title}</div>`;
-    const c=`export function Toast({type='success',title,onDismiss}){return(<div role="alert">{title}</div>);}`;
-    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div>${toast(args)}</div><div><pre>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${h}">Copy</button></div><div><pre>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${r}">Copy</button></div><div><pre>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button class="storybook-copy-btn" data-copy="${c}">Copy</button></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
+    // HTML snippet = the actual builder output → preview and snippet can never diverge
+    const h = toast(args).trim();
+    const tone = args.type === 'danger'
+      ? { border: '#f8b4b4', iconBg: '#fde8e8', text: '#f05252' }
+      : args.type === 'success'
+        ? { border: '#84e1bc', iconBg: '#ecfdf5', text: '#0e9f6e' }
+        : { border: null, iconBg: '#dbeafe', text: null };
+    const r = `<div className="toast" role="status" aria-live="polite"${tone.border ? ` style={{ borderColor: '${tone.border}' }}` : ''}>
+  <div style={{ width: 32, height: 32, borderRadius: 8, background: '${tone.iconBg}', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    {/* type icon */}
+  </div>
+  <p className="toast-body" style={{ margin: 0${tone.text ? `, color: '${tone.text}'` : ''} }}>${args.title}</p>
+  <button type="button" className="toast-close"${tone.text ? ` style={{ color: '${tone.text}' }}` : ''} aria-label="Dismiss">×</button>
+</div>`;
+    const c = `// Tone map mirrors the Iris palette; layout comes from the real .toast classes
+const TOAST_TONES = {
+  success: { border: '#84e1bc', iconBg: '#ecfdf5', text: '#0e9f6e' },
+  danger:  { border: '#f8b4b4', iconBg: '#fde8e8', text: '#f05252' },
+  default: { border: undefined, iconBg: '#dbeafe', text: undefined },
+};
+
+export function Toast({ type = 'success', title, onDismiss }) {
+  const tone = TOAST_TONES[type] || TOAST_TONES.default;
+  return (
+    <div className="toast" role="status" aria-live="polite" style={{ borderColor: tone.border }}>
+      <div style={{ width: 32, height: 32, borderRadius: 8, background: tone.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {/* type icon */}
+      </div>
+      <p className="toast-body" style={{ margin: 0, color: tone.text }}>{title}</p>
+      <button type="button" className="toast-close" style={{ color: tone.text }} aria-label="Dismiss" onClick={onDismiss}>×</button>
+    </div>
+  );
+}`;
+    const esc = (s) => s.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const q = (s) => s.split('"').join('&quot;');
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;"><div>${toast(args)}</div><div><pre>${esc(h)}</pre><button class="storybook-copy-btn" data-copy="${q(h)}">Copy</button></div><div><pre>${esc(r)}</pre><button class="storybook-copy-btn" data-copy="${q(r)}">Copy</button></div><div><pre>${esc(c)}</pre><button class="storybook-copy-btn" data-copy="${q(c)}">Copy</button></div></div><script>document.querySelectorAll('.storybook-copy-btn').forEach(b=>b.addEventListener('click',function(){navigator.clipboard.writeText(this.dataset.copy);this.innerHTML='Copied!';setTimeout(()=>this.innerHTML='Copy',2000);}));</script>`;
   },
   parameters: {
     docs: {
@@ -229,18 +261,8 @@ export const Interactive = {
         story: 'Use **Controls** to switch type, toggle `cta`, and edit message content. `cta` only affects `success` and `danger` types.',
       },
       source: {
-        transform: (_src, ctx) => {
-          const { type, cta, title, description, ctaLabel } = ctx.args;
-          const ctaAttr = cta ? ` data-cta="true"` : '';
-          const descLine = cta || ['push','interactive'].includes(type)
-            ? `\n  <p class="toast-message">${description}</p>` : '';
-          const btnLine = (cta || type === 'interactive')
-            ? `\n  <button class="btn btn-primary btn-xs">${ctaLabel}</button>` : '';
-          return `<div class="toast toast--${type}"${ctaAttr} role="status" aria-live="polite">
-  <p class="toast-title">${title}</p>${descLine}${btnLine}
-  <button class="toast-close" aria-label="Dismiss notification">×</button>
-</div>`;
-        },
+        // Snippet = the actual builder output → always matches the preview
+        transform: (_src, ctx) => toast(ctx.args).trim(),
       },
     },
   },
@@ -262,31 +284,34 @@ export const AllTypes = {
 **❌ Don't** — stack more than 3 toasts simultaneously — the stack becomes unreadable.`,
       },
       source: {
-        code: `<!-- Success -->
-<div class="toast toast--success" role="status" aria-live="polite">
-  <div class="toast-icon toast-icon-success"><!-- check icon --></div>
-  <p class="toast-title">File saved successfully.</p>
-  <button class="toast-close" aria-label="Dismiss">×</button>
+        code: `<!-- Success (compact) — tone via inline border/text color, layout via .toast -->
+<div class="toast" style="border-color:#84e1bc;" role="status" aria-live="polite">
+  <div style="width:32px;height:32px;background:#ecfdf5;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><!-- check icon --></div>
+  <p class="toast-body" style="margin:0;color:#0e9f6e;">File saved successfully.</p>
+  <button type="button" class="toast-close" style="color:#0e9f6e;" aria-label="Dismiss">×</button>
 </div>
 
-<!-- Danger -->
-<div class="toast toast--danger" role="alert" aria-live="assertive">
-  <div class="toast-icon toast-icon-danger"><!-- bell icon --></div>
-  <p class="toast-title">The file was permanently deleted.</p>
-  <button class="toast-close" aria-label="Dismiss">×</button>
+<!-- Danger (compact) -->
+<div class="toast" style="border-color:#f8b4b4;" role="alert" aria-live="assertive">
+  <div style="width:32px;height:32px;background:#fde8e8;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><!-- bell icon --></div>
+  <p class="toast-body" style="margin:0;color:#f05252;">The file was permanently deleted.</p>
+  <button type="button" class="toast-close" style="color:#f05252;" aria-label="Dismiss">×</button>
 </div>
 
-<!-- Default -->
-<div class="toast toast--default" role="status" aria-live="polite"> … </div>
+<!-- Default — neutral border, blue icon box -->
+<div class="toast" role="status" aria-live="polite"> … </div>
 
-<!-- Simple -->
-<div class="toast toast--simple" role="status" aria-live="polite"> … </div>
+<!-- Simple — icon + left-divided body -->
+<div class="toast" role="status" aria-live="polite">
+  <!-- paper-plane icon -->
+  <div class="toast-body" style="border-left:1px solid var(--color-border-default);padding-left:12px;"> … </div>
+</div>
 
-<!-- Push notification -->
-<div class="toast toast--push" role="status" aria-live="polite"> … </div>
+<!-- Push notification — column layout -->
+<div class="toast" style="flex-direction:column;align-items:stretch;" role="status" aria-live="polite"> … </div>
 
-<!-- Interactive -->
-<div class="toast toast--interactive" role="status" aria-live="polite"> … </div>`,
+<!-- Interactive — column layout with action buttons -->
+<div class="toast" style="flex-direction:column;align-items:stretch;" role="status" aria-live="polite"> … </div>`,
         language: 'html',
       },
     },
@@ -327,26 +352,26 @@ export const WithCTA = {
 **❌ Don't** — use the CTA variant for routine confirmations; the compact form is less intrusive.`,
       },
       source: {
-        code: `<!-- Success with CTA -->
-<div class="toast toast--success toast--expanded" role="status" aria-live="polite">
-  <div class="toast-title-row">
-    <!-- check-circle icon -->
-    <strong class="toast-title">Success</strong>
-    <button class="toast-close" aria-label="Dismiss">×</button>
+        code: `<!-- Success with CTA — expanded via inline flex-direction:column -->
+<div class="toast" style="border-color:#84e1bc;flex-direction:column;align-items:stretch;" role="status" aria-live="polite">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+    <!-- check-circle icon 18px #0e9f6e -->
+    <span class="toast-title" style="flex:1;color:#0e9f6e;">Success</span>
+    <button type="button" class="toast-close" style="color:#0e9f6e;" aria-label="Dismiss">×</button>
   </div>
-  <p class="toast-message">Your changes have been saved and are now visible to all collaborators.</p>
-  <button class="btn btn-green btn-xs">View file</button>
+  <p class="toast-message" style="margin:0 0 12px;color:#0e9f6e;">Your changes have been saved and are now visible to all collaborators.</p>
+  <button type="button" class="btn btn-green btn-xs">View file</button>
 </div>
 
 <!-- Danger with CTA -->
-<div class="toast toast--danger toast--expanded" role="alert" aria-live="assertive">
-  <div class="toast-title-row">
-    <!-- x-circle icon -->
-    <strong class="toast-title">Attention</strong>
-    <button class="toast-close" aria-label="Dismiss">×</button>
+<div class="toast" style="border-color:#f8b4b4;flex-direction:column;align-items:stretch;" role="alert" aria-live="assertive">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+    <!-- x-circle icon 18px #e02424 -->
+    <span class="toast-title" style="flex:1;color:var(--color-danger);">Attention</span>
+    <button type="button" class="toast-close" style="color:#e02424;" aria-label="Dismiss">×</button>
   </div>
-  <p class="toast-message">Oh snap! Something went wrong. Your changes could not be saved.</p>
-  <button class="btn btn-red btn-xs">Undo action</button>
+  <p class="toast-message" style="margin:0 0 12px;color:var(--color-danger);">Oh snap! Something went wrong. Your changes could not be saved.</p>
+  <button type="button" class="btn btn-red btn-xs">Undo action</button>
 </div>`,
         language: 'html',
       },

@@ -58,33 +58,27 @@ const METRIC_LEVELS = [
 ];
 
 function metricBadge({ label = 'Critical', sub = '11.0% rev', color = 'red', icon = false }) {
-  const { bg, text } = BADGE_COLORS[color] ?? BADGE_COLORS.red;
   const iconHtml = icon
-    ? `<svg width="12" height="12" viewBox="0 0 20 20" fill="${text}" aria-hidden="true" style="flex-shrink:0;margin-bottom:1px;"><path fill-rule="evenodd" d="${EXCLAMATION_PATH}" clip-rule="evenodd"/></svg>`
+    ? `<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-bottom:1px;"><path fill-rule="evenodd" d="${EXCLAMATION_PATH}" clip-rule="evenodd"/></svg>`
     : '';
-  return `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0;background:${bg};color:${text};font-size:10px;font-weight:600;line-height:1.3;border-radius:8px;padding:4px 8px;white-space:nowrap;text-align:center;font-family:inherit;">
-  ${icon ? `<span style="display:flex;align-items:center;gap:3px;">${iconHtml}${label}</span>` : label}
-  <span style="font-size:10px;font-weight:400;opacity:0.70;line-height:1.2;">${sub}</span>
+  return `<span class="badge badge-${color} badge--metric">
+  ${icon ? `<span class="badge--metric__icon">${iconHtml}${label}</span>` : label}
+  <span class="badge--metric__sub">${sub}</span>
 </span>`;
 }
 
 function badge({ label = 'Badge', color = 'indigo', size = 'lg', icon = false, dismissible = false }) {
-  const { bg, text, dismiss } = BADGE_COLORS[color] ?? BADGE_COLORS.indigo;
-  const isLg = size === 'lg';
-  const fs = isLg ? 'var(--text-sm)' : 'var(--text-xs)';
-  const fw = isLg ? '400' : 'var(--font-medium)';
-  const pad = isLg ? '2px 12px' : '2px 10px';
-  const iconSz = isLg ? 16 : 14;
+  const iconSz = size === 'lg' ? 16 : 14;
 
   const iconHtml = icon
-    ? `<svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${text}" aria-hidden="true" style="flex-shrink:0;"><path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/></svg>`
+    ? `<svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="flex-shrink:0;"><path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/></svg>`
     : '';
 
   const dismissHtml = dismissible
-    ? `<button type="button" aria-label="Remove" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;line-height:0;"><svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${dismiss}" aria-hidden="true"><path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/></svg></button>`
+    ? `<button type="button" class="badge__dismiss" aria-label="Remove ${label}"><svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/></svg></button>`
     : '';
 
-  return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};font-size:${fs};font-weight:${fw};border-radius:6px;padding:${pad};white-space:nowrap;line-height:1.5;font-family:inherit;">${iconHtml}<span>${label}</span>${dismissHtml}</span>`;
+  return `<span class="badge badge-${size} badge-${color}">${iconHtml}<span>${label}</span>${dismissHtml}</span>`;
 }
 
 export default {
@@ -191,30 +185,11 @@ export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
-    const { bg, text, dismiss } = BADGE_COLORS[a.color] ?? BADGE_COLORS.indigo;
-    const isLg = a.size === 'lg';
-    const fs = isLg ? 'var(--text-sm)' : 'var(--text-xs)';
-    const fw = isLg ? '400' : 'var(--font-medium)';
-    const pad = isLg ? '2px 12px' : '2px 10px';
-    const iconSz = isLg ? 16 : 14;
+    const iconSz = a.size === 'lg' ? 16 : 14;
 
-    const iconPartHtml = a.icon
-      ? `\n  <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${text}" aria-hidden="true">\n    <path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/>\n  </svg>`
-      : '';
-    const iconPartReact = a.icon
-      ? `\n  <ClockIcon className="w-4 h-4" />`
-      : '';
-
-    const dismissPartHtml = a.dismissible
-      ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${dismiss}" aria-hidden="true">\n      <path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/>\n    </svg>\n  </button>`
-      : '';
-    const dismissPartReact = a.dismissible
-      ? `\n  <button type="button" aria-label="Remove ${a.label}">\n    <XMarkIcon className="w-4 h-4" />\n  </button>`
-      : '';
-
-    const htmlCode = `<span class="badge badge-${a.size} badge-${a.color}">${a.icon ? '\n  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n    <!-- icon -->\n  </svg>' : ''}\n  <span>${a.label}</span>${a.dismissible ? '\n  <button type="button" aria-label="Remove ' + a.label + '">\n    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n      <!-- x icon -->\n    </svg>\n  </button>' : ''}\n</span>`;
-    const reactCode = `${a.icon ? "import { ClockIcon } from '@heroicons/react/24/outline';\n" : ""}${a.dismissible ? "import { XMarkIcon } from '@heroicons/react/24/outline';\n" : ""}${a.icon || a.dismissible ? "\n" : ""}<span className="badge badge-${a.size} badge-${a.color}">${a.icon ? '\n  <ClockIcon className="w-4 h-4" />' : ''}\n  <span>${a.label}</span>${a.dismissible ? '\n  <button type="button" aria-label="Remove ' + a.label + '">\n    <XMarkIcon className="w-4 h-4" />\n  </button>' : ''}\n</span>`;
-    const componentCode = `export function Badge({ label = "${a.label}", color = "${a.color}", size = "${a.size}", icon = ${a.icon}, onDismiss }) {\n  return (\n    <span className={\`badge badge-\${size} badge-\${color}\`}>\n      {icon && <ClockIcon className="w-4 h-4" />}\n      <span>{label}</span>\n      {onDismiss && (\n        <button\n          type="button"\n          aria-label={\`Remove \${label}\`}\n          onClick={onDismiss}\n        >\n          <XMarkIcon className="w-4 h-4" />\n        </button>\n      )}\n    </span>\n  );\n}`;
+    const htmlCode = `<span class="badge badge-${a.size} badge-${a.color}">${a.icon ? '\n  <svg width="' + iconSz + '" height="' + iconSz + '" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n    <!-- icon -->\n  </svg>' : ''}\n  <span>${a.label}</span>${a.dismissible ? '\n  <button type="button" class="badge__dismiss" aria-label="Remove ' + a.label + '">\n    <svg width="' + iconSz + '" height="' + iconSz + '" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n      <!-- x icon -->\n    </svg>\n  </button>' : ''}\n</span>`;
+    const reactCode = `${a.icon ? "import { ClockIcon } from '@heroicons/react/24/outline';\n" : ""}${a.dismissible ? "import { XMarkIcon } from '@heroicons/react/24/outline';\n" : ""}${a.icon || a.dismissible ? "\n" : ""}<span className="badge badge-${a.size} badge-${a.color}">${a.icon ? '\n  <ClockIcon className="w-4 h-4" />' : ''}\n  <span>${a.label}</span>${a.dismissible ? '\n  <button type="button" className="badge__dismiss" aria-label="Remove ' + a.label + '">\n    <XMarkIcon className="w-4 h-4" />\n  </button>' : ''}\n</span>`;
+    const componentCode = `export function Badge({ label = "${a.label}", color = "${a.color}", size = "${a.size}", icon = ${a.icon}, onDismiss }) {\n  return (\n    <span className={\`badge badge-\${size} badge-\${color}\`}>\n      {icon && <ClockIcon className="w-4 h-4" />}\n      <span>{label}</span>\n      {onDismiss && (\n        <button\n          type="button"\n          className="badge__dismiss"\n          aria-label={\`Remove \${label}\`}\n          onClick={onDismiss}\n        >\n          <XMarkIcon className="w-4 h-4" />\n        </button>\n      )}\n    </span>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -343,21 +318,16 @@ Use the **Controls** panel to experiment. Code updates live.
       source: {
         transform: (_src, ctx) => {
           const a = ctx.args;
-          const { bg, text, dismiss } = BADGE_COLORS[a.color] ?? BADGE_COLORS.indigo;
-          const isLg = a.size === 'lg';
-          const fs = isLg ? 'var(--text-sm)' : 'var(--text-xs)';
-          const fw = isLg ? '400' : 'var(--font-medium)';
-          const pad = isLg ? '2px 12px' : '2px 10px';
-          const iconSz = isLg ? 16 : 14;
+          const iconSz = a.size === 'lg' ? 16 : 14;
 
           const iconPart = a.icon
-            ? `\n  <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${text}" aria-hidden="true">\n    <path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/>\n  </svg>`
+            ? `\n  <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n    <path fill-rule="evenodd" d="${ICON_PATH}" clip-rule="evenodd"/>\n  </svg>`
             : '';
           const dismissPart = a.dismissible
-            ? `\n  <button type="button" aria-label="Remove ${a.label}" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;">\n    <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="${dismiss}" aria-hidden="true">\n      <path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/>\n    </svg>\n  </button>`
+            ? `\n  <button type="button" class="badge__dismiss" aria-label="Remove ${a.label}">\n    <svg width="${iconSz}" height="${iconSz}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n      <path fill-rule="evenodd" d="${DISMISS_PATH}" clip-rule="evenodd"/>\n    </svg>\n  </button>`
             : '';
 
-          return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};font-size:${fs};font-weight:${fw};border-radius:6px;padding:${pad};white-space:nowrap;line-height:1.5;">${iconPart}\n  <span>${a.label}</span>${dismissPart}\n</span>`;
+          return `<span class="badge badge-${a.size} badge-${a.color}">${iconPart}\n  <span>${a.label}</span>${dismissPart}\n</span>`;
         },
       },
     },
@@ -513,7 +483,7 @@ All 8 themes with a dismiss × button. The × uses a brighter variant of the the
 
 <span className="badge badge-lg badge-indigo">
   <span>In review</span>
-  <button type="button" aria-label="Remove In review" className="badge-dismiss">
+  <button type="button" aria-label="Remove In review" className="badge__dismiss">
     <XMarkIcon className="w-4 h-4" />
   </button>
 </span>`,
@@ -571,8 +541,10 @@ CSS: \`<span class="badge badge-red badge--metric">\`
 
 // With leading icon
 <span className="badge badge-red badge--metric">
-  <ExclamationCircleIcon className="w-3 h-3" />
-  <span>Critical</span>
+  <span className="badge--metric__icon">
+    <ExclamationCircleIcon className="w-3 h-3" />
+    Critical
+  </span>
   <span className="badge--metric__sub">11.0% rev</span>
 </span>`,
         language: 'jsx',

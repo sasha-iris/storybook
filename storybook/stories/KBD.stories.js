@@ -4,9 +4,10 @@
  * Source: Figma › Iris Library › KBD (node 13693:81993)
  * Light mode only.
  *
- * ## Visual spec (all keys share one style)
- * fill: var(--color-bg-secondary) · stroke: var(--color-border-default) · border-radius: 8px
- * font: 12px/600 · text: #1f2a37
+ * ## Visual spec (all keys share one style) — verified vs Figma API 2026-06-11
+ * fill: #f3f4f6 = var(--color-bg-muted) · stroke: #e5e7eb = var(--color-border-default) · border-radius: 8px
+ * font: 12px/600 · text: #1f2a37 (literal — var(--color-bg-dark) is double-defined, #1e2939 wins)
+ * CSS class: .kbd (+ .kbd-sm compact variant) — added to styles.css + iris-components.css 2026-06-11
  *
  * ## Key widths (height always 30px)
  * Regular (A–Z, 0–9, symbols): 29px
@@ -38,8 +39,8 @@ function keyWidth(label) {
 
 function arrowKey(dir) {
   const path = ARROW_PATHS[dir];
-  return `<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0;">
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-bg-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  return `<kbd class="kbd" style="min-width:32px;padding:0;">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="${path}"/>
   </svg>
 </kbd>`;
@@ -53,11 +54,10 @@ function kbd({ label = 'K', size = 'md' }) {
 
   if (arrowDir) return arrowKey(arrowDir);
 
-  const fs = size === 'sm' ? 10 : 12;
-  const h = size === 'sm' ? 22 : 30;
   const wAdjusted = size === 'sm' ? Math.round(w * 0.75) : w;
+  const sizeClass = size === 'sm' ? ' kbd-sm' : '';
 
-  return `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:${wAdjusted}px;height:${h}px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-family:inherit;font-size:${fs}px;font-weight:var(--font-semibold);color:var(--color-bg-dark);white-space:nowrap;box-sizing:border-box;">${label}</kbd>`;
+  return `<kbd class="kbd${sizeClass}" style="min-width:${wAdjusted}px;">${label}</kbd>`;
 }
 
 function shortcut(keys) {
@@ -126,14 +126,14 @@ export const Interactive = {
     const isArrow = !!arrowDir;
 
     const htmlCode = isArrow
-      ? `<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0;">\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">\n    <!-- ${arrowDir} arrow -->\n  </svg>\n</kbd>`
-      : `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:${w}px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-family:inherit;font-size:12px;font-weight:600;color:#1f2a37;white-space:nowrap;">${a.label}</kbd>`;
+      ? `<kbd class="kbd" style="min-width:32px;padding:0;">\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">\n    <!-- ${arrowDir} arrow -->\n  </svg>\n</kbd>`
+      : `<kbd class="kbd${a.size === 'sm' ? ' kbd-sm' : ''}" style="min-width:${w}px;">${a.label}</kbd>`;
 
     const reactCode = isArrow
-      ? `<kbd style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '30px', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)', borderRadius: '8px', padding: '0' }}>\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" strokeWidth="2">{/* arrow icon */}</svg>\n</kbd>`
-      : `<kbd style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '${w}px', height: '30px', background: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)', borderRadius: '8px', padding: '0 6px', fontFamily: 'inherit', fontSize: '12px', fontWeight: '600', color: '#1f2a37', whiteSpace: 'nowrap' }}>${a.label}</kbd>`;
+      ? `<kbd className="kbd" style={{ minWidth: 32, padding: 0 }}>\n  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{/* arrow icon */}</svg>\n</kbd>`
+      : `<kbd className="kbd${a.size === 'sm' ? ' kbd-sm' : ''}" style={{ minWidth: ${w} }}>${a.label}</kbd>`;
 
-    const componentCode = `export function KBD({ label = "${a.label}", size = "${a.size}" }) {\n  return (\n    <kbd className={\`kbd kbd-\${size}\`}>\n      {label}\n    </kbd>\n  );\n}`;
+    const componentCode = `export function KBD({ label = "${a.label}", size = "${a.size}", minWidth = ${w} }) {\n  return (\n    <kbd\n      className={size === 'sm' ? 'kbd kbd-sm' : 'kbd'}\n      style={{ minWidth }}\n    >\n      {label}\n    </kbd>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -220,7 +220,7 @@ All 26 letter keys. Width: 29×30px.
         `,
       },
       source: {
-        code: `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">A</kbd>`,
+        code: `<kbd class="kbd" style="min-width:29px;">A</kbd>`,
         language: 'html',
       },
     },
@@ -262,8 +262,8 @@ Modifier and control keys with Figma-spec widths.
       source: {
         code: `<!-- Modifier combo example -->
 <span class="kbd-combo">
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">Shift</kbd>
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">S</kbd>
+  <kbd class="kbd" style="min-width:44px;">Shift</kbd>
+  <kbd class="kbd" style="min-width:29px;">S</kbd>
 </span>`,
         language: 'html',
       },
@@ -289,7 +289,7 @@ export const FunctionKeys = {
         story: 'All 12 function keys. Width: 32×30px.',
       },
       source: {
-        code: `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:12px;font-weight:600;color:#1f2a37;">F5</kbd>`,
+        code: `<kbd class="kbd" style="min-width:32px;">F5</kbd>`,
         language: 'html',
       },
     },
@@ -320,7 +320,7 @@ Arrow keys rendered as SVG vector icons (Figma-exact). Width: 32×30px.
       },
       source: {
         code: `<!-- Left arrow key -->
-<kbd style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;background:var(--color-bg-secondary);border:1px solid var(--color-border-default);border-radius:8px;padding:0;">
+<kbd class="kbd" style="min-width:32px;padding:0;">
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1f2a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"/>
   </svg>
@@ -357,8 +357,8 @@ Common keyboard shortcuts as they appear in product UI — multiple \`<kbd>\` el
       source: {
         code: `<!-- Save: Ctrl + S -->
 <span class="kbd-combo">
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">Ctrl</kbd>
-  <kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:29px;height:30px;background:var(--color-bg-muted);border:1px solid var(--color-border-default);border-radius:8px;padding:0 6px;font-size:var(--text-xs);font-weight:var(--font-semibold);color:var(--color-bg-dark);">S</kbd>
+  <kbd class="kbd" style="min-width:38px;">Ctrl</kbd>
+  <kbd class="kbd" style="min-width:29px;">S</kbd>
 </span>`,
         language: 'html',
       },

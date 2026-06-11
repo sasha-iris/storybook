@@ -72,8 +72,8 @@ const ICON_DOLLAR = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6B72
   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
 </svg>`;
 
-// Grey pill button — always currency-dollar, always #D1D5DB bg
-const PILL = `<div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">${ICON_DOLLAR}</div>`;
+// Grey pill button — real .iris-kpi__pill class (always currency-dollar)
+const PILL = `<div class="iris-kpi__pill">${ICON_DOLLAR}</div>`;
 
 // Trend arrow icons (Heroicons v1 solid 20px → 16px display)
 const iconTrendUp = (color) => `<svg width="16" height="16" viewBox="0 0 20 20" fill="${color}" xmlns="http://www.w3.org/2000/svg">
@@ -86,15 +86,13 @@ const iconTrendDown = (color) => `<svg width="16" height="16" viewBox="0 0 20 20
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
 
-const F = (spec) => `font:${spec} 'Inter',sans-serif;`;
-
-function trendBadge(dir) {
+function trendBadge(dir, pctOverride) {
   const c = dir === 'up' ? C_UP : C_DN;
   const icon = dir === 'up' ? iconTrendUp(c) : iconTrendDown(c);
-  const pct = dir === 'up' ? '+12.5%' : '-23.17%';
-  return `<div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+  const pct = pctOverride || (dir === 'up' ? '+12.5%' : '-23.17%');
+  return `<div class="iris-kpi__trend iris-kpi__trend--${dir}">
     ${icon}
-    <span style="${F('600 12px/1.5')}color:${c};white-space:nowrap;">${pct}</span>
+    <span>${pct}</span>
   </div>`;
 }
 
@@ -115,7 +113,7 @@ function lineChartSvg(dir) {
     ? `<linearGradient id="${gradId}" x1="143" y1="1" x2="143" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#E5E7EB"/><stop offset="1" stop-color="white"/></linearGradient>`
     : `<linearGradient id="${gradId}" x1="143" y1="1" x2="143" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity="0.6"/><stop offset="1" stop-color="#B0B0B0" stop-opacity="0"/></linearGradient>`;
 
-  return `<div style="position:absolute;bottom:0;left:0;right:0;">
+  return `<div class="iris-kpi__chart">
     <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>${gradDef}</defs>
       <path d="${dir === 'up' ? FILL_UP : FILL_DN}" fill="url(#${gradId})"/>
@@ -127,14 +125,12 @@ function lineChartSvg(dir) {
 // Bar chart: 14 bars × 3px, heights from Figma
 // Standard (602:20796 up / 602:20845 down): container 40px. Big: container 58px.
 function barChartHtml(dir, heights, containerH = 40) {
-  const main = dir === 'up' ? C_BU : C_DN;
-  const light = dir === 'up' ? C_BU_LT : C_BD_LT;
   const bars = heights.map((h, i) => {
-    const col = (i === 6) ? light : main;
+    const cls = `iris-kpi__bar${dir === 'down' ? (i === 6 ? ' iris-kpi__bar--down-light' : ' iris-kpi__bar--down') : (i === 6 ? ' iris-kpi__bar--light' : '')}`;
     const ht = h >= containerH ? '100%' : `${h}px`;
-    return `<div style="width:3px;height:${ht};background:${col};border-radius:32px;flex-shrink:0;"></div>`;
+    return `<div class="${cls}" style="height:${ht};"></div>`;
   }).join('');
-  return `<div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:${containerH}px;flex-shrink:0;">${bars}</div>`;
+  return `<div class="iris-kpi__bars" style="height:${containerH}px;">${bars}</div>`;
 }
 
 // Segmented horizontal bar chart — barchart-segm-hor only
@@ -169,15 +165,16 @@ function segmChartHtml() {
 
 // ── Card builders ─────────────────────────────────────────────────────────────
 
-const BASE = `background:white;border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,0.08);box-sizing:border-box;overflow:hidden;position:relative;`;
+// All shells are the real `.iris-kpi` + size modifier classes.
+// Inner layout rows stay as flex wrappers (layout-only inline styles).
 
 // Linechart — label + value + trend in top row, chart flush at bottom (286×168px)
 function cardLinechart(dir) {
-  return `<div style="${BASE}width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;">
+  return `<div class="iris-kpi iris-kpi--line">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
-        <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
-        <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
+        <div class="iris-kpi__label">Total Sales</div>
+        <div class="iris-kpi__value">$16,416</div>
       </div>
       ${trendBadge(dir)}
       ${PILL}
@@ -188,23 +185,17 @@ function cardLinechart(dir) {
 
 // Linechart-vert — label + value, then "Compared to day prior" + trend, chart flush at bottom
 function cardLinechartVert(dir) {
-  const c = dir === 'up' ? C_UP : C_DN;
-  const pct = dir === 'up' ? '+12.5%' : '−8.3%';
-  const icon = dir === 'up' ? iconTrendUp(c) : iconTrendDown(c);
-  return `<div style="${BASE}width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:4px;">
+  return `<div class="iris-kpi iris-kpi--line-tight">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
-        <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
-        <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
+        <div class="iris-kpi__label">Total Sales</div>
+        <div class="iris-kpi__value">$16,416</div>
       </div>
       ${PILL}
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="${F('400 12px/1.5')}color:#6B7280;">Compared to day prior</span>
-      <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
-        ${icon}
-        <span style="${F('600 12px/1.5')}color:${c};white-space:nowrap;">${pct}</span>
-      </div>
+      <span class="iris-kpi__subtitle">Compared to day prior</span>
+      ${trendBadge(dir, dir === 'up' ? '+12.5%' : '−8.3%')}
     </div>
     ${lineChartSvg(dir)}
   </div>`;
@@ -212,12 +203,12 @@ function cardLinechartVert(dir) {
 
 // barchart — label + trend + value in header, bars at bottom (286×200px)
 function cardBarchart(dir) {
-  return `<div style="${BASE}width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;gap:40px;">
+  return `<div class="iris-kpi iris-kpi--bar">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
-        <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
+        <div class="iris-kpi__label">Total Sales</div>
         ${trendBadge(dir)}
-        <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
+        <div class="iris-kpi__value">$16,416</div>
       </div>
       ${PILL}
     </div>
@@ -227,24 +218,18 @@ function cardBarchart(dir) {
 
 // barchart-vert — label + value, then "Compared to day prior" + trend, bars at bottom (286×200px)
 function cardBarchartVert(dir = 'up') {
-  const c = dir === 'up' ? C_UP : C_DN;
-  const pct = dir === 'up' ? '+12.5%' : '−8.3%';
-  const icon = dir === 'up' ? iconTrendUp(c) : iconTrendDown(c);
-  return `<div style="${BASE}width:286px;height:200px;padding:32px 32px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
+  return `<div class="iris-kpi iris-kpi--bar" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
     <div style="display:flex;flex-direction:column;gap:16px;">
       <div style="display:flex;gap:16px;align-items:flex-start;">
         <div style="flex:1;min-width:0;">
-          <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
-          <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
+          <div class="iris-kpi__label">Total Sales</div>
+          <div class="iris-kpi__value">$16,416</div>
         </div>
         ${PILL}
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="${F('400 12px/1.5')}color:#6B7280;">Compared to day prior</span>
-        <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
-          ${icon}
-          <span style="${F('600 12px/1.5')}color:${c};white-space:nowrap;">${pct}</span>
-        </div>
+        <span class="iris-kpi__subtitle">Compared to day prior</span>
+        ${trendBadge(dir, dir === 'up' ? '+12.5%' : '−8.3%')}
       </div>
     </div>
     ${barChartHtml(dir, BARS_VERT)}
@@ -252,14 +237,12 @@ function cardBarchartVert(dir = 'up') {
 }
 
 // barchart-big — Charts frame [222x58], bars at idx 2,4,9,12 are full height (58px)
-// Figma "top" row: "1st" col = title(18px)+value(36px) = 54px | "Card Body" col = trend(18px) | pill
-// Header must be exactly 54px so: 32(top-pad)+54(header)+40(gap)+58(chart)+16(bot-pad)=200px
 function cardBarchartBig(dir = 'up') {
-  return `<div style="${BASE}width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;gap:40px;">
+  return `<div class="iris-kpi iris-kpi--bar">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
-        <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
-        <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
+        <div class="iris-kpi__label">Total Sales</div>
+        <div class="iris-kpi__value">$16,416</div>
       </div>
       ${trendBadge(dir)}
       ${PILL}
@@ -271,14 +254,14 @@ function cardBarchartBig(dir = 'up') {
 
 // barchart-segm-hor — wide horizontal card: segmented chart left, value right (449×104px)
 function cardBarchartSegmHor() {
-  return `<div style="${BASE}width:449px;height:104px;padding:32px 32px 16px;display:flex;flex-direction:row;gap:16px;align-items:flex-end;">
+  return `<div class="iris-kpi iris-kpi--wide">
     <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:0;justify-content:flex-end;">
-      <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
+      <div class="iris-kpi__label">Total Sales</div>
       ${segmChartHtml()}
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
       ${trendBadge('up')}
-      <span style="${F('400 12px/1.5')}color:#6B7280;text-align:right;">Compared to day prior</span>
+      <span class="iris-kpi__subtitle" style="text-align:right;">Compared to day prior</span>
     </div>
     ${PILL}
   </div>`;
@@ -291,16 +274,16 @@ function cardCredit() {
   const FILL2 = 'M38.1333 18.5122L29.095 18.5122L127.111 18.5122H165.244C169.482 17.0063 171.583 18.4996 177.876 18.5121L190.667 18.5122H247.867H260.578L286 18.5121C278.056 18.5121 279.644 23.5609 273.289 23.5609C266.933 23.5609 266.933 18.5122 260.578 18.5122H247.867C241.511 18.5122 240.717 23.5609 235.156 23.5609C229.594 23.561 228.8 35.5001 222.444 35.5001C216.089 35.5001 216.089 18.5122 209.733 18.5122L190.667 18.5122L177.956 18.5122C177.929 18.5122 177.903 18.5122 177.876 18.5121L165.244 18.5122C160.989 20.0243 158.889 60 152.533 60C146.178 60 146.178 18.5122 139.822 18.5122L127.111 18.5122L114.4 18.5122C108.044 18.5122 108.044 23.1402 101.689 23.1402C95.3334 23.1402 95.3333 18.5122 88.9778 18.5122C82.6222 18.5122 82.6222 28.6097 76.2667 28.6097C69.9111 28.6098 69.9111 18.5122 63.5555 18.5122C57.2 18.5122 57.2 23.561 50.8444 23.561C44.4889 23.561 44.4889 18.5122 38.1333 18.5122Z';
   const STROKE = 'M0 18.7918C6.35556 18.7918 6.35555 18.7918 12.7111 18.7918C19.0667 18.7918 19.0667 18.7918 25.4222 18.7918C31.7778 18.7918 31.7778 18.7918 38.1333 18.7918C44.4889 18.7918 44.4889 23.9168 50.8444 23.9168C57.2 23.9168 57.2 18.7918 63.5555 18.7918C69.9111 18.7918 69.9111 29.0418 76.2667 29.0418C82.6222 29.0418 82.6222 18.7918 88.9778 18.7918C95.3333 18.7917 95.3334 23.4897 101.689 23.4897C108.044 23.4897 108.044 18.7918 114.4 18.7918C120.756 18.7918 120.756 18.7918 127.111 18.7918C133.467 18.7918 133.467 18.7918 139.822 18.7918C146.178 18.7918 146.178 60.5002 152.533 60.5002C158.889 60.5002 161.489 18.7918 165.244 18.7918C169 18.7918 171.6 18.7917 177.956 18.7918C184.311 18.7918 184.311 18.7918 190.667 18.7918C197.022 18.7918 203.378 18.7919 209.733 18.7918C216.089 18.7918 216.089 35.5002 222.444 35.5002C228.8 35.5002 229.594 23.9168 235.156 23.9168C240.717 23.9167 241.511 18.7918 247.867 18.7918C254.222 18.7918 254.222 18.7918 260.578 18.7918C266.933 18.7918 266.933 23.9168 273.289 23.9168C279.644 23.9168 278.056 18.7918 286 18.7918';
 
-  return `<div style="${BASE}width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;">
+  return `<div class="iris-kpi iris-kpi--line">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
-        <div style="${F('500 12px/1.5')}color:#111928;">Total Sales</div>
-        <div style="${F('600 24px/1.5')}color:#111928;">$16,416</div>
+        <div class="iris-kpi__label">Total Sales</div>
+        <div class="iris-kpi__value">$16,416</div>
       </div>
       ${trendBadge('up')}
       ${PILL}
     </div>
-    <div style="position:absolute;bottom:0;left:0;right:0;">
+    <div class="iris-kpi__chart">
       <svg style="width:100%;height:69px;display:block;" viewBox="0 0 286 69" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="credit-grad1" x1="143" y1="0" x2="143" y2="69" gradientUnits="userSpaceOnUse">
@@ -403,11 +386,34 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
   },
 };
 
-/* ── Helper function for Interactive story ────────────────────────────────── */
-function chartCard({ direction = 'up', chartType = 'linechart' }) {
-  const trendColor = direction === 'up' ? '#5850EC' : '#E74694';
-  const trendLabel = direction === 'up' ? '+12.5%' : '−8.3%';
-  return `<div style="background:white;border:1px solid var(--color-border-default);border-radius:8px;width:286px;height:168px;padding:16px;display:flex;flex-direction:column;gap:16px;position:relative;"><div style="display:flex;gap:16px;align-items:flex-start;"><div style="flex:1;"><div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Total Sales</div><div style="font-size:24px;font-weight:600;color:var(--color-text-heading);">$16,416</div></div><div style="background:var(--color-bg-secondary);border-radius:8px;padding:8px;display:flex;align-items:center;gap:4px;"><svg width="16" height="16" viewBox="0 0 20 20" fill="${trendColor}"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg><span style="font-size:12px;font-weight:600;color:${trendColor};">${trendLabel}</span></div></div><div style="flex:1;position:relative;background:var(--color-bg-tertiary);border-radius:6px;overflow:hidden;"><div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to bottom, rgba(88,80,236,0.1), rgba(88,80,236,0.05));"/></div></div>`;
+/* ── Snippet builder — shared by Interactive panels + Show code ───────────── */
+const KPI_MODIFIER = {
+  'linechart': 'iris-kpi--line',
+  'linechart-vert': 'iris-kpi--line-tight',
+  'barchart': 'iris-kpi--bar',
+  'barchart-vert': 'iris-kpi--bar',
+  'barchart-big': 'iris-kpi--bar',
+  'barchart-segm-hor': 'iris-kpi--wide',
+  'credit': 'iris-kpi--line',
+};
+
+function kpiSnippet({ direction = 'up', chartType = 'linechart' }) {
+  const mod = KPI_MODIFIER[chartType] || 'iris-kpi--line';
+  const pct = direction === 'up' ? '+12.5%' : '-23.17%';
+  return `<div class="iris-kpi ${mod}">
+  <div style="display:flex;gap:16px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__value">$16,416</div>
+    </div>
+    <div class="iris-kpi__trend iris-kpi__trend--${direction}">
+      <!-- trend arrow icon -->
+      <span>${pct}</span>
+    </div>
+    <div class="iris-kpi__pill"><!-- currency-dollar icon --></div>
+  </div>
+  <div class="iris-kpi__chart"><!-- Figma-exported chart SVG --></div>
+</div>`;
 }
 
 /* ── Interactive (Controls) ─────────────────────────────────────────────────── */
@@ -427,9 +433,9 @@ export const Interactive = {
       default: previewHtml = cardLinechart(args.direction);
     }
 
-    const h = '<div style="padding:20px;border:1px solid var(--color-border-default);border-radius:12px;"><canvas></canvas></div>';
-    const r = '<div style={{padding:"20px",border:"1px solid var(--color-border-default)"}}><canvas ref={chartRef}></canvas></div>';
-    const c = 'export function ChartCard({chartType,direction}){return(<div style={{border:"1px solid var(--color-border-default)",padding:"20px"}}><canvas></canvas></div>);}';
+    const h = kpiSnippet(args);
+    const r = h.replace(/class=/g, 'className=').replace(/<!--/g, '{/*').replace(/-->/g, '*/}');
+    const c = `const MOD = { linechart: 'iris-kpi--line', 'linechart-vert': 'iris-kpi--line-tight', barchart: 'iris-kpi--bar', 'barchart-segm-hor': 'iris-kpi--wide' };\n\nexport function KpiCard({ label, value, trendPct, direction = 'up', chartType = 'linechart', chart }) {\n  return (\n    <div className={\`iris-kpi \${MOD[chartType] || 'iris-kpi--line'}\`}>\n      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>\n        <div style={{ flex: 1, minWidth: 0 }}>\n          <div className="iris-kpi__label">{label}</div>\n          <div className="iris-kpi__value">{value}</div>\n        </div>\n        <div className={\`iris-kpi__trend iris-kpi__trend--\${direction}\`}>\n          {/* trend arrow icon */}\n          <span>{trendPct}</span>\n        </div>\n        <div className="iris-kpi__pill">{/* currency-dollar icon */}</div>\n      </div>\n      <div className="iris-kpi__chart">{chart}</div>\n    </div>\n  );\n}`;
 
     return `
       <div style="display:flex;flex-direction:column;gap:24px;">
@@ -492,42 +498,7 @@ export const Interactive = {
         story: 'Use **direction** to switch trend up/down and **chartType** to preview any KPI variant. Source snippet reflects the linechart structure — adapt the chart area for other types.',
       },
       source: {
-        transform: (_src, storyCtx) => {
-          const { direction } = storyCtx.args;
-          const c = direction === 'up' ? '#5850EC' : '#E74694';
-          const pct = direction === 'up' ? '+12.5%' : '−8.3%';
-          const arrow = direction === 'up'
-            ? `<path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>`
-            : `<path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd"/>`;
-          return `<!-- Card KPI — Linechart / ${direction === 'up' ? 'Upwards' : 'Downwards'} -->
-<div style="background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:8px;
-            width:286px;height:168px;padding:16px;
-            display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;">
-  <div style="display:flex;gap:16px;align-items:flex-start;">
-    <div style="flex:1;">
-      <div style="font:500 12px/1.5 sans-serif;color:#111928;">Total Sales</div>
-      <div style="font:600 24px/1.5 sans-serif;color:#111928;">$16,416</div>
-    </div>
-    <!-- Trend badge -->
-    <div style="display:flex;align-items:center;gap:2px;">
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="${c}" xmlns="http://www.w3.org/2000/svg">
-        ${arrow}
-      </svg>
-      <span style="font:600 12px/1.5 sans-serif;color:${c};">${pct}</span>
-    </div>
-    <!-- Icon pill -->
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;display:flex;align-items:center;justify-content:center;">
-      <!-- currency-dollar icon -->
-    </div>
-  </div>
-  <!-- Line chart SVG — flush to card bottom, absolutely positioned -->
-  <div style="position:absolute;bottom:0;left:0;right:0;">
-    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
-      <!-- sparkline path here -->
-    </svg>
-  </div>
-</div>`;
-        },
+        transform: (_src, storyCtx) => kpiSnippet(storyCtx.args),
       },
     },
   },
@@ -543,35 +514,24 @@ export const LinechartUp = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — Linechart (286×168px) -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
-            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
-
+<div class="iris-kpi iris-kpi--line">
   <!-- Header row: label + trend + icon pill -->
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__value">$16,416</div>
     </div>
-    <!-- Trend badge (up: #5850EC, down: #E74694) -->
-    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
-      <!-- trend-up arrow SVG here -->
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+    <div class="iris-kpi__trend iris-kpi__trend--up">
+      <!-- trend-up arrow SVG -->
+      <span>+12.5%</span>
     </div>
-    <!-- Grey pill icon -->
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;">
-      <!-- currency-dollar SVG here -->
-    </div>
+    <div class="iris-kpi__pill"><!-- currency-dollar SVG --></div>
   </div>
 
-  <!-- Line chart SVG — flush to card bottom, absolute positioned -->
-  <div style="position:absolute;bottom:0;left:0;right:0;">
+  <!-- Line chart SVG — flush to card bottom -->
+  <div class="iris-kpi__chart">
     <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
-      <!-- area fill at 12% opacity (color #5850EC for up, #E74694 for down) -->
-      <path d="M0,60 C30,55 55,64 85,48 …286,3 L286,70 L0,70 Z" fill="#5850EC" opacity="0.12"/>
-      <!-- stroke line -->
-      <path d="M0,60 C30,55 55,64 85,48 …286,3" fill="none" stroke="#5850EC" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Figma-exported area fill + stroke paths (#5850EC up / #E74694 down) -->
     </svg>
   </div>
 </div>`,
@@ -588,27 +548,23 @@ export const LinechartDown = {
       description: { story: 'Smooth line chart trending downward. Trend badge: **#E74694** (pink).' },
       source: {
         language: 'html',
-        code: `<!-- Card KPI — Linechart Downwards: same structure as Linechart Upwards.
-     Change trend color to #E74694 (pink) and invert the SVG path direction. -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
-            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
+        code: `<!-- Card KPI — Linechart Downwards: same structure as Upwards;
+     trend modifier switches to --down (#E74694 pink via the class). -->
+<div class="iris-kpi iris-kpi--line">
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__value">$16,416</div>
     </div>
-    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+    <div class="iris-kpi__trend iris-kpi__trend--down">
       <!-- trend-down arrow SVG -->
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#E74694;">−8.3%</span>
+      <span>−8.3%</span>
     </div>
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+    <div class="iris-kpi__pill"><!-- dollar SVG --></div>
   </div>
-  <div style="position:absolute;bottom:0;left:0;right:0;">
+  <div class="iris-kpi__chart">
     <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none">
-      <path d="M0,3 C28,8 50,2 80,18 …286,65 L286,70 L0,70 Z" fill="#E74694" opacity="0.12"/>
-      <path d="M0,3 C28,8 50,2 80,18 …286,65" fill="none" stroke="#E74694" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Figma-exported downward paths, stroke #E74694 -->
     </svg>
   </div>
 </div>`,
@@ -629,26 +585,23 @@ export const LinechartVertUp = {
         language: 'html',
         code: `<!-- Card KPI — Linechart-vert (286×168px)
      Difference from Linechart: trend badge moves below the value, "Compared to day prior" label added. -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
-            gap:4px;position:relative;overflow:hidden;box-sizing:border-box;">
+<div class="iris-kpi iris-kpi--line-tight">
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__value">$16,416</div>
     </div>
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+    <div class="iris-kpi__pill"><!-- dollar SVG --></div>
   </div>
   <!-- "Compared to day prior" row with trend -->
   <div style="display:flex;align-items:center;justify-content:space-between;">
-    <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6B7280;">Compared to day prior</span>
-    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+    <span class="iris-kpi__subtitle">Compared to day prior</span>
+    <div class="iris-kpi__trend iris-kpi__trend--up">
       <!-- trend arrow SVG -->
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+      <span>+12.5%</span>
     </div>
   </div>
-  <!-- Line chart SVG (same as Linechart, see LinechartUp story) -->
-  <div style="position:absolute;bottom:0;left:0;right:0;"><!-- SVG chart --></div>
+  <div class="iris-kpi__chart"><!-- Figma-exported chart SVG --></div>
 </div>`,
       },
     },
@@ -666,30 +619,26 @@ export const BarchartUp = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — barchart (286×200px)
-     Layout: header (label + trend + value) at top, bar chart at bottom.
-     14 bars × 3px wide, border-radius 32px, aligned to flex-end (bottom).
-     Bar color: up=#6875F5, down=#E74694. Index-6 bar is lighter: up=#B4C6FC, down=#F8B4D9. -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
-            gap:40px;box-sizing:border-box;">
+     Bar colour comes from the class: default #6875F5, --light #B4C6FC (index 6),
+     --down #E74694, --down-light #F8B4D9. Heights are data (inline). -->
+<div class="iris-kpi iris-kpi--bar">
   <!-- Header -->
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <!-- Trend badge -->
-      <div style="display:flex;align-items:center;gap:2px;">
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__trend iris-kpi__trend--up">
         <!-- trend-up arrow SVG -->
-        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+        <span>+12.5%</span>
       </div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      <div class="iris-kpi__value">$16,416</div>
     </div>
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+    <div class="iris-kpi__pill"><!-- dollar SVG --></div>
   </div>
-  <!-- Bar chart: 14 bars, flex-end aligned, container 56px tall -->
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">
-    <div style="width:3px;height:15px;background:#6875F5;border-radius:32px;"></div>
-    <!-- … 13 more bars with heights from Figma … -->
-    <!-- Index 6: width:3px; background:#B4C6FC (lighter shade) -->
+  <!-- Bar chart: 14 bars × 3px, heights from Figma data -->
+  <div class="iris-kpi__bars" style="height:40px;">
+    <div class="iris-kpi__bar" style="height:15px;"></div>
+    <!-- … 12 more bars … -->
+    <div class="iris-kpi__bar iris-kpi__bar--light" style="height:19px;"></div><!-- index 6 -->
   </div>
 </div>`,
       },
@@ -708,29 +657,26 @@ export const BarchartVert = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — barchart-vert (286×200px)
-     Same as barchart but "Compared to day prior" label sits between the value and the bars. -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
-            gap:24px;box-sizing:border-box;">
+     Same as barchart but "Compared to day prior" sits between the value and the bars. -->
+<div class="iris-kpi iris-kpi--bar">
   <div style="display:flex;flex-direction:column;gap:16px;">
     <div style="display:flex;gap:16px;align-items:flex-start;">
       <div style="flex:1;min-width:0;">
-        <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-        <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+        <div class="iris-kpi__label">Total Sales</div>
+        <div class="iris-kpi__value">$16,416</div>
       </div>
-      <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+      <div class="iris-kpi__pill"><!-- dollar SVG --></div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6B7280;">Compared to day prior</span>
-      <div style="display:flex;align-items:center;gap:2px;">
+      <span class="iris-kpi__subtitle">Compared to day prior</span>
+      <div class="iris-kpi__trend iris-kpi__trend--up">
         <!-- trend-up arrow SVG -->
-        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+        <span>+12.5%</span>
       </div>
     </div>
   </div>
-  <!-- Bar chart (same as barchart, see BarchartUp story) -->
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">
-    <!-- 14 bars × 3px, heights from Figma -->
+  <div class="iris-kpi__bars" style="height:40px;">
+    <!-- 14 .iris-kpi__bar divs, heights from Figma -->
   </div>
 </div>`,
       },
@@ -749,29 +695,23 @@ export const BarchartBig = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — barchart-big (286×200px)
-     Same structure as barchart, but bars at indexes 4, 9, 12, and 13 reach full height (56px).
-     All other bar heights differ from standard barchart. -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:200px;padding:32px 32px 16px;display:flex;flex-direction:column;
-            gap:40px;box-sizing:border-box;">
-  <!-- Header: label + trend + value -->
+     Same structure as barchart; taller 58px chart with 4 full-height bars. -->
+<div class="iris-kpi iris-kpi--bar">
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <div style="display:flex;align-items:center;gap:2px;">
-        <!-- trend-up arrow SVG -->
-        <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
-      </div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__value">$16,416</div>
     </div>
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+    <div class="iris-kpi__trend iris-kpi__trend--up">
+      <!-- trend-up arrow SVG -->
+      <span>+12.5%</span>
+    </div>
+    <div class="iris-kpi__pill"><!-- dollar SVG --></div>
   </div>
-  <!-- Bar chart: 14 bars × 3px, indexes 4/9/12/13 at 56px (100%) -->
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;height:56px;flex-shrink:0;">
-    <div style="width:3px;height:15px;background:#6875F5;border-radius:32px;"></div>
-    <!-- … 11 more bars — index 6: background:#B4C6FC (lighter shade) … -->
-    <div style="width:3px;height:56px;background:#6875F5;border-radius:32px;"></div><!-- index 12 -->
-    <div style="width:3px;height:56px;background:#6875F5;border-radius:32px;"></div><!-- index 13 -->
+  <div class="iris-kpi__bars" style="height:58px;">
+    <div class="iris-kpi__bar" style="height:15px;"></div>
+    <!-- … bars at full height use height:100% … -->
+    <div class="iris-kpi__bar" style="height:100%;"></div>
   </div>
 </div>`,
       },
@@ -790,22 +730,17 @@ export const BarchartSegmHor = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — barchart-segm-hor (449×104px)
-     Layout: flex-row. Left: label + 12 segmented columns. Right: trend badge + "Compared to day prior".
      5 segment colors: gray #F2F4F7, green #22C55E, pink #EC4899, sky #33BFFF, blue #1D4ED8.
-     Column width: 6px. Gap between columns: 10px. Container height: 50px. -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:449px;height:104px;padding:32px 32px 16px;
-            display:flex;flex-direction:row;gap:16px;align-items:flex-end;box-sizing:border-box;">
+     Column width: 6px, gap 10px, container 50px (chart data stays inline). -->
+<div class="iris-kpi iris-kpi--wide">
 
   <!-- Left: label + segmented columns -->
   <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:0;justify-content:flex-end;">
-    <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-    <!-- Segmented chart: 12 columns × 6px wide, aligned to bottom -->
+    <div class="iris-kpi__label">Total Sales</div>
     <div style="display:flex;align-items:flex-end;gap:10px;height:50px;flex-shrink:0;">
-      <!-- Each column: stacked color segments (height in px from data) -->
       <div style="display:flex;flex-direction:column;width:6px;overflow:hidden;flex-shrink:0;">
-        <div style="width:6px;height:16px;background:#F2F4F7;flex-shrink:0;"></div>
-        <div style="width:6px;height:3px;background:#22C55E;flex-shrink:0;"></div>
+        <div style="width:6px;height:16px;background:#F2F4F7;"></div>
+        <div style="width:6px;height:3px;background:#22C55E;"></div>
         <!-- … repeat for all 12 columns … -->
       </div>
     </div>
@@ -813,13 +748,13 @@ export const BarchartSegmHor = {
 
   <!-- Right: trend badge + subtitle + icon pill -->
   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-    <div style="display:flex;align-items:center;gap:2px;">
+    <div class="iris-kpi__trend iris-kpi__trend--up">
       <!-- trend-up arrow SVG -->
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+      <span>+12.5%</span>
     </div>
-    <span style="font:400 12px/1.5 'Inter',sans-serif;color:#6B7280;text-align:right;">Compared to day prior</span>
+    <span class="iris-kpi__subtitle" style="text-align:right;">Compared to day prior</span>
   </div>
-  <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+  <div class="iris-kpi__pill"><!-- dollar SVG --></div>
 
 </div>`,
       },
@@ -838,37 +773,22 @@ export const CreditUp = {
       source: {
         language: 'html',
         code: `<!-- Card KPI — Credit (286×168px)
-     Same shell and header as Linechart. Different SVG path — smoother, credit-card-style wave.
-     Trend color: #5850EC (brand/600). No "Compared to day prior" row (same as standard Linechart). -->
-<div style="background:var(--color-bg-surface);border-radius:8px;box-shadow:0 1px 1px rgba(0,0,0,.08);
-            width:286px;height:168px;padding:16px;display:flex;flex-direction:column;
-            gap:16px;position:relative;overflow:hidden;box-sizing:border-box;">
-
-  <!-- Header row: label + value + trend + icon pill -->
+     Same shell and header as Linechart; different Figma-exported wave path. -->
+<div class="iris-kpi iris-kpi--line">
   <div style="display:flex;gap:16px;align-items:flex-start;">
     <div style="flex:1;min-width:0;">
-      <div style="font:500 12px/1.5 'Inter',sans-serif;color:#111928;">Total Sales</div>
-      <div style="font:600 24px/1.5 'Inter',sans-serif;color:#111928;">$16,416</div>
+      <div class="iris-kpi__label">Total Sales</div>
+      <div class="iris-kpi__value">$16,416</div>
     </div>
-    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+    <div class="iris-kpi__trend iris-kpi__trend--up">
       <!-- trend-up arrow SVG -->
-      <span style="font:600 12px/1.5 'Inter',sans-serif;color:#5850EC;">+12.5%</span>
+      <span>+12.5%</span>
     </div>
-    <div style="background:#D1D5DB;border-radius:999px;padding:9px;flex-shrink:0;"><!-- dollar SVG --></div>
+    <div class="iris-kpi__pill"><!-- dollar SVG --></div>
   </div>
-
-  <!-- Credit-style wave chart — flush to card bottom, absolutely positioned
-       Path differs from standard linechart: smoother, shallower curve with plateau in the middle -->
-  <div style="position:absolute;bottom:0;left:0;right:0;">
-    <svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70"
-         preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- area fill at 12% opacity -->
-      <path d="M0,40 C40,42 60,28 100,32 C140,36 155,20 190,24 C220,28 240,18 286,8
-               L286,70 L0,70 Z" fill="#5850EC" opacity="0.12"/>
-      <!-- stroke line -->
-      <path d="M0,40 C40,42 60,28 100,32 C140,36 155,20 190,24 C220,28 240,18 286,8"
-            fill="none" stroke="#5850EC" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
+  <div class="iris-kpi__chart">
+    <svg style="width:100%;height:69px;display:block;" viewBox="0 0 286 69" preserveAspectRatio="none">
+      <!-- Figma-exported credit-wave fill + stroke paths (#5850EC) -->
     </svg>
   </div>
 </div>`,

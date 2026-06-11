@@ -43,30 +43,29 @@ const COLOR_NAMES = Object.keys(CHIP_COLORS);
 // Heroicons mini — x-mark (20×20 solid)
 const X_PATH = 'M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z';
 
+// Built on the real `.iris-chip` + `.iris-chip--{color}` + `.iris-chip--disabled`
+// classes. The "hover" gallery state simulates the :hover background inline
+// (preview-only) — the real class handles actual hover.
 function chip({ label = 'Label', color = 'light', disabled = false, dot = false, state = 'default' }) {
   const c = CHIP_COLORS[color] ?? CHIP_COLORS.light;
-  const bg   = state === 'hover'    ? c.hover
-             : state === 'disabled' || disabled ? c.disabledBg
-             : c.bg;
-  const text = state === 'disabled' || disabled ? c.disabledText : c.text;
-  const icon = c.icon;
-  const opacity = (state === 'disabled' || disabled) ? 'opacity:0.9;' : '';
-  const cursor  = (state === 'disabled' || disabled) ? 'cursor:not-allowed;' : '';
+  const isDisabled = state === 'disabled' || disabled;
+  const classes = `iris-chip iris-chip--${color}${isDisabled ? ' iris-chip--disabled' : ''}`;
+  const hoverSim = state === 'hover' ? ` style="background:${c.hover};"` : '';
 
   const dotHtml = dot
-    ? `<svg width="12" height="12" viewBox="0 0 12 12" fill="${icon}" aria-hidden="true" style="flex-shrink:0;">
+    ? `<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true" style="flex-shrink:0;opacity:.75;">
         <circle cx="6" cy="6" r="3"/>
        </svg>`
     : '';
 
   const dismissHtml = `<button type="button" aria-label="Remove ${label}"
-    style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:${disabled ? 'not-allowed' : 'pointer'};padding:0;line-height:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="${icon}" aria-hidden="true">
+    style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;color:inherit;cursor:${isDisabled ? 'not-allowed' : 'pointer'};padding:0;line-height:0;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="opacity:.75;">
       <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
     </svg>
   </button>`;
 
-  return `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;font-family:inherit;${opacity}${cursor}">${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
+  return `<span class="${classes}"${hoverSim}>${dotHtml}<span>${label}</span>${dismissHtml}</span>`;
 }
 
 export default {
@@ -138,17 +137,14 @@ export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
     const a = args;
-    const c = CHIP_COLORS[a.color] ?? CHIP_COLORS.light;
-    const bg   = a.disabled ? c.disabledBg : c.bg;
-    const text = a.disabled ? c.disabledText : c.text;
-    const icon = c.icon;
-    const dotPart = a.dot ? `\n  <svg width="12" height="12" viewBox="0 0 12 12" fill="${icon}" aria-hidden="true">\n    <circle cx="6" cy="6" r="3"/>\n  </svg>` : '';
+    const classes = `iris-chip iris-chip--${a.color}${a.disabled ? ' iris-chip--disabled' : ''}`;
+    const dotPart = a.dot ? `\n  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>` : '';
 
-    const htmlCode = `<span style="display:inline-flex;align-items:center;gap:4px;background:${bg};color:${text};border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">${dotPart}\n  <span>${a.label}</span>\n  <button type="button" aria-label="Remove ${a.label}"${a.disabled ? ' aria-disabled="true"' : ''} style="display:inline-flex;align-items:center;background:none;border:none;cursor:${a.disabled ? 'not-allowed' : 'pointer'};padding:0;">\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="${icon}" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>\n  </button>\n</span>`;
+    const htmlCode = `<span class="${classes}">${dotPart}\n  <span>${a.label}</span>\n  <button type="button" aria-label="Remove ${a.label}"${a.disabled ? ' aria-disabled="true"' : ''} style="display:inline-flex;align-items:center;background:none;border:none;color:inherit;cursor:${a.disabled ? 'not-allowed' : 'pointer'};padding:0;">\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>\n  </button>\n</span>`;
 
-    const reactCode = `<span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '${bg}', color: '${text}', borderRadius: '4px', padding: '2px 8px', fontSize: 'var(--text-xs)', fontWeight: 'var(--font-medium)', whiteSpace: 'nowrap', lineHeight: '1.5' }}>\n  ${a.dot ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="${icon}" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>' : ''}\n  <span>${a.label}</span>\n  <button\n    type="button"\n    aria-label={\`Remove \${label}\`}\n    ${a.disabled ? 'aria-disabled="true"' : ''}\n    onClick={onRemove}\n    style={{ display: 'inline-flex', alignItems: 'center', background: 'none', border: 'none', cursor: '${a.disabled ? 'not-allowed' : 'pointer'}', padding: '0' }}\n  >\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="${icon}" aria-hidden="true">{/* x icon */}</svg>\n  </button>\n</span>`;
+    const reactCode = `<span className="${classes}">\n  ${a.dot ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>' : ''}\n  <span>${a.label}</span>\n  <button\n    type="button"\n    aria-label={\`Remove \${label}\`}\n    ${a.disabled ? 'aria-disabled="true"' : ''}\n    onClick={onRemove}\n    style={{ display: 'inline-flex', alignItems: 'center', background: 'none', border: 'none', color: 'inherit', padding: 0 }}\n  >\n    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">{/* x icon */}</svg>\n  </button>\n</span>`;
 
-    const componentCode = `export function Chip({ label = "${a.label}", color = "${a.color}", dot = ${a.dot}, disabled = ${a.disabled}, onRemove }) {\n  return (\n    <span className={\`chip chip--\${color}\${disabled ? ' disabled' : ''}\`}>\n      {dot && <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>}\n      <span>{label}</span>\n      <button\n        type="button"\n        aria-label={\`Remove \${label}\`}\n        aria-disabled={disabled}\n        onClick={onRemove}\n        disabled={disabled}\n      >\n        <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true">{/* x icon */}</svg>\n      </button>\n    </span>\n  );\n}`;
+    const componentCode = `export function Chip({ label = "${a.label}", color = "${a.color}", dot = ${a.dot}, disabled = ${a.disabled}, onRemove }) {\n  return (\n    <span className={\`iris-chip iris-chip--\${color}\${disabled ? ' iris-chip--disabled' : ''}\`}>\n      {dot && <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><circle cx="6" cy="6" r="3"/></svg>}\n      <span>{label}</span>\n      <button\n        type="button"\n        aria-label={\`Remove \${label}\`}\n        aria-disabled={disabled}\n        onClick={onRemove}\n        disabled={disabled}\n        style={{ display: 'inline-flex', alignItems: 'center', background: 'none', border: 'none', color: 'inherit', padding: 0 }}\n      >\n        <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">{/* x icon */}</svg>\n      </button>\n    </span>\n  );\n}`;
 
     const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -212,7 +208,14 @@ export const Interactive = {
   parameters: {
     docs: {
       description: {
-        story: 'Use the **Controls** panel to configure color, label, dot indicator, and disabled state.',
+        story: 'Use the **Controls** panel to configure color, label, dot indicator, and disabled state. Preview and snippets emit the real `.iris-chip` classes.',
+      },
+      source: {
+        transform: (_src, ctx) => {
+          const a = ctx.args;
+          const classes = `iris-chip iris-chip--${a.color}${a.disabled ? ' iris-chip--disabled' : ''}`;
+          return `<span class="${classes}">\n  ${a.dot ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>\n  ' : ''}<span>${a.label}</span>\n  <button type="button" aria-label="Remove ${a.label}"><!-- x icon --></button>\n</span>`;
+        },
       },
     },
   },
@@ -236,22 +239,18 @@ All 10 color themes in default state.
       },
       source: {
         code: `<!-- Light (neutral default) -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:var(--color-bg-secondary);color:#4a5565;border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+<span class="iris-chip iris-chip--light">
   <span>Marketing</span>
-  <button type="button" aria-label="Remove Marketing" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
+  <button type="button" aria-label="Remove Marketing" style="display:inline-flex;align-items:center;background:none;border:none;color:inherit;cursor:pointer;padding:0;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- x icon --></svg>
   </button>
 </span>
 
 <!-- Indigo -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+<span class="iris-chip iris-chip--indigo">
   <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;cursor:pointer;padding:0;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
+  <button type="button" aria-label="Remove Design" style="display:inline-flex;align-items:center;background:none;border:none;color:inherit;cursor:pointer;padding:0;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- x icon --></svg>
   </button>
 </span>`,
         language: 'html',
@@ -285,19 +284,19 @@ Default, hover, and disabled states for the selected color. Use the **color** co
         `,
       },
       source: {
-        code: `<!-- Default -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
+        code: `<!-- Default (hover handled by the class) -->
+<span class="iris-chip iris-chip--indigo">
   <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
+  <button type="button" aria-label="Remove Design" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- x icon --></svg>
   </button>
 </span>
 
 <!-- Disabled -->
-<span style="display:inline-flex;align-items:center;gap:4px;background:#b4c6fc;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;cursor:not-allowed;">
+<span class="iris-chip iris-chip--indigo iris-chip--disabled">
   <span>Design</span>
-  <button type="button" aria-label="Remove Design" aria-disabled="true" style="background:none;border:none;cursor:not-allowed;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true"><path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/></svg>
+  <button type="button" aria-label="Remove Design" aria-disabled="true" style="background:none;border:none;color:inherit;cursor:not-allowed;padding:0;display:inline-flex;align-items:center;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- x icon --></svg>
   </button>
 </span>`,
         language: 'html',
@@ -337,15 +336,13 @@ Chips with an optional leading dot indicator. Useful for category/status chips w
         `,
       },
       source: {
-        code: `<span style="display:inline-flex;align-items:center;gap:4px;background:#5850ec;color:var(--color-bg-white);border-radius:4px;padding:2px 8px;font-size:var(--text-xs);font-weight:var(--font-medium);white-space:nowrap;line-height:1.5;">
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="var(--color-bg-secondary)" aria-hidden="true">
+        code: `<span class="iris-chip iris-chip--indigo">
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
     <circle cx="6" cy="6" r="3"/>
   </svg>
   <span>Design</span>
-  <button type="button" aria-label="Remove Design" style="background:none;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
-    <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--color-bg-secondary)" aria-hidden="true">
-      <path fill-rule="evenodd" d="${X_PATH}" clip-rule="evenodd"/>
-    </svg>
+  <button type="button" aria-label="Remove Design" style="background:none;border:none;color:inherit;cursor:pointer;padding:0;display:inline-flex;align-items:center;">
+    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><!-- x icon --></svg>
   </button>
 </span>`,
         language: 'html',
