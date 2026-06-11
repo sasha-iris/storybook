@@ -85,7 +85,7 @@ const DOTS_H = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stro
 const QUESTION = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
 
 /* Heroicons envelope (2 paths) — used in form inputs card */
-const MAIL_ICON = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true" style="flex-shrink:0;">
+const MAIL_ICON = `<svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true" style="flex-shrink:0;display:block;">
   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
 </svg>`;
@@ -245,7 +245,7 @@ Social profile card. Centred avatar, name, role, and two action buttons.
  * **QA checklist**
  * - Container: .card-auth — 384px, p-32px, bg #fff, rounded-8px, shadow 0 1px 3px + 0 1px 2px rgba(0,0,0,.1)
  * - Input bg: var(--color-bg-tertiary), border: 1px solid var(--color-border-default), border-radius: 8px, px-16px py-12px
- * - Email input has a mail icon (16px) left of the placeholder
+ * - Email input has a mail icon: 16×16 #6b7280, 16px from input left edge, vertically centered; placeholder starts at 42px
  * - Checkbox: 16px square, bg var(--color-bg-tertiary), border 0.5px solid var(--color-border-default), border-radius 4px
  * - "Create account" button: .btn-blue — bg #1447e6 (blue/700, NOT brand/800 purple; .btn-primary renders purple), full width
  * - "Lost Password?" color: var(--color-primary) (blue/600), not brand purple
@@ -281,9 +281,14 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
   <div class="form-group">
     <label class="form-label">Your email</label>
     <div style="position:relative;">
-      <!-- mail icon -->
-      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--color-text-secondary);">✉</span>
-      <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:36px;">
+      <!-- mail icon: 16×16 #6b7280, 16px from input edge, vertically centered (Figma) -->
+      <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;color:var(--color-text-secondary);">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="#6b7280" aria-hidden="true" style="flex-shrink:0;display:block;">
+          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+        </svg>
+      </span>
+      <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:42px;">
     </div>
   </div>
   <!-- Password -->
@@ -325,8 +330,8 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
         <div class="form-group" style="margin-bottom:0;">
           <label class="form-label">Your email</label>
           <div style="position:relative;">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--color-text-secondary);">${MAIL_ICON}</span>
-            <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:36px;">
+            <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;color:var(--color-text-secondary);">${MAIL_ICON}</span>
+            <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:42px;">
           </div>
         </div>
 
