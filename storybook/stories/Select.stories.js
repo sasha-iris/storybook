@@ -103,6 +103,8 @@ export default {
     docs: {
       description: {
         component: `
+**Native popup caveat:** the OPEN option list of a native \`<select>\` is rendered by the OS and cannot be styled (it will look gray/dark on macOS dark mode). When the open list must match the design system, compose a combobox instead: \`<button class="form-select">\` trigger (the chevron comes from the class) + the Dropdown family list (\`.dropdown-menu.dropdown-menu--absolute\` + \`.dropdown-item\`, selected = \`.active\`), with \`role="combobox"\`/\`aria-expanded\` on the trigger and \`role="listbox"\`/\`role="option"\`+\`aria-selected\` on the list; Arrow keys navigate, Enter selects, Escape closes.
+
 **Select** covers two components: the **Input/Select** (single selection with inline label prefix, icon, and chevron) and the **Multiselect** (multi-value tag-based selector).
 
 **When to use**
@@ -366,3 +368,137 @@ export const MultiselectVariants = {
   },
 };
 
+// ─── Custom listbox (combobox) — styled open list ────────────────────────────
+// The open list of a native <select> is OS-rendered and unstylable (gray/dark
+// on macOS dark mode). This recipe composes two existing families instead:
+// Select trigger (.form-select on a <button>) + Dropdown list (.dropdown-menu
+// + .dropdown-item, selected = .active). CSS-only library: the behaviour
+// script below IS part of the recipe — copy both.
+export const CustomListbox = {
+  name: 'Custom listbox (combobox)',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: `Styled replacement for a native \`<select>\` whose open list must match the design system (the native popup is OS-rendered and unstylable — gray/dark on macOS dark mode).
+
+**Composition** (no new classes): trigger = \`<button class="form-select">\` (surface, border and chevron come from the class) · list = \`.dropdown-menu.dropdown-menu--absolute\` + \`.dropdown-item\`, selected option = \`.active\` (brand purple #42389d).
+
+**A11y contract (required, the script implements it)**
+- Trigger: \`role="combobox"\` + \`aria-expanded\` + \`aria-haspopup="listbox"\` + \`aria-controls\`
+- List: \`role="listbox"\`; options: \`role="option"\` + \`aria-selected\`
+- Focus: opening focuses the selected option; selecting or Escape returns focus to the trigger
+
+**Keyboard**: ArrowDown/ArrowUp — open, then move between options · Enter/Space — select (native button activation) · Escape — close without changes · click outside — close.
+
+✅ Brand-consistent menus, dark-mode-critical surfaces, short curated lists (2–10 items)
+❌ Long lists (countries, time zones) — keep the native \`<select>\`, the OS popup scrolls/types-ahead better
+❌ Mobile-heavy forms — native selects open OS pickers, which beat any custom menu on touch
+❌ Never try to style native \`<option>\` — it is not stylable, that is the whole reason this recipe exists`,
+      },
+      source: { code: `<!-- Trigger: .form-select on a <button> — surface, border and chevron come from the class -->
+<div style="position:relative;max-width:320px;">
+  <button type="button" id="orgSelect" class="form-select" role="combobox"
+          aria-expanded="false" aria-haspopup="listbox" aria-controls="orgListbox"
+          style="text-align:left;cursor:pointer;">Test Invite</button>
+
+  <!-- Open list: Dropdown family — selected option = .active (brand purple) -->
+  <ul class="dropdown-menu dropdown-menu--absolute" id="orgListbox" role="listbox"
+      aria-label="Default organization" hidden style="width:100%;margin:0;padding:0;">
+    <li><button type="button" class="dropdown-item active" role="option" aria-selected="true">Test Invite</button></li>
+    <li><button type="button" class="dropdown-item" role="option" aria-selected="false">Test 2005</button></li>
+    <li><button type="button" class="dropdown-item" role="option" aria-selected="false">Iris Finance HQ</button></li>
+  </ul>
+</div>
+
+<script>
+  const trigger = document.getElementById('orgSelect');
+  const listbox = document.getElementById('orgListbox');
+  const options = [...listbox.querySelectorAll('[role="option"]')];
+
+  function setOpen(open) {
+    listbox.hidden = !open;
+    trigger.setAttribute('aria-expanded', String(open));
+    if (open) (options.find(o => o.getAttribute('aria-selected') === 'true') || options[0]).focus();
+  }
+
+  trigger.addEventListener('click', () => setOpen(listbox.hidden));
+  trigger.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); setOpen(true); }
+  });
+
+  options.forEach((opt, i) => {
+    opt.addEventListener('click', () => {
+      options.forEach(o => { o.setAttribute('aria-selected', 'false'); o.classList.remove('active'); });
+      opt.setAttribute('aria-selected', 'true');
+      opt.classList.add('active');
+      trigger.textContent = opt.textContent;
+      setOpen(false);
+      trigger.focus();
+    });
+    opt.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown')      { e.preventDefault(); (options[i + 1] || options[0]).focus(); }
+      else if (e.key === 'ArrowUp')   { e.preventDefault(); (options[i - 1] || options[options.length - 1]).focus(); }
+      else if (e.key === 'Escape')    { setOpen(false); trigger.focus(); }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!listbox.hidden && !e.target.closest('#orgSelect, #orgListbox')) setOpen(false);
+  });
+</script>` },
+    },
+  },
+  render: () => `
+    <div style="min-height:260px;padding:8px;">
+      <label class="form-label" for="sbOrgSelect" style="display:block;margin-bottom:6px;">Default Organization</label>
+      <div style="position:relative;max-width:320px;">
+        <button type="button" id="sbOrgSelect" class="form-select" role="combobox"
+                aria-expanded="false" aria-haspopup="listbox" aria-controls="sbOrgListbox"
+                style="text-align:left;cursor:pointer;">Test Invite</button>
+        <ul class="dropdown-menu dropdown-menu--absolute" id="sbOrgListbox" role="listbox"
+            aria-label="Default organization" hidden style="width:100%;margin:0;padding:0;">
+          <li><button type="button" class="dropdown-item active" role="option" aria-selected="true">Test Invite</button></li>
+          <li><button type="button" class="dropdown-item" role="option" aria-selected="false">Test 2005</button></li>
+          <li><button type="button" class="dropdown-item" role="option" aria-selected="false">Iris Finance HQ</button></li>
+        </ul>
+      </div>
+      <p class="form-helper" style="margin-top:8px;">Live demo — click or use ArrowDown / Enter / Escape.</p>
+      <script>
+        (function () {
+          const trigger = document.getElementById('sbOrgSelect');
+          const listbox = document.getElementById('sbOrgListbox');
+          if (!trigger || trigger.dataset.init) return;
+          trigger.dataset.init = '1';
+          const options = [...listbox.querySelectorAll('[role="option"]')];
+          function setOpen(open) {
+            listbox.hidden = !open;
+            trigger.setAttribute('aria-expanded', String(open));
+            if (open) (options.find(o => o.getAttribute('aria-selected') === 'true') || options[0]).focus();
+          }
+          trigger.addEventListener('click', () => setOpen(listbox.hidden));
+          trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); setOpen(true); }
+          });
+          options.forEach((opt, i) => {
+            opt.addEventListener('click', () => {
+              options.forEach(o => { o.setAttribute('aria-selected', 'false'); o.classList.remove('active'); });
+              opt.setAttribute('aria-selected', 'true');
+              opt.classList.add('active');
+              trigger.textContent = opt.textContent;
+              setOpen(false);
+              trigger.focus();
+            });
+            opt.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowDown')    { e.preventDefault(); (options[i + 1] || options[0]).focus(); }
+              else if (e.key === 'ArrowUp') { e.preventDefault(); (options[i - 1] || options[options.length - 1]).focus(); }
+              else if (e.key === 'Escape')  { setOpen(false); trigger.focus(); }
+            });
+          });
+          document.addEventListener('click', (e) => {
+            if (!listbox.hidden && !e.target.closest('#sbOrgSelect, #sbOrgListbox')) setOpen(false);
+          });
+        })();
+      </script>
+    </div>`,
+};

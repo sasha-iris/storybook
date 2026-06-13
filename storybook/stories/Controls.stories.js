@@ -560,3 +560,51 @@ Disabled: label + helper → gray/300 \`var(--color-border-default)\`
 
 </div>`,
 };
+
+// ─── Radio cards — selectable card option ──────────────────────────────────
+export const RadioCards = {
+  name: 'Radio cards',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: 'Selectable card option — `.iris-radio-card` (+ `--selected` / `--disabled`) wrapping the canonical `.iris-radio` and `.iris-control__body`. States: hover border `--color-ctrl-off-hover`, pressed `--btn-primary-hover`, selected border `--btn-primary-bg`. A11y: wrap the group in `role="radiogroup"`; each radio keeps `role="radio"` + `aria-checked`, Space/Enter toggles. ✅ One-of-N choices that need descriptions (verification method, plan, report type) · ❌ short option lists — use plain radios · ❌ multi-select — use checkboxes.',
+      },
+      source: {
+        code: `<label class="iris-radio-card iris-radio-card--selected">
+  <span class="iris-control__check">
+    <span class="iris-radio iris-radio--checked" role="radio" aria-checked="true" tabindex="0" aria-label="Email"></span>
+  </span>
+  <span class="iris-control__body">
+    <span class="iris-control__label">Email</span>
+    <span class="iris-control__helper">Receive verification codes via email.</span>
+  </span>
+</label>`,
+      },
+    },
+  },
+  render: () => `
+    <div role="radiogroup" aria-label="Preferred verification method" style="display:flex;flex-direction:column;gap:12px;max-width:420px;">
+      <label class="iris-radio-card iris-radio-card--selected">
+        <span class="iris-control__check"><span class="iris-radio iris-radio--checked" role="radio" aria-checked="true" tabindex="0" aria-label="Email"></span></span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">Email</span>
+          <span class="iris-control__helper">Receive verification codes via email.</span>
+        </span>
+      </label>
+      <label class="iris-radio-card">
+        <span class="iris-control__check"><span class="iris-radio" role="radio" aria-checked="false" tabindex="0" aria-label="SMS"></span></span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">SMS</span>
+          <span class="iris-control__helper">Receive verification codes via text message.</span>
+        </span>
+      </label>
+      <label class="iris-radio-card iris-radio-card--disabled">
+        <span class="iris-control__check"><span class="iris-radio iris-radio--disabled" role="radio" aria-checked="false" aria-disabled="true" tabindex="0" aria-label="Authenticator App"></span></span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">Authenticator App</span>
+          <span class="iris-control__helper">Set up and verify an authenticator app before using it as your preferred method.</span>
+        </span>
+      </label>
+    </div>`,
+};

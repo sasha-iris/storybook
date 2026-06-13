@@ -71,6 +71,7 @@ Iris Library/
   Table/             ← Table/Cells, Table/Cohort, Table/Composed
   Tabs/              ← Tabs (Interactive, All states, With counter, With dropdown, Full bar)
   Progress Bar/      ← Progress Bar (Interactive, All colors, All values, Label below, In context)
+  QR/                ← QR (QR frame — quiet-zone container for QR codes)
 ```
 
 Rules:
@@ -154,3 +155,5 @@ Every CSS change must go into BOTH files simultaneously:
 - `iris-components.css` — used by Lovable export
 
 Never update one without the other. If a class exists in one file, it must exist in the other with identical values.
+
+This applies to TOKENS too — six token conflicts between the two files were found and fixed on 2026-06-12 (`--color-bg-primary` blue-vs-purple broke form checkboxes; `--btn-dark-hover` undefined broke `.btn-dark:hover`; etc.). Before every push, run the token diff: extract all `--token: value` pairs from both files, compare values, and check that every `var(--token)` used in a file is defined in that same file. Zero mismatches and zero undefined tokens is the bar.

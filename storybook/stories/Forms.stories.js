@@ -275,6 +275,7 @@ export default {
 - Label (required) — \`font-size:14px font-weight:500\`
 - Input container — \`height:37px/42px/52px\`, bg \`var(--color-bg-tertiary)\`, border \`var(--color-border-default)\`
 - Leading icon (optional) — 16×16px
+- Trailing icon/action (optional) — \`.form-search-wrap--end\`; use \`<button class="form-search-icon">\` for interactive actions (copy, clear)
 - Input text or placeholder
 - Clear × button (shown when value present)
 - Helper/caption text — \`font-size:12px\`, color varies by state
@@ -752,4 +753,35 @@ export const ReadOnlyField = {
       ${items.map(i => readOnly(i)).join('')}
     </div>`;
   },
+};
+
+// ─── Code / OTP input ───────────────────────────────────────────────────────
+export const CodeInput = {
+  name: 'Code input (OTP)',
+  parameters: {
+    controls: { disable: true },
+    docs: {
+      description: {
+        story: 'One-time verification code field — `.form-input.form-input-code` with `maxlength="6" inputmode="numeric" autocomplete="one-time-code"`. Sanitize input to digits in JS (strip spaces on paste, trim to 6). Error state = the standard `.is-error` + `.form-feedback-error` + `aria-invalid="true"`. ✅ TOTP / SMS / email codes · ❌ masked PINs — use a password input.',
+      },
+      source: {
+        code: `<input class="form-input form-input-code" maxlength="6" inputmode="numeric"
+       autocomplete="one-time-code" placeholder="123456"
+       aria-label="6-digit verification code">`,
+      },
+    },
+  },
+  render: () => `
+    <div style="display:flex;flex-direction:column;gap:24px;max-width:280px;">
+      <div class="form-group">
+        <label class="form-label">Verification code</label>
+        <input class="form-input form-input-code" maxlength="6" inputmode="numeric" autocomplete="one-time-code" placeholder="123456" aria-label="6-digit verification code">
+        <p class="form-helper">Enter the 6-digit code from your authenticator app.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Verification code — error</label>
+        <input class="form-input form-input-code is-error" value="000000" maxlength="6" inputmode="numeric" aria-invalid="true" aria-label="6-digit verification code with error">
+        <p class="form-feedback-error">The code is invalid or expired. Try again.</p>
+      </div>
+    </div>`,
 };

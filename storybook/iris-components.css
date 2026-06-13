@@ -109,7 +109,7 @@
   --color-text-secondary:            #6B7280;
   --color-text-disabled:             #9CA3AF;
   --color-text-inverse:              #FFFFFF;
-  --color-text-link:                 #1447e6;
+  --color-text-link:                 #1C64F2; /* sync: styles.css — canonical blue (Table-cells precedent), was #1447e6 */
   --color-text-heading:              #101828;
   --color-text-body:                 #4a5565;
   --color-text-body-subtle:          #6a7282;
@@ -128,6 +128,7 @@
   --color-bg-tertiary:               #f3f4f6;
   --color-bg-primary:                #42389d; /* brand purple — NOT legacy blue */
   --color-bg-primary-hover:          #362f78;
+  --color-bg-secondary:              #f9fafb; /* sync: styles.css — was used by .iris-search__select but undefined here */
   --color-bg-dark:                   #1e2939;
   --color-bg-dark-strong:            #101828;
   --color-bg-brand:                  #5145cd;
@@ -140,7 +141,7 @@
   /* Border colors */
   --color-border-default:            #e5e7eb;
   --color-border-base:               #e5e7eb;
-  --color-border-focus:              #155dfc;
+  --color-border-focus:              #1C64F2; /* Figma 84:19145 Active stroke #155dfc -> canonical blue; sync: styles.css */
 
   /* Semantic */
   --color-danger:                    #e02424;
@@ -487,6 +488,15 @@ a:hover { text-decoration: underline; }
   font-family: var(--font-family-base);
   text-decoration: none;
   transition: color 0.15s, border-color 0.15s;
+  /* Defaults = most-used Figma variant (Semibold / sm); type & size modifiers override */
+  font-size: 14px;
+  font-weight: 600;
+  color: #42389d;
+}
+.btn-link:hover {
+  color: #362f78;
+  border-bottom-color: #362f78;
+  text-decoration: none;
 }
 /* Semibold (Figma type=Semibold) — brand color */
 .btn-link-semibold {
@@ -612,8 +622,8 @@ a:hover { text-decoration: underline; }
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
+  /* Figma 84:19145 (State=Active): stroke #155dfc -> #1c64f2, NO glow */
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(118, 169, 250, 0.35);
 }
 
 /* Input sizes — matching [T] sizes */
@@ -807,6 +817,20 @@ input[type="file"].form-file-input {
 .form-feedback-error { font-size: var(--text-xs); color: var(--color-danger); margin-top: 4px; }
 .form-feedback-success { font-size: var(--text-xs); color: #0E9F6E; margin-top: 4px; }
 
+
+/* ── Code / OTP input — one-time verification codes ──
+   Modifier on .form-input. Type = lg/semibold tokens, tabular digits;
+   6px tracking is an engineering choice pending designer confirmation.
+   Pair with maxlength="6" inputmode="numeric" autocomplete="one-time-code". */
+.form-input-code {
+  max-width: 200px;
+  text-align: center;
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  letter-spacing: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Search input — matches Iris "Search input" frame */
 .form-search-wrap {
   position: relative;
@@ -820,6 +844,23 @@ input[type="file"].form-file-input {
   pointer-events: none;
 }
 .form-search-wrap .form-input { padding-left: 38px; }
+
+/* Trailing-icon variant — icon/action at the right edge (copy, clear) */
+.form-search-wrap--end .form-search-icon {
+  left: auto;
+  right: 12px;
+}
+.form-search-wrap--end .form-input { padding-left: 14px; padding-right: 38px; }
+/* Interactive trailing action — when the icon is a <button> */
+.form-search-wrap button.form-search-icon {
+  pointer-events: auto;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
 
 /* Floating labels — matches Iris "Floating labels" frame */
 .form-floating {
@@ -1785,6 +1826,7 @@ input[type="file"].form-file-input {
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
   color: var(--color-text-primary);
+  margin: 0; /* h2 default margins otherwise inflate the header */
 }
 
 .modal-close {
@@ -2314,6 +2356,46 @@ input[type="file"].form-file-input {
 }
 .stepper-line { flex: 1; height: 1px; background: #e5e7eb; margin-top: 12px; }
 .stepper--dots .stepper-label { font-size: var(--text-base); font-weight: var(--font-medium); color: #111928; }
+
+/* ── Standalone instructional step — no connector, self-contained ──
+   For "How it works" explanations; NOT an interactive stepper (no active/
+   completed semantics, not clickable). Number reuses .stepper-icon in the
+   filled (completed) style; icon circle = .card-icon-purple tint pair. */
+.stepper-item--standalone { gap: 10px; }
+.stepper-item.stepper-item--standalone::after { content: none; } /* beats .stepper-item:not(:last-child)::after */
+.stepper-step-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #EDE9FE;  /* = .card-icon-purple pair */
+  color: #5B21B6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.stepper-step-heading { display: inline-flex; align-items: center; gap: 8px; }
+.stepper-item--standalone .stepper-icon {
+  flex: none; /* heading is a flex row — never shrink the number */
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: var(--color-bg-primary);
+  color: #fff;
+  font-size: var(--text-xs);
+}
+.stepper-step-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-heading);
+}
+.stepper-step-desc {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  text-align: center;
+}
 
 /* Vertical stepper */
 .stepper-vertical {
@@ -3492,6 +3574,51 @@ kbd.kbd-dark {
   color: var(--color-ctrl-danger-disabled-text);
 }
 
+/* ── Radio card — selectable card option ──
+   Derived from existing canon (Figma node pending designer):
+   contains the canonical .iris-radio + .iris-control__body; border/hover =
+   interactive-border scale (#e5e7eb → --color-ctrl-off-hover, as Datepicker
+   input); selected = --btn-primary-bg (as .iris-radio--checked); pressed =
+   --btn-primary-hover; radius 12 = interactive containers (.btn). */
+.iris-radio-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.iris-radio-card:hover:not(.iris-radio-card--selected):not(.iris-radio-card--disabled) {
+  border-color: var(--color-ctrl-off-hover);
+}
+.iris-radio-card:active:not(.iris-radio-card--disabled) {
+  border-color: var(--btn-primary-hover);
+}
+.iris-radio-card--selected { border-color: var(--btn-primary-bg); }
+.iris-radio-card--disabled { cursor: not-allowed; background: var(--color-bg-secondary); }
+.iris-radio-card--disabled .iris-control__label,
+.iris-radio-card--disabled .iris-control__helper { color: var(--color-ctrl-off); }
+
+/* ── QR frame — container for QR codes ──
+   Guarantees the scanner-required quiet zone: white background + padding
+   stay white even on tinted/dark surfaces (QR needs a light background to
+   scan). Derived from canon: border --color-border-default, radius 12
+   (interactive-container scale), padding 16. Place a generated QR
+   (svg/img) inside; the frame never recolors it. */
+.qr-frame {
+  display: inline-flex;
+  padding: 16px;
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+.qr-frame svg,
+.qr-frame img { display: block; }
+
 /* ── TABS ───────────────────────────────────────────────────── */
 /* Figma node 10007:72664 · h=45px · pad=12px 16px · font=14px/500 */
 .iris-tab-bar {
@@ -4367,3 +4494,7 @@ kbd.kbd-dark {
 .iris-th-v--default  { background:#f9fafb; color:#6b7280; }
 .iris-th-v--actuals  { background:#cddbfe; color:#4b5563; }
 .iris-th-v--forecast { background:#96f7e4; color:#4b5563; }
+
+/* ── Global: the hidden attribute always wins over component display
+   classes (.btn{display:inline-flex}, .modal-backdrop{display:flex} …) ── */
+[hidden] { display: none !important; }

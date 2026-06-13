@@ -52,6 +52,8 @@ three sizes, optional left icon.
 
 **CSS:** \`.btn-link\` + \`.btn-link-semibold\` or \`.btn-link-medium\` + \`.btn-{size}\`
 
+Bare \`.btn-link\` now has safe defaults (= Semibold / sm: 14px, 600, #42389d); type and size modifiers override them.
+
 \`\`\`html
 <!-- Semibold (brand purple) -->
 <a class="btn-link btn-link-semibold btn-sm" href="#">Sign In</a>
