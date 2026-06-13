@@ -58,7 +58,7 @@ function drawerDefault(dark) {
     ${drawerHeader('Info', dark)}
     <p style="margin:0 0 24px;font-size:14px;font-weight:400;color:${body};line-height:1.6;font-family:inherit;">
       Supercharge your hiring by taking advantage of our <strong style="font-weight:600;">limited-time sale</strong>
-      for Flowbite Docs + Job Board. Unlimited access to over 190K top-ranked candidates and the #1 design job board.
+      on Iris Finance Premium. Unlimited access to every dashboard, report, and the full metrics library.
     </p>
     <div style="display:flex;gap:12px;">
       <button class="btn btn-primary btn-md">Get access</button>
@@ -132,7 +132,7 @@ function drawerContactForm(dark) {
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
       <div class="form-group" style="margin-bottom:0;">
         <label class="form-label" style="color:${label};">Your email</label>
-        <input class="form-input" type="email" placeholder="name@flowbite.com"
+        <input class="form-input" type="email" placeholder="name@company.com"
                style="background:${inputB};border-color:${inputC};color:${body};">
         <span class="form-helper" style="color:${body};">We'll never share your details. See our Privacy Policy.</span>
       </div>
@@ -154,7 +154,7 @@ function drawerContactForm(dark) {
       Send message
     </button>
     <div style="display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:1px solid ${dark ? 'var(--color-text-primary)' : T.border};">
-      <span style="font-size:14px;color:${body};font-family:inherit;">info@flowbite.com</span>
+      <span style="font-size:14px;color:${body};font-family:inherit;">info@irisfinance.co</span>
       <span style="font-size:14px;color:${body};font-family:inherit;">1-234-56789-10</span>
     </div>
   </div>`;
@@ -195,7 +195,7 @@ function drawerTextBottom(dark) {
     <div style="display:flex;align-items:center;gap:24px;flex:1;">
       <p style="margin:0;font-size:14px;color:${body};max-width:600px;line-height:1.5;">
         Supercharge your hiring by taking advantage of our <strong style="font-weight:600;">limited-time sale</strong>
-        for Flowbite Docs + Job Board. Unlimited access to over 190K top-ranked candidates.
+        on Iris Finance Premium. Unlimited access to every dashboard, report,.
       </p>
     </div>
     <div style="display:flex;gap:12px;flex-shrink:0;">

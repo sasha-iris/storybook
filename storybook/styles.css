@@ -39,7 +39,7 @@
 
   /* Border */
   --color-border-default:  #E5E7EB; /* gray-200 */
-  --color-border-focus:    #1C64F2; /* Figma 84:19145 Active stroke #155dfc -> canonical blue (Table-cells precedent); was Flowbite #76A9FA */
+  --color-border-focus:    #1C64F2; /* Figma 84:19145 Active stroke #155dfc -> canonical blue (Table-cells precedent); was legacy #76A9FA */
   --color-border-error:    #F98080; /* red-300   */
 
   /* Semantic */

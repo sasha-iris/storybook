@@ -170,7 +170,7 @@ function modalWithForms({ size = 'sm', darkMode = false, showOverlay = true } = 
       <label class="form-label" style="color:${t.body};">Your email</label>
       <div style="position:relative;">
         <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:${t.body};">${mailIcon}</span>
-        <input class="form-input" type="email" placeholder="name@flowbite.com"
+        <input class="form-input" type="email" placeholder="name@company.com"
                style="padding-left:36px;background:${darkMode ? '#4b5563' : 'var(--color-bg-default)'};
                       color:${t.body};border-color:${t.border};">
       </div>
@@ -535,7 +535,7 @@ Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from
 
     <div class="form-group">
       <label class="form-label">Your email</label>
-      <input class="form-input" type="email" placeholder="name@flowbite.com">
+      <input class="form-input" type="email" placeholder="name@company.com">
       <span class="form-helper">We'll never share your details. See our Privacy Policy.</span>
     </div>
 

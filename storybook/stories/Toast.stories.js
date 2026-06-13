@@ -319,7 +319,7 @@ export const AllTypes = {
   render: () => {
     const items = [
       { label: 'Success', html: toastSuccess({ cta: false, title: 'Report exported to CSV.' }) },
-      { label: 'Danger',  html: toastDanger({  cta: false, title: 'The file flowbite-figma-pro.fig was permanently deleted.' }) },
+      { label: 'Danger',  html: toastDanger({  cta: false, title: 'The file iris-figma-library.fig was permanently deleted.' }) },
       { label: 'Default', html: toastDefault({ title: 'Set yourself free.' }) },
       { label: 'Simple',  html: toastSimple({  title: 'Message sent successfully.' }) },
       { label: 'Push',    html: toastPush({ title: 'Bonnie Green', description: 'Hi Neil, thanks for sharing your thoughts.' }) },

@@ -84,7 +84,7 @@ Figma source: \
 
     <div class="form-group">
       <label class="form-label">Your email</label>
-      <input class="form-input" type="email" placeholder="name@flowbite.com">
+      <input class="form-input" type="email" placeholder="name@company.com">
       <span class="form-helper">We'll never share your details. See our Privacy Policy.</span>
     </div>
 

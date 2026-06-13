@@ -67,7 +67,7 @@
 <div role="banner" class="banner banner--default">
   <div class="banner__icon-text">
     <svg class="banner__icon" aria-hidden="true"><!-- lightbulb --></svg>
-    <span class="banner__text">New brand identity has been launched for our Flowbite library.</span>
+    <span class="banner__text">New brand identity has been launched for the Iris Library.</span>
   </div>
   <!-- no dismiss button -->
 </div>

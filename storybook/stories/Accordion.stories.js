@@ -29,8 +29,8 @@ const questionMarkCircle = `<svg width="18" height="18" viewBox="0 0 20 20" fill
 
 const DEFAULT_ITEMS = [
   {
-    title: 'Can I use FlowBite in open-source projects?',
-    body: 'Generally, it is accepted to use FlowBite in open-source projects, as long as the project is licensed under the same terms. Feel free to use this design kit for your open-source projects. Find out more information by reading the license.',
+    title: 'Can I use the Iris Library in open-source projects?',
+    body: 'Generally, it is accepted to use the Iris Library in open-source projects, as long as the project is licensed under the same terms. Feel free to use this design kit for your open-source projects. Find out more information by reading the license.',
   },
   {
     title: 'How do you achieve the "blurry" effect?',
@@ -267,13 +267,13 @@ Uses \`.accordion\` wrapper. Active item gets \`.accordion-item.open\` — heade
   <!-- Item 1 — expanded: add class "open" to .accordion-item -->
   <div class="accordion-item open">
     <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-      <span style="flex:1;">Can I use FlowBite in open-source projects?</span>
+      <span style="flex:1;">Can I use the Iris Library in open-source projects?</span>
       <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
         <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
     <div class="accordion-body" id="body-0" role="region" aria-labelledby="header-0">
-      Generally, it is accepted to use FlowBite in open-source projects…
+      Generally, it is accepted to use the Iris Library in open-source projects…
     </div>
   </div>
 
@@ -408,7 +408,7 @@ Uses \`.accordion.accordion-flush\` — removes outer border and border-radius. 
 
   <div class="accordion-item open">
     <button class="accordion-header" aria-expanded="true" aria-controls="body-0" id="header-0">
-      <span style="flex:1;">Can I use FlowBite in open-source projects?</span>
+      <span style="flex:1;">Can I use the Iris Library in open-source projects?</span>
       <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none">
         <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>

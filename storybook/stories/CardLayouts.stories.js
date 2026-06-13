@@ -288,7 +288,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
           <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
         </svg>
       </span>
-      <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:42px;">
+      <input class="form-input" type="email" placeholder="name@company.com" style="padding-left:42px;">
     </div>
   </div>
   <!-- Password -->
@@ -331,7 +331,7 @@ Sign-in form card. Email + password inputs, checkbox row, CTA button, helper lin
           <label class="form-label">Your email</label>
           <div style="position:relative;">
             <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;color:var(--color-text-secondary);">${MAIL_ICON}</span>
-            <input class="form-input" type="email" placeholder="name@flowbite.com" style="padding-left:42px;">
+            <input class="form-input" type="email" placeholder="name@company.com" style="padding-left:42px;">
           </div>
         </div>
 
@@ -732,7 +732,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
     <!-- Heading + body -->
     <p style="font-size:30px;font-weight:700;color:#111928;margin:0;">Work fast from anywhere</p>
     <p style="font-size:18px;color:var(--color-text-secondary);line-height:1.5;margin:0;">
-      Stay up to date and move work forward with Flowbite on iOS &amp; Android.</p>
+      Stay up to date and move work forward with Iris Finance on iOS &amp; Android.</p>
     <!-- App-store buttons: bg #111928, rounded-8px -->
     <div style="display:flex;gap:16px;">
       <div style="display:flex;align-items:center;gap:10px;background:#111928;
@@ -767,7 +767,7 @@ Wide call-to-action card. Centered heading and body copy with two app-store down
             Work fast from anywhere
           </p>
           <p style="font-size:18px;font-weight:400;color:var(--color-text-secondary);line-height:1.5;margin:0;">
-            Stay up to date and move work forward with Flowbite on iOS &amp; Android. Download the app today.
+            Stay up to date and move work forward with Iris Finance on iOS &amp; Android. Download the app today.
           </p>
         </div>
 
@@ -1062,7 +1062,7 @@ export const TestimonialCard = {
              style="width:32px;height:32px;border-radius:100px;border:1px solid var(--color-border-default);object-fit:cover;">
         <div>
           <span style="font-size:18px;font-weight:600;color:#111928;display:block;">Neil Sims</span>
-          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">CEO, Flowbite</span>
+          <span style="font-size:var(--text-sm);font-weight:var(--font-medium);color:var(--color-text-secondary);">CEO, Iris Finance</span>
         </div>
       </div>
     </div>
@@ -1076,10 +1076,10 @@ export const TestimonialCard = {
   },
   render: () => {
     const testimonials = [
-      { img: IMG.neilSimsTest,     name: 'Neil Sims',     role: 'CEO, Flowbite', title: 'Solid foundation for any project',          quote: 'If you care for your time, I hands down would go with this."'                                                                 },
-      { img: IMG.michealGoughTest, name: 'Micheal Gough', role: 'CEO, Flowbite', title: 'Perfect choice for a SaaS application',     quote: 'Designing with Figma components that can be easily translated to the utility classes of Tailwind CSS is a huge timesaver!"'  },
-      { img: IMG.heleneEngels,     name: 'Helene Engels', role: 'CEO, Flowbite', title: 'Mindblowing workflow',                       quote: 'Aesthetically, the well designed components are beautiful and will undoubtedly level up your next application."'             },
-      { img: IMG.karenNelsonTest,  name: 'Karen Nelson',  role: 'CEO, Flowbite', title: 'Efficient Collaborating',                    quote: 'You have many examples that can be used to create a fast prototype for your team."'                                         },
+      { img: IMG.neilSimsTest,     name: 'Neil Sims',     role: 'CEO, Iris Finance', title: 'Solid foundation for any project',          quote: 'If you care for your time, I hands down would go with this."'                                                                 },
+      { img: IMG.michealGoughTest, name: 'Micheal Gough', role: 'CEO, Iris Finance', title: 'Perfect choice for a SaaS application',     quote: 'Designing with Figma components that can be easily translated to the utility classes of Tailwind CSS is a huge timesaver!"'  },
+      { img: IMG.heleneEngels,     name: 'Helene Engels', role: 'CEO, Iris Finance', title: 'Mindblowing workflow',                       quote: 'Aesthetically, the well designed components are beautiful and will undoubtedly level up your next application."'             },
+      { img: IMG.karenNelsonTest,  name: 'Karen Nelson',  role: 'CEO, Iris Finance', title: 'Efficient Collaborating',                    quote: 'You have many examples that can be used to create a fast prototype for your team."'                                         },
     ];
     const cell = (t, border) => `
       <div style="flex:1;display:flex;flex-direction:column;justify-content:center;

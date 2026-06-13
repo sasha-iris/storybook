@@ -178,7 +178,7 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
     text: {
       control: 'text',
       description: 'Primary message text. Role varies by type: notification copy (default), marketing tagline (container-cta), feature label (bottom), description (cta), or label (newsletter).',
-      table: { category: 'Content', defaultValue: { summary: 'New brand identity has been launched for our Flowbite library.' } },
+      table: { category: 'Content', defaultValue: { summary: 'New brand identity has been launched for the Iris Library.' } },
     },
     heading: {
       control: 'text',
@@ -198,7 +198,7 @@ See [SETUP.md](https://github.com/sasha-iris/storybook/blob/main/docs/SETUP.md) 
   },
   args: {
     type:        'default',
-    text:        'New brand identity has been launched for our Flowbite library.',
+    text:        'New brand identity has been launched for the Iris Library.',
     heading:     'Integration is the key',
     link:        'Become a partner',
     dismissible: true,
@@ -329,10 +329,10 @@ export const AllTypes = {
   },
   render: ({ dismissible }) => {
     const items = [
-      { type: 'default',       label: 'Default',        args: { text: 'New brand identity has been launched for our Flowbite library.', dismissible } },
+      { type: 'default',       label: 'Default',        args: { text: 'New brand identity has been launched for the Iris Library.', dismissible } },
       { type: 'container-cta', label: 'Container CTA',  args: { text: 'Build websites even faster with components on top of Tailwind CSS.', dismissible } },
       { type: 'bottom',        label: 'Bottom',         args: { text: 'Get 2% pricing commission', link: 'Become a partner', dismissible } },
-      { type: 'cta',           label: 'CTA',            args: { heading: 'Integration is the key', text: 'You can integrate Flowbite with many tools to make your workflow smoother.', dismissible } },
+      { type: 'cta',           label: 'CTA',            args: { heading: 'Integration is the key', text: 'You can integrate Iris Finance with many tools to make your workflow smoother.', dismissible } },
       { type: 'newsletter',    label: 'Newsletter',     args: { text: 'Sign up to our newsletter', dismissible } },
     ];
     return `
@@ -367,7 +367,7 @@ export const NonDismissible = {
 <div role="banner" class="banner banner--default">
   <div class="banner__icon-text">
     <div class="banner__icon-circle"><!-- lightbulb icon, 14px, currentColor --></div>
-    <span class="banner__text">New brand identity has been launched for our Flowbite library.</span>
+    <span class="banner__text">New brand identity has been launched for the Iris Library.</span>
   </div>
   <!-- no dismiss button -->
 </div>`,
@@ -378,7 +378,7 @@ export const NonDismissible = {
   render: ({ type }) => banner({
     type,
     dismissible: false,
-    text:    'New brand identity has been launched for our Flowbite library.',
+    text:    'New brand identity has been launched for the Iris Library.',
     heading: 'Integration is the key',
     link:    'Become a partner',
   }),
