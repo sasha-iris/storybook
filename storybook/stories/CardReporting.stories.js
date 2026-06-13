@@ -513,10 +513,10 @@ Hover state: **border 1px solid #6875f5** (brand/500), **shadow-md**, title → 
   </div>
   <!-- ② + ③ same as Default state -->
 </div>
-<!-- CSS for hovered modifier:
+<!-- CSS for hovered modifier (as shipped in styles.css):
 .card-reporting--hovered {
-  border: 1px solid #6875f5;
-  box-shadow: var(--shadow-md);
+  border-color: #6875f5;  /* colors/brand/500 */
+  box-shadow: 0px 4px 6px rgba(0,0,0,.1), 0px 2px 4px rgba(0,0,0,.05); /* shadow-md */
 } -->`,
       },
     },

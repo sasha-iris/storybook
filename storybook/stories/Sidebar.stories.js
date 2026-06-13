@@ -387,7 +387,7 @@ export const Interactive = {
         // Snippet = the actual builder output → always matches the preview
         transform: (_src, storyCtx) => {
           const a = storyCtx.args;
-          if (a.contracted === true) return contractedSidebar().trim();
+          if (a.contracted === true || a.contracted === 'true') return contractedSidebar().trim();
           return sidebar({
             showLogo: a.showLogo !== false,
             activeItem: a.activeItem || 'overview',
@@ -399,7 +399,7 @@ export const Interactive = {
     },
   },
   render: (args) => {
-    const isContracted = args.contracted === true;
+    const isContracted = args.contracted === true || args.contracted === 'true'; // Controls can deliver booleans as strings (CLAUDE.md known failure mode)
     const showLogo    = args.showLogo !== false;
     const expanded    = args.financialExpanded !== false;
     const activeItem  = args.activeItem || 'overview';

@@ -112,7 +112,7 @@ function modalInfo({ size = 'default', darkMode = false, showOverlay = true } = 
      style="background:${t.bg};">
   <div class="modal-header" style="border-color:${t.border};">
     <h2 class="modal-title" id="modal-title" style="color:${t.title};">Terms of Service</h2>
-    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+    <button type="button" class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
   </div>
   <div class="modal-body" style="color:${t.body};font-size:var(--text-base);line-height:1.7;">
     <p style="margin:0 0 12px;">The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.</p>
@@ -136,7 +136,7 @@ function modalPopUp({ size = 'sm', darkMode = false, showOverlay = true } = {}) 
      class="modal-dialog${sizeClass(size)}"
      style="background:${t.bg};">
   <div class="modal-header" style="border-bottom:none;justify-content:flex-end;padding-bottom:8px;">
-    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+    <button type="button" class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
   </div>
   <div class="modal-body" style="text-align:center;padding-top:0;color:${t.body};">
     <div style="display:flex;justify-content:center;margin-bottom:16px;">${exclamationIcon}</div>
@@ -160,7 +160,7 @@ function modalWithForms({ size = 'sm', darkMode = false, showOverlay = true } = 
      class="modal-dialog${sizeClass(size)}"
      style="background:${t.bg};">
   <div class="modal-header" style="border-bottom:none;justify-content:flex-end;padding-bottom:8px;">
-    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+    <button type="button" class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
   </div>
   <div class="modal-body" style="padding-top:4px;">
     <h3 id="form-modal-title" style="font-size:var(--text-xl);font-weight:var(--font-semibold);
@@ -238,7 +238,7 @@ function modalCryptoWallet({ size = 'sm', darkMode = false, showOverlay = true }
      style="background:${t.bg};">
   <div class="modal-header" style="border-color:${t.border};">
     <h2 class="modal-title" id="wallet-title" style="color:${t.title};">Connect wallet</h2>
-    <button class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
+    <button type="button" class="modal-close" aria-label="Close dialog" style="color:${t.closeClr};">${closeIcon}</button>
   </div>
   <div class="modal-body">
     <p style="margin:0 0 16px;font-size:var(--text-sm);color:${t.body};line-height:1.6;">
@@ -450,7 +450,7 @@ Informational modal — Figma: \`Type=Info\`. Presents legal or consent content 
         code: `<div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-dialog">
   <div class="modal-header">
     <h2 class="modal-title" id="modal-title">Terms of Service</h2>
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+    <button type="button" class="modal-close" aria-label="Close dialog"><!-- × --></button>
   </div>
   <div class="modal-body">
     <p>The European Union's General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union.</p>
@@ -488,7 +488,7 @@ Destructive confirmation modal — Figma: \`Type=Pop-up\`. No title in header; b
         code: `<div role="dialog" aria-modal="true" aria-labelledby="popup-title" class="modal-dialog modal-dialog-sm">
   <!-- Header: close button only, no title, no border -->
   <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+    <button type="button" class="modal-close" aria-label="Close dialog"><!-- × --></button>
   </div>
   <div class="modal-body" style="text-align:center;">
     <!-- exclamation-circle icon 42×42 -->
@@ -528,7 +528,7 @@ Uses \`.form-group\` + \`.form-label\` + \`.form-input\` + \`.form-helper\` from
         code: `<div role="dialog" aria-modal="true" aria-labelledby="form-modal-title" class="modal-dialog modal-dialog-sm">
   <!-- Header: close button only, no title, no border -->
   <div class="modal-header" style="border-bottom:none;justify-content:flex-end;">
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+    <button type="button" class="modal-close" aria-label="Close dialog"><!-- × --></button>
   </div>
   <div class="modal-body">
     <h3 id="form-modal-title">Sign in to our platform</h3>
@@ -584,7 +584,7 @@ Wallet selection modal — Figma: \`Type=Crypto wallet\`. Title in header; walle
         code: `<div role="dialog" aria-modal="true" aria-labelledby="wallet-title" class="modal-dialog modal-dialog-sm">
   <div class="modal-header">
     <h2 class="modal-title" id="wallet-title">Connect wallet</h2>
-    <button class="modal-close" aria-label="Close dialog"><!-- × --></button>
+    <button type="button" class="modal-close" aria-label="Close dialog"><!-- × --></button>
   </div>
   <div class="modal-body">
     <p>Connect with one of our available wallet providers or create a new one.</p>
