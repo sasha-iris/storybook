@@ -258,79 +258,60 @@ const reportingCard = ({ active = true, owner = 'iris', hovered = false }) => {
  * - `owner:user`                 → avatar circle + "Jese Leos" in owner section
  */
 
-function cardReporting({ active = true, hovered = false, owner = 'iris' }) {
-  const mod = hovered ? ' card-reporting--hovered' : (!active ? ' card-reporting--inactive' : '');
-  const toggleClass = active ? 'iris-toggle--on' : 'iris-toggle--off';
-  const toggleAriaLabel = active ? 'Report enabled' : 'Report disabled';
-
-  return `<div class="card-reporting${mod}" style="min-width:362px;">
-  <div style="display:flex;gap:12px;align-items:flex-start;">
-    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:var(--color-text-heading);margin:0;">${hovered ? '→ Daily Report' : 'Daily Report'}</p>
-        <span class="iris-toggle ${toggleClass}" role="switch" aria-checked="${active}" aria-label="${toggleAriaLabel}">
-          <span class="iris-toggle__thumb"></span>
-        </span>
-      </div>
-      <div style="display:flex;gap:4px;">
-        <span class="rpt-chip rpt-chip--email" style="background:${active ? '#e60076' : 'var(--color-border-light)'};color:white;padding:4px 8px;border-radius:4px;font-size:12px;">✉ Email</span>
-        <span class="rpt-chip rpt-chip--slack" style="background:${active ? '#9810fa' : 'var(--color-border-light)'};color:white;padding:4px 8px;border-radius:4px;font-size:12px;">⚡ Slack</span>
-      </div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
-    <p style="font-size:var(--text-sm);color:var(--color-text-heading);margin:0;">Every day at 7am (PST)</p>
-    <div style="display:flex;flex-wrap:wrap;gap:4px;">
-      <span class="rpt-chip" style="background:var(--color-bg-tertiary);color:var(--color-text-secondary);padding:4px 8px;border-radius:4px;font-size:12px;">example@gmail.com</span>
-      <span class="rpt-chip" style="background:var(--color-bg-tertiary);color:var(--color-text-secondary);padding:4px 8px;border-radius:4px;font-size:12px;">+2</span>
-    </div>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--color-border-light);">
-    <div style="display:flex;gap:8px;">
-      <div style="width:24px;height:24px;background:${active ? '#fef9c2' : 'var(--color-border-default)'};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;">🟨</div>
-      <div style="width:24px;height:24px;background:var(--color-bg-tertiary);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;">☑</div>
-    </div>
-    <div style="font-size:11px;color:var(--color-text-secondary);">By ${owner === 'iris' ? 'Iris Finance' : 'You'}</div>
-  </div>
-</div>`;
-}
-
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const h='<div style="padding:20px;border:1px solid var(--color-border-default);border-radius:12px;background:#fff;"><div>Report Card</div></div>';
-    const r='<div style={{padding:"20px",border:"1px solid var(--color-border-default)",borderRadius:"12px"}}>{children}</div>';
-    const c='export function ReportingCard({title,data}){return(<div style={{border:"1px solid var(--color-border-default)",padding:"20px"}}>{title}</div>);}';
+    const { active = true, hovered = false, owner = 'iris' } = args;
+    const mod = hovered ? ' card-reporting--hovered' : (!active ? ' card-reporting--inactive' : '');
+    const titleColor = hovered ? '#42389d' : '#111928';
+    const scheduleText = active
+      ? 'Every day at 7am (PST)'
+      : 'Right now the report is paused. We’ll send it to you at 7am tomorrow morning when you turn it on';
+    const ownerLabel = owner === 'iris'
+      ? `<!-- Iris Finance logo mark (xs) -->\n        <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;">Iris Finance</span>`
+      : `<!-- Round avatar: initials circle -->\n        <span aria-label="Jese Leos avatar" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:100px;border:1px solid var(--color-border-default);background:var(--color-bg-muted);font-size:8px;font-weight:600;">JL</span>\n        <span style="font-size:var(--text-sm);font-weight:var(--font-semibold);color:#111928;">Jese Leos</span>`;
+    const ownerName = owner === 'iris' ? 'Iris Finance' : 'Jese Leos';
+
+    const htmlCode = `<div class="card-reporting${mod}">\n  <!-- ① Heading row: title + toggle -->\n  <div style="display:flex;gap:12px;align-items:flex-start;">\n    <div style="flex:1;display:flex;flex-direction:column;gap:8px;">\n      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">\n        <p style="font-size:var(--text-lg);font-weight:var(--font-semibold);color:${titleColor};margin:0;">Daily Report</p>${hovered ? '\n        <!-- arrow-right icon -->' : ''}\n        <span class="iris-toggle iris-toggle--${active ? 'on' : 'off'}" role="switch" aria-checked="${active}" aria-label="Report ${active ? 'enabled' : 'disabled'}">\n          <span class="iris-toggle__thumb"></span>\n        </span>\n      </div>\n      <!-- Delivery channel chips -->\n      <div style="display:flex;gap:4px;">\n        <span class="rpt-chip${active ? ' rpt-chip--email' : ' rpt-chip--muted'}"><!-- mail icon -->E-mail</span>\n        <span class="rpt-chip${active ? ' rpt-chip--slack' : ' rpt-chip--muted'}"><!-- slack icon -->Slack</span>\n      </div>\n    </div>\n  </div>\n  <!-- ② Schedule + recipients -->\n  <div style="display:flex;flex-direction:column;gap:12px;">\n    <p style="font-size:var(--text-sm);color:${active ? '#111928' : '#4b5563'};margin:0;">${scheduleText}</p>\n    <div style="display:flex;flex-wrap:wrap;gap:4px;">\n      <span class="rpt-chip" style="background:var(--color-bg-muted);">namesur@gmail.com</span>\n      <span class="rpt-chip" style="background:var(--color-bg-muted);">name@gmail.com</span>\n      <span class="rpt-chip" style="background:var(--color-bg-muted);">+5</span>\n    </div>\n  </div>\n  <!-- ③ Footer: sales channels + owner -->\n  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;">\n    <!-- Shopify + Amazon badges -->\n    <div style="display:flex;gap:8px;align-items:center;"><!-- shopify badge --><!-- amazon badge --></div>\n    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">\n      <span style="font-size:var(--text-xs);font-weight:var(--font-medium);color:var(--color-text-secondary);">Owned by</span>\n      <div style="display:flex;align-items:center;gap:4px;">\n        ${ownerLabel}\n      </div>\n    </div>\n  </div>\n</div>`;
+
+    const reactCode = `<div className={\`card-reporting\${hovered ? ' card-reporting--hovered' : !active ? ' card-reporting--inactive' : ''}\`}>\n  {/* ① Heading row: title + toggle */}\n  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>\n    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>\n      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>\n        <p style={{ color: hovered ? '#42389d' : '#111928' }}>Daily Report</p>\n        {hovered && <ArrowRightIcon />}\n        <span\n          className={\`iris-toggle iris-toggle--\${active ? 'on' : 'off'}\`}\n          role="switch"\n          aria-checked={active}\n          aria-label={\`Report \${active ? 'enabled' : 'disabled'}\`}\n          onClick={onToggle}\n        >\n          <span className="iris-toggle__thumb" />\n        </span>\n      </div>\n      <div style={{ display: 'flex', gap: 4 }}>\n        <span className={\`rpt-chip\${active ? ' rpt-chip--email' : ' rpt-chip--muted'}\`}><MailIcon />E-mail</span>\n        <span className={\`rpt-chip\${active ? ' rpt-chip--slack' : ' rpt-chip--muted'}\`}><SlackIcon />Slack</span>\n      </div>\n    </div>\n  </div>\n  {/* ② Schedule + recipients */}\n  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>\n    <p style={{ color: active ? '#111928' : '#4b5563' }}>{scheduleText}</p>\n    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>\n      {recipients.map((email) => <span key={email} className="rpt-chip">{email}</span>)}\n    </div>\n  </div>\n  {/* ③ Footer: sales channels + owner */}\n  <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>\n    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>\n      <ShopifyBadge /><AmazonBadge active={active} />\n    </div>\n    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>\n      <span>Owned by</span>\n      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>\n        {owner === 'iris' ? <IrisFinanceMark /> : <Avatar initials="JL" />}\n        <span>${ownerName}</span>\n      </div>\n    </div>\n  </div>\n</div>`;
+
+    const componentCode = `export function CardReporting({\n  active = ${active},\n  hovered = ${hovered},\n  owner = "${owner}",\n  recipients = ['namesur@gmail.com', 'name@gmail.com'],\n  onToggle,\n}) {\n  const mod = hovered ? ' card-reporting--hovered' : (!active ? ' card-reporting--inactive' : '');\n  const scheduleText = active\n    ? 'Every day at 7am (PST)'\n    : 'Right now the report is paused. We\\u2019ll send it to you at 7am tomorrow morning when you turn it on';\n\n  return (\n    <div className={\`card-reporting\${mod}\`}>\n      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>\n        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>\n          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>\n            <p style={{ color: hovered ? '#42389d' : '#111928' }}>Daily Report</p>\n            <span\n              className={\`iris-toggle iris-toggle--\${active ? 'on' : 'off'}\`}\n              role="switch"\n              aria-checked={active}\n              onClick={onToggle}\n            >\n              <span className="iris-toggle__thumb" />\n            </span>\n          </div>\n          <div style={{ display: 'flex', gap: 4 }}>\n            <span className={\`rpt-chip\${active ? ' rpt-chip--email' : ' rpt-chip--muted'}\`}>E-mail</span>\n            <span className={\`rpt-chip\${active ? ' rpt-chip--slack' : ' rpt-chip--muted'}\`}>Slack</span>\n          </div>\n        </div>\n      </div>\n      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>\n        <p style={{ color: active ? '#111928' : '#4b5563' }}>{scheduleText}</p>\n        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>\n          {recipients.map((email) => <span key={email} className="rpt-chip">{email}</span>)}\n        </div>\n      </div>\n      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>\n        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} />\n        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>\n          <span>Owned by</span>\n          <span>{owner === 'iris' ? 'Iris Finance' : 'Jese Leos'}</span>\n        </div>\n      </div>\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     return `
       <div style="display:flex;flex-direction:column;gap:24px;">
         <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
-          ${cardReporting(args)}
+          ${reportingCard(args)}
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start;">
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>

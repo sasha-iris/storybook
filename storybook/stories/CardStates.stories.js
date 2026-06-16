@@ -306,9 +306,26 @@ function cardStates({ state = 'loaded', variant = 'content' }) {
 export const Interactive = {
     name: 'Interactive (Controls)',
   render: (args) => {
-    const h='<div style="border:1px solid var(--color-border-default);border-radius:12px;padding:20px;background:#fff;"><div>State: Loading</div></div>';
-    const r='<div style={{border:"1px solid var(--color-border-default)",padding:"20px"}}>{state}</div>';
-    const c='export function StateCard({state}){return(<div style={{border:"1px solid var(--color-border-default)"}}>{state}</div>);}';
+    const { state = 'loaded', variant = 'content' } = args;
+    const title = CARD_TITLES[variant] || 'Card title';
+
+    const bodyByState = {
+      loaded: '<!-- normal card body — see Loaded story for full per-variant markup -->',
+      loading: '<div class="skeleton-text skeleton-w-2-3" style="height:16px;margin-bottom:10px;"></div>\n    <div class="skeleton-text skeleton-w-full" style="height:12px;margin-bottom:6px;"></div>\n    <div class="skeleton-text skeleton-w-1-2" style="height:12px;"></div>',
+      empty: '<div aria-hidden="true" style="margin-bottom:12px;display:flex;justify-content:center;color:var(--color-text-fg-disabled);"><!-- inbox icon --></div>\n    <div style="font-weight:var(--font-semibold);margin-bottom:6px;">No data yet</div>\n    <div style="font-size:var(--text-xs);color:var(--color-text-body-subtle);">Items will appear here once added.</div>',
+      error: '<div aria-hidden="true" style="width:44px;height:44px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;color:#991B1B;margin:0 auto 12px;"><!-- warning icon --></div>\n    <div style="font-weight:var(--font-semibold);margin-bottom:6px;">Failed to load</div>\n    <div style="font-size:var(--text-xs);color:var(--color-text-body-subtle);margin-bottom:16px;">Something went wrong. Please try again.</div>\n    <button class="btn btn-alternative btn-sm">↻ Retry</button>',
+    };
+
+    const htmlCode = `<div class="card">\n  <div class="card-header">\n    <div class="card-header-title">${title}</div>\n  </div>\n  <div class="card-body-padded"${state === 'empty' || state === 'error' ? ' style="text-align:center;padding:40px 20px;"' : ''}>\n    ${bodyByState[state]}\n  </div>\n</div>`;
+
+    const reactCode = `<div className="card">\n  <div className="card-header">\n    <div className="card-header-title">{title}</div>\n  </div>\n  {loading && <SkeletonBody variant="${variant}" />}\n  {error && <ErrorBody onRetry={onRetry} />}\n  {!loading && !error && isEmpty && <EmptyBody />}\n  {!loading && !error && !isEmpty && <LoadedBody data={data} variant="${variant}" />}\n</div>`;
+
+    const componentCode = `export function DataCard({\n  title = "${title}",\n  variant = "${variant}",\n  loading = ${state === 'loading'},\n  error = ${state === 'error'},\n  data,\n  onRetry,\n}) {\n  const isEmpty = !loading && !error && (!data || data.length === 0);\n\n  return (\n    <div className="card">\n      <div className="card-header">\n        <div className="card-header-title">{title}</div>\n      </div>\n      {loading && <SkeletonBody variant={variant} />}\n      {error && (\n        <div className="card-body-padded" style={{ textAlign: 'center', padding: '40px 20px' }}>\n          <p>Failed to load</p>\n          <button className="btn btn-alternative btn-sm" onClick={onRetry}>\n            ↻ Retry\n          </button>\n        </div>\n      )}\n      {isEmpty && (\n        <div className="card-body-padded" style={{ textAlign: 'center', padding: '40px 20px' }}>\n          <p>No data yet</p>\n        </div>\n      )}\n      {!loading && !error && !isEmpty && (\n        <div className="card-body-padded">{/* LoadedBody(data, variant) */}</div>\n      )}\n    </div>\n  );\n}`;
+
+    const htmlEscaped = htmlCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const reactEscaped = reactCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const componentEscaped = componentCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     return `
       <div style="display:flex;flex-direction:column;gap:24px;">
         <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
@@ -318,27 +335,27 @@ export const Interactive = {
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">HTML</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${h.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${htmlEscaped}</code></pre>
             </div>
-            <button data-copy="${h.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${htmlCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">React</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${r.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${reactEscaped}</code></pre>
             </div>
-            <button data-copy="${r.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${reactCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
           <div style="padding:16px;border:1px solid var(--color-border-default);border-radius:8px;">
             <div style="font-weight:600;font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Component (With Events)</div>
             <div style="background:var(--color-bg-tertiary);padding:12px;border-radius:6px;margin-bottom:12px;overflow:auto;">
-              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>
+              <pre style="margin:0;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-word;"><code>${componentEscaped}</code></pre>
             </div>
-            <button data-copy="${c.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
+            <button data-copy="${componentCode.split('"').join('&quot;')}" class="storybook-copy-btn" style="padding:8px 12px;background:var(--color-bg-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-default);border-radius:4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>Copy
             </button>
           </div>
