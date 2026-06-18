@@ -1,0 +1,21 @@
+{
+  "name": "@iris/react",
+  "version": "0.1.0",
+  "description": "Iris Design System — React components",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "typescript": "^5.9.3"
+  },
+  "keywords": [
+    "iris",
+    "design-system",
+    "react",
+    "components"
+  ]
+}
