@@ -4,6 +4,10 @@ interface ListGroupItem {
   key: string;
   label: string;
   icon?: React.ReactNode;
+  /** Right-aligned count badge. */
+  count?: number;
+  /** Highlights item with active background. */
+  active?: boolean;
   href?: string;
   onClick?: () => void;
 }
@@ -11,6 +15,8 @@ interface ListGroupItem {
 interface ListGroupProps {
   items: ListGroupItem[];
   dark?: boolean;
+  /** Remove outer border and border-radius — use when embedding inside a panel or modal column. */
+  flush?: boolean;
   width?: number | string;
   className?: string;
 }
@@ -25,40 +31,47 @@ interface ListGroupProps {
  *   - Full sidebar navigation → Sidebar
  *   - Data tables → Table
  *
+ * flush=true — removes outer border/radius, use when embedding inside a modal or panel column.
+ *
  * Requires iris-components.css to be loaded at app level.
  *
  * @example
  * <ListGroup items={[{ key: 'profile', label: 'Profile' }, { key: 'settings', label: 'Settings' }]} />
+ * <ListGroup flush items={categories} />
  */
-export function ListGroup({ items, dark = false, width, className }: ListGroupProps) {
-  const ulClass = ['list-group', dark ? 'list-group--dark' : '', className].filter(Boolean).join(' ');
+export function ListGroup({ items, dark = false, flush = false, width, className }: ListGroupProps) {
+  const ulClass = ['list-group', dark ? 'list-group--dark' : '', flush ? 'list-group--flush' : '', className].filter(Boolean).join(' ');
   const style = width ? { width: typeof width === 'number' ? `${width}px` : width } : undefined;
 
   return (
     <ul className={ulClass} style={style}>
       {items.map((item) => {
-        const content = (
+        const liClass = ['list-group-item', item.active ? 'active' : ''].filter(Boolean).join(' ');
+        const inner = (
           <>
             {item.icon && <span className="list-group-item__icon">{item.icon}</span>}
-            {item.label}
+            <span style={{ flex: 1 }}>{item.label}</span>
+            {item.count !== undefined && (
+              <span className="list-group-item-meta">({item.count})</span>
+            )}
           </>
         );
 
         if (item.href) {
           return (
-            <li key={item.key} className="list-group-item">
-              <a href={item.href}>{content}</a>
+            <li key={item.key} className={liClass}>
+              <a href={item.href} style={{ display: 'flex', width: '100%' }}>{inner}</a>
             </li>
           );
         }
         return (
           <li
             key={item.key}
-            className="list-group-item"
+            className={liClass}
             onClick={item.onClick}
             style={item.onClick ? { cursor: 'pointer' } : undefined}
           >
-            {content}
+            {inner}
           </li>
         );
       })}

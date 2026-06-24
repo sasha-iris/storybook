@@ -21,10 +21,15 @@ export type { FormInputProps, FormFieldState, FormInputSize } from './components
 export { FormTextarea } from './components/forms/FormTextarea';
 export type { FormTextareaProps, FormTextareaState } from './components/forms/FormTextarea';
 export { FormSearch } from './components/forms/FormSearch';
+export { TagInput } from './components/forms/TagInput';
+export { FileUpload } from './components/forms/FileUpload';
+export { ReadOnlyField } from './components/forms/ReadOnlyField';
+export { CodeInput } from './components/forms/CodeInput';
 
-// Select / Autocomplete
+// Select / Autocomplete / Datepicker
 export { Select } from './components/select/Select';
 export { Autocomplete } from './components/autocomplete/Autocomplete';
+export { Datepicker, DateRangePicker, MonthPicker, YearPicker, DobPicker, MonthYearTabPicker } from './components/datepicker/Datepicker';
 
 // Controls (checkbox / radio / toggle / radiocard)
 export { Checkbox } from './components/controls/Checkbox';
@@ -38,7 +43,10 @@ export { RangeSlider } from './components/range-slider/RangeSlider';
 // Cards
 export { Card } from './components/card/Card';
 export { CardKPI } from './components/card/CardKPI';
+export type { KPIChartType, KPIDirection } from './components/card/CardKPI';
 export { CardReporting } from './components/card/CardReporting';
+export { UserProfileCard, PricingCard, StatsCard, SignInCard, EcommerceCard, CustomerListCard, CTACard, NavTabsCard, TestimonialCard, CryptoWalletCard, CardWithButton, CardWithLink, HorizontalCard } from './components/card/CardLayouts';
+export { CardStateWrapper, CardEmptyBody, CardErrorBody, CardLoadingBody } from './components/card/CardStates';
 
 // Feedback
 export { Alert } from './components/alert/Alert';
@@ -58,12 +66,17 @@ export { Pagination } from './components/pagination/Pagination';
 // Layout / structure
 export { Accordion } from './components/accordion/Accordion';
 export { ListGroup } from './components/list-group/ListGroup';
-export { Stepper } from './components/stepper/Stepper';
+export { Stepper, StandaloneSteps } from './components/stepper/Stepper';
 export { Dropdown } from './components/dropdown/Dropdown';
+export { NotificationMenu } from './components/dropdown/NotificationMenu';
+export { FilterSelectButton } from './components/dropdown/FilterSelectButton';
 export { Tooltip } from './components/tooltip/Tooltip';
 
 // Data / tables
 export { CohortCell, IrisCell, IrisTH } from './components/table/TableCohort';
+export { DataCell, LabelCell, HHeader, VHeader } from './components/table/Table';
+export { TableRow, TableComposed } from './components/table/TableComposed';
+export type { TableCellDef, TableRowDef, PeriodHeaderDef, ColHeaderDef } from './components/table/TableComposed';
 
 // Status / indicators
 export { ProgressBar } from './components/progress-bar/ProgressBar';
@@ -73,3 +86,5 @@ export { Skeleton } from './components/skeleton/Skeleton';
 // Misc
 export { KBD } from './components/kbd/KBD';
 export { QRFrame } from './components/qr/QRFrame';
+export { SearchBar } from './components/search/Search';
+export { Logo } from './components/brand/Logo';

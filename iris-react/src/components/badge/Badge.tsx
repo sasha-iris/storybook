@@ -11,6 +11,8 @@ interface BadgeProps {
   onDismiss?: () => void;
   /** Icon node rendered before the label (e.g. status dot, clock icon). */
   icon?: React.ReactNode;
+  /** Second line below the label, e.g. "11.0% rev" — renders the two-line `badge--metric` layout. */
+  sub?: string;
   className?: string;
 }
 
@@ -37,14 +39,25 @@ export function Badge({
   size = 'md',
   onDismiss,
   icon,
+  sub,
   className,
 }: BadgeProps) {
   const classes = [
     'badge',
     size !== 'md' ? `badge-${size}` : '',
     `badge-${color}`,
+    sub != null ? 'badge--metric' : '',
     className,
   ].filter(Boolean).join(' ');
+
+  if (sub != null) {
+    return (
+      <span className={classes}>
+        {icon ? <span className="badge--metric__icon">{icon}{label}</span> : label}
+        <span className="badge--metric__sub">{sub}</span>
+      </span>
+    );
+  }
 
   return (
     <span className={classes}>

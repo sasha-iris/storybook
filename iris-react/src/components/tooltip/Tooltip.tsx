@@ -47,12 +47,16 @@ export function Tooltip({
   });
 
   return (
-    <div className={`tooltip-wrap tooltip-${position}`} data-tooltip>
+    <div className="tooltip-wrap" data-tooltip>
       {child}
       {visible && (
         <div
           id={tipId}
-          className={`tooltip-bubble tooltip-${color}`}
+          className={[
+            'tooltip-bubble',
+            `tooltip-${position}`,
+            color === 'white' ? 'tooltip-light' : '',
+          ].filter(Boolean).join(' ')}
           role="tooltip"
         >
           {content}

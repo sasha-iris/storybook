@@ -13,10 +13,12 @@ interface RangeSliderProps {
   className?: string;
 }
 
-/** Compute the CSS linear-gradient fill string for a range track. */
-function fillStyle(value: number, min: number, max: number): string {
+/** Compute the CSS linear-gradient fill object for a range track. */
+function fillStyle(value: number, min: number, max: number): React.CSSProperties {
   const pct = ((value - min) / (max - min)) * 100;
-  return `background: linear-gradient(to right, var(--color-brand-600) 0%, var(--color-brand-600) ${pct}%, var(--color-border-default) ${pct}%, var(--color-border-default) 100%)`;
+  return {
+    background: `linear-gradient(to right, var(--btn-primary-bg) 0%, var(--btn-primary-bg) ${pct}%, var(--color-border-default) ${pct}%, var(--color-border-default) 100%)`,
+  };
 }
 
 /**
@@ -68,7 +70,7 @@ export function RangeSlider({
         aria-valuemin={min}
         aria-valuemax={max}
         aria-valuenow={value}
-        style={fillStyle(value, min, max) as unknown as React.CSSProperties}
+        style={fillStyle(value, min, max)}
       />
     </div>
   );

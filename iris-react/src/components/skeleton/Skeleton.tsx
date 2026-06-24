@@ -37,6 +37,7 @@ export function Skeleton({
 }: SkeletonProps) {
   const baseClass = variant === 'avatar' ? 'skeleton-avatar'
     : variant === 'image' ? 'skeleton-image'
+    : variant === 'text' ? 'skeleton-text'
     : 'skeleton';
 
   const animation = animated ? 'skeleton-pulse 1.5s ease-in-out infinite' : 'none';

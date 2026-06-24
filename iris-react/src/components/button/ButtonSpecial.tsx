@@ -1,12 +1,10 @@
 import React from 'react';
 
-type ButtonSpecialVariant = 'chart' | 'table' | 'filter' | 'icon-action';
+type ButtonSpecialVariant = 'chart' | 'table';
 
 interface ButtonSpecialProps {
-  label?: string;
   variant?: ButtonSpecialVariant;
-  icon?: React.ReactNode;
-  active?: boolean;
+  icon: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
   ariaLabel?: string;
@@ -14,40 +12,34 @@ interface ButtonSpecialProps {
 }
 
 /**
- * Specialised toolbar and utility buttons for chart, table, and filter contexts.
+ * Specialised icon-only utility button for chart and table toolbars.
  *
  * USE FOR:
- *   - chart: chart toolbar actions (zoom, download, settings)
- *   - table: table row actions (edit, delete, expand)
- *   - filter: filter/sort trigger buttons
- *   - icon-action: icon-only action in dense UI (card header, toolbar)
- * REPLACES MUI: <IconButton>, <Tooltip><IconButton>, table row action patterns
+ *   - chart: compact 24px transparent icon button inside chart toolbars (Figma node 9705:152804)
+ *   - table: 28px bordered/shadowed icon button for table row actions (Figma node 9287:163857)
+ * REPLACES MUI: <IconButton>, table row action patterns
  * DO NOT USE FOR:
  *   - Page-level primary actions → Button
  *   - Navigation toggles → ButtonGroup
+ *
+ * CSS classes: btn-chart, btn-table (no wrapper/BEM modifier — these are the real classes, not `btn-special--*`).
+ * Only :hover and :disabled states exist — there is no "active" state class.
  *
  * Requires iris-components.css to be loaded at app level.
  *
  * @example
  * <ButtonSpecial variant="chart" icon={<DownloadIcon />} ariaLabel="Download chart" />
- * <ButtonSpecial variant="filter" label="Filter" icon={<FilterIcon />} active={hasFilters} />
+ * <ButtonSpecial variant="table" icon={<EditIcon />} ariaLabel="Edit row" />
  */
 export function ButtonSpecial({
-  label,
-  variant = 'icon-action',
+  variant = 'chart',
   icon,
-  active = false,
   disabled = false,
   onClick,
   ariaLabel,
   className,
 }: ButtonSpecialProps) {
-  const classes = [
-    'btn-special',
-    `btn-special--${variant}`,
-    active ? 'active' : '',
-    className,
-  ].filter(Boolean).join(' ');
+  const classes = [`btn-${variant}`, className].filter(Boolean).join(' ');
 
   return (
     <button
@@ -55,11 +47,9 @@ export function ButtonSpecial({
       className={classes}
       onClick={onClick}
       disabled={disabled}
-      aria-label={ariaLabel ?? label}
-      aria-pressed={active}
+      aria-label={ariaLabel}
     >
       {icon}
-      {label && <span>{label}</span>}
     </button>
   );
 }

@@ -4,7 +4,15 @@ interface TabItem {
   key: string;
   label: string;
   count?: number;
+  /** Renders a chevron — down when inactive, up when active — to indicate a sub-menu. */
+  dropdown?: boolean;
 }
+
+const ChevronIcon = ({ up }: { up: boolean }) => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points={up ? '18 15 12 9 6 15' : '6 9 12 15 18 9'} />
+  </svg>
+);
 
 interface TabsProps {
   tabs: TabItem[];
@@ -45,6 +53,7 @@ export function Tabs({ tabs, activeKey, onChange, className }: TabsProps) {
           {tab.count != null && (
             <span className="iris-tab__counter">{tab.count}</span>
           )}
+          {tab.dropdown && <ChevronIcon up={tab.key === activeKey} />}
         </button>
       ))}
     </div>

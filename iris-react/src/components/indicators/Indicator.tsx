@@ -1,13 +1,16 @@
 import React from 'react';
 
-type IndicatorDotColor = 'blue' | 'purple' | 'indigo' | 'teal' | 'green' | 'yellow' | 'red' | 'gray';
-type IndicatorBadgeVariant = 'active' | 'inactive' | 'pending' | 'online' | 'offline';
+/** CSS-backed colors. For arbitrary hex colors use the `customColor` prop instead. */
+type IndicatorDotColor = 'blue' | 'purple' | 'indigo' | 'teal';
+type IndicatorBadgeVariant = 'available' | 'unavailable';
 
 // ── Dot indicator — for chart legends, inline status labels ──────────────────
 
 interface IndicatorDotProps {
   label: string;
   color?: IndicatorDotColor;
+  /** Hex/CSS color for non-standard dots — overrides `color`. */
+  customColor?: string;
   className?: string;
 }
 
@@ -23,11 +26,11 @@ interface IndicatorDotProps {
  * @example
  * <IndicatorDot label="Revenue" color="blue" />
  */
-export function IndicatorDot({ label, color = 'blue', className }: IndicatorDotProps) {
-  const dotClass = `iris-indicator__dot iris-indicator__dot--${color}`;
+export function IndicatorDot({ label, color = 'blue', customColor, className }: IndicatorDotProps) {
+  const dotClass = customColor ? 'iris-indicator__dot' : `iris-indicator__dot iris-indicator__dot--${color}`;
   return (
     <span className={['iris-indicator', className].filter(Boolean).join(' ')}>
-      <span className={dotClass} aria-hidden="true" />
+      <span className={dotClass} style={customColor ? { background: customColor } : undefined} aria-hidden="true" />
       <span>{label}</span>
     </span>
   );
@@ -72,26 +75,33 @@ export function IndicatorCount({ count, max = 99, className }: IndicatorCountPro
 
 interface IndicatorBadgeProps {
   variant: IndicatorBadgeVariant;
+  label?: string;
   className?: string;
 }
 
+const DEFAULT_BADGE_LABEL: Record<IndicatorBadgeVariant, string> = {
+  available: 'Available',
+  unavailable: 'Unavailable',
+};
+
 /**
- * Status badge dot — user online/offline/active/inactive presence indicator.
+ * Status badge pill — colored dot + label, user online/offline/active/inactive presence indicator.
  *
  * USE FOR: user presence status in user lists, avatar overlays, team member status
  * REPLACES MUI: custom <Badge> with colored dot variant
  * DO NOT USE FOR: notification counts → IndicatorCount; chart legends → IndicatorDot
  *
  * @example
- * <IndicatorBadge variant="online" />
+ * <IndicatorBadge variant="available" />
  */
-export function IndicatorBadge({ variant, className }: IndicatorBadgeProps) {
+export function IndicatorBadge({ variant, label, className }: IndicatorBadgeProps) {
   return (
     <span
       className={['iris-indicator-badge', `iris-indicator-badge--${variant}`, className].filter(Boolean).join(' ')}
       role="status"
     >
       <span className="iris-indicator-badge__dot" />
+      <span>{label ?? DEFAULT_BADGE_LABEL[variant]}</span>
     </span>
   );
 }

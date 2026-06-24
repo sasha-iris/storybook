@@ -31,10 +31,7 @@ export function KBD({ keys, size = 'default', className }: KBDProps) {
   return (
     <span className="kbd-combo">
       {keyList.map((k, i) => (
-        <React.Fragment key={i}>
-          <kbd className={kbdClass}>{k}</kbd>
-          {i < keyList.length - 1 && <span className="kbd-sep" aria-hidden="true">+</span>}
-        </React.Fragment>
+        <kbd key={i} className={kbdClass}>{k}</kbd>
       ))}
     </span>
   );

@@ -76,8 +76,12 @@ export function Accordion({
               aria-controls={`accordion-body-${item.key}`}
               onClick={() => toggle(item.key)}
             >
-              {item.icon}
-              {item.title}
+              {item.icon && (
+                <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center', marginRight: 8 }}>
+                  {item.icon}
+                </span>
+              )}
+              <span style={{ flex: 1, textAlign: 'left' }}>{item.title}</span>
               <svg className="accordion-chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

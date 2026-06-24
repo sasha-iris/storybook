@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface SidebarItem {
   key: string;
@@ -93,6 +93,18 @@ export function Sidebar({
   );
 }
 
+const ChevronDownIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="m5 7.5 5 5 5-5" stroke="#1f2a37" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const ChevronUpIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="m5 12.5 5-5 5 5" stroke="#1f2a37" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 function SidebarNavItem({
   item,
   activeKey,
@@ -102,23 +114,56 @@ function SidebarNavItem({
   activeKey: string;
   onItemClick?: (key: string) => void;
 }) {
+  const hasChildren = !!item.children?.length;
   const isActive = item.key === activeKey;
-  const Tag = item.href ? 'a' : 'div';
+  const isChildActive = hasChildren && item.children!.some((c) => c.key === activeKey);
+  const [expanded, setExpanded] = useState(isActive || isChildActive);
+  const Tag = item.href && !hasChildren ? 'a' : 'div';
 
   return (
-    <Tag
-      className={`sidebar-item${isActive ? ' active' : ''}`}
-      href={item.href}
-      aria-current={isActive ? 'page' : undefined}
-      onClick={!item.href ? () => onItemClick?.(item.key) : undefined}
-      style={!item.href ? { cursor: 'pointer' } : undefined}
-    >
-      {item.icon && (
-        <span className="sidebar-item-icon" style={{ display: 'flex', alignItems: 'center' }}>
-          {item.icon}
-        </span>
+    <>
+      <Tag
+        className={`sidebar-item${isActive ? ' active' : ''}`}
+        href={!hasChildren ? item.href : undefined}
+        aria-current={isActive ? 'page' : undefined}
+        aria-expanded={hasChildren ? expanded : undefined}
+        onClick={hasChildren ? () => setExpanded((e) => !e) : !item.href ? () => onItemClick?.(item.key) : undefined}
+        style={hasChildren || !item.href ? { cursor: 'pointer' } : undefined}
+      >
+        <div style={{ display: 'flex', flex: 1, gap: 4, alignItems: 'center', minWidth: 0 }}>
+          {item.icon && (
+            <span className="sidebar-item-icon" style={{ display: 'flex', alignItems: 'center' }}>
+              {item.icon}
+            </span>
+          )}
+          <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.label}</span>
+        </div>
+        {hasChildren && (
+          <span style={{ flexShrink: 0, display: 'flex' }}>
+            {expanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </span>
+        )}
+      </Tag>
+      {hasChildren && expanded && (
+        <div style={{ paddingLeft: 28 }}>
+          {item.children!.map((child) => {
+            const childActive = child.key === activeKey;
+            const ChildTag = child.href ? 'a' : 'div';
+            return (
+              <ChildTag
+                key={child.key}
+                className={`sidebar-item${childActive ? ' active' : ''}`}
+                href={child.href}
+                style={{ paddingLeft: 0, cursor: child.href ? undefined : 'pointer' }}
+                aria-current={childActive ? 'page' : undefined}
+                onClick={!child.href ? () => onItemClick?.(child.key) : undefined}
+              >
+                <span>{child.label}</span>
+              </ChildTag>
+            );
+          })}
+        </div>
       )}
-      {item.label}
-    </Tag>
+    </>
   );
 }

@@ -39,7 +39,7 @@ export function RadioGroup({
   className,
 }: RadioGroupProps) {
   return (
-    <div role="radiogroup" className={className}>
+    <div role="radiogroup" className={className} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {options.map((opt) => {
         const checked = opt.value === value;
         const wrapClass = [

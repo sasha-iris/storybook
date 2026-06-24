@@ -1,6 +1,6 @@
 import React from 'react';
 
-type ProgressColor = 'primary' | 'blue' | 'green' | 'red' | 'yellow' | 'indigo' | 'purple' | 'dark';
+type ProgressColor = 'primary' | 'blue' | 'green' | 'orange' | 'yellow' | 'pink' | 'indigo' | 'purple' | 'dark';
 
 interface ProgressBarProps {
   value: number;
@@ -34,7 +34,7 @@ export function ProgressBar({
 }: ProgressBarProps) {
   const pct = Math.max(0, Math.min(100, value));
   const labelEl = (
-    <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-secondary)', textAlign: 'right', marginBottom: label === 'above' ? 4 : 0, marginTop: label === 'below' ? 4 : 0 }}>
+    <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--color-text-secondary)', textAlign: 'right', marginBottom: label === 'above' ? 4 : 0, marginTop: label === 'below' ? 6 : 0 }}>
       {pct}%
     </div>
   );

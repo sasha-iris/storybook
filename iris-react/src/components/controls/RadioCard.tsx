@@ -47,7 +47,7 @@ export function RadioCardGroup({
   className,
 }: RadioCardGroupProps) {
   return (
-    <div role="radiogroup" className={className}>
+    <div role="radiogroup" className={className} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {options.map((opt) => {
         const selected = opt.value === value;
         const cardClass = [
@@ -65,12 +65,7 @@ export function RadioCardGroup({
         return (
           <label key={opt.value} className={cardClass}>
             <span className="iris-control__check">
-              <span
-                className={radioClass}
-                role="radio"
-                aria-checked={selected}
-                aria-disabled={opt.disabled}
-              />
+              <span className={radioClass} aria-hidden="true" />
             </span>
             {opt.icon && <span className="iris-radio-card__icon">{opt.icon}</span>}
             <span className="iris-control__body">
@@ -79,13 +74,13 @@ export function RadioCardGroup({
             </span>
             <input
               type="radio"
+              role="radio"
               name={name}
               value={opt.value}
               checked={selected}
               disabled={opt.disabled}
               onChange={() => !opt.disabled && onChange(opt.value)}
               style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
-              aria-hidden="true"
             />
           </label>
         );

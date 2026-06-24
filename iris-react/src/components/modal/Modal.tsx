@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-  title: string;
+  /** Omit for titleless modals (PopUp/WithForms/CryptoWallet patterns) — renders a
+   *  borderless header with only the close button, right-aligned. */
+  title?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
   size?: ModalSize;
@@ -68,22 +71,21 @@ export function Modal({
     className,
   ].filter(Boolean).join(' ');
 
-  return (
-    <>
-      <div
-        className="modal-backdrop"
-        aria-hidden="true"
-        onClick={closeOnBackdrop ? onClose : undefined}
-      />
+  return createPortal(
+    <div
+      className="modal-backdrop"
+      onClick={closeOnBackdrop ? onClose : undefined}
+    >
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={title ? 'modal-title' : undefined}
         className={dialogClass}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="modal-header">
-          <h2 className="modal-title" id="modal-title">{title}</h2>
+        <div className="modal-header" style={title ? undefined : { borderBottom: 'none', justifyContent: 'flex-end', paddingBottom: 8 }}>
+          {title && <h2 className="modal-title" id="modal-title">{title}</h2>}
           <button type="button" className="modal-close" aria-label="Close dialog" onClick={onClose}>
             ×
           </button>
@@ -91,6 +93,7 @@ export function Modal({
         <div className="modal-body">{children}</div>
         {footer && <div className="modal-footer">{footer}</div>}
       </div>
-    </>
+    </div>,
+    document.body,
   );
 }
