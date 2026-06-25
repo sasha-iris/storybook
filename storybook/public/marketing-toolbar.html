@@ -215,24 +215,16 @@
 
       <input type="text" class="form-input" placeholder="Filter" style="width:150px;flex-shrink:0;">
 
-      <span class="tooltip-wrap">
-        <label class="iris-control" aria-describedby="tt-oper3" style="margin:0;cursor:pointer;align-items:center;flex-shrink:0;">
-          <span class="iris-control__check" style="margin-top:0;">
-            <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
-          </span>
-          <span class="iris-control__body">
-            <span class="iris-control__label">Operating &amp; Indirect</span>
-          </span>
-        </label>
-        <span class="tooltip-bubble tooltip-top" role="tooltip" id="tt-oper3">Show Operating and Indirect</span>
-      </span>
+      <label class="iris-control" style="margin:0;cursor:pointer;align-items:center;flex-shrink:0;">
+        <span class="iris-control__check" style="margin-top:0;">
+          <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
+        </span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">Show Operating and Indirect</span>
+        </span>
+      </label>
 
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;margin-left:auto;">
-        <button type="button" class="btn-link btn-link-semibold btn-sm" aria-label="Change Campaign Attribution">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m18 4-4 4h3v7c0 1.1-.9 2-2 2s-2-.9-2-2V8c0-2.21-1.79-4-4-4S5 5.79 5 8v7H2l4 4 4-4H7V8c0-1.1.9-2 2-2s2 .9 2 2v7c0 2.21 1.79 4 4 4s4-1.79 4-4V8h3z"/></svg>
-          Change Campaign Attribution
-        </button>
-
         <button type="button" class="btn btn-primary btn-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
           Auto Generate
@@ -246,6 +238,10 @@
             <span class="tooltip-bubble tooltip-top" role="tooltip" id="tt-more3">More actions</span>
           </span>
           <div class="dropdown-menu" data-menu="" role="menu" hidden style="position:absolute;top:100%;right:0;margin-top:8px;width:260px;z-index:10;">
+            <button type="button" class="dropdown-item" role="menuitem">
+              <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m18 4-4 4h3v7c0 1.1-.9 2-2 2s-2-.9-2-2V8c0-2.21-1.79-4-4-4S5 5.79 5 8v7H2l4 4 4-4H7V8c0-1.1.9-2 2-2s2 .9 2 2v7c0 2.21 1.79 4 4 4s4-1.79 4-4V8h3z"/></svg></span>
+              <span class="dropdown-item__text">Change Campaign Attribution</span>
+            </button>
             <button type="button" class="dropdown-item" role="menuitem">
               <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg></span>
               <span class="dropdown-item__text">Run Marketing Full Refresh</span>
