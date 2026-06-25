@@ -112,9 +112,13 @@
 
       <input type="text" class="form-input" placeholder="Filter" style="width:150px;flex-shrink:0;">
 
-      <label class="form-check" style="margin:0;flex-shrink:0;">
-        <input type="checkbox" class="form-check-input">
-        <span class="form-check-label">Show Operating and Indirect</span>
+      <label class="iris-control" style="margin:0;cursor:pointer;align-items:center;flex-shrink:0;">
+        <span class="iris-control__check" style="margin-top:0;">
+          <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
+        </span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">Operating &amp; Indirect</span>
+        </span>
       </label>
 
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;margin-left:auto;">
@@ -158,6 +162,18 @@
       });
       menu.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
+    });
+  });
+  document.querySelectorAll('[data-switch]').forEach(function (sw) {
+    var lbl = sw.closest('label') || sw;
+    var text = lbl.querySelector('.iris-control__label');
+    if (text) { text.style.transition = 'color 0.15s'; }
+    lbl.addEventListener('click', function (e) {
+      e.preventDefault();
+      var on = sw.classList.toggle('iris-toggle--on');
+      sw.classList.toggle('iris-toggle--off', !on);
+      sw.setAttribute('aria-checked', String(on));
+      if (text) { text.style.color = on ? '' : 'var(--color-text-disabled)'; }
     });
   });
   document.addEventListener('click', function () {
