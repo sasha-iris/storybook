@@ -17,7 +17,9 @@
     .cm-grouphead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
     .cm-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
     .cm-row + .cm-row { border-top: 1px solid var(--color-border-base); }
-    .cm-chico { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fce7f3; color: #a3004c; }
+    .cm-logo { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff; border: 1px solid var(--color-border-base); }
+    .cm-logo img { display: block; }
+    .cm-name { font-size: 13px; font-weight: 500; color: var(--color-text-heading); }
     .cm-val { margin-left: auto; font-size: 14px; font-weight: 600; color: var(--color-text-heading); }
     .cm-total { display: flex; justify-content: flex-end; padding-top: 8px; margin-top: 4px; border-top: 1px solid var(--color-border-base); font-size: 13px; font-weight: 600; color: var(--color-text-body-subtle); }
   </style>
@@ -25,10 +27,16 @@
 <body style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;padding:32px 40px;">
 <div style="max-width:1280px;margin:0 auto;">
 
-  <nav class="breadcrumb" aria-label="Breadcrumb" style="margin-bottom:10px;">
-    <span class="breadcrumb-item">Assumptions</span>
-    <span class="breadcrumb-sep">/</span>
-    <span class="breadcrumb-item">Custom Marketing</span>
+  <nav aria-label="Breadcrumb" style="margin-bottom:10px;">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="#"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;vertical-align:middle;"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Assumptions</a>
+        <span class="breadcrumb-sep" aria-hidden="true"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </li>
+      <li class="breadcrumb-item active">
+        <span aria-current="page">Custom Marketing</span>
+      </li>
+    </ol>
   </nav>
 
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;">
@@ -129,8 +137,8 @@
           </span>
         </div>
         <div class="cm-row">
-          <span class="cm-chico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg></span>
-          <span class="badge badge-yellow badge-sm">Amazon</span>
+          <span class="cm-logo"><img src="./amazon-logo.svg" alt="Amazon" width="18" height="18"></span>
+          <span class="cm-name">Amazon</span>
           <span class="cm-val">33%</span>
           <button type="button" class="btn btn-icon btn-xs" aria-label="Delete row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9M18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397"/></svg></button>
         </div>
@@ -146,20 +154,20 @@
           </span>
         </div>
         <div class="cm-row">
-          <span class="cm-chico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg></span>
-          <span class="badge badge-purple badge-sm">TikTok</span>
+          <span class="cm-logo"><img src="./tiktok-shop-logo.svg" alt="TikTok Shop" width="16" height="18"></span>
+          <span class="cm-name">TikTok Shop</span>
           <span class="cm-val">20%</span>
           <button type="button" class="btn btn-icon btn-xs" aria-label="Delete row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9M18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397"/></svg></button>
         </div>
         <div class="cm-row">
-          <span class="cm-chico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg></span>
-          <span class="badge badge-blue badge-sm">B2B</span>
+          <span class="cm-logo" style="font-size:9px;font-weight:700;color:var(--color-text-body-subtle);">B2B</span>
+          <span class="cm-name">Wholesale</span>
           <span class="cm-val">20%</span>
           <button type="button" class="btn btn-icon btn-xs" aria-label="Delete row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9M18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397"/></svg></button>
         </div>
         <div class="cm-row">
-          <span class="cm-chico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg></span>
-          <span class="badge badge-green badge-sm">Shopify</span>
+          <span class="cm-logo"><img src="./shopify-logo.svg" alt="Shopify" width="16" height="18"></span>
+          <span class="cm-name">Shopify</span>
           <span class="cm-val">20%</span>
           <button type="button" class="btn btn-icon btn-xs" aria-label="Delete row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9M18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397"/></svg></button>
         </div>
@@ -175,14 +183,14 @@
           </span>
         </div>
         <div class="cm-row">
-          <span class="cm-chico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg></span>
-          <span class="badge badge-green badge-sm">Shopify</span>
+          <span class="cm-logo"><img src="./shopify-logo.svg" alt="Shopify" width="16" height="18"></span>
+          <span class="cm-name">Shopify</span>
           <span class="cm-val">$849</span>
           <button type="button" class="btn btn-icon btn-xs" aria-label="Delete row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9M18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397"/></svg></button>
         </div>
         <div class="cm-row">
-          <span class="cm-chico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg></span>
-          <span class="badge badge-blue badge-sm">B2B</span>
+          <span class="cm-logo" style="font-size:9px;font-weight:700;color:var(--color-text-body-subtle);">B2B</span>
+          <span class="cm-name">Wholesale</span>
           <span class="cm-val">$849</span>
           <button type="button" class="btn btn-icon btn-xs" aria-label="Delete row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9M18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397"/></svg></button>
         </div>
