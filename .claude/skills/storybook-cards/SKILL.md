@@ -197,7 +197,7 @@ For states (loading, error, empty) and tricky variants (truncation, overflow):
 
 ## Self-test before declaring done — MANDATORY
 
-Do not say "готово" or push until every applicable item below is verified.
+Do not say "done" or push until every applicable item below is verified.
 Verify by reading the built output and story source, not by assuming the code is correct.
 
 ### 1. Build

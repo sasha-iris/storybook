@@ -478,7 +478,7 @@ a:hover { text-decoration: underline; }
 .btn-link {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   background: none;
   border: none;
   border-bottom: 1px solid transparent;
@@ -717,9 +717,14 @@ input[type="file"].form-file-input {
   appearance: none;
 }
 /* Thumb — Figma node 3284:22429: 22px white circle, grey border */
+.form-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: var(--radius-full);
+}
 .form-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 22px; height: 22px;
+  margin-top: -7px; /* center 22px thumb on 8px track */
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
@@ -733,6 +738,7 @@ input[type="file"].form-file-input {
   cursor: pointer;
   border: 2px solid var(--color-border-default);
   box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  box-sizing: border-box;
 }
 
 /* Checkbox & Radio */
@@ -1778,7 +1784,7 @@ input[type="file"].form-file-input {
    Pattern for ALL filter/selector dropdown buttons:
 
    <button className="btn btn-outline-gray btn-sm">
-     <SomeIcon className="w-4 h-4" />   {/* 16px — Figma sm button icon size */}
+     <SomeIcon className="w-4 h-4" />   (16px — Figma sm button icon size)
      Label
      <ChevronDownIcon className="w-4 h-4" />
    </button>
@@ -2753,18 +2759,28 @@ input[type="file"].form-file-input {
 }
 
 .list-group-item.active {
-  background: var(--color-bg-primary);
-  color: #fff;
-  border-color: var(--color-bg-primary);
+  background: #eef2ff;
+  color: #3730a3;
+  border-color: var(--color-border-default);
 }
 
 .list-group-item.disabled { color: var(--color-text-disabled); pointer-events: none; }
 
 /* Clickable */
 a.list-group-item:hover,
-button.list-group-item:hover { background: var(--color-bg-muted); text-decoration: none; }
+button.list-group-item:hover,
+li.list-group-item:hover { background: var(--color-bg-muted); text-decoration: none; color: inherit; }
 a.list-group-item.active:hover,
-button.list-group-item.active:hover { background: var(--color-bg-primary-hover); }
+button.list-group-item.active:hover,
+li.list-group-item.active:hover { background: #e0e7ff; }
+
+/* Flush — no outer border/radius, embeds directly into a panel */
+.list-group--flush {
+  border: none;
+  border-radius: 0;
+}
+.list-group--flush .list-group-item:first-child { border-top: none; }
+.list-group--flush .list-group-item:last-child  { border-bottom: none; }
 
 .list-group-item-meta {
   margin-left: auto;
@@ -2921,6 +2937,10 @@ kbd.kbd-dark {
   border: 1px solid var(--color-border-base);
   border-radius: var(--radius-xl);
   overflow: hidden;
+}
+.card--selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 /* Auth card — Card/Layouts "With form inputs" (Figma 13561:76495).
@@ -4423,6 +4443,7 @@ kbd.kbd-dark {
   position: relative;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 1px rgba(0,0,0,0.08);
@@ -4499,3 +4520,5 @@ kbd.kbd-dark {
 /* ── Global: the hidden attribute always wins over component display
    classes (.btn{display:inline-flex}, .modal-backdrop{display:flex} …) ── */
 [hidden] { display: none !important; }
+
+} /* end @layer iris */

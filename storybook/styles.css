@@ -764,7 +764,7 @@ a:hover { text-decoration: underline; }
 .btn-link {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   background: none;
   border: none;
   border-bottom: 1px solid transparent;
@@ -1002,9 +1002,14 @@ input[type="file"].form-file-input {
   appearance: none;
 }
 /* Thumb — Figma node 3284:22429: 22px white circle, grey border */
+.form-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: var(--radius-full);
+}
 .form-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 22px; height: 22px;
+  margin-top: -7px; /* center 22px thumb on 8px track */
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
@@ -1487,6 +1492,7 @@ input[type="file"].form-file-input {
   position: relative;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 1px rgba(0,0,0,0.08);
@@ -3472,18 +3478,28 @@ input[type="file"].form-file-input {
 }
 
 .list-group-item.active {
-  background: var(--color-bg-primary);
-  color: #fff;
-  border-color: var(--color-bg-primary);
+  background: #eef2ff;
+  color: #3730a3;
+  border-color: var(--color-border-default);
 }
 
 .list-group-item.disabled { color: var(--color-text-disabled); pointer-events: none; }
 
 /* Clickable */
 a.list-group-item:hover,
-button.list-group-item:hover { background: var(--color-bg-muted); text-decoration: none; }
+button.list-group-item:hover,
+li.list-group-item:hover { background: var(--color-bg-muted); text-decoration: none; color: inherit; }
 a.list-group-item.active:hover,
-button.list-group-item.active:hover { background: var(--color-bg-primary-hover); }
+button.list-group-item.active:hover,
+li.list-group-item.active:hover { background: #e0e7ff; }
+
+/* Flush — no outer border/radius, embeds directly into a panel */
+.list-group--flush {
+  border: none;
+  border-radius: 0;
+}
+.list-group--flush .list-group-item:first-child { border-top: none; }
+.list-group--flush .list-group-item:last-child  { border-bottom: none; }
 
 .list-group-item-meta {
   margin-left: auto;

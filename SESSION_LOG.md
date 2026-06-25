@@ -152,7 +152,7 @@ git push
 
 **Code Quality:**
 - ✅ **English ONLY in code** — no Russian text in JSX, HTML, or variable names
-- Labels like "Component (With Events)" — never "Component (с событиями)"
+- Labels like "Component (With Events)" — never a non-English equivalent
 - All comments, strings, classNames in English
 
 **Code Patterns:**

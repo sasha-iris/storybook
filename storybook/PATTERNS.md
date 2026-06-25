@@ -149,28 +149,28 @@ render: (args) => sidebar({ showLogo: args.showLogo !== false })
 
 ## 2b. Actions tab — KNOWN LIMITATION in html-vite
 
-**Status: не работает в этом проекте (Storybook 8 html-vite статическая сборка).**
+**Status: does not work in this project (Storybook 8 html-vite static build).**
 
-Actions tab рассчитан прежде всего на React/Vue/Angular, где события передаются как функции-пропы.
-Для HTML-string stories надёжного решения в Storybook 8 html-vite нет.
+The Actions tab is designed primarily for React/Vue/Angular, where events are passed as function props.
+For HTML-string stories there is no reliable solution in Storybook 8 html-vite.
 
-Подходы, проверенные и подтверждённо не работающие:
+Approaches tried and confirmed NOT working:
 ```
-❌ console.log в addEventListener         — идёт в браузерный консоль, не в Actions
-❌ action() из @storybook/addon-actions   — action() не достигает Actions panel
-❌ parameters.actions.handles             — withActions использует previewApi.useEffect,
-                                            который не срабатывает в html-vite
-❌ Кастомный decorator + setTimeout       — channel emission молча не работает
-                                            в статической сборке
+❌ console.log in addEventListener         — goes to the browser console, not Actions
+❌ action() from @storybook/addon-actions  — action() never reaches the Actions panel
+❌ parameters.actions.handles              — withActions uses previewApi.useEffect,
+                                             which does not fire in html-vite
+❌ Custom decorator + setTimeout           — channel emission silently fails
+                                             in the static build
 ```
 
-**Для диагностики нужна живая браузерная сессия:**
-открыть DevTools в preview iframe, кликнуть элемент, проверить вызывается ли
-`addons.getChannel().emit('storybook/actions/action-event')` и доходит ли
-postMessage до manager.
+**Diagnosing this requires a live browser session:**
+open DevTools in the preview iframe, click an element, check whether
+`addons.getChannel().emit('storybook/actions/action-event')` is called and whether the
+postMessage reaches the manager.
 
-**Не тратить время на это без доступа к браузеру.** Controls, Docs и source snippets
-работают и имеют значительно большую ценность.
+**Do not spend time on this without browser access.** Controls, Docs and source snippets
+work and deliver substantially more value.
 
 ---
 
