@@ -160,6 +160,76 @@
     </div>
   </section>
 
+  <section>
+    <p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);margin:0 0 16px;">Variant 3</p>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;">
+      <span style="font-size:20px;font-weight:700;color:var(--color-text-primary);">Custom Marketing</span>
+      <div class="btn-group" role="group" aria-label="View mode" style="flex-shrink:0;">
+        <button type="button" class="btn active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75h16.5v16.5H3.75zM3.75 9h16.5M3.75 14.25h16.5M9 3.75v16.5M14.25 3.75v16.5"/></svg>
+          Spreadsheet
+        </button>
+        <button type="button" class="btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z"/></svg>
+          Cards
+        </button>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="btn-group" role="group" aria-label="Year" style="flex-shrink:0;">
+        <button type="button" class="btn">2024</button>
+        <button type="button" class="btn">2025</button>
+        <button type="button" class="btn active">2026</button>
+        <button type="button" class="btn">2027</button>
+      </div>
+
+      <button type="button" class="btn btn-icon btn-sm" aria-label="Add">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      </button>
+
+      <input type="text" class="form-input" placeholder="Filter" style="width:150px;flex-shrink:0;">
+
+      <label class="iris-control" style="margin:0;cursor:pointer;align-items:center;flex-shrink:0;">
+        <span class="iris-control__check" style="margin-top:0;">
+          <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
+        </span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">Operating &amp; Indirect</span>
+        </span>
+      </label>
+
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;margin-left:auto;">
+        <button type="button" class="btn-link btn-link-semibold btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5 16.5 3m0 0L12 7.5M16.5 3v13.5m-13.5 0L7.5 21m0 0L12 16.5M7.5 21V7.5"/></svg>
+          Change Attribution
+        </button>
+
+        <button type="button" class="btn btn-primary btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+          Auto Generate
+        </button>
+
+        <div data-menu-wrap style="position:relative;">
+          <button type="button" class="btn btn-icon btn-sm" data-menu-toggle="" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+          </button>
+          <div class="dropdown-menu" data-menu="" role="menu" hidden style="position:absolute;top:100%;right:0;margin-top:8px;width:260px;z-index:10;">
+            <button type="button" class="dropdown-item" role="menuitem">
+              <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 4h10l4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2"/><circle cx="12" cy="14" r="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 4v4h6V4"/></svg></span>
+              <span class="dropdown-item__text">Save</span>
+            </button>
+            <button type="button" class="dropdown-item" role="menuitem">
+              <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg></span>
+              <span class="dropdown-item__text">Run Marketing Full Refresh</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
