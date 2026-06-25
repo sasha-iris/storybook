@@ -13,7 +13,7 @@
 <div style="max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:48px;">
 
   <p style="font-size:14px;line-height:1.6;color:var(--color-text-secondary);margin:0;max-width:680px;">
-    The fix for the &ldquo;3-button stack&rdquo;: <strong>Run Marketing Full Refresh</strong> moves into the &ldquo;&#8942;&rdquo; overflow menu the app already uses &mdash; the existing one in Spreadsheet (next to Delete All Data), and a new one in Cards. Each view is shown with its real buttons.
+    The fix: drop the redundant word. We are already in the <strong>Custom Marketing</strong> section &mdash; breadcrumb, title and every header say Marketing &mdash; so &ldquo;Run Marketing Full Refresh&rdquo; becomes <strong>Run Full Refresh</strong>. The shorter label frees enough width to keep the button <strong>visible in one row</strong>, so nothing hides under the &ldquo;&#8942;&rdquo; and the stack is gone. Each view is shown with its real buttons.
   </p>
 
   <section>
@@ -58,6 +58,11 @@
 
       <div style="flex:1;"></div>
 
+      <button type="button" class="btn btn-light btn-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+        Run Full Refresh
+      </button>
+
       <button type="button" class="btn btn-primary btn-sm" disabled>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 4h10l4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2"/><circle cx="12" cy="14" r="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 4v4h6V4"/></svg>
         Save
@@ -68,10 +73,6 @@
           <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
         </button>
         <div class="dropdown-menu" data-menu="" role="menu" hidden style="position:absolute;top:100%;right:0;margin-top:8px;width:260px;z-index:10;">
-          <button type="button" class="dropdown-item" role="menuitem">
-            <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg></span>
-            <span class="dropdown-item__text">Run Marketing Full Refresh</span>
-          </button>
           <button type="button" class="dropdown-item" role="menuitem">
             <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg></span>
             <span class="dropdown-item__text" style="color:var(--color-danger);">Delete All Data</span>
@@ -127,22 +128,15 @@
           Change Attribution
         </button>
 
+        <button type="button" class="btn btn-light btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+          Run Full Refresh
+        </button>
+
         <button type="button" class="btn btn-primary btn-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
           Auto Generate
         </button>
-
-        <div data-menu-wrap style="position:relative;">
-          <button type="button" class="btn btn-icon btn-sm" data-menu-toggle="" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-          </button>
-          <div class="dropdown-menu" data-menu="" role="menu" hidden style="position:absolute;top:100%;right:0;margin-top:8px;width:260px;z-index:10;">
-            <button type="button" class="dropdown-item" role="menuitem">
-              <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg></span>
-              <span class="dropdown-item__text">Run Marketing Full Refresh</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </section>
