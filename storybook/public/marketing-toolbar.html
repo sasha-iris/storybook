@@ -8,12 +8,19 @@
   <link rel="stylesheet" href="./iris-tokens.css">
   <link rel="stylesheet" href="./iris-components.css">
   <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* hover wiring for the Iris Tooltip component (library bubble has no hover trigger) */
+    .tooltip-wrap { display: inline-flex; }
+    .tooltip-wrap .tooltip-bubble { opacity: 0; visibility: hidden; transition: opacity .12s ease; }
+    .tooltip-wrap:hover .tooltip-bubble,
+    .tooltip-wrap:focus-within .tooltip-bubble { opacity: 1; visibility: visible; }
+  </style>
 </head>
 <body style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;padding:40px;">
 <div style="max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:48px;">
 
   <p style="font-size:14px;line-height:1.6;color:var(--color-text-secondary);margin:0;max-width:680px;">
-    The fix: drop the redundant word. We are already in the <strong>Custom Marketing</strong> section &mdash; breadcrumb, title and every header say Marketing &mdash; so &ldquo;Run Marketing Full Refresh&rdquo; becomes <strong>Run Full Refresh</strong>. The shorter label frees enough width to keep the button <strong>visible in one row</strong>, so nothing hides under the &ldquo;&#8942;&rdquo; and the stack is gone. Each view is shown with its real buttons. Hover any control to see its full name.
+    The fix: drop the redundant word. We are already in the <strong>Custom Marketing</strong> section &mdash; breadcrumb, title and every header say Marketing &mdash; so &ldquo;Run Marketing Full Refresh&rdquo; becomes <strong>Run Full Refresh</strong>. The shorter label frees enough width to keep the button <strong>visible in one row</strong>. Hover an action to see its full name (Iris tooltip).
   </p>
 
   <section>
@@ -22,11 +29,11 @@
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;">
       <span style="font-size:20px;font-weight:700;color:var(--color-text-primary);">Custom Marketing</span>
       <div class="btn-group" role="group" aria-label="View mode" style="flex-shrink:0;">
-        <button type="button" class="btn active" title="Spreadsheet view">
+        <button type="button" class="btn active">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75h16.5v16.5H3.75zM3.75 9h16.5M3.75 14.25h16.5M9 3.75v16.5M14.25 3.75v16.5"/></svg>
           Spreadsheet
         </button>
-        <button type="button" class="btn" title="Cards view">
+        <button type="button" class="btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z"/></svg>
           Cards
         </button>
@@ -35,45 +42,63 @@
 
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
       <div class="btn-group" role="group" aria-label="Year" style="flex-shrink:0;">
-        <button type="button" class="btn" title="2024">2024</button>
-        <button type="button" class="btn" title="2025">2025</button>
-        <button type="button" class="btn active" title="2026">2026</button>
-        <button type="button" class="btn" title="2027">2027</button>
+        <button type="button" class="btn">2024</button>
+        <button type="button" class="btn">2025</button>
+        <button type="button" class="btn active">2026</button>
+        <button type="button" class="btn">2027</button>
       </div>
-      <button type="button" class="btn btn-light btn-icon btn-pill btn-sm" aria-label="Add new expense for an entire year" title="Add new expense for an entire year">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-      </button>
-      <input type="text" class="form-input" placeholder="Filter" title="Filter custom expenses" style="width:150px;flex-shrink:0;">
+      <span class="tooltip-wrap tooltip-bottom">
+        <button type="button" class="btn btn-light btn-icon btn-pill btn-sm" aria-label="Add new expense for an entire year" aria-describedby="tt-add-sp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        </button>
+        <span class="tooltip-bubble" role="tooltip" id="tt-add-sp">Add new expense for an entire year</span>
+      </span>
+      <input type="text" class="form-input" placeholder="Filter" style="width:150px;flex-shrink:0;">
     </div>
 
     <div style="display:flex;align-items:center;gap:16px;">
-      <button type="button" class="btn-link btn-link-semibold btn-sm" title="Expand all" style="color:var(--color-text-secondary);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/></svg>
-        Expand all
-      </button>
-      <button type="button" class="btn-link btn-link-semibold btn-sm" title="Collapse all" style="color:var(--color-text-secondary);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9 12 5.25 15.75 9m-7.5 6L12 18.75 15.75 15"/></svg>
-        Collapse all
-      </button>
+      <span class="tooltip-wrap tooltip-bottom">
+        <button type="button" class="btn-link btn-link-semibold btn-sm" aria-describedby="tt-exp" style="color:var(--color-text-secondary);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/></svg>
+          Expand all
+        </button>
+        <span class="tooltip-bubble" role="tooltip" id="tt-exp">Expand all rows</span>
+      </span>
+      <span class="tooltip-wrap tooltip-bottom">
+        <button type="button" class="btn-link btn-link-semibold btn-sm" aria-describedby="tt-col" style="color:var(--color-text-secondary);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9 12 5.25 15.75 9m-7.5 6L12 18.75 15.75 15"/></svg>
+          Collapse all
+        </button>
+        <span class="tooltip-bubble" role="tooltip" id="tt-col">Collapse all rows</span>
+      </span>
 
       <div style="flex:1;"></div>
 
-      <button type="button" class="btn btn-light btn-sm" title="Run Marketing Full Refresh">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-        Run Full Refresh
-      </button>
+      <span class="tooltip-wrap tooltip-bottom">
+        <button type="button" class="btn btn-light btn-sm" aria-describedby="tt-refresh-sp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+          Run Full Refresh
+        </button>
+        <span class="tooltip-bubble" role="tooltip" id="tt-refresh-sp">Run Marketing Full Refresh</span>
+      </span>
 
-      <button type="button" class="btn btn-primary btn-sm" title="Save" disabled>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 4h10l4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2"/><circle cx="12" cy="14" r="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 4v4h6V4"/></svg>
-        Save
-      </button>
+      <span class="tooltip-wrap tooltip-bottom">
+        <button type="button" class="btn btn-primary btn-sm" aria-describedby="tt-save" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 4h10l4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2"/><circle cx="12" cy="14" r="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 4v4h6V4"/></svg>
+          Save
+        </button>
+        <span class="tooltip-bubble" role="tooltip" id="tt-save">Save changes</span>
+      </span>
 
       <div data-menu-wrap style="position:relative;">
-        <button type="button" class="btn btn-icon btn-sm" data-menu-toggle="" aria-haspopup="menu" aria-expanded="false" aria-label="More actions" title="More actions">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-        </button>
+        <span class="tooltip-wrap tooltip-bottom">
+          <button type="button" class="btn btn-icon btn-sm" data-menu-toggle="" aria-haspopup="menu" aria-expanded="false" aria-label="More actions" aria-describedby="tt-more">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 17a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+          </button>
+          <span class="tooltip-bubble" role="tooltip" id="tt-more">More actions</span>
+        </span>
         <div class="dropdown-menu" data-menu="" role="menu" hidden style="position:absolute;top:100%;right:0;margin-top:8px;width:260px;z-index:10;">
-          <button type="button" class="dropdown-item" role="menuitem" title="Delete All Data">
+          <button type="button" class="dropdown-item" role="menuitem">
             <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg></span>
             <span class="dropdown-item__text" style="color:var(--color-danger);">Delete All Data</span>
           </button>
@@ -88,11 +113,11 @@
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px;">
       <span style="font-size:20px;font-weight:700;color:var(--color-text-primary);">Custom Marketing</span>
       <div class="btn-group" role="group" aria-label="View mode" style="flex-shrink:0;">
-        <button type="button" class="btn" title="Spreadsheet view">
+        <button type="button" class="btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75h16.5v16.5H3.75zM3.75 9h16.5M3.75 14.25h16.5M9 3.75v16.5M14.25 3.75v16.5"/></svg>
           Spreadsheet
         </button>
-        <button type="button" class="btn active" title="Cards view">
+        <button type="button" class="btn active">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25a2.25 2.25 0 0 1-2.25-2.25v-2.25Z"/></svg>
           Cards
         </button>
@@ -101,42 +126,57 @@
 
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <div class="btn-group" role="group" aria-label="Year" style="flex-shrink:0;">
-        <button type="button" class="btn" title="2024">2024</button>
-        <button type="button" class="btn" title="2025">2025</button>
-        <button type="button" class="btn active" title="2026">2026</button>
-        <button type="button" class="btn" title="2027">2027</button>
+        <button type="button" class="btn">2024</button>
+        <button type="button" class="btn">2025</button>
+        <button type="button" class="btn active">2026</button>
+        <button type="button" class="btn">2027</button>
       </div>
 
-      <button type="button" class="btn btn-light btn-icon btn-pill btn-sm" aria-label="Add new expense for an entire year" title="Add new expense for an entire year">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-      </button>
+      <span class="tooltip-wrap tooltip-bottom">
+        <button type="button" class="btn btn-light btn-icon btn-pill btn-sm" aria-label="Add new expense for an entire year" aria-describedby="tt-add-cards">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        </button>
+        <span class="tooltip-bubble" role="tooltip" id="tt-add-cards">Add new expense for an entire year</span>
+      </span>
 
-      <input type="text" class="form-input" placeholder="Filter" title="Filter custom expenses" style="width:150px;flex-shrink:0;">
+      <input type="text" class="form-input" placeholder="Filter" style="width:150px;flex-shrink:0;">
 
-      <label class="iris-control" title="Show Operating and Indirect" style="margin:0;cursor:pointer;align-items:center;flex-shrink:0;">
-        <span class="iris-control__check" style="margin-top:0;">
-          <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
-        </span>
-        <span class="iris-control__body">
-          <span class="iris-control__label">Operating &amp; Indirect</span>
-        </span>
-      </label>
+      <span class="tooltip-wrap tooltip-bottom">
+        <label class="iris-control" aria-describedby="tt-oper" style="margin:0;cursor:pointer;align-items:center;flex-shrink:0;">
+          <span class="iris-control__check" style="margin-top:0;">
+            <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
+          </span>
+          <span class="iris-control__body">
+            <span class="iris-control__label">Operating &amp; Indirect</span>
+          </span>
+        </label>
+        <span class="tooltip-bubble" role="tooltip" id="tt-oper">Show Operating and Indirect</span>
+      </span>
 
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;margin-left:auto;">
-        <button type="button" class="btn-link btn-link-semibold btn-sm" aria-label="Change Campaign Attribution" title="Change Campaign Attribution">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-          Attribution
-        </button>
+        <span class="tooltip-wrap tooltip-bottom">
+          <button type="button" class="btn-link btn-link-semibold btn-sm" aria-label="Change Campaign Attribution" aria-describedby="tt-attr">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m18 4-4 4h3v7c0 1.1-.9 2-2 2s-2-.9-2-2V8c0-2.21-1.79-4-4-4S5 5.79 5 8v7H2l4 4 4-4H7V8c0-1.1.9-2 2-2s2 .9 2 2v7c0 2.21 1.79 4 4 4s4-1.79 4-4V8h3z"/></svg>
+            Attribution
+          </button>
+          <span class="tooltip-bubble" role="tooltip" id="tt-attr">Change Campaign Attribution</span>
+        </span>
 
-        <button type="button" class="btn btn-light btn-sm" title="Run Marketing Full Refresh">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-          Run Full Refresh
-        </button>
+        <span class="tooltip-wrap tooltip-bottom">
+          <button type="button" class="btn btn-light btn-sm" aria-describedby="tt-refresh-cards">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            Run Full Refresh
+          </button>
+          <span class="tooltip-bubble" role="tooltip" id="tt-refresh-cards">Run Marketing Full Refresh</span>
+        </span>
 
-        <button type="button" class="btn btn-primary btn-sm" title="Auto Generate">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
-          Auto Generate
-        </button>
+        <span class="tooltip-wrap tooltip-bottom">
+          <button type="button" class="btn btn-primary btn-sm" aria-describedby="tt-autogen">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+            Auto Generate
+          </button>
+          <span class="tooltip-bubble" role="tooltip" id="tt-autogen">Auto Generate marketing expenses</span>
+        </span>
       </div>
     </div>
   </section>
@@ -150,10 +190,7 @@
     toggle.addEventListener('click', function (e) {
       e.stopPropagation();
       var open = menu.hidden;
-      document.querySelectorAll('[data-menu]').forEach(function (m) {
-        m.hidden = true;
-        m.previousElementSibling.setAttribute('aria-expanded', 'false');
-      });
+      document.querySelectorAll('[data-menu]').forEach(function (m) { m.hidden = true; });
       menu.hidden = !open;
       toggle.setAttribute('aria-expanded', String(open));
     });
@@ -173,15 +210,13 @@
   document.addEventListener('click', function () {
     document.querySelectorAll('[data-menu]').forEach(function (m) {
       m.hidden = true;
-      m.previousElementSibling.setAttribute('aria-expanded', 'false');
+      var t = m.parentElement.querySelector('[data-menu-toggle]');
+      if (t) t.setAttribute('aria-expanded', 'false');
     });
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
-      document.querySelectorAll('[data-menu]').forEach(function (m) {
-        m.hidden = true;
-        m.previousElementSibling.setAttribute('aria-expanded', 'false');
-      });
+      document.querySelectorAll('[data-menu]').forEach(function (m) { m.hidden = true; });
     }
   });
 </script>
