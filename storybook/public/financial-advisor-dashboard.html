@@ -12,13 +12,13 @@
        gradient hero + score ring, priority accents, live Ask Fin chat, motion. Built on Iris tokens;
        purple anchors #42389d / #5850ec are the library's own brand values. -->
   <style>
-    /* ── Hero ─────────────────────────────────────────────── */
+    /* ── Hero — light gradient (LinkedIn-style airy tint, dark type) ── */
     .fad-hero {
-      background: linear-gradient(135deg, #241d54 0%, #42389d 55%, #5850ec 130%);
+      background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 55%, #fff 100%);
+      border: 1px solid var(--color-border-default);
       border-radius: 16px;
       padding: 32px;
       margin-bottom: 24px;
-      color: #fff;
       position: relative;
       overflow: hidden;
     }
@@ -27,47 +27,47 @@
       position: absolute;
       right: -120px; top: -120px;
       width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(104,117,245,.35), transparent 70%);
+      background: radial-gradient(circle, rgba(88,80,236,.07), transparent 70%);
       pointer-events: none;
     }
     .fad-hero-eyebrow {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-      color: rgba(255,255,255,.85); margin-bottom: 10px;
+      color: #42389d; margin-bottom: 10px;
     }
-    .fad-hero h2 { margin: 0; font-size: 22px; font-weight: 700; color: #fff; }
+    .fad-hero h2 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); }
     .fad-hero-status {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(253,224,71,.14); border: 1px solid rgba(253,224,71,.4);
-      color: #fde047; border-radius: 999px; padding: 3px 12px;
+      background: #fef9c2;
+      color: #894b00; border-radius: 999px; padding: 3px 12px;
       font-size: 12px; font-weight: 600;
     }
-    .fad-hero p.fad-summary { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.85); }
-    .fad-hero strong { color: #fff; }
-    .fad-hero-bullet { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: rgba(255,255,255,.85); }
+    .fad-hero p.fad-summary { font-size: 15px; line-height: 1.65; color: var(--color-text-body); }
+    .fad-hero strong { color: var(--color-text-heading); }
+    .fad-hero-bullet { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: var(--color-text-body); }
     .fad-btn-white {
       display: inline-flex; align-items: center; gap: 6px;
-      background: #fff; color: #42389d; border: none; cursor: pointer;
+      background: #42389d; color: #fff; border: none; cursor: pointer;
       border-radius: 12px; padding: 9px 16px; font-size: 14px; font-weight: 600; font-family: inherit;
       text-decoration: none; transition: background .15s ease;
     }
-    .fad-btn-white:hover { background: #e5e7eb; }
+    .fad-btn-white:hover { background: #362e83; }
     .fad-btn-ghost {
       display: inline-flex; align-items: center; gap: 6px;
-      background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.45); cursor: pointer;
+      background: #fff; color: var(--color-text-heading); border: 1px solid var(--color-border-default); cursor: pointer;
       border-radius: 12px; padding: 8px 16px; font-size: 14px; font-weight: 600; font-family: inherit;
       text-decoration: none; transition: border-color .15s ease, background .15s ease;
     }
-    .fad-btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,.08); }
-    .fad-btn-white:focus-visible, .fad-btn-ghost:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-    .fad-panel { background: rgba(255,255,255,.07); border-radius: 14px; padding: 22px; width: 100%; }
-    .fad-score-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.18); overflow: hidden; }
+    .fad-btn-ghost:hover { border-color: #d1d5db; background: var(--color-bg-muted); }
+    .fad-btn-white:focus-visible, .fad-btn-ghost:focus-visible { outline: 2px solid #42389d; outline-offset: 2px; }
+    .fad-panel { background: #fff; border: 1px solid var(--color-border-default); border-radius: 14px; padding: 22px; width: 100%; }
+    .fad-score-track { height: 6px; border-radius: 999px; background: var(--color-bg-muted); overflow: hidden; }
     .fad-score-bar {
-      height: 100%; width: 0; border-radius: 999px; background: #4ade80;
+      height: 100%; width: 0; border-radius: 999px; background: var(--color-success);
       transition: width 1.2s cubic-bezier(.4,0,.2,1);
     }
-    .fad-stat-value { font-size: 18px; font-weight: 700; color: #fff; }
-    .fad-stat-label { font-size: 12px; color: rgba(255,255,255,.85); margin-top: 2px; }
+    .fad-stat-value { font-size: 18px; font-weight: 700; color: var(--color-text-heading); }
+    .fad-stat-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
 
     /* ── Section reveal + card accents ────────────────────── */
     .fad-reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
@@ -357,15 +357,15 @@
 
           <ul role="list" style="list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:8px;">
             <li class="fad-hero-bullet">
-              <span class="iris-indicator__dot" aria-hidden="true" style="background:#4ade80;margin-top:6px;flex-shrink:0;"></span>
+              <span class="iris-indicator__dot" aria-hidden="true" style="background:var(--color-success);margin-top:6px;flex-shrink:0;"></span>
               Revenue growth is strong, but not all growth is profitable
             </li>
             <li class="fad-hero-bullet">
-              <span class="iris-indicator__dot" aria-hidden="true" style="background:#fde047;margin-top:6px;flex-shrink:0;"></span>
+              <span class="iris-indicator__dot" aria-hidden="true" style="background:#fdc700;margin-top:6px;flex-shrink:0;"></span>
               Gross margin is being compressed by fulfillment and product costs
             </li>
             <li class="fad-hero-bullet">
-              <span class="iris-indicator__dot" aria-hidden="true" style="background:#fda4af;margin-top:6px;flex-shrink:0;"></span>
+              <span class="iris-indicator__dot" aria-hidden="true" style="background:var(--color-danger);margin-top:6px;flex-shrink:0;"></span>
               29 inventory actions require review, including 3 critical stockout risks
             </li>
           </ul>
@@ -381,19 +381,19 @@
         </div>
 
         <div class="fad-panel" role="group" aria-label="Business health summary">
-          <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85);">Business Health Score</div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);">Business Health Score</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 12px;">
-            <span style="font-size:38px;font-weight:800;color:#fff;line-height:1;">82</span>
-            <span style="font-size:14px;font-weight:600;color:rgba(255,255,255,.85);">/ 100 · Healthy</span>
+            <span style="font-size:38px;font-weight:800;color:var(--color-text-heading);line-height:1;">82</span>
+            <span style="font-size:14px;font-weight:600;color:var(--color-text-secondary);">/ 100 · Healthy</span>
           </div>
           <div class="fad-score-track" role="img" aria-label="Business Health Score: 82 out of 100, down from 86 a month ago">
             <div class="fad-score-bar" id="healthRing"></div>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;">
-            <span style="font-size:12px;font-weight:600;color:#fda4af;"><span aria-hidden="true">&#8600;</span> Down from 86 a month ago</span>
-            <a href="#health-map" style="font-size:12px;font-weight:600;color:#fff;text-decoration:underline;text-underline-offset:2px;">See breakdown</a>
+            <span style="font-size:12px;font-weight:600;color:var(--color-danger);"><span aria-hidden="true">&#8600;</span> Down from 86 a month ago</span>
+            <a href="#health-map" style="font-size:12px;font-weight:600;color:#42389d;text-decoration:underline;text-underline-offset:2px;">See breakdown</a>
           </div>
-          <div style="height:1px;background:rgba(255,255,255,.16);margin:18px 0;" aria-hidden="true"></div>
+          <div style="height:1px;background:var(--color-border-default);margin:18px 0;" aria-hidden="true"></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;">
             <div>
               <div class="fad-stat-value">$42K</div>
