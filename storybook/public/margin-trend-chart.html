@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Margin trend chart — done right (demo)</title>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="./iris-tokens.css">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* Demo scaffolding only — the chart itself is one inline SVG on library .card shells */
+    .demo-note { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 8px; }
+  </style>
+</head>
+<body style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<main style="max-width:760px;margin:0 auto;padding:40px 24px;display:flex;flex-direction:column;gap:40px;">
+
+  <section>
+    <p class="demo-note">Variant A — the brief's §1 exhibit: 6-month trend, scoped axis, neutral dashed target, gap annotated at the gap.</p>
+
+    <h3 style="font-size:17px;font-weight:700;color:var(--color-text-heading);margin:0 0 6px;">Growth is strong — but you're buying it.</h3>
+    <p style="font-size:14px;line-height:1.6;color:var(--color-text-body);margin:0 0 14px;max-width:64ch;">
+      Net revenue hit <strong>$768K</strong> this month, <strong style="color:var(--color-success);">+12.4%</strong> and above plan.
+      But gross margin slipped to <strong>68.1%</strong> against a 71.3% target. Closing that gap is worth about <strong>$31K every month</strong>.
+    </p>
+
+    <!-- COMPONENT: Card — .card + .card-body-padded (library shell, as on financial-advisor-dashboard) -->
+    <div class="card">
+      <div class="card-body-padded">
+      <p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);margin:0 0 10px;">Gross margin vs target &middot; Feb&ndash;Jul 2026</p>
+      <svg viewBox="0 0 640 216" role="img"
+           aria-label="Gross margin by month, February to July 2026: declined from 71.8 percent to 68.1 percent, crossing below the 71.3 percent target in late March. Current gap: 3.2 points, about 31 thousand dollars per month."
+           style="width:100%;height:auto;display:block;font-family:inherit;">
+        <!-- gridlines: 66 / 68 / 70 / 72 % -->
+        <g stroke="var(--color-border-default)" stroke-width="1">
+          <line x1="44" y1="28.9"  x2="530" y2="28.9"/>
+          <line x1="44" y1="80.6"  x2="530" y2="80.6"/>
+          <line x1="44" y1="132.3" x2="530" y2="132.3"/>
+          <line x1="44" y1="184"   x2="530" y2="184"/>
+        </g>
+        <g font-size="11" fill="var(--color-text-secondary)" text-anchor="end">
+          <text x="36" y="32.9">72%</text>
+          <text x="36" y="84.6">70%</text>
+          <text x="36" y="136.3">68%</text>
+          <text x="36" y="188">66%</text>
+        </g>
+
+        <!-- shortfall area: actual below target, from the crossing point (late Mar) to Jul -->
+        <polygon points="165.3,47 238,54.8 335,75.4 433,98.7 530,129.7 530,47"
+                 fill="rgba(224,36,36,.05)"/>
+
+        <!-- target: neutral dashed reference line -->
+        <line x1="44" y1="47" x2="530" y2="47" stroke="var(--color-text-secondary)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="48" y="62" font-size="11" font-weight="600" fill="var(--color-text-secondary)">Target 71.3%</text>
+
+        <!-- actual: brand-purple series line (Iris chart convention), endpoint emphasized -->
+        <polyline points="44,34.1 141,44.4 238,54.8 335,75.4 433,98.7 530,129.7"
+                  fill="none" stroke="#5850ec" stroke-width="2.5"
+                  stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="530" cy="129.7" r="4.5" fill="#5850ec"/>
+        <text x="538" y="150" font-size="13" font-weight="700" fill="var(--color-text-heading)" text-anchor="end">68.1%</text>
+
+        <!-- gap bracket at July: from target down to actual, annotation at the gap -->
+        <g stroke="var(--color-text-secondary)" stroke-width="1">
+          <line x1="548" y1="47" x2="548" y2="129.7"/>
+          <line x1="544" y1="47" x2="552" y2="47"/>
+          <line x1="544" y1="129.7" x2="552" y2="129.7"/>
+        </g>
+        <text x="556" y="84" font-size="12" font-weight="700" fill="var(--color-danger)">&minus;3.2 pts</text>
+        <text x="556" y="100" font-size="11" fill="var(--color-text-secondary)">&asymp; $31K/mo</text>
+
+        <!-- month labels -->
+        <g font-size="11" fill="var(--color-text-secondary)" text-anchor="middle">
+          <text x="44"  y="205">Feb</text>
+          <text x="141" y="205">Mar</text>
+          <text x="238" y="205">Apr</text>
+          <text x="335" y="205">May</text>
+          <text x="433" y="205">Jun</text>
+          <text x="530" y="205">Jul</text>
+        </g>
+      </svg>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin:10px 0 0;">How I know: P&amp;L &middot; COGS &middot; logistics feeds &middot; <strong style="color:var(--color-text-heading);">89% confidence</strong> &middot; (71.3% &minus; 68.1%) &times; $768K &asymp; $24.6K + SKU-mix effect &asymp; $31K/mo</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="demo-note">Variant B — the letter-friendly minimum: a word-sized sparkline inline in the sentence, nothing else.</p>
+    <div class="card">
+      <div class="card-body-padded">
+      <p style="font-size:14px;line-height:1.7;color:var(--color-text-body);margin:0;max-width:64ch;">
+        Net revenue hit <strong>$768K</strong> this month, <strong style="color:var(--color-success);">+12.4%</strong> and above plan.
+        But gross margin slipped to <strong>68.1%</strong>
+        <svg viewBox="0 0 80 20" aria-hidden="true" style="width:80px;height:20px;vertical-align:-4px;margin:0 2px;">
+          <line x1="2" y1="5.5" x2="78" y2="5.5" stroke="var(--color-border-default)" stroke-width="1" stroke-dasharray="3 3"/>
+          <polyline points="2,4 17.2,5.2 32.4,6.4 47.6,8.8 62.8,11.5 78,15.1"
+                    fill="none" stroke="#5850ec" stroke-width="1.8"
+                    stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="78" cy="15.1" r="2.4" fill="#5850ec"/>
+        </svg>
+        against a 71.3% target &mdash; fulfillment and logistics costs are growing faster than revenue.
+        Closing that gap is worth about <strong>$31K every month</strong>.
+      </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
