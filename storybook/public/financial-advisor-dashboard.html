@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Advisor Dashboard — Iris Library example</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="./iris-tokens.css">
+  <link rel="stylesheet" href="./iris-components.css">
+  <link rel="stylesheet" href="./styles.css">
+  <!-- Custom demo layer (fad-*) — user-approved deviation from the Storybook-only rule (2026-07-08):
+       gradient hero + score ring, priority accents, live Ask Fin chat, motion. Built on Iris tokens;
+       purple anchors #42389d / #5850ec are the library's own brand values. -->
+  <style>
+    /* ── Hero ─────────────────────────────────────────────── */
+    .fad-hero {
+      background: linear-gradient(135deg, #241d54 0%, #42389d 55%, #5850ec 130%);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .fad-hero::after {
+      content: '';
+      position: absolute;
+      right: -120px; top: -120px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(104,117,245,.35), transparent 70%);
+      pointer-events: none;
+    }
+    .fad-hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(255,255,255,.85); margin-bottom: 10px;
+    }
+    .fad-hero h2 { margin: 0; font-size: 22px; font-weight: 700; color: #fff; }
+    .fad-hero-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(253,224,71,.14); border: 1px solid rgba(253,224,71,.4);
+      color: #fde047; border-radius: 999px; padding: 3px 12px;
+      font-size: 12px; font-weight: 600;
+    }
+    .fad-hero p.fad-summary { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.85); }
+    .fad-hero strong { color: #fff; }
+    .fad-hero-bullet { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: rgba(255,255,255,.85); }
+    .fad-btn-white {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; color: #42389d; border: none; cursor: pointer;
+      border-radius: 12px; padding: 9px 16px; font-size: 14px; font-weight: 600; font-family: inherit;
+      text-decoration: none; transition: background .15s ease;
+    }
+    .fad-btn-white:hover { background: #e5e7eb; }
+    .fad-btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.45); cursor: pointer;
+      border-radius: 12px; padding: 8px 16px; font-size: 14px; font-weight: 600; font-family: inherit;
+      text-decoration: none; transition: border-color .15s ease, background .15s ease;
+    }
+    .fad-btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+    .fad-btn-white:focus-visible, .fad-btn-ghost:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .fad-panel { background: rgba(255,255,255,.07); border-radius: 14px; padding: 22px; width: 100%; }
+    .fad-score-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.18); overflow: hidden; }
+    .fad-score-bar {
+      height: 100%; width: 0; border-radius: 999px; background: #4ade80;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    .fad-stat-value { font-size: 18px; font-weight: 700; color: #fff; }
+    .fad-stat-label { font-size: 12px; color: rgba(255,255,255,.85); margin-top: 2px; }
+
+    /* ── Section reveal + card accents ────────────────────── */
+    .fad-reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+    .fad-reveal.is-in { opacity: 1; transform: none; }
+    .fad-kpis .card, .fad-rec { transition: transform .18s ease, box-shadow .18s ease; }
+    .fad-kpis .card:hover, .fad-rec:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(17,25,40,.08); }
+
+    /* ── Ask Fin chat ─────────────────────────────────────── */
+    .fad-online { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); animation: fadPulse 2s infinite; }
+    @keyframes fadPulse {
+      0% { box-shadow: 0 0 0 0 rgba(34,197,94,.45); }
+      70% { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    .fad-chat-log { display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto; padding-right: 2px; }
+    .fad-msg { max-width: 88%; padding: 10px 12px; border-radius: 12px; font-size: 13px; line-height: 1.55; animation: fadIn .25s ease; }
+    @keyframes fadIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .fad-msg--fin { background: var(--color-bg-muted); color: var(--color-text-body); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .fad-msg--user { background: #42389d; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .fad-msg-meta {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--color-border-default);
+      font-size: 11px; color: var(--color-text-secondary);
+    }
+    .fad-typing { display: inline-flex; gap: 4px; align-items: center; padding: 4px 2px; }
+    .fad-typing span { width: 6px; height: 6px; border-radius: 50%; background: #9ca3af; animation: fadBlink 1.1s infinite; }
+    .fad-typing span:nth-child(2) { animation-delay: .18s; }
+    .fad-typing span:nth-child(3) { animation-delay: .36s; }
+    @keyframes fadBlink { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+    .fad-cursor { display: inline-block; width: 7px; height: 13px; background: #6b7280; vertical-align: -2px; margin-left: 2px; animation: fadBlink 1s infinite; }
+    .fad-finrow { display: flex; gap: 8px; align-items: flex-start; }
+    .fad-avatar {
+      width: 24px; height: 24px; border-radius: 50%; background: #42389d; color: #fff;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+    }
+    .fad-prompt {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      width: 100%; text-align: left; background: transparent;
+      border: 1px solid var(--color-border-default); border-radius: 10px;
+      padding: 9px 12px; font-size: 13px; font-family: inherit; color: var(--color-text-body);
+      cursor: pointer; transition: background .12s ease, border-color .12s ease;
+    }
+    .fad-prompt:hover { background: var(--color-bg-muted); }
+    .fad-prompt:focus-visible { outline: 2px solid #42389d; outline-offset: 1px; }
+    .fad-prompt svg { flex-shrink: 0; color: var(--color-text-secondary); }
+
+    /* ── Slim one-line integration banner (like production) ── */
+    .fad-banner { padding: 10px 16px; align-items: center; font-size: 14px; }
+    .fad-banner .alert-body { margin: 0; }
+    .fad-banner a { color: inherit; font-weight: 600; text-decoration: underline; }
+
+    /* ── Area label next to priority badge on recommendation cards ── */
+    .fad-area { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .03em; }
+
+    /* ── Health map: badges size to content, not to the grid cell ── */
+    .fad-map .badge { justify-self: start; }
+
+    /* ── Links size to their text — otherwise the border-bottom underline
+       stretches across the whole flex/grid cell ── */
+    .fad-kpis .btn-link { align-self: flex-start; }
+    .fad-map .btn-link, .fad-map .btn { justify-self: start; }
+
+    /* ── AI Mode toggle: everything Fin adds carries .fad-ai ── */
+    body.fad-ai-off .fad-ai { display: none !important; }
+    .alert[hidden] { display: none !important; } /* .alert{display:flex} would defeat the hidden attribute */
+
+    /* ── Snoozed / dismissed recommendation collapses to one line ── */
+    .fad-rec-collapsed {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 20px; font-size: 13px; color: var(--color-text-secondary);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      .fad-reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<!-- Page scaffolding only (layout, not component styling): flex shell = sidebar + content.
+     Pattern source: pages/account-settings.html -->
+<body style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       COMPONENT: Navigation/Sidebar — expanded, gray variant
+       Source story: Sidebar.stories.js › sidebar() builder (Figma 1057:2041, live example 9272:163206)
+       Classes: .sidebar .sidebar--gray · .sidebar-brand · .sidebar-nav · .sidebar-item(.active) · .sidebar-item-icon · .sidebar-divider
+       GAP: sidebar icon catalog has no "AI / advisor" solid glyph (Icons.stories.js only lists icons
+       actually consumed by components). Reused the outline sparkle path from marketing-toolbar.html's
+       "Auto Generate" button for the new Financial Advisor entry — logged in STORYBOOK_FIDELITY.md.
+       ════════════════════════════════════════════════════════════════════ -->
+  <aside class="sidebar sidebar--gray" aria-label="Main navigation" style="height:auto;">
+    <div class="sidebar-brand">
+      <div style="display:inline-flex;align-items:center;gap:12px;">
+        <img src="./assets/iris-mark-sm.svg" height="32" alt="Iris mark" style="display:block;flex-shrink:0;width:auto;">
+        <span style="font-size:24px;font-weight:600;line-height:24px;color:#101828;white-space:nowrap;font-family:inherit;">Iris</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-item active" aria-current="page">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+          </span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Fin AI</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Overview</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Metrics Library</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Profit &amp; Loss</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 000 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Plan vs Actual</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9z"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Inventory</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1v-1z"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Cohorts</span>
+        </div>
+      </div>
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Operations Center</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <nav class="sidebar-nav sidebar-nav--bottom">
+      <div class="sidebar-item">
+        <div style="display:flex;flex:1;gap:4px;align-items:center;min-width:0;">
+          <span class="sidebar-item-icon" style="display:flex;align-items:center;"><svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg></span>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Help</span>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Page scaffolding: main column -->
+  <main style="flex:1;padding:32px 40px;max-width:1360px;box-sizing:border-box;">
+
+    <!-- COMPONENT: Breadcrumbs — Source: custom-marketing-iris.html pattern (Breadcrumbs.stories.js) -->
+    <nav aria-label="Breadcrumb" style="margin-bottom:10px;">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;vertical-align:middle;"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Iris Finance</a>
+          <span class="breadcrumb-sep" aria-hidden="true"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </li>
+        <li class="breadcrumb-item active">
+          <span aria-current="page">Financial Advisor Dashboard</span>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Page heading — Foundation/Typography tokens only -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:4px;">
+      <div>
+        <h1 style="margin:0 0 4px;font-size:var(--text-2xl);font-weight:var(--font-bold);color:var(--color-text-heading);">Financial Advisor Dashboard</h1>
+        <p style="margin:0;font-size:var(--text-base);color:var(--color-text-secondary);">AI-guided view of business health, risks, and next best actions</p>
+      </div>
+      <span class="badge badge-indigo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+        <span>Fin — AI Financial Advisor</span>
+      </span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Context / filter bar — aligned to the production "Test Dashboard" toolbar
+         (Filters pill · comparison select · date range · D/W/M/Q/Y · toggle · sparkle-purple AI button)
+         Pattern source: marketing-toolbar.html + custom-marketing-iris.html filter rows
+         Classes: .btn/.btn-light/.btn-primary · .btn-group · .form-select · .badge · .iris-control/.iris-toggle
+         ══════════════════════════════════════════════════════════════════ -->
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0;">
+      <button type="button" class="btn btn-light btn-sm" aria-label="Filters: 37 channels selected">
+        Filters:
+        <span class="badge badge-sm badge-indigo">37 channels</span>
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <select class="form-select" style="width:160px;" aria-label="Comparison">
+        <option selected>No comparison</option>
+        <option>Previous period</option>
+        <option>Same period last year</option>
+      </select>
+
+      <button type="button" class="btn btn-light btn-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+        May 1 – Jun 1, 2026
+      </button>
+
+      <div class="btn-group" role="group" aria-label="Period granularity">
+        <button type="button" class="btn">D</button>
+        <button type="button" class="btn">W</button>
+        <button type="button" class="btn active">M</button>
+        <button type="button" class="btn">Q</button>
+        <button type="button" class="btn">Y</button>
+      </div>
+
+      <label class="iris-control" style="margin:0 0 0 auto;cursor:pointer;align-items:center;flex-shrink:0;">
+        <span class="iris-control__check" style="margin-top:0;">
+          <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch><span class="iris-toggle__thumb"></span></span>
+        </span>
+        <span class="iris-control__body">
+          <span class="iris-control__label">AI Mode: Advisor On</span>
+        </span>
+      </label>
+
+      <button type="button" class="btn btn-primary btn-sm fad-ai" id="askFinTop" style="flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+        Ask Fin
+      </button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+      <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Last updated: 3 min ago
+      </span>
+      <span class="badge badge-green" title="Share of orders with complete cost, fee, and mapping records across connected channels" style="cursor:help;">Data confidence: 94%</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         COMPONENT: Alerts — warning with CTA
+         Source story: Alerts.stories.js › "With CTA" (color=warning)
+         Classes: .alert .alert-warning · .alert-icon · .alert-body · .alert-title · .alert-dismiss
+         ══════════════════════════════════════════════════════════════════ -->
+    <!-- Slim one-line banner, same pattern as production -->
+    <div role="alert" class="alert alert-warning fad-banner" style="margin-bottom:24px;">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+      <div class="alert-body">Your Facebook authorization has expired. Please log in again from the <a href="#">Connections</a> page.</div>
+      <button type="button" class="alert-dismiss" aria-label="Dismiss">×</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Hero: Fin's Briefing — custom fad-hero gradient (production has a dark
+         purple gradient tile on Test Dashboard; brand anchors #42389d/#5850ec).
+         Score ring animates on load. Counters keep their live-update ids.
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="alert alert-warning fad-banner" id="advisorOffNote" hidden style="margin-bottom:24px;">
+      <div class="alert-body">Advisor is off — showing metrics only. Fin's briefing, recommendations, and chat are hidden.</div>
+    </div>
+
+    <section class="fad-hero fad-ai">
+      <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:36px;align-items:center;position:relative;z-index:1;">
+        <div>
+          <div class="fad-hero-eyebrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+            Fin — AI Financial Advisor
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+            <h2>Fin's Briefing</h2>
+            <span class="fad-hero-status">Healthy growth · margin pressure detected</span>
+          </div>
+
+          <p class="fad-summary" style="margin:0 0 16px;">
+            Revenue is up 12.4% this month, but gross margin is 3.2 pts below target. The biggest pressure is coming from fulfillment costs, inventory risk, and missing contribution margin targets. Iris estimates <strong>$198K in total financial impact</strong> across immediate risks and optimization opportunities.
+          </p>
+
+          <ul role="list" style="list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:8px;">
+            <li class="fad-hero-bullet">
+              <span class="iris-indicator__dot" aria-hidden="true" style="background:#4ade80;margin-top:6px;flex-shrink:0;"></span>
+              Revenue growth is strong, but not all growth is profitable
+            </li>
+            <li class="fad-hero-bullet">
+              <span class="iris-indicator__dot" aria-hidden="true" style="background:#fde047;margin-top:6px;flex-shrink:0;"></span>
+              Gross margin is being compressed by fulfillment and product costs
+            </li>
+            <li class="fad-hero-bullet">
+              <span class="iris-indicator__dot" aria-hidden="true" style="background:#fda4af;margin-top:6px;flex-shrink:0;"></span>
+              29 inventory actions require review, including 3 critical stockout risks
+            </li>
+          </ul>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="#recommendations" class="fad-btn-white">Review Next Best Actions</a>
+            <a href="#" class="fad-btn-ghost">Open P&amp;L Detail</a>
+            <button type="button" class="fad-btn-ghost" id="briefingSubscribe">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Email me this weekly
+            </button>
+          </div>
+        </div>
+
+        <div class="fad-panel" role="group" aria-label="Business health summary">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.85);">Business Health Score</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 12px;">
+            <span style="font-size:38px;font-weight:800;color:#fff;line-height:1;">82</span>
+            <span style="font-size:14px;font-weight:600;color:rgba(255,255,255,.85);">/ 100 · Healthy</span>
+          </div>
+          <div class="fad-score-track" role="img" aria-label="Business Health Score: 82 out of 100, down from 86 a month ago">
+            <div class="fad-score-bar" id="healthRing"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;">
+            <span style="font-size:12px;font-weight:600;color:#fda4af;"><span aria-hidden="true">&#8600;</span> Down from 86 a month ago</span>
+            <a href="#health-map" style="font-size:12px;font-weight:600;color:#fff;text-decoration:underline;text-underline-offset:2px;">See breakdown</a>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,.16);margin:18px 0;" aria-hidden="true"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;">
+            <div>
+              <div class="fad-stat-value">$42K</div>
+              <div class="fad-stat-label">Revenue protected</div>
+            </div>
+            <div>
+              <div class="fad-stat-value">$31K</div>
+              <div class="fad-stat-label">Margin opportunity</div>
+            </div>
+            <div>
+              <div class="fad-stat-value">$125K</div>
+              <div class="fad-stat-label">Inventory / cost risk</div>
+            </div>
+            <div>
+              <div class="fad-stat-value" id="impactActionsPending">29</div>
+              <div class="fad-stat-label">Actions pending</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Executive KPI strip
+         Shell: .card .card-body-padded · icon: .card-icon .card-icon-{color} + card-icons.js ICON.*
+         Delta: .badge badge-{color} · link: .btn-link
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="fad-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;">
+
+      <div class="card">
+        <div class="card-body-padded" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--color-text-secondary);">Net Revenue</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:22px;font-weight:700;color:var(--color-text-heading);">$768K</span>
+            <span style="font-size:13px;font-weight:600;color:var(--color-success);"><span aria-hidden="true">&#8599;</span> +12.4%</span>
+          </div>
+          <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" style="width:100%;height:32px;display:block;">
+            <polygon points="0,22 9,21 18,23 27,19 36,20 45,16 55,17 64,13 73,14 82,10 91,11 100,6 100,28 0,28" fill="rgba(14,159,110,.08)"/>
+            <polyline points="0,22 9,21 18,23 27,19 36,20 45,16 55,17 64,13 73,14 82,10 91,11 100,6" fill="none" stroke="var(--color-success)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+          </svg>
+          <p class="fad-ai" style="font-size:12px;line-height:1.5;color:var(--color-text-secondary);margin:0;">Growth is above plan, but profitability needs review.</p>
+          <a href="#" class="btn-link btn-link-semibold btn-xs">View revenue detail</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body-padded" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--color-text-secondary);">Gross Margin</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:22px;font-weight:700;color:var(--color-text-heading);">68.1%</span>
+            <span style="font-size:13px;font-weight:600;color:var(--color-danger);"><span aria-hidden="true">&#8600;</span> -3.2 pts vs target</span>
+          </div>
+          <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" style="width:100%;height:32px;display:block;">
+            <polygon points="0,8 9,9 18,7 27,11 36,10 45,14 55,13 64,17 73,16 82,20 91,19 100,22 100,28 0,28" fill="rgba(224,36,36,.06)"/>
+            <polyline points="0,8 9,9 18,7 27,11 36,10 45,14 55,13 64,17 73,16 82,20 91,19 100,22" fill="none" stroke="var(--color-danger)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+          </svg>
+          <p class="fad-ai" style="font-size:12px;line-height:1.5;color:var(--color-text-secondary);margin:0;">Fulfillment and product costs are compressing margin.</p>
+          <a href="#" class="btn-link btn-link-semibold btn-xs">Open P&amp;L</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body-padded" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--color-text-secondary);">Contribution Margin</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:22px;font-weight:700;color:var(--color-text-heading);">$473K</span>
+            <span style="font-size:13px;font-weight:600;color:var(--color-warning);">Target missing</span>
+          </div>
+          <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" style="width:100%;height:32px;display:block;">
+            <polygon points="0,18 9,17 18,18 27,16 36,17 45,15 55,16 64,14 73,15 82,13 91,14 100,12 100,28 0,28" fill="rgba(107,114,128,.06)"/>
+            <polyline points="0,18 9,17 18,18 27,16 36,17 45,15 55,16 64,14 73,15 82,13 91,14 100,12" fill="none" stroke="var(--color-text-secondary)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+          </svg>
+          <p class="fad-ai" style="font-size:12px;line-height:1.5;color:var(--color-text-secondary);margin:0;">May targets are incomplete, limiting plan-vs-actual accuracy.</p>
+          <a href="#" class="btn-link btn-link-semibold btn-xs">Build targets</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body-padded" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--color-text-secondary);">Inventory Risk</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:22px;font-weight:700;color:var(--color-text-heading);">$125K</span>
+            <span style="font-size:13px;font-weight:600;color:var(--color-danger);" id="kpiActionsPending">29 pending</span>
+          </div>
+          <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" style="width:100%;height:32px;display:block;">
+            <polygon points="0,20 9,21 18,19 27,18 36,19 45,15 55,16 64,12 73,13 82,9 91,10 100,7 100,28 0,28" fill="rgba(224,36,36,.06)"/>
+            <polyline points="0,20 9,21 18,19 27,18 36,19 45,15 55,16 64,12 73,13 82,9 91,10 100,7" fill="none" stroke="var(--color-danger)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+          </svg>
+          <p class="fad-ai" style="font-size:12px;line-height:1.5;color:var(--color-text-secondary);margin:0;">3 SKUs are projected to stock out within 7 days.</p>
+          <a href="#" class="btn-link btn-link-semibold btn-xs">Go to Inventory</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body-padded" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--color-text-secondary);">Customer Quality</div>
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:22px;font-weight:700;color:var(--color-text-heading);">$66.86 LTV</span>
+            <span style="font-size:13px;font-weight:600;color:var(--color-text-secondary);">Stable</span>
+          </div>
+          <svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true" style="width:100%;height:32px;display:block;">
+            <polygon points="0,14 9,15 18,13 27,14 36,15 45,14 55,13 64,14 73,15 82,14 91,13 100,14 100,28 0,28" fill="rgba(107,114,128,.06)"/>
+            <polyline points="0,14 9,15 18,13 27,14 36,15 45,14 55,13 64,14 73,15 82,14 91,13 100,14" fill="none" stroke="var(--color-text-secondary)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+          </svg>
+          <p class="fad-ai" style="font-size:12px;line-height:1.5;color:var(--color-text-secondary);margin:0;">Retention is stable — check growth by channel profitability.</p>
+          <a href="#" class="btn-link btn-link-semibold btn-xs">View cohorts</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Main body: Recommended Next Best Actions (left) + Impact Summary / Ask Fin (right)
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="fad-ai" style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;margin-bottom:24px;">
+
+      <section id="recommendations">
+        <h2 style="font-size:18px;font-weight:700;color:var(--color-text-heading);margin:0 0 2px;">Recommended Next Best Actions</h2>
+        <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 4px;">Prioritized by financial impact, urgency, and confidence</p>
+        <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 16px;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Accepted recommendations delivered <strong style="color:var(--color-success);">$210K</strong> in the last 90 days &middot; 12 of 14 accepted</span>
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Recommendation 1 — Critical / Inventory -->
+          <article class="card fad-rec">
+            <div class="card-body-padded">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div class="card-icon card-icon-red" style="width:36px;height:36px;flex-shrink:0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;" id="rec1BadgeWrap">
+                    <span class="badge badge-red">Critical</span><span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Inventory</span>
+                  </div>
+                  <h3 style="font-size:16px;font-weight:700;color:var(--color-text-heading);margin:0 0 6px;">Approve reorder plan for 3 SKUs approaching stockout</h3>
+                  <p style="font-size:14px;line-height:1.6;color:var(--color-text-body);margin:0 0 12px;">Three high-velocity SKUs are projected to run out within 7 days. Approving the recommended EOQ plan can protect forecasted sales and reduce emergency fulfillment cost.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;">
+                    <span><strong style="color:var(--color-success);">$42K</strong> revenue protected</span>
+                    <span><strong style="color:var(--color-text-heading);">94%</strong> confidence</span>
+                    <span>Sources: Inventory, sales velocity, lead time, EOQ model</span>
+                  </div>
+                  <p style="font-size:13px;font-weight:600;color:var(--color-danger);margin:0 0 12px;display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    If not approved by Jul 11, projected $42K in lost sales
+                  </p>
+                  <p id="rec1Confirm" hidden style="font-size:13px;font-weight:600;color:var(--color-success);margin:0 0 12px;">PO draft created for SKU-7790, SKU-0912, SKU-4412 — sent to Inventory for final review.</p>
+                  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                    <button type="button" class="btn btn-primary btn-sm" id="approveReorder">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                      Approve reorder plan
+                    </button>
+                    <a href="#" class="btn btn-light btn-sm">Go to Inventory</a>
+                    <button type="button" class="btn-link btn-link-semibold btn-sm" data-reasoning="1">View reorder reasoning</button>
+                    <span style="margin-left:auto;display:inline-flex;gap:14px;">
+                      <button type="button" class="btn-link btn-xs" data-snooze style="color:var(--color-text-secondary);">Snooze 7d</button>
+                      <button type="button" class="btn-link btn-xs" data-dismiss style="color:var(--color-text-secondary);">Dismiss</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Recommendation 2 — High / Gross Margin -->
+          <article class="card fad-rec">
+            <div class="card-body-padded">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div class="card-icon card-icon-yellow" style="width:36px;height:36px;flex-shrink:0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                    <span class="badge badge-yellow">High</span><span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Gross Margin</span>
+                  </div>
+                  <h3 style="font-size:16px;font-weight:700;color:var(--color-text-heading);margin:0 0 6px;">Review fulfillment costs reducing gross margin</h3>
+                  <p style="font-size:14px;line-height:1.6;color:var(--color-text-body);margin:0 0 12px;">Gross margin is 3.2 pts below target. Fulfillment and logistics costs are growing faster than revenue, especially on lower-margin SKUs.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;">
+                    <span><strong style="color:var(--color-text-heading);">$31K</strong> margin opportunity</span>
+                    <span><strong style="color:var(--color-text-heading);">89%</strong> confidence</span>
+                    <span>Sources: P&amp;L, COGS, logistics, product costs</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                    <a href="#" class="btn btn-primary btn-sm">Open P&amp;L</a>
+                    <button type="button" class="btn-link btn-link-semibold btn-sm" data-reasoning="2">View cost drivers</button>
+                    <span style="margin-left:auto;display:inline-flex;gap:14px;">
+                      <button type="button" class="btn-link btn-xs" data-snooze style="color:var(--color-text-secondary);">Snooze 7d</button>
+                      <button type="button" class="btn-link btn-xs" data-dismiss style="color:var(--color-text-secondary);">Dismiss</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Recommendation 3 — High / Demand Planning -->
+          <article class="card fad-rec">
+            <div class="card-body-padded">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div class="card-icon card-icon-yellow" style="width:36px;height:36px;flex-shrink:0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                    <span class="badge badge-yellow">High</span><span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Demand Planning</span>
+                  </div>
+                  <h3 style="font-size:16px;font-weight:700;color:var(--color-text-heading);margin:0 0 6px;">Set missing contribution margin targets for May</h3>
+                  <p style="font-size:14px;line-height:1.6;color:var(--color-text-body);margin:0 0 12px;">Contribution margin targets are missing for May, which prevents accurate daily goal tracking and weakens plan-vs-actual visibility.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;">
+                    <span>Improves forecast accuracy and daily goal control</span>
+                    <span><strong style="color:var(--color-text-heading);">91%</strong> confidence</span>
+                    <span>Sources: Plan vs Actual, daily sales, margin targets</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                    <a href="#" class="btn btn-primary btn-sm">Build Targets</a>
+                    <button type="button" class="btn-link btn-link-semibold btn-sm" data-reasoning="3">Review missing targets</button>
+                    <span style="margin-left:auto;display:inline-flex;gap:14px;">
+                      <button type="button" class="btn-link btn-xs" data-snooze style="color:var(--color-text-secondary);">Snooze 7d</button>
+                      <button type="button" class="btn-link btn-xs" data-dismiss style="color:var(--color-text-secondary);">Dismiss</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Recommendation 4 — Medium / Operations Integrity -->
+          <article class="card fad-rec">
+            <div class="card-body-padded">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div class="card-icon card-icon-blue" style="width:36px;height:36px;flex-shrink:0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                    <span class="badge badge-blue">Medium</span><span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Operations Integrity</span>
+                  </div>
+                  <h3 style="font-size:16px;font-weight:700;color:var(--color-text-heading);margin:0 0 6px;">Fix product mapping issues affecting financial trust score</h3>
+                  <p style="font-size:14px;line-height:1.6;color:var(--color-text-body);margin:0 0 12px;">Fee capture accuracy and unmapped products are limiting trust in margin reporting. Resolve mapping issues before making major cost decisions.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;">
+                    <span><strong style="color:var(--color-danger);">$8.7K</strong> exposure detected</span>
+                    <span><strong style="color:var(--color-text-heading);">99%</strong> confidence</span>
+                    <span>Sources: Operations Center, SKU mapping, order reconciliation</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                    <a href="#" class="btn btn-primary btn-sm">Open Operations Center</a>
+                    <button type="button" class="btn-link btn-link-semibold btn-sm" data-reasoning="4">Review data quality</button>
+                    <span style="margin-left:auto;display:inline-flex;gap:14px;">
+                      <button type="button" class="btn-link btn-xs" data-snooze style="color:var(--color-text-secondary);">Snooze 7d</button>
+                      <button type="button" class="btn-link btn-xs" data-dismiss style="color:var(--color-text-secondary);">Dismiss</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Recommendation 5 — Opportunity / Revenue Quality -->
+          <article class="card fad-rec">
+            <div class="card-body-padded">
+              <div style="display:flex;align-items:flex-start;gap:12px;">
+                <div class="card-icon card-icon-green" style="width:36px;height:36px;flex-shrink:0;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                    <span class="badge badge-green">Opportunity</span><span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Revenue Quality</span>
+                  </div>
+                  <h3 style="font-size:16px;font-weight:700;color:var(--color-text-heading);margin:0 0 6px;">Shift growth focus toward more profitable channels</h3>
+                  <p style="font-size:14px;line-height:1.6;color:var(--color-text-body);margin:0 0 12px;">Revenue is growing, but some channels may be contributing less profit after COGS, discounts, and fulfillment costs. Prioritize channels with stronger contribution margin and cohort quality.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;">
+                    <span>Potential <strong style="color:var(--color-success);">+6%</strong> contribution margin</span>
+                    <span><strong style="color:var(--color-text-heading);">84%</strong> confidence</span>
+                    <span>Sources: P&amp;L, Cohorts, channel performance, contribution margin</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                    <a href="#" class="btn btn-primary btn-sm">View Channel Performance</a>
+                    <button type="button" class="btn-link btn-link-semibold btn-sm" data-reasoning="5">Compare channels</button>
+                    <span style="margin-left:auto;display:inline-flex;gap:14px;">
+                      <button type="button" class="btn-link btn-xs" data-snooze style="color:var(--color-text-secondary);">Snooze 7d</button>
+                      <button type="button" class="btn-link btn-xs" data-dismiss style="color:var(--color-text-secondary);">Dismiss</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- Right column: Financial Impact Summary + Ask Fin (sticky while scrolling recommendations) -->
+      <aside style="display:flex;flex-direction:column;gap:24px;position:sticky;top:24px;">
+
+        <!-- Financial Impact Summary -->
+        <section class="card">
+          <div class="card-header">
+            <div class="card-header-title">Financial Impact Summary</div>
+          </div>
+          <div class="card-body-padded" style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--color-text-secondary);">Revenue protected</span>
+              <span style="font-size:14px;font-weight:700;color:var(--color-success);">$42K</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--color-text-secondary);">Margin opportunity</span>
+              <span style="font-size:14px;font-weight:700;color:var(--color-text-heading);">$31K</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--color-text-secondary);">Cost / inventory risk</span>
+              <span style="font-size:14px;font-weight:700;color:var(--color-danger);">$125K</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--color-text-secondary);">Data-quality exposure</span>
+              <span style="font-size:14px;font-weight:700;color:var(--color-warning);">$8.7K</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--color-text-secondary);">Actions pending</span>
+              <span style="font-size:14px;font-weight:700;color:var(--color-text-heading);" id="summaryActionsPending">29</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;color:var(--color-text-secondary);">High-confidence recommendations</span>
+              <span style="font-size:14px;font-weight:700;color:var(--color-text-heading);">4</span>
+            </div>
+            <p style="font-size:12px;line-height:1.5;color:var(--color-text-secondary);margin:4px 0 0;border-top:1px solid var(--color-border-default);padding-top:12px;">These estimates are based on current sales velocity, lead time, COGS, fulfillment costs, margin targets, and cohort behavior.</p>
+          </div>
+        </section>
+
+        <!-- Ask Fin — live chat (custom fad-chat layer) -->
+        <section class="card" id="askFinCard">
+          <div class="card-header">
+            <div class="card-header-title" style="display:flex;align-items:center;gap:8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-bg-primary)" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>
+              Ask Fin
+              <span style="display:inline-flex;align-items:center;gap:5px;margin-left:auto;font-size:11px;font-weight:500;color:var(--color-text-secondary);">
+                <span class="fad-online"></span> online
+              </span>
+            </div>
+          </div>
+          <div class="card-body-padded" style="display:flex;flex-direction:column;gap:12px;">
+            <div class="fad-chat-log" id="finChatLog" aria-live="polite"></div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);margin-bottom:2px;">Suggested</div>
+              <button type="button" class="fad-prompt" data-prompt>What should I fix first?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+              <button type="button" class="fad-prompt" data-prompt>Why is gross margin down?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+              <button type="button" class="fad-prompt" data-prompt>Which SKUs are creating the most risk?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+              <button type="button" class="fad-prompt" data-prompt>How can I improve contribution margin this month?<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="form-input" id="askFinInput" placeholder="Ask about revenue, margin, inventory, cohorts…" style="flex:1;">
+              <button type="button" class="btn btn-primary btn-icon btn-sm" id="askFinSend" aria-label="Send" style="flex-shrink:0;border-radius:999px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </aside>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Business Health Map
+         GAP: no generic data-table CSS component exists in Storybook (Table family is
+         built entirely around P&L cell types — iris-th-h/iris-th-v — and the cohort
+         heatmap; neither fits a status/score scorecard). Closest canonical fallback:
+         assembled from .card row scaffolding + real .badge / .iris-indicator__dot /
+         .btn-link classes. Logged in STORYBOOK_FIDELITY.md.
+         ══════════════════════════════════════════════════════════════════ -->
+    <section class="fad-map" id="health-map" style="margin-bottom:24px;">
+      <h2 style="font-size:18px;font-weight:700;color:var(--color-text-heading);margin:0 0 2px;">Business Health Map</h2>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 16px;">A cross-functional view of revenue, margin, inventory, planning, operations integrity, and customer quality</p>
+
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:12px 20px;border-bottom:1px solid var(--color-border-default);">
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);">Area</span>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);">Status</span>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);">Score</span>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);">What Iris sees</span>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);">Trend</span>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);">Action</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;border-bottom:1px solid var(--color-border-default);align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Revenue Growth</span>
+          <span class="badge badge-sm badge-green">Healthy</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">88</span>
+          <span style="font-size:13px;color:var(--color-text-body);">Net sales are up 12.4% vs last month</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-success);"></span>Up</span>
+          <a href="#" class="btn-link btn-link-semibold btn-sm">P&amp;L</a>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;border-bottom:1px solid var(--color-border-default);align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Gross Margin</span>
+          <span class="badge badge-sm badge-yellow">Needs Attention</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">64</span>
+          <span style="font-size:13px;color:var(--color-text-body);">Margin is below target due to fulfillment and product costs</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-danger);"></span>Down</span>
+          <button type="button" class="btn btn-light btn-sm" data-reasoning="2">View cost drivers</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;border-bottom:1px solid var(--color-border-default);align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Inventory</span>
+          <span class="badge badge-sm badge-red">Risk Detected</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">58</span>
+          <span style="font-size:13px;color:var(--color-text-body);">29 actions pending, 3 critical SKUs</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-danger);"></span>Worsening</span>
+          <button type="button" class="btn btn-light btn-sm" data-reasoning="1">Review reorder plan</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;border-bottom:1px solid var(--color-border-default);align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Demand Planning</span>
+          <span class="badge badge-sm badge-yellow">Incomplete</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">61</span>
+          <span style="font-size:13px;color:var(--color-text-body);">May contribution margin targets are missing</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-text-disabled);"></span>Flat</span>
+          <button type="button" class="btn btn-light btn-sm" data-reasoning="3">Build targets</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;border-bottom:1px solid var(--color-border-default);align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Operations Integrity</span>
+          <span class="badge badge-sm badge-blue">Watch</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">72</span>
+          <span style="font-size:13px;color:var(--color-text-body);">Fee capture accuracy is limiting trust score</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-success);"></span>Improving</span>
+          <button type="button" class="btn btn-light btn-sm" data-reasoning="4">Resolve mapping</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;border-bottom:1px solid var(--color-border-default);align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Customer Quality</span>
+          <span class="badge badge-sm badge-indigo">Stable</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">79</span>
+          <span style="font-size:13px;color:var(--color-text-body);">Retention and LTV are stable across recent cohorts</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-text-disabled);"></span>Stable</span>
+          <a href="#" class="btn-link btn-link-semibold btn-sm">Cohorts</a>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 0.6fr 2.4fr 0.8fr 1fr;gap:16px;padding:14px 20px;align-items:center;">
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Cash / Cost Efficiency</span>
+          <span class="badge badge-sm badge-blue">Watch</span>
+          <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">70</span>
+          <span style="font-size:13px;color:var(--color-text-body);">Cost growth should be reviewed against revenue growth</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);"><span class="iris-indicator__dot" style="background:var(--color-danger);"></span>Slightly down</span>
+          <a href="#" class="btn-link btn-link-semibold btn-sm">Cost Structure</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         What Changed This Week
+         GAP: no canonical timeline/activity-feed component in Storybook. Closest
+         canonical fallback: .card row scaffolding + real .iris-indicator__dot +
+         .badge + .btn-link classes (same gap family as the Business Health Map).
+         ══════════════════════════════════════════════════════════════════ -->
+    <section class="fad-ai" style="margin-bottom:24px;">
+      <h2 style="font-size:18px;font-weight:700;color:var(--color-text-heading);margin:0 0 2px;">What Changed This Week</h2>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 16px;">Notable shifts across revenue, margin, inventory, planning, and data quality</p>
+
+      <div class="card">
+        <div class="card-body-padded" style="display:flex;flex-direction:column;gap:0;">
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-default);">
+            <span class="iris-indicator__dot" style="background:var(--color-success);margin-top:6px;flex-shrink:0;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-sm badge-gray">Revenue</span>
+                <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Revenue increased 12.4% vs last month</span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-secondary);margin:4px 0 0;">Impact: Growth above plan</p>
+            </div>
+            <a href="#" class="btn-link btn-link-semibold btn-sm" style="flex-shrink:0;">View P&amp;L</a>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-default);">
+            <span class="iris-indicator__dot" style="background:var(--color-warning);margin-top:6px;flex-shrink:0;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-sm badge-gray">Margin</span>
+                <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Gross margin dropped 3.2 pts below target</span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-secondary);margin:4px 0 0;">Impact: $31K margin opportunity</p>
+            </div>
+            <a href="#" class="btn-link btn-link-semibold btn-sm" style="flex-shrink:0;">View cost drivers</a>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-default);">
+            <span class="iris-indicator__dot" style="background:var(--color-danger);margin-top:6px;flex-shrink:0;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-sm badge-gray">Inventory</span>
+                <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">3 SKUs entered critical stockout window</span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-secondary);margin:4px 0 0;">Impact: $42K revenue protected</p>
+            </div>
+            <a href="#" class="btn-link btn-link-semibold btn-sm" style="flex-shrink:0;">Approve reorder plan</a>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-default);">
+            <span class="iris-indicator__dot" style="background:var(--color-warning);margin-top:6px;flex-shrink:0;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-sm badge-gray">Planning</span>
+                <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Contribution margin targets are missing for May</span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-secondary);margin:4px 0 0;">Impact: Forecast accuracy reduced</p>
+            </div>
+            <a href="#" class="btn-link btn-link-semibold btn-sm" style="flex-shrink:0;">Build targets</a>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border-default);">
+            <span class="iris-indicator__dot" style="background:var(--color-warning);margin-top:6px;flex-shrink:0;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-sm badge-gray">Operations</span>
+                <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Fee capture accuracy is limiting financial trust score</span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-secondary);margin:4px 0 0;">Impact: $8.7K exposure</p>
+            </div>
+            <a href="#" class="btn-link btn-link-semibold btn-sm" style="flex-shrink:0;">Resolve mapping</a>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0 0;">
+            <span class="iris-indicator__dot" style="background:var(--color-warning);margin-top:6px;flex-shrink:0;"></span>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-sm badge-gray">Data connection</span>
+                <span style="font-size:14px;font-weight:600;color:var(--color-text-heading);">Facebook authorization expired</span>
+              </div>
+              <p style="font-size:13px;color:var(--color-text-secondary);margin:4px 0 0;">Impact: Channel data may be incomplete</p>
+            </div>
+            <a href="#" class="btn-link btn-link-semibold btn-sm" style="flex-shrink:0;">Reconnect account</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Advisor reasoning modal ("View Reasoning")
+     COMPONENT: Modal — Source story: Modal.stories.js › modalInfo() (stable, autodocs)
+     Classes: .modal-backdrop · .modal-dialog · .modal-header · .modal-title · .modal-close · .modal-body · .modal-footer
+     GAP: the spec calls for a slide-in side "drawer". Storybook's Drawer family
+     (Drawer.stories.js) is tagged `!dev` / "usage unconfirmed" and its sliding shell
+     has no real reusable CSS class — only inline position/box-shadow. Used the
+     confirmed, stable Modal component instead for "View Reasoning". Logged in
+     STORYBOOK_FIDELITY.md.
+     ══════════════════════════════════════════════════════════════════════ -->
+<div id="reasoningBackdrop" class="modal-backdrop" hidden style="position:fixed;inset:0;z-index:100;">
+  <div role="dialog" aria-modal="true" aria-labelledby="reasoningTitle" class="modal-dialog" style="max-width:480px;">
+    <div class="modal-header">
+      <h2 class="modal-title" id="reasoningTitle">Why Iris recommends approving reorder plan</h2>
+      <button type="button" class="modal-close" aria-label="Close dialog" id="reasoningClose">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="reasoningBody">
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:var(--color-text-body);">Iris detected that SKU-7790, SKU-0912, and SKU-4412 are projected to run out within 7 days. The recommendation uses current on-hand inventory, sales velocity, lead time, safety stock, and EOQ. The estimated revenue protected is based on forecasted demand during the replenishment window.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--color-text-secondary);">SKUs affected</span><strong style="color:var(--color-text-heading);">3</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--color-text-secondary);">Days to stockout</span><strong style="color:var(--color-text-heading);">6–7d</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--color-text-secondary);">EOQ units</span><strong style="color:var(--color-text-heading);">875 / 675 / 1,008</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--color-text-secondary);">Estimated revenue protected</span><strong style="color:var(--color-success);">$42K</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--color-text-secondary);">Confidence</span><strong style="color:var(--color-text-heading);">94%</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--color-text-secondary);">Data sources</span><strong style="color:var(--color-text-heading);text-align:right;">Inventory, sales velocity, lead time, EOQ model</strong></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-gray btn-md" id="reasoningCancel">Close</button>
+      <a href="#" class="btn btn-primary btn-md">Go to Inventory</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Reasoning content per recommendation card (data-reasoning="1".."5")
+  var REASONING = {
+    '1': {
+      title: 'Why Iris recommends approving reorder plan',
+      body: 'Iris detected that SKU-7790, SKU-0912, and SKU-4412 are projected to run out within 7 days. The recommendation uses current on-hand inventory, sales velocity, lead time, safety stock, and EOQ. The estimated revenue protected is based on forecasted demand during the replenishment window.',
+      rows: [
+        ['SKUs affected', '3'],
+        ['Days to stockout', '6–7d'],
+        ['EOQ units', '875 / 675 / 1,008'],
+        ['Estimated revenue protected', '$42K'],
+        ['Confidence', '94%'],
+        ['Data sources', 'Inventory, sales velocity, lead time, EOQ model']
+      ],
+      cta: 'Go to Inventory'
+    },
+    '2': {
+      title: 'Why Iris flagged gross margin pressure',
+      body: 'Gross margin fell 3.2 pts below target this month. Iris compared COGS and fulfillment cost growth against revenue growth by SKU and found fulfillment costs rising fastest on lower-margin products.',
+      rows: [
+        ['Gross margin', '68.1% (target 71.3%)'],
+        ['Fastest-growing cost', 'Fulfillment & logistics'],
+        ['Estimated margin opportunity', '$31K'],
+        ['Confidence', '89%'],
+        ['Data sources', 'P&L, COGS, logistics, product costs']
+      ],
+      cta: 'Open P&L'
+    },
+    '3': {
+      title: 'Why Iris flagged missing contribution margin targets',
+      body: 'No contribution margin targets are set for May 2026. Without targets, Plan vs Actual cannot compute daily variance, which weakens forecast accuracy and early-warning signals.',
+      rows: [
+        ['Month affected', 'May 2026'],
+        ['Targets missing', 'Contribution Margin'],
+        ['Effect', 'Daily goal tracking unavailable'],
+        ['Confidence', '91%'],
+        ['Data sources', 'Plan vs Actual, daily sales, margin targets']
+      ],
+      cta: 'Build Targets'
+    },
+    '4': {
+      title: 'Why Iris flagged data-quality exposure',
+      body: 'Fee capture accuracy is 72%, and 2 SKUs remain unmapped. Iris estimates the resulting exposure from misattributed fees and costs before this is resolved.',
+      rows: [
+        ['Fee capture accuracy', '72%'],
+        ['Unmapped SKUs', '2'],
+        ['Needs review', '3'],
+        ['Exposure detected', '$8.7K'],
+        ['Confidence', '99%'],
+        ['Data sources', 'Operations Center, SKU mapping, order reconciliation']
+      ],
+      cta: 'Open Operations Center'
+    },
+    '5': {
+      title: 'Why Iris recommends shifting channel focus',
+      body: 'Iris compared contribution margin and cohort quality by channel. Some channels grow revenue faster than they grow profit after COGS, discounts, and fulfillment cost are applied.',
+      rows: [
+        ['Metric compared', 'Contribution margin by channel'],
+        ['Potential improvement', '+6% contribution margin'],
+        ['Confidence', '84%'],
+        ['Data sources', 'P&L, Cohorts, channel performance, contribution margin']
+      ],
+      cta: 'View Channel Performance'
+    }
+  };
+
+  var backdrop = document.getElementById('reasoningBackdrop');
+  var titleEl = document.getElementById('reasoningTitle');
+  var bodyEl = document.getElementById('reasoningBody');
+  var footerCta = backdrop.querySelector('.modal-footer .btn-primary');
+
+  function openReasoning(key) {
+    var data = REASONING[key];
+    if (!data) return;
+    titleEl.textContent = data.title;
+    var rowsHtml = data.rows.map(function (r) {
+      return '<div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:var(--color-text-secondary);">' + r[0] + '</span><strong style="color:var(--color-text-heading);text-align:right;">' + r[1] + '</strong></div>';
+    }).join('');
+    bodyEl.innerHTML = '<p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:var(--color-text-body);">' + data.body + '</p><div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">' + rowsHtml + '</div>';
+    footerCta.textContent = data.cta;
+    backdrop.hidden = false;
+  }
+
+  function closeReasoning() {
+    backdrop.hidden = true;
+  }
+
+  document.querySelectorAll('[data-reasoning]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      openReasoning(btn.getAttribute('data-reasoning'));
+    });
+  });
+
+  document.getElementById('reasoningClose').addEventListener('click', closeReasoning);
+  document.getElementById('reasoningCancel').addEventListener('click', closeReasoning);
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) closeReasoning();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeReasoning();
+  });
+
+  // Ask Fin — canned grounded answers for the suggested prompts (demo)
+  var FIN_ANSWERS = {
+    'Why is gross margin down?': {
+      text: 'Gross margin is 68.1% — 3.2 pts below target. The largest drivers are fulfillment and logistics costs growing faster than revenue, concentrated in lower-margin SKUs. Recovering the gap is worth about $31K this month.',
+      meta: '89% confidence · P&L, COGS, logistics',
+      cta: 'Open P&L', href: '#'
+    },
+    'Which SKUs are creating the most risk?': {
+      text: 'SKU-7790, SKU-0912 and SKU-4412 are 6–7 days from stockout — $42K of forecasted revenue is at risk. Approving the recommended reorder plan protects it.',
+      meta: '94% confidence · Inventory, sales velocity, EOQ model',
+      cta: 'Go to Inventory', href: '#'
+    },
+    'What should I fix first?': {
+      text: 'Approve the reorder plan for the 3 critical SKUs first — highest impact ($42K revenue protected) at 94% confidence. Then review fulfillment costs: a $31K margin opportunity.',
+      meta: 'Prioritized by financial impact, urgency, and confidence',
+      cta: 'Review Next Best Actions', href: '#recommendations'
+    },
+    'Which channel is most profitable?': {
+      text: 'After COGS, discounts and fulfillment, contribution margin differs materially by channel. Shifting growth toward the stronger channels could add about +6% contribution margin.',
+      meta: '84% confidence · P&L, Cohorts, channel performance',
+      cta: 'View Channel Performance', href: '#'
+    },
+    'How can I improve contribution margin this month?': {
+      text: 'Three levers this month: set the missing May targets to restore daily tracking, cut fulfillment cost on low-margin SKUs ($31K opportunity), and shift spend toward higher-margin channels (+6% potential).',
+      meta: '91% confidence · Plan vs Actual, P&L, channel performance',
+      cta: 'Build Targets', href: '#'
+    }
+  };
+  var FIN_DEFAULT = {
+    text: 'I track revenue, margin, inventory, planning, and data quality across your connected channels. Try one of the suggested prompts, or start from the Next Best Actions above.',
+    meta: 'Fin — AI Financial Advisor',
+    cta: 'Review Next Best Actions', href: '#recommendations'
+  };
+
+  // ── In-page anchors: the <base> tag makes href="#…" resolve against the
+  // base URL and navigate away — intercept and scroll locally instead ─────
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    var id = a.getAttribute('href').slice(1);
+    var target = id && document.getElementById(id);
+    var instant = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (target) target.scrollIntoView({ behavior: instant ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  // ── Live chat rendering ────────────────────────────────────────────────
+  var chatLog = document.getElementById('finChatLog');
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finBusy = false;
+
+  function chatScroll() { chatLog.scrollTop = chatLog.scrollHeight; }
+
+  function addUserMsg(text) {
+    var el = document.createElement('div');
+    el.className = 'fad-msg fad-msg--user';
+    el.textContent = text;
+    chatLog.appendChild(el);
+    chatScroll();
+  }
+
+  function addFinMsg() {
+    var row = document.createElement('div');
+    row.className = 'fad-finrow';
+    var avatar = document.createElement('span');
+    avatar.className = 'fad-avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/></svg>';
+    var el = document.createElement('div');
+    el.className = 'fad-msg fad-msg--fin';
+    row.appendChild(avatar);
+    row.appendChild(el);
+    chatLog.appendChild(row);
+    chatScroll();
+    return el;
+  }
+
+  function showTyping() {
+    var el = addFinMsg();
+    el.innerHTML = '<span class="fad-typing"><span></span><span></span><span></span></span>';
+    return el;
+  }
+
+  // Streams answer text word-by-word into a fin bubble, then appends meta + CTA
+  function streamAnswer(bubble, a, done) {
+    var words = a.text.split(' ');
+    var textEl = document.createElement('span');
+    var cursor = document.createElement('span');
+    cursor.className = 'fad-cursor';
+    bubble.innerHTML = '';
+    bubble.appendChild(textEl);
+    bubble.appendChild(cursor);
+
+    function finish() {
+      cursor.remove();
+      var meta = document.createElement('div');
+      meta.className = 'fad-msg-meta';
+      meta.innerHTML = '<span>' + a.meta + '</span><a href="' + a.href + '" class="btn-link btn-link-semibold btn-xs" style="flex-shrink:0;">' + a.cta + '</a>';
+      bubble.appendChild(meta);
+      chatScroll();
+      if (done) done();
+    }
+
+    if (reducedMotion) { textEl.textContent = a.text; finish(); return; }
+
+    // Time-based streaming (28ms/word by wall clock) — immune to background-tab timer throttling
+    var start = Date.now();
+    var timer = setInterval(function () {
+      var i = Math.min(words.length, Math.floor((Date.now() - start) / 28) + 1);
+      textEl.textContent = words.slice(0, i).join(' ');
+      chatScroll();
+      if (i >= words.length) { clearInterval(timer); finish(); }
+    }, 28);
+  }
+
+  function askFin(question) {
+    if (finBusy || !question) return;
+    finBusy = true;
+    addUserMsg(question);
+    document.getElementById('askFinInput').value = '';
+    var typing = showTyping();
+    setTimeout(function () {
+      var a = FIN_ANSWERS[question] || FIN_DEFAULT;
+      streamAnswer(typing, a, function () { finBusy = false; });
+    }, 900);
+  }
+
+  document.querySelectorAll('[data-prompt]').forEach(function (chipEl) {
+    function ask() { askFin(chipEl.textContent.trim()); }
+    chipEl.addEventListener('click', ask);
+    chipEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ask(); }
+    });
+  });
+  document.getElementById('askFinInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { askFin(this.value.trim()); }
+  });
+  document.getElementById('askFinSend').addEventListener('click', function () {
+    askFin(document.getElementById('askFinInput').value.trim());
+  });
+
+  // Fin greets shortly after load — the chat never looks empty
+  // (IntersectionObserver was unreliable here inside the sticky right column)
+  setTimeout(function () {
+    var typing = showTyping();
+    setTimeout(function () {
+      streamAnswer(typing, {
+        text: "Hi — I'm Fin. I've already reviewed this month: revenue is up 12.4%, margin is under pressure, and 3 SKUs are close to stockout. Ask me anything, or tap a prompt below.",
+        meta: 'Fin — AI Financial Advisor',
+        cta: 'Review Next Best Actions',
+        href: '#recommendations'
+      });
+    }, 900);
+  }, 1200);
+
+  // ── Health score ring — animate to 82% on load ─────────────────────────
+  // circumference = 2π·52 ≈ 327; offset = 327 · (1 − 0.82)
+  setTimeout(function () {
+    document.getElementById('healthRing').style.width = '82%';
+  }, 300);
+
+  // ── Section reveal on scroll ────────────────────────────────────────────
+  var revealTargets = document.querySelectorAll('main > section:not(.fad-hero), main > div');
+  revealTargets.forEach(function (el) { el.classList.add('fad-reveal'); });
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('is-in'); revealObserver.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08 });
+  revealTargets.forEach(function (el) { revealObserver.observe(el); });
+  // Failsafe: IntersectionObserver is unreliable in some embedded preview contexts —
+  // force everything visible shortly after load so the page can never appear blank.
+  setTimeout(function () {
+    revealTargets.forEach(function (el) { el.classList.add('is-in'); });
+  }, 1500);
+
+  // One-click approve on the critical recommendation — Fin acts, counters update live
+  document.getElementById('approveReorder').addEventListener('click', function () {
+    this.disabled = true;
+    this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Approved';
+    document.getElementById('rec1BadgeWrap').innerHTML =
+      '<span class="badge badge-green">Approved</span><span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Inventory</span>';
+    document.getElementById('rec1Confirm').hidden = false;
+    // 29 pending − 3 critical SKUs approved = 26
+    document.getElementById('impactActionsPending').textContent = '26';
+    document.getElementById('summaryActionsPending').textContent = '26';
+    document.getElementById('kpiActionsPending').textContent = '26 pending';
+  });
+
+  // Top-bar "Ask Fin" — scroll to the Ask Fin panel and focus the input
+  document.getElementById('askFinTop').addEventListener('click', function () {
+    var input = document.getElementById('askFinInput');
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function () { input.focus(); }, 400);
+  });
+
+  // Toggle switch (AI Mode) — hides/shows the whole advisor layer (.fad-ai)
+  document.querySelectorAll('[data-switch]').forEach(function (sw) {
+    var lbl = sw.closest('label') || sw;
+    var text = lbl.querySelector('.iris-control__label');
+    lbl.addEventListener('click', function (e) {
+      e.preventDefault();
+      var on = sw.classList.toggle('iris-toggle--on');
+      sw.classList.toggle('iris-toggle--off', !on);
+      sw.setAttribute('aria-checked', String(on));
+      if (text) { text.textContent = on ? 'AI Mode: Advisor On' : 'AI Mode: Advisor Off'; }
+      document.body.classList.toggle('fad-ai-off', !on);
+      document.getElementById('advisorOffNote').hidden = on;
+    });
+  });
+
+  // Snooze / Dismiss on recommendation cards — collapse to one line, undo restores
+  document.addEventListener('click', function (e) {
+    var undo = e.target.closest('[data-undo]');
+    if (undo) {
+      var card = undo.closest('.fad-rec');
+      card.querySelector('.card-body-padded').style.display = '';
+      undo.closest('.fad-rec-collapsed').remove();
+      return;
+    }
+    var btn = e.target.closest('[data-snooze],[data-dismiss]');
+    if (!btn) return;
+    var recCard = btn.closest('.fad-rec');
+    var title = recCard.querySelector('h3').textContent;
+    var row = document.createElement('div');
+    row.className = 'fad-rec-collapsed';
+    var label = document.createElement('span');
+    label.textContent = (btn.hasAttribute('data-snooze') ? 'Snoozed until Jul 15' : 'Dismissed') + ' — ' + title;
+    var undoBtn = document.createElement('button');
+    undoBtn.type = 'button';
+    undoBtn.className = 'btn-link btn-link-semibold btn-xs';
+    undoBtn.setAttribute('data-undo', '');
+    undoBtn.style.flexShrink = '0';
+    undoBtn.textContent = 'Undo';
+    row.appendChild(label);
+    row.appendChild(undoBtn);
+    recCard.querySelector('.card-body-padded').style.display = 'none';
+    recCard.appendChild(row);
+  });
+
+  // "Email me this weekly" — demo confirmation
+  document.getElementById('briefingSubscribe').addEventListener('click', function () {
+    this.textContent = '✓ Scheduled — Mondays 8:00 AM';
+    this.disabled = true;
+    this.style.opacity = '.75';
+    this.style.cursor = 'default';
+  });
+</script>
+</body>
+</html>
