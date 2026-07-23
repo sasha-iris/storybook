@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assumptions · P&amp;L Configuration (Iris Library prototype)</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="./iris-tokens.css">
+  <link rel="stylesheet" href="./iris-components.css">
+  <link rel="stylesheet" href="./styles.css">
+  <!-- pnl-* prototype layer, shared conventions with pnl.html (approved fad-* deviation).
+       Only page scaffolding: settings rows (a logged library gap) and the sticky save bar. -->
+  <style>
+    .pnl-app { display: flex; min-height: 100vh; background: var(--color-bg-default); }
+    .pnl-main { flex: 1; min-width: 0; }
+    .pnl-content { padding: 24px 28px 120px; max-width: 1040px; }
+    .pnl-h1 { margin: 0; font-size: 24px; font-weight: 700; color: var(--color-text-heading); }
+    .pnl-sub { margin: 4px 0 0; font-size: 13px; color: var(--color-text-secondary); }
+    /* GAP: no "settings form row" pattern in the library (label+desc left | control right) —
+       composed from tokens, logged in CONTINUE_HERE.md. */
+    .pnl-setrow { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 14px 0; border-bottom: 1px solid #f3f4f6; }
+    .pnl-setrow:last-child { border-bottom: none; }
+    .pnl-setrow-label { font-size: 14px; font-weight: 600; color: var(--color-text-heading); }
+    .pnl-setrow-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; max-width: 460px; }
+    .pnl-setrow-ctrl { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+    .pnl-savebar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: #fff; border-top: 1px solid var(--color-border-default);
+      padding: 12px 28px; display: flex; align-items: center; gap: 12px; justify-content: flex-end;
+    }
+    .pnl-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .pnl-cardlink { text-decoration: none; display: block; }
+    .pnl-cardlink:hover .card { border-color: #b4a9f7; }
+  </style>
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;">
+<div class="pnl-app">
+
+  <!-- Sidebar (compact) -->
+  <aside class="sidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="./pnl.html">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span>
+        P&amp;L
+      </a>
+      <a class="sidebar-item active" aria-current="page" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg></span>
+        Assumptions
+      </a>
+    </nav>
+  </aside>
+
+  <div class="pnl-main">
+    <div class="pnl-content">
+
+      <!-- ═══════ State 8: Assumptions landing ═══════ -->
+      <section id="landing">
+        <h1 class="pnl-h1">Assumptions</h1>
+        <p class="pnl-sub">Modeling assumptions used for building forecasts and reports.</p>
+
+        <div class="pnl-cards" style="margin-top:24px;">
+          <a class="pnl-cardlink" href="#" onclick="toast('COGS assumptions page exists in the live product','info');return false;">
+            <div class="card"><div class="card-body">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span class="card-icon card-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"/></svg></span>
+                <div>
+                  <div class="card-header-title" style="color:#42389d;">COGS</div>
+                  <p style="margin:4px 0 0;font-size:13px;color:var(--color-text-secondary);">Cost of goods sold assumptions, mappings, and related configuration.</p>
+                </div>
+              </div>
+            </div></div>
+          </a>
+          <a class="pnl-cardlink" href="#" onclick="toast('Audit page exists in the live product','info');return false;">
+            <div class="card"><div class="card-body">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span class="card-icon card-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"/></svg></span>
+                <div>
+                  <div class="card-header-title" style="color:#42389d;">Audit</div>
+                  <p style="margin:4px 0 0;font-size:13px;color:var(--color-text-secondary);">Organization audit log and data access history.</p>
+                </div>
+              </div>
+            </div></div>
+          </a>
+          <a class="pnl-cardlink" href="#" onclick="toast('Categorization page exists in the live product','info');return false;">
+            <div class="card"><div class="card-body">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span class="card-icon card-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/></svg></span>
+                <div>
+                  <div class="card-header-title" style="color:#42389d;">Categorization</div>
+                  <p style="margin:4px 0 0;font-size:13px;color:var(--color-text-secondary);">Rules for categorizing orders and transactions.</p>
+                </div>
+              </div>
+            </div></div>
+          </a>
+          <a class="pnl-cardlink" href="#" onclick="toast('Custom Marketing page exists in the live product','info');return false;">
+            <div class="card"><div class="card-body">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span class="card-icon card-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m4.102.117a20.933 20.933 0 0 1 0-9.415m0 9.415a20.87 20.87 0 0 0 6.16 2.058c.598.111 1.2-.293 1.3-.894a20.933 20.933 0 0 0 0-9.744c-.1-.6-.702-1.004-1.3-.893a20.87 20.87 0 0 0-6.16 2.058"/></svg></span>
+                <div>
+                  <div class="card-header-title" style="color:#42389d;">Custom Marketing</div>
+                  <p style="margin:4px 0 0;font-size:13px;color:var(--color-text-secondary);">Custom marketing expense configurations and overrides.</p>
+                </div>
+              </div>
+            </div></div>
+          </a>
+          <!-- NEW card — the global P&L configuration entry (Marko: "Краще мати налаштування… глобальна конфігурація") -->
+          <a class="pnl-cardlink" href="#pnl-config" onclick="openConfig();return false;">
+            <div class="card" style="border-color:#b4a9f7;"><div class="card-body">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span class="card-icon card-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span>
+                <div>
+                  <div class="card-header-title" style="color:#42389d;">P&amp;L Configuration <span class="badge badge-purple badge-sm">New</span></div>
+                  <p style="margin:4px 0 0;font-size:13px;color:var(--color-text-secondary);">Global accounting views, forecast models, recognition rules, source mappings, and calculation defaults.</p>
+                </div>
+              </div>
+            </div></div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ═══════ State 9: P&L Configuration page ═══════ -->
+      <section id="config" hidden>
+        <nav class="breadcrumb" aria-label="Breadcrumb" style="margin-bottom:12px;">
+          <ol style="display:flex;align-items:center;gap:8px;list-style:none;margin:0;padding:0;">
+            <li class="breadcrumb-item"><a href="#" onclick="openLanding();return false;">Assumptions</a></li>
+            <li class="breadcrumb-sep" aria-hidden="true">/</li>
+            <li class="breadcrumb-item active" aria-current="page">P&amp;L Configuration</li>
+          </ol>
+        </nav>
+        <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:280px;">
+            <h1 class="pnl-h1">P&amp;L Configuration</h1>
+            <p class="pnl-sub">Global settings for every P&amp;L across the platform: accounting views, forecast models, comparisons, and mappings. Row-level overrides in Edit Mode inherit from these defaults.</p>
+          </div>
+          <span class="badge badge-gray badge-sm">Applies platform-wide</span>
+        </div>
+
+        <div class="iris-tab-bar" role="tablist" style="margin-top:20px;" id="cfgTabs">
+          <button class="iris-tab iris-tab--active" role="tab" aria-selected="true" data-tab="general">General</button>
+          <button class="iris-tab" role="tab" aria-selected="false" data-tab="operating">Operating P&amp;L</button>
+          <button class="iris-tab" role="tab" aria-selected="false" data-tab="accrual">Accrual P&amp;L</button>
+          <button class="iris-tab" role="tab" aria-selected="false" data-tab="forecast">Forecast &amp; Run Rate</button>
+          <button class="iris-tab" role="tab" aria-selected="false" data-tab="comparisons">Comparisons</button>
+          <button class="iris-tab" role="tab" aria-selected="false" data-tab="mappings">Mappings &amp; Overrides</button>
+        </div>
+
+        <!-- Tab: General -->
+        <div class="card" data-panel="general" style="margin-top:16px;"><div class="card-body">
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Default accounting view</div><div class="pnl-setrow-desc">The view every P&amp;L opens with. Users can still switch per page.</div></div>
+            <div class="pnl-setrow-ctrl">
+              <div class="btn-group btn-group--sm" role="group" data-editable>
+                <button type="button" class="btn active">Operating P&amp;L</button><button type="button" class="btn">Accrual</button><button type="button" class="btn">Cash</button>
+              </div>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Default time granularity</div><div class="pnl-setrow-desc">Initial column granularity for P&amp;L tables.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:160px;"><option>Monthly</option><option>Quarterly</option><option>Weekly</option><option>Daily</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Default comparison baseline</div><div class="pnl-setrow-desc">What the % under each value compares against, unless the user changes it on the page.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:160px;"><option>Plan</option><option>Budget</option><option>Previous period</option><option>Previous year</option><option>Forecast</option><option>None</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Default currency &amp; display units</div><div class="pnl-setrow-desc">Reporting currency and value units for tables.</div></div>
+            <div class="pnl-setrow-ctrl">
+              <select class="form-select" data-editable style="width:110px;"><option>USD</option><option>EUR</option></select>
+              <select class="form-select" data-editable style="width:150px;"><option>Thousands ($K)</option><option>Full values</option><option>Millions ($M)</option></select>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Recalculate historical periods on model change</div><div class="pnl-setrow-desc">When the forecast model or recognition rules change, re-run past periods too. <span class="badge badge-gray badge-sm">Inherited default</span></div></div>
+            <div class="pnl-setrow-ctrl"><span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch data-editable><span class="iris-toggle__thumb"></span></span></div>
+          </div>
+        </div></div>
+
+        <!-- Tab: Operating P&L -->
+        <div class="card" data-panel="operating" hidden style="margin-top:16px;"><div class="card-body">
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Source priority</div><div class="pnl-setrow-desc">Which system wins when several report the same order.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:260px;"><option>Commerce platforms first (Amazon, Shopify)</option><option>Accounting system first</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Order date basis</div><div class="pnl-setrow-desc">The date field that assigns an order to a period.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:160px;"><option>Date placed</option><option>Ship date</option><option>Delivery date</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Included order statuses</div><div class="pnl-setrow-desc">Orders counted into Operating revenue.</div></div>
+            <div class="pnl-setrow-ctrl" style="flex-wrap:wrap;max-width:320px;justify-content:flex-end;">
+              <span class="iris-tag iris-tag--green">Paid</span><span class="iris-tag iris-tag--green">Partially refunded</span><span class="iris-tag iris-tag--grey">+ Cancelled excluded</span>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Refunds &amp; discounts treatment</div><div class="pnl-setrow-desc">Where refunds and discounts land in the P&amp;L hierarchy.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:220px;"><option>Separate contra-revenue lines</option><option>Net into sales lines</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Currency conversion</div><div class="pnl-setrow-desc">FX basis for non-USD orders.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:160px;"><option>Daily FX rate</option><option>Monthly average</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Connected sources</div><div class="pnl-setrow-desc">Data freshness for Operating lines.</div></div>
+            <div class="pnl-setrow-ctrl" style="flex-direction:column;align-items:flex-end;gap:4px;">
+              <span class="badge badge-green badge-sm">Amazon Seller Central · synced just now</span>
+              <span class="badge badge-green badge-sm">Shopify · synced 4 min ago</span>
+              <span class="badge badge-yellow badge-sm">TikTok Shop · syncing…</span>
+            </div>
+          </div>
+        </div></div>
+
+        <!-- Tab: Accrual P&L -->
+        <div class="card" data-panel="accrual" hidden style="margin-top:16px;"><div class="card-body">
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Accounting connection</div><div class="pnl-setrow-desc">The system of record for Accrual P&amp;L.</div></div>
+            <div class="pnl-setrow-ctrl"><span class="badge badge-indigo badge-sm">QuickBooks Online</span><button type="button" class="btn btn-light btn-xs" onclick="toast('Connection settings are out of prototype scope','info')">Manage</button></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Revenue account mappings</div><div class="pnl-setrow-desc">GL accounts included in revenue lines.</div></div>
+            <div class="pnl-setrow-ctrl" style="flex-wrap:wrap;max-width:340px;justify-content:flex-end;">
+              <span class="iris-tag iris-tag--indigo">4000 · Product Revenue</span>
+              <span class="iris-tag iris-tag--indigo">4010 · Marketplace Revenue</span>
+              <span class="iris-tag iris-tag--indigo">4090 · Adjustments</span>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Recognition &amp; posting basis</div><div class="pnl-setrow-desc">How and when revenue is recognized.</div></div>
+            <div class="pnl-setrow-ctrl">
+              <select class="form-select" data-editable style="width:170px;"><option>Accrual recognition</option><option>Cash receipts</option></select>
+              <select class="form-select" data-editable style="width:150px;"><option>Posting date</option><option>Document date</option></select>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Unmapped account behavior</div><div class="pnl-setrow-desc">What happens to records whose GL account is not mapped to a P&amp;L line.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:220px;"><option>Hold in "Unmapped" + flag</option><option>Exclude silently</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Reconciliation threshold</div><div class="pnl-setrow-desc">Flag a line when Operating vs Accrual differ by more than this. Required.</div></div>
+            <div class="pnl-setrow-ctrl">
+              <div class="form-group" style="margin:0;">
+                <input type="number" class="form-input" id="reconThreshold" data-editable value="5" style="width:90px;">
+                <p class="form-feedback-error" id="reconError" hidden>Threshold is required. Enter a percentage.</p>
+              </div><span style="font-size:13px;color:var(--color-text-secondary);">%</span>
+            </div>
+          </div>
+        </div></div>
+
+        <!-- Tab: Forecast & Run Rate -->
+        <div class="card" data-panel="forecast" hidden style="margin-top:16px;"><div class="card-body">
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Default run-rate model</div><div class="pnl-setrow-desc">Model used for the Run Rate column and projected cells unless changed on the page.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:180px;"><option>MTD run rate</option><option>YTD run rate</option><option>T30D run rate</option><option>Financial model</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Model definitions</div><div class="pnl-setrow-desc">Plain-language definitions shown to users in the model picker.</div></div>
+            <div class="pnl-setrow-ctrl" style="flex-direction:column;align-items:flex-end;gap:6px;max-width:420px;">
+              <span style="font-size:12px;color:var(--color-text-body);"><b>MTD</b>: current month-to-date pace × remaining days</span>
+              <span style="font-size:12px;color:var(--color-text-body);"><b>YTD</b>: average pace since Jan 1, extrapolated</span>
+              <span style="font-size:12px;color:var(--color-text-body);"><b>T30D</b>: trailing 30 days pace</span>
+              <span style="font-size:12px;color:var(--color-text-body);"><b>Financial model</b>: projection driven by your Fin Model</span>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Financial-model source</div><div class="pnl-setrow-desc">Which Fin Model scenario feeds the "Financial model" option.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:220px;"><option>2024 Base Case v3</option><option>2024 Upside</option><option>2024 Conservative</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Projection period &amp; seasonality</div><div class="pnl-setrow-desc">How far projections extend and whether seasonality curves apply.</div></div>
+            <div class="pnl-setrow-ctrl">
+              <select class="form-select" data-editable style="width:160px;"><option>To period end</option><option>+3 months</option><option>+12 months</option></select>
+              <span class="iris-toggle iris-toggle--on" role="switch" aria-checked="true" data-switch data-editable title="Apply seasonality"><span class="iris-toggle__thumb"></span></span>
+            </div>
+          </div>
+          <div class="alert alert-info" style="margin-top:8px;"><div class="alert-body"><p style="margin:0;font-size:12px;">The forecast model is a <b>separate dimension</b> from the accounting view (Operating / Accrual / Cash). Changing it never changes which records are counted, only how projections are extrapolated.</p></div></div>
+        </div></div>
+
+        <!-- Tab: Comparisons -->
+        <div class="card" data-panel="comparisons" hidden style="margin-top:16px;"><div class="card-body">
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Available baselines</div><div class="pnl-setrow-desc">Baselines users can pick in "Compare to".</div></div>
+            <div class="pnl-setrow-ctrl" style="flex-wrap:wrap;max-width:340px;justify-content:flex-end;">
+              <span class="iris-tag iris-tag--purple">Plan</span><span class="iris-tag iris-tag--purple">Budget</span><span class="iris-tag iris-tag--purple">Previous period</span><span class="iris-tag iris-tag--purple">Previous year</span><span class="iris-tag iris-tag--purple">Forecast</span>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Default baseline</div><div class="pnl-setrow-desc">Applied to every P&amp;L unless changed per page.</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:160px;"><option>Plan</option><option>Budget</option><option>Previous period</option></select></div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Favourable-variance rules</div><div class="pnl-setrow-desc">Direction that counts as favourable, by line type. Colors follow these rules, not the raw sign.</div></div>
+            <div class="pnl-setrow-ctrl" style="flex-direction:column;align-items:flex-end;gap:4px;">
+              <span style="font-size:12px;color:var(--color-text-body);">Revenue lines: <b>above</b> baseline = favourable</span>
+              <span style="font-size:12px;color:var(--color-text-body);">Expense lines: <b>below</b> baseline = favourable</span>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Variance display</div><div class="pnl-setrow-desc">Show percentage, absolute, or both under values.</div></div>
+            <div class="pnl-setrow-ctrl">
+              <div class="btn-group btn-group--sm" role="group" data-editable>
+                <button type="button" class="btn active">% only</button><button type="button" class="btn">$ only</button><button type="button" class="btn">Both</button>
+              </div>
+            </div>
+          </div>
+          <div class="pnl-setrow">
+            <div><div class="pnl-setrow-label">Missing-baseline behavior</div><div class="pnl-setrow-desc">What to render when a baseline value does not exist (e.g. first period for "Previous period").</div></div>
+            <div class="pnl-setrow-ctrl"><select class="form-select" data-editable style="width:180px;"><option>Show "n/a"</option><option>Hide the % line</option></select></div>
+          </div>
+        </div></div>
+
+        <!-- Tab: Mappings & Overrides -->
+        <div class="card" data-panel="mappings" hidden style="margin-top:16px;"><div class="card-body">
+          <p style="margin:0 0 8px;font-size:13px;color:var(--color-text-secondary);">P&amp;L line mappings and every local override made in Edit Mode. Overrides inherit from global settings; removing one restores inheritance.</p>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead><tr>
+                <th class="iris-th">P&amp;L line</th><th class="iris-th">Source mapping</th><th class="iris-th">Status</th><th class="iris-th">Last modified</th><th class="iris-th"></th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;font-weight:600;">Amazon Sales</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;">Amazon Seller Central · FBA + FBM</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;"><span class="badge badge-gray badge-sm">Inherited</span></td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;color:var(--color-text-secondary);">—</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;"></td>
+                </tr>
+                <tr>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;font-weight:600;">Shopify Sales</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;">Shopify · Online Store + B2B</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;"><span class="badge badge-purple badge-sm">Local override</span></td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;color:var(--color-text-secondary);">O. Melnyk · Jul 21, 2026</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;"><button type="button" class="btn-link btn-link-semibold btn-xs" onclick="toast('Override removed. Line restored to the inherited mapping (prototype stub)','success')">Remove override</button></td>
+                </tr>
+                <tr>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;font-weight:600;">Merchant Fees</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;">Manual value · $1,172K / yr</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;"><span class="badge badge-purple badge-sm">Manual value</span></td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;color:var(--color-text-secondary);">M. Petrenko · Jul 18, 2026</td>
+                  <td style="padding:10px;border-bottom:1px solid #f3f4f6;"><button type="button" class="btn-link btn-link-semibold btn-xs" onclick="toast('Override removed. Line restored to the calculated total (prototype stub)','success')">Remove override</button></td>
+                </tr>
+                <tr>
+                  <td style="padding:10px;font-weight:600;">Net Sales</td>
+                  <td style="padding:10px;">Formula · sum of Income lines</td>
+                  <td style="padding:10px;"><span class="badge badge-gray badge-sm">Inherited</span></td>
+                  <td style="padding:10px;color:var(--color-text-secondary);">—</td>
+                  <td style="padding:10px;"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Sticky save bar (visible on the config page when there are edits) -->
+<div class="pnl-savebar" id="savebar" hidden>
+  <span class="badge badge-yellow badge-sm" id="cfgUnsaved">Unsaved changes</span>
+  <button type="button" class="btn btn-outline-gray btn-sm" id="cfgCancel">Cancel</button>
+  <button type="button" class="btn btn-primary btn-sm" id="cfgSave">Save changes</button>
+</div>
+
+<div class="toast-stack" id="toastStack" aria-live="polite" style="position:fixed;right:16px;bottom:70px;z-index:110;"></div>
+
+<script>
+function toast(msg, kind){
+  var stack = document.getElementById('toastStack');
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.setAttribute('role','status');
+  t.innerHTML = '<div class="toast-icon toast-icon-' + (kind === 'success' ? 'success' : 'info') + '">' +
+    (kind === 'success'
+      ? '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/></svg>'
+      : '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>') +
+    '</div><div class="toast-body"><p class="toast-message" style="margin:0;">' + msg + '</p></div>' +
+    '<button type="button" class="toast-close" aria-label="Dismiss">&times;</button>';
+  t.querySelector('.toast-close').addEventListener('click', function(){ t.remove(); });
+  stack.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 4200);
+}
+
+var dirty = false;
+function markDirty(){
+  if (!document.getElementById('landing').hidden) return;
+  dirty = true;
+  document.getElementById('savebar').hidden = false;
+}
+function openConfig(tab){
+  document.getElementById('landing').hidden = true;
+  document.getElementById('config').hidden = false;
+  if (tab) activateTab(tab);
+  window.scrollTo(0,0);
+}
+function openLanding(){
+  document.getElementById('landing').hidden = false;
+  document.getElementById('config').hidden = true;
+  document.getElementById('savebar').hidden = true;
+}
+function activateTab(name){
+  document.querySelectorAll('#cfgTabs .iris-tab').forEach(function(t){
+    var on = t.getAttribute('data-tab') === name;
+    t.classList.toggle('iris-tab--active', on);
+    t.setAttribute('aria-selected', String(on));
+  });
+  document.querySelectorAll('[data-panel]').forEach(function(p){ p.hidden = p.getAttribute('data-panel') !== name; });
+}
+document.getElementById('cfgTabs').addEventListener('click', function(e){
+  var t = e.target.closest('.iris-tab'); if (!t) return;
+  activateTab(t.getAttribute('data-tab'));
+});
+
+/* Any edit → unsaved state */
+document.querySelectorAll('select[data-editable], input[data-editable]').forEach(function(el){
+  el.addEventListener('change', markDirty);
+});
+document.querySelectorAll('.btn-group[data-editable]').forEach(function(g){
+  g.addEventListener('click', function(e){
+    var b = e.target.closest('.btn'); if (!b) return;
+    g.querySelectorAll('.btn').forEach(function(x){ x.classList.toggle('active', x === b); });
+    markDirty();
+  });
+});
+document.querySelectorAll('[data-switch]').forEach(function(sw){
+  sw.setAttribute('tabindex', '0');
+  sw.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sw.click(); }
+  });
+  sw.addEventListener('click', function(){
+    var on = sw.classList.toggle('iris-toggle--on');
+    sw.classList.toggle('iris-toggle--off', !on);
+    sw.setAttribute('aria-checked', String(on));
+    markDirty();
+  });
+});
+
+document.getElementById('cfgSave').addEventListener('click', function(){
+  var thr = document.getElementById('reconThreshold');
+  var err = document.getElementById('reconError');
+  if (thr.value === '') {
+    err.hidden = false;
+    activateTab('accrual');
+    toast('Fix validation errors before saving', 'info');
+    return;
+  }
+  err.hidden = true;
+  dirty = false;
+  document.getElementById('savebar').hidden = true;
+  toast('P&L configuration saved. It applies to every P&L across the platform', 'success');
+});
+document.getElementById('cfgCancel').addEventListener('click', function(){
+  dirty = false;
+  document.getElementById('savebar').hidden = true;
+  toast('Changes discarded. Configuration is back to the last saved state', 'info');
+});
+
+/* A11y: settings rows have visual labels only (library gap: no settings-row
+   pattern) — mirror each row label onto its unlabeled controls. */
+document.querySelectorAll('.pnl-setrow').forEach(function(row){
+  var label = row.querySelector('.pnl-setrow-label');
+  if (!label) return;
+  row.querySelectorAll('select, input, [role="switch"]').forEach(function(ctrl){
+    if (!ctrl.getAttribute('aria-label')) ctrl.setAttribute('aria-label', label.textContent.trim());
+  });
+});
+
+/* Deep links from pnl.html: #pnl-config, #pnl-config-forecast, #pnl-config-operating, … */
+(function(){
+  var h = location.hash;
+  if (h.indexOf('#pnl-config') === 0) {
+    var tab = h.replace('#pnl-config', '').replace(/^-/, '');
+    openConfig(tab || 'general');
+  }
+})();
+</script>
+</body>
+</html>

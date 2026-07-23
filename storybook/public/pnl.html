@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profit &amp; Loss · UX refinement prototype (Iris Library)</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="./iris-tokens.css">
+  <link rel="stylesheet" href="./iris-components.css">
+  <link rel="stylesheet" href="./styles.css">
+  <!-- pnl-* prototype layer — same approved deviation as fad-* (2026-07-08): only what the
+       library has no pattern for — the dense two-line financial grid, the split detail panel,
+       the variance popover and the recalc overlay. Colors reuse the library's own values
+       (#42389d brand, #007a55 / #c70036 from .iris-cell--positive/negative). Gaps logged. -->
+  <style>
+    .pnl-app { display: flex; min-height: 100vh; background: var(--color-bg-default); }
+    .pnl-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+    /* ── Top toolbar (global filters) ── */
+    .pnl-toolbar {
+      display: flex; align-items: center; gap: 4px;
+      padding: 10px 20px; background: #fff;
+      border-bottom: 1px solid var(--color-border-default);
+      position: sticky; top: 0; z-index: 40;
+    }
+    .pnl-toolbar .btn-link { color: var(--color-text-secondary); }
+    .pnl-toolbar .btn-link:hover { color: var(--color-text-primary); }
+
+    /* ── Content ── */
+    .pnl-content { padding: 20px 24px 80px; display: flex; flex-direction: column; gap: 14px; }
+    .pnl-h1 { margin: 0; font-size: 24px; font-weight: 700; color: var(--color-text-heading); }
+    .pnl-sub { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
+    .pnl-caption { font-size: 12px; color: var(--color-text-secondary); display: inline-flex; align-items: center; gap: 6px; }
+    /* GAP (library): .tooltip-bubble ships always-visible (documentation component);
+       the Tooltip story says "in production it appears on hover/focus" but no reveal
+       CSS exists. Wire hover/focus reveal here until the library provides it. */
+    .tooltip-wrap .tooltip-bubble { opacity: 0; visibility: hidden; transition: opacity .12s ease; }
+    .tooltip-wrap:hover .tooltip-bubble,
+    .tooltip-wrap:focus-visible .tooltip-bubble,
+    .tooltip-wrap:focus-within .tooltip-bubble { opacity: 1; visibility: visible; }
+    /* Per-button hover description on the accounting-view selector: the explanation
+       lives ON each option so you understand a view before/while choosing it, instead
+       of a separate (i) icon you'd have to hunt for after selecting. */
+    /* .btn-group ships overflow:hidden, which clips a tooltip hanging below a button.
+       Let this one overflow so the bubble can escape (first/last buttons keep their
+       own rounded corners, so the group still looks right). */
+    #viewGroup { overflow: visible; }
+    #viewGroup .btn { position: relative; }
+    /* the (i) affordance appears only on the SELECTED view; hovering it reveals the
+       description for that view. */
+    #viewGroup .btn .pnl-view-i { display: none; opacity: .6; margin-left: -1px; flex: 0 0 auto; }
+    #viewGroup .btn.active .pnl-view-i { display: inline-flex; }
+    #viewGroup .btn.active:hover .pnl-view-i,
+    #viewGroup .btn.active:focus-visible .pnl-view-i { opacity: .9; }
+    #viewGroup .btn .tooltip-bubble { opacity: 0; visibility: hidden; transition: opacity .12s ease; font-weight: var(--font-normal); }
+    #viewGroup .btn.active:hover .tooltip-bubble,
+    #viewGroup .btn.active:focus-visible .tooltip-bubble { opacity: 1; visibility: visible; }
+
+    /* ── Edit-mode bar ── */
+    .pnl-editbar {
+      display: none; align-items: center; gap: 12px;
+      background: #f5f3ff; border: 1px solid #d9d6fe; border-radius: 10px;
+      padding: 10px 14px;
+    }
+    body.pnl-editing .pnl-editbar { display: flex; }
+    /* Edit Mode must clearly stand out from the page (Marko: "щоб воно більш
+       відрізнювалося від сторінки") — tinted canvas, purple frame, corner ribbon. */
+    body.pnl-editing .pnl-content { background: #faf9ff; box-shadow: inset 0 0 0 2px #8074e8; border-radius: 12px; }
+    body.pnl-editing .pnl-tablewrap { outline: 2px solid #b4a9f7; outline-offset: -2px; }
+    .pnl-mode-ribbon { display: none; }
+    body.pnl-editing .pnl-mode-ribbon {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #42389d; color: #fff; font-size: 12px; font-weight: 700;
+      padding: 4px 12px; border-radius: 999px; letter-spacing: .02em;
+    }
+    body.pnl-editing .pnl-h1::after { content: none; }
+
+    /* ── Financial grid ── */
+    .pnl-layout { display: flex; gap: 0; align-items: flex-start; }
+    /* When the panel is open, the table drops its right rounding so the panel's
+       left divider reads as a single seam, not a double border. */
+    .pnl-layout:has(.pnl-panel.open) .pnl-tablewrap { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+    .pnl-tablewrap {
+      flex: 1; min-width: 0; overflow-x: auto; position: relative;
+      background: #fff; border: 1px solid var(--color-border-default); border-radius: 10px;
+    }
+    .pnl-grid { min-width: max-content; }
+    .pnl-row { display: flex; align-items: stretch; }
+    /* Column grid: horizontal row rule + subtle vertical dividers between columns,
+       as in the live product. Dividers sit on the column classes so header
+       (iris-th-v) and data (iris-cell) cells line up. Last column drops it. */
+    .pnl-grid .iris-cell { flex-shrink: 0; border-bottom: 1px solid #f3f4f6; }
+    .pnl-c-label { width: 236px; position: sticky; left: 0; z-index: 2; border-right: 1px solid #e5e7eb; }
+    .pnl-c-num { width: 96px; justify-content: flex-end; border-right: 1px solid #f3f4f6; }
+    .pnl-c-wide { width: 116px; justify-content: flex-end; border-right: 1px solid #e5e7eb; }
+    .pnl-row .pnl-c-num:last-child { border-right: none; }
+    .pnl-cell2 { height: 46px; flex-direction: column; align-items: flex-end; justify-content: center; gap: 1px; padding-top: 5px; padding-bottom: 5px; }
+    .pnl-cell2.pnl-c-label { align-items: flex-start; }
+    /* Value line inside a two-line cell keeps the canonical iris-cell--num markup:
+       <span>$</span><span>amount</span>. The --currency modifier pins $ to the left
+       edge with the number flush right, as in the live product's Run Rate / Summary. */
+    .pnl-valline { display: flex; align-items: center; justify-content: flex-end; gap: 4px; width: 100%; }
+    .pnl-valline--currency { justify-content: space-between; }
+    .pnl-var { font-size: 10px; line-height: 1; display: inline-flex; align-items: center; gap: 2px; font-weight: 500; }
+    .pnl-var--fav { color: #007a55; }
+    .pnl-var--unfav { color: #c70036; }
+    .pnl-var--na { color: #4b5563; }
+    .pnl-var .pnl-var-base { color: #4b5563; font-weight: 400; }
+    .pnl-section-h {
+      display: flex; align-items: center; gap: 6px; width: 100%;
+      padding: 9px 16px; background: #fff; border: 0; border-bottom: 1px solid #f3f4f6;
+      font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #42389d;
+      cursor: pointer; border-top: 1px solid #f3f4f6; font-family: inherit; text-align: left;
+    }
+    .pnl-row--click { cursor: pointer; }
+    .pnl-row--click:hover .iris-cell { background: #f9fafb; }
+    .pnl-row--sel .iris-cell { background: #f5f3ff !important; }
+    .pnl-row--sel .pnl-c-label { box-shadow: inset 3px 0 0 #42389d; }
+    body.pnl-editing .pnl-row--click:hover .iris-cell { background: #fdf6b2; }
+    /* Edit affordance: the pencil appears on row hover, not on every row at once */
+    /* Edit affordance lives ONLY in the distinct Edit Mode (Marko: not a
+       near-invisible pencil in the normal viewing mode). Hidden by default;
+       in Edit Mode every editable row shows it, brighter on hover. */
+    .pnl-row-pencil { all: unset; display: none; align-items: center; cursor: pointer; color: #42389d; }
+    body.pnl-editing .pnl-row-pencil { display: inline-flex; }
+    .pnl-row-pencil:hover { color: #362f78; }
+    .pnl-cell--selmonth { box-shadow: inset 0 0 0 1.5px #8074e8; border-radius: 4px; }
+    .pnl-headrow .iris-cell { border-bottom: 1px solid #e5e7eb; }
+    .pnl-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+    /* ── Recalculating overlay: table stays visible, subtle veil ── */
+    .pnl-tablewrap.pnl-updating::after {
+      content: ''; position: absolute; inset: 0; z-index: 5;
+      background: rgba(255,255,255,.55); border-radius: 10px;
+    }
+    .pnl-recalc-pill {
+      display: none; position: absolute; z-index: 6; top: 14px; left: 50%; transform: translateX(-50%);
+      align-items: center; gap: 8px; background: #fff; border: 1px solid var(--color-border-default);
+      border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--color-text-heading);
+      box-shadow: 0 6px 20px rgba(17,25,40,.10);
+    }
+    .pnl-tablewrap.pnl-updating .pnl-recalc-pill { display: inline-flex; }
+    .pnl-spin { width: 14px; height: 14px; border: 2px solid #d9d6fe; border-top-color: #42389d; border-radius: 50%; animation: pnlSpin .7s linear infinite; }
+    @keyframes pnlSpin { to { transform: rotate(360deg); } }
+
+    /* ── Detail panel — flush, separated by a vertical divider (not a card),
+       slides in from the right (Lovable pattern). ── */
+    .pnl-panel {
+      flex: 0 0 0px; min-width: 0; background: #fff;
+      border-left: 1px solid transparent;
+      display: flex; flex-direction: column; max-height: calc(100vh - 120px);
+      position: sticky; top: 76px; overflow: hidden;
+      /* Smoothly EXPAND from the right (the table narrows as the panel grows).
+         flex-basis/min-width are set inline in JS; this transition animates them.
+         overflow:hidden zeroes a flex item's auto minimum, so min-width is what
+         actually holds the panel open. */
+      transition: flex-basis .32s cubic-bezier(.4,0,.2,1), min-width .32s cubic-bezier(.4,0,.2,1), border-color .3s;
+    }
+    .pnl-panel.open { border-left-color: var(--color-border-default); }
+    .pnl-panel.open > * { animation: pnlFadeIn .4s ease both; }
+    @keyframes pnlFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    /* Nested drill panel — a hair tinted so its depth reads distinct from the detail. */
+    .pnl-drill { background: #fafafb; }
+    /* Fixed inner width so text doesn't reflow while the panel slides. */
+    .pnl-panel-h, .pnl-panel-scroll { width: 474px; box-sizing: border-box; }
+    .pnl-panel-scroll { overflow-y: auto; padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
+    .pnl-panel-h { padding: 16px 20px 0; }
+    .pnl-sect-title { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--color-text-secondary); margin: 0 0 8px; }
+    .pnl-kv { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 5px 0; }
+    .pnl-kv dt { color: var(--color-text-secondary); margin: 0; }
+    .pnl-kv dd { color: var(--color-text-heading); font-weight: 500; margin: 0; text-align: right; }
+    /* Compact metric strip (like the live product) — not a 6-card dashboard. */
+    .pnl-metrics { display: flex; flex-wrap: wrap; gap: 22px; align-items: baseline; }
+    .pnl-metrics > div { display: flex; flex-direction: column; gap: 1px; }
+    .pnl-metrics b { font-size: 18px; font-weight: 700; color: var(--color-text-heading); }
+    .pnl-metrics span { font-size: 11px; color: var(--color-text-secondary); }
+    .pnl-metrics-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+    .pnl-meth { background: var(--color-bg-muted); border: 1px solid var(--color-border-default); border-radius: 10px; padding: 12px 14px; }
+    .pnl-meth summary { cursor: pointer; font-size: 12px; font-weight: 600; color: #42389d; margin-top: 6px; }
+    .pnl-why[open] .pnl-why-chev { transform: rotate(90deg); }
+    .pnl-mini-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pnl-mini-table td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; color: var(--color-text-body); white-space: nowrap; }
+    .pnl-mini-table tr:last-child td { border-bottom: none; }
+    .pnl-mini-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pnl-mini-scroll { overflow-x: auto; border: 1px solid var(--color-border-default); border-radius: 8px; }
+
+    /* ── Variance popover (gap: no rich popover component in the library) ── */
+    .pnl-pop {
+      position: fixed; z-index: 80; width: 240px; display: none;
+      background: #fff; border: 1px solid var(--color-border-default); border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(17,25,40,.14); padding: 12px 14px; font-size: 12px;
+    }
+    .pnl-pop.show { display: block; }
+
+    /* ── Empty state ── */
+    .pnl-empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 70px 20px; text-align: center; }
+
+    /* ── Trend chart ── */
+    .pnl-chart-box { border: 1px solid var(--color-border-default); border-radius: 10px; padding: 14px; }
+
+    /* ── Edit drawer sizing (library drawer is a generic shell) ── */
+    .pnl-drawer { width: 430px; max-width: 92vw; }
+    .pnl-drawer-sect { border: 1px solid var(--color-border-default); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .pnl-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--color-bg-muted); border: 1px solid var(--color-border-default); border-radius: 8px; padding: 10px 12px; color: var(--color-text-body); white-space: pre-wrap; }
+
+    /* ── Prototype aid (clearly marked, unobtrusive) ── */
+    .pnl-aid {
+      position: fixed; left: 16px; bottom: 16px; z-index: 60;
+      background: #fff; border: 1px dashed #b4a9f7; border-radius: 10px; padding: 10px 12px;
+      box-shadow: 0 6px 20px rgba(17,25,40,.08); display: flex; flex-direction: column; gap: 6px;
+    }
+    .pnl-aid-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #42389d; }
+  </style>
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;">
+<div class="pnl-app">
+
+  <!-- ═══════════ Sidebar (library .sidebar) ═══════════ -->
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/></svg></span>
+        <span>Inventory</span>
+      </a>
+      <a class="sidebar-item active" aria-current="page" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span>
+        <span>P&amp;L</span>
+      </a>
+      <a class="sidebar-item" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span>
+        <span>Plan vs Actual</span>
+      </a>
+      <a class="sidebar-item" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span>
+        <span>Operations Center</span>
+      </a>
+      <a class="sidebar-item" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span>
+        <span>Cohorts</span>
+      </a>
+      <a class="sidebar-item" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span>
+        <span>Reporting</span>
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav sidebar-nav--bottom">
+      <a class="sidebar-item" href="./assumptions.html">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg></span>
+        <span>Assumptions</span>
+      </a>
+      <a class="sidebar-item" href="#" onclick="return false;">
+        <span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></span>
+        <span>Configuration</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="avatar-wrap">
+        <div class="avatar avatar-sm" style="background:#42389d;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">O</div>
+      </div>
+      <div style="min-width:0;" id="sidebarUserText">
+        <div style="font-size:13px;font-weight:600;color:var(--color-text-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Oleksandra Melnyk</div>
+        <div style="font-size:11px;color:var(--color-text-secondary);">sasha@irisfinance.co</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Contracted sidebar — assembled per the Sidebar story's contractedSidebar builder
+       (.sidebar--collapsed + .sidebar-contracted-item, no logo/labels, Figma 1060:44) -->
+  <aside class="sidebar sidebar--collapsed" id="appSidebarContracted" hidden style="height:100vh;position:sticky;top:0;">
+    <div style="display:flex;flex-direction:column;gap:16px;padding:0 0 12px;">
+      <button type="button" class="sidebar-contracted-item" title="Inventory" aria-label="Inventory"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/></svg></button>
+      <button type="button" class="sidebar-contracted-item active" title="P&L" aria-label="P&L" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></button>
+      <button type="button" class="sidebar-contracted-item" title="Plan vs Actual" aria-label="Plan vs Actual"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></button>
+      <button type="button" class="sidebar-contracted-item" title="Operations Center" aria-label="Operations Center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></button>
+      <button type="button" class="sidebar-contracted-item" title="Cohorts" aria-label="Cohorts"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></button>
+      <button type="button" class="sidebar-contracted-item" title="Reporting" aria-label="Reporting"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></button>
+    </div>
+    <div class="sidebar-divider" style="margin:0;"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
+      <a class="sidebar-contracted-item" title="Assumptions" aria-label="Assumptions" href="./assumptions.html"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg></a>
+      <button type="button" class="sidebar-contracted-item" title="Configuration" aria-label="Configuration"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></button>
+    </div>
+  </aside>
+
+  <!-- ═══════════ Main ═══════════ -->
+  <div class="pnl-main">
+
+    <!-- Global filter toolbar -->
+    <div class="pnl-toolbar">
+      <button type="button" class="btn btn-icon btn-sm" id="sidebarToggleBtn" aria-label="Collapse sidebar" aria-pressed="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M9.5 4v16"/></svg>
+      </button>
+
+      <!-- Channels — the global filter Marko asked about -->
+      <div data-menu-wrap style="position:relative;">
+        <button type="button" class="btn-link btn-link-semibold btn-sm" data-menu-toggle aria-haspopup="menu" aria-expanded="false" id="channelsBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72"/></svg>
+          Channels
+          <span class="dropdown-count" id="channelsCount">4</span>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </button>
+        <div class="dropdown-menu" data-menu role="group" aria-label="Channels filter" hidden style="position:absolute;top:100%;left:0;margin-top:8px;width:230px;z-index:50;">
+          <div class="dropdown-header">Channels</div>
+          <label class="dropdown-item" style="cursor:pointer;">
+            <input type="checkbox" class="form-check-input" data-channel="shopify" checked>
+            <span class="dropdown-item__text">Shopify</span>
+          </label>
+          <label class="dropdown-item" style="cursor:pointer;">
+            <input type="checkbox" class="form-check-input" data-channel="amazon" checked>
+            <span class="dropdown-item__text">Amazon</span>
+          </label>
+          <label class="dropdown-item" style="cursor:pointer;">
+            <input type="checkbox" class="form-check-input" data-channel="tiktok" checked>
+            <span class="dropdown-item__text">TikTok Shop</span>
+          </label>
+          <label class="dropdown-item" style="cursor:pointer;">
+            <input type="checkbox" class="form-check-input" data-channel="other" checked>
+            <span class="dropdown-item__text">Other</span>
+          </label>
+          <div class="dropdown-divider"></div>
+          <button type="button" class="dropdown-item" id="channelsOnlyShopify"><span class="dropdown-item__text" style="color:#42389d;font-weight:600;">Only Shopify (demo)</span></button>
+          <button type="button" class="dropdown-item" id="channelsReset"><span class="dropdown-item__text">Reset to all channels</span></button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-link btn-link-semibold btn-sm" onclick="toast('Geo filter is out of prototype scope','info')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m-18.432 0A8.959 8.959 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg>
+        Geo <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="btn-link btn-link-semibold btn-sm" onclick="toast('Products filter is out of prototype scope','info')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/></svg>
+        Products <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="btn-link btn-link-semibold btn-sm" onclick="toast('Attributes filter is out of prototype scope','info')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg>
+        Attributes <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+
+      <div style="flex:1;"></div>
+
+      <button type="button" class="btn btn-light btn-sm" onclick="toast('Actions list is out of prototype scope','info')">
+        Actions <span class="badge badge-red badge-sm" style="margin-left:2px;">6</span>
+      </button>
+      <button type="button" class="btn btn-light btn-sm" onclick="toast('Fin AI assistant is out of prototype scope','info')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/></svg>
+        Fin
+      </button>
+    </div>
+
+    <!-- Page content -->
+    <div class="pnl-content">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <h1 class="pnl-h1">Profit &amp; Loss</h1>
+        <span class="badge badge-purple badge-sm">Copy</span>
+        <span class="pnl-mode-ribbon" role="status">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z"/></svg>
+          Editing mode
+        </span>
+        <div style="flex:1;"></div>
+        <!-- Explicit entry into the distinct Edit Mode (hidden while editing —
+             the banner's Save/Cancel is the exit). The mode itself stands out
+             hard (tint + frame + ribbon), which is what makes editing obvious. -->
+        <button type="button" class="btn btn-light btn-sm" id="editModeBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg>
+          Edit P&amp;L
+        </button>
+      </div>
+
+      <!-- Edit-mode bar (state 7) -->
+      <div class="pnl-editbar" role="status">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#42389d" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"/></svg>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:#42389d;">Editing P&amp;L configuration</div>
+          <div style="font-size:12px;color:var(--color-text-secondary);">Click any row to edit its data source, formula, and attribution. Your edits stay as drafts until you save. Platform-wide model defaults live in <a class="banner__link" href="./assumptions.html#pnl-config">Assumptions → P&amp;L Configuration</a>.</div>
+        </div>
+        <span class="badge badge-yellow badge-sm" id="unsavedBadge" hidden>0 unsaved</span>
+        <button type="button" class="btn btn-primary btn-sm" id="saveChangesBtn" disabled>Save changes</button>
+        <button type="button" class="btn btn-outline-gray btn-sm" id="cancelEditBtn">Cancel</button>
+      </div>
+
+      <!-- Controls row -->
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="btn-group" role="group" aria-label="Time granularity" id="granGroup">
+          <button type="button" class="btn btn-md" data-gran="daily">Daily</button>
+          <button type="button" class="btn btn-md" data-gran="weekly">Weekly</button>
+          <button type="button" class="btn btn-md active" data-gran="monthly">Monthly</button>
+          <button type="button" class="btn btn-md" data-gran="quarterly">Quarterly</button>
+        </div>
+
+        <!-- Accounting-view selector. Marko: "треба додати description, щоб людина
+             явно розуміла, що вона взагалі дивиться." Each option carries its own (i)
+             icon INSIDE the selector — the description reveals on hover/focus, so you
+             learn what a view is while choosing it, no separate icon to hunt for. -->
+        <div class="btn-group" role="group" aria-label="Accounting view" id="viewGroup">
+          <button type="button" class="btn btn-md active" data-view="operating" aria-describedby="viewTip-operating">Operating P&amp;L<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-operating" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Operating P&amp;L — sales from commerce systems (Amazon, Shopify), order-date basis.</span></button>
+          <button type="button" class="btn btn-md" data-view="accrual" aria-describedby="viewTip-accrual">Accrual<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-accrual" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Accrual P&amp;L — accounting records from QuickBooks, posting-date basis with recognition rules. May differ from Operating.</span></button>
+          <button type="button" class="btn btn-md" data-view="cash" aria-describedby="viewTip-cash">Cash<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-cash" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Cash — receipts and payments on settlement date. Excludes receivables, payables, and accruals.</span></button>
+        </div>
+
+        <!-- Date range — library .iris-datepicker-input trigger + .iris-cal--range calendar -->
+        <div data-menu-wrap style="position:relative;">
+          <button type="button" class="iris-datepicker-input iris-datepicker-input--filled" style="width:auto;" data-menu-toggle aria-haspopup="dialog" aria-expanded="false" id="dateRangeBtn">
+            <span class="iris-datepicker-input__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg></span>
+            <span class="iris-datepicker-input__value">Jan 1, 2024 – Dec 31, 2024</span>
+          </button>
+          <div data-menu hidden style="position:absolute;top:100%;left:0;margin-top:8px;z-index:50;" id="dateRangeCal"></div>
+        </div>
+
+        <!-- Forecast model now lives ON the Run Rate column header (control at the
+             point of its effect) — see #forecastMenu, opened from the column. -->
+
+        <!-- Comparison baseline (state 1, treatment A — recommended) -->
+        <div data-menu-wrap style="position:relative;" id="compareWrap">
+          <button type="button" class="btn btn-light btn-md" data-menu-toggle aria-haspopup="menu" aria-expanded="false" id="compareBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+            <span id="compareLabel">Compare to: Plan</span>
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="dropdown-menu" data-menu role="menu" hidden style="position:absolute;top:100%;left:0;margin-top:8px;width:300px;z-index:50;">
+            <div class="dropdown-header">Comparison baseline: what the % under each value means</div>
+            <button type="button" class="dropdown-item" data-compare="plan"><span class="dropdown-item__text"><b>Plan</b><br><small style="color:var(--color-text-secondary);">Your approved operating plan for 2024.</small></span></button>
+            <button type="button" class="dropdown-item" data-compare="budget"><span class="dropdown-item__text"><b>Budget</b><br><small style="color:var(--color-text-secondary);">Board-approved budget (differs from plan).</small></span></button>
+            <button type="button" class="dropdown-item" data-compare="prevPeriod"><span class="dropdown-item__text"><b>Previous period</b><br><small style="color:var(--color-text-secondary);">The same line, one period earlier.</small></span></button>
+            <button type="button" class="dropdown-item" data-compare="prevYear"><span class="dropdown-item__text"><b>Previous year</b><br><small style="color:var(--color-text-secondary);">The same period in 2023.</small></span></button>
+            <button type="button" class="dropdown-item" data-compare="forecast"><span class="dropdown-item__text"><b>Forecast</b><br><small style="color:var(--color-text-secondary);">The active forecast model (see Forecast control).</small></span></button>
+            <button type="button" class="dropdown-item" data-compare="none"><span class="dropdown-item__text"><b>None</b><br><small style="color:var(--color-text-secondary);">Hide variance percentages.</small></span></button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Active filter chips + legend -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button type="button" class="btn-link btn-link-semibold btn-sm" id="expandAllBtn" style="color:var(--color-text-secondary);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/></svg>
+          Expand all
+        </button>
+        <button type="button" class="btn-link btn-link-semibold btn-sm" id="collapseAllBtn" style="color:var(--color-text-secondary);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9 12 5.25 15.75 9m-7.5 6L12 18.75 15.75 15"/></svg>
+          Collapse all
+        </button>
+        <span id="filterChips" style="display:inline-flex;gap:6px;align-items:center;"></span>
+        <div style="flex:1;"></div>
+        <span class="pnl-caption">Data source:</span>
+        <span class="pnl-caption"><span class="pnl-dot" style="background:#0e9f6e;"></span> Actual</span>
+        <span class="pnl-caption"><span class="pnl-dot" style="background:#3f83f8;"></span> Projected</span>
+        <span class="pnl-caption"><span class="pnl-dot" style="background:#e3a008;"></span> Blended</span>
+        <span class="pnl-caption"><span class="pnl-dot" style="background:#42389d;"></span> Overridden</span>
+      </div>
+
+      <!-- Table + detail panel -->
+      <div class="pnl-layout">
+        <div class="pnl-tablewrap" id="tablewrap" aria-label="Profit and loss table">
+          <div class="pnl-recalc-pill" role="status" aria-live="polite"><span class="pnl-spin" aria-hidden="true"></span> Recalculating with <span id="recalcModel">MTD run rate</span>…</div>
+          <div class="pnl-grid" id="pnlTable"></div>
+        </div>
+
+        <!-- Selected-line detail panel (states 2–4) -->
+        <aside class="pnl-panel" id="pnlPanel" aria-label="Selected line details"></aside>
+        <!-- Nested drill panel — opens further right when a breakdown period is clicked -->
+        <aside class="pnl-panel pnl-drill" id="pnlDrill" aria-label="Period drill-down"></aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Variance popover (level-2 detail; the baseline itself is visible without hovering) -->
+<div class="pnl-pop" id="pnlPop" role="tooltip"></div>
+
+<!-- Forecast-model menu — opened from the Run Rate column header (control at the
+     point of effect). Positioned under the header on click. -->
+<div class="dropdown-menu" id="forecastMenu" role="menu" hidden style="position:fixed;width:320px;z-index:80;">
+  <div class="dropdown-header">Forecast model — drives the Run Rate column</div>
+  <button type="button" class="dropdown-item" data-runrate="mtd">
+    <span class="dropdown-item__text"><b>MTD run rate</b><br><small style="color:var(--color-text-secondary);">Current month-to-date pace, extrapolated to the full period.</small></span>
+  </button>
+  <button type="button" class="dropdown-item" data-runrate="ytd">
+    <span class="dropdown-item__text"><b>YTD run rate</b><br><small style="color:var(--color-text-secondary);">Average pace since Jan 1, extrapolated forward.</small></span>
+  </button>
+  <button type="button" class="dropdown-item" data-runrate="t30d">
+    <span class="dropdown-item__text"><b>T30D run rate</b><br><small style="color:var(--color-text-secondary);">Trailing 30 days pace. Reacts fastest to recent changes.</small></span>
+  </button>
+  <button type="button" class="dropdown-item" data-runrate="finmodel">
+    <span class="dropdown-item__text"><b>Financial model</b><br><small style="color:var(--color-text-secondary);">Projection from your Fin Model drivers and seasonality.</small></span>
+  </button>
+  <div class="dropdown-divider"></div>
+  <a class="dropdown-item" href="./assumptions.html#pnl-config-forecast">
+    <span class="dropdown-item__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></span>
+    <span class="dropdown-item__text" style="color:#42389d;font-weight:600;">Manage model settings</span>
+  </a>
+</div>
+
+<!-- Edit drawer (library .iris-drawer shell) -->
+<div class="iris-drawer-backdrop" id="drawerBackdrop" hidden style="position:fixed;inset:0;z-index:90;"></div>
+<aside class="iris-drawer pnl-drawer" id="editDrawer" hidden role="dialog" aria-modal="true" aria-label="Edit P&L line" style="position:fixed;top:0;right:0;bottom:0;z-index:95;overflow-y:auto;">
+  <div class="iris-drawer__inner" id="editDrawerInner"></div>
+</aside>
+
+<!-- Exit-confirmation modal -->
+<div class="modal-backdrop" id="confirmModal" hidden style="position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;">
+  <div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-header">
+      <h3 class="modal-title" id="confirmTitle">Discard unsaved changes?</h3>
+      <button type="button" class="modal-close" aria-label="Close" onclick="hideConfirm()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin:0;font-size:14px;color:var(--color-text-body);" id="confirmText">You have unsaved line overrides. Leaving Edit Mode will discard them.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-gray btn-sm" onclick="hideConfirm()">Keep editing</button>
+      <button type="button" class="btn btn-red btn-sm" id="confirmDiscardBtn">Discard changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack" id="toastStack" aria-live="polite" style="position:fixed;right:16px;bottom:16px;z-index:110;"></div>
+
+<!-- Prototype aid: comparison treatment switcher (state 1 requires three treatments) -->
+<div class="pnl-aid">
+  <span class="pnl-aid-label">Prototype aid · comparison treatment</span>
+  <div class="btn-group btn-group--sm" role="group" aria-label="Comparison treatment" id="treatmentGroup">
+    <button type="button" class="btn active" data-treatment="A" title="Page-level selector (recommended)">A · Page selector</button>
+    <button type="button" class="btn" data-treatment="B" title="Column-header declaration">B · Column header</button>
+    <button type="button" class="btn" data-treatment="C" title="In-cell baseline">C · In-cell</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════ Mock data ═══════════════════
+   Values in $ thousands, taken from the current Lovable /pnl screenshots.
+   Expense rows are stored positive with sign:-1 and rendered in parentheses. */
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var VARSEQ = [-5,-10,5,-13,1,-4,-10,5,-12,4,-4,-11]; // vs-Plan variance %, per screenshots
+
+var ROWS = [
+  { id:'secIncome', type:'section', name:'Income' },
+  { id:'amazonSales',  type:'line', name:'Amazon Sales',  sign:1, section:'income', drill:'amazon',
+    ch:{amazon:1}, vals:[432,435,359,504,540,576,576,612,648,720,1007,1152] },
+  { id:'shopifySales', type:'line', name:'Shopify Sales', sign:1, section:'income', drill:'shopify',
+    ch:{shopify:1}, vals:[99,100,360,115,124,132,132,140,148,165,231,264] },
+  { id:'shippingRev',  type:'line', name:'Shipping Revenue', sign:1, section:'income', drill:'none',
+    ch:{shopify:.6,amazon:.3,tiktok:.1}, vals:[4,4,16,5,5,5,5,6,6,7,9,10] },
+  { id:'discounts', type:'line', name:'Discounts', count:6, sign:-1, section:'income', drill:'none',
+    ch:{amazon:.5,shopify:.4,tiktok:.1}, vals:[29,30,61,34,37,39,39,42,44,49,68,78] },
+  { id:'refunds', type:'line', name:'Refunds', sign:-1, section:'income', drill:'none',
+    ch:{amazon:.6,shopify:.35,tiktok:.05}, vals:[17,17,6,19,21,22,22,24,25,28,39,45] },
+  { id:'netSales', type:'subtotal', name:'Net Sales', of:['amazonSales','shopifySales','shippingRev','discounts','refunds'] },
+
+  { id:'secCogs', type:'section', name:'Cost of Goods Sold' },
+  { id:'productCosts', type:'line', name:'Product Costs', count:3, sign:-1, section:'cogs', drill:'none',
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, vals:[26,26,86,30,32,35,35,37,39,43,61,69] },
+  { id:'logistics', type:'line', name:'Logistics & Fulfillment', count:3, sign:-1, section:'cogs', drill:'none',
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, vals:[67,67,73,78,83,89,89,94,100,111,155,178] },
+  { id:'merchantFees', type:'line', name:'Merchant Fees', count:3, sign:-1, section:'cogs', drill:'none',
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, vals:[66,67,65,77,83,88,89,94,100,111,155,177] },
+  { id:'totalCogs', type:'subtotal', name:'Total COGS', of:['productCosts','logistics','merchantFees'] },
+  { id:'grossProfit', type:'total', name:'Gross Profit', calc:'netSales-totalCogs', margin:true, drill:'calc' },
+
+  { id:'secMkt', type:'section', name:'Marketing' },
+  { id:'giveaway', type:'line', name:'Product Giveaway Marketing', sign:-1, section:'mkt', drill:'empty',
+    ch:{tiktok:.6,shopify:.4}, vals:[0,0,2,1,1,1,1,1,1,1,1,1] },
+  { id:'amazonAds', type:'line', name:'Amazon Ads', sign:-1, section:'mkt', drill:'none',
+    ch:{amazon:1}, vals:[66,67,33,77,83,88,88,94,99,111,155,177] },
+  { id:'facebookMeta', type:'line', name:'Facebook / Meta', sign:-1, section:'mkt', drill:'none',
+    ch:{shopify:.7,tiktok:.3}, vals:[352,354,410,439,468,469,498,527,586,620,820,938] },
+  { id:'totalMkt', type:'subtotal', name:'Total Marketing', of:['giveaway','amazonAds','facebookMeta'] },
+
+  { id:'secOpex', type:'section', name:'Operating Expenses' },
+  { id:'payroll', type:'line', name:'Payroll & Benefits', sign:-1, section:'opex', drill:'none', agnostic:true,
+    vals:[118,118,120,120,122,122,124,124,126,126,128,128] },
+  { id:'software', type:'line', name:'Software & Tools', sign:-1, section:'opex', drill:'none', agnostic:true,
+    vals:[22,22,23,23,24,24,24,25,25,26,26,27] },
+  { id:'ga', type:'line', name:'General & Administrative', sign:-1, section:'opex', drill:'none', agnostic:true,
+    vals:[35,36,36,37,37,38,38,39,40,41,42,43] },
+  { id:'totalOpex', type:'subtotal', name:'Total OpEx', of:['payroll','software','ga'] },
+  { id:'ebitda', type:'total', name:'EBITDA', calc:'grossProfit-totalMkt-totalOpex', drill:'calc' }
+];
+
+/* Sub-rows behind the count badges (Discounts 6, Product Costs 3, …) — expandable
+   rows exactly like the product screenshots. Child vals = parent share splits. */
+var CHILDREN = {
+  discounts: [['Welcome10 promo',.30],['Bundle discount',.20],['Loyalty rewards',.15],['Wholesale tier',.15],['Seasonal sale',.12],['Price match',.08]],
+  productCosts: [['Manufacturing',.70],['Packaging',.18],['Inbound freight',.12]],
+  logistics: [['FBA fulfillment',.55],['3PL warehousing',.25],['Last-mile shipping',.20]],
+  merchantFees: [['Amazon referral fees',.60],['Shopify processing',.25],['Payment gateways',.15]]
+};
+var CHILDROWS = [];
+Object.keys(CHILDREN).forEach(function(pid){
+  var parent = ROWS.find(function(r){ return r.id === pid; });
+  parent.childRows = CHILDREN[pid].map(function(c, i){
+    var child = {
+      id: pid + '_c' + i, type:'line', child:true, parent:pid, name:c[0],
+      sign: parent.sign, section: parent.section, drill:'none', ch: parent.ch,
+      vals: parent.vals.map(function(v){ return v * c[1]; })
+    };
+    CHILDROWS.push(child);
+    return child;
+  });
+});
+
+var VIEW_FACTOR = { operating:1, accrual:0.965, cash:0.94 };
+var RUNRATE = {
+  mtd:      { label:'MTD run rate',    factor:0.9995 },
+  ytd:      { label:'YTD run rate',    factor:0.997  },
+  t30d:     { label:'T30D run rate',   factor:1.012  },
+  finmodel: { label:'Financial model', factor:1.043  }
+};
+var COMPARE_LABEL = { plan:'Plan', budget:'Budget', prevPeriod:'Previous period', prevYear:'Previous year', forecast:'Forecast', none:'None' };
+var CHANNEL_LABEL = { shopify:'Shopify', amazon:'Amazon', tiktok:'TikTok Shop', other:'Other' };
+
+var state = {
+  gran: 'monthly', view: 'operating', compare: 'plan', runrate: 'mtd', treatment: 'A',
+  channels: { shopify:true, amazon:true, tiktok:true, other:true },
+  selRow: null, selMonth: 0,
+  editMode: false, overrides: {}, drafts: 0,
+  collapsedSections: {}, expandedRows: {}, expandedQuarters: {}
+};
+
+/* ═══════════════════ Value engine ═══════════════════ */
+function rowById(id){
+  return ROWS.find(function(r){ return r.id === id; }) ||
+         CHILDROWS.find(function(r){ return r.id === id; });
+}
+function activeShare(row){
+  if (row.agnostic) return 1; // OpEx is not channel-attributed — kept with a note
+  if (!row.ch) return 1;
+  var s = 0;
+  for (var c in row.ch) if (state.channels[c]) s += row.ch[c];
+  return s;
+}
+function leafVal(row, m){ // signed $K after view factor + channel filter + overrides
+  var ov = state.overrides[row.id];
+  var base = row.vals[m] * activeShare(row) * VIEW_FACTOR[state.view];
+  if (ov && ov.manual != null) base = (ov.manual/1000/12) * activeShare(row); // manual annual override, spread evenly
+  return row.sign * base;
+}
+function leafPlan(row, m){
+  var v = VARSEQ[(m + hashRow(row.id)) % 12];
+  return leafVal(row, m) / (1 + v/100);
+}
+function hashRow(id){ var h = 0; for (var i=0;i<id.length;i++) h = (h + id.charCodeAt(i)) % 12; return h; }
+function rowVal(row, m){
+  if (row.type === 'line') return leafVal(row, m);
+  if (row.type === 'subtotal') return row.of.reduce(function(s,id){ return s + rowVal(rowById(id), m); }, 0);
+  if (row.calc === 'netSales-totalCogs') return rowVal(rowById('netSales'), m) + rowVal(rowById('totalCogs'), m);
+  if (row.calc === 'grossProfit-totalMkt-totalOpex') return rowVal(rowById('grossProfit'), m) + rowVal(rowById('totalMkt'), m) + rowVal(rowById('totalOpex'), m);
+  return 0;
+}
+function rowPlan(row, m){
+  if (row.type === 'line') return leafPlan(row, m);
+  if (row.type === 'subtotal') return row.of.reduce(function(s,id){ return s + rowPlan(rowById(id), m); }, 0);
+  if (row.calc === 'netSales-totalCogs') return rowPlan(rowById('netSales'), m) + rowPlan(rowById('totalCogs'), m);
+  if (row.calc === 'grossProfit-totalMkt-totalOpex') return rowPlan(rowById('grossProfit'), m) + rowPlan(rowById('totalMkt'), m) + rowPlan(rowById('totalOpex'), m);
+  return 0;
+}
+function baseline(row, m){
+  switch (state.compare) {
+    case 'plan':       return rowPlan(row, m);
+    case 'budget':     return rowPlan(row, m) * 0.97;
+    case 'prevPeriod': return m === 0 ? null : rowVal(row, m-1);
+    case 'prevYear':   return rowVal(row, m) * 0.84;
+    case 'forecast':   return rowVal(row, m) / (1 + 0.03);
+    default:           return null;
+  }
+}
+/* Favourable ≠ "higher": for expense lines spending BELOW baseline is favourable. */
+function varianceInfo(row, m){
+  var b = baseline(row, m);
+  if (b == null || state.compare === 'none') return null;
+  var a = rowVal(row, m);
+  if (Math.abs(b) < 0.5) return { na:true };
+  var pct = (a - b) / Math.abs(b) * 100;
+  var isExpense = a < 0 || (row.sign === -1);
+  var favourable = isExpense ? (Math.abs(a) <= Math.abs(b)) : (a >= b);
+  return { pct:pct, abs:a-b, base:b, cur:a, favourable:favourable, isExpense:isExpense };
+}
+
+/* Periods: monthly (12) or quarterly (4). In the quarterly view a quarter column
+   expands into its months — the expandable-columns pattern from the screenshots. */
+function periods(){
+  if (state.gran === 'quarterly') {
+    var out = [];
+    [[0,1,2],[3,4,5],[6,7,8],[9,10,11]].forEach(function(ms, qi){
+      out.push({ l:'Q' + (qi+1) + ' 2024', ms:ms, q:qi, expandable:true, expanded:!!state.expandedQuarters[qi] });
+      if (state.expandedQuarters[qi]) ms.forEach(function(m){ out.push({ l:MONTHS[m].toUpperCase()+' 2024', ms:[m], sub:true }); });
+    });
+    return out;
+  }
+  return MONTHS.map(function(mo,i){ return { l: mo.toUpperCase()+' 2024', ms:[i] }; });
+}
+function periodVal(row, p){ return p.ms.reduce(function(s,m){ return s + rowVal(row,m); },0); }
+function periodVarianceInfo(row, p){
+  if (state.compare === 'none') return null;
+  var a = periodVal(row,p), b = 0, has = true;
+  p.ms.forEach(function(m){ var x = baseline(row,m); if (x==null) has=false; else b+=x; });
+  if (!has || Math.abs(b) < 0.5) return { na:true };
+  var isExpense = a < 0 || (row.sign === -1);
+  return { pct:(a-b)/Math.abs(b)*100, abs:a-b, base:b, cur:a, favourable: isExpense ? Math.abs(a)<=Math.abs(b) : a>=b, isExpense:isExpense };
+}
+
+/* ═══════════════════ Formatting ═══════════════════ */
+function fmt(n){
+  var v = Math.round(Math.abs(n));
+  var s = v.toLocaleString('en-US');
+  return n < -0.5 ? '(' + s + ')' : s;
+}
+function fmtMoney(n){ return (n<0?'-':'') + '$' + Math.round(Math.abs(n)).toLocaleString('en-US') + 'K'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+/* ═══════════════════ Table render ═══════════════════ */
+function varHTML(row, vi){
+  if (!vi) return '';
+  if (vi.na) return '<span class="pnl-var pnl-var--na" title="No baseline data for this period">n/a</span>';
+  var cls = vi.favourable ? 'pnl-var--fav' : 'pnl-var--unfav';
+  /* Clean signed % in colour, like the live product — no heavy triangle. The +/-
+     sign carries direction (non-colour); favourable/unfavourable is colour +
+     aria-label. Treatment C adds the baseline compactly in parentheses. */
+  var baseTxt = state.treatment === 'C' ? ' <span class="pnl-var-base">(' + fmt(Math.abs(vi.base)) + ')</span>' : '';
+  var sr = (vi.favourable ? 'favourable' : 'unfavourable') + ' vs ' + COMPARE_LABEL[state.compare];
+  return '<span class="pnl-var ' + cls + '" aria-label="' + sr + '">' +
+         (vi.pct>=0?'+':'') + vi.pct.toFixed(0) + '%' + baseTxt + '</span>';
+}
+function renderTable(){
+  /* The table is about to re-render — any open cell drill points at a cell that
+     will be replaced, so drop it. (Row-detail selection re-applies afterwards.) */
+  if (state.drillCell) closeDrill();
+  var wrap = document.getElementById('tablewrap');
+  var el = document.getElementById('pnlTable');
+  var anyChannel = Object.keys(state.channels).some(function(c){ return state.channels[c]; });
+  if (!anyChannel) {
+    el.innerHTML =
+      '<div class="pnl-empty" style="min-width:600px;">' +
+      '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"/></svg>' +
+      '<div style="font-size:15px;font-weight:600;color:var(--color-text-heading);">No channels selected</div>' +
+      '<div style="font-size:13px;color:var(--color-text-secondary);max-width:320px;">The current Channels filter excludes every sales channel, so there is nothing to aggregate.</div>' +
+      '<button type="button" class="btn btn-primary btn-sm" onclick="resetChannels()">Reset channel filter</button></div>';
+    return;
+  }
+  var ps = periods();
+  var compareNote = state.treatment === 'B' && state.compare !== 'none'
+    ? '<div style="font-size:9px;font-weight:600;color:#42389d;letter-spacing:.02em;">% vs ' + esc(COMPARE_LABEL[state.compare]) + '</div>' : '';
+  var h = '<div class="pnl-row pnl-headrow">' +
+    '<div class="iris-cell-header pnl-c-label" style="background:#fff;flex-direction:column;align-items:flex-start;justify-content:center;height:52px;">' +
+      '<span>IN THOUSANDS ($)</span>' +
+      (state.treatment === 'A' && state.compare !== 'none' ? '<span style="font-size:10px;color:#42389d;font-weight:600;">% below values = vs ' + esc(COMPARE_LABEL[state.compare]) + '</span>' : '') +
+    '</div>' +
+    '<div class="iris-th-v iris-th-v--default pnl-c-wide" style="height:52px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;">' +
+      '<button type="button" id="runrateHeadBtn" aria-haspopup="menu" aria-expanded="false" title="Change forecast model — drives this column" style="all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:flex-end;gap:1px;">' +
+      'RUN RATE' +
+      '<span style="font-size:9px;font-weight:600;color:#42389d;text-transform:none;display:inline-flex;align-items:center;gap:2px;">' + esc(RUNRATE[state.runrate].label) +
+      '<svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg></span>' +
+      '</button></div>' +
+    '<div class="iris-th-v iris-th-v--default pnl-c-wide" style="height:52px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;">SUMMARY<div style="font-size:9px;font-weight:500;color:var(--color-text-secondary);text-transform:none;">Selected period</div></div>';
+  ps.forEach(function(p){
+    /* Expanded quarter header uses the library .iris-th-h--expand tint; the chevron
+       toggles the quarter's month columns. */
+    var headCls = p.expanded ? ' iris-th-h--expand' : (p.sub ? '' : '');
+    var chev = p.expandable
+      ? '<button type="button" data-q-toggle="' + p.q + '" aria-expanded="' + !!p.expanded + '" aria-label="' + (p.expanded ? 'Collapse' : 'Expand') + ' ' + p.l + ' into months" style="all:unset;cursor:pointer;display:inline-flex;margin-right:4px;">' +
+        '<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="transform:rotate(' + (p.expanded ? 90 : 0) + 'deg);"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg></button>'
+      : '';
+    h += '<div class="iris-th-v iris-th-v--default pnl-c-num' + headCls + '" style="height:52px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;' + (p.sub ? 'font-weight:500;' : '') + '">' +
+      '<span style="display:inline-flex;align-items:center;">' + chev + p.l + '</span>' + compareNote + '</div>';
+  });
+  h += '</div>';
+
+  /* One data row (top-level or expanded child). Children get an indented label. */
+  function dataRow(row){
+    var rowCls = row.type === 'total' ? ' iris-cell--row-derived' : (row.type === 'subtotal' ? ' iris-cell--row-total' : ' iris-cell--row-default');
+    var isSel = state.selRow === row.id;
+    var ov = state.overrides[row.id];
+    var summary = MONTHS.reduce(function(s,_,m){ return s + rowVal(row,m); },0);
+    var runrate = summary * RUNRATE[state.runrate].factor;
+    var bold = (row.type !== 'line') ? 'font-weight:700;' : (row.child ? 'color:#6b7280;' : '');
+    var expandable = row.childRows && row.childRows.length;
+    var expanded = expandable && state.expandedRows[row.id];
+    var rowChev = expandable
+      ? '<button type="button" data-row-toggle="' + row.id + '" aria-expanded="' + !!expanded + '" aria-label="' + (expanded ? 'Collapse' : 'Expand') + ' ' + esc(row.name) + ' sub-rows" style="all:unset;cursor:pointer;display:inline-flex;">' +
+        '<svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="transform:rotate(' + (expanded ? 90 : 0) + 'deg);transition:transform .15s;"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg></button>'
+      : '';
+    var r = '<div class="pnl-row pnl-row--click' + (isSel ? ' pnl-row--sel' : '') + '" data-row="' + row.id + '" role="button" tabindex="0" aria-label="' + esc(row.name) + ' details">';
+    r += '<div class="iris-cell pnl-c-label pnl-cell2' + rowCls + '" style="' + bold + (row.child ? 'padding-left:44px;' : '') + '">' +
+      '<span style="display:inline-flex;align-items:center;gap:6px;">' +
+      rowChev +
+      (row.type === 'line' ? '<button type="button" class="pnl-row-pencil" data-edit-row="' + row.id + '" title="Edit this line" aria-label="Edit ' + esc(row.name) + '"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg></button>' : '') +
+      (ov ? '<span class="pnl-dot" style="background:#42389d;" title="Overridden locally"></span>' : '') +
+      esc(row.name) +
+      (row.count ? '<span class="badge badge-gray badge-sm">' + row.count + '</span>' : '') +
+      (row.margin ? '<span style="font-size:11px;color:var(--color-text-secondary);font-weight:500;margin-left:4px;">' + marginPct() + '</span>' : '') +
+      '</span>' +
+      (ov ? '<span style="font-size:10px;color:#42389d;">Local override</span>' : '') +
+      '</div>';
+    /* Canonical iris-cell--num markup: <span>$</span><span>amount</span>; the
+       --currency line pins $ left / amount right as in the live Run Rate column. */
+    r += '<div class="iris-cell iris-cell--num pnl-c-wide pnl-cell2' + rowCls + '" style="' + bold + '"><div class="pnl-valline pnl-valline--currency"><span>$</span><span>' + fmt(runrate) + '</span></div></div>';
+    r += '<div class="iris-cell iris-cell--num pnl-c-wide pnl-cell2' + rowCls + '" style="' + bold + '"><div class="pnl-valline pnl-valline--currency"><span>$</span><span>' + fmt(summary) + '</span></div></div>';
+    ps.forEach(function(p, pi){
+      var v = periodVal(row, p);
+      var vi = periodVarianceInfo(row, p);
+      var selMonthCls = (isSel && p.ms.length === 1 && p.ms[0] === state.selMonth) ? ' pnl-cell--selmonth' : '';
+      r += '<div class="iris-cell iris-cell--num pnl-c-num pnl-cell2' + rowCls + selMonthCls + '" style="' + bold + '" data-period="' + pi + '" data-varrow="' + row.id + '">' +
+        '<div class="pnl-valline"><span>' + fmt(v) + '</span></div>' + varHTML(row, vi) + '</div>';
+    });
+    return r + '</div>';
+  }
+
+  ROWS.forEach(function(row){
+    if (row.type === 'section') {
+      var col = state.collapsedSections[row.id];
+      h += '<div class="pnl-row"><button type="button" class="pnl-section-h" style="width:100%;" data-sec-toggle="' + row.id + '" aria-expanded="' + !col + '">' +
+           '<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="transform:rotate(' + (col ? -90 : 0) + 'deg);transition:transform .15s;"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>' +
+           esc(row.name) + (col ? '<span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--color-text-secondary);">· collapsed</span>' : '') + '</button></div>';
+      return;
+    }
+    /* Collapsed section hides its member lines; subtotals stay visible. */
+    if (row.type === 'line' && row.section && state.collapsedSections['sec' + row.section.charAt(0).toUpperCase() + row.section.slice(1)]) return;
+    if (row.type === 'line' && !row.agnostic && row.ch && activeShare(row) === 0) return; // filtered out entirely
+    h += dataRow(row);
+    if (row.childRows && state.expandedRows[row.id]) row.childRows.forEach(function(c){ h += dataRow(c); });
+    if (row.margin) {
+      h += '<div class="pnl-row"><div class="iris-cell pnl-c-label iris-cell--row-default" style="font-size:11px;font-style:italic;color:var(--color-text-secondary);">Gross Margin %</div>' +
+        '<div class="iris-cell iris-cell--num pnl-c-wide iris-cell--row-default" style="font-size:11px;font-style:italic;color:var(--color-text-secondary);"><span>' + marginPct() + '</span></div>' +
+        '<div class="iris-cell iris-cell--num pnl-c-wide iris-cell--row-default" style="font-size:11px;font-style:italic;color:var(--color-text-secondary);"><span>' + marginPct() + '</span></div>';
+      ps.forEach(function(p){
+        var gp = periodVal(rowById('grossProfit'), p), ns = periodVal(rowById('netSales'), p);
+        h += '<div class="iris-cell iris-cell--num pnl-c-num iris-cell--row-default" style="font-size:11px;font-style:italic;color:var(--color-text-secondary);"><span>' + (ns ? (gp/ns*100).toFixed(1) : '—') + '%</span></div>';
+      });
+      h += '</div>';
+    }
+  });
+  el.innerHTML = h;
+
+  el.querySelectorAll('.pnl-row--click').forEach(function(r){
+    r.addEventListener('click', function(e){
+      var chev = e.target.closest('[data-row-toggle]');
+      if (chev) { e.stopPropagation(); var id = chev.getAttribute('data-row-toggle'); state.expandedRows[id] = !state.expandedRows[id]; renderTable(); return; }
+      var pencil = e.target.closest('[data-edit-row]');
+      var rid = r.getAttribute('data-row');
+      // Pencil is the always-available inline edit entry — works in the normal
+      // view without entering Edit Mode.
+      if (pencil) { e.stopPropagation(); openEditDrawer(pencil.getAttribute('data-edit-row')); return; }
+      if (state.editMode) { openEditDrawer(rid); return; }
+      var cell = e.target.closest('[data-period]');
+      /* Row or cell → the ONE detail panel. Clicking a specific month cell just
+         scopes the panel to that month. No separate cell-drill. */
+      if (cell) { var p = periods()[+cell.getAttribute('data-period')]; if (p.ms.length === 1) state.selMonth = p.ms[0]; }
+      selectRow(rid);
+    });
+    r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); r.click(); } });
+  });
+  el.querySelectorAll('[data-sec-toggle]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var id = b.getAttribute('data-sec-toggle');
+      state.collapsedSections[id] = !state.collapsedSections[id];
+      renderTable();
+    });
+  });
+  el.querySelectorAll('[data-q-toggle]').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      var q = +b.getAttribute('data-q-toggle');
+      state.expandedQuarters[q] = !state.expandedQuarters[q];
+      renderTable();
+    });
+  });
+  attachPopover(el);
+}
+function marginPct(){
+  var gp = MONTHS.reduce(function(s,_,m){ return s + rowVal(rowById('grossProfit'),m); },0);
+  var ns = MONTHS.reduce(function(s,_,m){ return s + rowVal(rowById('netSales'),m); },0);
+  return ns ? (gp/ns*100).toFixed(1) + '%' : '—';
+}
+
+/* ═══════════════════ Variance popover ═══════════════════ */
+function attachPopover(root){
+  var pop = document.getElementById('pnlPop');
+  root.querySelectorAll('[data-varrow]').forEach(function(cell){
+    cell.addEventListener('mouseenter', function(){
+      var row = rowById(cell.getAttribute('data-varrow'));
+      var p = periods()[+cell.getAttribute('data-period')];
+      var vi = periodVarianceInfo(row, p);
+      if (!vi || vi.na) return;
+      var interp = (vi.isExpense
+        ? (vi.favourable ? 'Below ' + COMPARE_LABEL[state.compare].toLowerCase() + ' spend (favourable)' : 'Above ' + COMPARE_LABEL[state.compare].toLowerCase() + ' spend (unfavourable)')
+        : (vi.favourable ? 'Above ' + COMPARE_LABEL[state.compare].toLowerCase() + ' (favourable)' : 'Below ' + COMPARE_LABEL[state.compare].toLowerCase() + ' (unfavourable)'));
+      pop.innerHTML =
+        '<div style="font-weight:700;color:var(--color-text-heading);margin-bottom:6px;">' + esc(row.name) + ' · ' + esc(p.l) + '</div>' +
+        '<dl style="margin:0;">' +
+        '<div class="pnl-kv"><dt>Current</dt><dd>' + fmtMoney(vi.cur) + '</dd></div>' +
+        '<div class="pnl-kv"><dt>' + esc(COMPARE_LABEL[state.compare]) + '</dt><dd>' + fmtMoney(vi.base) + '</dd></div>' +
+        '<div class="pnl-kv"><dt>Variance</dt><dd>' + fmtMoney(vi.abs) + ' · ' + (vi.pct>=0?'+':'') + vi.pct.toFixed(1) + '%</dd></div>' +
+        '</dl>' +
+        '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--color-border-default);color:' + (vi.favourable ? '#007a55' : '#c70036') + ';font-weight:600;">' + interp + '</div>';
+      var r = cell.getBoundingClientRect();
+      pop.style.left = Math.min(window.innerWidth - 260, r.left) + 'px';
+      pop.style.top = (r.bottom + 6) + 'px';
+      pop.classList.add('show');
+    });
+    cell.addEventListener('mouseleave', function(){ pop.classList.remove('show'); });
+  });
+}
+
+/* ═══════════════════ Detail panel (states 2–4) ═══════════════════ */
+function selectRow(id){
+  state.selRow = id;
+  state.txExpanded = false; /* reset the transactions expand for the new line */
+  closeDrill(); /* selecting a new line drops any open drill */
+  renderTable();
+  var panel = document.getElementById('pnlPanel');
+  panel.classList.add('open');
+  /* Inline sizing toggle — the .open cascade for flex-basis/min-width was unreliable
+     here; inline styles animate via the base transition and always win. */
+  panel.style.flexBasis = '474px'; panel.style.minWidth = '474px';
+  panel.innerHTML = '<div class="pnl-panel-scroll">' +
+    '<div class="skeleton-text skeleton-w-1-2 skeleton"></div>' +
+    '<div class="skeleton-text skeleton-w-full skeleton"></div>' +
+    '<div class="skeleton-text skeleton-w-full skeleton"></div>' +
+    '<div class="skeleton-text skeleton-w-2-3 skeleton"></div>' +
+    '<div class="skeleton-image skeleton" style="height:160px;"></div>' +
+    '<div class="skeleton-text skeleton-w-full skeleton"></div>' +
+    '<div class="skeleton-text skeleton-w-3-4 skeleton"></div></div>';
+  clearTimeout(selectRow._t);
+  selectRow._t = setTimeout(renderPanel, 380);
+}
+function closePanel(){ state.selRow = null; closeDrill(); var p = document.getElementById('pnlPanel'); p.classList.remove('open'); p.style.flexBasis = ''; p.style.minWidth = ''; renderTable(); }
+
+/* ═══════════════════ Nested drill panel (period → day level) ═══════════════════ */
+function openDrill(period, lineName){
+  var d = document.getElementById('pnlDrill');
+  d.classList.add('open');
+  d.style.flexBasis = '430px'; d.style.minWidth = '430px';
+  /* Split a weekly period into day rows; illustrative split, labelled as prototype. */
+  var m = period.match(/(\w{3}) (\d+)/);
+  var startDay = m ? parseInt(m[2],10) : 1;
+  var days = [];
+  for (var i=0;i<7;i++){ var dn = startDay+i; days.push('Jan ' + dn + ', 2024'); }
+  var rows = days.map(function(dl,i){
+    var orders = [6,5,6,5,6,5,4][i];
+    var amt = (orders * 2.4).toFixed(0);
+    return '<tr><td>' + dl + '</td><td class="num">' + orders + '</td><td class="num">$' + amt + 'K</td></tr>';
+  }).join('');
+  d.innerHTML =
+    '<div class="pnl-panel-h">' +
+      '<button type="button" class="btn-link btn-link-semibold btn-xs" onclick="closeDrill()" style="margin-bottom:6px;display:inline-flex;align-items:center;gap:4px;">' +
+        '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd"/></svg>' +
+        'Back to ' + esc(lineName || 'line') + '</button>' +
+      '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+        '<div style="flex:1;"><h2 style="margin:0;font-size:17px;font-weight:700;color:var(--color-text-heading);">' + esc(period) + '</h2>' +
+        '<div style="font-size:13px;color:var(--color-text-secondary);margin-top:2px;">Day-level breakdown · ' + esc(lineName || '') + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pnl-panel-scroll">' +
+      '<section><h3 class="pnl-sect-title">By day</h3>' +
+      '<div class="pnl-mini-scroll"><table class="pnl-mini-table"><thead><tr>' +
+      '<th class="iris-th">Day</th><th class="iris-th" style="text-align:right;">Orders</th><th class="iris-th" style="text-align:right;">Actual</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div></section>' +
+      '<p style="margin:0;font-size:11px;color:var(--color-text-secondary);">Illustrative day-level split for the prototype. Real data would come from the same synced source.</p>' +
+    '</div>';
+}
+function closeDrill(){
+  var d = document.getElementById('pnlDrill');
+  if (!d) return;
+  d.classList.remove('open'); d.style.flexBasis = ''; d.style.minWidth = '';
+  state.drillCell = null;
+  el0().querySelectorAll('.pnl-cell--selmonth').forEach(function(c){ c.classList.remove('pnl-cell--selmonth'); });
+}
+function el0(){ return document.getElementById('pnlTable'); }
+
+/* Cell drill — clicking a period value opens a focused "what makes up this number"
+   panel on the right (line × period). */
+function openCellDrill(rid, periodIndex){
+  var row = rowById(rid);
+  var ps = periods();
+  var p = ps[periodIndex]; if (!p) return;
+  var val = periodVal(row, p);
+  var meta = sourceMeta(row);
+  state.drillCell = { rid: rid, pi: periodIndex };
+  var d = document.getElementById('pnlDrill');
+  d.classList.add('open');
+  d.style.flexBasis = '430px'; d.style.minWidth = '430px';
+  /* highlight the clicked cell */
+  el0().querySelectorAll('.pnl-cell--selmonth').forEach(function(c){ c.classList.remove('pnl-cell--selmonth'); });
+  var cellEl = el0().querySelector('[data-row="' + rid + '"] [data-period="' + periodIndex + '"]');
+  if (cellEl) cellEl.classList.add('pnl-cell--selmonth');
+  /* breakdown: weeks for a single month, months for a quarter */
+  var sub, subLabels;
+  if (p.ms.length === 1) {
+    var shares=[0.23,0.23,0.23,0.22,0.09];
+    var mo = MONTHS[p.ms[0]];
+    var wk = [[1,7],[8,14],[15,21],[22,28],[29,31]];
+    subLabels = wk.map(function(w){ return mo + ' ' + w[0] + ' – ' + mo + ' ' + w[1]; });
+    sub = shares.map(function(s){ return Math.abs(val)*s; });
+  } else {
+    subLabels = p.ms.map(function(mm){ return MONTHS[mm] + ' 2024'; });
+    sub = p.ms.map(function(mm){ return Math.abs(rowVal(row, mm)); });
+  }
+  var rowsHtml = sub.map(function(a,i){
+    var orders = Math.round(a/2.55);
+    return '<tr style="cursor:pointer;" onclick="toast(\'Deeper drill for ' + esc(subLabels[i]) + ' — out of prototype scope\',\'info\')"><td>' + esc(subLabels[i]) + ' <span aria-hidden="true" style="color:#9ca3af;">›</span></td><td class="num">' + orders + '</td><td class="num">' + fmtMoney(a) + '</td></tr>';
+  }).join('');
+  var vi = periodVarianceInfo(row, p);
+  var varLine = vi && !vi.na ? '<div class="pnl-metrics-sub" style="margin-top:6px;">' + (vi.favourable?'▲':'▼') + ' ' + (vi.pct>=0?'+':'') + vi.pct.toFixed(0) + '% vs ' + esc(COMPARE_LABEL[state.compare]) + ' · ' + fmtMoney(vi.base) + '</div>' : '';
+  d.innerHTML =
+    '<div class="pnl-panel-h">' +
+      '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<h2 style="margin:0;font-size:17px;font-weight:700;color:var(--color-text-heading);">' + esc(row.name) + '</h2>' +
+          '<div style="font-size:13px;color:var(--color-text-secondary);margin-top:2px;">' + esc(p.l) + ' · ' + esc(meta.system) + '</div>' +
+        '</div>' +
+        '<button type="button" class="btn btn-icon btn-xs" aria-label="Close drill" onclick="closeDrill()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pnl-panel-scroll">' +
+      '<section><div class="pnl-metrics"><div><b>' + fmtMoney(val) + '</b><span>This cell</span></div>' +
+        '<div><b>' + Math.round(Math.abs(val)/2.55).toLocaleString('en-US') + '</b><span>Orders</span></div></div>' + varLine + '</section>' +
+      '<section><h3 class="pnl-sect-title">What makes up this number</h3>' +
+        '<div class="pnl-mini-scroll"><table class="pnl-mini-table"><thead><tr>' +
+        '<th class="iris-th">' + (p.ms.length===1?'Period':'Month') + '</th><th class="iris-th" style="text-align:right;">Orders</th><th class="iris-th" style="text-align:right;">Actual</th>' +
+        '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div></section>' +
+      '<section class="pnl-meth"><h3 class="pnl-sect-title" style="margin-bottom:6px;">Source</h3>' +
+        '<div style="font-size:12px;color:var(--color-text-body);"><b>' + esc(meta.system) + '</b> · ' + (state.view==='accrual'?'posting date':'order date') + ' · calculated ' + meta.sync.toLowerCase() + '</div>' +
+        '<button type="button" class="btn-link btn-link-semibold btn-xs" style="margin-top:8px;" onclick="var r=state.drillCell&&state.drillCell.rid; if(r){state.selMonth=' + (p.ms[0]) + ';selectRow(r);}">Open full line details →</button>' +
+      '</section>' +
+    '</div>';
+}
+
+function sourceMeta(row){
+  var shopifyOnly = state.channels.shopify && !state.channels.amazon && !state.channels.tiktok;
+  if (state.view === 'accrual') {
+    return { system:'QuickBooks Online', conn:'QuickBooks Connection', badge:'Accrual P&L',
+      calc:'Revenue recognized in the accounting system for the selected period, posting-date basis.',
+      sync:'26 min ago', stale:true };
+  }
+  if (row.id === 'shopifySales' || (shopifyOnly && row.drill === 'amazon')) {
+    return { system:'Shopify · Online Store + B2B', conn:'Shopify Connection', badge:null,
+      calc:'Net recognized operational sales from synced Shopify orders for the selected period.',
+      sync:'Just now', stale:false };
+  }
+  return { system:'Amazon Seller Central', conn:'Amazon Connection', badge:null,
+    calc:'Net recognized operational sales from synced Amazon orders for the selected period.',
+    sync:'Just now', stale:false };
+}
+
+function txRows(row){
+  var accrual = state.view === 'accrual';
+  if (accrual) {
+    return { head:['Posting date','Doc type','JE / Txn ID','Account (GL)','Credit','Status'],
+      rows:[
+        ['Jan 31, 2024','Sales Receipt','JE-10412','4000 · Product Revenue','$96K','<span class="badge badge-green badge-sm">Posted</span>'],
+        ['Jan 31, 2024','Invoice','INV-2201','4000 · Product Revenue','$88K','<span class="badge badge-green badge-sm">Posted</span>'],
+        ['Jan 31, 2024','Journal Entry','JE-10418','4010 · Marketplace Revenue','$121K','<span class="badge badge-green badge-sm">Posted</span>'],
+        ['Feb 2, 2024','Credit Memo','CM-0331','4000 · Product Revenue','($9K)','<span class="badge badge-yellow badge-sm">Unposted</span>'],
+        ['Jan 31, 2024','Journal Entry','JE-10425','4090 · Adjustments','$4K','<span class="badge badge-gray badge-sm">Unmapped</span>']
+      ] };
+  }
+  if (row.id === 'shopifySales' || (!state.channels.amazon && state.channels.shopify)) {
+    return { head:['Date placed','Account','Order ID','Net sales','Fulfillment','Status'],
+      rows:[
+        ['Jan 2, 2024','Online Store','#SH-58211','$1.9K','Fulfilled','<span class="badge badge-green badge-sm">Paid</span>'],
+        ['Jan 2, 2024','Online Store','#SH-58234','$0.8K','Fulfilled','<span class="badge badge-green badge-sm">Paid</span>'],
+        ['Jan 3, 2024','Shopify B2B','#B2B-1104','$12.4K','Partially fulfilled','<span class="badge badge-yellow badge-sm">Pending</span>'],
+        ['Jan 4, 2024','Online Store','#SH-58307','$1.1K','Unfulfilled','<span class="badge badge-red badge-sm">Refunded</span>']
+      ] };
+  }
+  return { head:['Date placed','Channel','Order ID','Net sales','Fulfillment','Status'],
+    rows:[
+      ['Jan 1, 2024','Amazon FBA','112-4401932','$87K','Shipped','<span class="badge badge-green badge-sm">Shipped</span>'],
+      ['Jan 1, 2024','Amazon FBA','112-4402150','$57K','Shipped','<span class="badge badge-green badge-sm">Shipped</span>'],
+      ['Jan 2, 2024','Amazon FBM','114-8830127','$85K','—','<span class="badge badge-red badge-sm">Cancelled</span>'],
+      ['Jan 2, 2024','Amazon FBA','112-4407788','$203K','Preparing','<span class="badge badge-yellow badge-sm">Pending</span>'],
+      ['Jan 3, 2024','Amazon FBA','112-4409021','$64K','Shipped','<span class="badge badge-green badge-sm">Shipped</span>'],
+      ['Jan 3, 2024','Amazon FBM','114-8831540','$41K','Delivered','<span class="badge badge-green badge-sm">Delivered</span>'],
+      ['Jan 4, 2024','Amazon FBA','112-4411338','$92K','Shipped','<span class="badge badge-green badge-sm">Shipped</span>'],
+      ['Jan 4, 2024','Amazon FBA','112-4412207','$18K','—','<span class="badge badge-yellow badge-sm">Pending</span>'],
+      ['Jan 5, 2024','Amazon FBM','114-8834112','$76K','Delivered','<span class="badge badge-green badge-sm">Delivered</span>'],
+      ['Jan 5, 2024','Amazon FBA','112-4415990','$33K','—','<span class="badge badge-red badge-sm">Refunded</span>']
+    ] };
+}
+
+function renderPanel(){
+  var row = rowById(state.selRow);
+  if (!row) return;
+  closeDrill(); /* panel content changed (view/gran/row) — the drill context is stale */
+  var panel = document.getElementById('pnlPanel');
+  var m = state.selMonth;
+  var meta = sourceMeta(row);
+  var monthLabel = MONTHS[m] + ' 2024';
+  var val = rowVal(row, m);
+  var accrual = state.view === 'accrual';
+  var calcLine = row.drill === 'calc';
+  var noTx = row.drill === 'empty' || row.drill === 'none';
+
+  var opVal = row.sign ? row.sign * (row.vals ? row.vals[m] * activeShare(row) : 0) : sumCalc(row, m, 'operating');
+  var acVal = opVal * VIEW_FACTOR.accrual;
+
+  var h = '<div class="pnl-panel-h">' +
+    '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+    '<div style="flex:1;min-width:0;">' +
+      '<h2 style="margin:0;font-size:18px;font-weight:700;color:var(--color-text-heading);">' + esc(row.name) + '</h2>' +
+      '<div style="font-size:13px;color:var(--color-text-secondary);margin-top:2px;">' + monthLabel + ' · ' + esc(RUNRATE[state.runrate].label) + '</div>' +
+    '</div>' +
+    '<button type="button" class="btn btn-icon btn-xs" aria-label="Expand panel" onclick="toast(\'Expanded panel view is out of prototype scope\',\'info\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"/></svg></button>' +
+    '<button type="button" class="btn btn-icon btn-xs" aria-label="Close panel" onclick="closePanel()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;">' +
+      '<span class="badge badge-green badge-sm">Actual</span>' +
+      '<span class="badge ' + (accrual ? 'badge-indigo' : 'badge-gray') + ' badge-sm">' + esc(meta.system) + '</span>' +
+      (accrual ? '<span class="badge badge-purple badge-sm">Accrual P&amp;L</span>' : '') +
+      (meta.stale ? '<span class="badge badge-yellow badge-sm">Sync ' + meta.sync + ' · stale</span>' : '') +
+    '</div>' +
+    (calcLine ? '' :
+      '<a class="btn-link btn-link-semibold btn-xs" href="./assumptions.html#pnl-config-' + (accrual ? 'accrual' : 'operating') + '" style="margin-top:8px;display:inline-flex;">' +
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>' +
+      'Open configuration: ' + esc(meta.conn) + '</a>') +
+  '</div>';
+
+  h += '<div class="pnl-panel-scroll">';
+
+  if (calcLine) {
+    h += calcPanelBody(row, m);
+  } else {
+    /* A · Summary — compact metric strip + a small data-freshness caption
+       (not a 6-card dashboard; the spec warns against that and Lovable is compact). */
+    var orders = Math.round(Math.abs(val) / 2.55);
+    h += '<section><h3 class="pnl-sect-title">Summary · ' + monthLabel + '</h3><div class="pnl-metrics">' +
+      '<div><b>' + fmtMoney(val) + '</b><span>' + (accrual ? 'Recognized revenue' : (row.sign === 1 ? 'Total revenue' : 'Total spend')) + '</span></div>' +
+      (accrual
+        ? '<div><b>' + (orders>0? Math.max(3, Math.round(orders/38)) : 0) + '</b><span>Posted entries</span></div>' +
+          '<div><b>$4K</b><span>Adjustments</span></div>'
+        : '<div><b>' + orders.toLocaleString('en-US') + '</b><span>Orders</span></div>' +
+          '<div><b>$' + (orders ? (Math.abs(val)/orders*1000).toFixed(0) : 0) + '</b><span>Avg order value</span></div>') +
+      '</div>' +
+      '<div class="pnl-metrics-sub">' +
+        '<span class="pnl-dot" style="background:' + (meta.stale ? '#e3a008' : '#0e9f6e') + ';"></span>' +
+        (accrual ? '1 unposted item · ' : 'Refund rate 2.1% · ') +
+        'synced ' + meta.sync.toLowerCase() + ' · ' + (accrual ? '96%' : '100%') + ' complete' +
+      '</div></section>';
+
+    /* B · Trend */
+    h += trendSection(row, m);
+
+    /* C · Period breakdown */
+    h += breakdownSection(row, m);
+
+    /* D · Transactions / records */
+    if (row.drill === 'empty') {
+      h += '<section><h3 class="pnl-sect-title">' + (accrual ? 'Accounting records' : 'Transaction details') + '</h3>' +
+        '<div class="pnl-empty" style="padding:28px 16px;border:1px dashed var(--color-border-default);border-radius:10px;">' +
+        '<div style="font-size:13px;font-weight:600;color:var(--color-text-heading);">No transactions in ' + monthLabel + '</div>' +
+        '<div style="font-size:12px;color:var(--color-text-secondary);">This line had no activity in the selected period and channel filter.</div></div></section>';
+    } else if (row.drill === 'none') {
+      var recs = [
+        ['Shipping fee','Carrier settlement','$2.1K'],['Handling fee','Fulfillment','$0.9K'],
+        ['Surcharge','Peak/oversize','$0.6K'],['Insurance','Declared value','$0.4K'],
+        ['Fuel adjustment','Carrier','$0.3K'],['Returns shipping','Reverse logistics','($0.4K)']
+      ];
+      var shownR = state.txExpanded ? recs : recs.slice(0, 3);
+      h += '<section><h3 class="pnl-sect-title">Composition</h3>' +
+        '<p style="margin:0 0 8px;font-size:13px;color:var(--color-text-secondary);">This line aggregates fee- and cost-level records rather than individual orders.</p>' +
+        '<div class="pnl-mini-scroll"><table class="pnl-mini-table"><thead><tr>' +
+        '<th class="iris-th">Record</th><th class="iris-th">Type</th><th class="iris-th" style="text-align:right;">Amount</th>' +
+        '</tr></thead><tbody>' +
+        shownR.map(function(r){ return '<tr><td>' + r[0] + '</td><td style="color:var(--color-text-secondary);">' + r[1] + '</td><td class="num">' + r[2] + '</td></tr>'; }).join('') +
+        '</tbody></table></div>' +
+        (state.txExpanded
+          ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="margin-top:8px;" onclick="state.txExpanded=false;renderPanel();">Show fewer ↑</button>'
+          : '<button type="button" class="btn-link btn-link-semibold btn-sm" style="margin-top:8px;" onclick="state.txExpanded=true;renderPanel();">View all ' + recs.length + ' details →</button>') +
+        '</section>';
+    } else {
+      var tx = txRows(row);
+      var shown = state.txExpanded ? tx.rows : tx.rows.slice(0, 4);
+      h += '<section><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+        '<h3 class="pnl-sect-title" style="margin-bottom:0;">' + (accrual ? 'Accounting records · QuickBooks' : 'Transaction details · ' + esc(meta.system)) + '</h3>' +
+        '<button type="button" class="btn btn-light btn-xs" onclick="toast(\'Export started (prototype stub)\',\'success\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> Export</button></div>' +
+        '<div class="pnl-mini-scroll" style="margin-top:8px;"><table class="pnl-mini-table"><thead><tr>' +
+        tx.head.map(function(x){ return '<th class="iris-th">' + esc(x) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' +
+        shown.map(function(r){ return '<tr>' + r.map(function(c,i){ return '<td class="' + (i===3||i===4&&accrual?'num':'') + '">' + c + '</td>'; }).join('') + '</tr>'; }).join('') +
+        '</tbody></table></div>' +
+        (state.txExpanded
+          ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="margin-top:8px;" onclick="state.txExpanded=false;renderPanel();">Show fewer ↑</button>'
+          : '<button type="button" class="btn-link btn-link-semibold btn-sm" style="margin-top:8px;" onclick="state.txExpanded=true;renderPanel();">View all ' + tx.rows.length + ' details →</button>') +
+        '</section>';
+    }
+
+    /* E · Methodology — persistent, not a tooltip (Marko: "Methodology треба постійно нагадувати") */
+    h += methodologySection(row, meta);
+
+    /* State 4 · Why is this different? — collapsed hint, shown only when the gap
+       vs the other view is material (>2%). Expands to the full reconciliation. */
+    var otherVal = accrual ? opVal : acVal;
+    var diff = val - otherVal;
+    var otherLabel = accrual ? 'Operating P&L' : 'Accrual P&L';
+    /* Material = >2% of the line AND at least $1K after rounding — otherwise the
+       callout would read "$0K gap" on small lines. */
+    var gapK = Math.round(Math.abs(diff));
+    if (Math.abs(val) > 0.5 && Math.abs(diff) / Math.abs(val) > 0.02 && gapK >= 1) {
+      /* Format the other value the same way as the table (parens for negatives),
+         and state the gap as a single positive amount — no double-negative "(-$1K)". */
+      var moneyOther = (otherVal < 0 ? '($' + Math.round(Math.abs(otherVal)) + 'K)' : '$' + Math.round(Math.abs(otherVal)) + 'K');
+      h += '<details class="pnl-meth pnl-why" style="border-color:#d9d6fe;background:#f8f7ff;">' +
+        '<summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-size:12px;color:#42389d;font-weight:600;">' +
+          '<svg class="pnl-why-chev" width="13" height="13" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0;transition:transform .15s;"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>' +
+          '<span>Differs in ' + otherLabel + ': ' + moneyOther + ' · $' + gapK + 'K gap — why?</span>' +
+        '</summary>' +
+        '<div style="margin-top:10px;">' +
+        '<ul style="margin:0;padding-left:18px;font-size:12px;color:var(--color-text-body);display:flex;flex-direction:column;gap:3px;">' +
+        '<li>Date basis: order date (Operating) vs posting date (Accrual)</li>' +
+        '<li>1 credit memo pending posting in QuickBooks</li>' +
+        '<li>Refund timing recognized in different periods</li>' +
+        '<li>$4K manual journal adjustment in Accrual only</li>' +
+        '</ul>' +
+        '<button type="button" class="btn-link btn-link-semibold btn-xs" style="margin-top:8px;" onclick="toast(\'Reconciliation detail view is out of prototype scope\',\'info\')">View reconciliation details →</button>' +
+        '</div></details>';
+    }
+  }
+
+  h += '</div>';
+  panel.innerHTML = h;
+}
+
+function sumCalc(row, m, view){
+  var f = VIEW_FACTOR[view] / VIEW_FACTOR[state.view];
+  return rowVal(row, m) * f;
+}
+
+function trendSection(row, m){
+  var v = Math.abs(rowVal(row, m));
+  var weeks = [0.23,0.23,0.23,0.22,0.09].map(function(w){ return v*w; });
+  var cum = []; weeks.reduce(function(s,w,i){ cum[i] = s+w; return s+w; },0);
+  var series = (trendSection.mode || 'cum') === 'cum' ? cum : weeks;
+  var max = Math.max.apply(null, series) * 1.15 || 1;
+  var pts = series.map(function(y,i){ return (30 + i*95) + ',' + (150 - y/max*130); }).join(' ');
+  var area = '30,150 ' + pts + ' ' + (30+4*95) + ',150';
+  var labels = ['Jan 1–7','Jan 8–14','Jan 15–21','Jan 22–28','Jan 29–Feb 4'];
+  return '<section><div class="pnl-chart-box">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+    '<div><div style="font-size:13px;font-weight:700;color:var(--color-text-heading);">Trend · ' + esc(row.name) + '</div>' +
+    '<div style="font-size:11px;color:var(--color-text-secondary);">$ thousands · ' + MONTHS[m] + ' 2024 · reflects active channel filter</div></div>' +
+    '<div class="btn-group btn-group--sm" role="group" aria-label="Trend mode">' +
+      '<button type="button" class="btn' + ((trendSection.mode||'cum')==='cum'?' active':'') + '" aria-pressed="' + ((trendSection.mode||'cum')==='cum') + '" onclick="trendSection.mode=\'cum\';renderPanel();">Cumulative</button>' +
+      '<button type="button" class="btn' + ((trendSection.mode||'cum')==='per'?' active':'') + '" aria-pressed="' + ((trendSection.mode||'cum')==='per') + '" onclick="trendSection.mode=\'per\';renderPanel();">Weekly</button>' +
+    '</div></div>' +
+    '<svg viewBox="0 0 440 170" style="width:100%;height:auto;" role="img" aria-label="Trend chart">' +
+    '<defs><linearGradient id="pnlGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#42389d" stop-opacity=".18"/><stop offset="100%" stop-color="#42389d" stop-opacity="0"/></linearGradient></defs>' +
+    [0,1,2,3].map(function(i){ var y = 20 + i*43; return '<line x1="30" y1="' + y + '" x2="410" y2="' + y + '" stroke="#f3f4f6"/>'; }).join('') +
+    '<polygon points="' + area + '" fill="url(#pnlGrad)"/>' +
+    '<polyline points="' + pts + '" fill="none" stroke="#42389d" stroke-width="2"/>' +
+    series.map(function(y,i){ return '<circle cx="' + (30+i*95) + '" cy="' + (150 - y/max*130) + '" r="3.5" fill="#42389d"/>'; }).join('') +
+    labels.map(function(l,i){ return '<text x="' + (30+i*95) + '" y="166" font-size="9" fill="#9ca3af" text-anchor="middle">' + l + '</text>'; }).join('') +
+    '</svg></div></section>';
+}
+
+function breakdownSection(row, m){
+  var quarterly = state.gran === 'quarterly';
+  var v = Math.abs(rowVal(row, m));
+  var rowsB, title;
+  if (quarterly) {
+    title = 'Monthly breakdown';
+    rowsB = [0,1,2].map(function(i){
+      var mv = Math.abs(rowVal(row, i));
+      return [MONTHS[i] + ' 2024', Math.round(mv/2.55), fmtMoney(mv)];
+    });
+  } else {
+    title = 'Weekly breakdown';
+    var shares = [0.23,0.23,0.23,0.22,0.09], labels = ['Jan 1 – Jan 7','Jan 8 – Jan 14','Jan 15 – Jan 21','Jan 22 – Jan 28','Jan 29 – Feb 4'];
+    rowsB = shares.map(function(s,i){ return [labels[i], Math.round(v*s/2.55), fmtMoney(v*s)]; });
+  }
+  var total = rowsB.reduce(function(s,r){ return s + r[1]; },0);
+  return '<section><h3 class="pnl-sect-title">' + title + '</h3>' +
+    '<div class="pnl-mini-scroll"><table class="pnl-mini-table"><thead><tr>' +
+    '<th class="iris-th">Period</th><th class="iris-th" style="text-align:right;">Orders</th><th class="iris-th" style="text-align:right;">Actual</th>' +
+    '</tr></thead><tbody>' +
+    '<tr style="font-weight:700;"><td>Total</td><td class="num">' + total + '</td><td class="num">' + fmtMoney(v) + '</td></tr>' +
+    rowsB.map(function(r){ return '<tr style="cursor:pointer;" onclick="openDrill(\'' + esc(r[0]) + '\',\'' + esc(row.name) + '\')"><td style="color:#42389d;">' + r[0] + ' <span aria-hidden="true" style="color:#9ca3af;">›</span></td><td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td></tr>'; }).join('') +
+    '</tbody></table></div></section>';
+}
+
+function methodologySection(row, meta){
+  var accrual = state.view === 'accrual';
+  /* Marko: methodology must stay PERSISTENTLY visible, not hidden in hover/collapse
+     (spec: "must persistently show the source, calculation basis, recognition basis").
+     So source + calculation + recognition + date/FX are always shown; only the
+     exhaustive included/excluded record lists (level-2 detail) collapse. */
+  return '<section class="pnl-meth">' +
+    '<h3 class="pnl-sect-title" style="margin-bottom:6px;">Calculation &amp; methodology</h3>' +
+    '<div style="font-size:12px;color:var(--color-text-body);margin-bottom:8px;">' +
+      '<b>' + esc(meta.system) + '</b> · ' + (accrual ? 'posting date' : 'order date') + ' · USD daily FX · calculated ' + meta.sync.toLowerCase() +
+    '</div>' +
+    '<dl style="margin:0;">' +
+      '<div class="pnl-kv"><dt>Calculation</dt><dd style="max-width:230px;">' + esc(meta.calc) + '</dd></div>' +
+      '<div class="pnl-kv"><dt>Recognition basis</dt><dd>' + (accrual ? 'Accrual (recognition rules)' : 'Operational (order date)') + '</dd></div>' +
+    '</dl>' +
+    '<details style="margin-top:8px;"><summary>Included / excluded records</summary>' +
+    '<dl style="margin:8px 0 0;">' +
+    (accrual
+      ? '<div class="pnl-kv"><dt>Included GL accounts</dt><dd>4000, 4010, 4090</dd></div>' +
+        '<div class="pnl-kv"><dt>Excluded</dt><dd>Unmapped accounts (1)</dd></div>'
+      : '<div class="pnl-kv"><dt>Included statuses</dt><dd>Paid, Partially refunded</dd></div>' +
+        '<div class="pnl-kv"><dt>Excluded statuses</dt><dd>Cancelled, Test orders</dd></div>') +
+    '</dl></details>' +
+    '</section>';
+}
+
+function calcPanelBody(row, m){
+  var isGP = row.id === 'grossProfit';
+  var formula = isGP ? 'Net Sales − Total COGS' : 'Gross Profit − Total Marketing − Total OpEx';
+  var parts = isGP
+    ? [['Net Sales', rowVal(rowById('netSales'), m)], ['Total COGS', rowVal(rowById('totalCogs'), m)]]
+    : [['Gross Profit', rowVal(rowById('grossProfit'), m)], ['Total Marketing', rowVal(rowById('totalMkt'), m)], ['Total OpEx', rowVal(rowById('totalOpex'), m)]];
+  var total = rowVal(row, m);
+  var maxAbs = Math.max.apply(null, parts.map(function(p){ return Math.abs(p[1]); })) || 1;
+  return '<section><h3 class="pnl-sect-title">Calculated line: no raw transactions</h3>' +
+    '<p style="margin:0;font-size:13px;color:var(--color-text-body);">' + esc(row.name) + ' comes from other P&amp;L lines. There are no raw transactions to drill into; inspect the contributing lines instead.</p></section>' +
+    '<section><h3 class="pnl-sect-title">Formula</h3><div class="pnl-code">' + esc(row.name) + ' = ' + formula + '</div></section>' +
+    '<section><h3 class="pnl-sect-title">Contribution · ' + MONTHS[m] + ' 2024</h3>' +
+    parts.map(function(p){
+      var pos = p[1] >= 0;
+      return '<div style="margin-bottom:10px;">' +
+        '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--color-text-body);">' + esc(p[0]) + '</span><b style="color:' + (pos?'#007a55':'#c70036') + ';">' + fmtMoney(p[1]) + '</b></div>' +
+        '<div class="progress progress-sm"><div class="progress-bar ' + (pos?'progress-bar-green':'progress-bar-primary') + '" style="width:' + (Math.abs(p[1])/maxAbs*100).toFixed(0) + '%;"></div></div></div>';
+    }).join('') +
+    '<div class="pnl-kv" style="border-top:1px solid var(--color-border-default);margin-top:6px;"><dt><b>' + esc(row.name) + '</b></dt><dd><b>' + fmtMoney(total) + '</b></dd></div>' +
+    '</section>' +
+    trendSection(row, m) +
+    '<section class="pnl-meth"><h3 class="pnl-sect-title">Variance drivers vs ' + esc(COMPARE_LABEL[state.compare] === 'None' ? 'Plan' : COMPARE_LABEL[state.compare]) + '</h3>' +
+    '<ul style="margin:0;padding-left:18px;font-size:12px;color:var(--color-text-body);display:flex;flex-direction:column;gap:3px;">' +
+    '<li>Amazon Sales below plan (−5%), the largest single driver</li>' +
+    '<li>Logistics &amp; Fulfillment above plan spend (+5%)</li>' +
+    '<li>Facebook / Meta spend above plan (+5%)</li></ul>' +
+    '<button type="button" class="btn-link btn-link-semibold btn-xs" style="margin-top:8px;" onclick="toast(\'Driver drill-down is out of prototype scope\',\'info\')">Drill into drivers →</button>' +
+    '</section>';
+}
+
+/* ═══════════════════ Edit mode (state 7) ═══════════════════ */
+function setEditMode(on){
+  if (!on && state.drafts > 0) { showConfirm(); return; }
+  state.editMode = on;
+  if (on) { state.savedOnce = false; state.savedOverrides = JSON.parse(JSON.stringify(state.overrides)); updateDraftUI(); }
+  document.body.classList.toggle('pnl-editing', on);
+  /* The entry button hides while editing; the banner's Save/Cancel is the exit. */
+  document.getElementById('editModeBtn').hidden = on;
+  if (on) closePanel(); else renderTable();
+}
+function updateDraftUI(){
+  var b = document.getElementById('unsavedBadge');
+  var cancel = document.getElementById('cancelEditBtn');
+  if (state.drafts > 0) {
+    /* Pending changes: yellow "N unsaved", Save active, secondary = Cancel (discard). */
+    b.hidden = false; b.className = 'badge badge-yellow badge-sm'; b.textContent = state.drafts + ' unsaved';
+    document.getElementById('saveChangesBtn').disabled = false;
+    cancel.textContent = 'Cancel';
+  } else {
+    /* Nothing pending: Save greys out (nothing to save). After a save this session,
+       show a green "Saved" confirmation, and the secondary becomes "Done" — there's
+       nothing to cancel, so "Cancel" would be misleading. */
+    document.getElementById('saveChangesBtn').disabled = true;
+    cancel.textContent = 'Done';
+    if (state.savedOnce) { b.hidden = false; b.className = 'badge badge-green badge-sm'; b.textContent = '✓ All changes saved'; }
+    else { b.hidden = true; }
+  }
+}
+function openEditDrawer(rid){
+  var row = rowById(rid);
+  if (!row || row.type !== 'line') { toast('Calculated lines are configured globally in Assumptions → P&L Configuration','info'); return; }
+  var ov = state.overrides[rid] || {};
+  var inner = document.getElementById('editDrawerInner');
+  inner.innerHTML =
+    '<div class="iris-drawer__header" style="display:flex;align-items:flex-start;gap:10px;">' +
+      '<div style="flex:1;">' +
+      '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-secondary);">Editing line</div>' +
+      '<div class="iris-drawer__title" style="font-size:17px;">' + esc(row.name) + '</div>' +
+      '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
+        '<span class="badge badge-gray badge-sm">Inherited · Global default</span>' +
+        (ov.manual != null ? '<span class="badge badge-purple badge-sm">Local override active</span>' : '') +
+      '</div></div>' +
+      '<button type="button" class="iris-drawer__close" aria-label="Close" onclick="closeDrawer()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:14px;padding:16px 0 24px;">' +
+
+    '<div class="pnl-drawer-sect">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><b style="font-size:13px;">Manual value</b><span style="font-size:11px;color:var(--color-text-secondary);">overrides the calculated total</span></div>' +
+      '<div class="form-group" style="margin:0;">' +
+      '<input type="number" class="form-input" id="manualValue" placeholder="e.g. 720000" value="' + (ov.manual != null ? ov.manual : '') + '">' +
+      '<p class="form-feedback-error" id="manualError" hidden>Enter a positive number. Negative revenue overrides are not allowed.</p>' +
+      '<p class="form-helper">Annual value in USD. Leave empty to keep the calculated total.</p></div>' +
+      '<div class="alert alert-warning" style="margin:0;"><div class="alert-body"><p style="margin:0;font-size:12px;">A local override makes this line diverge from the global P&amp;L model. For model-level changes, use <a class="banner__link" href="./assumptions.html#pnl-config-mappings">global configuration</a> instead.</p></div></div>' +
+    '</div>' +
+
+    '<div class="pnl-drawer-sect">' +
+      '<b style="font-size:13px;">1 · Data source <span style="font-weight:400;color:var(--color-text-secondary);">· where do the $ come from?</span></b>' +
+      ['Amazon Seller Central','Shopify · Online Store','Faire · Wholesale orders','Shopify B2B','NetSuite GL 4000'].map(function(s,i){
+        var checked = (ov.source ? ov.source === s : i === 0);
+        /* align-items:center — the library .iris-control aligns to flex-start for
+           two-line label+helper; these are single-line, so centre the radio. */
+        return '<label class="iris-control" style="margin:0;cursor:pointer;align-items:center;">' +
+          '<span class="iris-control__check"><span class="iris-radio' + (checked?' iris-radio--checked':'') + '" data-source="' + esc(s) + '"></span></span>' +
+          '<span class="iris-control__body"><span class="iris-control__label">' + esc(s) + '</span></span></label>';
+      }).join('') +
+      '<div><div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:6px;">Filters</div>' +
+      '<span class="form-tag">financial_status = paid <button type="button" class="form-tag__x" aria-label="Remove">&times;</button></span> ' +
+      '<span class="form-tag">test_order = false <button type="button" class="form-tag__x" aria-label="Remove">&times;</button></span> ' +
+      '<span class="form-tag form-tag--indigo">currency → USD @ daily FX <button type="button" class="form-tag__x" aria-label="Remove">&times;</button></span></div>' +
+    '</div>' +
+
+    '<div class="pnl-drawer-sect">' +
+      '<b style="font-size:13px;">2 · Formula</b>' +
+      '<div class="pnl-code">SUM(order_line_items.price × quantity)\nWHERE order.financial_status IN (\'paid\',\'partially_refunded\')</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">' +
+        '<div class="form-group" style="margin:0;"><label class="form-label" for="recSel">Recognition</label><select class="form-select" id="recSel"><option>Accrual</option><option>Cash</option></select></div>' +
+        '<div class="form-group" style="margin:0;"><label class="form-label" for="perSel">Period</label><select class="form-select" id="perSel"><option>Order date</option><option>Ship date</option><option>Posting date</option></select></div>' +
+        '<div class="form-group" style="margin:0;"><label class="form-label" for="fxSel">FX</label><select class="form-select" id="fxSel"><option>Daily</option><option>Monthly avg</option></select></div>' +
+      '</div>' +
+      '<p style="margin:0;font-size:11px;color:var(--color-text-secondary);">Recognition and period basis here are <b>local to this line</b>. Global defaults live in Assumptions → P&amp;L Configuration.</p>' +
+    '</div>' +
+
+    '<div class="pnl-drawer-sect">' +
+      '<b style="font-size:13px;">3 · Attribution <span style="font-weight:400;color:var(--color-text-secondary);">· tag this line</span></b>' +
+      '<div class="pnl-kv"><dt>Class</dt><dd><span class="iris-tag iris-tag--purple">Revenue</span> <span class="iris-tag iris-tag--blue">DTC</span></dd></div>' +
+      '<div class="pnl-kv"><dt>Channel</dt><dd><span class="iris-tag iris-tag--green">Amazon</span></dd></div>' +
+      '<div class="pnl-kv"><dt>Geo</dt><dd><span class="iris-tag iris-tag--grey">US</span> <span class="iris-tag iris-tag--grey">CA</span></dd></div>' +
+      '<div class="pnl-kv"><dt>SKU scope</dt><dd>all active (1,284)</dd></div>' +
+    '</div>' +
+
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+      '<button type="button" class="btn btn-outline-gray btn-sm" onclick="closeDrawer()">Discard</button>' +
+      '<button type="button" class="btn btn-primary btn-sm" onclick="applyLineEdit(\'' + rid + '\')">Apply to draft</button>' +
+    '</div></div>';
+
+  inner.querySelectorAll('.iris-radio').forEach(function(r){
+    r.closest('label').addEventListener('click', function(){
+      inner.querySelectorAll('.iris-radio').forEach(function(x){ x.classList.remove('iris-radio--checked'); });
+      r.classList.add('iris-radio--checked');
+    });
+  });
+  document.getElementById('drawerBackdrop').hidden = false;
+  document.getElementById('editDrawer').hidden = false;
+  openEditDrawer._prevFocus = document.activeElement;
+  var mv = document.getElementById('manualValue');
+  if (mv) mv.focus();
+}
+function closeDrawer(){
+  document.getElementById('drawerBackdrop').hidden = true;
+  document.getElementById('editDrawer').hidden = true;
+  if (openEditDrawer._prevFocus && openEditDrawer._prevFocus.focus) openEditDrawer._prevFocus.focus();
+}
+function applyLineEdit(rid){
+  var input = document.getElementById('manualValue');
+  var err = document.getElementById('manualError');
+  var v = input.value === '' ? null : Number(input.value);
+  if (v != null && (isNaN(v) || v < 0)) { err.hidden = false; input.classList.add('iris-datepicker-input--error'); return; }
+  err.hidden = true;
+  var src = document.querySelector('#editDrawerInner .iris-radio--checked');
+  state.overrides[rid] = { manual: v, source: src ? src.getAttribute('data-source') : null };
+  state.drafts += 1;
+  updateDraftUI();
+  closeDrawer();
+  renderTable();
+  toast('Draft change applied to ' + rowById(rid).name + '. Remember to save','info');
+}
+
+function showConfirm(){
+  showConfirm._prevFocus = document.activeElement;
+  document.getElementById('confirmText').textContent = 'You have ' + state.drafts + ' unsaved line ' + (state.drafts === 1 ? 'change' : 'changes') + '. Leaving Edit Mode will discard ' + (state.drafts === 1 ? 'it' : 'them') + '.';
+  document.getElementById('confirmModal').hidden = false;
+  document.getElementById('confirmDiscardBtn').focus();
+}
+function hideConfirm(){ document.getElementById('confirmModal').hidden = true; if (showConfirm._prevFocus && showConfirm._prevFocus.focus) showConfirm._prevFocus.focus(); }
+
+/* ═══════════════════ Recalculation (state 6) ═══════════════════ */
+function recalc(modelLabel, then){
+  var wrap = document.getElementById('tablewrap');
+  document.getElementById('recalcModel').textContent = modelLabel;
+  wrap.classList.add('pnl-updating');
+  clearTimeout(recalc._t);
+  recalc._t = setTimeout(function(){
+    wrap.classList.remove('pnl-updating');
+    then && then();
+    toast('Recalculated with ' + modelLabel, 'success');
+  }, 1100);
+}
+
+/* ═══════════════════ Filter chips ═══════════════════ */
+function renderChips(){
+  var el = document.getElementById('filterChips');
+  var all = Object.keys(state.channels);
+  var active = all.filter(function(c){ return state.channels[c]; });
+  document.getElementById('channelsCount').textContent = active.length;
+  /* No chip row when nothing is filtered — the Channels control already shows the
+     count; a "Filters: all channels" label would just be noise. Chips appear only
+     when a real subset is active. */
+  if (active.length === all.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<span class="pnl-caption" style="font-weight:600;">Channels:</span> ' +
+    active.map(function(c){
+      return '<span class="iris-chip iris-chip--purple">' + CHANNEL_LABEL[c] +
+        ' <button type="button" style="all:unset;cursor:pointer;line-height:1;" aria-label="Remove ' + CHANNEL_LABEL[c] + '" onclick="toggleChannel(\'' + c + '\',false)">&times;</button></span>';
+    }).join(' ') +
+    ' <button type="button" class="btn-link btn-link-semibold btn-xs" onclick="resetChannels()">Reset</button>';
+}
+function toggleChannel(c, on){
+  state.channels[c] = on;
+  document.querySelectorAll('[data-channel]').forEach(function(cb){ cb.checked = state.channels[cb.getAttribute('data-channel')]; });
+  onChannelsChanged();
+}
+function resetChannels(){
+  Object.keys(state.channels).forEach(function(c){ state.channels[c] = true; });
+  document.querySelectorAll('[data-channel]').forEach(function(cb){ cb.checked = true; });
+  onChannelsChanged();
+}
+function onChannelsChanged(){
+  renderChips();
+  /* State 5: selected line may disappear under the filter — close the panel then */
+  if (state.selRow) {
+    var row = rowById(state.selRow);
+    if (row && row.type === 'line' && !row.agnostic && activeShare(row) === 0) { closePanel(); toast(rowById(state.selRow) ? '' : '', 'info'); state.selRow = null; }
+  }
+  renderTable();
+  if (state.selRow) renderPanel();
+}
+
+/* ═══════════════════ Toasts ═══════════════════ */
+function toast(msg, kind){
+  if (!msg) return;
+  var stack = document.getElementById('toastStack');
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.setAttribute('role','status');
+  t.innerHTML = '<div class="toast-icon toast-icon-' + (kind === 'success' ? 'success' : 'info') + '">' +
+    (kind === 'success'
+      ? '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/></svg>'
+      : '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>') +
+    '</div><div class="toast-body"><p class="toast-message" style="margin:0;">' + esc(msg) + '</p></div>' +
+    '<button type="button" class="toast-close" aria-label="Dismiss">&times;</button>';
+  t.querySelector('.toast-close').addEventListener('click', function(){ t.remove(); });
+  stack.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 4200);
+}
+
+/* ═══════════════════ Date-range calendar (library .iris-cal--range) ═══════════════════ */
+function calMonthBlock(title, firstDow, daysInMonth, rangeStart, rangeEnd){
+  var DAY_HEADERS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var h = '<div><div class="iris-cal__header">' +
+    '<button type="button" class="iris-cal__nav" aria-label="Previous month"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd"/></svg></button>' +
+    '<span class="iris-cal__title">' + title + '</span>' +
+    '<button type="button" class="iris-cal__nav" aria-label="Next month"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg></button>' +
+    '</div><div class="iris-cal__grid">';
+  h += DAY_HEADERS.map(function(d){ return '<div class="iris-cal__day-header">' + d + '</div>'; }).join('');
+  for (var b = 0; b < firstDow; b++) h += '<button type="button" class="iris-cal__day iris-cal__day--muted" tabindex="-1"></button>';
+  for (var d = 1; d <= daysInMonth; d++) {
+    var cls = 'iris-cal__day';
+    if (d === rangeStart || d === rangeEnd) cls += ' iris-cal__day--range-selected';
+    else if ((rangeStart != null && d > rangeStart) || (rangeEnd != null && d < rangeEnd)) cls += ' iris-cal__day--in-range';
+    h += '<button type="button" class="' + cls + '">' + d + '</button>';
+  }
+  return h + '</div></div>';
+}
+(function buildRangeCal(){
+  var box = document.getElementById('dateRangeCal');
+  box.innerHTML = '<div class="iris-cal iris-cal--range">' +
+    '<div class="iris-cal__months">' +
+    calMonthBlock('January 2024', 1, 31, 1, null) +   // Jan 1, 2024 = Monday, range start
+    calMonthBlock('December 2024', 0, 31, null, 31) + // Dec 1, 2024 = Sunday, range end
+    '</div>' +
+    '<div class="iris-cal__footer">' +
+    '<button type="button" class="btn btn-outline-gray btn-sm" data-cal-cancel>Cancel</button>' +
+    '<button type="button" class="btn btn-primary btn-sm" data-cal-ok>Ok</button>' +
+    '</div></div>';
+  box.addEventListener('click', function(e){
+    e.stopPropagation();
+    if (e.target.closest('[data-cal-ok]')) { box.hidden = true; toast('Date range applied: Jan 1, 2024 – Dec 31, 2024', 'success'); }
+    if (e.target.closest('[data-cal-cancel]')) box.hidden = true;
+    if (e.target.closest('.iris-cal__nav')) toast('Month navigation is out of prototype scope', 'info');
+  });
+})();
+
+/* ═══════════════════ Wiring ═══════════════════ */
+document.querySelectorAll('[data-menu-wrap]').forEach(function(wrap){
+  var toggle = wrap.querySelector('[data-menu-toggle]');
+  var menu = wrap.querySelector('[data-menu]');
+  toggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = menu.hidden;
+    document.querySelectorAll('[data-menu]').forEach(function(m){ m.hidden = true; });
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  menu.addEventListener('click', function(e){ if (e.target.closest('label')) e.stopPropagation(); });
+});
+document.addEventListener('click', function(e){
+  document.querySelectorAll('[data-menu]').forEach(function(m){ m.hidden = true; });
+  var fm = document.getElementById('forecastMenu');
+  if (fm && !fm.hidden && !e.target.closest('#forecastMenu')) fm.hidden = true;
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') {
+    document.querySelectorAll('[data-menu]').forEach(function(m){ m.hidden = true; });
+    var fm = document.getElementById('forecastMenu'); if (fm) fm.hidden = true;
+    if (!document.getElementById('pnlDrill').classList.contains('open')) { /* nothing */ } else { closeDrill(); }
+    closeDrawer(); hideConfirm();
+  }
+});
+
+document.querySelectorAll('[data-channel]').forEach(function(cb){
+  cb.addEventListener('change', function(){ state.channels[cb.getAttribute('data-channel')] = cb.checked; onChannelsChanged(); });
+});
+document.getElementById('channelsOnlyShopify').addEventListener('click', function(){
+  Object.keys(state.channels).forEach(function(c){ state.channels[c] = (c === 'shopify'); });
+  document.querySelectorAll('[data-channel]').forEach(function(cb){ cb.checked = state.channels[cb.getAttribute('data-channel')]; });
+  onChannelsChanged();
+  toast('Showing Shopify only. Amazon rows and sources are excluded', 'info');
+});
+document.getElementById('channelsReset').addEventListener('click', resetChannels);
+
+document.getElementById('granGroup').addEventListener('click', function(e){
+  var b = e.target.closest('[data-gran]'); if (!b) return;
+  var g = b.getAttribute('data-gran');
+  if (g === 'daily' || g === 'weekly') { toast('Daily and Weekly are out of prototype scope. The comparison model works the same way there', 'info'); return; }
+  state.gran = g;
+  this.querySelectorAll('.btn').forEach(function(x){ x.classList.toggle('active', x === b); });
+  renderTable(); if (state.selRow) renderPanel();
+});
+
+/* Each accounting-view button carries its own hover/focus description (see the
+   .tooltip-bubble inside it), so the explanation is discoverable while choosing the
+   view rather than behind a separate (i) icon. */
+document.getElementById('viewGroup').addEventListener('click', function(e){
+  var b = e.target.closest('[data-view]'); if (!b) return;
+  state.view = b.getAttribute('data-view');
+  this.querySelectorAll('.btn').forEach(function(x){ x.classList.toggle('active', x === b); });
+  renderTable(); if (state.selRow) renderPanel();
+});
+
+document.querySelectorAll('[data-runrate], [data-compare]').forEach(function(b){ b.setAttribute('role', 'menuitem'); });
+document.querySelectorAll('[data-runrate]').forEach(function(b){
+  b.addEventListener('click', function(){
+    state.runrate = b.getAttribute('data-runrate');
+    document.getElementById('forecastMenu').hidden = true;
+    recalc(RUNRATE[state.runrate].label, function(){ renderTable(); if (state.selRow) renderPanel(); });
+  });
+});
+/* Open the forecast menu from the Run Rate column header, positioned under it.
+   The header is re-rendered by renderTable, so use delegation on the table. */
+function openForecastMenu(btn){
+  var menu = document.getElementById('forecastMenu');
+  var r = btn.getBoundingClientRect();
+  menu.style.top = (r.bottom + 6) + 'px';
+  menu.style.left = Math.max(8, Math.min(window.innerWidth - 328, r.right - 320)) + 'px';
+  menu.hidden = false;
+  btn.setAttribute('aria-expanded', 'true');
+}
+document.getElementById('pnlTable').addEventListener('click', function(e){
+  var btn = e.target.closest('#runrateHeadBtn');
+  if (!btn) return;
+  e.stopPropagation();
+  var menu = document.getElementById('forecastMenu');
+  if (menu.hidden) openForecastMenu(btn); else menu.hidden = true;
+});
+document.querySelectorAll('[data-compare]').forEach(function(b){
+  b.addEventListener('click', function(){
+    state.compare = b.getAttribute('data-compare');
+    document.getElementById('compareLabel').textContent = 'Compare to: ' + COMPARE_LABEL[state.compare];
+    renderTable(); if (state.selRow) renderPanel();
+  });
+});
+document.getElementById('treatmentGroup').addEventListener('click', function(e){
+  var b = e.target.closest('[data-treatment]'); if (!b) return;
+  state.treatment = b.getAttribute('data-treatment');
+  this.querySelectorAll('.btn').forEach(function(x){ x.classList.toggle('active', x === b); });
+  renderTable();
+});
+
+document.getElementById('expandAllBtn').addEventListener('click', function(){
+  state.collapsedSections = {};
+  Object.keys(CHILDREN).forEach(function(id){ state.expandedRows[id] = true; });
+  if (state.gran === 'quarterly') [0,1,2,3].forEach(function(q){ state.expandedQuarters[q] = true; });
+  renderTable();
+});
+document.getElementById('collapseAllBtn').addEventListener('click', function(){
+  state.expandedRows = {}; state.expandedQuarters = {};
+  ['secIncome','secCogs','secMkt','secOpex'].forEach(function(s){ state.collapsedSections[s] = true; });
+  renderTable();
+});
+
+document.getElementById('sidebarToggleBtn').addEventListener('click', function(){
+  var full = document.getElementById('appSidebar');
+  var mini = document.getElementById('appSidebarContracted');
+  var collapsed = mini.hidden; // about to collapse
+  full.hidden = collapsed;
+  mini.hidden = !collapsed;
+  this.setAttribute('aria-pressed', String(collapsed));
+  this.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+});
+
+document.getElementById('editModeBtn').addEventListener('click', function(){ setEditMode(true); });
+document.getElementById('cancelEditBtn').addEventListener('click', function(){ setEditMode(false); });
+document.getElementById('saveChangesBtn').addEventListener('click', function(){
+  if (state.drafts === 0) return;
+  toast(state.drafts + ' change' + (state.drafts === 1 ? '' : 's') + ' saved to the P&L draft', 'success');
+  /* Snapshot the saved baseline so a later Discard reverts to THIS, not to empty. */
+  state.savedOverrides = JSON.parse(JSON.stringify(state.overrides));
+  state.drafts = 0; state.savedOnce = true; updateDraftUI();
+});
+document.getElementById('confirmDiscardBtn').addEventListener('click', function(){
+  /* Revert to the last saved baseline (entry state if nothing saved) — Discard must
+     only drop unsaved drafts, never wipe previously saved overrides. */
+  state.overrides = JSON.parse(JSON.stringify(state.savedOverrides || {}));
+  state.drafts = 0; updateDraftUI(); hideConfirm();
+  state.editMode = true; setEditMode(false);
+});
+document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
+
+/* Initial paint */
+renderChips();
+renderTable();
+</script>
+</body>
+</html>
