@@ -70,6 +70,8 @@ export { Stepper, StandaloneSteps } from './components/stepper/Stepper';
 export { Dropdown } from './components/dropdown/Dropdown';
 export { NotificationMenu } from './components/dropdown/NotificationMenu';
 export { FilterSelectButton } from './components/dropdown/FilterSelectButton';
+export { FilterTreeButton } from './components/dropdown/FilterTreeButton';
+export type { FilterTreeNode } from './components/dropdown/FilterTreeButton';
 export { Tooltip } from './components/tooltip/Tooltip';
 
 // Data / tables

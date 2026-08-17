@@ -42,6 +42,7 @@ import { Stepper, StandaloneSteps } from '../src/components/stepper/Stepper';
 import { Dropdown } from '../src/components/dropdown/Dropdown';
 import { NotificationMenu } from '../src/components/dropdown/NotificationMenu';
 import { FilterSelectButton } from '../src/components/dropdown/FilterSelectButton';
+import { FilterTreeButton, type FilterTreeNode } from '../src/components/dropdown/FilterTreeButton';
 import { IndicatorDot, IndicatorBadge } from '../src/components/indicators/Indicator';
 import { Banner } from '../src/components/banner/Banner';
 import { Toast } from '../src/components/toast/Toast';
@@ -310,10 +311,34 @@ function PageFeedback() {
   );
 }
 
+const CHANNEL_TREE: FilterTreeNode[] = [
+  {
+    value: 'dtc', label: 'DTC', icon: <span>🛒</span>,
+    children: [
+      {
+        value: 'amazon-sp', label: 'Amazon Seller Partner', icon: <span>📦</span>,
+        children: [
+          { value: 'us', label: 'US', children: [{ value: 'amazon.com', label: 'amazon.com' }] },
+        ],
+      },
+      { value: 'manual-dtc', label: 'Manual Order DTC', icon: <span>📄</span>, children: [{ value: 'manual-dtc-1', label: 'Import batch A' }] },
+      { value: 'shopify-dtc', label: 'Shopify DTC', icon: <span>🛍️</span>, children: [{ value: 'shopify-dtc-1', label: 'store.myshopify.com' }] },
+    ],
+  },
+  {
+    value: 'wholesale', label: 'Wholesale', icon: <span>🏢</span>,
+    children: [
+      { value: 'manual-ws', label: 'Manual Order Wholesale', icon: <span>📄</span>, children: [{ value: 'manual-ws-1', label: 'Import batch B' }] },
+      { value: 'sps', label: 'SPS Commerce', icon: <span>🔷</span>, children: [{ value: 'sps-1', label: 'EDI feed' }] },
+    ],
+  },
+];
+
 function PageNavigation() {
   const [tab, setTab] = useState('overview');
   const [page, setPage] = useState(3);
   const [category, setCategory] = useState<string[]>([]);
+  const [channels, setChannels] = useState<string[]>(['amazon.com', 'manual-dtc-1', 'shopify-dtc-1', 'manual-ws-1', 'sps-1']);
   return (
     <>
       <div style={{ marginBottom: 24 }}>
@@ -352,6 +377,17 @@ function PageNavigation() {
           selected={category}
           onChange={setCategory}
           onClear={() => setCategory([])}
+        />
+      </Row>
+      <h2 style={{ fontSize: 16, fontWeight: 600, margin: '24px 0 12px' }}>Filter — multi-level (channel tree)</h2>
+      <Row>
+        <FilterTreeButton
+          label="Filters"
+          nodes={CHANNEL_TREE}
+          selected={channels}
+          onChange={setChannels}
+          countLabel={(n) => `${n} channels`}
+          onClear={() => setChannels([])}
         />
       </Row>
       <Row>
