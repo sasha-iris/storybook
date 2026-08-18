@@ -628,13 +628,13 @@ var ROWS = [
   { id:'secCogs', type:'section', name:'Cost of Goods Sold' },
   { id:'productCosts', type:'line', name:'Product Costs', count:3, sign:-1, section:'cogs', drill:'none',
     fx:{ op:'Σ unit_cost × units_sold', pred:'WHERE status ∈ {Paid, Partially refunded}' },
-    ch:{amazon:.65,shopify:.3,tiktok:.05}, vals:[26,26,86,30,32,35,35,37,39,43,61,69] },
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, mockedSplit:true, vals:[26,26,86,30,32,35,35,37,39,43,61,69] },
   { id:'logistics', type:'line', name:'Logistics & Fulfillment', count:3, sign:-1, section:'cogs', drill:'none',
     fx:{ op:'Σ fulfillment_fee + storage_fee + shipping_cost', pred:'WHERE settlement.date ∈ period' },
-    ch:{amazon:.65,shopify:.3,tiktok:.05}, vals:[67,67,73,78,83,89,89,94,100,111,155,178] },
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, mockedSplit:true, vals:[67,67,73,78,83,89,89,94,100,111,155,178] },
   { id:'merchantFees', type:'line', name:'Merchant Fees', count:3, sign:-1, section:'cogs', drill:'none',
     fx:{ op:'Σ referral_fee + processing_fee + gateway_fee', pred:'WHERE settlement.date ∈ period' },
-    ch:{amazon:.65,shopify:.3,tiktok:.05}, vals:[66,67,65,77,83,88,89,94,100,111,155,177] },
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, mockedSplit:true, vals:[66,67,65,77,83,88,89,94,100,111,155,177] },
   { id:'totalCogs', type:'subtotal', name:'Total COGS', of:['productCosts','logistics','merchantFees'] },
   { id:'grossProfit', type:'total', name:'Gross Profit', calc:'netSales-totalCogs', margin:true, drill:'calc' },
 
@@ -658,15 +658,15 @@ var ROWS = [
      range in every view (opAccrual pins the accrual line); only the channel split is
      new here. */
   { id:'payroll', type:'line', name:'Payroll & Benefits', sign:-1, section:'opex', drill:'none',
-    ch:{amazon:.65,shopify:.3,tiktok:.05},
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, mockedSplit:true,
     fx:{ op:'Σ GL 6000–6099 (Payroll & Benefits)', pred:null, opAccrual:'Σ GL 6000–6099 (Payroll & Benefits)', predAccrual:'WHERE status = Posted' },
     vals:[118,118,120,120,122,122,124,124,126,126,128,128] },
   { id:'software', type:'line', name:'Software & Tools', sign:-1, section:'opex', drill:'none',
-    ch:{amazon:.65,shopify:.3,tiktok:.05},
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, mockedSplit:true,
     fx:{ op:'Σ GL 6200–6249 (Software & Tools)', pred:null, opAccrual:'Σ GL 6200–6249 (Software & Tools)', predAccrual:'WHERE status = Posted' },
     vals:[22,22,23,23,24,24,24,25,25,26,26,27] },
   { id:'ga', type:'line', name:'General & Administrative', sign:-1, section:'opex', drill:'none',
-    ch:{amazon:.65,shopify:.3,tiktok:.05},
+    ch:{amazon:.65,shopify:.3,tiktok:.05}, mockedSplit:true,
     fx:{ op:'Σ GL 6300–6399 (General & Administrative)', pred:null, opAccrual:'Σ GL 6300–6399 (General & Administrative)', predAccrual:'WHERE status = Posted' },
     vals:[35,36,36,37,37,38,38,39,40,41,42,43] },
   { id:'totalOpex', type:'subtotal', name:'Total OpEx', of:['payroll','software','ga'] },
@@ -715,7 +715,9 @@ var state = {
   channels: { shopify:true, amazon:true, tiktok:true, other:true },
   selRow: null, selMonth: 0, editRow: null,
   editMode: false, overrides: {}, drafts: 0,
-  collapsedSections: {}, expandedRows: {}, expandedQuarters: {}
+  collapsedSections: {}, expandedRows: {}, expandedQuarters: {},
+  panelTrail: [] /* drill-into-contributors breadcrumb (Marko #15) — past rows in the
+    current drill chain, e.g. ['ebitda','grossProfit'] while looking at Net Sales */
 };
 
 /* ═══════════════════ Value engine ═══════════════════ */
@@ -724,7 +726,7 @@ function rowById(id){
          CHILDROWS.find(function(r){ return r.id === id; });
 }
 function activeShare(row){
-  if (row.agnostic) return 1; // OpEx is not channel-attributed — kept with a note
+  if (row.agnostic) return 1; // entity-level row — no channel dimension applies at all
   if (!row.ch) return 1;
   var s = 0;
   for (var c in row.ch) if (state.channels[c]) s += row.ch[c];
@@ -1031,12 +1033,15 @@ function attachPopover(root){
 }
 
 /* ═══════════════════ Detail panel (states 2–4) ═══════════════════ */
-function selectRow(id){
+function selectRow(id, keepTrail){
   /* The variance popover is hover-only (mouseenter/mouseleave). Clicking a cell to open
      the panel doesn't move the mouse, and the click's renderTable() replaces that cell
      with a new element that never gets its own mouseenter — so .show never got removed
      and the stale popover sat on top of the panel it just opened (review-qa 2026-08-18). */
   document.getElementById('pnlPop').classList.remove('show');
+  /* A click on the table (the normal entry point) starts a fresh drill chain; only
+     drillInto()/jumpToTrail() pass keepTrail — everything else clears it. */
+  if (!keepTrail) state.panelTrail = [];
   state.selRow = id;
   state.txExpanded = false; /* reset the transactions expand for the new line */
   closeDrill(); /* selecting a new line drops any open drill */
@@ -1046,7 +1051,14 @@ function selectRow(id){
   /* Inline sizing toggle — the .open cascade for flex-basis/min-width was unreliable
      here; inline styles animate via the base transition and always win. */
   panel.style.flexBasis = '474px'; panel.style.minWidth = '474px';
-  panel.innerHTML = '<div class="pnl-panel-scroll">' +
+  /* The 380ms skeleton used to blank the header too — during the wait it read as "the
+     panel is reloading," not "you're now looking at X" (review-ux 2026-08-18, most
+     noticeable when drilling from one calc-line contributor to the next). Row name
+     renders immediately, real content underneath still skeletons in. */
+  var targetRow = rowById(id);
+  panel.innerHTML =
+    '<div class="pnl-panel-h"><h2 style="margin:0;font-size:17px;font-weight:700;color:var(--color-text-heading);">' + esc(targetRow ? targetRow.name : '') + '</h2></div>' +
+    '<div class="pnl-panel-scroll">' +
     '<div class="skeleton-text skeleton-w-1-2 skeleton"></div>' +
     '<div class="skeleton-text skeleton-w-full skeleton"></div>' +
     '<div class="skeleton-text skeleton-w-full skeleton"></div>' +
@@ -1057,14 +1069,32 @@ function selectRow(id){
   clearTimeout(selectRow._t);
   selectRow._t = setTimeout(renderPanel, 380);
 }
-function closePanel(){ state.selRow = null; closeDrill(); var p = document.getElementById('pnlPanel'); p.classList.remove('open'); p.style.flexBasis = ''; p.style.minWidth = ''; renderTable(); }
+function closePanel(){ state.selRow = null; state.panelTrail = []; closeDrill(); var p = document.getElementById('pnlPanel'); p.classList.remove('open'); p.style.flexBasis = ''; p.style.minWidth = ''; renderTable(); }
+/* Contribution-row click (calc-line panel): push the line being left onto the trail,
+   then navigate — keepTrail=true so selectRow doesn't reset what was just pushed. */
+function drillInto(id){
+  if (state.selRow) state.panelTrail.push(state.selRow);
+  selectRow(id, true);
+}
+/* Breadcrumb segment click: jump back to that point in the chain and drop everything
+   after it — clicking "Gross Profit" from Net Sales (trail ['ebitda','grossProfit'])
+   goes to Gross Profit with the trail truncated back to ['ebitda']. */
+function jumpToTrail(i){
+  var target = state.panelTrail[i];
+  if (!target) return;
+  state.panelTrail = state.panelTrail.slice(0, i);
+  selectRow(target, true);
+}
 
 /* ═══════════════════ Nested drill panel (period → day level) ═══════════════════ */
-function openDrill(period, lineName){
+function openDrill(period, lineName, noTx){
   var d = document.getElementById('pnlDrill');
   d.classList.add('open');
   d.style.flexBasis = '430px'; d.style.minWidth = '430px';
-  /* Split a weekly period into day rows; illustrative split, labelled as prototype. */
+  /* Split a weekly period into day rows; illustrative split, labelled as prototype.
+     noTx carried over from breakdownSection so a record-based row (OpEx, fees, …)
+     doesn't suddenly grow an "Orders" column one click deeper than where it was
+     already correctly dropped (review-ux 2026-08-18). */
   var m = period.match(/(\w{3}) (\d+)/);
   var startDay = m ? parseInt(m[2],10) : 1;
   var days = [];
@@ -1072,7 +1102,7 @@ function openDrill(period, lineName){
   var rows = days.map(function(dl,i){
     var orders = [6,5,6,5,6,5,4][i];
     var amt = (orders * 2.4).toFixed(0);
-    return '<tr><td>' + dl + '</td><td class="num">' + orders + '</td><td class="num">$' + amt + 'K</td></tr>';
+    return '<tr><td>' + dl + '</td>' + (noTx ? '' : '<td class="num">' + orders + '</td>') + '<td class="num">$' + amt + 'K</td></tr>';
   }).join('');
   d.innerHTML =
     '<div class="pnl-panel-h">' +
@@ -1087,7 +1117,7 @@ function openDrill(period, lineName){
     '<div class="pnl-panel-scroll">' +
       '<section><h3 class="pnl-sect-title">By day</h3>' +
       '<div class="pnl-mini-scroll"><table class="pnl-mini-table"><thead><tr>' +
-      '<th class="iris-th">Day</th><th class="iris-th" style="text-align:right;">Orders</th><th class="iris-th" style="text-align:right;">Actual</th>' +
+      '<th class="iris-th">Day</th>' + (noTx ? '' : '<th class="iris-th" style="text-align:right;">Orders</th>') + '<th class="iris-th" style="text-align:right;">Actual</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div></section>' +
       '<p style="margin:0;font-size:11px;color:var(--color-text-secondary);">Illustrative day-level split for the prototype. Real data would come from the same synced source.</p>' +
     '</div>';
@@ -1210,6 +1240,16 @@ function fxSpoken(s){
 function fxCaption(row){
   if (row.agnostic) return 'Entity-level — not attributed to a sales channel';
   if (!row.ch) return null;
+  /* Marko #4's split is modeled, not queried — the GL formula above never gains a
+     WHERE-channel clause the way a real revenue row's does, so reusing "Scoped to: X"
+     here would claim a precision the row doesn't have (review-ux 2026-08-18: the
+     caption read as fact when it's an assumption). Always show the full assumed split,
+     not just the currently-active slice, since the number IS that assumption. */
+  if (row.mockedSplit) {
+    return 'Estimated split (not measured): ' + Object.keys(row.ch).map(function(c){
+      return Math.round(row.ch[c] * 100) + '% ' + CHANNEL_LABEL[c];
+    }).join(' / ');
+  }
   var all = Object.keys(CHANNEL_LABEL);
   var on = all.filter(function(c){ return state.channels[c]; });
   if (!on.length || on.length === all.length) return null;
@@ -1224,6 +1264,14 @@ function fxSignNote(row){
 
 function sourceMeta(row){
   var shopifyOnly = state.channels.shopify && !state.channels.amazon && !state.channels.tiktok;
+  /* OpEx (payroll/software/G&A) is GL-sourced in EVERY view — its own fx.op formula
+     already says "Σ GL 6xxx", never an Amazon/Shopify order query. Falling through to
+     the generic Amazon Seller Central default below was wrong in Operating view (the
+     panel's own formula and its source badge disagreed — review-ux 2026-08-18). */
+  if (row.section === 'opex') {
+    return { system:'QuickBooks Online', abbr:'QB', conn:'QuickBooks Connection', badge:null,
+      sync:'Just now', stale:false };
+  }
   if (state.view === 'accrual') {
     return { system:'QuickBooks Online', abbr:'QB', conn:'QuickBooks Connection', badge:'Accrual P&L',
       sync:'26 min ago', stale:true };
@@ -1289,9 +1337,22 @@ function renderPanel(){
   var acVal = opVal * VIEW_FACTOR.accrual;
 
   var cogSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>';
+  /* Marko #15's drill-into-contributors had no way back — EBITDA → Gross Profit → Net
+     Sales was a strict one-way walk, only a full close+re-click could return (review-ux
+     2026-08-18: "user control and freedom," the most consequential finding on that
+     feature). A breadcrumb costs no extra panel real estate and stays inside the single-
+     panel model — no second panel, which is the one thing this feature is not allowed
+     to reintroduce. Trail entries are past drill steps only; a fresh table click resets
+     it (see selectRow). */
+  var breadcrumb = state.panelTrail.length ? '<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;">' +
+    state.panelTrail.map(function(rid, i){
+      var r = rowById(rid);
+      return '<button type="button" class="btn-link btn-link-semibold" style="font-size:12px;" onclick="jumpToTrail(' + i + ')">' + esc(r ? r.name : rid) + '</button> <span aria-hidden="true">›</span> ';
+    }).join('') + esc(row.name) +
+    '</div>' : '';
   /* Condensed header (Marko): source badges INLINE with the title, Config as an icon
      next to expand/close — not their own rows. */
-  var h = '<div class="pnl-panel-h">' +
+  var h = '<div class="pnl-panel-h">' + breadcrumb +
     '<div style="display:flex;align-items:flex-start;gap:6px;">' +
     '<div style="flex:1;min-width:0;">' +
       '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
@@ -1315,11 +1376,17 @@ function renderPanel(){
     h += calcPanelBody(row, m);
   } else {
     /* A · Summary — compact metric strip + a small data-freshness caption
-       (not a 6-card dashboard; the spec warns against that and Lovable is compact). */
+       (not a 6-card dashboard; the spec warns against that and Lovable is compact).
+       "Orders"/"Avg order value" only mean something for order-level revenue rows —
+       reusing them for GL/record-based rows (OpEx, fees, Discounts, Refunds, …, any
+       drill:'none'/'empty' row) invented an order count and an order value for lines
+       that don't have orders at all. noTx rows get an honest single-metric card
+       instead, rather than a fabricated second number (review-ux 2026-08-18, exposed
+       by #4 once OpEx started showing "Scoped to:" and inviting a closer look). */
     var orders = Math.round(Math.abs(val) / 2.55);
     h += '<section><h3 class="pnl-sect-title">Summary · ' + monthLabel + '</h3><div class="pnl-metrics">' +
       '<div><b>' + fmtMoney(val) + '</b><span>' + (accrual ? 'Recognized revenue' : (row.sign === 1 ? 'Total revenue' : 'Total spend')) + '</span></div>' +
-      (accrual
+      (noTx ? '' : accrual
         ? '<div><b>' + (orders>0? Math.max(3, Math.round(orders/38)) : 0) + '</b><span>Posted entries</span></div>' +
           '<div><b>$4K</b><span>Adjustments</span></div>'
         : '<div><b>' + orders.toLocaleString('en-US') + '</b><span>Orders</span></div>' +
@@ -1327,7 +1394,7 @@ function renderPanel(){
       '</div>' +
       '<div class="pnl-metrics-sub">' +
         '<span class="pnl-dot" style="background:' + (meta.stale ? '#e3a008' : '#0e9f6e') + ';"></span>' +
-        (accrual ? '1 unposted item · ' : 'Refund rate 2.1% · ') +
+        (noTx ? '' : accrual ? '1 unposted item · ' : 'Refund rate 2.1% · ') +
         'synced ' + meta.sync.toLowerCase() + ' · ' + (accrual ? '96%' : '100%') + ' complete' +
       '</div></section>';
 
@@ -1454,6 +1521,10 @@ function trendSection(row, m){
 function breakdownSection(row, m){
   var quarterly = state.gran === 'quarterly';
   var v = Math.abs(rowVal(row, m));
+  /* Record-based rows (OpEx, fees, Discounts, Refunds, … — anything drill:'none'/
+     'empty') don't have an "orders" concept; inventing one here was the same
+     dishonesty the Summary card had (review-ux 2026-08-18). */
+  var noTx = row.drill === 'empty' || row.drill === 'none';
   var rowsB, title;
   if (quarterly) {
     title = 'Monthly breakdown';
@@ -1471,16 +1542,16 @@ function breakdownSection(row, m){
      Summary figure directly above, and a full row for it costs a period of detail. */
   return '<section><div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;">' +
     '<h3 class="pnl-sect-title" style="margin-bottom:6px;">' + title + '</h3>' +
-    '<div style="font-size:11px;color:var(--color-text-secondary);">Total ' + fmtMoney(v) + ' · ' + total + ' orders</div></div>' +
+    '<div style="font-size:11px;color:var(--color-text-secondary);">Total ' + fmtMoney(v) + (noTx ? '' : ' · ' + total + ' orders') + '</div></div>' +
     '<div class="pnl-mini-scroll"><table class="pnl-mini-table"><thead><tr>' +
-    '<th class="iris-th">Period</th><th class="iris-th" style="text-align:right;">Orders</th><th class="iris-th" style="text-align:right;">Actual</th>' +
+    '<th class="iris-th">Period</th>' + (noTx ? '' : '<th class="iris-th" style="text-align:right;">Orders</th>') + '<th class="iris-th" style="text-align:right;">Actual</th>' +
     '</tr></thead><tbody>' +
     /* The period label is a real .btn-link button, not just an onclick on the <tr>:
        a click handler on a row is unreachable by keyboard (WCAG 2.1.1). The row
        keeps its own handler so the whole row stays a mouse target. */
-    rowsB.map(function(r){ return '<tr style="cursor:pointer;" onclick="openDrill(\'' + esc(r[0]) + '\',\'' + esc(row.name) + '\')">' +
-      '<td><button type="button" class="btn-link btn-link-semibold" style="font-size:13px;" onclick="event.stopPropagation();openDrill(\'' + esc(r[0]) + '\',\'' + esc(row.name) + '\')">' + r[0] + ' <span aria-hidden="true">›</span></button></td>' +
-      '<td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td></tr>'; }).join('') +
+    rowsB.map(function(r){ return '<tr style="cursor:pointer;" onclick="openDrill(\'' + esc(r[0]) + '\',\'' + esc(row.name) + '\',' + noTx + ')">' +
+      '<td><button type="button" class="btn-link btn-link-semibold" style="font-size:13px;" onclick="event.stopPropagation();openDrill(\'' + esc(r[0]) + '\',\'' + esc(row.name) + '\',' + noTx + ')">' + r[0] + ' <span aria-hidden="true">›</span></button></td>' +
+      (noTx ? '' : '<td class="num">' + r[1] + '</td>') + '<td class="num">' + r[2] + '</td></tr>'; }).join('') +
     '</tbody></table></div></section>';
 }
 
@@ -1546,9 +1617,15 @@ function calcPanelBody(row, m){
     parts.map(function(p){
       var id = p[0], name = p[1], val = p[2];
       var pos = val >= 0;
-      return '<button type="button" class="pnl-contrib-row" onclick="selectRow(\'' + id + '\')" aria-label="Drill into ' + escAttr(name) + '" style="all:unset;cursor:pointer;display:block;width:100%;">' +
+      /* Was the exact same caret SVG the table uses for expand-in-place — borrowed that
+         icon's meaning without its behavior (review-ux 2026-08-18). This is a full
+         panel navigation, not an inline reveal, so it gets the "→" this file already
+         uses everywhere else for that ("View all N details →", "Manage roles →"), not a
+         caret. Label colored as a link too — the chevron alone was too faint a signal
+         at rest, riding entirely on the helper copy above the list. */
+      return '<button type="button" class="pnl-contrib-row" onclick="drillInto(\'' + id + '\')" aria-label="Drill into ' + escAttr(name) + '" style="all:unset;cursor:pointer;display:block;width:100%;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:4px;">' +
-          '<span style="color:var(--color-text-body);display:inline-flex;align-items:center;gap:3px;">' + esc(name) + '<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="color:var(--color-text-secondary);"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg></span>' +
+          '<span style="color:var(--color-bg-primary);font-weight:600;">' + esc(name) + ' →</span>' +
           '<b style="color:' + (pos?'#007a55':'#c70036') + ';">' + fmtMoney(val) + '</b>' +
         '</div>' +
         '<div class="progress progress-sm"><div class="progress-bar ' + (pos?'progress-bar-green':'progress-bar-primary') + '" style="width:' + (Math.abs(val)/maxAbs*100).toFixed(0) + '%;"></div></div>' +
