@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=6">
+<link rel="stylesheet" href="./segments-proto.css?v=7">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -21,7 +21,7 @@
   .sb-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 14px 24px; position: sticky; top: 0; z-index: 30; }
   .sb-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--seg-muted); margin-bottom: 8px; }
   .sb-crumb a { color: var(--seg-muted); text-decoration: none; }
-  .sb-crumb a:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .sb-crumb a:hover { color: var(--seg-link); text-decoration: underline; }
   .sb-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .sb-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
   .sb-head__end { margin-left: auto; display: flex; gap: 8px; align-items: center; }
@@ -53,7 +53,7 @@
   .sb-add { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
   .sb-add__g { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--seg-th); font-weight: var(--font-semibold); margin: 12px 0 6px; grid-column: 1 / -1; }
   .sb-add__b { display: flex; align-items: center; gap: 6px; padding: 7px 9px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-bg-white); font-size: 12.5px; color: var(--color-text-heading); cursor: pointer; text-align: left; }
-  .sb-add__b:hover { border-color: var(--color-bg-primary); color: var(--color-bg-primary); }
+  .sb-add__b:hover { border-color: var(--seg-link); color: var(--seg-link); }
   .sb-add__b[disabled] { opacity: .45; cursor: not-allowed; }
 
   .sb-rail { position: sticky; top: 70px; }
@@ -77,7 +77,7 @@
 
   .sb-tpl { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
   .sb-tpl__c { text-align: left; padding: 10px 12px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-bg-white); cursor: pointer; }
-  .sb-tpl__c:hover { border-color: var(--color-bg-primary); }
+  .sb-tpl__c:hover { border-color: var(--seg-link); }
   .sb-tpl__c b { display: block; font-size: 12.5px; color: var(--color-text-heading); }
   .sb-tpl__c span { font-size: 11px; color: var(--seg-muted); }
 
@@ -259,7 +259,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=6"></script>
+<script src="./segments-data.js?v=7"></script>
 <script>
 const CATALOG = {
   WHO: [

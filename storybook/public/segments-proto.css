@@ -18,6 +18,11 @@
   --seg-th: #4b5563;
   /* Secondary body text that must stay readable at 11–12px. */
   --seg-muted: #5b6270;
+  /* Links and clickable rows are brand purple #42389d, not --color-bg-primary,
+     which is blue-700 #1C64F2. The token names invite exactly this mistake:
+     --color-bg-primary is a BACKGROUND token and was being used as link colour
+     across these pages. The brand value lives in --btn-primary-bg. */
+  --seg-link: var(--btn-primary-bg);
 }
 
 .seg-ok { color: var(--seg-ok); }

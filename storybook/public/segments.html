@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=6">
+<link rel="stylesheet" href="./segments-proto.css?v=7">
 <!--
   seg-* prototype layer. Only what the library has no pattern for: the list workspace
   shell, the sticky toolbar, the resource-row table and the health callouts.
@@ -146,13 +146,24 @@
   }
   .seg-th-sort:hover { color: var(--color-text-heading); }
   .seg-caret { opacity: 0; transition: transform .15s; }
-  th[aria-sort] .seg-caret { opacity: 1; color: var(--color-bg-primary); }
+  th[aria-sort] .seg-caret { opacity: 1; color: var(--seg-link); }
   th[aria-sort="ascending"] .seg-caret { transform: rotate(180deg); }
 
   .seg-table tbody tr { border-bottom: 1px solid var(--color-border-light); }
   .seg-table tbody tr:last-child { border-bottom: 0; }
-  .seg-table tbody tr:hover { background: var(--color-bg-tertiary); }
+  /* LIBRARY GAP: iris-components.css has no tr:hover rule at all, so the row
+     treatment is defined here. It follows the convention the library does document
+     for a clickable row: on hover the clickable text turns brand purple and a
+     chevron-right appears (see .card-reporting--hovered and the Weekly Breakdown
+     table). The background tint is only the pointer feedback under it. */
+  .seg-table tbody tr { cursor: pointer; }
+  .seg-table tbody tr:hover,
   .seg-table tbody tr:focus-within { background: var(--color-bg-tertiary); }
+  .seg-table tbody tr:hover .seg-name,
+  .seg-table tbody tr:focus-within .seg-name { color: var(--seg-link); }
+  .seg-name__go { opacity: 0; margin-left: 4px; color: var(--seg-link); transition: opacity .1s; vertical-align: -2px; }
+  .seg-table tbody tr:hover .seg-name__go,
+  .seg-table tbody tr:focus-within .seg-name__go { opacity: 1; }
   .seg-table tbody tr[data-selected="1"] { background: var(--color-bg-brand-softer); }
   .seg-table td { padding: 8px 12px; vertical-align: top; font-size: 13px; color: var(--color-text-body); }
   .seg-tablewrap[data-density="condensed"] .seg-table td { padding: 5px 12px; }
@@ -162,7 +173,7 @@
   .seg-cbwrap { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
 
   .seg-name { font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); text-decoration: none; }
-  .seg-name:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .seg-name:hover { color: var(--seg-link); text-decoration: underline; }
   .seg-def {
     display: block; margin-top: 2px; font-size: 12px; color: #5b6270;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px;
@@ -170,7 +181,7 @@
   .seg-tablewrap[data-density="relaxed"] .seg-def { white-space: normal; }
   .seg-more {
     display: inline-block; padding: 4px 6px; margin: -4px 0;
-    color: var(--color-bg-primary); background: none; border: 0;
+    color: var(--seg-link); background: none; border: 0;
     font: var(--font-medium) 12px/1.3 var(--font-family-base); cursor: pointer;
   }
   /* ── Full definition mode ──
@@ -208,6 +219,8 @@
   .seg-flag--error { color: var(--color-text-fg-danger); }
   .seg-flag--warn  { color: #92400e; }
   .seg-flag--info  { color: var(--seg-muted); font-weight: 400; }
+  .seg-flag--more { border: 0; background: none; cursor: pointer; font: inherit; color: inherit; padding: 3px 0 0; text-align: left; }
+  .seg-flag--more:hover .seg-flag__why { color: var(--color-text-heading); }
   .seg-flag__why { color: var(--seg-muted); font-weight: 400; margin-left: 2px; }
   .seg-flag__why::before { content: "· "; }
 
@@ -232,7 +245,7 @@
   /* The operator stays visible — the model may grow an OR — but never louder than
      the condition it joins. .seg-op--mixed earns the colour only when it means something. */
   .seg-op { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; padding: 2px 0 2px 2px; }
-  .seg-op--mixed { color: var(--color-bg-primary); font-weight: var(--font-semibold); }
+  .seg-op--mixed { color: var(--seg-link); font-weight: var(--font-semibold); }
 
   /* Row menu — rendered at body level and positioned fixed, so no ancestor's
      overflow, stacking context or scroll container can clip it. */
@@ -435,7 +448,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=6"></script>
+<script src="./segments-data.js?v=7"></script>
 <script>
 const UI = { q:'', filter:'all', sort:'attention', dir:'desc', page:1, per:25, sel:new Set(), focus:null,
              /* compact by default: finding a segment is the frequent job, checking one
@@ -505,14 +518,18 @@ function fullDef(s) {
   </div>`;
 }
 
-const DOT = k => `<span class="indicator-dot indicator-dot-${k}" style="border-width:0;margin-right:4px;"></span>`;
+/* Status uses the library .badge, whose soft fill and dark text read far quieter
+   than 22 rows of orange words. Colour marks the exception, not the norm: healthy
+   is green and an empty result is amber, while "stale" and "not calculated" stay
+   neutral. The state is still carried by the words and the date underneath, so
+   nothing is lost by declining to colour the majority case. */
 function statusCell(s) {
-  if (s.calculating)   return `<span class="iris-tag iris-tag--blue">${DOT('blue')}Calculating…</span>
-    <span class="progress progress-sm seg-progress-indet" style="margin-top:6px;" role="progressbar" aria-busy="true" aria-label="Calculating ${s.n}"><span class="progress-bar progress-bar-primary"></span></span>`;
-  if (s.state === 'never')   return `<span class="iris-tag iris-tag--grey">${DOT('gray')}Not calculated</span><span class="seg-when">Created ${relTime(s.cr)}</span>`;
-  if (s.state === 'nomatch') return `<span class="iris-tag iris-tag--orange">${DOT('yellow')}No customers match</span><span class="seg-when">Checked ${relTime(s.up)}</span>`;
-  if (s.stale)               return `<span class="iris-tag iris-tag--orange">${DOT('yellow')}Stale data</span><span class="seg-when">From ${new Date(s.up).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>`;
-  return `<span class="iris-tag seg-ok">${DOT('green')}Up to date</span><span class="seg-when">Updated ${relTime(s.up)}</span>`;
+  if (s.calculating) return `<span class="badge badge-indigo">Calculating…</span>
+    <span class="progress progress-sm seg-progress-indet" style="margin-top:6px;" role="progressbar" aria-busy="true" aria-label="Calculating ${esc(s.n)}"><span class="progress-bar progress-bar-primary"></span></span>`;
+  if (s.state === 'never')   return `<span class="badge badge-gray">Not calculated</span><span class="seg-when">Created ${relTime(s.cr)}</span>`;
+  if (s.state === 'nomatch') return `<span class="badge badge-yellow">No customers match</span><span class="seg-when">Checked ${relTime(s.up)}</span>`;
+  if (s.stale)               return `<span class="badge badge-gray">Stale data</span><span class="seg-when">From ${new Date(s.up).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>`;
+  return `<span class="badge badge-green">Up to date</span><span class="seg-when">Updated ${relTime(s.up)}</span>`;
 }
 
 /* money(), ltvFmt(), relTime() come from ./segments-data.js — redeclaring
@@ -531,11 +548,16 @@ function rowHTML(s) {
   const rank = { error: 0, warn: 1, info: 2 };
   const top = [...s.flags].sort((a, b) => rank[a.sev] - rank[b.sev])[0];
   const rest = s.flags.length - 1;
-  const flags = !top ? '' :
-    `<span class="seg-flag seg-flag--${top.sev}">
-       ${top.sev === 'info' ? '' : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>`}
-       ${top.t}${top.why ? `<span class="seg-flag__why">${top.why}</span>` : ''}${rest > 0 ? `<span class="seg-flag__why">+${rest} more</span>` : ''}
-     </span>`;
+  const icon = top && top.sev !== 'info'
+    ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>` : '';
+  /* More than one finding turns the line into a disclosure. It used to say
+     "+1 more" as plain text with nothing behind it. */
+  const flags = !top ? ''
+    : rest > 0
+      ? `<button class="seg-flag seg-flag--${top.sev} seg-flag--more" data-flags="${s.id}" aria-expanded="false" aria-controls="segPop">
+           ${icon}${top.t}${top.why ? `<span class="seg-flag__why">${top.why}</span>` : ''}<span class="seg-flag__why">+${rest} more</span>
+         </button>`
+      : `<span class="seg-flag seg-flag--${top.sev}">${icon}${top.t}${top.why ? `<span class="seg-flag__why">${top.why}</span>` : ''}</span>`;
   const num = v => v == null ? NONE : `<span class="seg-val">${v}</span>`;
   const nm = esc(s.n);
 
@@ -543,7 +565,7 @@ function rowHTML(s) {
     ${/* a <label> makes the whole 24x24 box the hit target; a <span> did not */''}
     <td class="seg-cbcell"><label class="seg-cbwrap"><input type="checkbox" class="form-check-input seg-cb" data-id="${s.id}" ${sel ? 'checked' : ''} aria-label="Select ${nm}" style="margin:0;"></label></td>
     <td class="seg-idcell">
-      <a class="seg-name" href="./segment-detail.html?id=${s.id}">${esc(s.n)}</a>
+      <a class="seg-name" href="./segment-detail.html?id=${s.id}">${esc(s.n)}<svg class="seg-name__go" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg></a>
       ${s.d ? `<span class="seg-def">${esc(s.d)}</span>` : ''}
       ${UI.defs === 'full' ? fullDef(s)
         : `<span class="seg-def">${s.sentence.split(' · ').slice(0,3).join(' · ')}${more} <span class="seg-win">${winLabel(s)}</span></span>`}
@@ -805,7 +827,27 @@ function showPop(btn) {
 }
 function hidePop() {
   document.getElementById('segPop').dataset.on = '0';
-  document.querySelectorAll('[data-pop]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+  document.querySelectorAll('[data-pop],[data-flags]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+}
+
+/* every finding for one row, most severe first */
+function showFlags(btn) {
+  const s = SEGMENTS.find(x => x.id === btn.dataset.flags);
+  const pop = document.getElementById('segPop');
+  const rank = { error: 0, warn: 1, info: 2 };
+  const word = { error: 'Numbers are wrong', warn: 'Definition incomplete', info: 'For information' };
+  pop.innerHTML = `<div class="seg-pop__t">What is wrong with “${esc(s.n)}”</div>` +
+    [...s.flags].sort((a, b) => rank[a.sev] - rank[b.sev]).map(f => `
+      <div class="seg-cond" style="align-items:flex-start;">
+        <span class="seg-flag seg-flag--${f.sev}" style="margin:0;">${f.t}</span>
+        <span class="seg-cond__n" style="font-size:10px;text-transform:uppercase;letter-spacing:.04em;">${word[f.sev]}</span>
+      </div>${f.why ? `<div style="font-size:11px;color:var(--seg-muted);margin:-2px 0 4px;">${f.why}</div>` : ''}`).join('') +
+    `<a class="btn btn-xs btn-alternative" href="./segment-detail.html?id=${s.id}" style="margin-top:8px;">Open the segment</a>`;
+  pop.dataset.on = '1';
+  const r = btn.getBoundingClientRect(), h = pop.offsetHeight;
+  pop.style.left = Math.min(r.left, innerWidth - 400) + 'px';
+  pop.style.top = (r.bottom + h + 10 < innerHeight ? r.bottom + scrollY + 6 : r.top + scrollY - h - 6) + 'px';
+  document.querySelectorAll('[data-flags]').forEach(b => b.setAttribute('aria-expanded', String(b === btn)));
 }
 
 /* ── row menu ── */
@@ -899,7 +941,7 @@ document.getElementById('segDensity').addEventListener('change', e => { document
 
 document.addEventListener('click', e => {
   if (!e.target.closest('.seg-menu') && !e.target.closest('[data-menu]')) closeMenu();
-  if (!e.target.closest('#segPop') && !e.target.closest('[data-pop]')) hidePop();
+  if (!e.target.closest('#segPop') && !e.target.closest('[data-pop]') && !e.target.closest('[data-flags]')) hidePop();
 
   const f = e.target.closest('[data-f]');
   if (f && !f.disabled) { UI.filter = f.dataset.f; UI.page = 1; trimSelection(); render(); return; }
@@ -918,6 +960,8 @@ document.addEventListener('click', e => {
   }
   const pop = e.target.closest('[data-pop]');
   if (pop) { pop.getAttribute('aria-expanded') === 'true' ? hidePop() : showPop(pop); return; }
+  const fl = e.target.closest('[data-flags]');
+  if (fl) { fl.getAttribute('aria-expanded') === 'true' ? hidePop() : showFlags(fl); return; }
   const menu = e.target.closest('[data-menu]');
   if (menu) { menu.getAttribute('aria-expanded') === 'true' ? closeMenu() : showMenu(menu); return; }
   const dw = e.target.closest('[data-defsbtn]');
@@ -935,6 +979,29 @@ document.addEventListener('click', e => {
     if (clear.dataset.clear !== 'q') UI.filter = 'all';
     render();
   }
+});
+
+/* ── The whole row opens the segment ──────────────────────────────────────
+   Deliberately NOT by putting role="link" or tabindex on the <tr>: that breaks
+   table semantics and gives every row a second tab stop. The row is a mouse
+   affordance layered on top of a real <a> in the name cell, which stays the one
+   keyboard stop and the one thing a screen reader announces.
+
+   Three things must still work inside it: nested controls, text selection, and
+   modified clicks. All three are handled before navigating. */
+document.getElementById('segBody').addEventListener('click', e => {
+  if (e.target.closest('a, button, input, label, select, .seg-menu')) return;
+  if ((window.getSelection() || '').toString().length) return;   /* the user was selecting text */
+  const tr = e.target.closest('tr'); if (!tr) return;
+  const href = tr.querySelector('.seg-name')?.getAttribute('href'); if (!href) return;
+  if (e.metaKey || e.ctrlKey || e.shiftKey) window.open(href, '_blank');
+  else location.href = href;
+});
+/* middle-click opens in a new tab, as a link would */
+document.getElementById('segBody').addEventListener('auxclick', e => {
+  if (e.button !== 1 || e.target.closest('a, button, input, label, select')) return;
+  const href = e.target.closest('tr')?.querySelector('.seg-name')?.getAttribute('href');
+  if (href) window.open(href, '_blank');
 });
 
 document.getElementById('segAll').addEventListener('change', e => {

@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=6">
+<link rel="stylesheet" href="./segments-proto.css?v=7">
 <!--
   The current product shows this as a 1143x972 modal (95% of the viewport) with no
   URL of its own. Here it is a page: it has an address, a back button, and room for
@@ -19,7 +19,7 @@
   .sd-head { background: var(--color-bg-white); padding: 14px 24px 0; border-bottom: 1px solid var(--color-border-default); }
   .sd-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--seg-muted); margin-bottom: 10px; }
   .sd-crumb a { color: var(--seg-muted); text-decoration: none; }
-  .sd-crumb a:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .sd-crumb a:hover { color: var(--seg-link); text-decoration: underline; }
   .sd-title-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
   .sd-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
   .sd-meta { margin: 6px 0 0; font-size: 13px; color: var(--seg-muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -71,7 +71,7 @@
   .sd-sort { display: inline-flex; align-items: center; gap: 3px; border: 0; background: none; padding: 2px 0; cursor: pointer; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; }
   .sd-sort:hover { color: var(--color-text-heading); }
   .sd-sort .c { opacity: 0; }
-  th[aria-sort] .sd-sort .c { opacity: 1; color: var(--color-bg-primary); }
+  th[aria-sort] .sd-sort .c { opacity: 1; color: var(--seg-link); }
   th[aria-sort="ascending"] .sd-sort .c { transform: rotate(180deg); }
 
   .sd-empty { text-align: center; padding: 40px 24px; }
@@ -259,7 +259,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=6"></script>
+<script src="./segments-data.js?v=7"></script>
 <script>
 const params = new URLSearchParams(location.search);
 const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[6]; /* US or CA */
