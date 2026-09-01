@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=7">
+<link rel="stylesheet" href="./segments-proto.css?v=8">
 <!--
   seg-* prototype layer. Only what the library has no pattern for: the list workspace
   shell, the sticky toolbar, the resource-row table and the health callouts.
@@ -219,7 +219,14 @@
   .seg-flag--error { color: var(--color-text-fg-danger); }
   .seg-flag--warn  { color: #92400e; }
   .seg-flag--info  { color: var(--seg-muted); font-weight: 400; }
-  .seg-flag--more { border: 0; background: none; cursor: pointer; font: inherit; color: inherit; padding: 3px 0 0; text-align: left; }
+  /* Reset only what a <button> actually needs. The `font` shorthand would wipe the
+     11px set on .seg-flag, and `color: inherit` would beat the severity colour,
+     which is why multi-finding rows rendered larger and in the wrong colour. */
+  /* A <button> carries its own UA font, so the values are set outright rather than
+     inherited: `inherit` picks up the 13px cell, and the `font` shorthand wiped both
+     the size and the severity colour. That is why multi-finding rows came out bigger. */
+  .seg-flag--more { border: 0; background: none; cursor: pointer; padding: 3px 0 0; text-align: left;
+    font-family: inherit; font-size: 11px; font-weight: var(--font-medium); }
   .seg-flag--more:hover .seg-flag__why { color: var(--color-text-heading); }
   .seg-flag__why { color: var(--seg-muted); font-weight: 400; margin-left: 2px; }
   .seg-flag__why::before { content: "· "; }
@@ -448,7 +455,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=7"></script>
+<script src="./segments-data.js?v=8"></script>
 <script>
 const UI = { q:'', filter:'all', sort:'attention', dir:'desc', page:1, per:25, sel:new Set(), focus:null,
              /* compact by default: finding a segment is the frequent job, checking one
