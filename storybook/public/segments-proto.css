@@ -110,3 +110,16 @@
 .seg-modal-backdrop .modal-dialog {
   background: #fff; border-radius: 12px; max-width: 460px; width: 100%;
 }
+
+/* ── Collapsed navigation ────────────────────────────────────────────────
+   .sidebar--collapsed is layout only. The items themselves swap to the
+   library's .sidebar-contracted-item, built at runtime from the expanded nav
+   (see initSidebar in segments-data.js). */
+.sidebar-nav--contracted { display: none; }
+.sidebar--collapsed .sidebar-nav:not(.sidebar-nav--contracted) { display: none; }
+.sidebar--collapsed .sidebar-nav--contracted {
+  display: flex; flex-direction: column; gap: 16px; padding-bottom: 12px;
+}
+.sidebar--collapsed .sidebar-brand { justify-content: center; gap: 8px; }
+.sidebar--collapsed .sidebar-divider { margin: 0; }
+.sidebar-contracted-item { text-decoration: none; }

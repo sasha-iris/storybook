@@ -164,14 +164,39 @@ function markCalculated(id) {
 }
 
 /* ── Sidebar collapse ──────────────────────────────────────────────────────
-   256px of navigation next to a wide table is a lot of permanent furniture.
-   .sidebar--collapsed is the library's own 60px variant (layout only, no
-   background override, which would break the dark theme). The choice is
-   remembered so it does not have to be made on every page. */
+   256px of navigation beside a wide table is a lot of permanent furniture.
+   The library's collapsed state is NOT the expanded nav with its labels hidden:
+   it is a different element, .sidebar-contracted-item (60x32, icon centred,
+   aria-label + title carrying the name), per Sidebar.stories.js. The contracted
+   nav is generated from the expanded one so the two can never drift apart.
+   The choice is remembered across the four pages. */
 function initSidebar() {
   const side = document.getElementById('appSidebar');
   const btn = document.getElementById('sidebarToggle');
   if (!side || !btn) return;
+
+  if (!side.querySelector('.sidebar-nav--contracted')) {
+    side.querySelectorAll('.sidebar-nav').forEach(nav => {
+      const c = document.createElement('nav');
+      c.className = 'sidebar-nav sidebar-nav--contracted';
+      c.setAttribute('aria-label', (nav.getAttribute('aria-label') || 'Navigation') + ' (collapsed)');
+      nav.querySelectorAll('.sidebar-item').forEach(item => {
+        const label = (item.querySelector('span:not(.sidebar-item-icon)') || {}).textContent || '';
+        const icon = item.querySelector('.sidebar-item-icon svg');
+        const el = document.createElement('a');
+        el.className = 'sidebar-contracted-item' + (item.classList.contains('active') ? ' active' : '');
+        el.href = item.getAttribute('href') || '#';
+        if (item.getAttribute('onclick')) el.setAttribute('onclick', item.getAttribute('onclick'));
+        if (item.hasAttribute('aria-current')) el.setAttribute('aria-current', 'page');
+        el.setAttribute('aria-label', label.trim());
+        el.title = label.trim();
+        if (icon) el.appendChild(icon.cloneNode(true));
+        c.appendChild(el);
+      });
+      nav.after(c);
+    });
+  }
+
   const apply = on => {
     side.classList.toggle('sidebar--collapsed', on);
     btn.setAttribute('aria-expanded', String(!on));
