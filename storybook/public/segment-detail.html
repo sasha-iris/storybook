@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=9">
+<link rel="stylesheet" href="./segments-proto.css?v=10">
 <!--
   The current product shows this as a 1143x972 modal (95% of the viewport) with no
   URL of its own. Here it is a page: it has an address, a back button, and room for
@@ -260,7 +260,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=9"></script>
+<script src="./segments-data.js?v=10"></script>
 <script>
 const params = new URLSearchParams(location.search);
 const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[6]; /* US or CA */
@@ -302,11 +302,13 @@ document.getElementById('sdRecalc').innerHTML =
   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-4.992 4.992-1.68-1.68a7.5 7.5 0 1 0 1.06 8.964"/></svg>
    ${SEG.state === 'never' ? 'Calculate' : 'Recalculate'}`;
 
-const STATUS = { never:['gray','grey','Not calculated'], nomatch:['yellow','orange','No customers match'],
-                 stale:['yellow','orange','Stale data'], ready:['green','green','Up to date'] }
+/* Same badge the list uses. Colour marks the exception: green for healthy, amber
+   for an empty result, neutral for "stale" and "not calculated". */
+const STATUS = { never:['gray','Not calculated'], nomatch:['yellow','No customers match'],
+                 stale:['gray','Stale data'], ready:['green','Up to date'] }
                [SEG.state === 'ready' && SEG.stale ? 'stale' : SEG.state];
 document.getElementById('sdMeta').innerHTML = `
-  <span class="iris-tag ${STATUS[1] === 'green' ? 'seg-ok' : 'iris-tag--' + STATUS[1]}"><span class="indicator-dot indicator-dot-${STATUS[0]}"></span>${STATUS[2]}</span>
+  <span class="badge badge-${STATUS[0]}">${STATUS[1]}</span>
   <span aria-hidden="true" style="color:var(--seg-th)">·</span>
   <span>${SEG.d ? SEG.d + ' · ' : ''}${SEG.sentence}</span>
   <span aria-hidden="true" style="color:var(--seg-th)">·</span>
