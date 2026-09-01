@@ -79,54 +79,32 @@
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* ── Shell + responsive ───────────────────────────────────────────────────
-   Below 768px the fixed 256px sidebar left the content 119px wide. It is
-   replaced by a header button that opens the same nav as a drawer. */
+/* ── Shell ────────────────────────────────────────────────────────────────
+   The rail is 60px at every width, so no drawer or hamburger is needed: even at
+   375px it leaves 315px for content. */
 .seg-app { display: flex; min-height: 100vh; background: var(--color-bg-default); }
 .seg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
-.seg-burger {
-  display: none; align-items: center; justify-content: center;
-  width: 34px; height: 34px; margin-right: 10px;
-  border: 1px solid var(--color-border-base); border-radius: var(--radius-md);
-  background: var(--color-bg-white); color: var(--color-text-heading); cursor: pointer;
-}
 
-@media (max-width: 768px) {
-  .seg-app > .sidebar { display: none; }
-  .seg-app > .sidebar[data-open="1"] {
-    display: flex; position: fixed; inset: 0 auto 0 0; z-index: 70;
-    box-shadow: 0 0 0 100vw rgba(17,25,40,.45);
-  }
-  .seg-burger { display: inline-flex; }
-}
-
-/* ── Native dialogs are not part of the design system ─────────────────────
-   .modal-* is; every page uses the same helper markup. */
-.seg-modal-backdrop {
-  position: fixed; inset: 0; background: rgba(17,25,40,.45); z-index: 90;
-  display: flex; align-items: center; justify-content: center; padding: 16px;
-}
 .seg-modal-backdrop .modal-dialog {
   background: #fff; border-radius: 12px; max-width: 460px; width: 100%;
 }
 
 /* ── Collapsed navigation ────────────────────────────────────────────────
-   .sidebar--collapsed is layout only, and the items swap to the library's
-   .sidebar-contracted-item, generated at runtime from the expanded nav (see
-   initSidebar in segments-data.js).
+   Always collapsed; there is no expand control. .sidebar--collapsed gives the
+   60px rail, and the items are the library's .sidebar-contracted-item, built at
+   runtime by initSidebar in segments-data.js.
 
-   The contracted sections must NOT carry .sidebar-nav: that class is padded
-   0 8px 0 28px, which leaves a 24px content box inside the 60px rail and clips
-   every 60px item. Sidebar.stories.js uses a bare <nav> for exactly this reason.
-   .sidebar-brand needs the same treatment for its 28px left padding. */
-.seg-nav-contracted { display: none; }
+   The contracted sections deliberately do not carry .sidebar-nav: that class is
+   padded 0 8px 0 28px, which leaves a 24px content box inside the rail and clips
+   every 60px item. Sidebar.stories.js uses a bare <nav> for the same reason, and
+   .sidebar-brand needs its 28px left padding removed too. */
 .sidebar--collapsed .sidebar-nav { display: none; }
-.sidebar--collapsed .seg-nav-contracted {
+.seg-nav-contracted {
   display: flex; flex-direction: column; gap: 16px; padding: 0 0 12px; width: 100%;
 }
 .sidebar--collapsed .sidebar-brand {
-  padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 0; display: flex; justify-content: center;
 }
 .sidebar--collapsed .sidebar-divider { margin: 0; }
 .sidebar-contracted-item { text-decoration: none; }

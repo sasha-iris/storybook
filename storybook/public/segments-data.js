@@ -163,55 +163,39 @@ function markCalculated(id) {
   } catch (e) {}
 }
 
-/* ── Sidebar collapse ──────────────────────────────────────────────────────
-   256px of navigation beside a wide table is a lot of permanent furniture.
-   The library's collapsed state is NOT the expanded nav with its labels hidden:
-   it is a different element, .sidebar-contracted-item (60x32, icon centred,
-   aria-label + title carrying the name), per Sidebar.stories.js. The contracted
-   nav is generated from the expanded one so the two can never drift apart.
-   The choice is remembered across the four pages. */
+/* ── Navigation ────────────────────────────────────────────────────────────
+   The navigation is always shown collapsed. 256px of chrome beside a wide table
+   is not worth it here, and there is nothing on these pages that needs the
+   expanded labels. The collapsed state is the library's own: .sidebar--collapsed
+   for the 60px rail plus .sidebar-contracted-item for the items themselves
+   (60x32, icon centred, name carried by aria-label and title, per
+   Sidebar.stories.js). The contracted items are generated from the expanded
+   markup so the two lists cannot drift apart.
+
+   NB: the contracted sections must NOT carry .sidebar-nav, which is padded
+   0 8px 0 28px and leaves a 24px content box inside the rail, clipping every
+   icon. Same reason .sidebar-brand loses its 28px left padding. */
 function initSidebar() {
   const side = document.getElementById('appSidebar');
-  const btn = document.getElementById('sidebarToggle');
-  if (!side || !btn) return;
-
-  if (!side.querySelector('.sidebar-nav--contracted')) {
-    side.querySelectorAll('.sidebar-nav').forEach(nav => {
-      const c = document.createElement('nav');
-      /* NOT .sidebar-nav: that class carries padding 0 8px 0 28px, which leaves
-         24px of content box inside a 60px rail and clips every icon. The story's
-         collapsed sections are a bare <nav>. */
-      c.className = 'seg-nav-contracted';
-      c.setAttribute('aria-label', (nav.getAttribute('aria-label') || 'Navigation') + ' (collapsed)');
-      nav.querySelectorAll('.sidebar-item').forEach(item => {
-        const label = (item.querySelector('span:not(.sidebar-item-icon)') || {}).textContent || '';
-        const icon = item.querySelector('.sidebar-item-icon svg');
-        const el = document.createElement('a');
-        el.className = 'sidebar-contracted-item' + (item.classList.contains('active') ? ' active' : '');
-        el.href = item.getAttribute('href') || '#';
-        if (item.getAttribute('onclick')) el.setAttribute('onclick', item.getAttribute('onclick'));
-        if (item.hasAttribute('aria-current')) el.setAttribute('aria-current', 'page');
-        el.setAttribute('aria-label', label.trim());
-        el.title = label.trim();
-        if (icon) el.appendChild(icon.cloneNode(true));
-        c.appendChild(el);
-      });
-      nav.after(c);
+  if (!side) return;
+  side.querySelectorAll('.sidebar-nav').forEach(nav => {
+    const c = document.createElement('nav');
+    c.className = 'seg-nav-contracted';
+    c.setAttribute('aria-label', nav.getAttribute('aria-label') || 'Navigation');
+    nav.querySelectorAll('.sidebar-item').forEach(item => {
+      const label = ((item.querySelector('span:not(.sidebar-item-icon)') || {}).textContent || '').trim();
+      const icon = item.querySelector('.sidebar-item-icon svg');
+      const el = document.createElement('a');
+      el.className = 'sidebar-contracted-item' + (item.classList.contains('active') ? ' active' : '');
+      el.href = item.getAttribute('href') || '#';
+      if (item.getAttribute('onclick')) el.setAttribute('onclick', item.getAttribute('onclick'));
+      if (item.hasAttribute('aria-current')) el.setAttribute('aria-current', 'page');
+      el.setAttribute('aria-label', label);
+      el.title = label;
+      if (icon) el.appendChild(icon.cloneNode(true));
+      c.appendChild(el);
     });
-  }
-
-  const apply = on => {
-    side.classList.toggle('sidebar--collapsed', on);
-    btn.setAttribute('aria-expanded', String(!on));
-    btn.setAttribute('aria-label', on ? 'Expand navigation' : 'Collapse navigation');
-    btn.style.transform = on ? 'rotate(180deg)' : '';
-  };
-  let on = false;
-  try { on = localStorage.getItem('segNav') === 'collapsed'; } catch (e) {}
-  apply(on);
-  btn.addEventListener('click', () => {
-    on = !side.classList.contains('sidebar--collapsed');
-    apply(on);
-    try { localStorage.setItem('segNav', on ? 'collapsed' : 'open'); } catch (e) {}
+    nav.after(c);
   });
+  side.classList.add('sidebar--collapsed');
 }
