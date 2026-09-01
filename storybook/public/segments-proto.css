@@ -112,14 +112,21 @@
 }
 
 /* ── Collapsed navigation ────────────────────────────────────────────────
-   .sidebar--collapsed is layout only. The items themselves swap to the
-   library's .sidebar-contracted-item, built at runtime from the expanded nav
-   (see initSidebar in segments-data.js). */
-.sidebar-nav--contracted { display: none; }
-.sidebar--collapsed .sidebar-nav:not(.sidebar-nav--contracted) { display: none; }
-.sidebar--collapsed .sidebar-nav--contracted {
-  display: flex; flex-direction: column; gap: 16px; padding-bottom: 12px;
+   .sidebar--collapsed is layout only, and the items swap to the library's
+   .sidebar-contracted-item, generated at runtime from the expanded nav (see
+   initSidebar in segments-data.js).
+
+   The contracted sections must NOT carry .sidebar-nav: that class is padded
+   0 8px 0 28px, which leaves a 24px content box inside the 60px rail and clips
+   every 60px item. Sidebar.stories.js uses a bare <nav> for exactly this reason.
+   .sidebar-brand needs the same treatment for its 28px left padding. */
+.seg-nav-contracted { display: none; }
+.sidebar--collapsed .sidebar-nav { display: none; }
+.sidebar--collapsed .seg-nav-contracted {
+  display: flex; flex-direction: column; gap: 16px; padding: 0 0 12px; width: 100%;
 }
-.sidebar--collapsed .sidebar-brand { justify-content: center; gap: 8px; }
+.sidebar--collapsed .sidebar-brand {
+  padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
 .sidebar--collapsed .sidebar-divider { margin: 0; }
 .sidebar-contracted-item { text-decoration: none; }

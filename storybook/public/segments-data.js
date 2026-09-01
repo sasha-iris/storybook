@@ -178,7 +178,10 @@ function initSidebar() {
   if (!side.querySelector('.sidebar-nav--contracted')) {
     side.querySelectorAll('.sidebar-nav').forEach(nav => {
       const c = document.createElement('nav');
-      c.className = 'sidebar-nav sidebar-nav--contracted';
+      /* NOT .sidebar-nav: that class carries padding 0 8px 0 28px, which leaves
+         24px of content box inside a 60px rail and clips every icon. The story's
+         collapsed sections are a bare <nav>. */
+      c.className = 'seg-nav-contracted';
       c.setAttribute('aria-label', (nav.getAttribute('aria-label') || 'Navigation') + ' (collapsed)');
       nav.querySelectorAll('.sidebar-item').forEach(item => {
         const label = (item.querySelector('span:not(.sidebar-item-icon)') || {}).textContent || '';
