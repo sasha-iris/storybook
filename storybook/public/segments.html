@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=12">
+<link rel="stylesheet" href="./segments-proto.css?v=13">
 <!--
   seg-* prototype layer. Only what the library has no pattern for: the list workspace
   shell, the sticky toolbar, the resource-row table and the health callouts.
@@ -455,7 +455,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=12"></script>
+<script src="./segments-data.js?v=13"></script>
 <script>
 const UI = { q:'', filter:'all', sort:'attention', dir:'desc', page:1, per:25, sel:new Set(), focus:null,
              /* compact by default: finding a segment is the frequent job, checking one
@@ -596,7 +596,7 @@ function rowHTML(s) {
           : s.state === 'never' ? `<button class="btn btn-xs btn-outline-primary" data-calc="${s.id}">Calculate</button>`
           : s.state === 'nomatch' ? `<a class="btn btn-xs btn-outline-primary" href="./segment-builder.html?id=${s.id}">Edit filters</a>`
           : `<a class="btn btn-xs btn-alternative" href="./segment-detail.html?id=${s.id}">Analyze</a>`}
-        <button class="btn btn-xs btn-alternative seg-kebab" data-menu="${s.id}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for ${nm}">${KEBAB}</button>
+        <button class="seg-iconbtn seg-kebab" data-menu="${s.id}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for ${nm}">${KEBAB}</button>
       </div>
     </td>
   </tr>`;

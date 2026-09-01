@@ -74,6 +74,15 @@
    Inline links inside a line of text are exempt; standalone controls are not.
    These three were measured under the minimum. */
 /* the row overflow control matches the row button it stands next to (36px square) */
+/* Overflow is a quiet control: an icon, no border, no fill until you point at it.
+   A bordered button gives it the same weight as the real action beside it. */
+.seg-iconbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; min-height: 36px; padding: 0;
+  border: 0; background: none; border-radius: var(--radius-md);
+  color: var(--seg-th); cursor: pointer;
+}
+.seg-iconbtn:hover { background: var(--color-bg-muted); color: var(--color-text-heading); }
 .seg-kebab { min-width: 36px; min-height: 36px; }
 .breadcrumb-item a { display: inline-flex; align-items: center; min-height: 24px; }
 .seg-th-sort { min-height: 24px; }
