@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=13">
+<link rel="stylesheet" href="./segments-proto.css?v=14">
 <!--
   The current product shows this as a 1143x972 modal (95% of the viewport) with no
   URL of its own. Here it is a page: it has an address, a back button, and room for
@@ -19,9 +19,12 @@
   .sd-head { background: var(--color-bg-white); padding: 14px 24px 0; border-bottom: 1px solid var(--color-border-default); }
   /* the library breadcrumb: 14px, links in heading colour, chevron separator */
   .breadcrumb { margin: 0 0 10px; padding: 0; }
-  .sd-title-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    /* Title and actions share one line; the meta line gets the full width below them.
+     Keeping the meta inside the title block made it push the buttons onto a second
+     row, where margin-left:auto stranded them against the right edge. */
+  .sd-title-row { display: flex; align-items: center; gap: 16px; }
   .sd-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
-  .sd-meta { margin: 6px 0 0; font-size: 13px; color: var(--seg-muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .sd-meta { margin: 8px 0 0; font-size: 13px; color: var(--seg-muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .sd-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; position: relative; }
   .sd-tabs { margin-top: 14px; }
 
@@ -127,10 +130,7 @@
         </ol>
       </nav>
       <div class="sd-title-row">
-        <div style="min-width:0;">
-          <h1 class="sd-h1" id="sdName"></h1>
-          <p class="sd-meta" id="sdMeta"></p>
-        </div>
+        <h1 class="sd-h1" id="sdName"></h1>
         <div class="sd-actions">
           <button class="btn btn-sm btn-alternative" id="sdRecalc"></button>
           <a class="btn btn-sm btn-alternative" id="sdEdit" href="./segment-builder.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>Edit definition</a>
@@ -140,6 +140,7 @@
           </button>
         </div>
       </div>
+      <p class="sd-meta" id="sdMeta"></p>
       <div class="iris-tab-bar sd-tabs" role="tablist" aria-label="Segment views" id="sdTabs">
         <button class="iris-tab iris-tab--active" role="tab" id="tab-overview"  aria-controls="p-overview"  aria-selected="true"  tabindex="0"  data-tab="overview">Overview</button>
         <button class="iris-tab"                   role="tab" id="tab-customers" aria-controls="p-customers" aria-selected="false" tabindex="-1" data-tab="customers">Customer metrics</button>
@@ -260,7 +261,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=13"></script>
+<script src="./segments-data.js?v=14"></script>
 <script>
 const params = new URLSearchParams(location.search);
 const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[6]; /* US or CA */
