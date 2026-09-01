@@ -17,8 +17,13 @@
   a frozen snapshot.
 -->
 <style>
-  .sb-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 12px 24px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 30; flex-wrap: wrap; }
-  .sb-h1 { margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-heading); }
+  /* same header anatomy as segment-detail and segments-compare */
+  .sb-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 14px 24px; position: sticky; top: 0; z-index: 30; }
+  .sb-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--seg-muted); margin-bottom: 8px; }
+  .sb-crumb a { color: var(--seg-muted); text-decoration: none; }
+  .sb-crumb a:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .sb-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .sb-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
   .sb-head__end { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 
   .sb-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; padding: 20px 24px 60px; align-items: start; max-width: 1240px; }
@@ -38,6 +43,10 @@
   .sb-cond__n b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
   /* the operator is visible but never louder than the condition it joins */
   .sb-op { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--seg-th); padding: 6px 0 6px 10px; }
+  .sb-op--ctl { padding: 4px 0 4px 10px; }
+  .sb-op--ctl .form-select { width: auto; height: 26px; padding: 0 26px 0 8px; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .06em; color: var(--seg-th);
+    background-position: right 8px center; background-size: 12px; }
   .sb-x { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; min-height: 26px; border: 0; background: none; color: var(--seg-th); cursor: pointer; font-size: 14px; line-height: 1; border-radius: 4px; }
   .sb-x:hover { background: var(--color-bg-muted); color: var(--color-text-fg-danger); }
 
@@ -99,13 +108,15 @@
 
   <main class="seg-main">
     <header class="sb-head">
-      <button class="seg-burger" id="segBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="appSidebar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
-      </button>
-      <a class="btn btn-sm btn-alternative" href="./segments.html" id="sbBack">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
-        Back
-      </a>
+      <nav class="sb-crumb" aria-label="Breadcrumb">
+        <button class="seg-burger" id="segBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="appSidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <a href="./segments.html">Customer Segments</a>
+        <span aria-hidden="true">/</span>
+        <span id="sbCrumb" aria-current="true">New segment</span>
+      </nav>
+      <div class="sb-title-row">
       <h1 class="sb-h1" id="sbTitle">New segment</h1>
       <div class="sb-head__end">
         <button class="btn btn-sm btn-alternative" id="sbUndo" aria-label="Undo" title="Undo" disabled style="padding:0 9px;">
@@ -117,6 +128,7 @@
         <span id="sbDirty" class="iris-tag iris-tag--grey" style="font-size:11px;">Not saved</span>
         <button class="btn btn-sm btn-alternative" id="sbCancel">Cancel</button>
         <button class="btn btn-sm btn-primary" id="sbSave" disabled>Save segment</button>
+      </div>
       </div>
     </header>
 
@@ -178,11 +190,6 @@
         <div class="sb-card">
           <div class="sb-card__h">
             <h2 class="sb-card__t">Conditions</h2>
-            <label class="seg-sr" for="sbJoin">How conditions combine</label>
-            <select class="form-select" id="sbJoin" style="height:30px;font-size:12px;width:auto;padding-right:32px;">
-              <option value="all">Match all of them</option>
-              <option value="any">Match any of them</option>
-            </select>
             <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);" id="sbCondN"></span>
           </div>
           <div class="sb-card__b">
@@ -297,6 +304,7 @@ let touched = false;   /* opening a segment for editing is not a change to it */
 if (EDIT) {
   document.title = `Edit ${EDIT.n} · Iris`;
   document.getElementById('sbTitle').textContent = `Edit “${EDIT.n}”`;
+  document.getElementById('sbCrumb').textContent = `Edit “${EDIT.n}”`;
   document.getElementById('sbSave').textContent = 'Save changes';
   state.name = EDIT.n;
   state.desc = EDIT.d || '';
@@ -347,7 +355,9 @@ function syncInputs() {
   document.getElementById('sbName').value = state.name;
   document.getElementById('sbDesc').value = state.desc;
   document.getElementById('sbRange').value = String(state.range);
-  document.getElementById('sbJoin').value = state.join;
+  /* the operator control only exists once there are two conditions to join */
+  const j = document.getElementById('sbJoin');
+  if (j) j.value = state.join;
 }
 
 function rangeValid() {
@@ -400,7 +410,20 @@ function condRow(c, i, steps) {
            style="width:92px;height:32px;font-size:12.5px;${badNum(c.v) ? 'border-color:var(--color-border-danger)' : ''}"></span>
        ${badNum(c.v) ? `<span class="form-feedback-error" id="${id}-err" style="font-size:11px;">Enter a whole number between 0 and 1,000,000</span>` : ''}`;
   const drop = steps[i] - steps[i + 1];
-  return `${i ? `<div class="sb-op">${state.join === 'any' ? 'or' : 'and'}</div>` : ''}
+  /* The operator joins two conditions, so it belongs between them. The first gap
+     carries the control; the rest just state what was chosen. With a single
+     condition there is nothing to join and nothing is shown. */
+  const joiner = i === 0 ? ''
+    : i === 1
+      ? `<div class="sb-op sb-op--ctl">
+           <label class="seg-sr" for="sbJoin">How conditions combine</label>
+           <select class="form-select" id="sbJoin">
+             <option value="all" ${state.join === 'all' ? 'selected' : ''}>and</option>
+             <option value="any" ${state.join === 'any' ? 'selected' : ''}>or</option>
+           </select>
+         </div>`
+      : `<div class="sb-op">${state.join === 'any' ? 'or' : 'and'}</div>`;
+  return `${joiner}
     <div class="sb-cond ${filled ? '' : 'sb-cond--bad'}">
       <div class="sb-cond__main">
         <label class="sb-cond__name" for="${id}">${def.n}</label>

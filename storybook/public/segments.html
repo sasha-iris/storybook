@@ -52,7 +52,11 @@
   .seg-toolbar .iris-search__input { height: calc(var(--ctl-h) - 2px); font-size: var(--ctl-font); }
   .seg-toolbar .btn-group .btn { height: var(--ctl-h); font-size: var(--ctl-font); padding: 0 12px; }
   /* natural width, never squeezed — the measurement below depends on it */
-  .seg-filters { display: flex; gap: 6px; flex-wrap: nowrap; flex: 0 0 auto; }
+  .seg-filters { flex: 0 0 auto; }
+  .seg-filters .btn { gap: 5px; }
+  .seg-filters .btn[disabled] { opacity: .45; cursor: not-allowed; }
+  #segIssues { flex-shrink: 0; }
+  #segIssues[aria-pressed="true"] { background: var(--color-bg-danger-soft); border-color: var(--color-border-danger); color: #9b1c1c; }
   .seg-fchip {
     display: inline-flex; align-items: center; gap: 6px;
     min-height: 30px; padding: 4px 11px;
@@ -111,6 +115,12 @@
 
   /* ── Table ── */
   .seg-tablewrap { padding: 14px 24px 40px; }
+  .seg-tablebar { display: flex; align-items: center; gap: 10px; padding: 0 2px 10px; flex-wrap: wrap; }
+  .seg-tablebar__n { font-size: 12px; color: var(--seg-muted); }
+  .seg-tablebar .seg-defsw { margin-left: auto; }
+  .seg-tablebar { --ctl-h: 32px; --ctl-font: 12.5px; }
+  .seg-tablebar .btn-group .btn { height: var(--ctl-h); font-size: var(--ctl-font); padding: 0 12px; }
+  .seg-tablebar .seg-select { height: var(--ctl-h); font-size: var(--ctl-font); }
   .seg-scroll { position: relative; border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-bg-white); }
   /* Fixed layout: the column widths are decided here, not by the longest cell, so the
      table can never grow past its container and push Actions off the screen — which is
@@ -326,19 +336,13 @@
         </span>
       </div>
 
-      <div class="seg-filters" role="group" aria-label="Filter by status" id="segFilters"></div>
+      <span class="seg-minilabel" id="segStateLbl">Status</span>
+      <span class="btn-group btn-group--sm btn-group--primary seg-filters" role="group" aria-labelledby="segStateLbl" id="segFilters"></span>
       <span class="seg-statussel">
         <label class="seg-minilabel" for="segStatusSel">Status</label>
         <select class="seg-select" id="segStatusSel"></select>
       </span>
-
-      <span class="seg-defsw">
-        <span class="seg-minilabel" id="segDefsLbl">Definitions</span>
-        <span class="btn-group btn-group--sm btn-group--primary" role="group" aria-labelledby="segDefsLbl">
-          <button class="btn active" data-defsbtn="compact" aria-pressed="true">Compact</button>
-          <button class="btn" data-defsbtn="full" aria-pressed="false">Full</button>
-        </span>
-      </span>
+      <button class="seg-fchip" id="segIssues" aria-pressed="false"></button>
 
       <div class="seg-tools-end">
         <label class="seg-minilabel" for="segSort">Sort</label>
@@ -349,12 +353,6 @@
           <option value="created">Recently created</option>
           <option value="customers">Largest audience</option>
           <option value="net">Highest net sales</option>
-        </select>
-        <label class="seg-minilabel" for="segDensity">Rows</label>
-        <select class="seg-select" id="segDensity">
-          <option value="condensed">Condensed</option>
-          <option value="regular" selected>Regular</option>
-          <option value="relaxed">Relaxed</option>
         </select>
       </div>
     </div>
@@ -372,6 +370,24 @@
     <div class="seg-alerts" id="segAlerts"></div>
 
     <div class="seg-tablewrap" id="segWrap" data-density="regular">
+      <!-- Display controls belong to the table, not to the filters: neither of these
+           changes which rows are shown, only how they are drawn. -->
+      <div class="seg-tablebar">
+        <span class="seg-tablebar__n" id="segShowing"></span>
+        <span class="seg-defsw">
+          <span class="seg-minilabel" id="segDefsLbl">Definitions</span>
+          <span class="btn-group btn-group--sm btn-group--primary" role="group" aria-labelledby="segDefsLbl">
+            <button class="btn active" data-defsbtn="compact" aria-pressed="true">Compact</button>
+            <button class="btn" data-defsbtn="full" aria-pressed="false">Full</button>
+          </span>
+        </span>
+        <label class="seg-minilabel" for="segDensity">Rows</label>
+        <select class="seg-select" id="segDensity">
+          <option value="condensed">Condensed</option>
+          <option value="regular" selected>Regular</option>
+          <option value="relaxed">Relaxed</option>
+        </select>
+      </div>
       <div class="seg-scroll" id="segScroll">
       <table class="seg-table" id="segTable">
         <caption class="seg-sr">Customer segments. Use the column buttons to sort.</caption>
@@ -424,6 +440,7 @@
 const UI = { q:'', filter:'all', sort:'attention', dir:'desc', page:1, per:25, sel:new Set(), focus:null,
              /* compact by default: finding a segment is the frequent job, checking one
                 against another is the deliberate one. The choice is remembered. */
+             issues: false,
              defs: (() => { try { return localStorage.getItem('segDefs') || 'compact'; } catch (e) { return 'compact'; } })() };
 
 /* Search first, then status — so the chip counts describe what the search left,
@@ -433,22 +450,26 @@ const searched = () => {
   return q ? SEGMENTS.filter(s => s.n.toLowerCase().includes(q) || (s.d||'').toLowerCase().includes(q) || s.sentence.toLowerCase().includes(q))
            : SEGMENTS;
 };
+/* The four states partition the list exactly (8 + 9 + 22 + 1 = 40), so they belong
+   in a segmented control: one choice, no overlap. "Data issues" is not a state, it
+   is a flag that cuts across them (2 never-calculated, 12 stale), so it stays a
+   separate toggle and combines with whichever state is selected. */
 const IS = {
   all:     () => true,
   ready:   s => s.state === 'ready' && !s.stale,
   stale:   s => s.stale,
   nomatch: s => s.state === 'nomatch',
-  never:   s => s.state === 'never',
-  issues:  s => s.flags.some(f => f.danger)
+  never:   s => s.state === 'never'
 };
+const HAS_ISSUE = s => s.flags.some(f => f.danger);
 const FILTERS = [
-  { k:'all', label:'All' }, { k:'ready', label:'Healthy' }, { k:'stale', label:'Stale data' },
-  { k:'nomatch', label:'No matches' }, { k:'never', label:'Not calculated' }, { k:'issues', label:'Data issues' }
+  { k:'all', label:'All' }, { k:'ready', label:'Healthy' }, { k:'stale', label:'Stale' },
+  { k:'nomatch', label:'No matches' }, { k:'never', label:'Not calculated' }
 ];
 const ATT = s => s.state === 'never' ? 0 : s.flags.some(f => f.danger) ? 1 : s.state === 'nomatch' ? 2 : s.stale ? 3 : 4;
 
 function visible() {
-  const rows = searched().filter(IS[UI.filter]);
+  const rows = searched().filter(IS[UI.filter]).filter(s => !UI.issues || HAS_ISSUE(s));
   const asc = UI.dir === 'asc' ? -1 : 1;
   const by = {
     attention: (a,b) => ATT(a) - ATT(b) || (b.c||0) - (a.c||0),
@@ -551,13 +572,21 @@ function render() {
                                 cb: a.classList.contains('seg-cb') ? a.dataset.id : null } : null;
 
   const base = searched();
-  const counts = FILTERS.map(f => [f, base.filter(IS[f.k]).length]);
+  /* counts show what clicking would actually give, so they respect the issues toggle */
+  const pool = base.filter(s => !UI.issues || HAS_ISSUE(s));
+  const counts = FILTERS.map(f => [f, pool.filter(IS[f.k]).length]);
   document.getElementById('segFilters').innerHTML = counts.map(([f, n]) =>
-    `<button class="seg-fchip" data-f="${f.k}" aria-pressed="${UI.filter === f.k}" ${n === 0 && UI.filter !== f.k ? 'disabled' : ''}>
+    `<button class="btn ${UI.filter === f.k ? 'active' : ''}" data-f="${f.k}" aria-pressed="${UI.filter === f.k}" ${n === 0 && UI.filter !== f.k ? 'disabled' : ''}>
       ${f.label} <span class="seg-fchip__n">${n}</span></button>`).join('');
-  /* same choice, narrow layout */
   document.getElementById('segStatusSel').innerHTML = counts.map(([f, n]) =>
     `<option value="${f.k}" ${UI.filter === f.k ? 'selected' : ''} ${n === 0 && UI.filter !== f.k ? 'disabled' : ''}>${f.label} (${n})</option>`).join('');
+
+  const issueN = base.filter(IS[UI.filter]).filter(HAS_ISSUE).length;
+  const ib = document.getElementById('segIssues');
+  ib.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>
+    Data issues <span class="seg-fchip__n">${issueN}</span>`;
+  ib.setAttribute('aria-pressed', String(UI.issues));
+  ib.disabled = issueN === 0 && !UI.issues;
 
   const rows = visible();
   const pages = Math.max(1, Math.ceil(rows.length / UI.per));
@@ -589,9 +618,11 @@ function render() {
     document.getElementById('segEmptyBtn').dataset.clear = both ? 'both' : searching ? 'q' : 'f';
   }
 
-  document.getElementById('segFoot').textContent = rows.length
+  const showing = rows.length
     ? `Showing ${(UI.page-1)*UI.per + 1}–${Math.min(UI.page*UI.per, rows.length)} of ${rows.length} segments`
     : '';
+  document.getElementById('segFoot').textContent = showing;
+  document.getElementById('segShowing').textContent = showing;
 
   document.getElementById('segPager').innerHTML = pages < 2 ? '' :
     [`<li class="page-item ${UI.page === 1 ? 'disabled' : ''}"><button class="page-link" data-p="${UI.page-1}" ${UI.page===1?'disabled':''} aria-label="Previous page">‹</button></li>`]
@@ -638,7 +669,7 @@ function renderAlerts() {
     `<div class="seg-notice" role="region" aria-label="Data quality">
        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>
        <span>${parts.join(', ')}.</span>
-       <button class="btn-link btn-link-semibold" data-f="issues" style="font-size:12.5px;padding:0;">Show them</button>
+       <button class="btn-link btn-link-semibold" id="showIssues" style="font-size:12.5px;padding:0;">Show them</button>
        ${never ? `<button class="btn-link btn-link-medium" id="calcAll" style="font-size:12.5px;padding:0;">Calculate all ${never}</button>` : ''}
        <button class="seg-notice__x" id="noticeX" aria-label="Dismiss">✕</button>
      </div>`;
@@ -775,16 +806,21 @@ function showMenu(btn) {
   const s = SEGMENTS.find(x => x.id === btn.dataset.menu);
   const m = document.createElement('div');
   m.className = 'seg-menu'; m.setAttribute('role', 'menu');
-  m.innerHTML = `
-    <a class="seg-menu__i" role="menuitem" href="./segment-detail.html?id=${s.id}">Analyze</a>
-    <a class="seg-menu__i" role="menuitem" href="./segment-builder.html?id=${s.id}">Edit definition</a>
-    <button class="seg-menu__i" role="menuitem" data-act="fin">Ask Fin about this segment</button>
-    <button class="seg-menu__i" role="menuitem" data-act="dup">Duplicate</button>
-    <button class="seg-menu__i" role="menuitem" data-act="calc">Recalculate now</button>
-    ${/* pass this segment plus the nearest healthy one, so compare opens with a
-          real pair instead of silently substituting three unrelated defaults */''}
-    <a class="seg-menu__i" role="menuitem" href="./segments-compare.html?ids=${s.id},${(SEGMENTS.find(x => x.id !== s.id && x.state === 'ready') || SEGMENTS[6]).id}">Compare with…</a>
-    <button class="seg-menu__i" role="menuitem" data-act="export">Export emails</button>
+  /* The row already carries one action as a labelled button, and which one it is
+     depends on the segment's state. The menu holds everything else, and never
+     repeats what is already sitting next to it. */
+  const partner = (SEGMENTS.find(x => x.id !== s.id && x.state === 'ready') || SEGMENTS[6]).id;
+  const primary = s.state === 'never' ? 'calc' : s.state === 'nomatch' ? 'edit' : 'analyze';
+  const menuItems = [
+    { k:'analyze', html:`<a class="seg-menu__i" role="menuitem" href="./segment-detail.html?id=${s.id}">Analyze</a>` },
+    { k:'edit',    html:`<a class="seg-menu__i" role="menuitem" href="./segment-builder.html?id=${s.id}">Edit definition</a>` },
+    { k:'calc',    html:`<button class="seg-menu__i" role="menuitem" data-act="calc">${s.state === 'never' ? 'Calculate' : 'Recalculate now'}</button>` },
+    { k:'fin',     html:`<button class="seg-menu__i" role="menuitem" data-act="fin">Ask Fin about this segment</button>` },
+    { k:'dup',     html:`<button class="seg-menu__i" role="menuitem" data-act="dup">Duplicate</button>` },
+    { k:'compare', html:`<a class="seg-menu__i" role="menuitem" href="./segments-compare.html?ids=${s.id},${partner}">Compare with…</a>` },
+    { k:'export',  html:`<button class="seg-menu__i" role="menuitem" data-act="export">Export emails</button>` }
+  ].filter(i => i.k !== primary);
+  m.innerHTML = menuItems.map(i => i.html).join('') + `
     <div class="seg-menu__sep"></div>
     <button class="seg-menu__i" role="menuitem" data-act="archive">Archive</button>
     <button class="seg-menu__i seg-menu__i--danger" role="menuitem" data-act="del">Delete</button>`;
@@ -866,6 +902,7 @@ document.addEventListener('click', e => {
             cb.closest('tr').dataset.selected = cb.checked ? '1' : ''; renderBulk(); return; }
   const calc = e.target.closest('[data-calc]');
   if (calc) { runCalc([calc.dataset.calc]); return; }
+  if (e.target.closest('#showIssues')) { UI.issues = true; UI.filter = 'all'; UI.page = 1; trimSelection(); render(); return; }
   if (e.target.closest('#calcAll')) { runCalc(SEGMENTS.filter(s => s.state === 'never').map(s => s.id)); return; }
   if (e.target.closest('#noticeX')) {
     try { sessionStorage.setItem('segNoticeOff', '1'); } catch (err) {}
@@ -942,6 +979,7 @@ document.getElementById('skipLink').addEventListener('click', e => {
 });
 
 document.getElementById('segStatusSel').addEventListener('change', e => { UI.filter = e.target.value; UI.page = 1; trimSelection(); render(); });
+document.getElementById('segIssues').addEventListener('click', () => { UI.issues = !UI.issues; UI.page = 1; trimSelection(); render(); document.getElementById('segIssues').focus(); });
 document.getElementById('segBurger').addEventListener('click', e => {
   const side = document.getElementById('appSidebar');
   const open = side.dataset.open === '1';
