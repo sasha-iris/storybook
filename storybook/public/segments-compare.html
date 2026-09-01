@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare segments · Iris redesign prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="./iris-tokens.css">
+<link rel="stylesheet" href="./iris-components.css">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./segments-proto.css">
+<!--
+  The live product compares exactly two segments on cohort RETENTION
+  (Segment 1 Primary / Segment 2 Comparison, View: Retention). That job is kept
+  as the default view. A Metrics view is added alongside it, because comparison
+  is the only place where three segments returning byte-identical numbers can be
+  caught — which is what UK Customers, California Customers and Subscription
+  Orders Last Week do today.
+-->
+<style>
+  .sc-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 14px 24px; }
+  .sc-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--seg-muted); margin-bottom: 8px; }
+  .sc-crumb a { color: var(--seg-muted); }
+  .sc-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
+  .sc-body { padding: 18px 24px 60px; max-width: 1320px; }
+  @media (max-width: 768px) { .sc-head, .sc-body { padding-left: 14px; padding-right: 14px; } }
+
+  .sc-controls { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
+  .sc-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 6px 5px 11px; border: 1px solid var(--color-border-default); border-radius: var(--radius-full); background: var(--color-bg-white); font-size: 12.5px; font-weight: var(--font-medium); color: var(--color-text-heading); }
+  .sc-pill button { border: 0; background: none; cursor: pointer; color: var(--seg-th); min-width: 24px; min-height: 24px; border-radius: 50%; line-height: 1; }
+  .sc-pill button:hover { background: var(--color-bg-muted); color: var(--color-text-fg-danger); }
+
+  .sc-card { background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); margin-bottom: 16px; }
+  .sc-card__h { padding: 12px 16px; border-bottom: 1px solid var(--color-border-light); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sc-card__t { margin: 0; font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sc-card__b { padding: 14px 16px; }
+
+  .sc-tw { overflow-x: auto; }
+  .sc-t { width: 100%; border-collapse: collapse; }
+  .sc-t th, .sc-t td { padding: 11px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--color-border-light); font-size: 13px; }
+  .sc-t tbody tr:last-child th, .sc-t tbody tr:last-child td { border-bottom: 0; }
+  .sc-t thead th { background: var(--color-bg-tertiary); border-bottom: 1px solid var(--color-border-default); vertical-align: bottom; }
+  .sc-t tbody th {
+    width: 168px; font-size: 11px; font-weight: var(--font-semibold); color: var(--seg-th);
+    text-transform: uppercase; letter-spacing: .04em; background: var(--color-bg-white);
+  }
+  .sc-t tbody tr:hover td, .sc-t tbody tr:hover th { background: var(--color-bg-tertiary); }
+  .sc-name { font-size: 14px; font-weight: 700; color: var(--color-text-heading); text-decoration: none; display: block; }
+  .sc-name:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .sc-sub { display: block; margin-top: 3px; font-size: 11.5px; color: var(--seg-muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .sc-v { font-size: 16px; font-weight: 700; color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
+  .sc-d { display: block; margin-top: 2px; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .sc-d--up { color: var(--seg-ok); } .sc-d--dn { color: #c70036; } .sc-d--eq { color: var(--seg-th); }
+  .sc-bar { height: 5px; border-radius: 3px; background: var(--color-bg-muted); overflow: hidden; margin-top: 6px; }
+  .sc-bar i { display: block; height: 100%; background: var(--color-bg-primary); }
+  .sc-bar--warn i { background: var(--color-bg-danger); }
+
+  .sc-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--seg-muted); margin-top: 8px; }
+  .sc-key { display: inline-flex; align-items: center; gap: 6px; }
+  .sc-key i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+</style>
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;">
+<a class="seg-skip" href="#" id="skipLink">Skip to the comparison</a>
+<div class="seg-app">
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse navigation" aria-expanded="true" aria-controls="appSidebar" style="margin-left:auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="sc-head">
+      <nav class="sc-crumb" aria-label="Breadcrumb">
+        <button class="seg-burger" id="segBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="appSidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <a href="./segments.html">Customer Segments</a><span aria-hidden="true">/</span><span aria-current="true">Compare</span>
+      </nav>
+      <h1 class="sc-h1">Compare customer segments</h1>
+    </header>
+
+    <div class="sc-body" id="scBody">
+      <p class="seg-sr" role="status" aria-live="polite" id="scLive"></p>
+      <div id="scAlert"></div>
+
+      <div class="sc-controls">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label" for="scPrimary">Segment 1 (primary)</label>
+          <select class="form-select" id="scPrimary" style="min-width:230px;"></select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label" for="scSecond">Segment 2 (comparison)</label>
+          <select class="form-select" id="scSecond" style="min-width:230px;"></select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label" for="scView">View</label>
+          <select class="form-select" id="scView" style="min-width:170px;">
+            <option value="retention">Retention</option>
+            <option value="metrics">Metrics</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;" id="scExtraWrap" hidden>
+          <label class="form-label" for="scAdd">Add a segment</label>
+          <select class="form-select" id="scAdd" style="min-width:210px;"></select>
+        </div>
+      </div>
+
+      <div id="scExtras" style="display:flex;gap:8px;flex-wrap:wrap;margin:-6px 0 16px;"></div>
+
+      <!-- ══ Retention (the job the live Compare does) ══ -->
+      <section id="viewRetention">
+        <div class="sc-card">
+          <div class="sc-card__h">
+            <h2 class="sc-card__t">Retention by month since first order</h2>
+            <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);">Share of each cohort ordering again</span>
+          </div>
+          <div class="sc-card__b">
+            <svg id="scChart" viewBox="0 0 640 200" preserveAspectRatio="none" style="width:100%;height:200px;display:block;" role="img" aria-labelledby="scChartDesc"></svg>
+            <span id="scChartDesc" class="seg-sr"></span>
+            <div class="sc-legend" id="scLegend"></div>
+          </div>
+          <div class="sc-tw" id="scRetWrap"></div>
+        </div>
+      </section>
+
+      <!-- ══ Metrics ══ -->
+      <section id="viewMetrics" hidden>
+        <div class="sc-card" style="margin:0;">
+          <div class="sc-tw"><table class="sc-t" id="scTable"></table></div>
+        </div>
+      </section>
+
+      <p style="margin:12px 0 0;font-size:11.5px;color:var(--seg-muted);line-height:1.55;max-width:760px;">
+        Differences are measured against the primary segment. Segments calculated on
+        different dates are not strictly comparable — the date under each name says when
+        each one last ran.
+      </p>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+
+<script src="./segments-data.js?v=3"></script>
+<script>
+const CALC = SEGMENTS.filter(s => s.c != null);
+const q = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);
+let picked = [...new Set(q.map(id => SEGMENTS.find(s => s.id === id)).filter(Boolean))].slice(0, 4);
+let requestedButKept = null;
+let badIds = q.length > 0 && picked.length === 0;
+
+if (picked.length === 1) {
+  /* Keep what the user asked for and say what was added, rather than silently
+     replacing the selection with three unrelated defaults. */
+  requestedButKept = picked[0];
+  picked.push(CALC.find(s => s !== picked[0] && s.state === 'ready') || CALC[1]);
+} else if (picked.length === 0) {
+  picked = [SEGMENTS.find(s => s.id === 's26'), SEGMENTS.find(s => s.id === 's29')];
+}
+
+let view = 'retention';
+const fmtN = v => v == null ? null : Math.round(v).toLocaleString('en-US');
+const pct  = v => (v * 100).toFixed(v < .1 ? 1 : 0) + '%';
+const COLORS = ['#42389d', '#0e9f6e', '#d97706', '#c70036'];
+
+function toast(title, msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="toast-icon toast-icon-info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25h1.5v5.25M12 7.5h.008"/><circle cx="12" cy="12" r="9"/></svg></span>
+    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
+    <button class="toast-close" aria-label="Dismiss">✕</button>`;
+  el.querySelector('.toast-close').onclick = () => el.remove();
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+/* Retention curve derived from the segment's own LTV and order frequency, so two
+   segments differ the way their data differs. */
+function curve(s) {
+  if (s.c == null || s.c === 0) return null;
+  const freq = s.o && s.c ? s.o / s.c : 1;
+  const base = Math.min(48, Math.max(12, 18 * freq + (s.ltv > 0 ? 6 : 0)));
+  return [100, base, base * .72, base * .61, base * .54, base * .49, base * .46].map(v => +v.toFixed(1));
+}
+
+function delta(v, base, label) {
+  if (v == null || base == null || base === 0) return '';
+  const d = (v - base) / Math.abs(base);
+  if (Math.abs(d) < 0.005) return `<span class="sc-d sc-d--eq">same as ${label}</span>`;
+  return `<span class="sc-d ${d > 0 ? 'sc-d--up' : 'sc-d--dn'}">${d > 0 ? '+' : ''}${(d * 100).toFixed(0)}%</span>`;
+}
+
+const ROWS = [
+  { l:'Definition', cell: s => `<div style="font-size:12.5px;color:#374151;line-height:1.5;">${s.sentence}</div>
+      <div style="margin-top:4px;font-size:11.5px;color:${s.r ? 'var(--seg-muted)' : 'var(--color-text-fg-danger)'};">${s.r || 'No order window set'}</div>` },
+  { l:'Status', cell: s => {
+      const [dot, tag, label] = s.state === 'never' ? ['gray','grey','Not calculated']
+        : s.state === 'nomatch' ? ['yellow','orange','No customers match']
+        : s.stale ? ['yellow','orange','Stale data'] : ['green','green','Up to date'];
+      return `<span class="iris-tag ${tag === 'green' ? 'seg-ok' : 'iris-tag--' + tag}"><span class="indicator-dot indicator-dot-${dot}"></span>${label}</span>
+        <span class="sc-d sc-d--eq">${s.state === 'never' ? 'never run' : 'ran ' + relTime(s.up)}</span>`; } },
+  { l:'Customers', cell: (s, b) => s.c == null ? '<span style="color:var(--seg-th)">—</span>' :
+      `<span class="sc-v">${fmtN(s.c)}</span>${delta(s.c, b.c, b.n)}
+       <span class="sc-bar ${s.share >= .95 ? 'sc-bar--warn' : ''}"><i style="width:${Math.max(1, s.share*100)}%"></i></span>
+       <span class="sc-d ${s.share >= .95 ? 'sc-d--dn' : 'sc-d--eq'}">${pct(s.share)} of all customers</span>` },
+  { l:'Orders',    cell: (s, b) => s.o == null ? '<span style="color:var(--seg-th)">—</span>' : `<span class="sc-v">${fmtN(s.o)}</span>${delta(s.o, b.o, b.n)}` },
+  { l:'Net sales', cell: (s, b) => s.net == null ? '<span style="color:var(--seg-th)">—</span>' : `<span class="sc-v">${money(s.net)}</span>${delta(s.net, b.net, b.n)}` },
+  { l:'AOV',       cell: (s, b) => s.aov == null ? '<span style="color:var(--seg-th)">—</span>' : `<span class="sc-v">${money(s.aov)}</span>${delta(s.aov, b.aov, b.n)}` },
+  { l:'Avg LTV',   cell: (s, b) => s.ltv == null ? '<span style="color:var(--seg-th)">—</span>' :
+      `<span class="sc-v" style="${s.ltv < 0 ? 'color:#c70036' : ''}">${ltvFmt(s.ltv)}</span>${delta(s.ltv, b.ltv, b.n)}` },
+  { l:'Data issues', cell: s => s.flags.length
+      ? s.flags.map(f => `<div style="font-size:11.5px;color:${f.danger ? 'var(--color-text-fg-danger)' : '#92400e'};margin-bottom:2px;">${f.t}</div>`).join('')
+      : '<span style="font-size:12px;color:var(--seg-ok);">None found</span>' }
+];
+
+function renderRetention() {
+  const months = ['M0','M1','M2','M3','M4','M5','M6'];
+  const pairs = picked.map((s, i) => ({ s, c: curve(s), col: COLORS[i] }));
+  const usable = pairs.filter(p => p.c);
+
+  const svg = document.getElementById('scChart'), W = 640, H = 200, P = 24;
+  if (!usable.length) {
+    svg.innerHTML = `<text x="16" y="100" fill="#4b5563" font-size="13" font-family="Inter">Neither segment has been calculated, so there is no retention to compare.</text>`;
+    document.getElementById('scChartDesc').textContent = 'No retention data available for the selected segments.';
+    document.getElementById('scLegend').innerHTML = '';
+    document.getElementById('scRetWrap').innerHTML = '';
+    return;
+  }
+  const x = i => P + i * (W - P * 2) / (months.length - 1);
+  const y = v => H - P - (v / 100) * (H - P * 2);
+  svg.innerHTML =
+    [0, 25, 50, 75, 100].map(v => `<line x1="${P}" y1="${y(v)}" x2="${W - P}" y2="${y(v)}" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="2" y="${y(v) + 4}" font-size="9" fill="#4b5563" font-family="Inter">${v}%</text>`).join('') +
+    usable.map(p => `<path d="${p.c.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ')}" fill="none" stroke="${p.col}" stroke-width="2.5" vector-effect="non-scaling-stroke"/>` +
+      p.c.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="${p.col}"/>`).join('')).join('') +
+    months.map((m, i) => `<text x="${x(i) - 8}" y="${H - 6}" font-size="10" fill="#4b5563" font-family="Inter">${m}</text>`).join('');
+
+  document.getElementById('scChartDesc').textContent = usable.map(p =>
+    `${p.s.n}: month one retention ${p.c[1]}%, month six ${p.c[6]}%.`).join(' ');
+  document.getElementById('scLegend').innerHTML = usable.map(p =>
+    `<span class="sc-key"><i style="background:${p.col}"></i>${p.s.n}</span>`).join('') +
+    pairs.filter(p => !p.c).map(p => `<span class="sc-key" style="color:var(--color-text-fg-danger)">${p.s.n} — no data</span>`).join('');
+
+  const base = usable[0];
+  document.getElementById('scRetWrap').innerHTML = `<table class="sc-t">
+    <thead><tr><th>Segment</th>${months.map(m => `<th style="text-align:right">${m}</th>`).join('')}</tr></thead>
+    <tbody>${pairs.map(p => `<tr>
+      <th scope="row" style="text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--color-text-heading);">
+        <span class="sc-key"><i style="background:${p.col}"></i>${p.s.n}</span></th>
+      ${p.c ? p.c.map((v, i) => `<td style="text-align:right">
+          <span class="iris-cohort-badge iris-cohort-badge--${Math.min(100, Math.round(v / 10) * 10)}">${v.toFixed(0)}%</span>
+          ${p !== base && i ? delta(v, base.c[i], base.s.n) : ''}</td>`).join('')
+        : `<td colspan="${months.length}" style="color:var(--seg-muted);font-size:12.5px;">
+             ${p.s.state === 'never' ? 'Never calculated — no retention to show.' : 'No customers match — no retention to show.'}</td>`}
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderMetrics() {
+  const base = picked[0];
+  document.getElementById('scTable').innerHTML = `
+    <thead><tr>
+      <th style="width:168px;"><span class="seg-sr">Metric</span></th>
+      ${picked.map((s, i) => `<th>
+        <a class="sc-name" href="./segment-detail.html?id=${s.id}">${s.n}</a>
+        <span class="sc-sub">${i === 0 ? 'primary' : 'comparison'}</span></th>`).join('')}
+    </tr></thead>
+    <tbody>${ROWS.map(r => `<tr><th scope="row">${r.l}</th>
+      ${picked.map(s => `<td>${r.cell(s, base)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+
+function render() {
+  /* identical results across different definitions: the finding worth shouting about */
+  const groups = {};
+  [...new Set(picked)].forEach(s => { if (s.c > 0) (groups[s.c + '|' + s.net] ||= []).push(s); });
+  const clash = Object.values(groups).find(g => g.length > 1);
+  const notes = [];
+  if (clash) notes.push(['danger', `${clash.length} of these segments return exactly the same numbers`,
+    `${clash.map(s => `<strong>${s.n}</strong>`).join(', ')} each report ${fmtN(clash[0].c)} customers and ${money(clash[0].net)} in net sales, despite different definitions. Their filters are not being applied, so these are not different audiences.`]);
+  if (requestedButKept) notes.push(['warn', 'A comparison needs two segments',
+    `You opened this from <strong>${requestedButKept.n}</strong>, and <strong>${picked[1].n}</strong> was added as the comparison. Change it above if you meant a different one.`]);
+  if (badIds) notes.push(['warn', 'Those segments could not be found',
+    `The link pointed at segments that do not exist, so two were picked for you. Choose the ones you meant above.`]);
+  document.getElementById('scAlert').innerHTML = notes.map(([kind, t, d]) => `
+    <div class="alert ${kind === 'danger' ? 'alert-danger' : 'alert-warning'}" role="region" aria-label="${t}" style="margin-bottom:16px;">
+      <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg></span>
+      <div class="alert-body"><div class="alert-title">${t}</div><div>${d}</div></div></div>`).join('');
+
+  const opts = (chosen, blocked) => SEGMENTS.map(s =>
+    `<option value="${s.id}" ${s.id === chosen ? 'selected' : ''} ${s.id === blocked ? 'disabled' : ''}>${s.n}${s.d ? ' — ' + s.d.slice(0, 32) : ''}</option>`).join('');
+  document.getElementById('scPrimary').innerHTML = opts(picked[0].id, picked[1].id);
+  document.getElementById('scSecond').innerHTML  = opts(picked[1].id, picked[0].id);
+
+  /* The live product compares exactly two. Extra segments are a Metrics-only feature. */
+  document.getElementById('scExtraWrap').hidden = view !== 'metrics' || picked.length >= 4;
+  document.getElementById('scAdd').innerHTML = `<option value="">Add a segment…</option>` +
+    SEGMENTS.filter(s => !picked.includes(s)).map(s => `<option value="${s.id}">${s.n}</option>`).join('');
+  document.getElementById('scExtras').innerHTML = picked.slice(2).map(s =>
+    `<span class="sc-pill">${s.n}<button data-rm="${s.id}" aria-label="Remove ${s.n.replace(/"/g,'&quot;')} from the comparison">✕</button></span>`).join('');
+
+  document.getElementById('viewRetention').hidden = view !== 'retention';
+  document.getElementById('viewMetrics').hidden   = view !== 'metrics';
+  view === 'retention' ? renderRetention() : renderMetrics();
+  document.getElementById('scLive').textContent =
+    `Comparing ${picked.map(s => s.n).join(' and ')} on ${view === 'retention' ? 'retention' : 'metrics'}.`;
+}
+
+function sync() {
+  history.replaceState(null, '', '?ids=' + picked.map(s => s.id).join(','));
+  render();
+}
+
+document.addEventListener('change', e => {
+  const pickInto = (i, id, focusId) => {
+    const seg = SEGMENTS.find(s => s.id === id);
+    const other = picked[1 - i];
+    if (other && seg === other) {                 /* comparing a segment with itself says nothing */
+      toast('Pick two different segments', `“${seg.n}” is already on the other side of this comparison.`);
+      render(); return;
+    }
+    picked[i] = seg; requestedButKept = null; badIds = false; sync();
+    document.getElementById(focusId).focus();
+  };
+  if (e.target.id === 'scPrimary') pickInto(0, e.target.value, 'scPrimary');
+  if (e.target.id === 'scSecond')  pickInto(1, e.target.value, 'scSecond');
+  if (e.target.id === 'scView')    { view = e.target.value; if (view === 'retention') picked = picked.slice(0, 2); sync(); }
+  if (e.target.id === 'scAdd' && e.target.value) {
+    const seg = SEGMENTS.find(s => s.id === e.target.value);
+    if (!picked.includes(seg)) picked.push(seg);
+    sync();
+    /* the add control hides at four, so focus lands on the pill that was just created */
+    (document.querySelector(`[data-rm="${seg.id}"]`) || document.getElementById('scAdd') || document.getElementById('scView')).focus();
+  }
+});
+document.addEventListener('click', e => {
+  const rm = e.target.closest('[data-rm]');
+  if (rm) { picked = picked.filter(s => s.id !== rm.dataset.rm); sync(); document.getElementById('scAdd')?.focus(); }
+});
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const b = document.getElementById('scBody'); b.setAttribute('tabindex', '-1'); b.focus();
+});
+document.getElementById('segBurger').addEventListener('click', e => {
+  const side = document.getElementById('appSidebar');
+  const open = side.dataset.open === '1';
+  side.dataset.open = open ? '0' : '1';
+  e.currentTarget.setAttribute('aria-expanded', String(!open));
+});
+
+render();
+initSidebar();
+</script>
+</body>
+</html>

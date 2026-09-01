@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Segment · Iris redesign prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="./iris-tokens.css">
+<link rel="stylesheet" href="./iris-components.css">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./segments-proto.css">
+<!--
+  The current product shows this as a 1143x972 modal (95% of the viewport) with no
+  URL of its own. Here it is a page: it has an address, a back button, and room for
+  content. Shell, focus rings, status dots and responsive rules come from
+  ./segments-proto.css so all four pages stay identical.
+-->
+<style>
+  .sd-head { background: var(--color-bg-white); padding: 14px 24px 0; border-bottom: 1px solid var(--color-border-default); }
+  .sd-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--seg-muted); margin-bottom: 10px; }
+  .sd-crumb a { color: var(--seg-muted); text-decoration: none; }
+  .sd-crumb a:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .sd-title-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .sd-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
+  .sd-meta { margin: 6px 0 0; font-size: 13px; color: var(--seg-muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .sd-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; position: relative; }
+  .sd-tabs { margin-top: 14px; }
+
+  .sd-body { padding: 18px 24px 60px; display: flex; flex-direction: column; gap: 16px; max-width: 1280px; }
+  .sd-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 1100px) { .sd-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .sd-head, .sd-body { padding-left: 14px; padding-right: 14px; } }
+
+  .sd-card { background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); }
+  .sd-card__h { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--color-border-light); flex-wrap: wrap; }
+  .sd-card__t { margin: 0; font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sd-card__b { padding: 14px 16px; }
+
+  .sd-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--color-border-light); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); overflow: hidden; }
+  .sd-kpi { background: var(--color-bg-white); padding: 12px 14px; }
+  .sd-kpi__l { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--seg-th); font-weight: var(--font-semibold); }
+  .sd-kpi__v { margin-top: 4px; font-size: 21px; font-weight: 700; color: var(--color-text-heading); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .sd-kpi__s { margin-top: 2px; font-size: 11px; color: var(--seg-muted); }
+  .sd-kpi__s--warn { color: #92400e; font-weight: var(--font-semibold); }
+  .sd-kpi__s--bad  { color: var(--color-text-fg-danger); font-weight: var(--font-semibold); }
+
+  .sd-fun__row { display: grid; grid-template-columns: 1fr 92px; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dashed var(--color-border-light); }
+  .sd-fun__row:last-child { border-bottom: 0; }
+  .sd-fun__lab { font-size: 12.5px; color: var(--color-text-body); }
+  .sd-fun__lab small { display: block; color: var(--seg-muted); font-size: 11px; margin-top: 1px; }
+  .sd-fun__n { text-align: right; font-size: 12.5px; font-variant-numeric: tabular-nums; font-weight: var(--font-medium); color: var(--color-text-heading); }
+  .sd-fun__bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--color-bg-muted); overflow: hidden; }
+  .sd-fun__bar i { display: block; height: 100%; background: var(--color-bg-primary); }
+  .sd-fun__row--bad .sd-fun__lab { color: var(--color-text-fg-danger); }
+  .sd-fun__row--bad .sd-fun__bar i { background: var(--color-bg-danger); }
+  .sd-fun__row--kill .sd-fun__lab { color: #92400e; font-weight: var(--font-semibold); }
+  .sd-fun__row--kill .sd-fun__bar i { background: #d97706; }
+
+  .sd-chart { width: 100%; height: 132px; display: block; }
+  .sd-legend { display: flex; gap: 14px; font-size: 11px; color: var(--seg-muted); margin-top: 6px; flex-wrap: wrap; }
+
+  .sd-tw { overflow-x: auto; }
+  .sd-t { width: 100%; border-collapse: collapse; min-width: 640px; }
+  .sd-t th { padding: 7px 12px; text-align: left; white-space: nowrap; font-size: 10px; font-weight: var(--font-semibold); color: var(--seg-th); text-transform: uppercase; letter-spacing: .04em; background: var(--color-bg-tertiary); border-bottom: 1px solid var(--color-border-default); }
+  .sd-t td { padding: 8px 12px; font-size: 12.5px; color: var(--color-text-body); border-bottom: 1px solid var(--color-border-light); }
+  .sd-t tbody tr:last-child td { border-bottom: 0; }
+  .sd-t tbody tr:hover { background: var(--color-bg-tertiary); }
+  .sd-t .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .sd-t tfoot td { padding: 8px 12px; font-size: 12.5px; font-weight: var(--font-semibold); background: var(--color-bg-tertiary); border-top: 1px solid var(--color-border-default); }
+  .sd-sku { font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sd-sort { display: inline-flex; align-items: center; gap: 3px; border: 0; background: none; padding: 2px 0; cursor: pointer; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; }
+  .sd-sort:hover { color: var(--color-text-heading); }
+  .sd-sort .c { opacity: 0; }
+  th[aria-sort] .sd-sort .c { opacity: 1; color: var(--color-bg-primary); }
+  th[aria-sort="ascending"] .sd-sort .c { transform: rotate(180deg); }
+
+  .sd-empty { text-align: center; padding: 40px 24px; }
+  .sd-empty h3 { margin: 0 0 6px; font-size: 15px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sd-empty p { margin: 0 auto 14px; font-size: 13px; color: var(--seg-muted); max-width: 520px; line-height: 1.55; }
+  .sd-why { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: var(--radius-md); background: var(--color-bg-warning-soft); color: #92400e; font-size: 12px; font-weight: var(--font-medium); margin-bottom: 14px; }
+
+  .sd-menu { position: absolute; right: 0; top: 38px; z-index: 55; min-width: 190px; padding: 4px; background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(17,25,40,.14); }
+  .sd-menu__i { display: flex; width: 100%; align-items: center; padding: 7px 10px; border: 0; background: none; border-radius: var(--radius-md); font: var(--font-medium) 12.5px/1.3 var(--font-family-base); color: var(--color-text-body); cursor: pointer; text-align: left; text-decoration: none; }
+  .sd-menu__i:hover { background: var(--color-bg-muted); color: var(--color-text-heading); }
+  .sd-menu__i--danger { color: var(--color-text-fg-danger); }
+  .sd-menu__i:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; border-radius: 4px; }
+
+  /* Everything the prototype synthesises carries this marker. The whole argument of
+     this redesign is that the UI should not state more than the data supports. */
+  .sd-illus { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 999px;
+    background: var(--color-bg-muted); color: var(--seg-th); font-size: 10px; font-weight: var(--font-semibold);
+    text-transform: uppercase; letter-spacing: .04em; }
+  .sd-note { margin: 8px 0 0; font-size: 11px; color: var(--seg-muted); line-height: 1.5; }
+  @media (max-width: 900px) {
+    .sd-tabs { overflow-x: auto; }
+    /* four header buttons do not fit on a phone; they wrap instead of pushing the page */
+    .sd-actions { margin-left: 0; width: 100%; flex-wrap: wrap; }
+  }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;">
+<a class="seg-skip" href="#" id="skipLink">Skip to segment content</a>
+<div class="seg-app">
+
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse navigation" aria-expanded="true" aria-controls="appSidebar" style="margin-left:auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span><span>P&amp;L</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span><span>Inventory</span></a>
+      <a class="sidebar-item" href="#" id="navCohorts"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span><span>Reporting</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="sd-head">
+      <nav class="sd-crumb" aria-label="Breadcrumb">
+        <button class="seg-burger" id="segBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="appSidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <a href="./segments.html">Customer Segments</a>
+        <span aria-hidden="true">/</span>
+        <span id="sdCrumbName" aria-current="true"></span>
+      </nav>
+      <div class="sd-title-row">
+        <div style="min-width:0;">
+          <h1 class="sd-h1" id="sdName"></h1>
+          <p class="sd-meta" id="sdMeta"></p>
+        </div>
+        <div class="sd-actions">
+          <button class="btn btn-sm btn-alternative" id="sdRecalc"></button>
+          <a class="btn btn-sm btn-alternative" id="sdEdit" href="./segment-builder.html">Edit definition</a>
+          <a class="btn btn-sm btn-alternative" id="sdCompare" href="./segments-compare.html">Compare</a>
+          <button class="btn btn-sm btn-alternative" id="sdMore" aria-haspopup="menu" aria-expanded="false" aria-label="More actions" style="padding:0 8px;min-height:30px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="iris-tab-bar sd-tabs" role="tablist" aria-label="Segment views" id="sdTabs">
+        <button class="iris-tab iris-tab--active" role="tab" id="tab-overview"  aria-controls="p-overview"  aria-selected="true"  tabindex="0"  data-tab="overview">Overview</button>
+        <button class="iris-tab"                   role="tab" id="tab-customers" aria-controls="p-customers" aria-selected="false" tabindex="-1" data-tab="customers">Customer metrics</button>
+        <button class="iris-tab"                   role="tab" id="tab-products"  aria-controls="p-products"  aria-selected="false" tabindex="-1" data-tab="products">Products <span class="iris-tab__counter" id="sdProdN" hidden></span></button>
+        <button class="iris-tab"                   role="tab" id="tab-journey"   aria-controls="p-journey"   aria-selected="false" tabindex="-1" data-tab="journey">Product journey</button>
+      </div>
+    </header>
+
+    <div class="sd-body" id="sdBody">
+      <p class="seg-sr" role="status" aria-live="polite" id="sdLive"></p>
+      <div id="sdAlert"></div>
+
+      <!-- ══ Overview ══ -->
+      <section id="p-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+        <div class="sd-kpis" id="sdKpis" style="margin-bottom:16px;"></div>
+
+        <div class="sd-grid">
+          <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
+            <div class="sd-card">
+              <div class="sd-card__h">
+                <h2 class="sd-card__t">Segment size over time</h2>
+                <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);" id="sdChartNote"></span>
+              </div>
+              <div class="sd-card__b">
+                <svg class="sd-chart" id="sdChart" viewBox="0 0 640 132" preserveAspectRatio="none" role="img" aria-labelledby="sdChartDesc"></svg>
+                <span id="sdChartDesc" class="seg-sr"></span>
+                <div class="sd-legend" id="sdChartLegend"></div>
+              </div>
+            </div>
+
+            <div class="sd-card">
+              <div class="sd-card__h">
+                <h2 class="sd-card__t">Top products in this segment</h2>
+                <button class="btn-link btn-link-medium" data-goto="products" style="margin-left:auto;font-size:12px;">All products →</button>
+              </div>
+              <div id="sdTopWrap"><div class="sd-tw"><table class="sd-t" id="sdTopProd"></table></div></div>
+            </div>
+          </div>
+
+          <div class="sd-card">
+            <div class="sd-card__h">
+              <h2 class="sd-card__t">How this segment is built</h2>
+              <a class="btn-link btn-link-medium" id="sdEdit2" href="./segment-builder.html" style="margin-left:auto;font-size:12px;">Edit</a>
+            </div>
+            <div class="sd-card__b">
+              <div id="sdFunnel"></div>
+              <p style="margin:12px 0 0;font-size:11px;color:var(--seg-muted);line-height:1.5;" id="sdFunnelNote"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ Customer metrics ══ -->
+      <section id="p-customers" role="tabpanel" aria-labelledby="tab-customers" tabindex="0" hidden>
+        <div class="sd-grid">
+          <div class="sd-card">
+            <div class="sd-card__h">
+              <h2 class="sd-card__t">Retention by month since first order</h2><span class="sd-illus">Illustrative</span>
+              <a class="btn-link btn-link-medium" id="sdCohortLink" href="#" style="margin-left:auto;font-size:12px;">View full cohort analysis →</a>
+            </div>
+            <div id="sdRetWrap"><div class="sd-tw"><table class="sd-t" id="sdRet"></table></div></div>
+          </div>
+          <div class="sd-card" id="sdSampleCard">
+            <div class="sd-card__h"><h2 class="sd-card__t">Sample customers</h2><span class="sd-illus">Illustrative</span></div>
+            <div class="sd-card__b" id="sdSample"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ Products ══ -->
+      <section id="p-products" role="tabpanel" aria-labelledby="tab-products" tabindex="0" hidden>
+        <div class="sd-card">
+          <div class="sd-card__h">
+            <h2 class="sd-card__t">Product performance</h2>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+              <div class="iris-search" style="height:32px;">
+                <label for="sdProdQ" class="seg-sr">Search products by SKU or name</label>
+                <span class="iris-search__cell">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+                  <input class="iris-search__input" id="sdProdQ" type="search" placeholder="Search SKU or name…" style="height:30px;font-size:12.5px;">
+                </span>
+              </div>
+              <button class="btn btn-xs btn-alternative" data-export="products">Export CSV</button>
+            </div>
+          </div>
+          <div id="sdProdWrap"><div class="sd-tw"><table class="sd-t" id="sdProd"></table></div></div>
+        </div>
+      </section>
+
+      <!-- ══ Journey ══ -->
+      <section id="p-journey" role="tabpanel" aria-labelledby="tab-journey" tabindex="0" hidden>
+        <div class="sd-card">
+          <div class="sd-card__h"><h2 class="sd-card__t">What customers buy next</h2><span class="sd-illus">Illustrative</span></div>
+          <div class="sd-card__b" id="sdJourneyBody">
+            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;" id="sdJourneyControls">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label" for="sdFirst" style="font-size:11px;">First product</label>
+                <select class="form-select" id="sdFirst" style="height:34px;font-size:13px;min-width:220px;"></select>
+              </div>
+              <div class="form-group" style="margin:0;">
+                <label class="form-label" for="sdJSort" style="font-size:11px;">Sort by</label>
+                <select class="form-select" id="sdJSort" style="height:34px;font-size:13px;min-width:150px;">
+                  <option value="confidence">Confidence</option>
+                  <option value="customers">Customers</option>
+                  <option value="name">Product name</option>
+                </select>
+              </div>
+              <button class="btn btn-sm btn-alternative" data-export="journey" style="margin-bottom:1px;">Export CSV</button>
+            </div>
+            <div id="sdJWrap"><div class="sd-tw"><table class="sd-t" id="sdJourney"></table></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="modalHost"></div>
+
+<script src="./segments-data.js?v=3"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[6]; /* US or CA */
+const HAS_DATA = SEG.c != null && SEG.c > 0;
+
+/* F001 and B009 figures are read from the live Products tab; the rest of the
+   catalogue is scaled to this segment's net sales. Product names are invented —
+   only the SKU codes are real. Logged in SEGMENTS_BA_REVIEW.md. */
+const CATALOG = [
+  { sku:'F001', name:'Cold Brew Concentrate 32oz', share:.452, margin:.653, price:30.37, ret:.001 },
+  { sku:'B009', name:'Vanilla Bean Cold Brew 12pk', share:.121, margin:.661, price:57.73, ret:.000 },
+  { sku:'B018', name:'Texture Powder 8oz',          share:.098, margin:.612, price:42.10, ret:.004 },
+  { sku:'B004', name:'Original Blend 16oz',         share:.087, margin:.588, price:26.40, ret:.007 },
+  { sku:'B005', name:'Decaf Cold Brew 32oz',        share:.071, margin:.641, price:34.95, ret:.002 },
+  { sku:'F014', name:'Starter Kit',                 share:.063, margin:.503, price:64.00, ret:.011 },
+  { sku:'A002', name:'Ceramic Mug',                 share:.041, margin:.702, price:18.00, ret:.003 },
+  { sku:'A007', name:'Reusable Filter',             share:.038, margin:.735, price:12.50, ret:.005 },
+  { sku:'B021', name:'Shampoo Bar',                 share:.029, margin:.556, price:14.00, ret:.019 }
+];
+const PROD = HAS_DATA ? CATALOG.map(p => {
+  const net = SEG.net * p.share, units = Math.round(net / p.price), gp = net * p.margin;
+  return { ...p, net, units, cogs: net - gp, gp, uniq: Math.round(SEG.c * p.share * 2.3) };
+}) : [];
+
+const fmt$  = v => '$' + Math.round(v).toLocaleString('en-US');
+const fmt$2 = v => '$' + v.toFixed(2);
+const fmtN  = v => Math.round(v).toLocaleString('en-US');
+const pct   = v => (v * 100).toFixed(1) + '%';
+const DASH  = '<span style="color:var(--seg-th)"><span class="seg-sr">no value</span><span aria-hidden="true">—</span></span>';
+
+/* ── header ── */
+document.title = `${SEG.n} · Customer Segments · Iris`;
+document.getElementById('sdCrumbName').textContent = SEG.n;
+document.getElementById('sdName').textContent = SEG.n;
+['sdEdit','sdEdit2'].forEach(id => document.getElementById(id).href = `./segment-builder.html?id=${SEG.id}`);
+document.getElementById('sdCompare').href =
+  `./segments-compare.html?ids=${SEG.id},${(SEGMENTS.find(x => x.id !== SEG.id && x.state === 'ready') || SEGMENTS[6]).id}`;
+document.getElementById('sdRecalc').innerHTML =
+  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-4.992 4.992-1.68-1.68a7.5 7.5 0 1 0 1.06 8.964"/></svg>
+   ${SEG.state === 'never' ? 'Calculate' : 'Recalculate'}`;
+
+const STATUS = { never:['gray','grey','Not calculated'], nomatch:['yellow','orange','No customers match'],
+                 stale:['yellow','orange','Stale data'], ready:['green','green','Up to date'] }
+               [SEG.state === 'ready' && SEG.stale ? 'stale' : SEG.state];
+document.getElementById('sdMeta').innerHTML = `
+  <span class="iris-tag ${STATUS[1] === 'green' ? 'seg-ok' : 'iris-tag--' + STATUS[1]}"><span class="indicator-dot indicator-dot-${STATUS[0]}"></span>${STATUS[2]}</span>
+  <span aria-hidden="true" style="color:var(--seg-th)">·</span>
+  <span>${SEG.d ? SEG.d + ' · ' : ''}${SEG.sentence}</span>
+  <span aria-hidden="true" style="color:var(--seg-th)">·</span>
+  <span>${SEG.r ? 'Orders ' + SEG.r : 'No order window set'}</span>
+  <span aria-hidden="true" style="color:var(--seg-th)">·</span>
+  <span>${SEG.state === 'never' ? 'Never calculated' : 'Last calculated ' + relTime(SEG.up)}</span>`;
+
+const danger = SEG.flags.filter(f => f.danger);
+if (danger.length) {
+  const wholeBase = danger.some(f => f.k === 'wholebase');
+  document.getElementById('sdAlert').innerHTML = `
+    <div class="alert alert-danger" role="region" aria-label="Definition problem">
+      <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg></span>
+      <div class="alert-body">
+        <div class="alert-title">${wholeBase ? 'These numbers describe your whole business, not a segment' : 'This segment has a definition problem'}</div>
+        <div>${danger.map(f => f.t).join('. ')}.${wholeBase ? ` It matches ${pct(SEG.share)} of all ${fmtN(BASE)} customers, so the revenue below is total company revenue.` : ''}</div>
+        <a class="btn btn-xs btn-red" href="./segment-builder.html?id=${SEG.id}" style="margin-top:8px;">Fix the definition</a>
+      </div>
+    </div>`;
+}
+
+/* ── KPIs. A calculated-empty segment reports nothing, not "$0.00" as a fact. ── */
+const kpiBox = document.getElementById('sdKpis');
+if (SEG.state === 'never') {
+  kpiBox.hidden = true;
+} else {
+  const KPI = HAS_DATA ? [
+    ['Customers', fmtN(SEG.c), `${pct(SEG.share)} of all customers`, SEG.share >= .95 ? 'warn' : ''],
+    ['Orders',    SEG.o == null ? DASH : fmtN(SEG.o), SEG.o == null ? 'Order data missing' : `${(SEG.o / SEG.c).toFixed(2)} per customer`, SEG.o == null ? 'warn' : ''],
+    ['Net sales', fmt$(SEG.net), SEG.r ? 'in the order window' : 'all history', ''],
+    ['AOV',       SEG.aov ? fmt$2(SEG.aov) : DASH, '', ''],
+    ['Avg LTV',   SEG.ltv < 0 ? '(' + fmt$(Math.abs(SEG.ltv)).slice(1) + ')' : fmt$2(SEG.ltv), SEG.ltv < 0 ? 'Negative — check the LTV definition' : '', SEG.ltv < 0 ? 'bad' : ''],
+    ['Products',  String(PROD.length), '', '']
+  ] : [
+    ['Customers', '0', 'nobody matches the definition', 'warn'],
+    ['Orders',    DASH, 'nothing to measure', ''],
+    ['Net sales', DASH, 'nothing to measure', ''],
+    ['AOV',       DASH, '', ''],
+    ['Avg LTV',   DASH, '', ''],
+    ['Products',  DASH, '', '']
+  ];
+  kpiBox.innerHTML = KPI.map(([l, v, s, m]) =>
+    `<div class="sd-kpi"><div class="sd-kpi__l">${l}</div><div class="sd-kpi__v">${v}</div>
+     ${s ? `<div class="sd-kpi__s ${m ? 'sd-kpi__s--' + m : ''}">${s}</div>` : ''}</div>`).join('');
+}
+
+/* ── conditions ──
+   The earlier version drew a funnel with "drops N customers" per condition. That
+   number is not obtainable: conditions are AND-composed, so there is no ordering, and
+   the drop attributed to each one was an artefact of the order they were typed in.
+   Per-condition counts need a backend endpoint that does not exist, so they are
+   marked unavailable rather than invented. */
+(function conditions() {
+  const rows = [];
+  const push = (lab, sub, n, w, cls) => rows.push(
+    `<div class="sd-fun__row ${cls || ''}">
+       <div class="sd-fun__lab">${lab}${sub ? `<small>${sub}</small>` : ''}</div>
+       <div class="sd-fun__n">${n}</div>
+       ${w == null ? '' : `<div class="sd-fun__bar"><i style="width:${(w * 100).toFixed(1)}%"></i></div>`}
+     </div>`);
+
+  push('Starting universe', SEG.r ? 'Customers with orders ' + SEG.r : 'Every customer, all history', fmtN(BASE), 1);
+  SEG.live.forEach(c => push(c.label, 'a count for this condition alone is not available yet', DASH, null));
+  SEG.broken.forEach(c => push(c.label, 'never given a value, so it matches everyone', fmtN(BASE), 1, 'sd-fun__row--bad'));
+  if (!SEG.live.length && !SEG.broken.length) push('No conditions', 'every customer qualifies', fmtN(BASE), 1, 'sd-fun__row--bad');
+  push('Segment size', SEG.state === 'never' ? 'not calculated yet' : 'measured at the last calculation',
+       SEG.c == null ? DASH : fmtN(SEG.c), SEG.c == null ? null : SEG.c / BASE);
+
+  document.getElementById('sdFunnel').innerHTML = rows.join('');
+  document.getElementById('sdFunnelNote').textContent =
+    SEG.c === 0 ? 'Together these conditions match nobody. Loosen or remove one of them.'
+    : SEG.broken.length ? 'A condition with no value does not filter anything. Give it a value or delete it.'
+    : SEG.c == null ? 'The size appears after the first calculation.'
+    : 'Only the total is measured. A count per individual condition needs a backend endpoint we do not have.';
+})();
+
+/* ── size over time ── */
+(function chart() {
+  const svg = document.getElementById('sdChart'), W = 640, H = 132, P = 6;
+  const desc = document.getElementById('sdChartDesc');
+  if (!HAS_DATA) {
+    const msg = SEG.state === 'never'
+      ? 'This segment has never been calculated, so there is no history to show.'
+      : 'This segment matches no customers, so there is no history to show.';
+    svg.innerHTML = `<text x="16" y="70" fill="#4b5563" font-size="13" font-family="Inter">${msg}</text>`;
+    desc.textContent = msg;
+    document.getElementById('sdChartNote').textContent = '';
+    document.getElementById('sdChartLegend').innerHTML = '';
+    return;
+  }
+  const n = 12, pts = [];
+  for (let i = 0; i < n; i++) pts.push(Math.max(0, Math.round(SEG.c * (1 + Math.sin(i * 1.7) * .06 + (i - n + 1) * .012))));
+  pts[n - 1] = SEG.c;
+  const max = Math.max(...pts, 1);
+  const x = i => P + i * (W - P * 2) / (n - 1);
+  const y = v => H - P - (v / max) * (H - P * 2 - 14);
+  const line = pts.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  svg.innerHTML = `<path d="${line} L${x(n-1).toFixed(1)},${H-P} L${x(0).toFixed(1)},${H-P} Z" fill="var(--color-bg-brand-softer)"/>
+    <path d="${line}" fill="none" stroke="var(--color-bg-primary)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <circle cx="${x(n-1).toFixed(1)}" cy="${y(pts[n-1]).toFixed(1)}" r="3.5" fill="var(--color-bg-primary)"/>`;
+  /* Iris stores no history for a segment, so the shape of this line is a placeholder.
+     The current size is real; the trend is not, and it says so rather than quoting a
+     growth percentage nobody can reproduce. */
+  document.getElementById('sdChartNote').innerHTML = '<span class="sd-illus">Illustrative</span>';
+  desc.textContent = `Placeholder shape for segment size over time. The current size is ${fmtN(SEG.c)} customers; historical values are not stored.`;
+  document.getElementById('sdChartLegend').innerHTML =
+    `<span>Now <strong style="color:var(--color-text-heading)">${fmtN(SEG.c)}</strong></span>
+     <span>Historical sizes are not recorded, so no trend is shown.</span>`;
+})();
+
+/* ── empty states (Carbon: replace the content, keep the page frame) ── */
+function emptyBlock(what) {
+  if (SEG.state === 'never') return `
+    <div class="sd-empty">
+      <h3>This segment has never been calculated</h3>
+      <p>It was created ${relTime(SEG.cr)} but never run, so Iris has no ${what} for it. Calculating takes about a minute.</p>
+      <button class="btn btn-sm btn-primary" data-calc="1">Calculate now</button>
+    </div>`;
+  const killer = SEG.live[SEG.live.length - 1];
+  return `
+    <div class="sd-empty">
+      <h3>No customers match this definition</h3>
+      <p>The segment ran ${relTime(SEG.up)} and returned nobody, so there is no ${what} to show.
+      ${killer ? `The narrowest condition is <strong>${killer.label}</strong>, usually the one to loosen first.` : ''}</p>
+      <div class="sd-why"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>
+        An empty result is not the same as zero revenue</div><br>
+      <a class="btn btn-sm btn-primary" href="./segment-builder.html?id=${SEG.id}">Edit filters</a>
+    </div>`;
+}
+
+/* ── products ── */
+let pSort = { k: 'net', dir: 'desc' }, pQuery = '';
+const PCOLS = [
+  { k:'sku',   l:'SKU',        cell:p => `<span class="sd-sku">${p.sku}</span>` },
+  { k:'name',  l:'Product',    cell:p => p.name },
+  { k:'units', l:'Units',      n:1, cell:p => fmtN(p.units) },
+  { k:'net',   l:'Net sales',  n:1, cell:p => fmt$(p.net) },
+  { k:'cogs',  l:'COGS',       n:1, full:1, cell:p => fmt$(p.cogs) },
+  { k:'gp',    l:'Gross profit', n:1, full:1, cell:p => fmt$(p.gp) },
+  { k:'margin',l:'Margin',     n:1, cell:p => pct(p.margin) },
+  { k:'price', l:'Avg price',  n:1, full:1, cell:p => fmt$2(p.price) },
+  { k:'ret',   l:'Return rate',n:1, full:1, cell:p => pct(p.ret) },
+  { k:'uniq',  l:'Customers',  n:1, full:1, cell:p => fmtN(p.uniq) }
+];
+
+function drawProducts() {
+  const wrap = document.getElementById('sdProdWrap');
+  if (!PROD.length) { wrap.innerHTML = emptyBlock('product data'); return; }
+  const cols = PCOLS;
+  let rows = PROD.filter(p => !pQuery || p.sku.toLowerCase().includes(pQuery) || p.name.toLowerCase().includes(pQuery));
+  rows = [...rows].sort((a, b) => {
+    const A = a[pSort.k], B = b[pSort.k];
+    const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
+    return pSort.dir === 'desc' ? -r : r;
+  });
+  wrap.innerHTML = `<div class="sd-tw"><table class="sd-t" id="sdProd">
+    <thead><tr>${cols.map(c => `<th class="${c.n ? 'n' : ''}" ${pSort.k === c.k ? `aria-sort="${pSort.dir === 'desc' ? 'descending' : 'ascending'}"` : ''}>
+      <button class="sd-sort" data-psort="${c.k}">${c.l} <span class="c" aria-hidden="true">▾</span></button></th>`).join('')}</tr></thead>
+    <tbody>${rows.length ? rows.map(p => `<tr>${cols.map(c => `<td class="${c.n ? 'n' : ''}">${c.cell(p)}</td>`).join('')}</tr>`).join('')
+      : `<tr><td colspan="${cols.length}" style="padding:28px 12px;text-align:center;color:var(--seg-muted);">
+           No products match “${pQuery}”. <button class="btn-link btn-link-medium" id="pClear" style="font-size:12.5px;">Clear search</button></td></tr>`}</tbody>
+    ${rows.length ? `<tfoot><tr>
+      <td colspan="2">Totals</td>
+      <td class="n">${fmtN(rows.reduce((a,b)=>a+b.units,0))}</td>
+      <td class="n">${fmt$(rows.reduce((a,b)=>a+b.net,0))}</td>
+      <td class="n">${fmt$(rows.reduce((a,b)=>a+b.cogs,0))}</td>
+      <td class="n">${fmt$(rows.reduce((a,b)=>a+b.gp,0))}</td>
+      <td class="n">${pct(rows.reduce((a,b)=>a+b.gp,0)/rows.reduce((a,b)=>a+b.net,0))}</td>
+      <td class="n">${fmt$2(rows.reduce((a,b)=>a+b.net,0)/rows.reduce((a,b)=>a+b.units,0))}</td>
+      <td class="n"></td>
+      <td class="n">${pQuery ? DASH : fmtN(SEG.c)}</td></tr></tfoot>` : ''}
+  </table></div>`;
+  document.getElementById('sdLive').textContent = `${rows.length} product${rows.length === 1 ? '' : 's'} shown.`;
+}
+
+function drawTop() {
+  const wrap = document.getElementById('sdTopWrap');
+  if (!PROD.length) { wrap.innerHTML = emptyBlock('product data'); return; }
+  const rows = [...PROD].sort((a, b) => b.net - a.net).slice(0, 5);
+  wrap.innerHTML = `<div class="sd-tw"><table class="sd-t">
+    <thead><tr><th>SKU</th><th>Product</th><th class="n">Units</th><th class="n">Net sales</th><th class="n">Margin</th></tr></thead>
+    <tbody>${rows.map(p => `<tr><td class="sd-sku">${p.sku}</td><td>${p.name}</td>
+      <td class="n">${fmtN(p.units)}</td><td class="n">${fmt$(p.net)}</td><td class="n">${pct(p.margin)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+if (PROD.length) { const c = document.getElementById('sdProdN'); c.hidden = false; c.textContent = PROD.length; }
+drawTop(); drawProducts();
+
+/* ── customer metrics ── */
+(function customers() {
+  const link = document.getElementById('sdCohortLink');
+  link.addEventListener('click', e => { e.preventDefault(); toast('Cohorts', `Opening the full cohort analysis filtered to “${SEG.n}”.`); });
+  if (!HAS_DATA) {
+    document.getElementById('sdRetWrap').innerHTML = emptyBlock('retention data');
+    document.getElementById('sdSampleCard').hidden = true;
+    return;
+  }
+  const months = ['M0','M1','M2','M3','M4','M5','M6'];
+  const curve  = [100, 31, 22, 18, 15, 13, 12];
+  document.getElementById('sdRet').innerHTML = `
+    <thead><tr><th>Cohort</th>${months.map(m => `<th class="n">${m}</th>`).join('')}</tr></thead>
+    <tbody>${['Mar 2026','Apr 2026','May 2026','Jun 2026'].map((c, ci) => `<tr><td>${c}</td>
+      ${curve.map((v, i) => {
+        /* M0 is 100% by definition; only later months vary */
+        const val = i > months.length - 1 - ci ? null : (i === 0 ? 100 : Math.max(0, v - ci * 0.8 - i * 0.3));
+        return `<td class="n">${val == null ? DASH
+          : `<span class="iris-cohort-badge iris-cohort-badge--${Math.min(100, Math.round(val / 10) * 10)}">${val.toFixed(0)}%</span>`}</td>`;
+      }).join('')}</tr>`).join('')}</tbody>`;
+
+  const names = ['A. Whitfield','M. Okafor','J. Lindqvist','R. Baptiste','S. Nakamura'];
+  document.getElementById('sdSample').innerHTML = names.map((n, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--color-border-light);">
+      <span class="avatar avatar-sm" style="background:var(--color-bg-brand-softer);color:var(--color-text-fg-brand-strong);font-weight:600;font-size:11px;">${n.split(' ')[1][0]}${n[0]}</span>
+      <div style="min-width:0;">
+        <div style="font-size:12.5px;font-weight:600;color:var(--color-text-heading);">${n}</div>
+        <div style="font-size:11px;color:var(--seg-muted);">${2 + i} orders · ${fmt$2(SEG.aov * (0.8 + i * 0.12))} AOV · qualifies on ${(SEG.live[0] || { label:'the order window' }).label}</div>
+      </div>
+    </div>`).join('') +
+    `<p class="sd-note">Example profiles, not real customers. 5 of ${fmtN(SEG.c)} in the segment. Sampling lets you sanity-check a definition before trusting the totals.</p>`;
+})();
+
+/* ── journey ── */
+function drawJourney() {
+  const wrap = document.getElementById('sdJWrap');
+  if (!PROD.length) { wrap.innerHTML = emptyBlock('purchase-sequence data'); document.getElementById('sdJourneyControls').hidden = true; return; }
+  const first = document.getElementById('sdFirst').value;
+  const sort  = document.getElementById('sdJSort').value;
+  let rest = PROD.filter(p => p.sku !== first);
+  const tot = rest.reduce((a, b) => a + b.share, 0);
+  rest = rest.map((p, i) => ({ ...p, conf: p.share / tot * (0.62 - i * 0.03) }));
+  /* Take the top six by confidence first, then order them. Sorting before slicing
+     changed which products appeared, not just their order. */
+  rest = rest.sort((a, b) => b.conf - a.conf).slice(0, 6)
+             .sort((a, b) => sort === 'name' ? a.name.localeCompare(b.name) : b.conf - a.conf);
+  wrap.innerHTML = `<div class="sd-tw"><table class="sd-t">
+    <thead><tr><th>Next product</th><th class="n">Customers</th><th class="n">Confidence</th><th style="width:160px;"><span class="seg-sr">Share</span></th></tr></thead>
+    <tbody>${rest.map(p => `<tr><td><span class="sd-sku">${p.sku}</span> ${p.name}</td>
+      <td class="n">${fmtN(SEG.c * p.conf)}</td><td class="n">${pct(p.conf)}</td>
+      <td><span class="progress progress-sm" role="img" aria-label="${pct(p.conf)}"><span class="progress-bar progress-bar-primary" style="width:${(p.conf * 100).toFixed(1)}%"></span></span></td></tr>`).join('')}</tbody></table></div>`;
+}
+if (PROD.length) {
+  document.getElementById('sdFirst').innerHTML = PROD.map(p => `<option value="${p.sku}">${p.sku} — ${p.name}</option>`).join('');
+  document.getElementById('sdFirst').addEventListener('change', drawJourney);
+  document.getElementById('sdJSort').addEventListener('change', drawJourney);
+}
+drawJourney();
+
+/* ── toast + modal (no window.alert anywhere) ── */
+function toast(title, msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="toast-icon toast-icon-success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></span>
+    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
+    <button class="toast-close" aria-label="Dismiss">✕</button>`;
+  el.querySelector('.toast-close').onclick = () => el.remove();
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+function modal({ title, body, confirmLabel, danger, onConfirm }) {
+  const host = document.getElementById('modalHost'), opener = document.activeElement;
+  host.innerHTML = `<div class="seg-modal-backdrop"><div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="mdT">
+      <div class="modal-header"><h2 class="modal-title" id="mdT">${title}</h2><button class="modal-close" data-md="x" aria-label="Close">✕</button></div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-footer"><button class="btn btn-sm btn-alternative" data-md="x">Cancel</button>
+        <button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok">${confirmLabel}</button></div></div></div>`;
+  const f = () => [...host.querySelectorAll('button')];
+  const close = () => { host.innerHTML = ''; document.removeEventListener('keydown', onKey); opener?.focus?.(); };
+  const onKey = e => {
+    if (e.key === 'Escape') return close();
+    if (e.key !== 'Tab') return;
+    const els = f(), first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  document.addEventListener('keydown', onKey);
+  host.querySelector('[data-md="x"].btn').focus();
+  host.onclick = e => {
+    if (e.target.closest('[data-md="ok"]')) { const fn = onConfirm; close(); fn(); }
+    else if (e.target.closest('[data-md="x"]') || e.target.classList.contains('seg-modal-backdrop')) close();
+  };
+}
+
+/* ── tabs, APG pattern, state in the URL ── */
+const tabs = [...document.querySelectorAll('#sdTabs [role=tab]')];
+function show(name, push) {
+  tabs.forEach(t => {
+    const on = t.dataset.tab === name;
+    t.classList.toggle('iris-tab--active', on);
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById('p-' + t.dataset.tab).hidden = !on;
+  });
+  if (push) history.replaceState(null, '', `?id=${SEG.id}#${name}`);
+  document.getElementById('sdLive').textContent = `${name} tab shown.`;
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => show(t.dataset.tab, true));
+  t.addEventListener('keydown', e => {
+    const map = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    const nx = tabs[(map[e.key] + tabs.length) % tabs.length];
+    show(nx.dataset.tab, true); nx.focus();
+  });
+});
+show((location.hash || '#overview').slice(1), false);
+
+/* ── header actions ── */
+document.getElementById('sdRecalc').addEventListener('click', e => {
+  const b = e.currentTarget, label = b.innerHTML;
+  b.disabled = true; b.textContent = SEG.state === 'never' ? 'Calculating…' : 'Recalculating…';
+  const first = SEG.state === 'never';
+  setTimeout(() => {
+    if (first) {
+      /* Record the outcome and rebuild the page from it. Announcing a result while
+         the page still read "Never calculated" was a lie. */
+      markCalculated(SEG.id); location.reload(); return;
+    }
+    b.disabled = false; b.innerHTML = label;
+    toast(`${SEG.n} recalculated`, HAS_DATA ? `${fmtN(SEG.c)} customers match.` : 'No customers match this definition.');
+  }, 1500);
+});
+document.getElementById('sdMore').addEventListener('click', e => {
+  const btn = e.currentTarget;
+  if (btn.getAttribute('aria-expanded') === 'true') { closeMenu(); return; }
+  const m = document.createElement('div');
+  m.className = 'sd-menu'; m.setAttribute('role', 'menu');
+  m.innerHTML = `<button class="sd-menu__i" role="menuitem" data-act="dup">Duplicate</button>
+    <button class="sd-menu__i" role="menuitem" data-act="export">Export emails</button>
+    <button class="sd-menu__i" role="menuitem" data-act="archive">Archive</button>
+    <button class="sd-menu__i sd-menu__i--danger" role="menuitem" data-act="del">Delete</button>`;
+  btn.parentElement.appendChild(m);
+  btn.setAttribute('aria-expanded', 'true');
+  const items = [...m.querySelectorAll('.sd-menu__i')];
+  items.forEach((it, i) => it.tabIndex = i ? -1 : 0); items[0].focus();
+  m.addEventListener('keydown', ev => {
+    const i = items.indexOf(document.activeElement);
+    if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') { ev.preventDefault(); items[(i + (ev.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus(); }
+    if (ev.key === 'Escape' || ev.key === 'Tab') { closeMenu(); btn.focus(); }
+  });
+  m.onclick = ev => {
+    const a = ev.target.closest('[data-act]'); if (!a) return;
+    closeMenu();
+    if (a.dataset.act === 'dup')     toast('Segment duplicated', `“${SEG.n} (copy)” is ready to edit.`);
+    if (a.dataset.act === 'export')  toast('Export started', `Emails for “${SEG.n}” will arrive by email.`);
+    if (a.dataset.act === 'archive') toast('Segment archived', `“${SEG.n}” stops recalculating.`);
+    if (a.dataset.act === 'del') modal({
+      title: 'Delete this segment?', danger: true, confirmLabel: 'Delete segment',
+      body: `<p style="margin:0;font-size:13px;color:#374151;">“<strong>${SEG.n}</strong>” will be removed for everyone. Reports built on it will stop working. This cannot be undone.</p>`,
+      onConfirm: () => { toast('Segment deleted', `“${SEG.n}” was removed.`); setTimeout(() => location.href = './segments.html', 900); }
+    });
+  };
+});
+function closeMenu() {
+  document.querySelectorAll('.sd-menu').forEach(m => m.remove());
+  document.getElementById('sdMore').setAttribute('aria-expanded', 'false');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.sd-menu') && !e.target.closest('#sdMore')) closeMenu();
+  const g = e.target.closest('[data-goto]');
+  if (g) { show(g.dataset.goto, true); document.getElementById('tab-' + g.dataset.goto).focus(); }
+  if (e.target.closest('[data-calc]')) { document.getElementById('sdRecalc').click(); }
+  const ex = e.target.closest('[data-export]');
+  if (ex) toast('Export started', `The ${ex.dataset.export} table for “${SEG.n}” is being prepared as CSV.`);
+  const ps = e.target.closest('[data-psort]');
+  if (ps) { const k = ps.dataset.psort; pSort = { k, dir: pSort.k === k && pSort.dir === 'desc' ? 'asc' : 'desc' }; drawProducts(); }
+  if (e.target.closest('#pClear')) { pQuery = ''; document.getElementById('sdProdQ').value = ''; drawProducts(); }
+});
+document.getElementById('sdProdQ').addEventListener('input', e => { pQuery = e.target.value.trim().toLowerCase(); drawProducts(); });
+
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const b = document.getElementById('sdBody'); b.setAttribute('tabindex', '-1'); b.focus();
+});
+document.getElementById('segBurger').addEventListener('click', e => {
+  const side = document.getElementById('appSidebar');
+  const open = side.dataset.open === '1';
+  side.dataset.open = open ? '0' : '1';
+  e.currentTarget.setAttribute('aria-expanded', String(!open));
+});
+initSidebar();
+</script>
+</body>
+</html>

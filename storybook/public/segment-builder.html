@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New segment · Iris redesign prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="./iris-tokens.css">
+<link rel="stylesheet" href="./iris-components.css">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./segments-proto.css">
+<!--
+  The existing builder already has the right bones: WHO / WHAT / HOW, a starting
+  universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
+  not have and is added here: a count under every condition, the estimate as a share
+  of the base, a duplicate check, and a choice between an auto-updating segment and
+  a frozen snapshot.
+-->
+<style>
+  .sb-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 12px 24px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 30; flex-wrap: wrap; }
+  .sb-h1 { margin: 0; font-size: 18px; font-weight: 700; color: var(--color-text-heading); }
+  .sb-head__end { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+  .sb-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; padding: 20px 24px 60px; align-items: start; max-width: 1240px; }
+  @media (max-width: 1080px) { .sb-body { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .sb-head, .sb-body { padding-left: 14px; padding-right: 14px; } }
+
+  .sb-card { background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); margin-bottom: 16px; }
+  .sb-card__h { padding: 12px 16px; border-bottom: 1px solid var(--color-border-light); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .sb-card__t { margin: 0; font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sb-card__b { padding: 14px 16px; }
+
+  .sb-cond { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid var(--color-border-light); border-radius: var(--radius-md); }
+  .sb-cond--bad { border-color: var(--color-border-danger); background: #fff8f8; }
+  .sb-cond__main { flex: 1; min-width: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .sb-cond__name { font-size: 12.5px; font-weight: var(--font-semibold); color: var(--color-text-heading); min-width: 118px; }
+  .sb-cond__n { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--seg-muted); white-space: nowrap; }
+  .sb-cond__n b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
+  /* the operator is visible but never louder than the condition it joins */
+  .sb-op { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--seg-th); padding: 6px 0 6px 10px; }
+  .sb-x { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; min-height: 26px; border: 0; background: none; color: var(--seg-th); cursor: pointer; font-size: 14px; line-height: 1; border-radius: 4px; }
+  .sb-x:hover { background: var(--color-bg-muted); color: var(--color-text-fg-danger); }
+
+  .sb-add { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+  .sb-add__g { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--seg-th); font-weight: var(--font-semibold); margin: 12px 0 6px; grid-column: 1 / -1; }
+  .sb-add__b { display: flex; align-items: center; gap: 6px; padding: 7px 9px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-bg-white); font-size: 12.5px; color: var(--color-text-heading); cursor: pointer; text-align: left; }
+  .sb-add__b:hover { border-color: var(--color-bg-primary); color: var(--color-bg-primary); }
+  .sb-add__b[disabled] { opacity: .45; cursor: not-allowed; }
+
+  .sb-rail { position: sticky; top: 70px; }
+  .sb-est { text-align: center; padding: 18px 16px 14px; }
+  .sb-est__n { font-size: 34px; font-weight: 800; color: var(--color-text-heading); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .sb-est__l { font-size: 12px; color: var(--seg-muted); margin-top: 2px; }
+  .sb-est__bar { height: 8px; border-radius: 4px; background: var(--color-bg-muted); overflow: hidden; margin: 12px 0 6px; }
+  .sb-est__bar i { display: block; height: 100%; background: var(--color-bg-primary); transition: width .25s ease; }
+  .sb-est__share { font-size: 11px; color: var(--seg-muted); }
+  .sb-est__share b { color: var(--color-text-heading); }
+  .sb-est--warn .sb-est__bar i { background: var(--color-bg-danger); }
+
+  .sb-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--color-border-light); border-top: 1px solid var(--color-border-light); margin: 0; }
+  .sb-mini > div { background: var(--color-bg-white); padding: 10px 12px; }
+  .sb-mini dt { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--seg-th); font-weight: var(--font-semibold); }
+  .sb-mini dd { margin: 2px 0 0; font-size: 15px; font-weight: 700; color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
+
+  .sb-sample { padding: 10px 14px 14px; }
+  .sb-sample__i { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid var(--color-border-light); }
+  .sb-sample__i:last-child { border-bottom: 0; }
+
+  .sb-tpl { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+  .sb-tpl__c { text-align: left; padding: 10px 12px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-bg-white); cursor: pointer; }
+  .sb-tpl__c:hover { border-color: var(--color-bg-primary); }
+  .sb-tpl__c b { display: block; font-size: 12.5px; color: var(--color-text-heading); }
+  .sb-tpl__c span { font-size: 11px; color: var(--seg-muted); }
+
+  .sb-modecards { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sb-modecards .iris-radio-card { flex: 1; min-width: 230px; display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+</style>
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;">
+<a class="seg-skip" href="#" id="skipLink">Skip to the definition</a>
+<div class="seg-app">
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse navigation" aria-expanded="true" aria-controls="appSidebar" style="margin-left:auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span><span>P&amp;L</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span><span>Inventory</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span><span>Reporting</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="sb-head">
+      <button class="seg-burger" id="segBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="appSidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+      </button>
+      <a class="btn btn-sm btn-alternative" href="./segments.html" id="sbBack">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+        Back
+      </a>
+      <h1 class="sb-h1" id="sbTitle">New segment</h1>
+      <div class="sb-head__end">
+        <button class="btn btn-sm btn-alternative" id="sbUndo" aria-label="Undo" title="Undo" disabled style="padding:0 9px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
+        </button>
+        <button class="btn btn-sm btn-alternative" id="sbRedo" aria-label="Redo" title="Redo" disabled style="padding:0 9px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3"/></svg>
+        </button>
+        <span id="sbDirty" class="iris-tag iris-tag--grey" style="font-size:11px;">Not saved</span>
+        <button class="btn btn-sm btn-alternative" id="sbCancel">Cancel</button>
+        <button class="btn btn-sm btn-primary" id="sbSave" disabled>Save segment</button>
+      </div>
+    </header>
+
+    <div class="sb-body" id="sbBody">
+      <div>
+        <p class="seg-sr" role="status" aria-live="polite" id="sbLive"></p>
+        <div id="sbWarn"></div>
+
+        <div class="sb-card">
+          <div class="sb-card__h"><h2 class="sb-card__t">Name and description</h2></div>
+          <div class="sb-card__b">
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label" for="sbName">Segment name</label>
+              <input class="form-input" id="sbName" type="text" placeholder="e.g. California high spenders" autocomplete="off" aria-describedby="sbNameHelp">
+              <p class="form-helper" id="sbNameHelp">Used everywhere this segment appears. Two segments may not share a name.</p>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label" for="sbDesc">Description</label>
+              <textarea class="form-textarea" id="sbDesc" rows="2" placeholder="What is this segment for?"></textarea>
+              <p class="form-helper">
+                <button class="btn-link btn-link-medium" id="sbGen" style="font-size:12px;padding:0;">Write it from the definition</button>
+                — describes the conditions in plain language so the list stays readable.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card__h">
+            <h2 class="sb-card__t">Starting universe</h2>
+            <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);">Everything below narrows this set</span>
+          </div>
+          <div class="sb-card__b">
+            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+              <div class="form-group" style="margin:0;">
+                <label class="form-label" for="sbRange">Order window</label>
+                <select class="form-select" id="sbRange" style="min-width:190px;">
+                  <option value="30">Last 30 days</option>
+                  <option value="90" selected>Last 90 days</option>
+                  <option value="180">Last 180 days</option>
+                  <option value="365">Last 12 months</option>
+                  <option value="0">All time</option>
+                  <option value="custom">Custom range…</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin:0;" id="sbFromWrap" hidden>
+                <label class="form-label" for="sbFrom">Start date</label>
+                <input class="form-input" id="sbFrom" type="date" value="2026-06-03" style="min-width:150px;">
+              </div>
+              <div class="form-group" style="margin:0;" id="sbToWrap" hidden>
+                <label class="form-label" for="sbTo">End date</label>
+                <input class="form-input" id="sbTo" type="date" value="2026-09-01" style="min-width:150px;">
+              </div>
+            </div>
+            <p style="margin:10px 0 0;font-size:12px;color:var(--seg-muted);" id="sbUniverse"></p>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card__h">
+            <h2 class="sb-card__t">Conditions</h2>
+            <label class="seg-sr" for="sbJoin">How conditions combine</label>
+            <select class="form-select" id="sbJoin" style="height:30px;font-size:12px;width:auto;padding-right:32px;">
+              <option value="all">Match all of them</option>
+              <option value="any">Match any of them</option>
+            </select>
+            <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);" id="sbCondN"></span>
+          </div>
+          <div class="sb-card__b">
+            <div id="sbConds"></div>
+            <div class="sb-add" id="sbAdd"></div>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card__h"><h2 class="sb-card__t">How this segment stays current</h2></div>
+          <div class="sb-card__b sb-modecards">
+            <!-- The choice the current product never offers, which is why 8 segments sat
+                 uncalculated and 22 more are serving data from last year. -->
+            <label class="iris-radio-card iris-radio-card--selected" for="modeAuto">
+              <span class="iris-radio iris-radio--checked" aria-hidden="true"></span>
+              <input type="radio" name="sbMode" id="modeAuto" value="auto" checked class="seg-sr">
+              <span>
+                <b style="display:block;font-size:12.5px;color:var(--color-text-heading);">Recalculate nightly</b>
+                <span style="font-size:11.5px;color:var(--seg-muted);">A new version is written each night. Older versions stay readable, so a number you quoted last week still resolves.</span>
+              </span>
+            </label>
+            <label class="iris-radio-card" for="modeSnap">
+              <span class="iris-radio" aria-hidden="true"></span>
+              <input type="radio" name="sbMode" id="modeSnap" value="snapshot" class="seg-sr">
+              <span>
+                <b style="display:block;font-size:12.5px;color:var(--color-text-heading);">Calculate on demand</b>
+                <span style="font-size:11.5px;color:var(--seg-muted);">Runs only when someone asks for it. Use it for a fixed list you want to measure against.</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="sb-card__h">
+            <h2 class="sb-card__t">Start from a template</h2>
+            <label class="seg-sr" for="sbTplCat">Template category</label>
+            <select class="form-select" id="sbTplCat" style="height:30px;font-size:12px;width:auto;padding-right:32px;margin-left:auto;">
+              <option value="">All categories</option>
+              <option>Retention</option><option>Acquisition</option><option>Revenue</option>
+            </select>
+          </div>
+          <div class="sb-card__b"><div class="sb-tpl" id="sbTpl"></div></div>
+        </div>
+      </div>
+
+      <div class="sb-rail">
+        <div class="sb-card" style="margin-bottom:12px;" id="sbEstCard">
+          <div class="sb-card__h"><h2 class="sb-card__t">Estimated audience</h2>
+            <span class="iris-tag iris-tag--grey" style="margin-left:auto;font-size:10px;">estimate</span></div>
+          <div class="sb-est">
+            <div class="sb-est__n" id="sbEstN">—</div>
+            <div class="sb-est__l">customers match</div>
+            <div class="sb-est__bar"><i id="sbEstBar" style="width:100%"></i></div>
+            <div class="sb-est__share" id="sbEstShare"></div>
+          </div>
+          <dl class="sb-mini" id="sbMini"></dl>
+        </div>
+
+        <div class="sb-card" style="margin-bottom:12px;">
+          <div class="sb-card__h"><h2 class="sb-card__t">Sample of who qualifies</h2></div>
+          <div class="sb-sample" id="sbSample"></div>
+        </div>
+
+        <p style="font-size:11px;color:var(--seg-muted);line-height:1.55;margin:0;">
+          Counts are estimated from the last nightly calculation and can differ from the
+          final size by a few percent. The exact number is written when the segment first runs.
+        </p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="modalHost"></div>
+
+<script src="./segments-data.js?v=3"></script>
+<script>
+const CATALOG = {
+  WHO: [
+    { k:'ctype',  n:'Customer type',      ctl:['select', ['First-time customers','Returning customers']], f:.31 },
+    { k:'geo',    n:'Geography',          ctl:['select', ['United States','Canada','United Kingdom','Australia']], f:.42 },
+    { k:'pct',    n:'Percentile rank',    ctl:['select', ['Top 10% by revenue','Top 25% by order count','Bottom 50% by revenue']], f:.19 },
+    { k:'subs',   n:'Subscriber status',  ctl:['select', ['Subscribers only','Non-subscribers only']], f:.27 }
+  ],
+  WHAT: [
+    { k:'sku',    n:'SKU',                ctl:['select', ['F001','B009','B018','B004','B005']], f:.36 },
+    { k:'fam',    n:'Product family',     ctl:['select', ['Cold Brew','Powders','Accessories']], f:.48 }
+  ],
+  HOW: [
+    { k:'value',  n:'Order value',        ctl:['num', 'greater than $'], f:.44 },
+    { k:'disc',   n:'Discount',           ctl:['num', 'greater than %'], f:.38 },
+    { k:'refund', n:'Refunds',            ctl:['select', ['No refunds','Has refunds']], f:.86 },
+    { k:'chan',   n:'Sales channels',     ctl:['select', ['Shopify','Amazon','Wholesale','Retail','TikTok']], f:.63 },
+    { k:'tag',    n:'Order tag',          ctl:['select', ['gift','subscription','vip','wholesale']], f:.22 },
+    { k:'whole',  n:'Wholesale',          ctl:['select', ['Wholesale only','Exclude wholesale']], f:.71 },
+    { k:'subord', n:'Subscription orders',ctl:['select', ['Subscription orders only','Exclude subscriptions']], f:.33 }
+  ]
+};
+const ALL = Object.values(CATALOG).flat();
+const TEMPLATES = [
+  { n:'High-value repeat buyers',  d:'Returning · orders over $100',    cat:'Revenue',     c:[['ctype','Returning customers'],['value','100']] },
+  { n:'At-risk subscribers',       d:'Subscribers · has refunds',       cat:'Retention',   c:[['subs','Subscribers only'],['refund','Has refunds']] },
+  { n:'Discount-driven first buy', d:'First-time · discount over 20%',  cat:'Acquisition', c:[['ctype','First-time customers'],['disc','20']] },
+  { n:'Top decile by revenue',     d:'Top 10% by revenue',              cat:'Revenue',     c:[['pct','Top 10% by revenue']] }
+];
+
+/* Edit mode: the list, the detail page and the row menu all link here with ?id */
+const EDIT = SEGMENTS.find(s => s.id === new URLSearchParams(location.search).get('id')) || null;
+
+let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: '', desc: '', mode: 'auto', join: 'all' };
+let touched = false;   /* opening a segment for editing is not a change to it */
+if (EDIT) {
+  document.title = `Edit ${EDIT.n} · Iris`;
+  document.getElementById('sbTitle').textContent = `Edit “${EDIT.n}”`;
+  document.getElementById('sbSave').textContent = 'Save changes';
+  state.name = EDIT.n;
+  state.desc = EDIT.d || '';
+  state.range = 0;
+  /* map the live segment's conditions onto the catalogue where the type is recognisable */
+  /* Only the condition TYPE can be recovered from the list payload; the stored value
+     is not in it. Guessing one silently rewrote people's segments on the first Save,
+     so the type is loaded and the value is left empty for the user to confirm. */
+  const typeOf = raw =>
+      /SKU/i.test(raw) ? 'sku' : /product famil/i.test(raw) ? 'fam'
+    : /First-time|Returning/i.test(raw) ? 'ctype' : /Geography|postal code/i.test(raw) ? 'geo'
+    : /Top \d+%/i.test(raw) ? 'pct' : /Subscriber/i.test(raw) ? 'subs'
+    : /Order value/i.test(raw) ? 'value' : /Discount/i.test(raw) ? 'disc'
+    : /refund/i.test(raw) ? 'refund' : /sales channel/i.test(raw) ? 'chan'
+    : /tag/i.test(raw) ? 'tag' : null;
+  EDIT.conds.forEach(c => {
+    const k = typeOf(c.raw);
+    if (k && !state.conds.some(x => x.k === k)) state.conds.push({ k, v: '' });
+  });
+  /* the order window is part of the definition and must survive the round trip */
+  if (EDIT.r) {
+    const m = EDIT.r.match(/^(.+?) to (.+)$/);
+    if (m) {
+      const iso = d => { const x = new Date(d); return isNaN(x) ? null : x.toISOString().slice(0, 10); };
+      const a = iso(m[1]), b = iso(m[2]);
+      if (a && b) { state.range = 'custom'; state.from = a; state.to = b; }
+    }
+  }
+}
+
+const fmtN = v => Math.round(v).toLocaleString('en-US');
+const fmt$ = v => '$' + Math.round(v).toLocaleString('en-US');
+
+/* ── undo / redo ── */
+const history_ = { past: [], future: [] };
+const snapshot = () => JSON.parse(JSON.stringify(state));
+function commit(fn) {
+  touched = true;
+  history_.past.push(snapshot());
+  if (history_.past.length > 50) history_.past.shift();
+  history_.future.length = 0;
+  fn();
+  render();
+}
+function undo() { if (!history_.past.length) return; history_.future.push(snapshot()); state = history_.past.pop(); syncInputs(); render(); }
+function redo() { if (!history_.future.length) return; history_.past.push(snapshot()); state = history_.future.pop(); syncInputs(); render(); }
+function syncInputs() {
+  document.getElementById('sbName').value = state.name;
+  document.getElementById('sbDesc').value = state.desc;
+  document.getElementById('sbRange').value = String(state.range);
+  document.getElementById('sbJoin').value = state.join;
+}
+
+function rangeValid() {
+  return state.range !== 'custom' || (new Date(state.to) > new Date(state.from));
+}
+function windowDays() {
+  if (state.range === 'custom') return (new Date(state.to) - new Date(state.from)) / 864e5;
+  return state.range;
+}
+const universeSize = () => {
+  if (!rangeValid()) return null;          /* no estimate at all beats a wrong one */
+  const d = windowDays();
+  return d === 0 ? BASE : Math.round(BASE * (0.34 + Math.min(d, 365) / 365 * 0.62));
+};
+function estimate() {
+  let n = universeSize();
+  if (n == null) return { n: null, steps: [] };
+  const steps = [n];
+  if (state.join === 'any' && state.conds.length) {
+    /* any-of unions rather than narrows */
+    const filled = state.conds.filter(c => c.v !== '' && c.v != null);
+    const keep = filled.length ? 1 - filled.reduce((a, c) => a * (1 - ALL.find(x => x.k === c.k).f), 1) : 1;
+    n = Math.round(universeSize() * keep);
+    state.conds.forEach(() => steps.push(n));
+  } else {
+    state.conds.forEach(c => {
+      const def = ALL.find(a => a.k === c.k);
+      n = Math.round(n * ((c.v !== '' && c.v != null) ? def.f : 1));
+      steps.push(n);
+    });
+  }
+  return { n, steps };
+}
+
+/* negative, fractional and absurd values were accepted and saved */
+const badNum = v => v !== '' && v != null && (!/^\d+$/.test(String(v)) || +v > 1000000);
+
+function condRow(c, i, steps) {
+  const def = ALL.find(a => a.k === c.k);
+  const [kind, arg] = def.ctl;
+  const filled = c.v !== '' && c.v != null;
+  const id = `cond-${i}`;
+  const ctl = kind === 'select'
+    ? `<select class="form-select" id="${id}" data-v="${i}" style="min-width:190px;height:32px;font-size:12.5px;">
+         <option value="">Choose a value…</option>${arg.map(o => `<option ${c.v === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
+    : `<span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--seg-muted);">${arg}
+         <input class="form-input" id="${id}" data-v="${i}" type="number" min="0" max="1000000" step="1"
+           value="${c.v === '' || c.v == null ? '' : esc(c.v)}" placeholder="0"
+           aria-describedby="${badNum(c.v) ? id + '-err' : ''}"
+           style="width:92px;height:32px;font-size:12.5px;${badNum(c.v) ? 'border-color:var(--color-border-danger)' : ''}"></span>
+       ${badNum(c.v) ? `<span class="form-feedback-error" id="${id}-err" style="font-size:11px;">Enter a whole number between 0 and 1,000,000</span>` : ''}`;
+  const drop = steps[i] - steps[i + 1];
+  return `${i ? `<div class="sb-op">${state.join === 'any' ? 'or' : 'and'}</div>` : ''}
+    <div class="sb-cond ${filled ? '' : 'sb-cond--bad'}">
+      <div class="sb-cond__main">
+        <label class="sb-cond__name" for="${id}">${def.n}</label>
+        ${ctl}
+        <span class="sb-cond__n">${filled
+          ? (state.join === 'any' ? `<b>${fmtN(steps[i + 1])}</b> in the union` : `<b>${fmtN(steps[i + 1])}</b> left · drops ${fmtN(drop)}`)
+          : '<span style="color:var(--color-text-fg-danger)">no value — filters nobody</span>'}</span>
+      </div>
+      <button class="sb-x" data-x="${i}" aria-label="Remove the ${def.n} condition">✕</button>
+    </div>`;
+}
+
+function render() {
+  const { n, steps } = estimate();
+  const uni = universeSize();
+
+  document.getElementById('sbFromWrap').hidden = document.getElementById('sbToWrap').hidden = state.range !== 'custom';
+  const badRange = state.range === 'custom' && !(new Date(state.to) > new Date(state.from));
+  document.getElementById('sbUniverse').textContent = badRange
+    ? 'The end date must be after the start date.'
+    : state.range === 'custom'
+      ? `${fmtN(uni)} customers placed an order between ${state.from} and ${state.to}.`
+      : `${fmtN(uni)} customers placed an order in this window.`;
+  document.getElementById('sbUniverse').style.color = badRange ? 'var(--color-text-fg-danger)' : '';
+
+  document.getElementById('sbConds').innerHTML = state.conds.length
+    ? state.conds.map((c, i) => condRow(c, i, steps)).join('')
+    : `<p style="margin:0 0 12px;font-size:12.5px;color:var(--seg-muted);">No conditions yet — this segment would include every customer in the window. Add at least one.</p>`;
+  document.getElementById('sbCondN').textContent = state.conds.length ? `${state.conds.length} condition${state.conds.length > 1 ? 's' : ''}` : '';
+
+  document.getElementById('sbAdd').innerHTML = Object.entries(CATALOG).map(([g, items]) =>
+    `<div class="sb-add__g">${g}</div>` + items.map(it =>
+      `<button class="sb-add__b" data-add="${it.k}" ${state.conds.some(c => c.k === it.k) ? 'disabled' : ''}>
+         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+         ${it.n}</button>`).join('')).join('');
+
+  const cat = document.getElementById('sbTplCat').value;
+  document.getElementById('sbTpl').innerHTML = TEMPLATES
+    .map((t, i) => [t, i]).filter(([t]) => !cat || t.cat === cat)
+    .map(([t, i]) => `<button class="sb-tpl__c" data-tpl="${i}"><b>${t.n}</b><span>${t.d}</span></button>`).join('');
+
+  const share = n / BASE;
+  document.getElementById('sbEstCard').classList.toggle('sb-est--warn', share >= .95);
+  document.getElementById('sbEstN').textContent = fmtN(n);
+  document.getElementById('sbEstBar').style.width = Math.max(1, share * 100) + '%';
+  document.getElementById('sbEstShare').innerHTML = share >= .95
+    ? `<b style="color:var(--color-text-fg-danger)">${(share * 100).toFixed(0)}% of all ${fmtN(BASE)} customers</b> — this is not a segment yet`
+    : `<b>${(share * 100).toFixed(share < .1 ? 1 : 0)}%</b> of all ${fmtN(BASE)} customers`;
+
+  const aov = 52 + (1 - share) * 26;
+  document.getElementById('sbMini').innerHTML = `
+    <div><dt>Orders</dt><dd>${fmtN(n * 1.06)}</dd></div>
+    <div><dt>AOV</dt><dd>$${aov.toFixed(2)}</dd></div>
+    <div><dt>Net sales</dt><dd>${fmt$(n * 1.06 * aov)}</dd></div>
+    <div><dt>Avg LTV</dt><dd>$${(aov * 2.7).toFixed(0)}</dd></div>`;
+
+  const names = ['A. Whitfield','M. Okafor','J. Lindqvist','R. Baptiste'];
+  document.getElementById('sbSample').innerHTML = n === 0
+    ? `<p style="margin:0;font-size:12px;color:var(--seg-muted);">Nobody matches yet. Loosen the condition that drops the count to zero.</p>`
+    : names.map((nm, i) => `<div class="sb-sample__i">
+        <span class="avatar avatar-sm" style="background:var(--color-bg-brand-softer);color:var(--color-text-fg-brand-strong);font-weight:600;font-size:11px;">${nm.split(' ')[1][0]}${nm[0]}</span>
+        <div><div style="font-size:12px;font-weight:600;color:var(--color-text-heading);">${nm}</div>
+        <div style="font-size:10.5px;color:var(--seg-muted);">${2 + i} orders · $${(aov * (0.9 + i * .1)).toFixed(2)} AOV</div></div>
+      </div>`).join('');
+
+  const nameClash = duplicates();
+  const emptyCond = state.conds.some(c => c.v === '' || c.v == null || badNum(c.v));
+  document.getElementById('sbUndo').disabled = !history_.past.length;
+  document.getElementById('sbRedo').disabled = !history_.future.length;
+  /* A condition with no value is exactly the defect this redesign flags on 11 existing
+     segments. Refusing to save one is the point; warning and saving anyway is not. */
+  document.getElementById('sbSave').disabled =
+    !state.name.trim() || !state.conds.length || nameClash || emptyCond || badRange || (EDIT && !touched);
+  document.getElementById('sbSave').title =
+    emptyCond ? 'Every condition needs a value' : badRange ? 'Fix the date range' :
+    nameClash ? 'That name is already taken' : '';
+  const nameEl = document.getElementById('sbName');
+  nameEl.setAttribute('aria-invalid', String(nameClash));
+  /* the reason for "invalid" has to be reachable, not just announced */
+  nameEl.setAttribute('aria-describedby', nameClash ? 'sbWarnMsg sbNameHelp' : 'sbNameHelp');
+  document.getElementById('sbDirty').textContent = (state.name || state.conds.length) ? 'Unsaved changes' : 'Not saved';
+  document.getElementById('sbLive').textContent = `Estimated audience ${fmtN(n)} customers.`;
+}
+
+/* Duplicate check — the reason this workspace grew six Californias and four tests.
+   role="region", not role="alert": it is rebuilt on every keystroke. */
+function duplicates() {
+  const box = document.getElementById('sbWarn');
+  const nm = state.name.trim().toLowerCase();
+  const out = [];
+  let clash = false;
+
+  if (nm) {
+    const exact = SEGMENTS.filter(s => s.n.toLowerCase() === nm && (!EDIT || s.id !== EDIT.id));
+    const near  = SEGMENTS.filter(s => s.n.toLowerCase() !== nm && (!EDIT || s.id !== EDIT.id) &&
+      (s.n.toLowerCase().includes(nm) || nm.includes(s.n.toLowerCase())) && nm.length > 2);
+    if (exact.length) { clash = true; out.push(['danger', `A segment named “${esc(exact[0].n)}” already exists`,
+      'Two segments with the same name cannot be told apart anywhere else in Iris. Pick a different name, or edit the existing one.']); }
+    else if (near.length) out.push(['warn', `${near.length} segment${near.length > 1 ? 's have' : ' has'} a similar name`,
+      near.slice(0, 4).map(s => esc(s.n)).join(', ') + '. Check whether one of them already answers your question.']);
+  }
+  if (estimate().n / BASE >= .95 && state.conds.length)
+    out.push(['danger', 'This definition matches almost every customer',
+      'One of the conditions has no value, so it is not filtering anything. Fill it in or remove it.']);
+
+  box.innerHTML = out.map(([kind, t, d]) => `
+    <div class="alert ${kind === 'danger' ? 'alert-danger' : 'alert-warning'}" role="region" aria-label="${t}" id="sbWarnMsg" style="margin-bottom:12px;">
+      <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg></span>
+      <div class="alert-body"><div class="alert-title">${t}</div><div>${d}</div></div>
+    </div>`).join('');
+  return clash;
+}
+
+function describe() {
+  const parts = state.conds.map(c => {
+    const def = ALL.find(a => a.k === c.k);
+    if (!c.v) return null;
+    return def.ctl[0] === 'num' ? `${def.n.toLowerCase()} ${def.ctl[1].replace('$', '')}${c.v}` : String(c.v).toLowerCase();
+  }).filter(Boolean);
+  const win = { 30:'the last 30 days', 90:'the last 90 days', 180:'the last 180 days', 365:'the last 12 months', 0:'all time', custom:`${state.from} to ${state.to}` }[state.range];
+  const join = state.join === 'any' ? ' or ' : ', ';
+  return parts.length ? `Customers who ordered in ${win}: ${parts.join(join)}.` : `Every customer who ordered in ${win}.`;
+}
+
+/* ── toast + modal (never window.alert / window.confirm) ── */
+function toast(title, msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="toast-icon toast-icon-success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></span>
+    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
+    <button class="toast-close" aria-label="Dismiss">✕</button>`;
+  el.querySelector('.toast-close').onclick = () => el.remove();
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+function modal({ title, body, confirmLabel, danger, onConfirm }) {
+  const host = document.getElementById('modalHost'), opener = document.activeElement;
+  host.innerHTML = `<div class="seg-modal-backdrop"><div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="mdT">
+      <div class="modal-header"><h2 class="modal-title" id="mdT">${title}</h2><button class="modal-close" data-md="x" aria-label="Close">✕</button></div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-footer"><button class="btn btn-sm btn-alternative" data-md="x">Cancel</button>
+        <button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok">${confirmLabel}</button></div></div></div>`;
+  const close = () => { host.innerHTML = ''; document.removeEventListener('keydown', onKey); opener?.focus?.(); };
+  const onKey = e => {
+    if (e.key === 'Escape') return close();
+    if (e.key !== 'Tab') return;
+    const els = [...host.querySelectorAll('button')], first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  document.addEventListener('keydown', onKey);
+  host.querySelector('[data-md="x"].btn').focus();
+  host.onclick = e => {
+    if (e.target.closest('[data-md="ok"]')) { const fn = onConfirm; close(); fn(); }
+    else if (e.target.closest('[data-md="x"]') || e.target.classList.contains('seg-modal-backdrop')) close();
+  };
+}
+
+/* ── events ── */
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-add]');
+  if (a && !a.disabled) {
+    commit(() => state.conds.push({ k: a.dataset.add, v: '' }));
+    /* focus the control that was just created, not <body> */
+    document.getElementById(`cond-${state.conds.length - 1}`)?.focus();
+    return;
+  }
+  const x = e.target.closest('[data-x]');
+  if (x) {
+    const i = +x.dataset.x;
+    commit(() => state.conds.splice(i, 1));
+    (document.querySelector(`[data-x="${Math.min(i, state.conds.length - 1)}"]`) || document.querySelector('[data-add]:not([disabled])'))?.focus();
+    return;
+  }
+  const t = e.target.closest('[data-tpl]');
+  if (t) {
+    const tpl = TEMPLATES[+t.dataset.tpl];
+    const apply = () => commit(() => {
+      state.conds = tpl.c.map(([k, v]) => ({ k, v }));
+      if (!state.name) { state.name = tpl.n; document.getElementById('sbName').value = tpl.n; }
+    });
+    /* a template replaces the whole definition — never silently */
+    if (state.conds.length) modal({
+      title: 'Replace the current conditions?', confirmLabel: 'Replace',
+      body: `<p style="margin:0;font-size:13px;color:#374151;">The template “<strong>${esc(tpl.n)}</strong>” replaces all ${state.conds.length} conditions you have set. Undo will bring them back.</p>`,
+      onConfirm: apply
+    });
+    else apply();
+    return;
+  }
+  if (e.target.closest('#sbGen')) { const d = describe(); commit(() => state.desc = d); document.getElementById('sbDesc').value = d; return; }
+  if (e.target.closest('#sbUndo')) return undo();
+  if (e.target.closest('#sbRedo')) return redo();
+  if (e.target.closest('#sbSave')) {
+    saved = true;
+    toast(EDIT ? 'Changes saved' : 'Segment created',
+      `“${esc(state.name)}” saved. ${state.mode === 'auto' ? 'It will recalculate nightly.' : 'It will calculate on demand.'} Estimated audience ${fmtN(estimate().n)} customers.`);
+    setTimeout(() => location.href = './segments.html', 1100);
+    return;
+  }
+  if (e.target.closest('#sbCancel')) {
+    if (!state.conds.length && !state.name) return location.href = './segments.html';
+    modal({ title: 'Discard this segment?', danger: true, confirmLabel: 'Discard',
+      body: `<p style="margin:0;font-size:13px;color:#374151;">Your conditions and name will be lost.</p>`,
+      onConfirm: () => { saved = true; location.href = './segments.html'; } });
+    return;
+  }
+});
+
+document.addEventListener('change', e => {
+  if (e.target.dataset.v != null) { const i = +e.target.dataset.v, v = e.target.value; commit(() => state.conds[i].v = v); document.getElementById(`cond-${i}`)?.focus(); }
+  if (e.target.id === 'sbRange') { const v = e.target.value === 'custom' ? 'custom' : +e.target.value; commit(() => state.range = v); }
+  if (e.target.id === 'sbFrom')  { const v = e.target.value; commit(() => state.from = v); }
+  if (e.target.id === 'sbTo')    { const v = e.target.value; commit(() => state.to = v); }
+  if (e.target.id === 'sbJoin')  { const v = e.target.value; commit(() => state.join = v); }
+  if (e.target.id === 'sbTplCat') render();
+  if (e.target.name === 'sbMode') {
+    state.mode = e.target.value;
+    document.querySelectorAll('.iris-radio-card').forEach(l => {
+      const on = l.contains(e.target);
+      l.classList.toggle('iris-radio-card--selected', on);
+      l.querySelector('.iris-radio').classList.toggle('iris-radio--checked', on);
+    });
+  }
+});
+/* Name edits go into the history, debounced, so Undo restores what was typed instead
+   of silently clearing the field from an older snapshot. */
+let nameTimer = null, nameBefore = null;
+document.getElementById('sbName').addEventListener('input', e => {
+  if (nameBefore === null) nameBefore = state.name;
+  state.name = e.target.value;
+  clearTimeout(nameTimer);
+  nameTimer = setTimeout(() => {
+    const prev = nameBefore; nameBefore = null;
+    const now = state.name;
+    state.name = prev; commit(() => state.name = now);
+    document.getElementById('sbName').value = now;
+  }, 600);
+  render();
+});
+document.getElementById('sbDesc').addEventListener('input', e => { state.desc = e.target.value; });
+
+document.addEventListener('keydown', e => {
+  /* leave text fields their own undo */
+  if (/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+});
+
+/* leaving with unsaved work should not be silent */
+let saved = false;
+addEventListener('beforeunload', e => {
+  if (!saved && (state.conds.length || state.name.trim())) { e.preventDefault(); e.returnValue = ''; }
+});
+
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const b = document.getElementById('sbBody'); b.setAttribute('tabindex', '-1'); b.focus();
+});
+document.getElementById('segBurger').addEventListener('click', e => {
+  const side = document.getElementById('appSidebar');
+  const open = side.dataset.open === '1';
+  side.dataset.open = open ? '0' : '1';
+  e.currentTarget.setAttribute('aria-expanded', String(!open));
+});
+
+syncInputs();
+render();
+initSidebar();
+</script>
+</body>
+</html>

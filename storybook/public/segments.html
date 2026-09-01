@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Segments · Iris redesign prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="./iris-tokens.css">
+<link rel="stylesheet" href="./iris-components.css">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./segments-proto.css">
+<!--
+  seg-* prototype layer. Only what the library has no pattern for: the list workspace
+  shell, the sticky toolbar, the resource-row table and the health callouts.
+  Library components are used as-is elsewhere (.iris-th, .indicator-dot, .pagination,
+  .modal-*, .toast, .alert, .progress, .sidebar, .btn, .form-*).
+  GAP (library): there is no toggle/pressed chip — .iris-chip is a static pill with no
+  selected state — so .seg-fchip below is a local control built on library tokens.
+-->
+<style>
+  /* .seg-app, .seg-main, .seg-skip, .seg-sr, focus rings, status dots, the burger
+     and the responsive shell all live in ./segments-proto.css */
+
+  /* ── Page header ── */
+  .seg-head { padding: 18px 24px 0; background: var(--color-bg-white); }
+  .seg-head__row { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .seg-h1 { margin: 0; font-size: 24px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
+  .seg-sub { margin: 4px 0 0; font-size: 13px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .seg-head__actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+  /* ── Toolbar ── */
+  .seg-toolbar {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--color-bg-white);
+    border-bottom: 1px solid var(--color-border-default);
+    padding: 8px 24px;
+    /* One line, always. A wrapping toolbar grows the sticky offset and pushes the
+       table header down the viewport — that is what made the header "float". */
+    display: flex; align-items: center; gap: 10px; flex-wrap: nowrap;
+  }
+  /* ── Toolbar density ────────────────────────────────────────────────────
+     Only the HEIGHT and the type size deviate from the library, because Iris has
+     no toolbar-density control set: .form-select and .iris-search are 42px form
+     fields and .btn-group--sm is 35px. Everything else stays library canon —
+     fields keep the #f3f4f6 fill, the #e5e7eb border and the 8px radius, buttons
+     keep their 12px radius. That difference is deliberate in Iris, not a defect,
+     and flattening it made the bar look like it came from another product.
+     The fill, not the border, is what identifies a field here, so the light
+     border is fine under WCAG 1.4.11. */
+  .seg-toolbar { --ctl-h: 34px; --ctl-font: 13px; }
+  .seg-toolbar .iris-search { flex: 0 1 240px; min-width: 150px; }
+  .seg-toolbar .iris-search__input { height: calc(var(--ctl-h) - 2px); font-size: var(--ctl-font); }
+  .seg-toolbar .btn-group .btn { height: var(--ctl-h); font-size: var(--ctl-font); padding: 0 12px; }
+  /* natural width, never squeezed — the measurement below depends on it */
+  .seg-filters { display: flex; gap: 6px; flex-wrap: nowrap; flex: 0 0 auto; }
+  .seg-fchip {
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 30px; padding: 4px 11px;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-white); color: var(--color-text-body);
+    font: var(--font-medium) 12px/1.3 var(--font-family-base); cursor: pointer;
+    white-space: nowrap;
+  }
+  .seg-fchip:hover { background: var(--color-bg-muted); color: var(--color-text-heading); }
+  .seg-fchip[aria-pressed="true"] { background: var(--color-bg-primary); border-color: var(--color-bg-primary); color: #fff; }
+  .seg-fchip[disabled] { opacity: .5; cursor: not-allowed; }
+  .seg-fchip__n { font-variant-numeric: tabular-nums; opacity: .8; }
+  .seg-defsw { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .seg-defsw { white-space: nowrap; }
+  .seg-tools-end { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .seg-minilabel { font-size: 11px; color: #5b6270; text-transform: uppercase; letter-spacing: .04em; font-weight: var(--font-semibold); }
+  /* .form-select at toolbar height: same fill, border and radius as the library */
+  .seg-select {
+    height: var(--ctl-h); padding: 0 30px 0 10px; font-size: var(--ctl-font); color: var(--color-text-primary);
+    border: 1px solid var(--color-border-default); border-radius: var(--radius-md);
+    background: var(--color-bg-tertiary) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%236b7280' stroke-width='1.8'><path d='M3 5l3 3 3-3'/></svg>") no-repeat right 10px center;
+    appearance: none; cursor: pointer;
+  }
+  /* Six chips do not always fit, and a hidden-scrollbar strip makes them
+     unreachable, so the same choice is offered as a select instead. The switch is
+     driven by measured overflow rather than a viewport breakpoint: the sidebar takes
+     256px, so the chips run out of room well before any round viewport number. */
+  .seg-statussel { display: none; align-items: center; gap: 6px; }
+  .seg-toolbar[data-compact="1"] .seg-filters { display: none; }
+  .seg-toolbar[data-compact="1"] .seg-statussel { display: inline-flex; }
+
+  /* LIBRARY GAP: .iris-search sets overflow:hidden and .iris-search__input sets
+     outline:none, so the field has no focus indicator at all. The ring goes on the
+     wrapper, which is the only box not clipped. */
+  .iris-search:focus-within { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+
+  .seg-alerts:not(:empty) { padding: 10px 24px 0; }
+  .seg-notice {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 8px 12px; border-radius: var(--radius-md);
+    background: var(--color-bg-danger-soft); color: #9b1c1c; font-size: 12.5px;
+  }
+  .seg-notice__x { margin-left: auto; border: 0; background: none; color: inherit; cursor: pointer; opacity: .6; min-width: 24px; min-height: 24px; border-radius: 4px; }
+  .seg-notice__x:hover { opacity: 1; background: rgba(0,0,0,.06); }
+
+  .seg-bulk {
+    position: sticky; z-index: 29;
+    display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 10px 24px;
+    background: var(--color-bg-brand-softer); border-bottom: 1px solid var(--color-border-brand-subtle);
+  }
+  .seg-bulk[data-on="1"] { display: flex; }
+  .seg-bulk__count { font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-fg-brand-strong); }
+  .seg-bulk__hint { font-size: 12px; color: #5b6270; }
+
+  /* ── Table ── */
+  .seg-tablewrap { padding: 14px 24px 40px; }
+  .seg-scroll { position: relative; border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); background: var(--color-bg-white); }
+  /* Fixed layout: the column widths are decided here, not by the longest cell, so the
+     table can never grow past its container and push Actions off the screen — which is
+     exactly what the current product does at 1207px. */
+  .seg-table { width: 100%; min-width: 980px; table-layout: fixed; border-collapse: collapse; background: var(--color-bg-white); }
+  /* Truncation belongs only on the cell that can overflow. A blanket overflow:hidden
+     here clips any popup rendered inside a cell — the row menu disappeared behind it. */
+  .seg-table td.seg-idcell, .seg-table th.seg-idcell { overflow: hidden; text-overflow: ellipsis; }
+  .seg-table thead th {
+    position: sticky; top: var(--seg-stick, 50px); z-index: 20;
+    background: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border-default);
+    white-space: nowrap;
+  }
+  /* Belt and braces: if the toolbar ever exceeds one line, the sticky header is
+     released rather than pinned halfway down the page. Measured in stick(). */
+  .seg-tablewrap[data-nostick="1"] .seg-table thead th { position: static; }
+  .seg-table th.seg-num, .seg-table td.seg-num { text-align: right; }
+  .seg-th-sort {
+    display: inline-flex; align-items: center; gap: 3px;
+    border: 0; background: none; padding: 2px 0; cursor: pointer;
+    font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit;
+  }
+  .seg-th-sort:hover { color: var(--color-text-heading); }
+  .seg-caret { opacity: 0; transition: transform .15s; }
+  th[aria-sort] .seg-caret { opacity: 1; color: var(--color-bg-primary); }
+  th[aria-sort="ascending"] .seg-caret { transform: rotate(180deg); }
+
+  .seg-table tbody tr { border-bottom: 1px solid var(--color-border-light); }
+  .seg-table tbody tr:last-child { border-bottom: 0; }
+  .seg-table tbody tr:hover { background: var(--color-bg-tertiary); }
+  .seg-table tbody tr:focus-within { background: var(--color-bg-tertiary); }
+  .seg-table tbody tr[data-selected="1"] { background: var(--color-bg-brand-softer); }
+  .seg-table td { padding: 8px 12px; vertical-align: top; font-size: 13px; color: var(--color-text-body); }
+  .seg-tablewrap[data-density="condensed"] .seg-table td { padding: 5px 12px; }
+  .seg-tablewrap[data-density="relaxed"]   .seg-table td { padding: 13px 12px; }
+  /* 24x24 hit area around a 16px checkbox without changing the visual size */
+  .seg-table td.seg-cbcell { padding-left: 14px; padding-right: 6px; }
+  .seg-cbwrap { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
+
+  .seg-name { font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); text-decoration: none; }
+  .seg-name:hover { color: var(--color-bg-primary); text-decoration: underline; }
+  .seg-def {
+    display: block; margin-top: 2px; font-size: 12px; color: #5b6270;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px;
+  }
+  .seg-tablewrap[data-density="relaxed"] .seg-def { white-space: normal; }
+  .seg-more {
+    display: inline-block; padding: 4px 6px; margin: -4px 0;
+    color: var(--color-bg-primary); background: none; border: 0;
+    font: var(--font-medium) 12px/1.3 var(--font-family-base); cursor: pointer;
+  }
+  /* ── Full definition mode ──
+     The original page printed every condition of every segment inline. That is how
+     people tell `Geo + Offer` from `Geo + offer 2` (same two conditions, same window,
+     3 customers versus 992) and how they spot duplicates. Compact mode is for finding
+     a segment; full mode is for checking one against another. The capability is kept,
+     the six screens of scrolling become opt-in. */
+  .seg-defs { margin-top: 5px; }
+  .seg-defs__h { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--seg-th); font-weight: var(--font-semibold); }
+  .seg-defs__l { margin: 3px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .seg-defs__l li { font-size: 12px; color: var(--color-text-body); padding-left: 10px; position: relative; }
+  .seg-defs__l li::before { content: ""; position: absolute; left: 0; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: var(--color-border-base); }
+  .seg-defs__l li.is-bad { color: var(--color-text-fg-danger); }
+  .seg-defs__l li.is-bad::before { background: currentColor; }
+  .seg-defs__win { margin-top: 4px; font-size: 11.5px; color: var(--seg-muted); }
+  .seg-defs__win--none { color: var(--color-text-fg-danger); font-weight: var(--font-medium); }
+  .seg-tablewrap[data-defs="full"] .seg-idcell { overflow: visible; }
+  .seg-tablewrap[data-defs="full"] .seg-def { white-space: normal; }
+
+  .seg-win { margin-left: 6px; padding-left: 8px; border-left: 1px solid var(--color-border-default); color: #5b6270; }
+  .seg-win--none { color: var(--color-text-fg-danger); font-style: normal; font-weight: var(--font-medium); }
+  .seg-val { font-variant-numeric: tabular-nums; font-weight: var(--font-medium); color: var(--color-text-heading); }
+  .seg-share { display: block; font-size: 11px; color: #5b6270; font-variant-numeric: tabular-nums; margin-top: 1px; }
+  .seg-share--warn { color: #92400e; font-weight: var(--font-semibold); }
+  .seg-none { color: #6b7280; }
+  .seg-when { font-size: 11px; color: #5b6270; display: block; margin-top: 2px; }
+  .seg-rowbtns { display: flex; gap: 4px; justify-content: flex-end; position: relative; }
+  /* the overflow control is a library button; this only makes it square */
+  .seg-kebab { width: 36px; min-width: 36px; padding: 0; }
+
+  .seg-flag { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: var(--font-medium); color: #92400e; margin: 3px 12px 0 0; }
+  .seg-flag--danger { color: var(--color-text-fg-danger); }
+
+
+  .seg-empty { display: none; padding: 56px 24px; text-align: center; background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); }
+  .seg-empty h2 { margin: 0 0 6px; font-size: 16px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .seg-empty p  { margin: 0 0 16px; font-size: 13px; color: #5b6270; }
+
+  .seg-foot { display: flex; align-items: center; gap: 12px; padding: 12px 0 0; flex-wrap: wrap; }
+  .seg-foot__info { font-size: 12px; color: #5b6270; }
+
+  /* Disclosure with the full structured definition */
+  .seg-pop {
+    position: absolute; z-index: 60; display: none; min-width: 300px; max-width: 380px;
+    background: var(--color-bg-white); border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(17,25,40,.12); padding: 14px;
+  }
+  .seg-pop[data-on="1"] { display: block; }
+  .seg-pop__t { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #5b6270; font-weight: var(--font-semibold); margin-bottom: 8px; }
+  .seg-cond { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; font-size: 12px; }
+  .seg-cond__n { margin-left: auto; font-variant-numeric: tabular-nums; color: #5b6270; }
+  /* The operator stays visible — the model may grow an OR — but never louder than
+     the condition it joins. .seg-op--mixed earns the colour only when it means something. */
+  .seg-op { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; padding: 2px 0 2px 2px; }
+  .seg-op--mixed { color: var(--color-bg-primary); font-weight: var(--font-semibold); }
+
+  /* Row menu — rendered at body level and positioned fixed, so no ancestor's
+     overflow, stacking context or scroll container can clip it. */
+  .seg-menu { position: fixed; z-index: 75; min-width: 186px; padding: 4px; background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(17,25,40,.14); }
+  .seg-menu__i { display: flex; width: 100%; align-items: center; gap: 8px; padding: 7px 10px; border: 0; background: none; border-radius: var(--radius-md); font: var(--font-medium) 12.5px/1.3 var(--font-family-base); color: var(--color-text-body); cursor: pointer; text-align: left; text-decoration: none; }
+  .seg-menu__i:hover { background: var(--color-bg-muted); color: var(--color-text-heading); }
+  .seg-menu__i--danger { color: var(--color-text-fg-danger); }
+  .seg-menu__i--danger:hover { background: #fef2f2; color: var(--color-text-fg-danger); }
+  .seg-menu__sep { height: 1px; margin: 4px 2px; background: var(--color-border-light); }
+  /* LIBRARY GAP: the .indicator-dot family ships red/green/yellow/gray only, so a blue
+     status dot falls back to brand purple and disagrees with its own .iris-tag--blue label. */
+  .indicator-dot-blue { background: #155dfc; }
+  /* An operation that just started must not render a full bar. */
+  .seg-progress-indet { position: relative; overflow: hidden; }
+  .seg-progress-indet .progress-bar { width: 35% !important; animation: segIndet 1.1s ease-in-out infinite; }
+  @keyframes segIndet { 0% { transform: translateX(-100%); } 100% { transform: translateX(320%); } }
+
+  /* Narrow: the wrapper becomes the scroll container, which disables position:sticky —
+     so the header is released here on purpose. Declared AFTER the base rule so it wins. */
+  @media (max-width: 1180px) {
+    .seg-scroll { overflow-x: auto; }
+    .seg-table thead th { position: static; }
+    /* keep identity visible while the metrics scroll past */
+    .seg-table td.seg-cbcell, .seg-table th.seg-cbcell,
+    .seg-table td.seg-idcell, .seg-table th.seg-idcell {
+      position: sticky; background: var(--color-bg-white); z-index: 5;
+    }
+    .seg-table td.seg-cbcell, .seg-table th.seg-cbcell { left: 0; }
+    .seg-table td.seg-idcell, .seg-table th.seg-idcell { left: 44px; box-shadow: 1px 0 0 var(--color-border-light); }
+    .seg-table thead th.seg-cbcell, .seg-table thead th.seg-idcell { background: var(--color-bg-tertiary); }
+    .seg-table tbody tr:hover td.seg-cbcell, .seg-table tbody tr:hover td.seg-idcell { background: var(--color-bg-tertiary); }
+    .seg-table tbody tr[data-selected="1"] td.seg-cbcell,
+    .seg-table tbody tr[data-selected="1"] td.seg-idcell { background: var(--color-bg-brand-softer); }
+  }
+  /* Below this the four toolbar controls genuinely do not fit on one line. Wrapping
+     grows the sticky offset, which the nostick guard in stick() already handles. */
+  @media (max-width: 1000px) {
+    .seg-toolbar { flex-wrap: wrap; }
+    .seg-tools-end { margin-left: 0; }
+  }
+  @media (max-width: 768px) {
+    .seg-head, .seg-toolbar, .seg-alerts, .seg-bulk, .seg-tablewrap { padding-left: 14px; padding-right: 14px; }
+    .seg-head__actions { width: 100%; margin-left: 0; }
+    .seg-toolbar { flex-wrap: wrap; }
+    .seg-toolbar .iris-search { flex: 1 1 100%; }
+    .seg-tools-end { margin-left: 0; width: 100%; }
+    .seg-scroll { overflow-x: auto; }
+  }
+</style>
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;">
+<a class="seg-skip" href="#" id="skipLink">Skip to the segment list</a>
+<div class="seg-app">
+
+  <!-- ═══ Sidebar (library .sidebar) ═══ -->
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse navigation" aria-expanded="true" aria-controls="appSidebar" style="margin-left:auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span><span>P&amp;L</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span><span>Inventory</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span><span>Reporting</span></a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav sidebar-nav--bottom" aria-label="Secondary">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/></svg></span><span>Settings</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="seg-head">
+      <div class="seg-head__row">
+        <button class="seg-burger" id="segBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="appSidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <div>
+          <h1 class="seg-h1">Customer Segments</h1>
+          <p class="seg-sub"><span id="segCount"></span></p>
+        </div>
+        <div class="seg-head__actions">
+          <button class="btn btn-sm btn-alternative" id="btnCompare" title="Select 2 to 4 segments to compare">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h13.5m0 0-3-3m3 3-3 3M21 16.5H7.5m0 0 3 3m-3-3 3-3"/></svg>
+            Compare
+          </button>
+          <a class="btn btn-sm btn-primary" href="./segment-builder.html">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            New segment
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="seg-toolbar">
+      <div class="iris-search">
+        <label for="segSearch" class="seg-sr">Search segments</label>
+        <span class="iris-search__cell">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+          <input class="iris-search__input" id="segSearch" type="search" placeholder="Search by name or description…">
+        </span>
+      </div>
+
+      <div class="seg-filters" role="group" aria-label="Filter by status" id="segFilters"></div>
+      <span class="seg-statussel">
+        <label class="seg-minilabel" for="segStatusSel">Status</label>
+        <select class="seg-select" id="segStatusSel"></select>
+      </span>
+
+      <span class="seg-defsw">
+        <span class="seg-minilabel" id="segDefsLbl">Definitions</span>
+        <span class="btn-group btn-group--sm btn-group--primary" role="group" aria-labelledby="segDefsLbl">
+          <button class="btn active" data-defsbtn="compact" aria-pressed="true">Compact</button>
+          <button class="btn" data-defsbtn="full" aria-pressed="false">Full</button>
+        </span>
+      </span>
+
+      <div class="seg-tools-end">
+        <label class="seg-minilabel" for="segSort">Sort</label>
+        <select class="seg-select" id="segSort">
+          <option value="attention">Needs attention first</option>
+          <option value="updated">Recently updated</option>
+          <option value="name">Name A–Z</option>
+          <option value="created">Recently created</option>
+          <option value="customers">Largest audience</option>
+          <option value="net">Highest net sales</option>
+        </select>
+        <label class="seg-minilabel" for="segDensity">Rows</label>
+        <select class="seg-select" id="segDensity">
+          <option value="condensed">Condensed</option>
+          <option value="regular" selected>Regular</option>
+          <option value="relaxed">Relaxed</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="seg-bulk" id="segBulk" role="region" aria-label="Bulk actions">
+      <span class="seg-bulk__count" id="segBulkCount">0 selected</span>
+      <span class="seg-bulk__hint" id="segBulkHint"></span>
+      <button class="btn btn-xs btn-alternative" id="bulkRecalc">Recalculate</button>
+      <button class="btn btn-xs btn-alternative" id="bulkArchive">Archive</button>
+      <button class="btn btn-xs btn-alternative" id="bulkCompare">Compare</button>
+      <button class="btn btn-xs btn-outline-red" id="bulkDelete">Delete</button>
+      <button class="btn-link btn-link-medium" id="bulkClear" style="margin-left:auto;font-size:12px;">Clear selection</button>
+    </div>
+
+    <div class="seg-alerts" id="segAlerts"></div>
+
+    <div class="seg-tablewrap" id="segWrap" data-density="regular">
+      <div class="seg-scroll" id="segScroll">
+      <table class="seg-table" id="segTable">
+        <caption class="seg-sr">Customer segments. Use the column buttons to sort.</caption>
+        <colgroup>
+          <col style="width:44px"><col><col style="width:104px"><col style="width:104px">
+          <col style="width:88px"><col style="width:82px"><col style="width:92px">
+          <col style="width:172px"><col style="width:128px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="iris-th seg-cbcell" style="width:44px;">
+              <label class="seg-cbwrap"><input type="checkbox" class="form-check-input" id="segAll" aria-label="Select all segments on this page" style="margin:0;"></label>
+            </th>
+            <th class="iris-th seg-idcell"><button class="seg-th-sort" data-sort="name">Segment <span class="seg-caret" aria-hidden="true">▾</span></button></th>
+            <th class="iris-th seg-num"><button class="seg-th-sort" data-sort="customers">Customers <span class="seg-caret" aria-hidden="true">▾</span></button></th>
+            <th class="iris-th seg-num"><button class="seg-th-sort" data-sort="net">Net sales <span class="seg-caret" aria-hidden="true">▾</span></button></th>
+            <th class="iris-th seg-num">Orders</th>
+            <th class="iris-th seg-num">AOV</th>
+            <th class="iris-th seg-num">Avg LTV</th>
+            <th class="iris-th" style="width:180px;">Status</th>
+            <th class="iris-th" style="width:120px;"><span class="seg-sr">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="segBody"></tbody>
+      </table>
+      </div>
+
+      <div class="seg-empty" id="segEmpty">
+        <h2 id="segEmptyT"></h2>
+        <p id="segEmptyD"></p>
+        <button class="btn btn-sm btn-alternative" id="segEmptyBtn"></button>
+      </div>
+
+      <div class="seg-foot">
+        <span class="seg-foot__info" id="segFoot" role="status" aria-live="polite"></span>
+        <nav aria-label="Pagination" style="margin-left:auto;">
+          <ul class="pagination pagination-sm" id="segPager"></ul>
+        </nav>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="seg-pop" id="segPop" role="group" aria-label="Segment definition"></div>
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="modalHost"></div>
+
+<script src="./segments-data.js?v=3"></script>
+<script>
+const UI = { q:'', filter:'all', sort:'attention', dir:'desc', page:1, per:25, sel:new Set(), focus:null,
+             /* compact by default: finding a segment is the frequent job, checking one
+                against another is the deliberate one. The choice is remembered. */
+             defs: (() => { try { return localStorage.getItem('segDefs') || 'compact'; } catch (e) { return 'compact'; } })() };
+
+/* Search first, then status — so the chip counts describe what the search left,
+   instead of advertising 40 segments over an empty table. */
+const searched = () => {
+  const q = UI.q.trim().toLowerCase();
+  return q ? SEGMENTS.filter(s => s.n.toLowerCase().includes(q) || (s.d||'').toLowerCase().includes(q) || s.sentence.toLowerCase().includes(q))
+           : SEGMENTS;
+};
+const IS = {
+  all:     () => true,
+  ready:   s => s.state === 'ready' && !s.stale,
+  stale:   s => s.stale,
+  nomatch: s => s.state === 'nomatch',
+  never:   s => s.state === 'never',
+  issues:  s => s.flags.some(f => f.danger)
+};
+const FILTERS = [
+  { k:'all', label:'All' }, { k:'ready', label:'Healthy' }, { k:'stale', label:'Stale data' },
+  { k:'nomatch', label:'No matches' }, { k:'never', label:'Not calculated' }, { k:'issues', label:'Data issues' }
+];
+const ATT = s => s.state === 'never' ? 0 : s.flags.some(f => f.danger) ? 1 : s.state === 'nomatch' ? 2 : s.stale ? 3 : 4;
+
+function visible() {
+  const rows = searched().filter(IS[UI.filter]);
+  const asc = UI.dir === 'asc' ? -1 : 1;
+  const by = {
+    attention: (a,b) => ATT(a) - ATT(b) || (b.c||0) - (a.c||0),
+    updated:   (a,b) => (new Date(b.up) - new Date(a.up)) * asc,
+    name:      (a,b) => a.n.localeCompare(b.n) * (UI.dir === 'asc' ? 1 : -1),
+    created:   (a,b) => (new Date(b.cr) - new Date(a.cr)) * asc,
+    customers: (a,b) => ((b.c ?? -1) - (a.c ?? -1)) * asc,
+    net:       (a,b) => ((b.net ?? -1) - (a.net ?? -1)) * asc
+  }[UI.sort];
+  return [...rows].sort(by);
+}
+const pageRows = () => visible().slice((UI.page-1)*UI.per, UI.page*UI.per);
+
+function winLabel(s) {
+  if (!s.r) return `<em class="seg-win--none">no order window</em>`;
+  const m = s.r.match(/^(.+?) to (.+)$/);
+  if (!m) return s.r;
+  const f = d => new Date(d).toLocaleDateString('en-US', { month:'short', year:'numeric' });
+  const a = f(m[1]), b = f(m[2]);
+  return a === b ? a : `${a} – ${b}`;
+}
+
+/* The complete definition, aligned and readable. The operator is stated once as a
+   heading instead of being repeated as a chip before every condition. */
+function fullDef(s) {
+  const items = s.conds.length
+    ? s.conds.map(c => `<li class="${c.noop ? 'is-bad' : ''}">${esc(c.label)}${c.noop ? ' — no value set' : ''}</li>`).join('')
+    : `<li class="is-bad">No conditions — every customer qualifies</li>`;
+  return `<div class="seg-defs">
+    <div class="seg-defs__h">Matches ${s.conds.length > 1 ? 'all of' : ''}</div>
+    <ul class="seg-defs__l">${items}</ul>
+    <div class="seg-defs__win ${s.r ? '' : 'seg-defs__win--none'}">${s.r ? 'Orders ' + esc(s.r) : 'No order window set'}</div>
+  </div>`;
+}
+
+const DOT = k => `<span class="indicator-dot indicator-dot-${k}" style="border-width:0;margin-right:4px;"></span>`;
+function statusCell(s) {
+  if (s.calculating)   return `<span class="iris-tag iris-tag--blue">${DOT('blue')}Calculating…</span>
+    <span class="progress progress-sm seg-progress-indet" style="margin-top:6px;" role="progressbar" aria-busy="true" aria-label="Calculating ${s.n}"><span class="progress-bar progress-bar-primary"></span></span>`;
+  if (s.state === 'never')   return `<span class="iris-tag iris-tag--grey">${DOT('gray')}Not calculated</span><span class="seg-when">Created ${relTime(s.cr)}</span>`;
+  if (s.state === 'nomatch') return `<span class="iris-tag iris-tag--orange">${DOT('yellow')}No customers match</span><span class="seg-when">Checked ${relTime(s.up)}</span>`;
+  if (s.stale)               return `<span class="iris-tag iris-tag--orange">${DOT('yellow')}Stale data</span><span class="seg-when">From ${new Date(s.up).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>`;
+  return `<span class="iris-tag seg-ok">${DOT('green')}Up to date</span><span class="seg-when">Updated ${relTime(s.up)}</span>`;
+}
+
+/* money(), ltvFmt(), relTime() come from ./segments-data.js — redeclaring
+   them here throws "Identifier already declared" and kills the whole script. */
+/* The dash is decorative; the meaning goes to assistive tech as real text. */
+const NONE = '<span class="seg-none"><span class="seg-sr">Not calculated</span><span aria-hidden="true">—</span></span>';
+const KEBAB = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>`;
+
+function rowHTML(s) {
+  const sel = UI.sel.has(s.id);
+  const more = s.conds.length > 3
+    ? ` <button class="seg-more" data-pop="${s.id}" aria-expanded="false" aria-controls="segPop">+${s.conds.length - 3} more</button>` : '';
+  const flags = s.flags.slice(0, 2).map(f =>
+    `<span class="seg-flag ${f.danger ? 'seg-flag--danger' : ''}">
+       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>${f.t}</span>`).join('');
+  const num = v => v == null ? NONE : `<span class="seg-val">${v}</span>`;
+  const nm = esc(s.n);
+
+  return `<tr data-id="${s.id}" ${sel ? 'data-selected="1"' : ''}>
+    ${/* a <label> makes the whole 24x24 box the hit target; a <span> did not */''}
+    <td class="seg-cbcell"><label class="seg-cbwrap"><input type="checkbox" class="form-check-input seg-cb" data-id="${s.id}" ${sel ? 'checked' : ''} aria-label="Select ${nm}" style="margin:0;"></label></td>
+    <td class="seg-idcell">
+      <a class="seg-name" href="./segment-detail.html?id=${s.id}">${esc(s.n)}</a>
+      ${s.d ? `<span class="seg-def">${esc(s.d)}</span>` : ''}
+      ${UI.defs === 'full' ? fullDef(s)
+        : `<span class="seg-def">${s.sentence.split(' · ').slice(0,3).join(' · ')}${more} <span class="seg-win">${winLabel(s)}</span></span>`}
+      ${flags}
+    </td>
+    <td class="seg-num">
+      ${s.c == null ? NONE : `<span class="seg-val">${s.c.toLocaleString('en-US')}</span>`}
+      ${s.share == null ? '' : `<span class="seg-share ${s.share >= .95 ? 'seg-share--warn' : ''}">${(s.share*100).toFixed(s.share>=.1?0:1)}% of base</span>`}
+    </td>
+    <td class="seg-num">${num(money(s.net))}</td>
+    <td class="seg-num">${num(s.o == null ? null : s.o.toLocaleString('en-US'))}</td>
+    <td class="seg-num">${num(money(s.aov))}</td>
+    <td class="seg-num">${s.ltv == null ? NONE : `<span class="seg-val" style="color:${s.ltv<0?'#c70036':'inherit'}">${ltvFmt(s.ltv)}</span>`}</td>
+    <td>${statusCell(s)}</td>
+    <td>
+      <div class="seg-rowbtns">
+        ${/* The row action carries its own urgency: a segment that has never run gets
+              the solid button, a broken one gets the outline, a healthy one stays quiet.
+              One weight for all three would make 40 rows look equally undone. */''}
+        ${s.calculating ? `<button class="btn btn-xs btn-alternative" disabled>Calculating…</button>`
+          : s.state === 'never' ? `<button class="btn btn-xs btn-outline-primary" data-calc="${s.id}">Calculate</button>`
+          : s.state === 'nomatch' ? `<a class="btn btn-xs btn-outline-primary" href="./segment-builder.html?id=${s.id}">Edit filters</a>`
+          : `<a class="btn btn-xs btn-alternative" href="./segment-detail.html?id=${s.id}">Analyze</a>`}
+        <button class="btn btn-xs btn-alternative seg-kebab" data-menu="${s.id}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for ${nm}">${KEBAB}</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function render() {
+  const a = document.activeElement;
+  UI.focus = a && a.dataset ? { f: a.dataset.f, p: a.dataset.p, sort: a.dataset.sort,
+                                calc: a.dataset.calc, menu: a.dataset.menu, pop: a.dataset.pop,
+                                cb: a.classList.contains('seg-cb') ? a.dataset.id : null } : null;
+
+  const base = searched();
+  const counts = FILTERS.map(f => [f, base.filter(IS[f.k]).length]);
+  document.getElementById('segFilters').innerHTML = counts.map(([f, n]) =>
+    `<button class="seg-fchip" data-f="${f.k}" aria-pressed="${UI.filter === f.k}" ${n === 0 && UI.filter !== f.k ? 'disabled' : ''}>
+      ${f.label} <span class="seg-fchip__n">${n}</span></button>`).join('');
+  /* same choice, narrow layout */
+  document.getElementById('segStatusSel').innerHTML = counts.map(([f, n]) =>
+    `<option value="${f.k}" ${UI.filter === f.k ? 'selected' : ''} ${n === 0 && UI.filter !== f.k ? 'disabled' : ''}>${f.label} (${n})</option>`).join('');
+
+  const rows = visible();
+  const pages = Math.max(1, Math.ceil(rows.length / UI.per));
+  if (UI.page > pages) UI.page = pages;
+  const slice = rows.slice((UI.page-1)*UI.per, UI.page*UI.per);
+
+  document.getElementById('segCount').textContent = `${SEGMENTS.length} segments`;
+  document.getElementById('segWrap').dataset.defs = UI.defs;
+  document.querySelectorAll('[data-defsbtn]').forEach(b => {
+    const on = b.dataset.defsbtn === UI.defs;
+    b.setAttribute('aria-pressed', String(on));
+    b.classList.toggle('active', on);
+  });
+  document.getElementById('segBody').innerHTML = slice.map(rowHTML).join('');
+
+  const empty = rows.length === 0;
+  document.getElementById('segScroll').style.display = empty ? 'none' : '';
+  document.getElementById('segAlerts').style.display = empty ? 'none' : '';
+  const box = document.getElementById('segEmpty');
+  box.style.display = empty ? 'block' : 'none';
+  if (empty) {
+    const searching = UI.q.trim().length > 0;
+    document.getElementById('segEmptyT').textContent = searching ? `No segments match “${UI.q}”` : 'No segments have this status';
+    document.getElementById('segEmptyD').textContent = searching
+      ? (UI.filter === 'all' ? 'Try a different spelling.' : 'Nothing under this status matches that search.')
+      : 'Nothing is in this state right now.';
+    const both = searching && UI.filter !== 'all';
+    document.getElementById('segEmptyBtn').textContent = both ? 'Clear search and filter' : searching ? 'Clear search' : 'Clear filter';
+    document.getElementById('segEmptyBtn').dataset.clear = both ? 'both' : searching ? 'q' : 'f';
+  }
+
+  document.getElementById('segFoot').textContent = rows.length
+    ? `Showing ${(UI.page-1)*UI.per + 1}–${Math.min(UI.page*UI.per, rows.length)} of ${rows.length} segments`
+    : '';
+
+  document.getElementById('segPager').innerHTML = pages < 2 ? '' :
+    [`<li class="page-item ${UI.page === 1 ? 'disabled' : ''}"><button class="page-link" data-p="${UI.page-1}" ${UI.page===1?'disabled':''} aria-label="Previous page">‹</button></li>`]
+      /* aria-current="page" is already on the sidebar item for this page, so the pager
+         says "true" and screen readers do not announce two current pages. */
+      .concat(Array.from({length: pages}, (_, i) =>
+        `<li class="page-item ${UI.page === i+1 ? 'active' : ''}"><button class="page-link" data-p="${i+1}" ${UI.page===i+1?'aria-current="true"':''}>${i+1}</button></li>`))
+      .concat(`<li class="page-item ${UI.page === pages ? 'disabled' : ''}"><button class="page-link" data-p="${UI.page+1}" ${UI.page===pages?'disabled':''} aria-label="Next page">›</button></li>`).join('');
+
+  renderAlerts();
+  renderBulk();
+  stick();
+  restoreFocus();
+}
+
+/* innerHTML throws focus on the floor; put it back where the user left it. */
+function restoreFocus() {
+  const f = UI.focus; if (!f) return;
+  const sel = f.f ? `[data-f="${f.f}"]` : f.p ? `[data-p="${f.p}"]`
+    : f.sort ? `[data-sort="${f.sort}"]` : f.calc ? `[data-calc="${f.calc}"], [data-menu="${f.calc}"]`
+    : f.menu ? `[data-menu="${f.menu}"]` : f.pop ? `[data-pop="${f.pop}"]`
+    : f.cb ? `.seg-cb[data-id="${f.cb}"]` : null;
+  if (sel) document.querySelector(sel)?.focus();
+}
+
+/* Static callouts: role="region", not role="alert" — otherwise every keystroke
+   re-announces the whole banner. They are rebuilt only when the data changes. */
+let alertsKey = '';
+function renderAlerts() {
+  const wholeBase = SEGMENTS.filter(s => s.flags.some(f => f.k === 'wholebase'));
+  const never = SEGMENTS.filter(s => s.state === 'never').length;
+  const key = wholeBase.length + '|' + never;
+  if (key === alertsKey) return;
+  alertsKey = key;
+  /* One line, not two paragraphs. The detail belongs on the rows, which already
+     carry the flags; up here it only has to say that something is wrong and where
+     to look. Dismissible, because after the second visit it is noise. */
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem('segNoticeOff') === '1'; } catch (e) {}
+  const parts = [];
+  if (wholeBase.length) parts.push(`<strong>${wholeBase.length}</strong> report your whole customer base`);
+  if (never) parts.push(`<strong>${never}</strong> have never been calculated`);
+  document.getElementById('segAlerts').innerHTML = (!parts.length || dismissed) ? '' :
+    `<div class="seg-notice" role="region" aria-label="Data quality">
+       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>
+       <span>${parts.join(', ')}.</span>
+       <button class="btn-link btn-link-semibold" data-f="issues" style="font-size:12.5px;padding:0;">Show them</button>
+       ${never ? `<button class="btn-link btn-link-medium" id="calcAll" style="font-size:12.5px;padding:0;">Calculate all ${never}</button>` : ''}
+       <button class="seg-notice__x" id="noticeX" aria-label="Dismiss">✕</button>
+     </div>`;
+}
+
+function renderBulk() {
+  const n = UI.sel.size;
+  const shown = new Set(pageRows().map(s => s.id));
+  const hidden = [...UI.sel].filter(id => !shown.has(id)).length;
+  const bar = document.getElementById('segBulk');
+  bar.dataset.on = n ? '1' : '0';
+  /* the notice and the bulk bar never stack: one is for browsing, one is for acting */
+  document.getElementById('segAlerts').style.display = n ? 'none' : '';
+  document.getElementById('segBulkCount').textContent = `${n} selected`;
+  /* Selection outliving the filter is how people delete rows they cannot see. */
+  document.getElementById('segBulkHint').textContent =
+    hidden ? `${hidden} on other pages of this list` : '';
+  document.getElementById('btnCompare').disabled = n < 2 || n > 4;
+  document.getElementById('btnCompare').title = n < 2 ? 'Select 2 to 4 segments to compare'
+    : n > 4 ? 'Comparison fits at most 4 segments' : `Compare ${n} segments`;
+  const all = document.getElementById('segAll');
+  const page = pageRows();
+  all.checked = page.length > 0 && page.every(s => UI.sel.has(s.id));
+  all.indeterminate = !all.checked && page.some(s => UI.sel.has(s.id));
+}
+
+/* ── toast + modal, from the library instead of window.alert/confirm ── */
+function toast(title, msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="toast-icon toast-icon-success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></span>
+    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
+    <button class="toast-close" aria-label="Dismiss">✕</button>`;
+  el.querySelector('.toast-close').onclick = () => el.remove();
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+function modal({ title, body, confirmLabel, danger, onConfirm }) {
+  const host = document.getElementById('modalHost');
+  const opener = document.activeElement;
+  host.innerHTML = `
+    <div class="seg-modal-backdrop">
+      <div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="mdT">
+        <div class="modal-header"><h2 class="modal-title" id="mdT">${title}</h2>
+          <button class="modal-close" data-md="x" aria-label="Close">✕</button></div>
+        <div class="modal-body">${body}</div>
+        <div class="modal-footer">
+          <button class="btn btn-sm btn-alternative" data-md="x">Cancel</button>
+          <button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok">${confirmLabel}</button>
+        </div>
+      </div>
+    </div>`;
+  const focusables = () => [...host.querySelectorAll('button, [href], input, select, textarea')];
+  const close = () => {
+    host.innerHTML = '';
+    document.removeEventListener('keydown', onKey);
+    opener?.focus?.();                       /* focus goes back where it came from */
+  };
+  const onKey = e => {
+    if (e.key === 'Escape') return close();
+    if (e.key !== 'Tab') return;
+    const f = focusables(); if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  document.addEventListener('keydown', onKey);
+  /* Cancel takes focus, never the destructive button. */
+  host.querySelector('[data-md="x"].btn').focus();
+  host.onclick = e => {
+    if (e.target.closest('[data-md="ok"]')) { const f = onConfirm; close(); f(); }
+    else if (e.target.closest('[data-md="x"]') || e.target.classList.contains('seg-modal-backdrop')) close();
+  };
+}
+
+/* ── calculating: a real progress state, then a result the user is told about ── */
+function runCalc(ids) {
+  ids.forEach(id => {
+    const s = SEGMENTS.find(x => x.id === id); if (!s || s.calculating) return;
+    const first = s.state === 'never';
+    s.calculating = true;
+    setTimeout(() => {
+      s.calculating = false;
+      if (first) {
+        /* Only a segment that has never run gets the demo outcome. Re-running a
+           calculated segment must not invent a new result for it. */
+        markCalculated(s.id);
+        s.never = false; s.state = 'nomatch';
+        s.c = 0; s.o = 0; s.aov = 0; s.net = 0; s.ltv = 0; s.share = 0;
+        s.flags = s.flags.filter(f => f.k !== 'wholebase' && f.k !== 'dupe');
+      }
+      s.up = 'Sep 1, 2026'; s.stale = false; s.age = 0;
+      render();
+      toast(`${esc(s.n)} calculated`, first
+        ? 'No customers match this definition. Open it to see why.'
+        : `Numbers refreshed. ${s.c.toLocaleString('en-US')} customers match.`);
+    }, 1500 + ids.indexOf(id) * 350);
+  });
+  render();
+}
+
+/* ── definition disclosure ── */
+function showPop(btn) {
+  const s = SEGMENTS.find(x => x.id === btn.dataset.pop);
+  const pop = document.getElementById('segPop');
+  const step = s.c == null ? null : [BASE].concat(s.live.map((_, i) => Math.round(BASE * Math.pow(s.c / BASE || .3, (i + 1) / Math.max(1, s.live.length)))));
+  pop.innerHTML = `<div class="seg-pop__t">Definition</div>
+    <div class="seg-cond"><span>Starting universe</span><span class="seg-cond__n">${BASE.toLocaleString('en-US')}</span></div>
+    ${s.conds.map((c, i) => `${i ? `<div class="seg-op">and</div>` : ''}
+      <div class="seg-cond">
+        <span style="${c.noop ? 'color:var(--color-text-fg-danger)' : ''}">${c.label}${c.noop ? ' — never configured' : ''}</span>
+        <span class="seg-cond__n">${step && !c.noop ? step[Math.min(i+1, step.length-1)].toLocaleString('en-US') : '—'}</span>
+      </div>`).join('')}
+    <div class="seg-cond" style="border-top:1px solid var(--color-border-default);margin-top:6px;padding-top:8px;font-weight:600;">
+      <span>Segment size</span><span class="seg-cond__n">${s.c == null ? 'not calculated' : s.c.toLocaleString('en-US')}</span></div>
+    <div style="margin-top:8px;font-size:11px;color:${s.r ? '#5b6270' : 'var(--color-text-fg-danger)'};">${s.r ? 'Order window: ' + s.r : 'No order window set — the segment spans all history.'}</div>`;
+  pop.dataset.on = '1';
+  const r = btn.getBoundingClientRect(), h = pop.offsetHeight;
+  const below = r.bottom + h + 10 < innerHeight;
+  pop.style.left = Math.min(r.left, innerWidth - 400) + 'px';
+  pop.style.top = (below ? r.bottom + scrollY + 6 : r.top + scrollY - h - 6) + 'px';
+  document.querySelectorAll('[data-pop]').forEach(b => b.setAttribute('aria-expanded', b === btn));
+}
+function hidePop() {
+  document.getElementById('segPop').dataset.on = '0';
+  document.querySelectorAll('[data-pop]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+}
+
+/* ── row menu ── */
+function showMenu(btn) {
+  closeMenu();
+  const s = SEGMENTS.find(x => x.id === btn.dataset.menu);
+  const m = document.createElement('div');
+  m.className = 'seg-menu'; m.setAttribute('role', 'menu');
+  m.innerHTML = `
+    <a class="seg-menu__i" role="menuitem" href="./segment-detail.html?id=${s.id}">Analyze</a>
+    <a class="seg-menu__i" role="menuitem" href="./segment-builder.html?id=${s.id}">Edit definition</a>
+    <button class="seg-menu__i" role="menuitem" data-act="fin">Ask Fin about this segment</button>
+    <button class="seg-menu__i" role="menuitem" data-act="dup">Duplicate</button>
+    <button class="seg-menu__i" role="menuitem" data-act="calc">Recalculate now</button>
+    ${/* pass this segment plus the nearest healthy one, so compare opens with a
+          real pair instead of silently substituting three unrelated defaults */''}
+    <a class="seg-menu__i" role="menuitem" href="./segments-compare.html?ids=${s.id},${(SEGMENTS.find(x => x.id !== s.id && x.state === 'ready') || SEGMENTS[6]).id}">Compare with…</a>
+    <button class="seg-menu__i" role="menuitem" data-act="export">Export emails</button>
+    <div class="seg-menu__sep"></div>
+    <button class="seg-menu__i" role="menuitem" data-act="archive">Archive</button>
+    <button class="seg-menu__i seg-menu__i--danger" role="menuitem" data-act="del">Delete</button>`;
+  document.body.appendChild(m);
+  btn.setAttribute('aria-expanded', 'true');
+  /* anchor to the button, flipping up when there is no room below */
+  const r = btn.getBoundingClientRect(), h = m.offsetHeight, w = m.offsetWidth;
+  m.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + 'px';
+  m.style.top  = (r.bottom + h + 8 < innerHeight ? r.bottom + 6 : r.top - h - 6) + 'px';
+  const items = [...m.querySelectorAll('.seg-menu__i')];
+  items.forEach((it, i) => it.tabIndex = i ? -1 : 0);
+  items[0].focus();
+  /* APG menu keys: the row menu is reachable and operable without a mouse */
+  m.addEventListener('keydown', e => {
+    const i = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const nx = items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length];
+      items.forEach(x => x.tabIndex = -1); nx.tabIndex = 0; nx.focus();
+    }
+    if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+    if (e.key === 'End')  { e.preventDefault(); items[items.length - 1].focus(); }
+    if (e.key === 'Escape' || e.key === 'Tab') { closeMenu(); btn.focus(); }
+  });
+  m.onclick = e => {
+    const a = e.target.closest('[data-act]'); if (!a) return;
+    closeMenu();
+    btn.focus();          /* the kebab is the opener a dialog must return focus to */
+    if (a.dataset.act === 'calc')    { runCalc([s.id]); }
+    if (a.dataset.act === 'fin')     { toast('Fin', `Ask Fin anything about “${esc(s.n)}”.`); }
+    if (a.dataset.act === 'dup')     { toast('Segment duplicated', `“${esc(s.n)} (copy)” is ready to edit.`); }
+    if (a.dataset.act === 'export')  { toast('Export started', `Emails for “${esc(s.n)}” will arrive by email.`); }
+    if (a.dataset.act === 'archive') { toast('Segment archived', `“${esc(s.n)}” stops recalculating and leaves this list.`); }
+    if (a.dataset.act === 'del') modal({
+      title: 'Delete this segment?', danger: true, confirmLabel: 'Delete segment',
+      body: `<p style="margin:0;font-size:13px;color:#374151;">“<strong>${esc(s.n)}</strong>” goes for everyone, and anything built on it stops working. You cannot undo this.</p>`,
+      onConfirm: () => toast('Segment deleted', `“${esc(s.n)}” was removed.`)
+    });
+  };
+}
+function closeMenu() {
+  document.querySelectorAll('.seg-menu').forEach(m => m.remove());
+  document.querySelectorAll('[data-menu]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+}
+
+function goCompare(ids) {
+  if (ids.length < 2 || ids.length > 4) {
+    toast('Pick 2 to 4 segments', `Comparison needs at least two segments and fits at most four. ${ids.length} selected.`);
+    return;
+  }
+  location.href = './segments-compare.html?ids=' + ids.join(',');
+}
+
+/* ── events ── */
+/* A selection that survives a filter change is how people delete rows they cannot
+   see. It is trimmed to what the current view actually contains. */
+function trimSelection() {
+  const ok = new Set(visible().map(s => s.id));
+  [...UI.sel].forEach(id => { if (!ok.has(id)) UI.sel.delete(id); });
+}
+document.getElementById('segSearch').addEventListener('input', e => { UI.q = e.target.value; UI.page = 1; trimSelection(); render(); });
+document.getElementById('segSort').addEventListener('change', e => {
+  UI.sort = e.target.value;
+  UI.dir = e.target.value === 'name' ? 'asc' : 'desc';   /* "Name A–Z" must sort A→Z */
+  syncCarets(); render();
+});
+document.getElementById('segDensity').addEventListener('change', e => { document.getElementById('segWrap').dataset.density = e.target.value; });
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.seg-menu') && !e.target.closest('[data-menu]')) closeMenu();
+  if (!e.target.closest('#segPop') && !e.target.closest('[data-pop]')) hidePop();
+
+  const f = e.target.closest('[data-f]');
+  if (f && !f.disabled) { UI.filter = f.dataset.f; UI.page = 1; trimSelection(); render(); return; }
+  const p = e.target.closest('[data-p]');
+  if (p && !p.disabled) { UI.page = +p.dataset.p; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  const cb = e.target.closest('.seg-cb');
+  if (cb) { cb.checked ? UI.sel.add(cb.dataset.id) : UI.sel.delete(cb.dataset.id);
+            cb.closest('tr').dataset.selected = cb.checked ? '1' : ''; renderBulk(); return; }
+  const calc = e.target.closest('[data-calc]');
+  if (calc) { runCalc([calc.dataset.calc]); return; }
+  if (e.target.closest('#calcAll')) { runCalc(SEGMENTS.filter(s => s.state === 'never').map(s => s.id)); return; }
+  if (e.target.closest('#noticeX')) {
+    try { sessionStorage.setItem('segNoticeOff', '1'); } catch (err) {}
+    alertsKey = ''; render(); return;
+  }
+  const pop = e.target.closest('[data-pop]');
+  if (pop) { pop.getAttribute('aria-expanded') === 'true' ? hidePop() : showPop(pop); return; }
+  const menu = e.target.closest('[data-menu]');
+  if (menu) { menu.getAttribute('aria-expanded') === 'true' ? closeMenu() : showMenu(menu); return; }
+  const dw = e.target.closest('[data-defsbtn]');
+  if (dw) {
+    UI.defs = dw.dataset.defsbtn;
+    try { localStorage.setItem('segDefs', UI.defs); } catch (err) {}
+    render();
+    document.querySelector(`[data-defsbtn="${UI.defs}"]`)?.focus();
+    return;
+  }
+
+  const clear = e.target.closest('[data-clear]');
+  if (clear) {
+    if (clear.dataset.clear !== 'f') { UI.q = ''; document.getElementById('segSearch').value = ''; }
+    if (clear.dataset.clear !== 'q') UI.filter = 'all';
+    render();
+  }
+});
+
+document.getElementById('segAll').addEventListener('change', e => {
+  pageRows().forEach(s => e.target.checked ? UI.sel.add(s.id) : UI.sel.delete(s.id));
+  render();
+});
+document.getElementById('bulkClear').addEventListener('click', () => { UI.sel.clear(); render(); });
+document.getElementById('bulkRecalc').addEventListener('click', () => runCalc([...UI.sel]));
+document.getElementById('bulkCompare').addEventListener('click', () => goCompare([...UI.sel]));
+document.getElementById('btnCompare').addEventListener('click', () => goCompare([...UI.sel]));
+document.getElementById('bulkArchive').addEventListener('click', () => {
+  const names = [...UI.sel].map(id => esc(SEGMENTS.find(s => s.id === id).n));
+  modal({ title: `Archive ${names.length} segments?`, confirmLabel: 'Archive',
+    body: `<p style="margin:0 0 8px;font-size:13px;color:#374151;">They leave this list and stop recalculating. You can bring them back.</p>
+           <ul style="margin:0;padding-left:18px;font-size:12.5px;color:#5b6270;">${names.slice(0,6).map(n => `<li>${n}</li>`).join('')}${names.length>6?`<li>and ${names.length-6} more</li>`:''}</ul>`,
+    onConfirm: () => { toast('Segments archived', `${names.length} segments archived.`); UI.sel.clear(); render(); } });
+});
+document.getElementById('bulkDelete').addEventListener('click', () => {
+  const names = [...UI.sel].map(id => esc(SEGMENTS.find(s => s.id === id).n));
+  modal({ title: `Delete ${names.length} segments?`, danger: true, confirmLabel: `Delete ${names.length} segments`,
+    body: `<p style="margin:0 0 8px;font-size:13px;color:#374151;">They go for everyone, and anything built on them stops working. You cannot undo this.</p>
+           <ul style="margin:0;padding-left:18px;font-size:12.5px;color:#5b6270;">${names.slice(0,6).map(n => `<li>${n}</li>`).join('')}${names.length>6?`<li>and ${names.length-6} more</li>`:''}</ul>`,
+    onConfirm: () => { toast('Segments deleted', `${names.length} segments removed.`); UI.sel.clear(); render(); } });
+});
+
+/* sorting: toggles direction, and says so */
+function syncCarets() {
+  document.querySelectorAll('.seg-table thead th').forEach(th => th.removeAttribute('aria-sort'));
+  const btn = document.querySelector(`.seg-th-sort[data-sort="${UI.sort}"]`);
+  if (btn) btn.closest('th').setAttribute('aria-sort', UI.dir === 'asc' ? 'ascending' : 'descending');
+}
+document.querySelectorAll('.seg-th-sort').forEach(btn => btn.addEventListener('click', () => {
+  const k = btn.dataset.sort;
+  UI.dir = UI.sort === k ? (UI.dir === 'desc' ? 'asc' : 'desc') : (k === 'name' ? 'asc' : 'desc');
+  UI.sort = k;
+  document.getElementById('segSort').value = k;
+  syncCarets(); render();
+}));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { hidePop(); closeMenu(); }
+});
+
+/* These pages carry <base href>, so "#segTable" in an href would navigate to the
+   pages directory instead of scrolling. Handle it, and make the target focusable. */
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const t = document.getElementById('segTable');
+  t.setAttribute('tabindex', '-1'); t.focus(); t.scrollIntoView({ block: 'start' });
+});
+
+document.getElementById('segStatusSel').addEventListener('change', e => { UI.filter = e.target.value; UI.page = 1; trimSelection(); render(); });
+document.getElementById('segBurger').addEventListener('click', e => {
+  const side = document.getElementById('appSidebar');
+  const open = side.dataset.open === '1';
+  side.dataset.open = open ? '0' : '1';
+  e.currentTarget.setAttribute('aria-expanded', String(!open));
+  if (!open) side.querySelector('.sidebar-item')?.focus();
+});
+
+function stick() {
+  /* Chips first, because collapsing them changes the toolbar height. */
+  const bar = document.querySelector('.seg-toolbar');
+  bar.dataset.compact = '0';                       /* show chips, then see if the row fits */
+  if (bar.scrollWidth > bar.clientWidth + 1) bar.dataset.compact = '1';
+  const h = Math.round(document.querySelector('.seg-toolbar').getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--seg-stick', h + 'px');
+  document.getElementById('segBulk').style.top = h + 'px';
+  /* A toolbar taller than one line means the sticky header would land mid-screen. */
+  document.getElementById('segWrap').dataset.nostick = h > 64 ? '1' : '0';
+}
+addEventListener('resize', stick);
+render();
+/* Widths change when the webfont lands, so the fit test is repeated once it has. */
+requestAnimationFrame(stick);
+document.fonts?.ready.then(stick);
+initSidebar();
+</script>
+</body>
+</html>
