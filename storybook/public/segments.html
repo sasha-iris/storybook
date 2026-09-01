@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=5">
+<link rel="stylesheet" href="./segments-proto.css?v=6">
 <!--
   seg-* prototype layer. Only what the library has no pattern for: the list workspace
   shell, the sticky toolbar, the resource-row table and the health callouts.
@@ -192,7 +192,7 @@
   .seg-tablewrap[data-defs="full"] .seg-def { white-space: normal; }
 
   .seg-win { margin-left: 6px; padding-left: 8px; border-left: 1px solid var(--color-border-default); color: #5b6270; }
-  .seg-win--none { color: var(--color-text-fg-danger); font-style: normal; font-weight: var(--font-medium); }
+  .seg-win--none { color: #92400e; font-style: normal; font-weight: var(--font-medium); }
   .seg-val { font-variant-numeric: tabular-nums; font-weight: var(--font-medium); color: var(--color-text-heading); }
   .seg-share { display: block; font-size: 11px; color: #5b6270; font-variant-numeric: tabular-nums; margin-top: 1px; }
   .seg-share--warn { color: #92400e; font-weight: var(--font-semibold); }
@@ -202,8 +202,14 @@
   /* the overflow control is a library button; this only makes it square */
   .seg-kebab { width: 36px; min-width: 36px; padding: 0; }
 
-  .seg-flag { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: var(--font-medium); color: #92400e; margin: 3px 12px 0 0; }
-  .seg-flag--danger { color: var(--color-text-fg-danger); }
+  /* Red only where the reported numbers are wrong. Amber where the definition is
+     incomplete but the numbers may still hold. Grey for anything informational. */
+  .seg-flag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: var(--font-medium); margin: 3px 0 0; }
+  .seg-flag--error { color: var(--color-text-fg-danger); }
+  .seg-flag--warn  { color: #92400e; }
+  .seg-flag--info  { color: var(--seg-muted); font-weight: 400; }
+  .seg-flag__why { color: var(--seg-muted); font-weight: 400; margin-left: 2px; }
+  .seg-flag__why::before { content: "· "; }
 
 
   .seg-empty { display: none; padding: 56px 24px; text-align: center; background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); }
@@ -429,7 +435,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=5"></script>
+<script src="./segments-data.js?v=6"></script>
 <script>
 const UI = { q:'', filter:'all', sort:'attention', dir:'desc', page:1, per:25, sel:new Set(), focus:null,
              /* compact by default: finding a segment is the frequent job, checking one
@@ -455,7 +461,7 @@ const IS = {
   nomatch: s => s.state === 'nomatch',
   never:   s => s.state === 'never'
 };
-const HAS_ISSUE = s => s.flags.some(f => f.danger);
+const HAS_ISSUE = s => s.flags.some(f => f.sev === 'error' || f.sev === 'warn');
 const FILTERS = [
   { k:'all', label:'All' }, { k:'ready', label:'Healthy' }, { k:'stale', label:'Stale' },
   { k:'nomatch', label:'No matches' }, { k:'never', label:'Not calculated' }
@@ -519,9 +525,17 @@ function rowHTML(s) {
   const sel = UI.sel.has(s.id);
   const more = s.conds.length > 3
     ? ` <button class="seg-more" data-pop="${s.id}" aria-expanded="false" aria-controls="segPop">+${s.conds.length - 3} more</button>` : '';
-  const flags = s.flags.slice(0, 2).map(f =>
-    `<span class="seg-flag ${f.danger ? 'seg-flag--danger' : ''}">
-       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>${f.t}</span>`).join('');
+  /* One line per row. Three red items on every row is the same as none: the eye
+     stops separating them. The row carries the most severe finding, with its cause
+     folded in; the rest are on the segment's own page. */
+  const rank = { error: 0, warn: 1, info: 2 };
+  const top = [...s.flags].sort((a, b) => rank[a.sev] - rank[b.sev])[0];
+  const rest = s.flags.length - 1;
+  const flags = !top ? '' :
+    `<span class="seg-flag seg-flag--${top.sev}">
+       ${top.sev === 'info' ? '' : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>`}
+       ${top.t}${top.why ? `<span class="seg-flag__why">${top.why}</span>` : ''}${rest > 0 ? `<span class="seg-flag__why">+${rest} more</span>` : ''}
+     </span>`;
   const num = v => v == null ? NONE : `<span class="seg-val">${v}</span>`;
   const nm = esc(s.n);
 

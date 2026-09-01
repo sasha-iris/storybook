@@ -107,12 +107,24 @@ const SEGMENTS = RAW.map((s, i) => {
   const age   = daysAgo(s.up);
   const stale = state === 'ready' && age > 30;
 
+  /* Severity, not a single danger flag. Red is reserved for "the numbers this row
+     reports are wrong"; amber is "the definition is incomplete, the numbers may
+     still hold"; grey is informational. Cause and consequence are one finding, not
+     two: an unconfigured filter is WHY a segment matches everyone, so they are
+     merged rather than stacked as two equal red lines. */
   const flags = [];
-  if (broken.length)                     flags.push({ k:'unconfigured', t:`${broken.length} filter${broken.length>1?'s':''} not configured`, danger:true });
-  if (share != null && share >= 0.95)    flags.push({ k:'wholebase',    t:'Matches ~100% of all customers', danger:true });
-  if (s.c > 0 && s.o == null)            flags.push({ k:'partial',      t:'Order data missing', danger:false });
-  if (state === 'ready' && s.ltv < 0)    flags.push({ k:'negltv',       t:'Negative LTV', danger:false });
-  if (!live.length && !s.never)          flags.push({ k:'nofilter',     t:'No active filter', danger:true });
+  const cause = broken.length ? `${broken.length} filter${broken.length > 1 ? 's have' : ' has'} no value`
+              : !live.length && !s.never ? 'no condition filters anything' : null;
+
+  if (share != null && share >= 0.95)
+    flags.push({ k:'wholebase', sev:'error', t:'Reports your whole customer base', why: cause });
+  else if (broken.length)
+    flags.push({ k:'unconfigured', sev:'warn', t:`${broken.length} filter${broken.length > 1 ? 's' : ''} not configured` });
+  else if (!live.length && !s.never)
+    flags.push({ k:'nofilter', sev:'warn', t:'No condition filters anything' });
+
+  if (s.c > 0 && s.o == null)         flags.push({ k:'partial', sev:'info', t:'Order data missing' });
+  if (state === 'ready' && s.ltv < 0) flags.push({ k:'negltv',  sev:'info', t:'Negative LTV' });
 
   return {
     id: 's' + i, ...s, conds, live, broken, share, state, stale, age, flags,
@@ -124,7 +136,12 @@ const SEGMENTS = RAW.map((s, i) => {
 /* duplicate detection: identical calculated result sets */
 const byResult = {};
 SEGMENTS.forEach(s => { if (s.c > 0) { const k = s.c + '|' + s.net; (byResult[k] ||= []).push(s); } });
-Object.values(byResult).forEach(g => { if (g.length > 1) g.forEach(s => s.flags.push({ k:'dupe', t:`Identical result to ${g.length - 1} other segment${g.length>2?'s':''}`, danger:true })); });
+Object.values(byResult).forEach(g => { if (g.length > 1) g.forEach(s =>
+  s.flags.push({ k:'dupe', sev:'error', t:`Same numbers as ${g.length - 1} other segment${g.length > 2 ? 's' : ''}` })); });
+
+/* "danger" is kept as a derived property so the status filters and the page-level
+   notice keep counting the rows whose numbers cannot be trusted. */
+SEGMENTS.forEach(s => s.flags.forEach(f => { f.danger = f.sev === 'error'; }));
 
 /* ── Demo persistence ──────────────────────────────────────────────────────
    Calculating a segment in the prototype has to leave a visible result, and the
