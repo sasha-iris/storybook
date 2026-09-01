@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=8">
+<link rel="stylesheet" href="./segments-proto.css?v=9">
 <!--
   The live product compares exactly two segments on cohort RETENTION
   (Segment 1 Primary / Segment 2 Comparison, View: Retention). That job is kept
@@ -19,8 +19,7 @@
 -->
 <style>
   .sc-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 14px 24px; }
-  .sc-crumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--seg-muted); margin-bottom: 8px; }
-  .sc-crumb a { color: var(--seg-muted); }
+  .breadcrumb { margin: 0 0 8px; padding: 0; }
   .sc-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
   .sc-body { padding: 18px 24px 60px; max-width: 1320px; }
   @media (max-width: 768px) { .sc-head, .sc-body { padding-left: 14px; padding-right: 14px; } }
@@ -77,8 +76,12 @@
 
   <main class="seg-main">
     <header class="sc-head">
-      <nav class="sc-crumb" aria-label="Breadcrumb">
-        <a href="./segments.html">Customer Segments</a><span aria-hidden="true">/</span><span aria-current="true">Compare</span>
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="./segments.html">Customer Segments</a></li>
+          <li class="breadcrumb-sep" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg></li>
+          <li class="breadcrumb-item active" aria-current="page">Compare</li>
+        </ol>
       </nav>
       <h1 class="sc-h1">Compare customer segments</h1>
     </header>
@@ -145,7 +148,7 @@
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 
-<script src="./segments-data.js?v=8"></script>
+<script src="./segments-data.js?v=9"></script>
 <script>
 const CALC = SEGMENTS.filter(s => s.c != null);
 const q = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);

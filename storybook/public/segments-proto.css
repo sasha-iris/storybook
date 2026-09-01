@@ -75,7 +75,7 @@
    These three were measured under the minimum. */
 /* the row overflow control matches the row button it stands next to (36px square) */
 .seg-kebab { min-width: 36px; min-height: 36px; }
-.sd-crumb a, .sc-crumb a { display: inline-flex; align-items: center; min-height: 24px; }
+.breadcrumb-item a { display: inline-flex; align-items: center; min-height: 24px; }
 .seg-th-sort { min-height: 24px; }
 .btn.btn-sm, .btn.btn-xs { min-height: 24px; }
 
