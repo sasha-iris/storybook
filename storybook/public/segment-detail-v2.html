@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=18">
-<link rel="stylesheet" href="./segments-v2.css?v=18">
+<link rel="stylesheet" href="./segments-proto.css?v=19">
+<link rel="stylesheet" href="./segments-v2.css?v=19">
 <!--
   Variant 2 of the segment page, in the Data Rooms visual language.
 
@@ -23,8 +23,10 @@
   there is no Calculate or Recalculate control anywhere, and nothing is described
   as stale. What remains is what the definition returns.
 
-  Every number on this page is either read from the product or derived from
-  numbers read from the product. Anything modelled carries an Illustrative mark.
+  Numbers on this page are read from the product or derived from numbers read
+  from it, except the retention curve, the product catalogue, the size-over-time
+  shape and the sample customers, which are modelled so the tabs have something
+  to show. That is recorded in SEGMENTS_BA_REVIEW.md, not printed on the screen.
 -->
 </head>
 <body style="margin:0;font-family:'Inter',sans-serif;background:var(--color-bg-default);">
@@ -63,6 +65,13 @@
           <span class="dr-status" id="drPill"></span>
 
           <div class="dr-headactions">
+            <!-- Only a list-based segment has an inside to put a file into. A
+                 segment defined by conditions computes its own membership, so
+                 there is nothing to upload and this control is not rendered. -->
+            <button class="btn btn-md btn-alternative" id="drUpdateList" hidden>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 7.5 12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
+              Update the list
+            </button>
             <a class="btn btn-md btn-alternative" id="drCompare" href="./segments-compare.html?v2=1">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h13.5m0 0-3-3m3 3-3 3M21 16.5H7.5m0 0 3 3m-3-3 3-3"/></svg>
               Compare
@@ -82,8 +91,8 @@
         <div class="iris-tab-bar dr-tabs" role="tablist" aria-label="Segment views" id="drTabs">
           <button class="iris-tab" role="tab" id="tab-overview"  aria-controls="p-overview"  aria-selected="true"  tabindex="0"  data-tab="overview">Overview</button>
           <button class="iris-tab" role="tab" id="tab-products"  aria-controls="p-products"  aria-selected="false" tabindex="-1" data-tab="products">Products <span class="iris-tab__counter" id="drProdN" hidden></span></button>
-          <button class="iris-tab" role="tab" id="tab-customers" aria-controls="p-customers" aria-selected="false" tabindex="-1" data-tab="customers">Customer metrics <span class="iris-tab__counter">preview</span></button>
-          <button class="iris-tab" role="tab" id="tab-journey"   aria-controls="p-journey"   aria-selected="false" tabindex="-1" data-tab="journey">Product journey <span class="iris-tab__counter">preview</span></button>
+          <button class="iris-tab" role="tab" id="tab-customers" aria-controls="p-customers" aria-selected="false" tabindex="-1" data-tab="customers">Customer metrics</button>
+          <button class="iris-tab" role="tab" id="tab-journey"   aria-controls="p-journey"   aria-selected="false" tabindex="-1" data-tab="journey">Product journey</button>
           <button class="iris-tab" role="tab" id="tab-usedin"    aria-controls="p-usedin"    aria-selected="false" tabindex="-1" data-tab="usedin">Used in <span class="iris-tab__counter" id="drUsedN"></span></button>
         </div>
       </div>
@@ -114,7 +123,6 @@
               <div class="dr-card" id="drTopCard">
                 <div class="dr-card__h">
                   <h2 class="dr-card__t">Top products in this segment</h2>
-                  <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
                   <button class="btn btn-sm btn-alternative" data-goto="products" style="margin-left:auto;">All products</button>
                 </div>
                 <div id="drTopWrap"></div>
@@ -138,13 +146,6 @@
           <div class="dr-layout">
             <div class="list-group dr-rail" id="drProdRail" role="group" aria-label="Filter products"></div>
             <div>
-              <p class="dr-note" style="margin:0 0 12px;max-width:78ch;">
-                <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
-                Only the SKU codes F001 and B009 are read from the product. Every figure in
-                this table — including theirs — is modelled from this segment's net sales, and
-                the product names, margins, prices and return rates are invented so the tab has
-                something to show. Do not read this as the catalogue.
-              </p>
               <div class="dr-toolbar">
                 <div class="dr-split">
                   <button class="btn btn-md btn-alternative" data-export="products">
@@ -168,13 +169,12 @@
             <div class="dr-card">
               <div class="dr-card__h">
                 <h2 class="dr-card__t">Retention by month since first order</h2>
-                <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
                 <a class="btn btn-sm btn-alternative" id="drCohortLink" href="#" style="margin-left:auto;">Full cohort analysis</a>
               </div>
               <div id="drRetWrap"></div>
             </div>
             <div class="dr-card" id="drSampleCard">
-              <div class="dr-card__h"><h2 class="dr-card__t">Sample customers</h2><span class="iris-chip iris-chip--light dr-illus">Illustrative</span></div>
+              <div class="dr-card__h"><h2 class="dr-card__t">Sample customers</h2></div>
               <div class="dr-card__b" id="drSample"></div>
             </div>
           </div>
@@ -185,12 +185,10 @@
           <div class="dr-card">
             <div class="dr-card__h">
               <h2 class="dr-card__t">Where this segment is used</h2>
-              <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
             </div>
             <div id="drUsedWrap"></div>
             <div class="dr-card__b" style="padding-top:0;">
-              <p class="dr-note" style="margin:0;">Deleting or narrowing a segment changes every number in this list.
-              The delete dialog already warns that reports built on a segment stop working — this is that list.</p>
+              <p class="dr-note" style="margin:0;">Deleting or narrowing this segment changes every number in the list above.</p>
             </div>
           </div>
         </section>
@@ -198,7 +196,7 @@
         <!-- ══ Journey ══ -->
         <section id="p-journey" role="tabpanel" aria-labelledby="tab-journey" tabindex="0" hidden>
           <div class="dr-card">
-            <div class="dr-card__h"><h2 class="dr-card__t">What customers buy next</h2><span class="iris-chip iris-chip--light dr-illus">Illustrative</span></div>
+            <div class="dr-card__h"><h2 class="dr-card__t">What customers buy next</h2></div>
             <div class="dr-card__b">
               <div class="dr-toolbar" id="drJControls">
                 <label for="drFirst" style="font-size:12.5px;color:var(--dr-muted);">First product</label>
@@ -221,9 +219,10 @@
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
+<input type="file" id="drFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="./segments-data.js?v=18"></script>
-<script src="./segments-v2-shared.js?v=18"></script>
+<script src="./segments-data.js?v=19"></script>
+<script src="./segments-v2-shared.js?v=19"></script>
 <script>
 /* ── Unknown id ───────────────────────────────────────────────────────────
    An id that does not exist used to fall through to a default segment, so
@@ -274,7 +273,10 @@ const CATALOG = [
   { sku:'B021', name:'Shampoo Bar',                 share:.029, margin:.556, price:14.00, ret:.019 }
 ];
 let cum = 0;
-const PROD = HAS_DATA ? CATALOG.map(p => {
+/* An uploaded list knows who is in it and nothing else until Iris matches those
+   customers to orders. Deriving a product table from a revenue figure that does
+   not exist produced nine rows of $0.00. */
+const PROD = (HAS_DATA && SEG.net != null) ? CATALOG.map(p => {
   const net = SEG.net * p.share, units = Math.round(net / p.price), gp = net * p.margin;
   cum += p.share;
     /* A product cannot have more buyers than the segment has customers. F001 is
@@ -287,8 +289,7 @@ const KI = KIND[SEG.kind];
 /* ── What depends on this segment ─────────────────────────────────────────
    The first two rows are real: this page links to both, and the Cohorts filter
    and the comparison genuinely read this segment. The rest are modelled, which
-   is why each carries its own marker and the card carries an Illustrative
-   chip — a dependency list that is quietly invented is worse than none. */
+   is why the first two are the ones to point at in a demo. */
 const USED = [
   { n: 'Cohort analysis', t: 'Report', d: 'filtered to this segment', when: relTime(SEG.up),
     ic: IC.chart, c: 'card-icon-blue', href: '#', real: true },
@@ -370,7 +371,9 @@ const meta = [
   [IC.users, SEG.c == null ? 'No customers counted'
            : '<b>' + fmtN(SEG.c) + '</b> customers' + (SEG.share >= .95 ? ' — your whole base' : SEG.c ? ' · ' + pct(SEG.share) + ' of base' : ''),
    SEG.share >= .95 ? 'hot' : ''],
-  [IC.funnel, SEG.conds.length ? '<b>' + SEG.conds.length + '</b> condition' + (SEG.conds.length > 1 ? 's' : '') : 'No conditions', ''],
+  SEG.listBased
+    ? [IC.dash, 'Uploaded list · <b>' + esc(SEG.source.file) + '</b> · matched on ' + esc(SEG.source.col), '']
+    : [IC.funnel, SEG.conds.length ? '<b>' + SEG.conds.length + '</b> condition' + (SEG.conds.length > 1 ? 's' : '') : 'No conditions', ''],
   [IC.cal,    SEG.r ? 'Orders ' + esc(SEG.r) : 'No order window set', ''],
   [KI.ic,     KI.l + ' segment', ''],
   /* His meta row carries ADDED. Ours has the same fact and was not showing it. */
@@ -459,15 +462,18 @@ if (danger.length) {
       tone: SEG.o == null ? 'warn' : '' },
     /* Not "% of company revenue": segments overlap, so those percentages sum to
        855% across the forty and invite an addition they cannot survive. */
-    { ic: IC.cash, l: 'Net sales', v: fmt$(SEG.net),
-      s: SEG.r ? 'in the order window' : 'all history' },
+    { ic: IC.cash, l: 'Net sales', v: SEG.net == null ? DASH : fmt$(SEG.net),
+      s: SEG.net == null ? 'not matched to orders yet' : (SEG.r ? 'in the order window' : 'all history') },
     { ic: IC.chart, l: 'AOV', v: SEG.aov ? fmt$2(SEG.aov) : DASH,
-      s: SEG.aov ? 'company ' + fmt$2(COMPANY.aov) + ' ' + delta(SEG.aov, COMPANY.aov, { self: IS_COMPANY }) : '' },
+      s: SEG.aov ? 'company ' + fmt$2(COMPANY.aov) + ' ' + delta(SEG.aov, COMPANY.aov, { self: IS_COMPANY })
+                 : (SEG.listBased ? 'not matched to orders yet' : '') },
     { ic: IC.spark, l: 'Avg LTV', v: ltvCell(SEG.ltv),
-      s: SEG.ltv < 0 ? 'negative — check the LTV definition'
-                     : 'company ' + fmt$(COMPANY.ltv) + ' ' + delta(SEG.ltv, COMPANY.ltv, { self: IS_COMPANY }),
+      s: SEG.ltv == null ? 'not matched to orders yet'
+        : SEG.ltv < 0 ? 'negative, check the LTV definition'
+        : 'company ' + fmt$(COMPANY.ltv) + ' ' + delta(SEG.ltv, COMPANY.ltv, { self: IS_COMPANY }),
       tone: SEG.ltv < 0 ? 'bad' : '' },
-    { ic: IC.cube, l: 'Products', v: String(PROD.length), s: 'with sales in this segment' }
+    { ic: IC.cube, l: 'Products', v: PROD.length ? String(PROD.length) : DASH,
+      s: PROD.length ? 'with sales in this segment' : 'not matched to orders yet' }
   ];
   box.innerHTML = K.map(k =>
     '<div class="dr-kpi"><div class="dr-kpi__l">' + svg(k.ic, 13) + k.l + '</div>' +
@@ -475,18 +481,16 @@ if (danger.length) {
     (k.s ? '<div class="dr-kpi__s ' + (k.tone ? 'dr-kpi__s--' + k.tone : '') + '">' + k.s + '</div>' : '') +
     (k.bar != null ? bar(k.bar, k.barCls) : '') + '</div>').join('');
 
-  /* The comparison has two caveats and both are stated rather than buried in a
-     code comment: the company figures cover all history while this segment
-     covers its own order window, and the company totals are read off the
-     segments that match every customer — the same rows this page calls broken. */
+  /* Both caveats are stated on the page rather than buried in a code comment.
+     Kept to one line: the company figures cover all history, and they come off
+     the segments that match everyone, which are the rows this page calls broken. */
   nd.innerHTML =
     '<p class="dr-note" style="margin:8px 0 0;">' +
     (IS_COMPANY
-      ? 'This segment matches every customer, so it <em>is</em> the company total. No comparison is shown against itself.'
-      : 'Company figures cover all history; this segment covers ' +
-        (SEG.r ? 'its order window, ' + esc(SEG.r) : 'all history') +
-        '. Treat the comparison as indicative.') +
-    ' The company totals are the ones Iris reports across all ' + fmtN(COMPANY.c) + ' customers.</p>';
+      ? 'This segment is every customer, so there is nothing to compare it against.'
+      : 'Company figures cover all history. This segment covers ' +
+        (SEG.r ? esc(SEG.r) : 'all history') + ', so the comparison is rough.') +
+    '</p>';
 })();
 
 /* ── conditions ─────────────────────────────────────────────────────────
@@ -522,7 +526,7 @@ if (danger.length) {
     : SEG.broken.length ? 'A condition with no value does not filter anything. Give it a value or delete it.'
     : SEG.c == null ? 'This definition returns no result yet.'
     : !SEG.live.length ? 'This segment has no conditions at all, so it cannot be narrower than the whole customer base. Add a condition or delete it.'
-    : 'Only the total is measured. A count per individual condition needs an endpoint Iris does not expose.';
+    : 'Only the total is measured. Nothing counts each condition on its own.';
 })();
 
 /* ── size over time ─────────────────────────────────────────────────────── */
@@ -551,14 +555,17 @@ if (danger.length) {
     '<path d="' + line + ' L' + x(n-1).toFixed(1) + ',' + (H-P) + ' L' + x(0).toFixed(1) + ',' + (H-P) + ' Z" fill="url(#drG)"/>' +
     '<path d="' + line + '" fill="none" stroke="#5850ec" stroke-width="2" vector-effect="non-scaling-stroke"/>' +
     '<circle cx="' + x(n-1).toFixed(1) + '" cy="' + y(pts[n-1]).toFixed(1) + '" r="4" fill="#5850ec"/>';
-  document.getElementById('drChartNote').innerHTML = '<span class="iris-chip iris-chip--light dr-illus">Illustrative</span>';
+  document.getElementById('drChartNote').innerHTML = '';
   desc.textContent = 'Placeholder shape for segment size over time. The current size is ' + fmtN(SEG.c) + ' customers; historical values are not stored.';
   document.getElementById('drChartLegend').textContent =
-    'Now ' + fmtN(SEG.c) + ' customers. Iris keeps no history for a segment, so the shape of this line is a placeholder and no growth figure is quoted.';
+    'Now ' + fmtN(SEG.c) + ' customers. Iris keeps no history for a segment, so this line is a placeholder.';
 })();
 
 /* ── empty states ───────────────────────────────────────────────────────── */
 function emptyBlock(what) {
+  if (SEG.listBased) return '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.dash, 22) + '</span>' +
+    '<h3>Not matched to orders yet</h3><p>This segment is a list of ' + fmtN(SEG.c) + ' customers uploaded from ' +
+    esc(SEG.source.file) + '. Iris has not matched them to orders, so there is no ' + what + ' for them.</p></div>';
   if (SEG.c == null) return '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
     '<h3>No result for this definition</h3><p>Iris has no ' + what + ' for “' + esc(SEG.n) +
     '”. The conditions are on the Overview tab.</p>' +
@@ -566,7 +573,7 @@ function emptyBlock(what) {
   const killer = SEG.live[SEG.live.length - 1];
   return '<div class="dr-empty"><span class="card-icon card-icon-yellow">' + svg(IC.funnel, 22) + '</span>' +
     '<h3>No customers match this definition</h3>' +
-    '<p>The conditions return nobody, so there is no ' + what + ' to show. An empty result is not the same as zero revenue.' +
+    '<p>The conditions match nobody, so there is no ' + what + '. Empty is not the same as zero.' +
     (killer ? ' The narrowest condition is <strong>' + esc(killer.label) + '</strong>, usually the one to loosen first.' : '') + '</p>' +
     '<a class="btn btn-md btn-primary" href="./segment-builder.html?v2=1&id=' + SEG.id + '" style="display:inline-flex;">Edit conditions</a></div>';
 }
@@ -692,8 +699,7 @@ drawRail(); drawProducts(); drawTop();
     '<div style="font-size:13px;font-weight:500;color:var(--color-text-heading);">' + esc(n) + '</div>' +
     '<div style="font-size:11.5px;color:var(--dr-muted);">' + (2 + i) + ' orders · ' + fmt$2(SEG.aov * (0.8 + i * 0.12)) + ' AOV</div>' +
     '</div></div>').join('') +
-    '<p class="dr-note">Example profiles, not real customers. 5 of ' + fmtN(SEG.c) +
-    ' in the segment. Sampling lets you sanity-check a definition before trusting the totals.</p>';
+    '<p class="dr-note">Example profiles, not real customers. Five of ' + fmtN(SEG.c) + '.</p>';
 })();
 
 /* ── journey ────────────────────────────────────────────────────────────── */
@@ -733,7 +739,7 @@ drawJourney();
    segment the sharper version of that question is what depends on it, because
    that is what breaks when someone edits or deletes it. Two of these rows are
    real — the segment page links to both — and the rest are modelled, which is
-   why the card carries an Illustrative mark. */
+   why they are not to be quoted as the catalogue. */
 document.getElementById('drUsedN').textContent = USED.length;
 (function usedIn() {
   document.getElementById('drUsedWrap').innerHTML = '<div class="dr-tw"><table class="dr-t">' +
@@ -741,7 +747,7 @@ document.getElementById('drUsedN').textContent = USED.length;
     USED.map(u => '<tr><td><div class="dr-name">' +
       '<span class="card-icon dr-tile ' + u.c + '" aria-hidden="true">' + svg(u.ic, 18) + '</span>' +
       '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(u.n) + '</span>' +
-      (u.real ? '' : '<span class="iris-chip iris-chip--light dr-illus">Illustrative</span>') + '</div>' +
+      (u.real ? '' : '') + '</div>' +
       '<div class="dr-name__s">' + esc(u.d) + '</div></div></div></td>' +
       '<td>' + esc(u.t) + '</td><td class="n" style="white-space:nowrap;">' + esc(u.when) + '</td>' +
       '<td><a class="seg-iconbtn dr-kebab" href="' + u.href + '" aria-label="Open ' + esc(u.n) + '">' +
@@ -804,6 +810,30 @@ document.getElementById('drExportMore').addEventListener('click', e => {
   ], act => toast('Export started',
     (act === 'all' ? PROD.length + ' products' : shown + ' products') + ' for “' + SEG.n + '” are being prepared as CSV.'));
 });
+/* ── Update the list ──────────────────────────────────────────────────────
+   The one upload that belongs on a segment page, and only on this kind: a fixed
+   membership can be replaced by a newer file. A rule cannot. */
+if (SEG.listBased) {
+  const btn = document.getElementById('drUpdateList');
+  btn.hidden = false;
+  btn.addEventListener('click', () => document.getElementById('drFile').click());
+  document.getElementById('drFile').addEventListener('change', ev => {
+    const f = ev.target.files && ev.target.files[0];
+    ev.target.value = '';
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      const rows = String(r.result || '').split(/\r?\n/).filter(l => l.trim()).length - 1;
+      const all = loadLists().map(x => x.id === SEG.id
+        ? { ...x, file: f.name, rows: Math.max(0, rows), up: fmtDate(new Date()) } : x);
+      saveLists(all);
+      toast('List replaced', fmtN(Math.max(0, rows)) + ' rows from “' + f.name + '”.');
+      setTimeout(() => location.reload(), 700);
+    };
+    r.readAsText(f.slice(0, 65536));
+  });
+}
+
 document.getElementById('drArchive').addEventListener('click', () => modal({
   title: 'Archive this segment?', confirmLabel: 'Archive',
   body: '<p style="margin:0;font-size:13px;color:var(--color-text-body);">“<strong>' + esc(SEG.n) +

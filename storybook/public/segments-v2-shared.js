@@ -119,6 +119,35 @@ if (typeof RAW !== 'undefined') {
   });
 }
 
+/* ── List-based segments ──────────────────────────────────────────────────
+   A segment is normally a rule: it computes who belongs. A segment built from an
+   uploaded file is the other kind — a fixed membership that does not change when
+   a definition changes. The distinction matters for the interface, because only
+   the second kind has something you can upload INTO. That is why the segment
+   page shows "Update the list" on these and on nothing else.
+
+   Only the file's own numbers are used: how many rows it had and which column
+   identified the customer. Nothing about revenue is claimed, because matching a
+   list against orders is work Iris does and this prototype does not. */
+function loadLists() {
+  try { return JSON.parse(sessionStorage.getItem('segLists') || '[]'); } catch (e) { return []; }
+}
+function saveLists(v) { try { sessionStorage.setItem('segLists', JSON.stringify(v)); } catch (e) {} }
+
+function listSegment(rec) {
+  const conds = [{ raw: rec.file, label: 'imported from ' + rec.file, noop: false }];
+  return {
+    id: rec.id, n: rec.n, d: 'Built from an uploaded list', r: null,
+    f: [rec.file], conds, live: conds, broken: [],
+    c: rec.rows, o: null, aov: null, net: null, ltv: null,
+    share: rec.rows / BASE, cr: rec.cr, up: rec.up, never: false,
+    state: 'ready', stale: false, age: 0, flags: [], kind: 'other',
+    listBased: true, source: rec,
+    sentence: rec.rows.toLocaleString('en-US') + ' customers from ' + rec.file
+  };
+}
+loadLists().forEach(rec => { if (!SEGMENTS.some(s => s.id === rec.id)) SEGMENTS.push(listSegment(rec)); });
+
 /* ── Company baseline ─────────────────────────────────────────────────────
    Read off the segments that match every customer: 35,590 customers, 75,437
    orders, $3,745,567 net, $49.65 AOV, $140 LTV. Those rows are the bug, but the

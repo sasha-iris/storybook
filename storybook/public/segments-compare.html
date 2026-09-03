@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=18">
+<link rel="stylesheet" href="./segments-proto.css?v=19">
 <!--
   The live product compares exactly two segments on cohort RETENTION
   (Segment 1 Primary / Segment 2 Comparison, View: Retention). That job is kept
@@ -41,7 +41,15 @@
 
   .sc-tw { overflow-x: auto; }
   .sc-t { width: 100%; border-collapse: collapse; }
-  .sc-t th, .sc-t td { padding: 11px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--color-border-light); font-size: 13px; }
+  .sc-t th, .sc-t td { padding: 11px 14px; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--color-border-light); font-size: 13px; }
+  /* The delta used to hang on a second line under the badge, so every comparison
+     row grew and the columns went ragged. Badge and delta share one line and one
+     right edge, and the library cohort badge is a fixed 62x42 block that has to
+     be told to be compact inside a comparison cell. */
+  .sc-cell { text-align: right; }
+  .sc-cell__in { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; white-space: nowrap; }
+  .sc-cell__in .sc-d { margin: 0; font-size: 11px; }
+  .sc-t .iris-cohort-badge { width: auto; min-width: 46px; height: 26px; font-size: 11px; }
   .sc-t tbody tr:last-child th, .sc-t tbody tr:last-child td { border-bottom: 0; }
   .sc-t thead th { background: var(--color-bg-tertiary); border-bottom: 1px solid var(--color-border-default); vertical-align: bottom; }
   .sc-t tbody th {
@@ -154,7 +162,7 @@
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 
-<script src="./segments-data.js?v=18"></script>
+<script src="./segments-data.js?v=19"></script>
 <script>
 const CALC = SEGMENTS.filter(s => s.c != null);
 const q = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);
@@ -283,7 +291,7 @@ function renderRetention() {
   document.getElementById('scChartDesc').textContent = usable.map(p =>
     `${p.s.n}: month one retention ${p.c[1]}%, month six ${p.c[6]}%.`).join(' ');
   document.getElementById('scLegend').innerHTML =
-    (twinned ? `<span class="sc-twin">${svgWarn}These ${usable.length} segments return identical numbers, so their curves sit exactly on top of each other. The dashed line is the second one.</span>` : '') +
+    (twinned ? `<span class="sc-twin">${svgWarn}Both segments return identical numbers, so the curves overlap. The dashed line is the second one.</span>` : '') +
     usable.map((p, n) => `<span class="sc-key"><i style="background:${p.col}${twinned && n ? ';height:0;border-top:3px dashed ' + p.col : ''}"></i>${p.s.n}</span>`).join('') +
     pairs.filter(p => !p.c).map(p => `<span class="sc-key" style="color:var(--color-text-fg-danger)">${p.s.n} — no data</span>`).join('');
 
@@ -294,9 +302,11 @@ function renderRetention() {
       <th scope="row" style="text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--color-text-heading);">
         <span class="sc-key"><i style="background:${p.col}"></i>${p.s.n}</span>
         ${twinned && p !== base ? `<span class="sc-d sc-d--dn" style="display:block;margin-top:2px;">every month identical to ${base.s.n}</span>` : ''}</th>
-      ${p.c ? p.c.map((v, i) => `<td style="text-align:right">
-          <span class="iris-cohort-badge iris-cohort-badge--${Math.min(100, Math.round(v / 10) * 10)}">${v.toFixed(0)}%</span>
-          ${p !== base && i && !twinned ? delta(v, base.c[i], base.s.n) : ''}</td>`).join('')
+      ${p.c ? p.c.map((v, i) => `<td class="sc-cell">
+          <span class="sc-cell__in">
+            <span class="iris-cohort-badge iris-cohort-badge--${Math.min(100, Math.round(v / 10) * 10)}">${v.toFixed(0)}%</span>
+            ${p !== base && i && !twinned ? delta(v, base.c[i], base.s.n) : ''}
+          </span></td>`).join('')
         : `<td colspan="${months.length}" style="color:var(--seg-muted);font-size:12.5px;">
              ${V2 ? (v2state(p.s) === 'unknown' ? 'No result for this definition — no retention to show.' : 'No customers match — no retention to show.') : (p.s.state === 'never' ? 'Never calculated — no retention to show.' : 'No customers match — no retention to show.')}</td>`}
     </tr>`).join('')}</tbody></table>`;

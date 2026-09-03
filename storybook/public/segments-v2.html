@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=18">
-<link rel="stylesheet" href="./segments-v2.css?v=18">
+<link rel="stylesheet" href="./segments-proto.css?v=19">
+<link rel="stylesheet" href="./segments-v2.css?v=19">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -101,6 +101,19 @@
                    stay visible: a segmented control, per the project's own rule
                    that .btn-group is the view toggle (List/Kanban, Cumulative/Daily).
                    A pressed icon button would hide the alternative behind a state. -->
+              <!-- The order used to be announced by a grey line of text that appeared
+                   on its own, which read as something the user had switched on. It is
+                   a setting with a current value, so it is a control that shows that
+                   value and can be changed. -->
+              <label class="dr-sortlab" for="lsSort">Sort</label>
+              <select class="form-select dr-sortsel" id="lsSort">
+                <option value="attention">Needs attention first</option>
+                <option value="c">Customers</option>
+                <option value="net">Net sales</option>
+                <option value="ltv">Avg LTV</option>
+                <option value="up">Definition updated</option>
+                <option value="n">Name</option>
+              </select>
               <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
                 <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
                 <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
@@ -126,8 +139,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="./segments-data.js?v=18"></script>
-<script src="./segments-v2-shared.js?v=18"></script>
+<script src="./segments-data.js?v=19"></script>
+<script src="./segments-v2-shared.js?v=19"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fKind = 'all', fState = 'all', fFolder = 'all', q = '', full = false;
@@ -270,6 +283,15 @@ const nBy    = k => SEGMENTS.filter(s => v2state(s) === k).length;
   document.getElementById('lsDist').innerHTML =
     '<div class="dr-card"><div class="dr-card__h">' +
       '<h2 class="dr-card__t">All ' + SEGMENTS.length + ' segments, drawn to scale</h2>' +
+      /* The explanation sits under an info icon rather than as a paragraph below
+         the chart: you need it once, and after that it is three lines of text
+         between the picture and the list. */
+      '<span class="tooltip-wrap dr-info"><button type="button" aria-label="How to read this chart" aria-describedby="distTip">' +
+        svg('M11.25 11.25h1.5v5.25M12 7.5h.008M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z', 15) + '</button>' +
+        '<span class="tooltip-bubble tooltip-bottom dr-tip" id="distTip" role="tooltip">' +
+        'One bar per segment, height is its share of the ' + fmtN(BASE) + ' customer base. ' +
+        whole.length + ' reach the ceiling, and those carry the largest revenue, which is why they look like your best segments today.' +
+        '</span></span>' +
       '<span class="dr-dist__key"><i class="dr-dist__k dr-dist__k--bad"></i>reports the whole base' +
       '<i class="dr-dist__k dr-dist__k--warn"></i>matches nobody' +
       '<i class="dr-dist__k dr-dist__k--none"></i>no result' +
@@ -280,9 +302,7 @@ const nBy    = k => SEGMENTS.filter(s => v2state(s) === k).length;
         '<span class="dr-dist__ceil"><b>' + fmtN(BASE) + '</b> — your whole customer base</span>' +
         bars +
       '</div>' +
-      '<p class="dr-note" style="margin-top:10px;">Each bar is one segment and its height is how much of the base it covers. ' +
-      '<b>' + whole.length + ' reach the ceiling.</b> A segment that contains everyone answers no question — and those five carry the ' +
-      'largest revenue on the page, which is why they look like the best ones in the product today.</p>' +
+
     '</div></div>';
 })();
 
@@ -450,12 +470,7 @@ function render() {
         '<button class="dr-fchip__x" data-drop="' + c[0] + '" aria-label="Remove the ' + c[1].toLowerCase() + ' filter ' + esc(c[2]) + '">' +
         svg('M6 18 18 6M6 6l12 12', 12) + '</button></span>').join('') +
     (chips.length > 1 ? '<button class="btn-link" id="lsClear">Clear all</button>' : '') +
-    /* "Needs attention first" on its own read as a greyed-out button. It is a
-       statement about the order, so it says so and drops the vertical rule that
-       made it look like a control. */
-    (sort.k === 'attention'
-      ? '<span class="dr-sum__sort">Sorted by <b>needs attention first</b></span>'
-      : '');
+    '';
 
   const head = '<thead><tr>' + COLS.map(c =>
       '<th class="' + (c.n ? 'n' : '') + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
@@ -495,7 +510,7 @@ function render() {
         svg(open ? 'm19.5 8.25-7.5 7.5-7.5-7.5' : 'm8.25 4.5 7.5 7.5-7.5 7.5', 14) +
         '<span class="card-icon ' + KIND[k].c + '" aria-hidden="true">' + svg(KIND[k].ic, 15) + '</span>' +
         '<b>' + KIND[k].l + '</b>' +
-        '<span class="dr-grp__n">' + g.length + ' segment' + (g.length > 1 ? 's' : '') + '</span>' +
+        '<span class="dr-grp__n">' + g.length + '</span>' +
         (bad ? '<span class="dr-grp__bad">' + svg(IC.warn, 13) + bad + ' with data issues</span>' : '') +
         '<span class="dr-grp__sum">largest ' + (big ? fmtN(big) + ' customers' : 'returns nobody') + '</span>' +
       '</button></td></tr>' +
@@ -542,6 +557,11 @@ arrBtns.forEach((b, i) => {
 });
 
 /* ── Definition detail: a switch ── */
+document.getElementById('lsSort').addEventListener('change', e => {
+  const k = e.target.value;
+  sort = { k, dir: k === 'n' ? 'asc' : 'desc' };
+  render();
+});
 document.getElementById('lsDetail').addEventListener('click', e => {
   full = !full;
   const b = e.currentTarget;
@@ -569,7 +589,13 @@ document.addEventListener('click', e => {
     return;
   }
   const so = e.target.closest('[data-sort]');
-  if (so) { const key = so.dataset.sort; sort = { k: key, dir: sort.k === key && sort.dir === 'desc' ? 'asc' : 'desc' }; return keepFocus(so, render); }
+  if (so) {
+    const key = so.dataset.sort;
+    sort = { k: key, dir: sort.k === key && sort.dir === 'desc' ? 'asc' : 'desc' };
+    const sel = document.getElementById('lsSort');
+    sel.value = [...sel.options].some(o => o.value === key) ? key : 'attention';
+    return keepFocus(so, render);
+  }
   const drop = e.target.closest('[data-drop]');
   if (drop) {
     const k = drop.dataset.drop;
@@ -686,6 +712,13 @@ function readCsv(file) {
     const cols  = (lines[0] || '').split(/[,;\t]/).map(c => c.replace(/^["']|["']$/g, '').trim()).filter(Boolean);
     const rows  = Math.max(0, lines.length - 1);
     const guess = cols.findIndex(c => /e-?mail/i.test(c));
+    /* modal() clears the dialog before it runs onConfirm, so the select is gone
+       by the time the handler fires. The choice is tracked as it is made. */
+    let chosen = cols[guess < 0 ? 0 : guess] || 'column 1';
+    setTimeout(() => {
+      const sel = document.getElementById('impCol');
+      if (sel) sel.addEventListener('change', e => { chosen = cols[e.target.value] || chosen; });
+    }, 0);
     modal({
       title: 'Create a segment from this list',
       confirmLabel: 'Create segment',
@@ -703,8 +736,19 @@ function readCsv(file) {
         '<p class="dr-note">Iris matches these against known customers and builds a fixed list. ' +
         'A list-based segment does not drift when a definition changes, which is the point of importing one. ' +
         'Nothing leaves this browser in the prototype.</p>',
-      onConfirm: () => toast('List imported',
-        fmtN(rows) + ' rows from “' + file.name + '” would be matched against your ' + fmtN(BASE) + ' customers.')
+      onConfirm: () => {
+        /* The file becomes a segment of its own kind: a fixed membership rather
+           than a rule. It is the only sort that has something you can upload
+           into later, which is why its page carries "Update the list". */
+        const rec = {
+          id: 'L' + Date.now().toString(36),
+          n: file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          file: file.name, rows: rows, col: chosen,
+          cr: fmtDate(new Date()), up: fmtDate(new Date())
+        };
+        const all = loadLists(); all.push(rec); saveLists(all);
+        location.href = './segment-detail-v2.html?id=' + rec.id;
+      }
     });
   };
   r.readAsText(file.slice(0, 65536));

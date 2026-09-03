@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=18">
+<link rel="stylesheet" href="./segments-proto.css?v=19">
 <!--
   The current product shows this as a 1143x972 modal (95% of the viewport) with no
   URL of its own. Here it is a page: it has an address, a back button, and room for
@@ -86,12 +86,6 @@
   .sd-menu__i:hover { background: var(--color-bg-muted); color: var(--color-text-heading); }
   .sd-menu__i--danger { color: var(--color-text-fg-danger); }
   .sd-menu__i:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; border-radius: 4px; }
-
-  /* Everything the prototype synthesises carries this marker. The whole argument of
-     this redesign is that the UI should not state more than the data supports. */
-  .sd-illus { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 999px;
-    background: var(--color-bg-muted); color: var(--seg-th); font-size: 10px; font-weight: var(--font-semibold);
-    text-transform: uppercase; letter-spacing: .04em; }
   .sd-note { margin: 8px 0 0; font-size: 11px; color: var(--seg-muted); line-height: 1.5; }
   @media (max-width: 900px) {
     .sd-tabs { overflow-x: auto; }
@@ -198,13 +192,13 @@
         <div class="sd-grid">
           <div class="sd-card">
             <div class="sd-card__h">
-              <h2 class="sd-card__t">Retention by month since first order</h2><span class="sd-illus">Illustrative</span>
+              <h2 class="sd-card__t">Retention by month since first order</h2>
               <a class="btn-link btn-link-medium" id="sdCohortLink" href="#" style="margin-left:auto;font-size:12px;">View full cohort analysis →</a>
             </div>
             <div id="sdRetWrap"><div class="sd-tw"><table class="sd-t" id="sdRet"></table></div></div>
           </div>
           <div class="sd-card" id="sdSampleCard">
-            <div class="sd-card__h"><h2 class="sd-card__t">Sample customers</h2><span class="sd-illus">Illustrative</span></div>
+            <div class="sd-card__h"><h2 class="sd-card__t">Sample customers</h2></div>
             <div class="sd-card__b" id="sdSample"></div>
           </div>
         </div>
@@ -233,7 +227,7 @@
       <!-- ══ Journey ══ -->
       <section id="p-journey" role="tabpanel" aria-labelledby="tab-journey" tabindex="0" hidden>
         <div class="sd-card">
-          <div class="sd-card__h"><h2 class="sd-card__t">What customers buy next</h2><span class="sd-illus">Illustrative</span></div>
+          <div class="sd-card__h"><h2 class="sd-card__t">What customers buy next</h2></div>
           <div class="sd-card__b" id="sdJourneyBody">
             <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px;" id="sdJourneyControls">
               <div class="form-group" style="margin:0;">
@@ -261,7 +255,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=18"></script>
+<script src="./segments-data.js?v=19"></script>
 <script>
 const params = new URLSearchParams(location.search);
 const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[6]; /* US or CA */
@@ -414,7 +408,7 @@ if (SEG.state === 'never') {
   /* Iris stores no history for a segment, so the shape of this line is a placeholder.
      The current size is real; the trend is not, and it says so rather than quoting a
      growth percentage nobody can reproduce. */
-  document.getElementById('sdChartNote').innerHTML = '<span class="sd-illus">Illustrative</span>';
+  document.getElementById('sdChartNote').innerHTML = '';
   desc.textContent = `Placeholder shape for segment size over time. The current size is ${fmtN(SEG.c)} customers; historical values are not stored.`;
   document.getElementById('sdChartLegend').innerHTML =
     `<span>Now <strong style="color:var(--color-text-heading)">${fmtN(SEG.c)}</strong></span>

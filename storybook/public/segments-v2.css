@@ -393,16 +393,18 @@ th[aria-sort="ascending"] .dr-sort .c { transform: rotate(180deg); }
 .dr-grp + .dr-grp .dr-grp__h td { border-top: 1px solid var(--dr-border); }
 .dr-grp__h td { padding: 0; background: var(--dr-head-bg); border-bottom: 1px solid var(--dr-border); }
 .dr-grp__b {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 9px 12px; border: 0; background: none; cursor: pointer;
-  font-family: inherit; font-size: var(--text-sm); color: var(--color-text-body); text-align: left;
+  /* a group header is a divider, not a heading: it must not out-shout the
+     segment names in the rows it introduces */
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 7px 12px; border: 0; background: none; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; color: var(--dr-muted); text-align: left;
 }
 .dr-grp__b:hover { background: var(--dr-sel); }
 .dr-grp__b:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
 .dr-grp__b > svg:first-child { flex: none; color: var(--dr-muted); }
-.dr-grp__b .card-icon { width: 26px; height: 26px; border-radius: var(--radius-sm); flex: none; }
-.dr-grp__b b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
-.dr-grp__n { color: var(--dr-muted); }
+.dr-grp__b .card-icon { width: 22px; height: 22px; border-radius: var(--radius-sm); flex: none; }
+.dr-grp__b b { color: var(--color-text-heading); font-weight: var(--font-semibold); font-size: 13px; }
+.dr-grp__n { padding: 0 6px; border-radius: var(--radius-sm); background: var(--color-bg-quaternary); color: var(--dr-th); font-size: 11px; font-weight: var(--font-semibold); }
 .dr-grp__bad { display: inline-flex; align-items: center; gap: 4px; color: var(--color-text-fg-danger); font-weight: var(--font-medium); }
 .dr-grp__sum { margin-left: auto; color: var(--dr-muted); font-variant-numeric: tabular-nums; }
 @media (max-width: 700px) { .dr-grp__sum { display: none; } }
@@ -450,14 +452,6 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-name__s .flag.bad { color: var(--color-text-fg-danger); }
 .dr-name__s .flag.warn { color: var(--color-text-fg-warning-subtle); }
 
-/* The grey chip is .iris-chip.iris-chip--light (#f3f4f6 on #4a5565, 4px radius),
-   which this file had rebuilt twice — once as .dr-chip and once as .dr-illus,
-   with three different geometries for one component. Only the "Illustrative"
-   marker's uppercase treatment is added on top. */
-.iris-chip.dr-illus {
-  text-transform: uppercase; letter-spacing: .05em; font-size: 11px;
-  border-radius: var(--radius-full);
-}
 
 /* ── Share-of-base bar ────────────────────────────────────────────────────
    The library .progress, used to turn "35,590 customers" into something the eye
@@ -586,6 +580,25 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-dist__k--ok   { background: var(--iris-brand-600); }
 @media (max-width: 900px) { .dr-dist__key { display: none; } }
 
+/* ── Info tip ─────────────────────────────────────────────────────────────
+   LIBRARY GAPS, both real. .tooltip-bubble is white-space:nowrap, so it cannot
+   hold a sentence, and the library ships no rule that ever hides it — drop the
+   markup on a page and the bubble is simply always on screen. Both are supplied
+   here; the bubble, its colour and its arrow stay the library's. */
+.dr-info > button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--radius-full);
+  background: none; color: var(--dr-muted); cursor: help;
+}
+.dr-info > button:hover { color: var(--color-text-heading); }
+.dr-info > button:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+.dr-info .dr-tip {
+  white-space: normal; width: max-content; max-width: 280px; line-height: 1.45;
+  opacity: 0; visibility: hidden; transition: opacity .12s;
+}
+.dr-info:hover .dr-tip,
+.dr-info:focus-within .dr-tip { opacity: 1; visibility: visible; }
+
 /* ── Condition list ───────────────────────────────────────────────────────
    Rows in the same shape as the table rows: tile, label, value on the right. */
 .dr-cond { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--dr-border-soft); }
@@ -596,6 +609,10 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-cond__s { margin-top: 2px; font-size: 11.5px; color: var(--dr-muted); }
 .dr-cond__n { font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dr-cond--bad .dr-cond__l, .dr-cond--bad .dr-cond__s { color: var(--color-text-fg-danger); }
+/* The row above already draws a hairline, so the total's own top border landed
+   directly on it and read as a double rule. The row before the total gives its
+   border up. */
+.dr-cond:has(+ .dr-cond--total) { border-bottom: 0; }
 .dr-cond--total { border-top: 1px solid var(--dr-border); margin-top: 4px; padding-top: 12px; }
 
 /* The library cohort badge is a fixed 62x42 flex block; in a right-aligned cell
@@ -639,12 +656,6 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
   font-weight: var(--font-semibold);
 }
 
-/* Anything the prototype synthesises says so. */
-.dr-illus {
-  display: inline-flex; align-items: center; padding: 2px 7px; border-radius: var(--radius-full);
-  background: var(--dr-sel); color: var(--dr-th);
-  font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em; text-transform: uppercase;
-}
 .dr-note { margin: 10px 0 0; max-width: 72ch; font-size: 12px; line-height: 1.55; color: var(--dr-muted); }
 
 /* Row-level affordance for the list. The row is the pointer target; the name
@@ -660,8 +671,12 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-sum__n b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
 /* the sort note describes the order, so it follows the filters but is quieter
    and set apart by a rule rather than by another chip */
-.dr-sum__sort { color: var(--dr-muted); }
-.dr-sum__sort b { font-weight: var(--font-medium); color: var(--color-text-body); }
+.dr-sortlab { color: var(--dr-muted); }
+.dr-sortsel.form-select {
+  height: 30px; padding: 0 26px 0 8px; font-size: var(--text-xs);
+  border-radius: var(--radius-md); border-color: var(--dr-border); background-size: 12px;
+  background-position: right 8px center; color: var(--color-text-body); width: auto;
+}
 
 /* an applied filter: label, value, and its own remove control */
 .dr-fchip { gap: 5px; padding-right: 3px; }
