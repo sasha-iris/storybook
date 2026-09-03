@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=17">
-<link rel="stylesheet" href="./segments-v2.css?v=17">
+<link rel="stylesheet" href="./segments-proto.css?v=18">
+<link rel="stylesheet" href="./segments-v2.css?v=18">
 <!--
   Variant 2 of the segment page, in the Data Rooms visual language.
 
@@ -222,8 +222,8 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=17"></script>
-<script src="./segments-v2-shared.js?v=17"></script>
+<script src="./segments-data.js?v=18"></script>
+<script src="./segments-v2-shared.js?v=18"></script>
 <script>
 /* ── Unknown id ───────────────────────────────────────────────────────────
    An id that does not exist used to fall through to a default segment, so
@@ -389,13 +389,18 @@ document.getElementById('drMeta').innerHTML =
 if (danger.length) {
   const whole = danger.some(f => f.k === 'wholebase');
   document.getElementById('drAlert').innerHTML =
-    '<div class="alert alert-danger dr-alert dr-alert--lead" role="region" aria-label="Definition problem" style="margin-bottom:18px;">' +
-      '<span class="alert-icon">' + svg(IC.warn, 18) + '</span>' +
+    /* Two lines, and the action is a link at the end of the sentence. The same
+       trim the list banner got: a 17px heading over a paragraph over a bordered
+       button was a hundred pixels of red before any of the numbers. */
+    '<div class="alert alert-danger dr-alert" role="region" aria-label="Definition problem" style="margin-bottom:16px;">' +
+      '<span class="alert-icon">' + svg(IC.warn, 17) + '</span>' +
       '<div class="alert-body"><div class="alert-title">' +
       (whole ? 'These numbers describe your whole business, not a segment' : 'This segment has a definition problem') + '</div>' +
-      '<p>' + danger.map(f => esc(f.t)).join('. ') + '.' +
-      (whole ? ' It matches ' + pct(SEG.share) + ' of all ' + fmtN(BASE) + ' customers, so the revenue below is total company revenue.' : '') + '</p>' +
-      '<a class="btn btn-sm btn-alternative" href="./segment-builder.html?v2=1&id=' + SEG.id + '">Fix the definition</a></div></div>';
+      '<p>' + (whole
+        ? 'It matches all ' + fmtN(BASE) + ' customers, so the revenue below is total company revenue. '
+        : danger.map(f => esc(f.t)).join('. ') + '. ') +
+      '<a class="btn-link" href="./segment-builder.html?v2=1&id=' + SEG.id + '">Fix the definition</a></p>' +
+      '</div></div>';
 }
 
 /* ── KPIs ─────────────────────────────────────────────────────────────────

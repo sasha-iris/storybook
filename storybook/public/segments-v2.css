@@ -660,7 +660,8 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-sum__n b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
 /* the sort note describes the order, so it follows the filters but is quieter
    and set apart by a rule rather than by another chip */
-.dr-sum__sort { padding-left: 12px; border-left: 1px solid var(--dr-border); color: var(--dr-muted); }
+.dr-sum__sort { color: var(--dr-muted); }
+.dr-sum__sort b { font-weight: var(--font-medium); color: var(--color-text-body); }
 
 /* an applied filter: label, value, and its own remove control */
 .dr-fchip { gap: 5px; padding-right: 3px; }

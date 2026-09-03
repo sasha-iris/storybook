@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=17">
-<link rel="stylesheet" href="./segments-v2.css?v=17">
+<link rel="stylesheet" href="./segments-proto.css?v=18">
+<link rel="stylesheet" href="./segments-v2.css?v=18">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -126,8 +126,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="./segments-data.js?v=17"></script>
-<script src="./segments-v2-shared.js?v=17"></script>
+<script src="./segments-data.js?v=18"></script>
+<script src="./segments-v2-shared.js?v=18"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fKind = 'all', fState = 'all', fFolder = 'all', q = '', full = false;
@@ -450,8 +450,11 @@ function render() {
         '<button class="dr-fchip__x" data-drop="' + c[0] + '" aria-label="Remove the ' + c[1].toLowerCase() + ' filter ' + esc(c[2]) + '">' +
         svg('M6 18 18 6M6 6l12 12', 12) + '</button></span>').join('') +
     (chips.length > 1 ? '<button class="btn-link" id="lsClear">Clear all</button>' : '') +
+    /* "Needs attention first" on its own read as a greyed-out button. It is a
+       statement about the order, so it says so and drops the vertical rule that
+       made it look like a control. */
     (sort.k === 'attention'
-      ? '<span class="dr-sum__sort" title="Segments whose numbers cannot be trusted first, then the empty ones, then the rest by size">Needs attention first</span>'
+      ? '<span class="dr-sum__sort">Sorted by <b>needs attention first</b></span>'
       : '');
 
   const head = '<thead><tr>' + COLS.map(c =>

@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=17">
+<link rel="stylesheet" href="./segments-proto.css?v=18">
 <!--
   The live product compares exactly two segments on cohort RETENTION
   (Segment 1 Primary / Segment 2 Comparison, View: Retention). That job is kept
@@ -61,6 +61,7 @@
 
   .sc-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--seg-muted); margin-top: 8px; }
   .sc-key { display: inline-flex; align-items: center; gap: 6px; }
+  .sc-twin { display: inline-flex; align-items: center; gap: 6px; margin-right: 14px; color: var(--color-text-fg-danger); font-weight: 500; }
   .sc-key i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
 </style>
 </head>
@@ -153,7 +154,7 @@
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 
-<script src="./segments-data.js?v=17"></script>
+<script src="./segments-data.js?v=18"></script>
 <script>
 const CALC = SEGMENTS.filter(s => s.c != null);
 const q = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);
@@ -173,6 +174,8 @@ if (picked.length === 1) {
 let view = 'retention';
 const fmtN = v => v == null ? null : Math.round(v).toLocaleString('en-US');
 const pct  = v => (v * 100).toFixed(v < .1 ? 1 : 0) + '%';
+const svgWarn = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="flex:none"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg>';
+
 const COLORS = ['#42389d', '#0e9f6e', '#d97706', '#c70036'];
 
 function toast(title, msg) {
@@ -260,19 +263,28 @@ function renderRetention() {
     document.getElementById('scRetWrap').innerHTML = '';
     return;
   }
+  /* Two segments that return identical numbers produce identical curves, and one
+     line then sits exactly on top of the other: the chart looks broken and the
+     legend claims two series where one is visible. The second is drawn dashed so
+     both are readable, and the fact is stated once instead of six times in the
+     table below. */
+  const twinned = usable.length > 1 &&
+    usable.every(p => p.c.every((v, i) => Math.abs(v - usable[0].c[i]) < 0.05));
+
   const x = i => P + i * (W - P * 2) / (months.length - 1);
   const y = v => H - P - (v / 100) * (H - P * 2);
   svg.innerHTML =
     [0, 25, 50, 75, 100].map(v => `<line x1="${P}" y1="${y(v)}" x2="${W - P}" y2="${y(v)}" stroke="#e5e7eb" stroke-width="1"/>
       <text x="2" y="${y(v) + 4}" font-size="9" fill="#4b5563" font-family="Inter">${v}%</text>`).join('') +
-    usable.map(p => `<path d="${p.c.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ')}" fill="none" stroke="${p.col}" stroke-width="2.5" vector-effect="non-scaling-stroke"/>` +
-      p.c.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="${p.col}"/>`).join('')).join('') +
+    usable.map((p, n) => `<path d="${p.c.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ')}" fill="none" stroke="${p.col}" stroke-width="2.5"${twinned && n ? ' stroke-dasharray="7 5"' : ''} vector-effect="non-scaling-stroke"/>` +
+      (twinned && n ? '' : p.c.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="${p.col}"/>`).join(''))).join('') +
     months.map((m, i) => `<text x="${x(i) - 8}" y="${H - 6}" font-size="10" fill="#4b5563" font-family="Inter">${m}</text>`).join('');
 
   document.getElementById('scChartDesc').textContent = usable.map(p =>
     `${p.s.n}: month one retention ${p.c[1]}%, month six ${p.c[6]}%.`).join(' ');
-  document.getElementById('scLegend').innerHTML = usable.map(p =>
-    `<span class="sc-key"><i style="background:${p.col}"></i>${p.s.n}</span>`).join('') +
+  document.getElementById('scLegend').innerHTML =
+    (twinned ? `<span class="sc-twin">${svgWarn}These ${usable.length} segments return identical numbers, so their curves sit exactly on top of each other. The dashed line is the second one.</span>` : '') +
+    usable.map((p, n) => `<span class="sc-key"><i style="background:${p.col}${twinned && n ? ';height:0;border-top:3px dashed ' + p.col : ''}"></i>${p.s.n}</span>`).join('') +
     pairs.filter(p => !p.c).map(p => `<span class="sc-key" style="color:var(--color-text-fg-danger)">${p.s.n} — no data</span>`).join('');
 
   const base = usable[0];
@@ -280,10 +292,11 @@ function renderRetention() {
     <thead><tr><th>Segment</th>${months.map(m => `<th style="text-align:right">${m}</th>`).join('')}</tr></thead>
     <tbody>${pairs.map(p => `<tr>
       <th scope="row" style="text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--color-text-heading);">
-        <span class="sc-key"><i style="background:${p.col}"></i>${p.s.n}</span></th>
+        <span class="sc-key"><i style="background:${p.col}"></i>${p.s.n}</span>
+        ${twinned && p !== base ? `<span class="sc-d sc-d--dn" style="display:block;margin-top:2px;">every month identical to ${base.s.n}</span>` : ''}</th>
       ${p.c ? p.c.map((v, i) => `<td style="text-align:right">
           <span class="iris-cohort-badge iris-cohort-badge--${Math.min(100, Math.round(v / 10) * 10)}">${v.toFixed(0)}%</span>
-          ${p !== base && i ? delta(v, base.c[i], base.s.n) : ''}</td>`).join('')
+          ${p !== base && i && !twinned ? delta(v, base.c[i], base.s.n) : ''}</td>`).join('')
         : `<td colspan="${months.length}" style="color:var(--seg-muted);font-size:12.5px;">
              ${V2 ? (v2state(p.s) === 'unknown' ? 'No result for this definition — no retention to show.' : 'No customers match — no retention to show.') : (p.s.state === 'never' ? 'Never calculated — no retention to show.' : 'No customers match — no retention to show.')}</td>`}
     </tr>`).join('')}</tbody></table>`;
