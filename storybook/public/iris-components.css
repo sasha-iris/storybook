@@ -815,7 +815,7 @@ input[type="file"].form-file-input {
   background: #FFF5F5;
 }
 .form-feedback-error { font-size: var(--text-xs); color: var(--color-danger); margin-top: 4px; }
-.form-feedback-success { font-size: var(--text-xs); color: #0E9F6E; margin-top: 4px; }
+.form-feedback-success { font-size: var(--text-xs); color: var(--color-text-fg-success); margin-top: 4px; } /* was #0E9F6E = 3.0:1 on white */
 
 
 /* ── Code / OTP input — one-time verification codes ──
@@ -1152,7 +1152,7 @@ input[type="file"].form-file-input {
   border-radius: 50%;
   border: 2px solid #fff;
 }
-.avatar-status-online  { background: #0E9F6E; }
+.avatar-status-online  { background: var(--color-bg-success); } /* was #0E9F6E */
 .avatar-status-away    { background: #C27803; }
 .avatar-status-busy    { background: #E02424; }
 .avatar-status-offline { background: #9CA3AF; }
@@ -1220,7 +1220,7 @@ input[type="file"].form-file-input {
 .badge-outline-default, .badge--outline { background: transparent; border-color: #374151; color: #374151; } /* sync: styles.css; border=text per sibling pattern; no Outline type in Figma 639:4756 — pending designer confirmation */
 .badge-outline-primary  { background: transparent; border-color: #1C64F2; color: #1C64F2; }
 .badge-outline-red      { background: transparent; border-color: #E02424; color: #E02424; }
-.badge-outline-green    { background: transparent; border-color: #057A55; color: #057A55; }
+.badge-outline-green    { background: transparent; border-color: var(--color-text-fg-success); color: var(--color-text-fg-success); } /* was #057A55 — one of five greens for one meaning */
 .badge-outline-yellow   { background: transparent; border-color: #C27803; color: #C27803; }
 .badge-outline-purple   { background: transparent; border-color: #7E3AF2; color: #7E3AF2; }
 
@@ -1991,6 +1991,11 @@ input[type="file"].form-file-input {
 .progress-bar-dark    { background: #111928; }
 .progress-bar-blue    { background: #1c64f2; }
 
+/* The set above is the chart palette. It had no danger variant, so anything that
+   needed a bar to mean "this is wrong" was reaching for progress-bar-pink, the
+   trend-down hue, which reads as a chart series rather than an error. */
+.progress-bar-danger  { background: var(--color-bg-danger); }
+
 .progress-label {
   font-size: 10px;
   font-weight: var(--font-semibold);
@@ -2464,7 +2469,7 @@ input[type="file"].form-file-input {
   margin-top: 1px;
 }
 
-.toast-icon-success { background: #0E9F6E; }
+.toast-icon-success { background: var(--color-bg-success); } /* was #0E9F6E */
 .toast-icon-danger  { background: #E02424; }
 .toast-icon-warning { background: #C27803; }
 .toast-icon-info    { background: #1C64F2; }
@@ -2878,7 +2883,7 @@ kbd.kbd-dark {
   background: var(--color-bg-primary);
 }
 .indicator-dot-red    { background: #E02424; }
-.indicator-dot-green  { background: #0E9F6E; }
+.indicator-dot-green  { background: var(--color-bg-success); } /* was #0E9F6E */
 .indicator-dot-yellow { background: #C27803; }
 .indicator-dot-gray   { background: #9CA3AF; }
 
@@ -3185,6 +3190,19 @@ kbd.kbd-dark {
 .card-icon-yellow { background: #FEF3C7; color: #92400E; }
 .card-icon-purple { background: #EDE9FE; color: #5B21B6; }
 .card-icon-dark   { background: var(--color-bg-dark); color: #fff; }
+
+/* Neutral and non-status accents.
+   The six variants above are blue / green / red / yellow / purple / dark, and
+   four of those are also status colours: green reads "good", yellow "warning",
+   red "error". Anything that uses .card-icon to say what KIND of thing a row is
+   therefore ends up with one hue carrying two unrelated meanings — a yellow tile
+   meaning "order value" beside a yellow badge meaning "matched nobody".
+   These four are hues the status scale does not use, plus the neutral the set
+   was missing entirely. Values are the Foundation accent tokens with a tint. */
+.card-icon-gray   { background: var(--color-bg-tertiary); color: var(--color-text-body); }
+.card-icon-indigo { background: #e0e7ff; color: #3730a3; }
+.card-icon-teal   { background: #d5f5f6; color: #005f5a; }
+.card-icon-sky    { background: #e0f2fe; color: #075985; }
 
 /* ═══════════════════════════════════════════════════════════════════
    Reporting Card  (Figma node 10046:76406)
@@ -3698,7 +3716,7 @@ kbd.kbd-dark {
 .iris-chip--dark:hover { background: #1e2939; }
 .iris-chip--indigo  { background: #5850ec; color: #ffffff; }
 .iris-chip--indigo:hover { background: var(--color-bg-primary); }
-.iris-chip--green   { background: #009966; color: #ffffff; }
+.iris-chip--green   { background: var(--color-bg-success); color: #ffffff; } /* was #009966: white on it measured 3.1:1 */
 .iris-chip--green:hover { background: #006045; }
 .iris-chip--red     { background: #e7000b; color: #ffffff; }
 .iris-chip--red:hover { background: #9f0712; }
@@ -3739,7 +3757,7 @@ kbd.kbd-dark {
 /* Color variants — dot and text (Figma-exact, some differ slightly) */
 .iris-tag--grey   { color: #4a5565; }
 .iris-tag--indigo { color: #5850ec; }
-.iris-tag--green  { color: #009966; }
+.iris-tag--green  { color: var(--color-text-fg-success); } /* was #009966 = 3.65:1 on white, under AA at 12px */
 .iris-tag--red    { color: #e7000b; }
 .iris-tag--orange { color: #d03801; }
 .iris-tag--teal   { color: #009689; }

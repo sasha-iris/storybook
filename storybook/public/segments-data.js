@@ -126,12 +126,36 @@ const SEGMENTS = RAW.map((s, i) => {
   if (s.c > 0 && s.o == null)         flags.push({ k:'partial', sev:'info', t:'Order data missing' });
   if (state === 'ready' && s.ltv < 0) flags.push({ k:'negltv',  sev:'info', t:'Negative LTV' });
 
+  /* What the segment is about. Additive: v1 does not read it, variant 2 uses it to
+     colour the row tile the way Data Rooms colours a file-type glyph. */
+  const kindOf = () => {
+    const raw = s.f.join(' ').toLowerCase();
+    if (/geograph|postal/.test(raw))                 return 'geo';
+    if (/sku|product famil/.test(raw))               return 'product';
+    if (/order value|discount|refund/.test(raw))     return 'value';
+    if (/first-time|returning|subscrib|top \d+%|tag|channel/.test(raw)) return 'behaviour';
+    return 'other';
+  };
+  const kind = kindOf();
+
   return {
-    id: 's' + i, ...s, conds, live, broken, share, state, stale, age, flags,
+    id: 's' + i, ...s, conds, live, broken, share, state, stale, age, flags, kind,
     sentence: live.length ? live.map(c => c.label).join(' · ')
                           : (broken.length ? 'No effective filter — every customer matches' : 'All customers')
   };
 });
+
+/* ── Variant 2 only ────────────────────────────────────────────────────────
+   Marko, 2026-09-01: in the new pass Iris computes these metrics on the fly, so
+   there is no run step, nothing can be stale, and "never calculated" cannot
+   exist. The state model collapses to what the definition returns. The 8
+   segments never run in the old product have no numbers in this snapshot, so
+   they read as unavailable rather than being given invented ones.
+
+   This is a separate function rather than a change to `state` on purpose: v1 is
+   the record of the current product's four-state reality and has to keep working
+   unchanged so the two variants can be shown side by side. */
+function v2state(s) { return s.c == null ? 'unknown' : s.c === 0 ? 'nomatch' : 'ready'; }
 
 /* duplicate detection: identical calculated result sets */
 const byResult = {};

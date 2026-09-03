@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=14">
+<link rel="stylesheet" href="./segments-proto.css?v=17">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -81,6 +81,17 @@
 
   .sb-modecards { display: flex; gap: 10px; flex-wrap: wrap; }
   .sb-modecards .iris-radio-card { flex: 1; min-width: 230px; display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+
+  /* Variant-2 mode only. The container was capped at 1240px but never centred,
+     so on a wide monitor the whole form sat against the left edge with a third
+     of the screen empty beside it. The header is centred on the same measure so
+     the title, the actions and the form share one left edge. */
+  /* Both measures must resolve to the same left edge. .sb-body's max-width is
+     content-box and its 24px padding sits outside it, so the body's outer
+     measure is 1240 + 48; the header's inner box already lives inside the
+     header's own 24px padding and stays at 1240. */
+  .v2 .sb-body { box-sizing: border-box; max-width: 1288px; margin-left: auto; margin-right: auto; }
+  .v2 .sb-head__in { max-width: 1240px; margin: 0 auto; }
 </style>
 </head>
 <body style="margin:0;font-family:'Inter',sans-serif;">
@@ -192,7 +203,7 @@
           </div>
         </div>
 
-        <div class="sb-card">
+        <div class="sb-card" id="sbModeCard">
           <div class="sb-card__h"><h2 class="sb-card__t">How this segment stays current</h2></div>
           <div class="sb-card__b sb-modecards">
             <!-- The choice the current product never offers, which is why 8 segments sat
@@ -247,7 +258,7 @@
           <div class="sb-sample" id="sbSample"></div>
         </div>
 
-        <p style="font-size:11px;color:var(--seg-muted);line-height:1.55;margin:0;">
+        <p style="font-size:11px;color:var(--seg-muted);line-height:1.55;margin:0;" id="sbEstNote">
           Counts are estimated from the last nightly calculation and can differ from the
           final size by a few percent. The exact number is written when the segment first runs.
         </p>
@@ -259,7 +270,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=14"></script>
+<script src="./segments-data.js?v=17"></script>
 <script>
 const CATALOG = {
   WHO: [
@@ -292,6 +303,35 @@ const TEMPLATES = [
 
 /* Edit mode: the list, the detail page and the row menu all link here with ?id */
 const EDIT = SEGMENTS.find(s => s.id === new URLSearchParams(location.search).get('id')) || null;
+
+/* ── Variant-2 mode ────────────────────────────────────────────────────────
+   The v2 pages have no builder of their own, so they link here with ?v2=1.
+   Marko, 2026-09-01: in the new pass Iris computes the metrics on the fly, so
+   there is no run step to schedule and nothing to calculate on demand. In that
+   mode the scheduling card is removed, the estimate footnote stops promising a
+   nightly figure, and Back and Cancel return to the v2 list.
+
+   It is a flag rather than an edit because v1 has to keep working unchanged:
+   the two variants are shown side by side. Default behaviour is untouched. */
+const V2 = new URLSearchParams(location.search).has('v2');
+if (V2) {
+  document.body.classList.add('v2');
+  /* the header content gets the same centred measure as the body below it */
+  const head = document.querySelector('.sb-head');
+  if (head && !head.querySelector('.sb-head__in')) {
+    const box = document.createElement('div');
+    box.className = 'sb-head__in';
+    while (head.firstChild) box.appendChild(head.firstChild);
+    head.appendChild(box);
+  }
+  const card = document.getElementById('sbModeCard');
+  if (card) card.remove();
+  const note = document.getElementById('sbEstNote');
+  if (note) note.textContent =
+    'The estimate is computed from the conditions above and can differ from the ' +
+    'final size by a few percent. Iris computes the exact figure on the fly when the segment is opened.';
+  document.querySelectorAll('a[href="./segments.html"]').forEach(a => a.href = './segments-v2.html');
+}
 
 let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: '', desc: '', mode: 'auto', join: 'all' };
 let touched = false;   /* opening a segment for editing is not a change to it */
@@ -614,15 +654,16 @@ document.addEventListener('click', e => {
   if (e.target.closest('#sbSave')) {
     saved = true;
     toast(EDIT ? 'Changes saved' : 'Segment created',
-      `“${esc(state.name)}” saved. ${state.mode === 'auto' ? 'It will recalculate nightly.' : 'It will calculate on demand.'} Estimated audience ${fmtN(estimate().n)} customers.`);
-    setTimeout(() => location.href = './segments.html', 1100);
+      `“${esc(state.name)}” saved. ${V2 ? 'Its metrics are computed on the fly.'
+        : state.mode === 'auto' ? 'It will recalculate nightly.' : 'It will calculate on demand.'} Estimated audience ${fmtN(estimate().n)} customers.`);
+    setTimeout(() => location.href = V2 ? './segments-v2.html' : './segments.html', 1100);
     return;
   }
   if (e.target.closest('#sbCancel')) {
-    if (!state.conds.length && !state.name) return location.href = './segments.html';
+    if (!state.conds.length && !state.name) return location.href = V2 ? './segments-v2.html' : './segments.html';
     modal({ title: 'Discard this segment?', danger: true, confirmLabel: 'Discard',
       body: `<p style="margin:0;font-size:13px;color:#374151;">Your conditions and name will be lost.</p>`,
-      onConfirm: () => { saved = true; location.href = './segments.html'; } });
+      onConfirm: () => { saved = true; location.href = V2 ? './segments-v2.html' : './segments.html'; } });
     return;
   }
 });

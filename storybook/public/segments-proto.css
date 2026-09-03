@@ -100,8 +100,19 @@
 .seg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
 
+/* The backdrop itself had no rule anywhere — only the dialog inside it did — so
+   every dialog on these pages rendered in normal page flow, unpositioned, with
+   no scrim, while claiming aria-modal="true". On a long page that put it wherever
+   the document happened to end, which is why the discard dialog appeared in the
+   bottom-left corner. These are the library's own .modal-backdrop values. */
+.seg-modal-backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: rgba(0, 0, 0, .5);
+}
 .seg-modal-backdrop .modal-dialog {
   background: #fff; border-radius: 12px; max-width: 460px; width: 100%;
+  max-height: 90vh; overflow: auto; box-shadow: 0 20px 48px rgba(0, 0, 0, .2);
 }
 
 /* ── Collapsed navigation ────────────────────────────────────────────────

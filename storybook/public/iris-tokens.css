@@ -33,7 +33,7 @@
 
   /* Semantic */
   --color-primary:         #1C64F2;
-  --color-success:         #0E9F6E;
+  --color-success:         #007a55; /* was #0E9F6E = 3.0:1 on white; unified with --color-text-fg-success */
   --color-warning:         #C27803;
   --color-danger:          #E02424;
   --color-info:            #1C64F2;

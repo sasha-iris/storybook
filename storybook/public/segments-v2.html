@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Segments · variant 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./iris-tokens.css">
+<link rel="stylesheet" href="./iris-components.css">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./segments-proto.css?v=17">
+<link rel="stylesheet" href="./segments-v2.css?v=17">
+<!--
+  The segment list in the Data Rooms visual language.
+
+  Data Rooms never showed us a list — both screenshots are the detail page of one
+  room holding three files, so its table has no sort and its rail cannot change
+  the result. At forty segments neither of those holds, so this page keeps the
+  Data Rooms atoms (rail, toolbar, card-wrapped table, tinted icon tiles) and
+  makes them work at this scale.
+
+  Components come from the library wherever it has one: .card-icon for the type
+  tile, .badge for status, .progress for the share-of-base bar, brand purple for
+  the primary action. No Calculate anywhere: metrics are computed on the fly.
+-->
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;background:var(--color-bg-default);">
+<a class="seg-skip" href="#" id="skipLink">Skip to the segment list</a>
+<div class="seg-app">
+
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span><span>P&amp;L</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span><span>Inventory</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments-v2.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span><span>Reporting</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="dr-head dr-head--notabs">
+      <div class="dr-inner">
+        <div class="dr-titlerow">
+          <h1 class="dr-h1">Customer Segments</h1>
+          <div class="dr-headactions">
+            <a class="btn btn-md btn-alternative" id="lsCompare" href="./segments-compare.html?v2=1">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h13.5m0 0-3-3m3 3-3 3M21 16.5H7.5m0 0 3 3m-3-3 3-3"/></svg>
+              Compare
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="dr-wrap" id="lsBody">
+      <div class="dr-inner">
+        <p class="seg-sr" role="status" aria-live="polite" id="lsLive"></p>
+
+        <div id="lsAlert"></div>
+        <div class="dr-kpis" id="lsKpis"></div>
+        <div id="lsDist" style="margin-bottom:18px;"></div>
+
+        <div class="dr-layout">
+          <div class="list-group dr-rail" id="lsRail" role="group" aria-label="Filter segments"></div>
+
+          <div>
+            <div class="dr-toolbar">
+              <div class="dr-split">
+                <a class="btn btn-md btn-primary" href="./segment-builder.html?v2=1">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                  New segment
+                </a>
+                <button class="btn btn-md btn-primary" id="lsNewMore" aria-haspopup="menu" aria-expanded="false" aria-label="More ways to create a segment"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></button>
+              </div>
+              <div class="dr-split">
+                <button class="btn btn-md btn-alternative" id="lsImport"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 7.5 12 3m0 0 4.5 4.5M12 3v13.5"/></svg>Import customers</button>
+                <button class="btn btn-md btn-alternative" id="lsImportMore" aria-haspopup="menu" aria-expanded="false" aria-label="Import options"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></button>
+              </div>
+              <div class="dr-split">
+                <button class="btn btn-md btn-alternative" data-export="segments">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                  Export
+                </button>
+                <button class="btn btn-md btn-alternative" id="lsExportMore" aria-haspopup="menu" aria-expanded="false" aria-label="Export options"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></button>
+              </div>
+              <div class="dr-toolbar__end">
+                <div class="form-search-wrap" style="min-width:260px;"><label for="lsQ" class="seg-sr">Search segments by name or definition</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="lsQ" type="search" placeholder="Search segments"></div>
+              </div>
+            </div>
+
+            <div class="dr-sum">
+              <span id="lsSum"></span>
+
+              <!-- Arrangement is a choice between two named views, so both names
+                   stay visible: a segmented control, per the project's own rule
+                   that .btn-group is the view toggle (List/Kanban, Cumulative/Daily).
+                   A pressed icon button would hide the alternative behind a state. -->
+              <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
+                <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
+                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
+              </div>
+
+              <!-- Definition detail is not a choice between two destinations, it is
+                   one enhancement being turned on: nobody navigates to "compact".
+                   That is a switch, and the library ships .iris-toggle for it. -->
+              <button class="dr-switch" id="lsDetail" role="switch" aria-checked="false">
+                <span class="iris-toggle iris-toggle--off" aria-hidden="true"><span class="iris-toggle__thumb"></span></span>
+                <span>Full definitions</span>
+              </button>
+            </div>
+            <div id="lsTable"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="modalHost"></div>
+<input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
+
+<script src="./segments-data.js?v=17"></script>
+<script src="./segments-v2-shared.js?v=17"></script>
+<script>
+/* ── page state ─────────────────────────────────────────────────────────── */
+let fKind = 'all', fState = 'all', fFolder = 'all', q = '', full = false;
+
+/* ── Grouping ─────────────────────────────────────────────────────────────
+   Data Rooms' table is flat because it holds three files. Ours holds forty
+   segments, and a flat forty-row scroll is the thing the live product already
+   gets wrong: you cannot hold it in your head, so you never find the segment
+   you half-remember. Grouped by what the segment is about, the same forty rows
+   become five blocks of 17 / 13 / 5 / 2 / 3, each with its own subtotal, and
+   the question "how much of my business does geography actually explain" has an
+   answer on the page instead of in a spreadsheet.
+
+   It is the default and it is switchable, because sorting by a column is a
+   different job and the flat table is better at it. */
+let grouped = true;
+const COLLAPSED = new Set();
+
+/* ── Folders ──────────────────────────────────────────────────────────────
+   Data Rooms groups its records into folders: the meta row counts them, the
+   rail filters by them, "+ New folder" creates one, and every ungrouped record
+   says "Unfiled" under its name. This redesign had dropped the whole concept
+   and put a saved filter in its place, which is a different thing — a saved
+   filter remembers a question, a folder is where a thing lives. Marko's own
+   note was "it's more about organizing the segments", and grouping forty of
+   them is the plainest reading of that.
+
+   It starts empty, exactly as his screen does: zero folders, everything
+   ungrouped. Nothing about which segment belongs where is invented; the
+   mechanism is shown and the assignments are the user's. */
+const FOLDERS = (() => {
+  try { return JSON.parse(sessionStorage.getItem('segFolders') || '[]'); } catch (e) { return []; }
+})();
+const saveFolders = () => { try { sessionStorage.setItem('segFolders', JSON.stringify(FOLDERS)); } catch (e) {} };
+const folderOf = s => (FOLDERS.find(f => f.ids.includes(s.id)) || null);
+const matchFolder = s => fFolder === 'all' ? true
+                       : fFolder === 'none' ? !folderOf(s)
+                       : (folderOf(s) || {}).id === fFolder;
+/* Default order is attention, not size.
+   Sorting by customers descending puts the five segments that report the whole
+   customer base at the very top — which is precisely the failure of the live
+   product this redesign exists to fix, reproduced by our own default. v1 had an
+   attention order and v2 had lost it. Anything the user asks for by clicking a
+   header wins; this is only what they see before they ask. */
+let sort = { k: 'attention', dir: 'desc' };
+const ATT = s => s.flags.some(f => f.danger) ? 0
+              : v2state(s) === 'nomatch' ? 1
+              : v2state(s) === 'unknown' ? 2
+              : (v2state(s) === 'ready' && s.ltv < 0) ? 3 : 4;
+
+/* v2state, not s.state: v1 keeps the current product's four-state model, this
+   variant collapses it because metrics are computed on the fly. Both read the
+   same dataset, so the numbers can never disagree between the two variants. */
+const matchKind  = s => fKind  === 'all' || s.kind  === fKind;
+const stateOf = (s, k) =>
+  k === 'all'    ? true :
+  k === 'issues' ? s.flags.some(f => f.danger) :
+  k === 'negltv' ? v2state(s) === 'ready' && s.ltv < 0 :
+                   v2state(s) === k;
+const matchState = s => stateOf(s, fState);
+const matchQ = s => {
+  if (!q) return true;
+  const hay = (s.n + ' ' + (s.d || '') + ' ' + s.sentence + ' ' + s.conds.map(c => c.label).join(' ')).toLowerCase();
+  return hay.includes(q);
+};
+
+const issues = SEGMENTS.filter(s => s.flags.some(f => f.danger));
+const whole  = SEGMENTS.filter(s => s.flags.some(f => f.k === 'wholebase'));
+const nBy    = k => SEGMENTS.filter(s => v2state(s) === k).length;
+
+/* ── the page in six numbers ────────────────────────────────────────────
+   Everything here is counted from the dataset. Nothing is modelled, and the two
+   figures that are a problem are the two that carry colour. */
+(function summary() {
+  const ready = SEGMENTS.filter(s => v2state(s) === 'ready');
+  const clean = ready.filter(s => !s.flags.some(f => f.danger));
+  const biggest = clean.reduce((a, b) => (b.c > (a ? a.c : 0) ? b : a), null);
+  const neg = SEGMENTS.filter(s => v2state(s) === 'ready' && s.ltv < 0).length;
+  const K = [
+    { ic: IC.layers, l: 'Segments', v: SEGMENTS.length, go: 'all',
+      s: nBy('ready') + ' return customers, ' + (SEGMENTS.length - nBy('ready')) + ' do not' },
+    /* Stated as an assumption, not a fact: 35,590 is read off the largest segment,
+       and that segment is itself the bug this page is about. */
+    { ic: IC.users, l: 'Customer base', v: fmtN(BASE),
+      s: 'assumed from the largest segment' },
+    { ic: IC.check, l: 'Largest usable', v: biggest ? fmtN(biggest.c) : '—',
+      s: biggest ? esc(biggest.n) + ' · no data issues' : 'none',
+      bar: biggest ? biggest.share : 0, barCls: 'progress-bar-indigo' },
+    { ic: IC.slash, l: 'No matches', v: nBy('nomatch'), go: 'nomatch',
+      s: nBy('nomatch') ? 'return nobody' : 'none', tone: nBy('nomatch') ? 'warn' : '' },
+    { ic: IC.cash, l: 'Negative LTV', v: neg, go: 'negltv',
+      s: neg ? 'value per customer below zero' : 'none', tone: neg ? 'warn' : '' },
+    { ic: IC.warn, l: 'Data issues', v: issues.length, go: 'issues',
+      s: whole.length + ' report the whole base', tone: issues.length ? 'bad' : '' }
+  ];
+  /* Every figure that names a subset is the control that shows it. Six numbers
+     you read and scroll past are decoration; the same six as the way into the
+     list are the navigation. */
+  document.getElementById('lsKpis').innerHTML = K.map(k =>
+    (k.go ? '<button class="dr-kpi dr-kpi--go" data-kpi="' + k.go + '" aria-label="Show ' + esc(k.l) + '">'
+          : '<div class="dr-kpi">') +
+    '<div class="dr-kpi__l">' + svg(k.ic, 13) + k.l + (k.go ? svg('m8.25 4.5 7.5 7.5-7.5 7.5', 12) : '') + '</div>' +
+    '<div class="dr-kpi__v">' + k.v + '</div>' +
+    '<div class="dr-kpi__s ' + (k.tone ? 'dr-kpi__s--' + k.tone : '') + '">' + k.s + '</div>' +
+    (k.bar != null ? bar(k.bar, k.barCls) : '') +
+    (k.go ? '</button>' : '</div>')).join('');
+})();
+
+/* ══ The shape of the segment library ═════════════════════════════════════
+   Forty segments, one bar each, height is the segment's share of the customer
+   base. Nothing is modelled: it is s.c / 35,590 drawn to scale.
+
+   This is the finding as a picture rather than as a sentence. Five bars reach
+   the ceiling — a segment that covers the entire customer base is not a
+   segment — and everything that is genuinely a segment sits in the bottom
+   fifth. A page of numbers can state that; only a picture makes it obvious
+   before you have read anything, and it is the one object on this page that
+   his screen could not carry, because a distribution needs a population and he
+   has three files.
+
+   It is also the colour Marko asked for, doing work: red is "not a segment",
+   amber is "matches nobody", grey is "no result", brand is a real segment. */
+(function distribution() {
+  const ranked = [...SEGMENTS].sort((a, b) => (b.c || 0) - (a.c || 0));
+  const tone = s => s.flags.some(f => f.danger) ? ['bad', 'reports the whole base']
+              : v2state(s) === 'nomatch' ? ['warn', 'matches nobody']
+              : v2state(s) === 'unknown' ? ['none', 'no result']
+              : ['ok', pct(s.share) + ' of the base'];
+  const bars = ranked.map(s => {
+    const [t, why] = tone(s);
+    const h = s.c ? Math.max(2, Math.round(s.share * 100)) : 2;
+    /* Not a link. Forty bars as links meant forty tab stops before the table, and
+       at 22px wide they were under the 24px target minimum anyway. This is a
+       picture: the chart carries an accessible description as a whole, each bar
+       carries a title for the mouse, and every segment it shows is reachable as
+       a proper row in the table below. */
+    return '<span class="dr-dist__col" title="' + esc(s.n) + ' — ' + why + '">' +
+      '<span class="dr-dist__b dr-dist__b--' + t + '" style="height:' + h + '%"></span></span>';
+  }).join('');
+  document.getElementById('lsDist').innerHTML =
+    '<div class="dr-card"><div class="dr-card__h">' +
+      '<h2 class="dr-card__t">All ' + SEGMENTS.length + ' segments, drawn to scale</h2>' +
+      '<span class="dr-dist__key"><i class="dr-dist__k dr-dist__k--bad"></i>reports the whole base' +
+      '<i class="dr-dist__k dr-dist__k--warn"></i>matches nobody' +
+      '<i class="dr-dist__k dr-dist__k--none"></i>no result' +
+      '<i class="dr-dist__k dr-dist__k--ok"></i>a real segment</span>' +
+    '</div><div class="dr-card__b">' +
+      '<div class="dr-dist" role="img" aria-label="Segment sizes as a share of the ' + fmtN(BASE) +
+      ' customer base. ' + whole.length + ' segments cover the entire base.">' +
+        '<span class="dr-dist__ceil"><b>' + fmtN(BASE) + '</b> — your whole customer base</span>' +
+        bars +
+      '</div>' +
+      '<p class="dr-note" style="margin-top:10px;">Each bar is one segment and its height is how much of the base it covers. ' +
+      '<b>' + whole.length + ' reach the ceiling.</b> A segment that contains everyone answers no question — and those five carry the ' +
+      'largest revenue on the page, which is why they look like the best ones in the product today.</p>' +
+    '</div></div>';
+})();
+
+if (whole.length) {
+  /* The banner names the finding; the button opens the filter, which is wider —
+     it also catches the segments that duplicate another one's numbers. Saying
+     "show these 5" and then listing 7 would be its own small lie. */
+  const dupes = SEGMENTS.filter(s => s.flags.some(f => f.k === 'dupe'));
+  const extra = dupes.filter(s => !s.flags.some(f => f.k === 'wholebase')).length;
+  document.getElementById('lsAlert').innerHTML =
+    /* Two lines. The banner had a 17px heading, a three-sentence paragraph and a
+       bordered button under it — over 100px of red at the top of the page, which
+       is the "too much red" note in a new costume. The duplicate count moved into
+       the rows that carry it, where it belongs, and the action is an inline link
+       at the end of the sentence rather than a button on its own row. */
+    '<div class="alert alert-danger dr-alert" role="region" aria-label="Data quality" style="margin-bottom:16px;">' +
+    '<span class="alert-icon">' + svg(IC.warn, 17) + '</span>' +
+    '<div class="alert-body"><div class="alert-title">' + whole.length + ' segments report your whole customer base</div>' +
+    '<p>A filter with no value matches everyone, and their revenue puts them top of the list. ' +
+    '<button class="btn-link" id="lsShowIssues">Show all ' + issues.length + ' with data issues</button></p>' +
+    '</div></div>';
+  document.getElementById('lsShowIssues').addEventListener('click', () => {
+    fState = 'issues'; fKind = 'all'; render();
+    document.getElementById('lsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+/* ── rail ───────────────────────────────────────────────────────────────
+   Two dimensions, cross-filtered: the count beside "Geography" is how many
+   geography segments survive the result filter that is currently on, not how
+   many exist in total. A rail whose numbers ignore the rest of the page walks
+   you into empty results — which is what the Data Rooms rail does, where the
+   folder count sits beside zero folders. */
+function drawRail() {
+  const kinds = ['geo','product','behaviour','value','other'];
+  const states = ['ready','nomatch','unknown'];
+  const nKind  = k => SEGMENTS.filter(s => (k === 'all' || s.kind === k) && matchState(s) && matchFolder(s) && matchQ(s)).length;
+  const nState = k => SEGMENTS.filter(s => matchKind(s) && matchFolder(s) && matchQ(s) && stateOf(s, k)).length;
+  const nFolder = k => SEGMENTS.filter(s => matchKind(s) && matchState(s) && matchQ(s) &&
+                      (k === 'all' ? true : k === 'none' ? !folderOf(s) : (folderOf(s) || {}).id === k)).length;
+
+  const item = (on, k, attr, ic, label, n) =>
+    '<button class="list-group-item" ' + attr + '="' + k + '" aria-pressed="' + on + '">' +
+    svg(ic, 16) + '<span>' + label + '</span><span class="dr-rail__n">' + n + '</span></button>';
+
+  document.getElementById('lsRail').innerHTML =
+    '<div class="dr-rail__g"><div class="dr-rail__lab">Type</div>' +
+      item(fKind === 'all', 'all', 'data-kind', IC.layers, 'All segments', nKind('all')) +
+      kinds.map(k => item(fKind === k, k, 'data-kind', KIND[k].ic, KIND[k].l, nKind(k))).join('') +
+    '</div>' +
+    '<div class="dr-rail__g"><div class="dr-rail__lab">Result</div>' +
+      item(fState === 'all', 'all', 'data-state', IC.layers, 'Any result', nState('all')) +
+      states.map(k => item(fState === k, k, 'data-state', STATE[k].ic, STATE[k].l, nState(k))).join('') +
+      item(fState === 'negltv', 'negltv', 'data-state', IC.cash, 'Negative LTV', nState('negltv')) +
+      item(fState === 'issues', 'issues', 'data-state', IC.warn, 'Data issues', nState('issues')) +
+    '</div>' +
+    /* His rail's third group, and its footer action. */
+    '<div class="dr-rail__g"><div class="dr-rail__lab">Folders</div>' +
+      item(fFolder === 'all', 'all', 'data-folder', IC.layers, 'All segments', nFolder('all')) +
+      FOLDERS.map(f => item(fFolder === f.id, f.id, 'data-folder', IC.folder, esc(f.name), nFolder(f.id))).join('') +
+      item(fFolder === 'none', 'none', 'data-folder', IC.folderOpen, 'Ungrouped', nFolder('none')) +
+      '<button class="dr-rail__add" id="lsNewFolder">' +
+        svg('M12 4.5v15m7.5-7.5h-15', 16) + '<span>New folder</span></button>' +
+    '</div>';
+}
+
+/* ── table ──────────────────────────────────────────────────────────────── */
+const COLS = [
+  { k:'n',   l:'Segment' },
+  { k:'c',   l:'Customers', n:1 },
+  { k:'o',   l:'Orders',    n:1 },
+  { k:'net', l:'Net sales', n:1 },
+  { k:'ltv', l:'Avg LTV',   n:1 },
+  { k:'up',  l:'Definition updated', n:1 }
+];
+
+function nameCell(s) {
+  const kind = KIND[s.kind];
+  const err  = s.flags.filter(f => f.danger);
+  const warn = s.flags.filter(f => f.sev === 'warn');
+  const st   = v2state(s);
+  const conds = full && s.conds.length
+    ? s.conds.map(c => '<span class="iris-chip iris-chip--light" style="font-weight:500;">' + esc(c.label) + '</span>').join(' ')
+    : esc(s.sentence);
+  /* Status only when it is an exception. A green "Active" on 23 of 40 rows is
+     noise; the number in the Customers column already says the segment works. */
+  const badge = st === 'nomatch' ? '<span class="badge badge-yellow badge-sm">No customers match</span>'
+              : st === 'unknown' ? '<span class="badge badge-gray badge-sm">No data</span>' : '';
+  /* Line 1 is the name and, only when it is an exception, a status badge. The
+     condition count moved down to the definition line, where it belongs: on the
+     name line it competed with the title and pushed it onto its own row in a
+     290px column, which broke the name away from its own tile. */
+  return '<div class="dr-name"><span class="card-icon dr-tile ' + kind.c + '" title="' + kind.l + '" aria-hidden="true">' + svg(kind.ic, 19) + '</span>' +
+    '<div class="dr-name__t"><div class="dr-name__l">' +
+      '<a class="dr-name__a" href="./segment-detail-v2.html?id=' + s.id + '">' + esc(s.n) + '</a>' +
+      badge +
+    '</div><div class="dr-name__s">' +
+      (s.conds.length ? '<span class="iris-chip iris-chip--light">' + s.conds.length + ' condition' + (s.conds.length > 1 ? 's' : '') + '</span>' : '') +
+      (folderOf(s) ? '<span class="iris-chip iris-chip--light">' + svg(IC.folder, 12) + esc(folderOf(s).name) + '</span>' : '') +
+      '<span>' + conds + '</span>' +
+      /* the finding gets its own line rather than trailing the definition behind a
+         dot: on a wrapped row the dot was left dangling at the end of a line, and
+         a fixed line lets the eye run down the flags instead of hunting them. */
+      /* Both findings on one line. Two stacked flag lines made the worst rows
+         101px tall at 1180px, and the eye reads "reports the whole base · same
+         numbers as two others" as one problem, which is what it is. */
+      (err.length ? '<span class="flag bad">' + svg(IC.warn, 13) +
+        esc(err[0].t) + err.slice(1).map(f => ' · ' + esc(f.t).replace(/^S/, 's')).join('') + '</span>' : '') +
+      (!err.length && warn.length ? '<span class="flag warn">' + svg(IC.warn, 13) + esc(warn[0].t) + '</span>' : '') +
+      (!err.length && v2state(s) === 'ready' && s.ltv < 0
+        ? '<span class="flag warn">' + svg(IC.warn, 13) + 'Average LTV is negative</span>' : '') +
+    '</div></div></div>';
+}
+
+/* Customers is the lead metric, so it gets the weight and a bar. The bar is the
+   finding made visible: a track filled end to end is a segment that is not a
+   segment, and it is red before you have read a single digit. */
+function customersCell(s) {
+  if (s.c == null) return DASH;
+  const whole = s.share >= 0.95;
+  return '<div class="dr-share"><span class="lead' + (whole ? ' ' : '') + '"' +
+    (whole ? ' style="color:var(--color-text-fg-danger)"' : '') + '>' + fmtN(s.c) + '</span>' +
+    (s.c ? bar(s.share, whole ? 'progress-bar-danger' : 'progress-bar-indigo') +
+           '<span class="sub">' + pct(s.share) + ' of base</span>' : '') + '</div>';
+}
+
+function render() {
+  drawRail();
+  let rows = SEGMENTS.filter(s => matchKind(s) && matchState(s) && matchFolder(s) && matchQ(s));
+  rows = [...rows].sort((a, b) => {
+    if (sort.k === 'attention') {
+      const d = ATT(a) - ATT(b);
+      return d || (b.c || 0) - (a.c || 0);   /* inside a band, biggest first */
+    }
+    let A = a[sort.k], B = b[sort.k];
+    if (sort.k === 'up') { A = new Date(a.up); B = new Date(b.up); }
+    if (A == null && B == null) return 0;
+    if (A == null) return 1;          /* rows with no value sink, either direction */
+    if (B == null) return -1;
+    const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
+    return sort.dir === 'desc' ? -r : r;
+  });
+
+  /* Applied filters are removable chips, not a sentence with one "Clear filters"
+     hammer at the end. Three reasons this is the better control:
+     — you can drop ONE filter. The button could only drop all of them, so
+       narrowing from four filters to three meant starting over.
+     — what is applied is visible as objects, not buried in a run-on line.
+     — "clear all" stops being a bordered button competing with the real actions
+       and becomes what it is: a quiet reset, last in the row.
+     The × is inside the chip, so it is one control per filter, where it applies. */
+  const chips = [];
+  if (fKind !== 'all')   chips.push(['kind',   'Type',   KIND[fKind].l]);
+  if (fState !== 'all')  chips.push(['state',  'Result', fState === 'issues' ? 'Data issues'
+                                     : fState === 'negltv' ? 'Negative LTV' : STATE[fState].l]);
+  if (fFolder !== 'all') chips.push(['folder', 'Folder', fFolder === 'none' ? 'Ungrouped'
+                                     : (FOLDERS.find(f => f.id === fFolder) || {}).name]);
+  if (q)                 chips.push(['q',      'Search', '“' + q + '”']);
+
+  document.getElementById('lsSum').innerHTML =
+    '<span class="dr-sum__n"><b>' + rows.length + '</b> of ' + SEGMENTS.length + ' segments</span>' +
+    chips.map(c =>
+      '<span class="iris-chip iris-chip--light dr-fchip">' +
+        '<span class="dr-fchip__k">' + c[1] + '</span>' + esc(c[2]) +
+        '<button class="dr-fchip__x" data-drop="' + c[0] + '" aria-label="Remove the ' + c[1].toLowerCase() + ' filter ' + esc(c[2]) + '">' +
+        svg('M6 18 18 6M6 6l12 12', 12) + '</button></span>').join('') +
+    (chips.length > 1 ? '<button class="btn-link" id="lsClear">Clear all</button>' : '') +
+    (sort.k === 'attention'
+      ? '<span class="dr-sum__sort" title="Segments whose numbers cannot be trusted first, then the empty ones, then the rest by size">Needs attention first</span>'
+      : '');
+
+  const head = '<thead><tr>' + COLS.map(c =>
+      '<th class="' + (c.n ? 'n' : '') + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
+      '<button class="dr-sort" data-sort="' + c.k + '">' + c.l + ' <span class="c" aria-hidden="true">▾</span></button></th>').join('') +
+      '<th style="width:44px;"><span class="seg-sr">Actions</span></th></tr></thead>';
+
+  const rowHtml = s =>
+    '<tr data-href="./segment-detail-v2.html?id=' + s.id + '">' +
+      '<td>' + nameCell(s) + '</td>' +
+      '<td class="n">' + customersCell(s) + '</td>' +
+      '<td class="n">' + (s.o == null ? DASH : fmtN(s.o)) + '</td>' +
+      '<td class="n">' + (s.net == null ? DASH : fmt$(s.net)) + '</td>' +
+      '<td class="n">' + ltvCell(s.ltv) + '</td>' +
+      '<td class="n" style="white-space:nowrap;">' + fmtDate(s.up) +
+        '<div class="sub">' + relTime(s.up) + '</div></td>' +
+      '<td><button class="seg-iconbtn dr-kebab" data-menu="' + s.id + '" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for ' + esc(s.n) + '">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button></td>' +
+    '</tr>';
+
+  /* Grouping only makes sense while the rail is not already showing one type,
+     and while the user has not asked for a column order that cuts across them. */
+  const canGroup = grouped && fKind === 'all' && sort.k === 'attention';
+  const groupBody = () => ['geo','product','behaviour','value','other'].map(k => {
+    const g = rows.filter(r => r.kind === k);
+    if (!g.length) return '';
+    const open = !COLLAPSED.has(k);
+    /* NOT a sum. Segments overlap, so adding their customer counts produced
+       223,690 for Geography against a base of 35,590 — the same additive trap
+       that got "% of company revenue" removed from the segment page. The
+       largest member is a real number and answers the question the header is
+       actually for: how big does this kind of segment get. */
+    const big = g.reduce((a, r) => Math.max(a, r.c || 0), 0);
+    const bad  = g.filter(r => r.flags.some(f => f.danger)).length;
+    return '<tbody class="dr-grp">' +
+      '<tr class="dr-grp__h"><td colspan="7">' +
+      '<button class="dr-grp__b" data-grp="' + k + '" aria-expanded="' + open + '">' +
+        svg(open ? 'm19.5 8.25-7.5 7.5-7.5-7.5' : 'm8.25 4.5 7.5 7.5-7.5 7.5', 14) +
+        '<span class="card-icon ' + KIND[k].c + '" aria-hidden="true">' + svg(KIND[k].ic, 15) + '</span>' +
+        '<b>' + KIND[k].l + '</b>' +
+        '<span class="dr-grp__n">' + g.length + ' segment' + (g.length > 1 ? 's' : '') + '</span>' +
+        (bad ? '<span class="dr-grp__bad">' + svg(IC.warn, 13) + bad + ' with data issues</span>' : '') +
+        '<span class="dr-grp__sum">largest ' + (big ? fmtN(big) + ' customers' : 'returns nobody') + '</span>' +
+      '</button></td></tr>' +
+      (open ? g.map(rowHtml).join('') : '') + '</tbody>';
+  }).join('');
+
+  const body = rows.length ? (canGroup ? groupBody() : '<tbody>' + rows.map(rowHtml).join('') + '</tbody>')
+    : '<tbody><tr><td colspan="7">' +
+      '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
+      '<h3>No segments match these filters</h3>' +
+      '<p>All ' + SEGMENTS.length + ' segments are still here. Clear the filters to see them.</p>' +
+      '<button class="btn btn-md btn-primary" id="lsClear2" style="display:inline-flex;">Clear filters</button></div></td></tr></tbody>';
+
+  document.getElementById('lsTable').innerHTML =
+    '<div class="dr-tablecard"><div class="dr-tw"><table class="dr-t dr-t--list">' + head + body + '</table></div></div>';
+  document.getElementById('lsLive').textContent = rows.length + ' of ' + SEGMENTS.length + ' segments shown.';
+}
+
+/* ── interaction ────────────────────────────────────────────────────────── */
+function clearAll() { fKind = 'all'; fState = 'all'; fFolder = 'all'; q = ''; document.getElementById('lsQ').value = ''; render(); }
+
+document.getElementById('lsQ').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
+/* ── Arrangement: radiogroup, with the arrow-key behaviour the pattern owes ── */
+const arrBtns = [...document.querySelectorAll('[data-arr]')];
+function setArrangement(next, focus) {
+  grouped = next === 'grouped';
+  arrBtns.forEach(b => {
+    const on = b.dataset.arr === next;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', String(on));
+    b.tabIndex = on ? 0 : -1;
+    if (on && focus) b.focus();
+  });
+  render();
+}
+arrBtns.forEach((b, i) => {
+  b.addEventListener('click', () => setArrangement(b.dataset.arr, false));
+  b.addEventListener('keydown', e => {
+    const map = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: arrBtns.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    setArrangement(arrBtns[(map[e.key] + arrBtns.length) % arrBtns.length].dataset.arr, true);
+  });
+});
+
+/* ── Definition detail: a switch ── */
+document.getElementById('lsDetail').addEventListener('click', e => {
+  full = !full;
+  const b = e.currentTarget;
+  b.setAttribute('aria-checked', String(full));
+  const pill = b.querySelector('.iris-toggle');
+  pill.classList.toggle('iris-toggle--on', full);
+  pill.classList.toggle('iris-toggle--off', !full);
+  render();
+});
+
+document.addEventListener('click', e => {
+  const k = e.target.closest('[data-kind]');   if (k)  { fKind  = k.dataset.kind;   return keepFocus(k, render); }
+  const st = e.target.closest('[data-state]'); if (st) { fState = st.dataset.state; return keepFocus(st, render); }
+  const fo = e.target.closest('[data-folder]'); if (fo) { fFolder = fo.dataset.folder; return keepFocus(fo, render); }
+  const gp = e.target.closest('[data-grp]');
+  if (gp) {
+    const k = gp.dataset.grp;
+    COLLAPSED.has(k) ? COLLAPSED.delete(k) : COLLAPSED.add(k);
+    return keepFocus(gp, render);
+  }
+  const kp = e.target.closest('[data-kpi]');
+  if (kp) {
+    fState = kp.dataset.kpi; fKind = 'all'; fFolder = 'all'; render();
+    document.getElementById('lsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  const so = e.target.closest('[data-sort]');
+  if (so) { const key = so.dataset.sort; sort = { k: key, dir: sort.k === key && sort.dir === 'desc' ? 'asc' : 'desc' }; return keepFocus(so, render); }
+  const drop = e.target.closest('[data-drop]');
+  if (drop) {
+    const k = drop.dataset.drop;
+    if (k === 'kind')   fKind = 'all';
+    if (k === 'state')  fState = 'all';
+    if (k === 'folder') fFolder = 'all';
+    if (k === 'q')      { q = ''; document.getElementById('lsQ').value = ''; }
+    return render();
+  }
+  if (e.target.closest('#lsClear') || e.target.closest('#lsClear2')) return clearAll();
+  if (e.target.closest('#lsNewFolder')) return newFolder();
+
+  const ex = e.target.closest('[data-export]');
+  if (ex) return toast('Export started', 'The segment list is being prepared as CSV.');
+
+  const mb = e.target.closest('[data-menu]');
+  if (mb) { openMenu(mb); return; }
+  /* A click on any menu trigger is handled by that trigger's own listener. Without
+     this guard the delegated close ran in the same event and shut the menu the
+     button had just opened. */
+  if (!e.target.closest('.dr-menu') && !e.target.closest('[aria-haspopup="menu"]')) closeMenu();
+
+  /* Whole-row click. The row carries no role or tabindex: the name link is the
+     single keyboard stop, and this only mirrors it for the mouse. Clicks on the
+     link itself, the overflow button or any text selection are left alone. */
+  const tr = e.target.closest('tr[data-href]');
+  if (tr && !e.target.closest('a') && !e.target.closest('button')) {
+    if ((getSelection() || {}).toString()) return;
+    location.href = tr.dataset.href;
+  }
+});
+
+function newFolder(assign) {
+  promptModal({
+    title: 'New folder', confirmLabel: 'Create folder', label: 'Folder name',
+    placeholder: 'High value, Retention, Paused…',
+    onConfirm: name => {
+      const f = { id: 'f' + Date.now().toString(36), name: name, ids: assign ? [assign] : [] };
+      FOLDERS.push(f); saveFolders(); fFolder = f.id; render();
+      toast('Folder created', assign ? '“' + name + '” now holds 1 segment.' : '“' + name + '” is empty. Move segments into it from any row.');
+    }
+  });
+}
+function moveTo(seg, fid) {
+  FOLDERS.forEach(f => { f.ids = f.ids.filter(x => x !== seg.id); });
+  const f = FOLDERS.find(x => x.id === fid);
+  if (f) f.ids.push(seg.id);
+  saveFolders(); render();
+  toast(f ? 'Moved to ' + f.name : 'Removed from folder', '“' + seg.n + '”' + (f ? '' : ' is ungrouped again.'));
+}
+
+function openMenu(btn) {
+  const s = SEGMENTS.find(x => x.id === btn.dataset.menu);
+  const here = folderOf(s);
+  menu(btn, [
+    { lab: 'Work with this segment' },
+    { href: './segment-builder.html?v2=1&id=' + s.id, ic: IC.pencil, t: 'Edit definition' },
+    { act: 'dup',     ic: IC.copy,  t: 'Duplicate' },
+    { act: 'export',  ic: IC.down,  t: 'Export emails' },
+    { sep: true },
+    { lab: here ? 'In folder ' + here.name : 'Not in a folder' }
+  ].concat(FOLDERS.filter(f => !here || f.id !== here.id).map(f =>
+    ({ act: 'mv:' + f.id, ic: IC.folder, t: 'Move to ' + f.name })
+  )).concat(here ? [{ act: 'mv:', ic: IC.folderOpen, t: 'Remove from folder' }] : [])
+   .concat([
+    { act: 'newf', ic: IC.folder, t: 'Move to a new folder…' },
+    { sep: true },
+    { act: 'archive', ic: IC.box,   t: 'Archive' },
+    { act: 'del',     ic: IC.trash, t: 'Delete', danger: true }
+  ]), act => {
+    if (act.startsWith('mv:')) return moveTo(s, act.slice(3));
+    if (act === 'newf')    return newFolder(s.id);
+    if (act === 'dup')     toast('Segment duplicated', '“' + s.n + ' (copy)” is ready to edit.');
+    if (act === 'export')  toast('Export started', 'Emails for “' + s.n + '” will arrive by email.');
+    if (act === 'archive') toast('Segment archived', '“' + s.n + '” moved to Archived.');
+    if (act === 'del') modal({
+      title: 'Delete this segment?', danger: true, confirmLabel: 'Delete segment',
+      body: '<p style="margin:0;font-size:13px;color:var(--color-text-body);">“<strong>' + esc(s.n) +
+            '</strong>” will be removed for everyone. Reports built on it will stop working. This cannot be undone.</p>',
+      onConfirm: () => toast('Segment deleted', '“' + s.n + '” was removed.')
+    });
+  });
+}
+
+/* The two split buttons. Menu items name what they act on, so "Export" from a
+   filtered list cannot be confused with exporting all forty. */
+document.getElementById('lsNewMore').addEventListener('click', e => {
+  menu(e.currentTarget, [
+    { lab: 'Create a segment' },
+    { href: './segment-builder.html?v2=1', ic: IC.layers, t: 'Blank definition' },
+    { act: 'tpl',  ic: IC.spark, t: 'From a template' },
+    { act: 'dup',  ic: IC.copy,  t: 'Duplicate an existing segment' }
+  ], act => {
+    if (act === 'tpl') location.href = './segment-builder.html?v2=1#templates';
+    if (act === 'dup') toast('Pick a segment', 'Choose Duplicate from any row to start from it.');
+  });
+});
+/* Data Rooms' Upload brings a file into the room. The segment equivalent is
+   bringing a customer list in from outside and treating it as a segment — the
+   path every comparable tool has (Klaviyo, Mailchimp, HubSpot) and the one this
+   redesign had dropped entirely. A list-based segment does not drift, which is
+   also the honest answer to "these 400 people from the trade show". */
+/* ── Import ───────────────────────────────────────────────────────────────
+   His Upload takes a file on the main half and offers variants on the caret.
+   Mine opened the same menu from both, so the primary action did not do the
+   primary thing. The main half now opens a file picker, and the file is read
+   in the browser — the row count and the column names below are read out of
+   the file the user actually chose. Nothing is sent anywhere. */
+function readCsv(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    const text  = String(r.result || '');
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+    const cols  = (lines[0] || '').split(/[,;\t]/).map(c => c.replace(/^["']|["']$/g, '').trim()).filter(Boolean);
+    const rows  = Math.max(0, lines.length - 1);
+    const guess = cols.findIndex(c => /e-?mail/i.test(c));
+    modal({
+      title: 'Create a segment from this list',
+      confirmLabel: 'Create segment',
+      body:
+        '<div class="dr-cond" style="padding-top:0;">' +
+          '<span class="card-icon card-icon-teal" aria-hidden="true">' + svg(IC.dash, 15) + '</span>' +
+          '<div class="dr-cond__t"><div class="dr-cond__l">' + esc(file.name) + '</div>' +
+          '<div class="dr-cond__s">' + fmtN(rows) + ' row' + (rows === 1 ? '' : 's') + ' · ' +
+          (file.size < 1024 ? file.size + ' bytes' : fmtN(Math.round(file.size / 1024)) + ' KB') + ' · ' + cols.length + ' column' + (cols.length === 1 ? '' : 's') + '</div></div></div>' +
+        '<div class="form-group" style="margin:14px 0 0;">' +
+          '<label class="form-label" for="impCol">Which column identifies the customer?</label>' +
+          '<select class="form-select dr-select" id="impCol" style="width:100%;">' +
+            cols.map((c, i) => '<option value="' + i + '"' + (i === (guess < 0 ? 0 : guess) ? ' selected' : '') + '>' + esc(c) + '</option>').join('') +
+          '</select></div>' +
+        '<p class="dr-note">Iris matches these against known customers and builds a fixed list. ' +
+        'A list-based segment does not drift when a definition changes, which is the point of importing one. ' +
+        'Nothing leaves this browser in the prototype.</p>',
+      onConfirm: () => toast('List imported',
+        fmtN(rows) + ' rows from “' + file.name + '” would be matched against your ' + fmtN(BASE) + ' customers.')
+    });
+  };
+  r.readAsText(file.slice(0, 65536));
+}
+document.getElementById('lsFile').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (f) readCsv(f);
+});
+
+function importMenu(trigger) {
+  menu(trigger, [
+    { lab: 'Create from a list' },
+    { act: 'emails', ic: IC.users,   t: 'CSV of email addresses' },
+    { act: 'ids',    ic: IC.layers,  t: 'CSV of customer IDs' },
+    { act: 'orders', ic: IC.receipt, t: 'CSV of order numbers' }
+  ], act => {
+    document.getElementById('lsFile').click();
+  });
+}
+document.getElementById('lsImport').addEventListener('click', () => document.getElementById('lsFile').click());
+document.getElementById('lsImportMore').addEventListener('click', e => importMenu(e.currentTarget));
+
+document.getElementById('lsExportMore').addEventListener('click', e => {
+  const shown = document.querySelectorAll('.dr-t tbody tr[data-href]').length;
+  menu(e.currentTarget, [
+    { lab: 'Export' },
+    { act: 'view',   ic: IC.down, t: 'This view as CSV (' + shown + ')' },
+    { act: 'all',    ic: IC.down, t: 'All ' + SEGMENTS.length + ' segments as CSV' },
+    { act: 'emails', ic: IC.users, t: 'Customer emails for this view' }
+  ], act => {
+    if (act === 'view')   toast('Export started', shown + ' segments are being prepared as CSV.');
+    if (act === 'all')    toast('Export started', 'All ' + SEGMENTS.length + ' segments are being prepared as CSV.');
+    if (act === 'emails') toast('Export started', 'Customer emails for the ' + shown + ' segments in view will arrive by email.');
+  });
+});
+
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const b = document.getElementById('lsBody'); b.setAttribute('tabindex', '-1'); b.focus();
+});
+
+render();
+initSidebar();
+</script>
+</body>
+</html>

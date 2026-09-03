@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Segment · variant 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./iris-tokens.css">
+<link rel="stylesheet" href="./iris-components.css">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./segments-proto.css?v=17">
+<link rel="stylesheet" href="./segments-v2.css?v=17">
+<!--
+  Variant 2 of the segment page, in the Data Rooms visual language.
+
+  Marko sent two screenshots of a Data Rooms detail page with the note that the
+  segments work reads "much more neutral". Those screenshots are a DETAIL page —
+  breadcrumb, title with a status pill, meta row, tabs, card-wrapped table — so
+  this page, not the list, is their structural twin. The layout is matched
+  element for element; the content is ours.
+
+  Two things follow his other comment, that metrics are computed on the fly:
+  there is no Calculate or Recalculate control anywhere, and nothing is described
+  as stale. What remains is what the definition returns.
+
+  Every number on this page is either read from the product or derived from
+  numbers read from the product. Anything modelled carries an Illustrative mark.
+-->
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;background:var(--color-bg-default);">
+<a class="seg-skip" href="#" id="skipLink">Skip to segment content</a>
+<div class="seg-app">
+
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="./iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span><span>P&amp;L</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span><span>Inventory</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments-v2.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span><span>Reporting</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="dr-head">
+      <div class="dr-inner">
+        <a class="dr-back" href="./segments-v2.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+          All segments
+        </a>
+
+        <div class="dr-titlerow">
+          <span class="card-icon dr-tile" id="drTile" aria-hidden="true"></span>
+          <h1 class="dr-h1" id="drName"></h1>
+          <button class="dr-pencil" id="drPencil" aria-label="Rename this segment">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+          </button>
+          <span class="dr-status" id="drPill"></span>
+
+          <div class="dr-headactions">
+            <a class="btn btn-md btn-alternative" id="drCompare" href="./segments-compare.html?v2=1">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h13.5m0 0-3-3m3 3-3 3M21 16.5H7.5m0 0 3 3m-3-3 3-3"/></svg>
+              Compare
+            </a>
+            <button class="btn btn-md btn-alternative" id="drArchive">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5 19.4 18.6a2.25 2.25 0 0 1-2.24 2.09H6.84A2.25 2.25 0 0 1 4.6 18.6L3.75 7.5m6 4.125h4.5M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/></svg>
+              Archive
+            </button>
+            <button class="seg-iconbtn dr-kebab" id="drMore" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <ul class="dr-meta" id="drMeta"></ul>
+
+        <div class="iris-tab-bar dr-tabs" role="tablist" aria-label="Segment views" id="drTabs">
+          <button class="iris-tab" role="tab" id="tab-overview"  aria-controls="p-overview"  aria-selected="true"  tabindex="0"  data-tab="overview">Overview</button>
+          <button class="iris-tab" role="tab" id="tab-products"  aria-controls="p-products"  aria-selected="false" tabindex="-1" data-tab="products">Products <span class="iris-tab__counter" id="drProdN" hidden></span></button>
+          <button class="iris-tab" role="tab" id="tab-customers" aria-controls="p-customers" aria-selected="false" tabindex="-1" data-tab="customers">Customer metrics <span class="iris-tab__counter">preview</span></button>
+          <button class="iris-tab" role="tab" id="tab-journey"   aria-controls="p-journey"   aria-selected="false" tabindex="-1" data-tab="journey">Product journey <span class="iris-tab__counter">preview</span></button>
+          <button class="iris-tab" role="tab" id="tab-usedin"    aria-controls="p-usedin"    aria-selected="false" tabindex="-1" data-tab="usedin">Used in <span class="iris-tab__counter" id="drUsedN"></span></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="dr-wrap" id="drBody">
+      <div class="dr-inner">
+        <p class="seg-sr" role="status" aria-live="polite" id="drLive"></p>
+        <div id="drAlert"></div>
+
+        <!-- ══ Overview ══ -->
+        <section id="p-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+          <div class="dr-kpis" id="drKpis" style="margin-bottom:18px;"></div>
+          <div id="drNoData"></div>
+          <div class="dr-layout dr-layout--wide">
+            <div style="display:flex;flex-direction:column;gap:18px;min-width:0;">
+              <div class="dr-card">
+                <div class="dr-card__h">
+                  <h2 class="dr-card__t">Segment size over time</h2>
+                  <span style="margin-left:auto;" id="drChartNote"></span>
+                </div>
+                <div class="dr-card__b">
+                  <svg id="drChart" viewBox="0 0 640 150" preserveAspectRatio="none" style="width:100%;height:150px;display:block;" role="img" aria-labelledby="drChartDesc"></svg>
+                  <span id="drChartDesc" class="seg-sr"></span>
+                  <p class="dr-note" id="drChartLegend"></p>
+                </div>
+              </div>
+              <div class="dr-card" id="drTopCard">
+                <div class="dr-card__h">
+                  <h2 class="dr-card__t">Top products in this segment</h2>
+                  <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
+                  <button class="btn btn-sm btn-alternative" data-goto="products" style="margin-left:auto;">All products</button>
+                </div>
+                <div id="drTopWrap"></div>
+              </div>
+            </div>
+            <div class="dr-card">
+              <div class="dr-card__h">
+                <h2 class="dr-card__t">How this segment is built</h2>
+                <a class="btn btn-sm btn-alternative" id="drEdit2" href="./segment-builder.html?v2=1" style="margin-left:auto;">Edit</a>
+              </div>
+              <div class="dr-card__b">
+                <div id="drCond"></div>
+                <p class="dr-note" id="drCondNote"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ Products — the Data Rooms Documents tab: rail + toolbar + table ══ -->
+        <section id="p-products" role="tabpanel" aria-labelledby="tab-products" tabindex="0" hidden>
+          <div class="dr-layout">
+            <div class="list-group dr-rail" id="drProdRail" role="group" aria-label="Filter products"></div>
+            <div>
+              <p class="dr-note" style="margin:0 0 12px;max-width:78ch;">
+                <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
+                Only the SKU codes F001 and B009 are read from the product. Every figure in
+                this table — including theirs — is modelled from this segment's net sales, and
+                the product names, margins, prices and return rates are invented so the tab has
+                something to show. Do not read this as the catalogue.
+              </p>
+              <div class="dr-toolbar">
+                <div class="dr-split">
+                  <button class="btn btn-md btn-alternative" data-export="products">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    Export CSV
+                  </button>
+                  <button class="btn btn-md btn-alternative" id="drExportMore" aria-haspopup="menu" aria-expanded="false" aria-label="Export options"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg></button>
+                </div>
+                <div class="dr-toolbar__end">
+                  <div class="form-search-wrap"><label for="drProdQ" class="seg-sr">Search products by SKU or name</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="drProdQ" type="search" placeholder="Search products"></div>
+                </div>
+              </div>
+              <div id="drProdWrap"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ Customer metrics ══ -->
+        <section id="p-customers" role="tabpanel" aria-labelledby="tab-customers" tabindex="0" hidden>
+          <div class="dr-layout dr-layout--wide">
+            <div class="dr-card">
+              <div class="dr-card__h">
+                <h2 class="dr-card__t">Retention by month since first order</h2>
+                <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
+                <a class="btn btn-sm btn-alternative" id="drCohortLink" href="#" style="margin-left:auto;">Full cohort analysis</a>
+              </div>
+              <div id="drRetWrap"></div>
+            </div>
+            <div class="dr-card" id="drSampleCard">
+              <div class="dr-card__h"><h2 class="dr-card__t">Sample customers</h2><span class="iris-chip iris-chip--light dr-illus">Illustrative</span></div>
+              <div class="dr-card__b" id="drSample"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ Used in — the answer to his "0 viewers" and Share tab ══ -->
+        <section id="p-usedin" role="tabpanel" aria-labelledby="tab-usedin" tabindex="0" hidden>
+          <div class="dr-card">
+            <div class="dr-card__h">
+              <h2 class="dr-card__t">Where this segment is used</h2>
+              <span class="iris-chip iris-chip--light dr-illus">Illustrative</span>
+            </div>
+            <div id="drUsedWrap"></div>
+            <div class="dr-card__b" style="padding-top:0;">
+              <p class="dr-note" style="margin:0;">Deleting or narrowing a segment changes every number in this list.
+              The delete dialog already warns that reports built on a segment stop working — this is that list.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ Journey ══ -->
+        <section id="p-journey" role="tabpanel" aria-labelledby="tab-journey" tabindex="0" hidden>
+          <div class="dr-card">
+            <div class="dr-card__h"><h2 class="dr-card__t">What customers buy next</h2><span class="iris-chip iris-chip--light dr-illus">Illustrative</span></div>
+            <div class="dr-card__b">
+              <div class="dr-toolbar" id="drJControls">
+                <label for="drFirst" style="font-size:12.5px;color:var(--dr-muted);">First product</label>
+                <select class="form-select dr-select" id="drFirst"></select>
+                <label for="drJSort" style="font-size:12.5px;color:var(--dr-muted);margin-left:6px;">Sort by</label>
+                <select class="form-select dr-select" id="drJSort" style="min-width:170px;">
+                  <option value="conf">Confidence</option>
+                  <option value="customers">Customers</option>
+                  <option value="name">Product name</option>
+                </select>
+              </div>
+              <div id="drJWrap"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="modalHost"></div>
+
+<script src="./segments-data.js?v=17"></script>
+<script src="./segments-v2-shared.js?v=17"></script>
+<script>
+/* ── Unknown id ───────────────────────────────────────────────────────────
+   An id that does not exist used to fall through to a default segment, so
+   ?id=s99 quietly rendered "California Buyers" — and the first tab click
+   rewrote the URL to ?id=s24, making the bad link indistinguishable from a good
+   one. A link that points at nothing has to say so. */
+(function () {
+const requested = new URLSearchParams(location.search).get('id');
+if (requested && !SEGMENTS.some(s => s.id === requested)) {
+  document.title = 'Segment not found · Iris';
+  document.querySelector('.dr-titlerow').innerHTML =
+    '<h1 class="dr-h1">Segment not found</h1>';
+  document.getElementById('drMeta').remove();
+  document.getElementById('drTabs').remove();
+  document.querySelector('.dr-wrap .dr-inner').innerHTML =
+    '<div class="dr-card"><div class="dr-card__b"><div class="dr-empty">' +
+    '<span class="card-icon card-icon-gray">' + svg(IC.quest, 22) + '</span>' +
+    '<h3>No segment with the id “' + esc(requested) + '”</h3>' +
+    '<p>It may have been deleted, or the link may be mistyped. ' +
+    'All ' + SEGMENTS.length + ' segments are on the list.</p>' +
+    '<a class="btn btn-md btn-primary" href="./segments-v2.html" style="display:inline-flex;">Back to all segments</a>' +
+    '</div></div></div>';
+  initSidebar();
+  return;
+}
+
+const params = new URLSearchParams(location.search);
+const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[24]; /* California Buyers */
+const ST  = v2state(SEG);
+const HAS_DATA = SEG.c != null && SEG.c > 0;
+/* A segment that matches everyone IS the company baseline. Benchmarking it
+   against itself and printing "in line with company average" is a tautology
+   dressed as a finding. */
+const IS_COMPANY = SEG.share != null && SEG.share >= 0.95;
+
+/* F001 and B009 are read from the live Products tab. The rest of the catalogue is
+   scaled to this segment's net sales and the product names are invented — only
+   the SKU codes are real. Logged in SEGMENTS_BA_REVIEW.md. */
+const CATALOG = [
+  { sku:'F001', name:'Cold Brew Concentrate 32oz', share:.452, margin:.653, price:30.37, ret:.001 },
+  { sku:'B009', name:'Vanilla Bean Cold Brew 12pk', share:.121, margin:.661, price:57.73, ret:.000 },
+  { sku:'B018', name:'Texture Powder 8oz',          share:.098, margin:.612, price:42.10, ret:.004 },
+  { sku:'B004', name:'Original Blend 16oz',         share:.087, margin:.588, price:26.40, ret:.007 },
+  { sku:'B005', name:'Decaf Cold Brew 32oz',        share:.071, margin:.641, price:34.95, ret:.002 },
+  { sku:'F014', name:'Starter Kit',                 share:.063, margin:.503, price:64.00, ret:.011 },
+  { sku:'A002', name:'Ceramic Mug',                 share:.041, margin:.702, price:18.00, ret:.003 },
+  { sku:'A007', name:'Reusable Filter',             share:.038, margin:.735, price:12.50, ret:.005 },
+  { sku:'B021', name:'Shampoo Bar',                 share:.029, margin:.556, price:14.00, ret:.019 }
+];
+let cum = 0;
+const PROD = HAS_DATA ? CATALOG.map(p => {
+  const net = SEG.net * p.share, units = Math.round(net / p.price), gp = net * p.margin;
+  cum += p.share;
+    /* A product cannot have more buyers than the segment has customers. F001 is
+     45% of revenue, and the 2.3 multiplier put it 4% above the segment total. */
+  return { ...p, net, units, cogs: net - gp, gp, cum, uniq: Math.min(SEG.c, Math.round(SEG.c * p.share * 2.3)) };
+}) : [];
+
+const KI = KIND[SEG.kind];
+
+/* ── What depends on this segment ─────────────────────────────────────────
+   The first two rows are real: this page links to both, and the Cohorts filter
+   and the comparison genuinely read this segment. The rest are modelled, which
+   is why each carries its own marker and the card carries an Illustrative
+   chip — a dependency list that is quietly invented is worse than none. */
+const USED = [
+  { n: 'Cohort analysis', t: 'Report', d: 'filtered to this segment', when: relTime(SEG.up),
+    ic: IC.chart, c: 'card-icon-blue', href: '#', real: true },
+  { n: 'Segment comparison', t: 'Report', d: 'this segment as the primary', when: relTime(SEG.up),
+    ic: IC.layers, c: 'card-icon-indigo', href: './segments-compare.html?v2=1&ids=' + SEG.id, real: true },
+  { n: 'Weekly revenue dashboard', t: 'Dashboard', d: 'two tiles read this segment', when: '3 days ago',
+    ic: IC.dash, c: 'card-icon-teal', href: '#', real: false },
+  { n: 'Monthly board pack', t: 'Export', d: 'scheduled, first Monday', when: 'a month ago',
+    ic: IC.down, c: 'card-icon-gray', href: '#', real: false }
+];
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+document.title = SEG.n + ' · Customer Segments · Iris';
+document.getElementById('drName').textContent = SEG.n;
+const tile = document.getElementById('drTile');
+tile.className = 'card-icon dr-tile ' + KI.c;
+tile.innerHTML = svg(KI.ic, 20);
+document.getElementById('drEdit2').href = './segment-builder.html?v2=1&id=' + SEG.id;
+
+/* ── Rename in place ──────────────────────────────────────────────────────
+   His pencil edits the title where it stands. Ours navigated to the builder,
+   which is a whole screen and a whole mode for changing four characters in a
+   name — and the builder edits the DEFINITION, which is a different and far
+   riskier thing than the label. Renaming is now what the pencil does.
+
+   The heading itself becomes the field, so the text never moves and nothing
+   below it shifts. Enter commits, Escape restores, blur commits. */
+(function rename() {
+  const h1 = document.getElementById('drName'), pencil = document.getElementById('drPencil');
+  let before = null;
+  const stop = (commit) => {
+    if (before === null) return;
+    const next = h1.textContent.replace(/\s+/g, ' ').trim();
+    h1.removeAttribute('contenteditable');
+    h1.classList.remove('dr-h1--editing');
+    if (!commit || !next) { h1.textContent = before; }
+    else if (next !== before) {
+      SEG.n = next; document.title = next + ' · Customer Segments · Iris';
+      toast('Segment renamed', '“' + before + '” is now “' + next + '”.');
+    }
+    before = null;
+    pencil.focus();
+  };
+  const start = () => {
+    if (before !== null) return;
+    before = h1.textContent;
+    h1.setAttribute('contenteditable', 'plaintext-only');
+    h1.classList.add('dr-h1--editing');
+    h1.focus();
+    const r = document.createRange(); r.selectNodeContents(h1);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  };
+  pencil.addEventListener('click', start);
+  h1.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); stop(true); }
+    if (e.key === 'Escape') { e.preventDefault(); stop(false); }
+  });
+  h1.addEventListener('blur', () => stop(true));
+})();
+document.getElementById('drCompare').href =
+  './segments-compare.html?v2=1&ids=' + SEG.id + ',' + (SEGMENTS.find(x => x.id !== SEG.id && v2state(x) === 'ready') || SEGMENTS[6]).id;
+
+/* Status is the library .badge with a library .indicator-dot, the same pairing
+   the v1 list uses. A definition error outranks the outcome: a segment that
+   reports the whole customer base must not read as healthy just because it
+   returned a large number. */
+const danger = SEG.flags.filter(f => f.danger);
+const PILL = danger.length ? ['red', 'red', 'Definition error']
+           : ST === 'ready'   ? ['green', 'green', 'Active']
+           : ST === 'nomatch' ? ['yellow', 'yellow', 'No customers match']
+           : ['gray', 'gray', 'No data yet'];
+document.getElementById('drPill').innerHTML =
+  '<span class="badge badge-' + PILL[0] + '"><span class="indicator-dot indicator-dot-' + PILL[1] + '"></span>' + esc(PILL[2]) + '</span>';
+
+/* Meta row. One icon per fact, spaced, no dot run: the icon says what kind of
+   fact is coming before you read it. Nothing here mentions freshness — the
+   metrics are computed on the fly. */
+const meta = [
+  [IC.users, SEG.c == null ? 'No customers counted'
+           : '<b>' + fmtN(SEG.c) + '</b> customers' + (SEG.share >= .95 ? ' — your whole base' : SEG.c ? ' · ' + pct(SEG.share) + ' of base' : ''),
+   SEG.share >= .95 ? 'hot' : ''],
+  [IC.funnel, SEG.conds.length ? '<b>' + SEG.conds.length + '</b> condition' + (SEG.conds.length > 1 ? 's' : '') : 'No conditions', ''],
+  [IC.cal,    SEG.r ? 'Orders ' + esc(SEG.r) : 'No order window set', ''],
+  [KI.ic,     KI.l + ' segment', ''],
+  /* His meta row carries ADDED. Ours has the same fact and was not showing it. */
+  [IC.cal,    'Created ' + fmtDate(SEG.cr), ''],
+  /* No "Created by" slot. It existed only because his meta row has ADDED BY, and
+     a field that can only ever print "not available" is a copied checklist item,
+     not information. "Used in" stays: it answers what breaks if this changes,
+     which is a question a segment actually raises and a file does not. */
+  [IC.link,   'Used in <b>' + USED.length + '</b> place' + (USED.length === 1 ? '' : 's'), ''],
+  [IC.clock,  'Definition updated ' + fmtDate(SEG.up) + ' · ' + relTime(SEG.up), ''],
+  [IC.bolt,   'Calculated live', '']
+];
+document.getElementById('drMeta').innerHTML =
+  meta.map(m => '<li class="' + m[2] + '">' + svg(m[0], 14) + '<span>' + m[1] + '</span></li>').join('');
+
+if (danger.length) {
+  const whole = danger.some(f => f.k === 'wholebase');
+  document.getElementById('drAlert').innerHTML =
+    '<div class="alert alert-danger dr-alert dr-alert--lead" role="region" aria-label="Definition problem" style="margin-bottom:18px;">' +
+      '<span class="alert-icon">' + svg(IC.warn, 18) + '</span>' +
+      '<div class="alert-body"><div class="alert-title">' +
+      (whole ? 'These numbers describe your whole business, not a segment' : 'This segment has a definition problem') + '</div>' +
+      '<p>' + danger.map(f => esc(f.t)).join('. ') + '.' +
+      (whole ? ' It matches ' + pct(SEG.share) + ' of all ' + fmtN(BASE) + ' customers, so the revenue below is total company revenue.' : '') + '</p>' +
+      '<a class="btn btn-sm btn-alternative" href="./segment-builder.html?v2=1&id=' + SEG.id + '">Fix the definition</a></div></div>';
+}
+
+/* ── KPIs ─────────────────────────────────────────────────────────────────
+   Every figure is placed against the company average, because "AOV $56.68" on
+   its own answers nothing — the question a segment page exists to answer is
+   whether these customers are worth more than the average one. The baseline is
+   named in the label, not implied. */
+(function kpis() {
+  const box = document.getElementById('drKpis');
+  const nd  = document.getElementById('drNoData');
+
+  /* A row of em dashes tells the reader nothing, and there is nothing to compare
+     a segment of zero against. Both empty cases replace the strip with what IS
+     known: when it was created, what it filters on, and which condition to
+     loosen first. The two cases say different things, because they are different
+     problems — one definition returns nobody, the other has never returned
+     anything at all. */
+  if (!HAS_DATA) {
+    box.hidden = true;
+    const nomatch = SEG.c === 0;
+    const killer  = SEG.live[SEG.live.length - 1];
+    const facts = [
+      'Created ' + fmtDate(SEG.cr),
+      'Definition updated ' + fmtDate(SEG.up),
+      SEG.conds.length + ' condition' + (SEG.conds.length > 1 ? 's' : ''),
+      esc(KI.l) + ' segment',
+      SEG.r ? 'Orders ' + esc(SEG.r) : 'No order window set'
+    ];
+    nd.innerHTML =
+      '<div class="dr-card" style="margin-bottom:18px;"><div class="dr-card__b"><div class="dr-empty">' +
+      '<span class="card-icon ' + (nomatch ? 'card-icon-yellow' : 'card-icon-gray') + '">' +
+        svg(nomatch ? IC.funnel : IC.quest, 22) + '</span>' +
+      '<h3>' + (nomatch ? 'No customers match this definition'
+                        : 'This definition has not returned a result') + '</h3>' +
+      '<p>' + (nomatch
+        ? 'The conditions below are all true at once for nobody, so there is no revenue, no orders and no products to show. An empty result is not the same as zero revenue.' +
+          (killer ? ' The narrowest condition is <strong>' + esc(killer.label) + '</strong>, usually the one to loosen first.' : '')
+        : 'Iris has no customer count, order count or revenue for “' + esc(SEG.n) +
+          '”. Everything the product does know about it is here, and the conditions are on the right.') + '</p>' +
+      '<div class="dr-empty__facts">' + facts.map(f => '<span class="iris-chip iris-chip--light">' + f + '</span>').join('') + '</div>' +
+      '<a class="btn btn-md btn-primary" href="./segment-builder.html?v2=1&id=' + SEG.id + '" style="display:inline-flex;">' +
+      (nomatch ? 'Edit conditions' : 'Open the definition') + '</a>' +
+      '</div></div></div>';
+    return;
+  }
+
+  const opc  = SEG.o != null && SEG.c ? SEG.o / SEG.c : null;
+  const opcB = COMPANY.o / COMPANY.c;
+  /* Only reached when the segment has customers — both empty cases returned. */
+  const K = [
+    { ic: IC.users, l: 'Customers', v: fmtN(SEG.c),
+      s: pct(SEG.share) + ' of all ' + fmtN(BASE), tone: SEG.share >= .95 ? 'warn' : '',
+      bar: SEG.share, barCls: SEG.share >= .95 ? 'progress-bar-danger' : 'progress-bar-primary' },
+    { ic: IC.receipt, l: 'Orders', v: SEG.o == null ? DASH : fmtN(SEG.o),
+      s: SEG.o == null ? 'order data missing' : opc.toFixed(2) + ' per customer ' + delta(opc, opcB, { self: IS_COMPANY }),
+      tone: SEG.o == null ? 'warn' : '' },
+    /* Not "% of company revenue": segments overlap, so those percentages sum to
+       855% across the forty and invite an addition they cannot survive. */
+    { ic: IC.cash, l: 'Net sales', v: fmt$(SEG.net),
+      s: SEG.r ? 'in the order window' : 'all history' },
+    { ic: IC.chart, l: 'AOV', v: SEG.aov ? fmt$2(SEG.aov) : DASH,
+      s: SEG.aov ? 'company ' + fmt$2(COMPANY.aov) + ' ' + delta(SEG.aov, COMPANY.aov, { self: IS_COMPANY }) : '' },
+    { ic: IC.spark, l: 'Avg LTV', v: ltvCell(SEG.ltv),
+      s: SEG.ltv < 0 ? 'negative — check the LTV definition'
+                     : 'company ' + fmt$(COMPANY.ltv) + ' ' + delta(SEG.ltv, COMPANY.ltv, { self: IS_COMPANY }),
+      tone: SEG.ltv < 0 ? 'bad' : '' },
+    { ic: IC.cube, l: 'Products', v: String(PROD.length), s: 'with sales in this segment' }
+  ];
+  box.innerHTML = K.map(k =>
+    '<div class="dr-kpi"><div class="dr-kpi__l">' + svg(k.ic, 13) + k.l + '</div>' +
+    '<div class="dr-kpi__v">' + k.v + '</div>' +
+    (k.s ? '<div class="dr-kpi__s ' + (k.tone ? 'dr-kpi__s--' + k.tone : '') + '">' + k.s + '</div>' : '') +
+    (k.bar != null ? bar(k.bar, k.barCls) : '') + '</div>').join('');
+
+  /* The comparison has two caveats and both are stated rather than buried in a
+     code comment: the company figures cover all history while this segment
+     covers its own order window, and the company totals are read off the
+     segments that match every customer — the same rows this page calls broken. */
+  nd.innerHTML =
+    '<p class="dr-note" style="margin:8px 0 0;">' +
+    (IS_COMPANY
+      ? 'This segment matches every customer, so it <em>is</em> the company total. No comparison is shown against itself.'
+      : 'Company figures cover all history; this segment covers ' +
+        (SEG.r ? 'its order window, ' + esc(SEG.r) : 'all history') +
+        '. Treat the comparison as indicative.') +
+    ' The company totals are the ones Iris reports across all ' + fmtN(COMPANY.c) + ' customers.</p>';
+})();
+
+/* ── conditions ─────────────────────────────────────────────────────────
+   No per-condition counts. Conditions are AND-composed, so there is no ordering,
+   and any "this one dropped N customers" figure is an artefact of the order they
+   were typed in. The endpoint that could answer it honestly does not exist. */
+(function conditions() {
+  const rows = [];
+  const row = (ic, col, lab, sub, n, cls) =>
+    '<div class="dr-cond ' + (cls || '') + '">' +
+    '<span class="card-icon ' + col + '" aria-hidden="true">' + svg(ic, 15) + '</span>' +
+    '<div class="dr-cond__t"><div class="dr-cond__l">' + lab + '</div>' +
+    (sub ? '<div class="dr-cond__s">' + sub + '</div>' : '') + '</div>' +
+    '<div class="dr-cond__n">' + n + '</div></div>';
+
+  rows.push(row(IC.users, 'card-icon-gray', 'Everyone in Iris', 'all customers, all history', fmtN(BASE)));
+  /* The order window is a condition like any other, and it is the reason the
+     ladder can end lower than the base without any filter appearing to cut. */
+  if (SEG.r) rows.push(row(IC.cal, 'card-icon-gray', 'Ordered ' + esc(SEG.r), 'the segment’s order window', DASH));
+  SEG.live.forEach(c => rows.push(row(KI.ic, KI.c, esc(c.label), 'counted together with the others', DASH)));
+  SEG.broken.forEach(c => rows.push(row(IC.warn, 'card-icon-red', esc(c.label), 'never given a value, so it matches everyone', fmtN(BASE), 'dr-cond--bad')));
+  if (!SEG.live.length && !SEG.broken.length)
+    /* Only claim the base on this row when the segment actually returns it: three
+       segments have no conditions and still report fewer customers than the base,
+       so printing 35,590 here contradicted the total two rows below. */
+    rows.push(row(IC.warn, 'card-icon-red', 'No conditions', 'every customer qualifies',
+                  SEG.c != null && SEG.c < BASE ? DASH : fmtN(BASE), 'dr-cond--bad'));
+  rows.push(row(KI.ic, KI.c, '<strong>This segment</strong>', '', SEG.c == null ? DASH : '<strong>' + fmtN(SEG.c) + '</strong>', 'dr-cond--total'));
+
+  document.getElementById('drCond').innerHTML = rows.join('');
+  document.getElementById('drCondNote').textContent =
+    SEG.c === 0 ? 'Together these conditions match nobody. Loosen or remove one of them.'
+    : SEG.broken.length ? 'A condition with no value does not filter anything. Give it a value or delete it.'
+    : SEG.c == null ? 'This definition returns no result yet.'
+    : !SEG.live.length ? 'This segment has no conditions at all, so it cannot be narrower than the whole customer base. Add a condition or delete it.'
+    : 'Only the total is measured. A count per individual condition needs an endpoint Iris does not expose.';
+})();
+
+/* ── size over time ─────────────────────────────────────────────────────── */
+(function chart() {
+  const el = document.getElementById('drChart'), W = 640, H = 150, P = 8;
+  const desc = document.getElementById('drChartDesc');
+  if (!HAS_DATA) {
+    const msg = SEG.c == null ? 'This definition returns no result, so there is no history to show.'
+                              : 'This segment matches no customers, so there is no history to show.';
+    el.innerHTML = '<text x="16" y="78" fill="#4a5565" font-size="13" font-family="Inter">' + msg + '</text>';
+    desc.textContent = msg;
+    document.getElementById('drChartLegend').textContent = '';
+    return;
+  }
+  const n = 12, pts = [];
+  for (let i = 0; i < n; i++) pts.push(Math.max(0, Math.round(SEG.c * (1 + Math.sin(i * 1.7) * .06 + (i - n + 1) * .012))));
+  pts[n - 1] = SEG.c;
+  const max = Math.max(...pts, 1);
+  const x = i => P + i * (W - P * 2) / (n - 1);
+  const y = v => H - P - (v / max) * (H - P * 2 - 14);
+  const line = pts.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
+  el.innerHTML =
+    '<defs><linearGradient id="drG" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#5850ec" stop-opacity=".22"/>' +
+      '<stop offset="100%" stop-color="#5850ec" stop-opacity="0"/></linearGradient></defs>' +
+    '<path d="' + line + ' L' + x(n-1).toFixed(1) + ',' + (H-P) + ' L' + x(0).toFixed(1) + ',' + (H-P) + ' Z" fill="url(#drG)"/>' +
+    '<path d="' + line + '" fill="none" stroke="#5850ec" stroke-width="2" vector-effect="non-scaling-stroke"/>' +
+    '<circle cx="' + x(n-1).toFixed(1) + '" cy="' + y(pts[n-1]).toFixed(1) + '" r="4" fill="#5850ec"/>';
+  document.getElementById('drChartNote').innerHTML = '<span class="iris-chip iris-chip--light dr-illus">Illustrative</span>';
+  desc.textContent = 'Placeholder shape for segment size over time. The current size is ' + fmtN(SEG.c) + ' customers; historical values are not stored.';
+  document.getElementById('drChartLegend').textContent =
+    'Now ' + fmtN(SEG.c) + ' customers. Iris keeps no history for a segment, so the shape of this line is a placeholder and no growth figure is quoted.';
+})();
+
+/* ── empty states ───────────────────────────────────────────────────────── */
+function emptyBlock(what) {
+  if (SEG.c == null) return '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
+    '<h3>No result for this definition</h3><p>Iris has no ' + what + ' for “' + esc(SEG.n) +
+    '”. The conditions are on the Overview tab.</p>' +
+    '<a class="btn btn-md btn-primary" href="./segment-builder.html?v2=1&id=' + SEG.id + '" style="display:inline-flex;">Open the definition</a></div>';
+  const killer = SEG.live[SEG.live.length - 1];
+  return '<div class="dr-empty"><span class="card-icon card-icon-yellow">' + svg(IC.funnel, 22) + '</span>' +
+    '<h3>No customers match this definition</h3>' +
+    '<p>The conditions return nobody, so there is no ' + what + ' to show. An empty result is not the same as zero revenue.' +
+    (killer ? ' The narrowest condition is <strong>' + esc(killer.label) + '</strong>, usually the one to loosen first.' : '') + '</p>' +
+    '<a class="btn btn-md btn-primary" href="./segment-builder.html?v2=1&id=' + SEG.id + '" style="display:inline-flex;">Edit conditions</a></div>';
+}
+
+/* ── products: the Data Rooms Documents tab, with a rail that actually filters ──
+   Data Rooms' rail filters by folder, and in both screenshots there are zero
+   folders, so the control cannot change the result. These four groups are
+   computed from the rows themselves, so every one of them does. */
+const PFILTERS = [
+  { k:'all',    l:'All products',    ic:IC.cube,  f:() => true },
+  { k:'core',   l:'Drives 80%',      ic:IC.spark, f:p => p.cum <= 0.8 },
+  { k:'margin', l:'Margin under 60%', ic:IC.cash, f:p => p.margin < 0.6 },
+  { k:'ret',    l:'Returns over 0.5%', ic:IC.warn, f:p => p.ret > 0.005 }
+];
+let pFilter = 'all', pQuery = '', pSort = { k:'net', dir:'desc' };
+const PCOLS = [
+  { k:'sku', l:'Product', cell:p =>
+      /* The tile colour is the Pareto band, the same split the rail filters on:
+         purple for the products that make up the first 80% of sales, grey for the
+         tail. Two colours, one meaning, and the shape of the catalogue is visible
+         before any number is read. */
+      '<div class="dr-name"><span class="card-icon dr-tile card-icon-gray" aria-hidden="true">' + svg(IC.cube, 18) + '</span>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name) + '</span>' +
+      '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span></div>' +
+      '<div class="dr-name__s">' + fmtN(p.units) + ' units' +
+      (p.cum <= 0.8 ? '<span>·</span>top 80% of sales' : '') +
+      (p.ret > 0.005 ? '<span class="flag warn">' + svg(IC.warn, 13) + pct(p.ret) + ' returned</span>' : '') +
+      '</div></div></div>' },
+  { k:'net',    l:'Net sales', n:1, lead:1, cell:p => fmt$(p.net) },
+  { k:'gp',     l:'Gross profit', n:1, cell:p => fmt$(p.gp) },
+  { k:'margin', l:'Margin', n:1, cell:p => pct(p.margin) },
+  { k:'price',  l:'Avg price', n:1, cell:p => fmt$2(p.price) },
+  { k:'uniq',   l:'Customers', n:1, cell:p => fmtN(p.uniq) }
+];
+
+function drawRail() {
+  document.getElementById('drProdRail').innerHTML =
+    '<div class="dr-rail__g"><div class="dr-rail__lab">Products</div>' +
+    PFILTERS.map(f => {
+      const n = PROD.filter(f.f).filter(p => !pQuery ||
+        p.sku.toLowerCase().includes(pQuery) || p.name.toLowerCase().includes(pQuery)).length;
+      return '<button class="list-group-item" data-pf="' + f.k + '" aria-pressed="' + (pFilter === f.k) + '">' +
+        svg(f.ic, 16) + '<span>' + f.l + '</span><span class="dr-rail__n">' + n + '</span></button>';
+    }).join('') + '</div>';
+}
+
+function drawProducts() {
+  const wrap = document.getElementById('drProdWrap');
+  if (!PROD.length) { wrap.innerHTML = '<div class="dr-tablecard">' + emptyBlock('product data') + '</div>'; return; }
+  const active = PFILTERS.find(f => f.k === pFilter) || PFILTERS[0];
+  let rows = PROD.filter(active.f)
+    .filter(p => !pQuery || p.sku.toLowerCase().includes(pQuery) || p.name.toLowerCase().includes(pQuery));
+  rows = [...rows].sort((a, b) => {
+    const A = a[pSort.k], B = b[pSort.k];
+    const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
+    return pSort.dir === 'desc' ? -r : r;
+  });
+  wrap.innerHTML = '<div class="dr-tablecard"><div class="dr-tw"><table class="dr-t">' +
+    '<thead><tr>' + PCOLS.map(c =>
+      '<th class="' + (c.n ? 'n' : '') + '"' + (pSort.k === c.k ? ' aria-sort="' + (pSort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
+      '<button class="dr-sort" data-psort="' + c.k + '">' + c.l + ' <span class="c" aria-hidden="true">▾</span></button></th>').join('') +
+    '</tr></thead><tbody>' +
+    (rows.length ? rows.map(p => '<tr>' + PCOLS.map(c =>
+        '<td class="' + (c.n ? 'n' : '') + '">' + (c.lead ? '<span class="lead">' + c.cell(p) + '</span>' : c.cell(p)) + '</td>').join('') + '</tr>').join('')
+      : '<tr><td colspan="' + PCOLS.length + '" style="padding:34px 14px;text-align:center;color:var(--dr-muted);">' +
+        'No products match ' + (pQuery ? '“' + esc(pQuery) + '”' : 'this filter') +
+        '. <button class="btn btn-sm btn-alternative" id="pClear" style="margin-left:8px;">Clear</button></td></tr>') +
+    '</tbody>' +
+    (rows.length ? '<tfoot><tr><td>Totals · ' + rows.length + ' product' + (rows.length > 1 ? 's' : '') + '</td>' +
+      '<td class="n">' + fmt$(rows.reduce((a,b) => a + b.net, 0)) + '</td>' +
+      '<td class="n">' + fmt$(rows.reduce((a,b) => a + b.gp, 0)) + '</td>' +
+      '<td class="n">' + pct(rows.reduce((a,b) => a + b.gp, 0) / rows.reduce((a,b) => a + b.net, 0)) + '</td>' +
+      '<td class="n"></td><td class="n"></td></tr></tfoot>' : '') +
+    '</table></div></div>';
+  document.getElementById('drLive').textContent = rows.length + ' product' + (rows.length === 1 ? '' : 's') + ' shown.';
+}
+
+/* Top five on the Overview, so the tab is not the only place with product data */
+function drawTop() {
+  const wrap = document.getElementById('drTopWrap');
+  if (!PROD.length) { wrap.innerHTML = emptyBlock('product data'); return; }
+  const rows = [...PROD].sort((a, b) => b.net - a.net).slice(0, 5);
+  wrap.innerHTML = '<div class="dr-tw"><table class="dr-t"><thead><tr>' +
+    '<th>Product</th><th class="n">Units</th><th class="n">Net sales</th><th class="n">Share</th></tr></thead><tbody>' +
+    rows.map(p => '<tr><td><div class="dr-name">' +
+      '<span class="card-icon dr-tile card-icon-gray" aria-hidden="true">' + svg(IC.cube, 18) + '</span>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name) + '</span>' +
+      '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span></div></div></div></td>' +
+      '<td class="n">' + fmtN(p.units) + '</td><td class="n"><span class="lead">' + fmt$(p.net) + '</span></td>' +
+      '<td class="n" style="width:120px;">' + bar(p.share, 'progress-bar-indigo') +
+      '<div class="sub">' + pct(p.share) + '</div></td></tr>').join('') +
+    '</tbody></table></div>';
+}
+
+if (PROD.length) { const c = document.getElementById('drProdN'); c.hidden = false; c.textContent = PROD.length; }
+drawRail(); drawProducts(); drawTop();
+
+/* ── customer metrics ───────────────────────────────────────────────────── */
+(function customers() {
+  document.getElementById('drCohortLink').addEventListener('click', e => {
+    e.preventDefault(); toast('Cohorts', 'Opening the full cohort analysis filtered to “' + SEG.n + '”.');
+  });
+  if (!HAS_DATA) {
+    document.getElementById('drRetWrap').innerHTML = emptyBlock('retention data');
+    document.getElementById('drSampleCard').hidden = true;
+    return;
+  }
+  const months = ['M0','M1','M2','M3','M4','M5','M6'];
+  const curve  = [100, 31, 22, 18, 15, 13, 12];
+  document.getElementById('drRetWrap').innerHTML = '<div class="dr-tw"><table class="dr-t">' +
+    '<thead><tr><th>Cohort</th>' + months.map(m => '<th class="n">' + m + '</th>').join('') + '</tr></thead><tbody>' +
+    ['Mar 2026','Apr 2026','May 2026','Jun 2026'].map((c, ci) =>
+      '<tr><td>' + c + '</td>' + curve.map((v, i) => {
+        const val = i > months.length - 1 - ci ? null : (i === 0 ? 100 : Math.max(0, v - ci * 0.8 - i * 0.3));
+        return '<td class="n">' + (val == null ? DASH :
+          '<span class="iris-cohort-badge iris-cohort-badge--' + Math.min(100, Math.round(val / 10) * 10) + '">' + val.toFixed(0) + '%</span>') + '</td>';
+      }).join('') + '</tr>').join('') + '</tbody></table></div>';
+
+  const names = ['A. Whitfield','M. Okafor','J. Lindqvist','R. Baptiste','S. Nakamura'];
+  document.getElementById('drSample').innerHTML = names.map((n, i) =>
+    '<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--dr-border-soft);">' +
+    '<span class="avatar avatar-sm avatar-rounded">' + esc(n[0] + n.split(' ')[1][0]) + '</span><div style="min-width:0;">' +
+    '<div style="font-size:13px;font-weight:500;color:var(--color-text-heading);">' + esc(n) + '</div>' +
+    '<div style="font-size:11.5px;color:var(--dr-muted);">' + (2 + i) + ' orders · ' + fmt$2(SEG.aov * (0.8 + i * 0.12)) + ' AOV</div>' +
+    '</div></div>').join('') +
+    '<p class="dr-note">Example profiles, not real customers. 5 of ' + fmtN(SEG.c) +
+    ' in the segment. Sampling lets you sanity-check a definition before trusting the totals.</p>';
+})();
+
+/* ── journey ────────────────────────────────────────────────────────────── */
+function drawJourney() {
+  const wrap = document.getElementById('drJWrap');
+  if (!PROD.length) { wrap.innerHTML = emptyBlock('purchase-sequence data'); document.getElementById('drJControls').hidden = true; return; }
+  const first = document.getElementById('drFirst').value;
+  const how   = document.getElementById('drJSort').value;
+  let rest = PROD.filter(p => p.sku !== first);
+  const tot = rest.reduce((a, b) => a + b.share, 0);
+  /* Take the top six by confidence first, then order them. Sorting before
+     slicing changed which products appeared, not just their order. */
+  rest = rest.map((p, i) => ({ ...p, conf: p.share / tot * (0.62 - i * 0.03) }))
+             .sort((a, b) => b.conf - a.conf).slice(0, 6)
+             .sort((a, b) => how === 'name' ? a.name.localeCompare(b.name)
+                           : how === 'customers' ? b.share - a.share
+                           : b.conf - a.conf);
+  wrap.innerHTML = '<div class="dr-tablecard"><div class="dr-tw"><table class="dr-t">' +
+    '<thead><tr><th>Next product</th><th class="n">Customers</th><th class="n">Confidence</th><th style="width:180px;"><span class="seg-sr">Share</span></th></tr></thead><tbody>' +
+    rest.map(p => '<tr><td><div class="dr-name">' +
+      '<span class="card-icon dr-tile card-icon-gray" aria-hidden="true">' + svg(IC.cube, 18) + '</span>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name) + '</span>' +
+      '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span></div></div></div></td>' +
+      '<td class="n">' + fmtN(SEG.c * p.conf) + '</td><td class="n"><span class="lead">' + pct(p.conf) + '</span></td>' +
+      '<td>' + bar(p.conf, 'progress-bar-indigo') + '</td></tr>').join('') +
+    '</tbody></table></div></div>';
+}
+if (PROD.length) {
+  document.getElementById('drFirst').innerHTML = PROD.map(p => '<option value="' + esc(p.sku) + '">' + esc(p.sku + ' — ' + p.name) + '</option>').join('');
+  document.getElementById('drFirst').addEventListener('change', drawJourney);
+  document.getElementById('drJSort').addEventListener('change', drawJourney);
+}
+drawJourney();
+
+/* ── Used in ──────────────────────────────────────────────────────────────
+   His screen answers "who can see this" with 0 viewers and a Share tab. For a
+   segment the sharper version of that question is what depends on it, because
+   that is what breaks when someone edits or deletes it. Two of these rows are
+   real — the segment page links to both — and the rest are modelled, which is
+   why the card carries an Illustrative mark. */
+document.getElementById('drUsedN').textContent = USED.length;
+(function usedIn() {
+  document.getElementById('drUsedWrap').innerHTML = '<div class="dr-tw"><table class="dr-t">' +
+    '<thead><tr><th>Where</th><th>Type</th><th class="n">Last opened</th><th style="width:44px;"><span class="seg-sr">Open</span></th></tr></thead><tbody>' +
+    USED.map(u => '<tr><td><div class="dr-name">' +
+      '<span class="card-icon dr-tile ' + u.c + '" aria-hidden="true">' + svg(u.ic, 18) + '</span>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(u.n) + '</span>' +
+      (u.real ? '' : '<span class="iris-chip iris-chip--light dr-illus">Illustrative</span>') + '</div>' +
+      '<div class="dr-name__s">' + esc(u.d) + '</div></div></div></td>' +
+      '<td>' + esc(u.t) + '</td><td class="n" style="white-space:nowrap;">' + esc(u.when) + '</td>' +
+      '<td><a class="seg-iconbtn dr-kebab" href="' + u.href + '" aria-label="Open ' + esc(u.n) + '">' +
+      svg('M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25', 15) +
+      '</a></td></tr>').join('') + '</tbody></table></div>';
+})();
+
+/* ── tabs (APG) ─────────────────────────────────────────────────────────── */
+const tabs = [...document.querySelectorAll('#drTabs [role=tab]')];
+function show(name, push) {
+  if (!tabs.some(t => t.dataset.tab === name)) name = 'overview';
+  tabs.forEach(t => {
+    const on = t.dataset.tab === name;
+    t.setAttribute('aria-selected', String(on));
+    t.classList.toggle('iris-tab--active', on);
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById('p-' + t.dataset.tab).hidden = !on;
+  });
+  if (push) history.replaceState(null, '', pageUrl('?id=' + SEG.id, '#' + name));
+  document.getElementById('drLive').textContent = name + ' tab shown.';
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => show(t.dataset.tab, true));
+  t.addEventListener('keydown', e => {
+    const map = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    const nx = tabs[(map[e.key] + tabs.length) % tabs.length];
+    show(nx.dataset.tab, true); nx.focus();
+  });
+});
+show((location.hash || '#overview').slice(1), false);
+
+/* ── header actions ─────────────────────────────────────────────────────── */
+document.getElementById('drMore').addEventListener('click', e => {
+  menu(e.currentTarget, [
+    { lab: 'Work with this segment' },
+    { href: './segment-builder.html?v2=1&id=' + SEG.id, ic: IC.pencil, t: 'Edit definition' },
+    { act: 'dup',    ic: IC.copy, t: 'Duplicate' },
+    { act: 'export', ic: IC.down, t: 'Export customer emails' },
+    { sep: true },
+    { act: 'del',    ic: IC.trash, t: 'Delete segment', danger: true }
+  ], act => {
+    if (act === 'dup')    toast('Segment duplicated', '“' + SEG.n + ' (copy)” is ready to edit.');
+    if (act === 'export') toast('Export started', 'Emails for “' + SEG.n + '” will arrive by email.');
+    if (act === 'del') modal({
+      title: 'Delete this segment?', danger: true, confirmLabel: 'Delete segment',
+      body: '<p style="margin:0;font-size:13px;color:var(--color-text-body);">“<strong>' + esc(SEG.n) +
+            '</strong>” will be removed for everyone. Reports built on it will stop working. This cannot be undone.</p>',
+      onConfirm: () => { toast('Segment deleted', '“' + SEG.n + '” was removed.'); setTimeout(() => location.href = './segments-v2.html', 900); }
+    });
+  });
+});
+document.getElementById('drExportMore').addEventListener('click', e => {
+  const shown = document.querySelectorAll('#p-products .dr-t tbody tr').length;
+  menu(e.currentTarget, [
+    { lab: 'Export' },
+    { act: 'view', ic: IC.down, t: 'This view as CSV (' + shown + ')' },
+    { act: 'all',  ic: IC.down, t: 'All ' + PROD.length + ' products as CSV' }
+  ], act => toast('Export started',
+    (act === 'all' ? PROD.length + ' products' : shown + ' products') + ' for “' + SEG.n + '” are being prepared as CSV.'));
+});
+document.getElementById('drArchive').addEventListener('click', () => modal({
+  title: 'Archive this segment?', confirmLabel: 'Archive',
+  body: '<p style="margin:0;font-size:13px;color:var(--color-text-body);">“<strong>' + esc(SEG.n) +
+        '</strong>” leaves the segment list. Nothing is deleted and you can restore it from Archived.</p>',
+  onConfirm: () => toast('Segment archived', '“' + SEG.n + '” moved to Archived.')
+}));
+
+document.addEventListener('click', e => {
+  /* Any menu trigger owns its own click; the delegated close must not run in the
+     same event and shut what was just opened. */
+  if (!e.target.closest('.dr-menu') && !e.target.closest('[aria-haspopup="menu"]')) closeMenu();
+  const g = e.target.closest('[data-goto]');
+  if (g) { show(g.dataset.goto, true); document.getElementById('tab-' + g.dataset.goto).focus(); }
+  const pf = e.target.closest('[data-pf]');
+  if (pf) { pFilter = pf.dataset.pf; keepFocus(pf, () => { drawRail(); drawProducts(); }); }
+  const ps = e.target.closest('[data-psort]');
+  if (ps) { const k = ps.dataset.psort; pSort = { k, dir: pSort.k === k && pSort.dir === 'desc' ? 'asc' : 'desc' }; keepFocus(ps, drawProducts); }
+  if (e.target.closest('#pClear')) { pQuery = ''; pFilter = 'all'; document.getElementById('drProdQ').value = ''; drawRail(); drawProducts(); }
+  const ex = e.target.closest('[data-export]');
+  if (ex) toast('Export started', 'The ' + ex.dataset.export + ' table for “' + SEG.n + '” is being prepared as CSV.');
+});
+document.getElementById('drProdQ').addEventListener('input', e => { pQuery = e.target.value.trim().toLowerCase(); drawRail(); drawProducts(); });
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const b = document.getElementById('drBody'); b.setAttribute('tabindex', '-1'); b.focus();
+});
+initSidebar();
+})();
+</script>
+</body>
+</html>

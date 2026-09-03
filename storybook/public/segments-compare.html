@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=14">
+<link rel="stylesheet" href="./segments-proto.css?v=17">
 <!--
   The live product compares exactly two segments on cohort RETENTION
   (Segment 1 Primary / Segment 2 Comparison, View: Retention). That job is kept
@@ -22,6 +22,11 @@
   .breadcrumb { margin: 0 0 8px; padding: 0; }
   .sc-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
   .sc-body { padding: 18px 24px 60px; max-width: 1320px; }
+  /* Variant-2 mode only — same reason as the builder: capped but not centred. */
+  /* Same alignment rule as the builder: the body's 24px padding is outside its
+     max-width, the header's inner box is already inside the header's padding. */
+  .v2 .sc-body { box-sizing: border-box; max-width: 1368px; margin-left: auto; margin-right: auto; }
+  .v2 .sc-head__in { max-width: 1320px; margin: 0 auto; }
   @media (max-width: 768px) { .sc-head, .sc-body { padding-left: 14px; padding-right: 14px; } }
 
   .sc-controls { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
@@ -70,7 +75,7 @@
     <nav class="sidebar-nav" aria-label="Main">
       <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
       <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
-      <a class="sidebar-item active" aria-current="page" href="./segments.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments.html" data-back><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
     </nav>
   </aside>
 
@@ -78,7 +83,7 @@
     <header class="sc-head">
       <nav aria-label="Breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="./segments.html">Customer Segments</a></li>
+          <li class="breadcrumb-item"><a href="./segments.html" data-back>Customer Segments</a></li>
           <li class="breadcrumb-sep" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg></li>
           <li class="breadcrumb-item active" aria-current="page">Compare</li>
         </ol>
@@ -148,7 +153,7 @@
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 
-<script src="./segments-data.js?v=14"></script>
+<script src="./segments-data.js?v=17"></script>
 <script>
 const CALC = SEGMENTS.filter(s => s.c != null);
 const q = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);
@@ -197,15 +202,37 @@ function delta(v, base, label) {
   return `<span class="sc-d ${d > 0 ? 'sc-d--up' : 'sc-d--dn'}">${d > 0 ? '+' : ''}${(d * 100).toFixed(0)}%</span>`;
 }
 
+const V2 = new URLSearchParams(location.search).has('v2');
+if (V2) {
+  document.body.classList.add('v2');
+  const head = document.querySelector('.sc-head');
+  if (head && !head.querySelector('.sc-head__in')) {
+    const box = document.createElement('div');
+    box.className = 'sc-head__in';
+    while (head.firstChild) box.appendChild(head.firstChild);
+    head.appendChild(box);
+  }
+}
+
 const ROWS = [
   { l:'Definition', cell: s => `<div style="font-size:12.5px;color:#374151;line-height:1.5;">${s.sentence}</div>
       <div style="margin-top:4px;font-size:11.5px;color:${s.r ? 'var(--seg-muted)' : 'var(--color-text-fg-danger)'};">${s.r || 'No order window set'}</div>` },
+  /* Variant-2 mode: the v2 pages link here with ?v2=1. Marko, 2026-09-01 — the
+     metrics are computed on the fly in the new pass, so there is no run step and
+     nothing can be stale. The four states collapse to what the definition
+     returns, and the sub-line reports the definition date rather than a run.
+     A flag, not an edit: v1's default rendering is untouched. */
   { l:'Status', cell: s => {
-      const [dot, tag, label] = s.state === 'never' ? ['gray','grey','Not calculated']
-        : s.state === 'nomatch' ? ['yellow','orange','No customers match']
-        : s.stale ? ['yellow','orange','Stale data'] : ['green','green','Up to date'];
+      const [dot, tag, label] = V2
+        ? (v2state(s) === 'unknown' ? ['gray','grey','No data']
+           : v2state(s) === 'nomatch' ? ['yellow','orange','No customers match']
+           : ['green','green','Active'])
+        : (s.state === 'never' ? ['gray','grey','Not calculated']
+           : s.state === 'nomatch' ? ['yellow','orange','No customers match']
+           : s.stale ? ['yellow','orange','Stale data'] : ['green','green','Up to date']);
       return `<span class="iris-tag ${tag === 'green' ? 'seg-ok' : 'iris-tag--' + tag}"><span class="indicator-dot indicator-dot-${dot}"></span>${label}</span>
-        <span class="sc-d sc-d--eq">${s.state === 'never' ? 'never run' : 'ran ' + relTime(s.up)}</span>`; } },
+        <span class="sc-d sc-d--eq">${V2 ? 'definition updated ' + relTime(s.up)
+          : s.state === 'never' ? 'never run' : 'ran ' + relTime(s.up)}</span>`; } },
   { l:'Customers', cell: (s, b) => s.c == null ? '<span style="color:var(--seg-th)">—</span>' :
       `<span class="sc-v">${fmtN(s.c)}</span>${delta(s.c, b.c, b.n)}
        <span class="sc-bar ${s.share >= .95 ? 'sc-bar--warn' : ''}"><i style="width:${Math.max(1, s.share*100)}%"></i></span>
@@ -227,7 +254,7 @@ function renderRetention() {
 
   const svg = document.getElementById('scChart'), W = 640, H = 200, P = 24;
   if (!usable.length) {
-    svg.innerHTML = `<text x="16" y="100" fill="#4b5563" font-size="13" font-family="Inter">Neither segment has been calculated, so there is no retention to compare.</text>`;
+    svg.innerHTML = `<text x="16" y="100" fill="#4b5563" font-size="13" font-family="Inter">${V2 ? 'Neither segment returns customers, so there is no retention to compare.' : 'Neither segment has been calculated, so there is no retention to compare.'}</text>`;
     document.getElementById('scChartDesc').textContent = 'No retention data available for the selected segments.';
     document.getElementById('scLegend').innerHTML = '';
     document.getElementById('scRetWrap').innerHTML = '';
@@ -258,7 +285,7 @@ function renderRetention() {
           <span class="iris-cohort-badge iris-cohort-badge--${Math.min(100, Math.round(v / 10) * 10)}">${v.toFixed(0)}%</span>
           ${p !== base && i ? delta(v, base.c[i], base.s.n) : ''}</td>`).join('')
         : `<td colspan="${months.length}" style="color:var(--seg-muted);font-size:12.5px;">
-             ${p.s.state === 'never' ? 'Never calculated — no retention to show.' : 'No customers match — no retention to show.'}</td>`}
+             ${V2 ? (v2state(p.s) === 'unknown' ? 'No result for this definition — no retention to show.' : 'No customers match — no retention to show.') : (p.s.state === 'never' ? 'Never calculated — no retention to show.' : 'No customers match — no retention to show.')}</td>`}
     </tr>`).join('')}</tbody></table>`;
 }
 
@@ -348,6 +375,8 @@ document.getElementById('skipLink').addEventListener('click', e => {
 });
 
 render();
+/* Reached from v2, every way back should return to v2. */
+if (V2) document.querySelectorAll('[data-back]').forEach(a => a.href = './segments-v2.html');
 initSidebar();
 </script>
 </body>
