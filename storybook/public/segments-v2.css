@@ -199,15 +199,8 @@
 .dr-seg .btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
 .dr-seg .btn:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
 
-/* The switch: library pill, our label and hit area. */
-.dr-switch {
-  display: inline-flex; align-items: center; gap: 8px;
-  height: 30px; padding: 0 4px; border: 0; background: none; cursor: pointer;
-  font-family: inherit; font-size: var(--text-xs); color: var(--dr-muted);
-}
-.dr-switch:hover { color: var(--color-text-heading); }
-.dr-switch[aria-checked="true"] { color: var(--color-text-heading); font-weight: var(--font-medium); }
-.dr-switch:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+/* A condition that exists but was left empty is listed, and listed as dead. */
+.iris-chip.dr-chip--dead { background: var(--color-bg-danger-soft); color: var(--color-text-fg-danger); }
 .dr-split > .btn:last-child { padding: 0 7px; }
 
 /* .btn-primary already carries the brand fill; only the open state is added. */

@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=19">
-<link rel="stylesheet" href="./segments-v2.css?v=19">
+<link rel="stylesheet" href="./segments-proto.css?v=20">
+<link rel="stylesheet" href="./segments-v2.css?v=20">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -119,13 +119,17 @@
                 <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
               </div>
 
-              <!-- Definition detail is not a choice between two destinations, it is
-                   one enhancement being turned on: nobody navigates to "compact".
-                   That is a switch, and the library ships .iris-toggle for it. -->
-              <button class="dr-switch" id="lsDetail" role="switch" aria-checked="false">
-                <span class="iris-toggle iris-toggle--off" aria-hidden="true"><span class="iris-toggle__thumb"></span></span>
-                <span>Full definitions</span>
-              </button>
+              <!-- Not a switch. A switch promises that ON adds something, and this
+                   swaps one reading of the definition for another: the summary says
+                   what the conditions amount to ("no effective filter, every customer
+                   matches"), the condition list says what was literally configured
+                   ("geography (no criteria set)"). Neither is more than the other,
+                   and on a one-condition segment the "full" view was the shorter of
+                   the two. Two named alternatives, both visible. -->
+              <div class="btn-group dr-seg" role="radiogroup" aria-label="Definition">
+                <button class="btn btn-sm active" role="radio" aria-checked="true" data-def="summary">Summary</button>
+                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-def="conditions">Conditions</button>
+              </div>
             </div>
             <div id="lsTable"></div>
           </div>
@@ -139,8 +143,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="./segments-data.js?v=19"></script>
-<script src="./segments-v2-shared.js?v=19"></script>
+<script src="./segments-data.js?v=20"></script>
+<script src="./segments-v2-shared.js?v=20"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fKind = 'all', fState = 'all', fFolder = 'all', q = '', full = false;
@@ -384,8 +388,13 @@ function nameCell(s) {
   const err  = s.flags.filter(f => f.danger);
   const warn = s.flags.filter(f => f.sev === 'warn');
   const st   = v2state(s);
+  /* The condition view lists every condition, including the ones that filter
+     nothing, and marks those. That is the whole difference between the two
+     readings: the summary says what the definition amounts to, this says what
+     was actually configured. */
   const conds = full && s.conds.length
-    ? s.conds.map(c => '<span class="iris-chip iris-chip--light" style="font-weight:500;">' + esc(c.label) + '</span>').join(' ')
+    ? s.conds.map(c => '<span class="iris-chip iris-chip--light' + (c.noop ? ' dr-chip--dead' : '') + '">' +
+        esc(c.label) + (c.noop ? ' · filters nobody' : '') + '</span>').join(' ')
     : esc(s.sentence);
   /* Status only when it is an exception. A green "Active" on 23 of 40 rows is
      noise; the number in the Customers column already says the segment works. */
@@ -562,14 +571,27 @@ document.getElementById('lsSort').addEventListener('change', e => {
   sort = { k, dir: k === 'n' ? 'asc' : 'desc' };
   render();
 });
-document.getElementById('lsDetail').addEventListener('click', e => {
-  full = !full;
-  const b = e.currentTarget;
-  b.setAttribute('aria-checked', String(full));
-  const pill = b.querySelector('.iris-toggle');
-  pill.classList.toggle('iris-toggle--on', full);
-  pill.classList.toggle('iris-toggle--off', !full);
+/* ── Definition: the summary, or the literal condition list ── */
+const defBtns = [...document.querySelectorAll('[data-def]')];
+function setDefinition(next, focus) {
+  full = next === 'conditions';
+  defBtns.forEach(b => {
+    const on = b.dataset.def === next;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', String(on));
+    b.tabIndex = on ? 0 : -1;
+    if (on && focus) b.focus();
+  });
   render();
+}
+defBtns.forEach((b, i) => {
+  b.addEventListener('click', () => setDefinition(b.dataset.def, false));
+  b.addEventListener('keydown', e => {
+    const map = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: defBtns.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    setDefinition(defBtns[(map[e.key] + defBtns.length) % defBtns.length].dataset.def, true);
+  });
 });
 
 document.addEventListener('click', e => {
