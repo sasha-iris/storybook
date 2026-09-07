@@ -1,0 +1,1236 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Customer Segments — variant 2, in the Data Rooms visual language.
+
+   Marko, 2026-09-01: "this view is much more neutral than the work i had liked
+   on the data rooms. can you provide a touch of color or something to give it
+   more pop?" — with two Data Rooms screenshots attached.
+
+   Those screenshots are NOT a segments list. They are the detail page of one
+   data room: breadcrumb, title with an inline status pill, a meta row, tabs, and
+   a card-wrapped table of child records. The structural twin is our SEGMENT
+   page, so this layer is modelled on it directly and the list reuses its atoms.
+
+   DESIGN SYSTEM FIRST. Everything that the Iris library already has is used from
+   the library, not rebuilt: .card-icon for the tinted type tile, .badge +
+   .indicator-dot for status, .progress for the share bars, and the brand purple
+   --btn-primary-bg for the primary action. The Data Rooms shapes that the
+   library has no component for — the back link, the meta row, the filter rail,
+   the 40px toolbar button, the card-wrapped table — are built here on library
+   tokens, and every deviation is named.
+
+   Loads AFTER segments-proto.css and overrides nothing in it.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* The Data Rooms primary is a violet close to, but not equal to, the library
+     brand. The library value wins: --btn-primary-bg #42389d is the Iris brand
+     purple, it is what every other Iris button uses, and white on it measures
+     9.9:1. Matching a screenshot is not worth forking the brand colour. */
+  /* The brand button is --btn-primary-bg #42389d and always was. An earlier pass
+     swapped it for --iris-brand-600 #5850ec to get closer to the violet on the
+     Data Rooms screens, but #5850ec is the CHART token — it reads blue, and this
+     product has no blue buttons. The dull, heavy look that swap was chasing was
+     never the hue: it was a 43px button with a 12px radius and 20px of padding,
+     which is fixed separately. Brand purple for anything interactive, #5850ec
+     for data only. */
+  --dr-primary: var(--btn-primary-bg);
+  --dr-primary-hover: var(--btn-primary-hover);
+  --dr-primary-soft: #f0effa;
+
+  --dr-border: var(--color-border-base);        /* #e5e7eb */
+  --dr-border-soft: var(--color-border-light);  /* #f3f4f6 */
+  --dr-head-bg: var(--color-bg-secondary);      /* #f9fafb */
+  --dr-hover: var(--color-bg-secondary);
+  --dr-sel: var(--color-bg-tertiary);           /* #f3f4f6 */
+
+  /* Text. The library's --color-text-body-subtle #6a7282 measures 4.9:1 on
+     white but only 4.4:1 on the #f9fafb table header, so headers take
+     --color-text-body #4a5565 (7.4:1). */
+  --dr-muted: var(--color-text-body-subtle);
+  --dr-th: var(--color-text-body);
+
+  --dr-radius: var(--radius-lg);     /* 12px */
+  --dr-radius-sm: var(--radius-md);  /* 8px  */
+
+  /* The page is 1280px wide and centred. Below that it fills the viewport. */
+  --dr-max: 1280px;
+}
+
+/* ── Page frame ───────────────────────────────────────────────────────────
+   Header and body share one centred container so the title, the meta row, the
+   tabs, the rail and the table all sit on the same left edge and the whole
+   page centres on a wide monitor instead of hugging the rail. */
+.dr-inner { max-width: var(--dr-max); margin: 0 auto; }
+.dr-head { background: var(--color-bg-white); padding: 18px 28px 0; border-bottom: 1px solid var(--dr-border); }
+.dr-wrap { padding: 22px 28px 64px; }
+@media (max-width: 760px) { .dr-head, .dr-wrap { padding-left: 16px; padding-right: 16px; } }
+
+/* ── Breadcrumb: a single back link, not a trail ───────────────────────────
+   Data Rooms shows "← All data rooms". The library breadcrumb is a
+   chevron-separated trail, a different component doing a different job. */
+.dr-back {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 24px; margin-bottom: 12px;
+  font-size: 13.5px; color: var(--dr-muted); text-decoration: none;
+}
+.dr-back:hover { color: var(--color-text-heading); }
+.dr-back svg { flex: none; }
+
+/* ── Title row ────────────────────────────────────────────────────────────
+   26px/600 sits between the library's --text-h2 (24) and --text-h1 (30) and
+   matches the Data Rooms title. */
+.dr-titlerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dr-h1 {
+  margin: 0; font-size: 26px; line-height: 1.15; font-weight: var(--font-semibold);
+  color: var(--color-text-heading); letter-spacing: -0.015em;
+}
+/* --color-text-fg-disabled #99a1af measures 2.6:1 on white; WCAG 1.4.11 asks 3:1
+   of any graphic that carries meaning, and an icon-only control is exactly that.
+   --color-text-body-subtle #6a7282 measures 4.8:1. The earlier "0 contrast
+   failures" claim was wrong because the check only walked text nodes. */
+.dr-pencil {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; padding: 0; border: 0; border-radius: var(--radius-sm);
+  background: none; color: var(--dr-muted); cursor: pointer;
+}
+.dr-pencil:hover { background: var(--dr-sel); color: var(--color-text-heading); }
+.dr-pencil:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+/* ── Edit panel ───────────────────────────────────────────────────────────
+   The library .iris-drawer is the surface; what it has no opinion about is a
+   pinned footer, which this needs because Save and Cancel must stay reachable
+   without scrolling. 380px rather than the library's 320 so a long segment
+   name is readable in the field it is being edited in. */
+.dr-drawer { width: 380px; }
+.dr-drawer__inner { padding: 24px; }
+.dr-drawer__foot {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 16px 24px; border-top: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+}
+.dr-drawer__note {
+  margin: 24px 0 0; padding-top: 16px;
+  border-top: 1px solid var(--color-border-default);
+  font-size: var(--text-xs); color: var(--color-text-body-subtle); line-height: 1.55;
+}
+/* The helper line doubles as the error line, so the field does not grow by a
+   row when a name is rejected and the Save button does not move under the
+   pointer that is about to press it. */
+.dr-drawer__err { color: var(--color-text-fg-danger); }
+.dr-drawer .btn:disabled { opacity: .55; cursor: not-allowed; }
+.dr-headactions { margin-left: auto; display: flex; gap: 8px; align-items: center; position: relative; }
+
+/* Status is the library .badge with a library .indicator-dot inside it — the
+   same combination the v1 list uses, so the two variants read identically.
+   segments-proto.css already strips the dot's white ring for inline use. */
+.dr-status { display: inline-flex; align-items: center; }
+.dr-status .badge { display: inline-flex; align-items: center; }
+
+/* ── Meta row ─────────────────────────────────────────────────────────────
+   Data Rooms pairs a 14px icon with each fact and separates the pairs with
+   space. No dot separators — an icon says what kind of fact is coming before
+   you read it, which a 130-character dot run never did. */
+.dr-meta {
+  margin: 12px 0 0; padding: 0; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 6px 20px;
+  font-size: 13px; color: var(--dr-muted);
+}
+.dr-meta li { display: inline-flex; align-items: center; gap: 6px; }
+.dr-meta svg { flex: none; color: var(--dr-muted); }
+.dr-meta b { font-weight: var(--font-semibold); color: var(--color-text-heading); }
+.dr-meta .hot { color: var(--color-text-fg-danger); }
+.dr-meta .hot svg, .dr-meta .hot b { color: var(--color-text-fg-danger); }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────
+   The library's .iris-tab-bar / .iris-tab / .iris-tab--active is the same
+   underline tab the Data Rooms screen uses, at the same 14px/500, and these are
+   page-level tabs — exactly its remit. It was rebuilt here for no reason.
+
+   The library paints the active tab blue (--color-bg-primary #1C64F2) while
+   every other interactive surface in this product is brand purple #42389d.
+   That is a library inconsistency, not something to fork per-page: left as the
+   library ships it and logged for the design system instead.
+
+   Only two things are added: the bar scrolls sideways on a narrow screen, and
+   it sits flush with the header's own bottom border. */
+/* overflow-y MUST be pinned. Setting only overflow-x:auto makes the other axis
+   compute to auto as well, so the tab bar became a scroll container in both
+   directions and grew a vertical scrollbar of its own. */
+.dr-tabs { margin-top: 18px; overflow-x: auto; overflow-y: hidden; border-bottom: 0; scrollbar-width: thin; }
+.dr-tabs::-webkit-scrollbar { height: 0; }
+.dr-tabs .iris-tab:first-child { padding-left: 0; }
+
+/* ── Buttons ──────────────────────────────────────────────────────────────
+   The library's, not ours. An earlier version of this file declared a .dr-btn
+   and justified it by saying .btn was 35/42px with a 6px radius and no icon
+   slot. All three claims were wrong: .btn.btn-md is exactly the 40px button the
+   Data Rooms toolbar uses, .btn's radius is --radius-lg (12px), and .btn is
+   inline-flex with gap:8px, which IS an icon slot. The whole component was built
+   on a gap that did not exist.
+
+   What genuinely is missing from the library and stays here:
+   - a pressed state for a toolbar toggle (.btn has :hover, :focus-visible and
+     [disabled], but nothing for aria-pressed)
+   - the split button: .btn-group joins buttons, but does not give the trailing
+     caret half its lighter dividing rule on a filled button. */
+/* ── Toolbar density ──────────────────────────────────────────────────────
+   The library .btn.btn-md and the Data Rooms toolbar button agree on height
+   (40px) and on having an icon slot. They disagree on two things, and side by
+   side the difference is the whole reason ours looked heavier than his:
+
+     radius   library 12px  ·  Data Rooms 8px
+     padding  library 20px  ·  Data Rooms 14px
+
+   At 12px radius a 40px button reads as a lozenge; at 20px of padding three of
+   them in a row take 60px more than his do and stop looking like a set. This is
+   a real disagreement between two design systems inside one product, and it is
+   a question for the design system rather than something to settle per page.
+   Until it is settled, the toolbar is set to the Data Rooms values so the two
+   screens can be compared honestly — scoped to the toolbar, not a fork of .btn. */
+.dr-toolbar, .dr-headactions { gap: 12px; }
+.dr-toolbar .btn, .dr-headactions .btn, .dr-sum .btn {
+  /* 36px, not 40. The Data Rooms button is 40px, but his toolbar carries three
+     controls and ours carries three SPLIT controls — six boxes in the same run —
+     so at his height the row reads as a wall. 36/13px keeps the same proportions
+     at the density this toolbar actually needs. */
+  height: 36px;
+  padding: 0 12px;
+  gap: 6px;
+  font-size: 13px;
+  border-radius: var(--radius-md);   /* 8px, library 12px */
+}
+.dr-toolbar .btn svg, .dr-headactions .btn svg { width: 14px; height: 14px; }
+/* Only the outline buttons take the darker label. Setting `color` on every .btn
+   in the toolbar overrode .btn-primary's white text, and the primary label went
+   to 1.12:1 — a purple block with no readable words on it. */
+.dr-toolbar .btn-alternative, .dr-headactions .btn-alternative { color: #374151; }
+/* Display controls sitting under a row of real actions. At the same weight they
+   competed with New segment and Import, so they are quieter and smaller. */
+.dr-seg .btn {
+  height: 30px; padding: 0 12px; font-size: var(--text-xs);
+  color: var(--dr-muted); border-color: var(--dr-border);
+}
+.dr-seg .btn.active { background: var(--dr-sel); color: var(--color-text-heading); font-weight: var(--font-semibold); }
+.dr-seg .btn:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; z-index: 1; }
+.dr-seg { border-radius: var(--radius-md); }
+.dr-seg .btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.dr-seg .btn:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+/* A condition that exists but was left empty is listed, and listed as dead. */
+.iris-chip.dr-chip--dead { background: var(--color-bg-danger-soft); color: var(--color-text-fg-danger); }
+.dr-split > .btn:last-child { padding: 0 7px; }
+
+/* .btn-primary already carries the brand fill; only the open state is added. */
+.dr-split > .btn-primary[aria-expanded="true"] { background: var(--btn-primary-hover); }
+/* the split halves keep the outer corners and lose the inner ones */
+.dr-split > .btn:first-child { border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+.dr-split > .btn:last-child  { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
+
+.dr-toolbar .btn[aria-pressed="true"],
+.dr-headactions .btn[aria-pressed="true"] {
+  background: var(--dr-primary-soft); border-color: var(--dr-primary); color: var(--dr-primary);
+}
+.dr-sum .btn[aria-pressed="true"] {
+  background: var(--dr-sel); border-color: var(--dr-border); color: var(--color-text-heading);
+}
+.dr-toolbar .btn[aria-pressed="true"] svg,
+.dr-sum .btn[aria-pressed="true"] svg { color: var(--dr-primary); }
+
+/* ── Split button ─────────────────────────────────────────────────────────
+   Two of the three toolbar buttons on the Data Rooms screens are split: a label
+   and, behind a 1px rule, a caret that opens a menu. .btn-group joins the two
+   halves; the rule on the filled half is the only thing it does not supply. */
+.dr-split { display: inline-flex; }
+.dr-split > .btn:first-child { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.dr-split > .btn:last-child {
+  border-top-left-radius: 0; border-bottom-left-radius: 0;
+  padding-left: 10px; padding-right: 10px; margin-left: -1px;
+}
+.dr-split > .btn-primary:last-child { border-left-color: rgba(255, 255, 255, .32); }
+.dr-split > .btn:last-child svg { width: 13px; height: 13px; transition: transform .15s; }
+.dr-split > .btn[aria-expanded="true"]:last-child svg { transform: rotate(180deg); }
+
+/* ── Rail footer action ───────────────────────────────────────────────────
+   The Data Rooms rail ends with "+ New folder". Segments have no folders; the
+   equivalent affordance in the same place is saving the filter combination the
+   rail is currently set to. */
+.dr-rail__add {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  margin-top: 4px; padding: 8px 10px; border: 0; border-radius: var(--dr-radius-sm);
+  background: none; cursor: pointer; text-align: left;
+  font-family: inherit; font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--dr-primary);
+}
+.dr-rail__add:hover { background: var(--dr-primary-soft); }
+.dr-rail__add svg { flex: none; }
+.dr-rail__add:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+
+/* ── Search ───────────────────────────────────────────────────────────────
+   .form-search-wrap + .form-search-icon + .form-input is the library's
+   leading-icon search field. The gap this file claimed was in .iris-search,
+   a different component. What is genuinely missing is a focus indicator:
+   .form-input sets outline:none and moves the border only, which is a 3:1
+   non-text change, not a focus ring. */
+.form-search-wrap { min-width: 240px; }
+/* the field sits in the same row as the buttons and must share their height */
+.dr-toolbar .form-search-wrap .form-input { height: 36px; font-size: 13px; }
+.form-search-wrap .form-input:focus-visible {
+  outline: 2px solid var(--color-border-focus); outline-offset: 1px;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────
+   Data Rooms wraps every block in a white card with a 1px border and a 12px
+   radius. No shadows anywhere on that screen. */
+.dr-card { background: var(--color-bg-white); border: 1px solid var(--dr-border); border-radius: var(--dr-radius); }
+.dr-card__h {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 13px 16px; border-bottom: 1px solid var(--dr-border-soft);
+}
+.dr-card__t { margin: 0; font-size: 13.5px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+.dr-card__b { padding: 16px; }
+
+/* ── The Documents-tab layout: rail + toolbar + table ────────────────────
+   Left rail is a card of filters with a count on the right, the selected one
+   filled. On Data Rooms it filters by folder; here it filters by something that
+   actually changes the result, which is the point of the variant.
+
+   The rail is the library's .list-group + .list-group-item. Three things sit on
+   top, and each is a real gap: the items are toggles (the library has .active
+   but nothing for aria-pressed), they carry a trailing count, and the group
+   label is .sidebar-section-label borrowed from a different component. */
+.dr-layout { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 16px; align-items: start; }
+.dr-layout--wide { grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); }
+@media (max-width: 900px) {
+  .dr-layout, .dr-layout--wide { grid-template-columns: minmax(0, 1fr); }
+}
+.dr-layout > * { min-width: 0; }
+
+.list-group.dr-rail { padding: 6px; }
+.dr-rail .dr-rail__g + .dr-rail__g { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--dr-border-soft); }
+.dr-rail__lab {
+  padding: 6px 10px 4px; font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--dr-th);
+}
+.dr-rail .list-group-item {
+  /* 13px, not the library's 14: a filter rail is a dense control column, and at
+     14px in a 208px track the longer labels wrapped onto a second line. */
+  width: 100%; padding: 7px 10px; border: 0; border-radius: var(--dr-radius-sm);
+  background: none; cursor: pointer; text-align: left; font-family: inherit; gap: 9px;
+  font-size: 13px; line-height: 1.4; color: var(--color-text-body);
+}
+.dr-rail .list-group-item > span:not(.dr-rail__n) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dr-rail .list-group-item:hover { background: var(--dr-hover); }
+.dr-rail .list-group-item[aria-pressed="true"] {
+  background: var(--dr-primary-soft); color: var(--dr-primary); font-weight: var(--font-semibold);
+}
+.dr-rail .list-group-item svg { flex: none; color: var(--dr-muted); }
+/* the five type icons keep their .card-icon foreground, which turns the rail
+   into the legend the tiles need: without it the colour in the table is
+   decoration, because nothing on screen says what blue or green mean */
+/* The rail used to tint each Type icon to match the tile colour in the table,
+   so the rail doubled as the legend. Type is gone; the rail's dimensions are not
+   the tile's colours, and tinting them would claim a correspondence that no
+   longer holds. Removed rather than remapped. */
+/* Was --color-text-fg-danger. See the note further down: a filter is not a
+   warning, and this was the only red in the rail. */
+.dr-rail .list-group-item[data-state="issues"] svg   { color: var(--dr-muted); }
+.dr-rail .list-group-item[aria-pressed="true"] svg   { color: var(--dr-primary); }
+.dr-rail__n { margin-left: auto; font-size: 12px; font-weight: var(--font-medium); color: var(--dr-th); font-variant-numeric: tabular-nums; }
+.dr-rail .list-group-item[aria-pressed="true"] .dr-rail__n { color: var(--dr-primary); }
+.dr-rail .list-group-item:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+
+.dr-toolbar { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 14px; }
+.dr-toolbar__end { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+@media (max-width: 620px) { .dr-toolbar__end { margin-left: 0; width: 100%; } .form-search-wrap { flex: 1; } }
+
+/* ── Table ────────────────────────────────────────────────────────────────
+   Header on #f9fafb, 11px uppercase; rows separated by a hairline; the name
+   cell is a tinted tile plus two lines. Data Rooms has no sortable headers —
+   with three files it does not need them. At forty rows it does, so the header
+   here is a button. A deliberate addition, not a copy. */
+.dr-tablecard { background: var(--color-bg-white); border: 1px solid var(--dr-border); border-radius: var(--dr-radius); overflow: hidden; }
+/* position:relative so the visually-hidden column labels resolve their absolute
+   position inside this scroller. Without it their containing block is the page,
+   and a 1px sr-only span sitting past the right edge of a wide table pushed the
+   whole document 38px sideways. */
+/* overflow-y pinned for the same reason as the tab bar: with only overflow-x
+   set, the other axis computes to auto and the table card grows its own
+   vertical scrollbar. */
+.dr-tw { overflow-x: auto; overflow-y: hidden; position: relative; }
+/* The name column carries a tile, a title, a status badge and two lines of
+   definition. Squeezed under ~300px the title wraps away from its own tile and
+   the row stops reading as one object, so the table scrolls inside its card
+   rather than crushing the column. The page itself never scrolls sideways. */
+.dr-t { width: 100%; border-collapse: collapse; }
+/* ONLY the segment list. An unscoped min-width here forced the small side tables
+   — top products, retention, journey — to 940px inside a 600px card, where they
+   scrolled sideways and clipped their own first column.
+
+   The list needs it because its name column carries four things: tile, title,
+   status badge and the definition sentence. At 290px the condition chip and the
+   definition each took their own line and every row ran four lines deep. */
+/* Sized so the whole table fits beside the rail at 1280px without a sideways
+   scroll. It was 940px against ~900px of space, which cut the last column off. */
+.dr-t--list { min-width: 780px; }
+/* The name column, not the select column. `:first-child` used to be the name;
+   the checkbox now holds that slot and took the 258px with it, collapsing the
+   name into the space meant for a checkbox. */
+.dr-t--list th.dr-pick, .dr-t--list td.dr-pick { width: 40px; min-width: 40px; }
+.dr-t--list th.dr-pick + th, .dr-t--list td.dr-pick + td { width: 36%; min-width: 258px; }
+.dr-t th {
+  /* Headers wrap; cells do not. "Definition updated" on one line cost 60px and
+     pushed an eight-column table into a horizontal scroll at 1280px. */
+  padding: 10px 12px; text-align: left; white-space: normal;
+  background: var(--dr-head-bg); border-bottom: 1px solid var(--dr-border);
+  font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--dr-th);
+}
+.dr-t td { padding: 11px 12px; font-size: 13px; color: var(--color-text-body); border-bottom: 1px solid var(--dr-border-soft); vertical-align: middle; }
+.dr-t tbody tr:last-child td { border-bottom: 0; }
+.dr-t tbody tr:hover { background: var(--dr-hover); }
+.dr-t .n { text-align: right; font-variant-numeric: tabular-nums; }
+/* the primary metric carries more weight than the ones beside it, so the eye
+   has somewhere to land after the name */
+.dr-t .lead { font-weight: var(--font-semibold); color: var(--color-text-heading); font-size: 13.5px; }
+.dr-t .sub { margin-top: 2px; font-size: 11.5px; font-weight: var(--font-normal); color: var(--dr-muted); }
+.dr-t tfoot td { background: var(--dr-head-bg); border-top: 1px solid var(--dr-border); border-bottom: 0; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+.dr-sort {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 24px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: inherit; font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--dr-th);
+}
+.dr-sort:hover { color: var(--color-text-heading); }
+.dr-sort .c { opacity: 0; }
+th[aria-sort] .dr-sort { color: var(--dr-primary); }
+th[aria-sort] .dr-sort .c { opacity: 1; }
+th[aria-sort="ascending"] .dr-sort .c { transform: rotate(180deg); }
+.dr-sort:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+.dr-grp + .dr-grp .dr-grp__h td { border-top: 1px solid var(--dr-border); }
+.dr-grp__h td { padding: 0; background: var(--dr-head-bg); border-bottom: 1px solid var(--dr-border); }
+.dr-grp__b {
+  /* a group header is a divider, not a heading: it must not out-shout the
+     segment names in the rows it introduces */
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  padding: 7px 12px; border: 0; background: none; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; color: var(--dr-muted); text-align: left;
+}
+.dr-grp__b:hover { background: var(--dr-sel); }
+.dr-grp__b:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+.dr-grp__b > svg:first-child { flex: none; color: var(--dr-muted); }
+.dr-grp__b .card-icon { width: 22px; height: 22px; border-radius: var(--radius-sm); flex: none; }
+.dr-grp__b b { color: var(--color-text-heading); font-weight: var(--font-semibold); font-size: 13px; }
+.dr-grp__n { padding: 0 6px; border-radius: var(--radius-sm); background: var(--color-bg-quaternary); color: var(--dr-th); font-size: 11px; font-weight: var(--font-semibold); }
+.dr-grp__bad { display: inline-flex; align-items: center; gap: 4px; color: var(--color-text-fg-danger); font-weight: var(--font-medium); }
+.dr-grp__sum { margin-left: auto; color: var(--dr-muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) { .dr-grp__sum { display: none; } }
+
+/* ── The name cell ────────────────────────────────────────────────────────
+   Data Rooms: a tinted rounded tile with a coloured glyph, then the name with
+   an optional version chip, then a grey subtitle. That tile is the whole of the
+   colour on his screen, and it means something, because the glyph is the file
+   type. Ours means something too: it says what kind of segment this is.
+
+   The tile is the library's .card-icon. The library ships it at 40px only, so
+   the row size is a local modifier; there is no neutral variant, so
+   .card-icon-gray is a local addition. Both are library gaps. */
+.dr-name { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.card-icon.dr-tile { width: 38px; height: 38px; border-radius: var(--dr-radius-sm); flex: none; }
+/* .card-icon-gray, -indigo, -teal and -sky now live in the library: the set
+   shipped six variants and four of them doubled as status colours, so anything
+   using .card-icon to say what KIND of thing a row is collided with the status
+   scale. Nothing local left here. */
+
+.dr-name__t { min-width: 0; }
+.dr-name__l { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+/* .badge-sm is 12px/1.5 and .iris-chip is 12px; side by side they were 24px and
+   15px tall on the same centred line. */
+.dr-name__l .badge { font-size: 11px; padding: 1px 7px; line-height: 1.35; }
+.dr-name__a {
+  /* padded to clear the 24px minimum of WCAG 2.5.8: the bare text box measured
+     20px tall. The row itself is the pointer target; this is the keyboard stop. */
+  display: inline-block; padding: 3px 0; min-width: 24px;
+  font-size: 13.5px; font-weight: var(--font-semibold); color: var(--color-text-heading); text-decoration: none;
+}
+/* Scoped to real anchors: the detail page reuses this class on <span>s for
+   product names, which were announcing themselves as links and doing nothing. */
+a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; cursor: pointer; }
+.dr-name__a:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+/* Block, not flex: as a flex row the condition chip was a rigid item that took a
+   whole line to itself whenever the definition sentence did not fit beside it.
+   As inline content the chip and the sentence wrap together like normal text. */
+.dr-name__s { margin-top: 1px; font-size: 12px; line-height: 1.45; color: var(--dr-muted); }
+.dr-name__s > .iris-chip { margin-right: 6px; vertical-align: 1px; }
+/* a finding always occupies its own line under the definition, so the flags in a
+   forty-row table line up in a column instead of hiding at the end of a sentence */
+.dr-name__s .flag { display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: var(--font-medium); }
+.dr-name__s .flag svg { flex: none; }
+.dr-name__s .flag.bad { color: var(--color-text-fg-danger); }
+.dr-name__s .flag.warn { color: var(--color-text-fg-warning-subtle); }
+
+
+/* ── Share-of-base bar ────────────────────────────────────────────────────
+   The library .progress, used to turn "35,590 customers" into something the eye
+   reads before the digits. Colour is the finding: a bar that fills the track is
+   a segment that is not a segment. */
+/* LIBRARY GAP, recorded not patched: .progress sets height and width but never
+   `display`, so on an inline element the height is dropped and the block-level
+   .progress-bar inside renders as a tall box. bar() emits a <div>; the class
+   itself is left alone rather than redefined for the whole page. */
+/* LIBRARY GAP: .progress-bar-* is the chart palette — indigo, green, orange,
+   yellow, pink, purple, dark, blue — and has no danger variant. The pink #e74694
+   was standing in for one, which reads as a chart series rather than as an
+   error and is a different red from every other warning on the page. */
+.progress-bar-danger { background: var(--color-bg-danger); }
+
+.dr-share { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.dr-share .progress { width: 86px; }
+
+/* ── Row overflow ─────────────────────────────────────────────────────────
+   Quiet by default, as on Data Rooms: a glyph with no border and no fill until
+   pointed at. The prototype already had this control — .seg-iconbtn in
+   segments-proto.css, 36px, borderless, with the focus ring — and a second copy
+   was declared here for no reason. The library's own .btn-icon.btn-sm is the
+   same 36px but always carries a button fill, which is why the shared prototype
+   layer has the quiet one. */
+.dr-kebab { min-width: 36px; min-height: 36px; }
+
+/* ── Overflow menu ────────────────────────────────────────────────────────
+   The library ships the whole menu: .dropdown-menu (224px, 8px radius, its own
+   shadow), .dropdown-item with a 12px icon gap, .dropdown-item.danger,
+   .dropdown-label and .dropdown-divider. This file had rebuilt every one of
+   them. The only thing genuinely missing is fixed positioning: the library's
+   helper is .dropdown-menu--absolute, which needs a positioned wrapper, and
+   these menus are portalled to <body> to escape the table cell's overflow. */
+.dr-menu { position: fixed; z-index: 90; }
+
+/* A menu row with a second line, as the product's own Create automation menu
+   has: the name in the reading weight, what it does underneath it in secondary.
+   The icon holds the top line rather than centring against both, so a two-line
+   row and a one-line row put their icons in the same place. */
+.dropdown-item--two { align-items: flex-start; padding-top: 10px; padding-bottom: 10px; }
+.dropdown-item--two .dropdown-item__icon { margin-top: 2px; }
+.dropdown-item__two { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.dropdown-item__two > b { font-weight: var(--font-semibold); }
+.dropdown-item__two > span {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ── KPI strip ────────────────────────────────────────────────────────────
+   One card, hairline-divided cells, so six figures read as a single object.
+   The dividers are a 1px ring on each cell rather than a 1px grid gap: with six
+   cells on a four-column row the gap painted the empty tail of the last row in
+   the divider colour, which read as a broken block. */
+/* Six cells, so the column count is set explicitly rather than left to auto-fit:
+   auto-fit landed on five at 1120px and stranded the sixth — the data-issues
+   count — alone on a second row. Explicit steps always divide evenly. */
+.dr-kpis {
+  margin-bottom: 18px;
+  /* Six across on a wide screen, and the steps below it all divide six evenly —
+     6, 3, 2, 1 — so nothing is ever stranded alone on a last row. auto-fit was
+     tried and rejected for exactly that: it landed on five at 1120px and left
+     the sixth by itself.
+
+     Six in a line costs the grouping the two rows carried — size on top,
+     per-customer value beneath — and buys back about 90px at the top of a page
+     that needs it. */
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px;
+  background: var(--dr-border-soft);
+  border: 1px solid var(--dr-border); border-radius: var(--dr-radius); overflow: hidden;
+}
+@media (max-width: 1180px) { .dr-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 720px)  { .dr-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px)  { .dr-kpis { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
+/* Tighter cells once there are six of them: the label, the figure and its
+   sub-line all have a third of the width they had. */
+@media (min-width: 1181px) {
+  .dr-kpis .dr-kpi { padding: 12px 12px; }
+  .dr-kpis .dr-kpi__v { font-size: var(--text-h3, 20px); }
+  .dr-kpis .dr-kpi__l { min-height: 24px; font-size: 10.5px; letter-spacing: .04em; }
+  .dr-kpis .dr-kpi__s { font-size: 11px; }
+}
+/* A 1px grid gap draws each divider once; the per-cell ring drew every interior
+   divider twice, at 2px. The column counts are explicit and all divide six
+   evenly, so nothing is stranded on a second row any more. */
+.dr-kpi { background: var(--color-bg-white); padding: 14px 16px; display: flex; flex-direction: column;
+  text-align: left; border: 0; font-family: inherit; }
+/* the figures that name a subset are buttons that show it */
+.dr-kpi--go { cursor: pointer; }
+.dr-kpi--go:hover { background: var(--dr-hover); }
+.dr-kpi--go:hover .dr-kpi__l { color: var(--dr-primary); }
+.dr-kpi--go .dr-kpi__l svg:last-child { margin-left: auto; opacity: 0; transition: opacity .12s; }
+.dr-kpi--go:hover .dr-kpi__l svg:last-child { opacity: 1; }
+.dr-kpi--go:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+/* Labels run from 8 to 21 characters in equal columns; without a floor the ones
+   that wrap push their value off the baseline the other five share. */
+.dr-kpi__l { display: flex; align-items: flex-start; gap: 6px; min-height: 28px; font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em; text-transform: uppercase; color: var(--dr-th); }
+.dr-kpi__l svg { color: var(--dr-muted); flex: none; }
+.dr-kpi__v { margin-top: 5px; font-size: var(--text-h2); font-weight: var(--font-semibold); letter-spacing: -0.02em; color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
+.dr-kpi__s { margin-top: 4px; margin-bottom: 8px; font-size: 11.5px; color: var(--dr-muted); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.dr-kpi__s--warn { color: var(--color-text-fg-warning-subtle); font-weight: var(--font-medium); }
+.dr-kpi__s--bad  { color: var(--color-text-fg-danger); font-weight: var(--font-medium); }
+/* The cell's own tone reaches its label icon too, so a problem count is coloured
+   at the top of the cell as well as the bottom and the strip stops reading as a
+   block of grey with one red line hiding in it. */
+.dr-kpi:has(.dr-kpi__s--bad) .dr-kpi__l svg  { color: var(--color-text-fg-danger); }
+.dr-kpi:has(.dr-kpi__s--warn) .dr-kpi__l svg { color: var(--color-text-fg-warning-subtle); }
+.dr-kpi .progress { margin-top: auto; }
+
+/* The delta against the company average is the library's .card-trend with
+   .card-trend-up / -down / -neutral — the same three tokens, the same 4px gap.
+   Rebuilt here for nothing. Only the wrap is added: at 375px the KPI cell is
+   ~138px wide and "in line with company" does not fit on one line. */
+.card-trend { margin-top: 0; flex-wrap: wrap; min-width: 0; }
+
+/* ── The shape of the segment library ────────────────────────────────────
+   Forty bars, one per segment, height = that segment's share of the customer
+   base. Nothing modelled: it is s.c / 35,590 drawn to scale.
+
+   This is the page's finding as a picture. Five bars touch the ceiling, and a
+   segment that contains every customer is not a segment; everything that is a
+   real segment sits in the bottom fifth. It is also the colour the client asked
+   for, doing work rather than decorating — and it is the one object here that
+   his screen could not carry, because a distribution needs a population and he
+   has three files. */
+.dr-dist {
+  position: relative; display: flex; align-items: flex-end; gap: 3px;
+  height: 132px; padding-top: 22px;
+  border-bottom: 1px solid var(--dr-border);
+}
+.dr-dist::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 22px;
+  border-top: 1px dashed var(--color-border-danger-subtle);
+}
+.dr-dist__ceil { position: absolute; right: 0; top: 0; font-size: 11px; color: var(--dr-muted); }
+/* The ceiling is a reference, not an alarm. Red here was the last thing on the
+   page still arguing the point the line already makes. */
+.dr-dist__ceil b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
+.dr-dist__col {
+  flex: 1 1 0; min-width: 5px; align-self: stretch;
+  display: flex; align-items: flex-end;
+}
+.dr-dist__b {
+  width: 100%; border-radius: 2px 2px 0 0; transition: filter .1s;
+}
+.dr-dist__col:hover .dr-dist__b { filter: brightness(.86); }
+/* Eight bars in --color-bg-danger were the loudest thing on the page, and they
+   said the same thing the ceiling line says: these reach the top. Marko's note
+   was that the defects are expected and the page should not be about them, so
+   the chart shows the SHAPE of the library — one colour, sorted, with the base
+   drawn across it — and lets the line do the pointing. A bar that touches the
+   ceiling needs no second way of saying so.
+
+   The two states that have no height cannot speak through height, so they keep
+   a mark of their own: a grey stub at the baseline. */
+.dr-dist__b--bad  { background: var(--iris-brand-600); }
+.dr-dist__b--warn { background: var(--color-bg-gray); }
+.dr-dist__b--none { background: var(--color-bg-gray); }
+.dr-dist__b--ok   { background: var(--iris-brand-600); }
+
+.dr-dist__key { margin-left: auto; display: inline-flex; align-items: center; font-size: 11px; color: var(--dr-muted); }
+.dr-dist__key i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 5px 0 12px; }
+.dr-dist__key i:first-child { margin-left: 0; }
+.dr-dist__k--none { background: var(--color-bg-gray); }
+.dr-dist__k--ok   { background: var(--iris-brand-600); }
+@media (max-width: 900px) { .dr-dist__key { display: none; } }
+
+/* ── Info tip ─────────────────────────────────────────────────────────────
+   LIBRARY GAPS, both real. .tooltip-bubble is white-space:nowrap, so it cannot
+   hold a sentence, and the library ships no rule that ever hides it — drop the
+   markup on a page and the bubble is simply always on screen. Both are supplied
+   here; the bubble, its colour and its arrow stay the library's. */
+.dr-info > button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--radius-full);
+  background: none; color: var(--dr-muted); cursor: help;
+}
+.dr-info > button:hover { color: var(--color-text-heading); }
+.dr-info > button:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+.dr-info .dr-tip {
+  white-space: normal; width: max-content; max-width: 280px; line-height: 1.45;
+  opacity: 0; visibility: hidden; transition: opacity .12s;
+}
+.dr-info:hover .dr-tip,
+.dr-info:focus-within .dr-tip { opacity: 1; visibility: visible; }
+
+/* ── Condition list ───────────────────────────────────────────────────────
+   Rows in the same shape as the table rows: tile, label, value on the right. */
+.dr-cond { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--dr-border-soft); }
+.dr-cond:last-child { border-bottom: 0; }
+.dr-cond .card-icon { width: 30px; height: 30px; border-radius: var(--radius-sm); flex: none; }
+.dr-cond__t { min-width: 0; flex: 1; }
+.dr-cond__l { font-size: 13px; color: var(--color-text-heading); font-weight: var(--font-medium); }
+.dr-cond__s { margin-top: 2px; font-size: 11.5px; color: var(--dr-muted); }
+.dr-cond__n { font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dr-cond--bad .dr-cond__l, .dr-cond--bad .dr-cond__s { color: var(--color-text-fg-danger); }
+/* The row above already draws a hairline, so the total's own top border landed
+   directly on it and read as a double rule. The row before the total gives its
+   border up. */
+.dr-cond:has(+ .dr-cond--total) { border-bottom: 0; }
+.dr-cond--total { border-top: 1px solid var(--dr-border); margin-top: 4px; padding-top: 12px; }
+
+/* The library cohort badge is a fixed 62x42 flex block; in a right-aligned cell
+   it ignored the alignment and made every retention row 64px tall. */
+.dr-t .iris-cohort-badge { width: auto; min-width: 46px; height: 24px; margin-left: auto; font-size: 11px; }
+
+/* ── Alert ────────────────────────────────────────────────────────────────
+   The library ships .alert with .alert-icon / .alert-body / .alert-title and an
+   .alert-danger variant (#FEF2F2 on #FECACA, text #991B1B) — the soft treatment
+   this page wants, and the one the v1 pages already use. An earlier version of
+   this file hand-rolled the same thing with its own hexes and a left rule, which
+   was a component the design system does not have. Only two things are added on
+   top of the library component, and both are scoped:
+
+   1. .dr-alert--lead raises the title to 17px. On the list this alert is the
+      page's whole thesis and .alert-title's 14px left it smaller than the
+      empty-state heading below it.
+   2. a measure, so the sentence does not run 200 characters at 1280px. */
+.dr-alert .alert-title { font-size: var(--text-sm); }
+.dr-alert--lead .alert-title { font-size: 17px; line-height: 1.3; margin-bottom: 5px; }
+.dr-alert .alert-body p { margin: 0; max-width: 68ch; }
+.dr-alert .btn { margin-top: 10px; }
+
+/* ── Empty state ──────────────────────────────────────────────────────────
+   Carbon's taxonomy: the frame stays, the content is replaced, and the copy
+   says which of the empty cases this is. */
+.dr-empty { text-align: center; padding: 44px 24px; }
+.dr-empty .card-icon { width: 48px; height: 48px; border-radius: var(--radius-lg); margin: 0 auto 14px; }
+.dr-empty h3 { margin: 0 0 6px; font-size: 15px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+.dr-empty p { margin: 0 auto 16px; max-width: 520px; font-size: 13px; line-height: 1.6; color: var(--dr-muted); }
+.dr-empty__facts {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 10px;
+  margin: 0 auto 16px; max-width: 620px;
+}
+
+/* LIBRARY GAP, already logged once for this library: .avatar's default grey on
+   grey measures 3.9:1 for its initials, under AA for 11px text at .avatar-sm.
+   Repainted on library brand tokens, which measure 10.4:1. */
+#drSample .avatar {
+  background: var(--color-bg-brand-softer); color: var(--color-text-fg-brand-strong);
+  font-weight: var(--font-semibold);
+}
+
+.dr-note { margin: 10px 0 0; max-width: 72ch; font-size: 12px; line-height: 1.55; color: var(--dr-muted); }
+
+/* Row-level affordance for the list. The row is the pointer target; the name
+   link inside it is the single keyboard stop. */
+.dr-t tbody tr[data-href] { cursor: pointer; }
+.dr-t tbody tr[data-href]:focus-within { background: var(--dr-hover); }
+/* #lsSum holds the count, the applied filters and the sort note; the two view
+   controls are its siblings. Without a flex row and a growing first child they
+   all packed against the left edge in one undifferentiated run. */
+.dr-sum { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; min-height: 34px; font-size: var(--text-xs); color: var(--dr-muted); }
+.dr-sum > #lsSum { flex: 1 1 auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.dr-sum__n { white-space: nowrap; }
+.dr-sum__n b { color: var(--color-text-heading); font-weight: var(--font-semibold); }
+/* the sort note describes the order, so it follows the filters but is quieter
+   and set apart by a rule rather than by another chip */
+.dr-sortlab { color: var(--dr-muted); }
+.dr-sortsel.form-select {
+  height: 30px; padding: 0 26px 0 8px; font-size: var(--text-xs);
+  border-radius: var(--radius-md); border-color: var(--dr-border); background-size: 12px;
+  background-position: right 8px center; color: var(--color-text-body); width: auto;
+}
+
+/* an applied filter: label, value, and its own remove control */
+.dr-fchip { gap: 5px; padding-right: 3px; }
+/* --dr-muted #6a7282 measures 4.83:1 on white but the chip sits on the library
+   chip's own tinted ground, where it fell to 4.39:1. --color-text-body #4a5565
+   measures 7.0:1 there. */
+.dr-fchip__k { color: var(--color-text-body); font-weight: var(--font-normal); }
+.dr-sum .btn-link { font-size: var(--text-xs); }
+
+
+/* Used on the list, which has no tab bar under the meta row. */
+.dr-head--notabs { padding-bottom: 16px; }
+
+[hidden] { display: none !important; }
+
+/* Why the arrangement is not in effect. It sits directly after the control it
+   explains — on its own line at the far left it read as a note about the result
+   count, 622px from the button it was about. */
+.dr-grouphint {
+  margin: 0 0 8px;
+  font-size: var(--text-xs); color: var(--color-text-body-subtle); line-height: 1.5;
+}
+.dr-grouphint .btn-link {
+  font-size: inherit;
+  display: inline-flex; align-items: center; min-height: 24px;
+}
+
+/* A facet that would return nothing. Dimmed, not removed: the count is the
+   explanation, and a row that vanishes and reappears as you filter is harder
+   to use than one that stays put and greys out. Still 4.6:1 on white, so the
+   label and its number remain readable rather than becoming decoration. */
+.dr-rail .list-group-item.is-empty {
+  color: var(--color-text-body-subtle); cursor: default;
+}
+.dr-rail .list-group-item.is-empty svg { opacity: .55; }
+.dr-rail .list-group-item.is-empty:hover { background: transparent; }
+/* The count is WHY the row is inert, so it must not be the least readable part
+   of it. opacity .7 over white composited #4a5565 to #808893 — 3.58:1, under AA
+   at 12px. Full strength, and the muted label carries the dimming instead. */
+.dr-rail .list-group-item.is-empty .dr-rail__n { opacity: 1; color: var(--color-text-body); }
+
+/* ── Rail groups after the Type removal ───────────────────────────────────
+   Three headings of equal weight over twenty-one identical rows read as one
+   pile. The gap between groups is now larger than any gap inside one, so the
+   boundary is carried by space rather than by a hairline alone. */
+.dr-rail__g + .dr-rail__g { margin-top: 20px; padding-top: 16px; }
+.dr-rail__lab {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+/* How many are on in a group that allows several, and the way back out. The
+   live product's own filter panel carries the same pair on every group. */
+.dr-rail__sel {
+  margin-left: auto; font-size: 11px; font-weight: var(--font-medium);
+  color: var(--color-text-body-subtle); letter-spacing: 0;
+  text-transform: none;
+}
+.dr-rail__reset {
+  margin-left: auto; padding: 0 2px; min-height: 24px;
+  border: 0; background: none; cursor: pointer;
+  font-size: 11px; font-weight: var(--font-medium); font-family: inherit;
+  color: var(--dr-primary); text-transform: none; letter-spacing: 0;
+}
+.dr-rail__sel + .dr-rail__reset { margin-left: 8px; }
+.dr-rail__reset:hover { text-decoration: underline; }
+.dr-rail__reset:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+
+/* "All segments" and "Any result" are selected until the reader touches the
+   group, so filling them the same purple as a real choice made four rows look
+   chosen when two of them were only defaults. A default reads as the resting
+   state; a filled row now always means a decision. */
+.dr-rail .list-group-item.is-default[aria-pressed="true"] {
+  background: transparent; color: var(--color-text-body);
+  font-weight: var(--font-normal);
+}
+.dr-rail .list-group-item.is-default[aria-pressed="true"] svg { color: var(--dr-muted); }
+.dr-rail .list-group-item.is-default[aria-pressed="true"]:hover { background: var(--dr-hover); }
+
+/* Chips narrow one after another. Without the word, two chips side by side
+   read as alternatives. */
+.dr-fchip__and {
+  margin: 0 2px; font-size: var(--text-xs); color: var(--color-text-body-subtle);
+}
+
+/* ── Selecting several segments ───────────────────────────────────────────
+   The checkbox column is 40px and never wraps: it is the first thing on every
+   row and the table already fights for width at 780px. */
+.dr-t .dr-pick { width: 40px; padding: 0; }
+/* The label is the target. A checkbox renders at 16px in every browser and
+   ::before does not paint on a replaced element, so the hit area has to come
+   from something wrapping it. */
+.dr-t .dr-pick__hit {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 40px; min-height: 34px; cursor: pointer;
+}
+.dr-t .dr-pick input {
+  width: 16px; height: 16px; margin: 0; cursor: pointer;
+  accent-color: var(--dr-primary);
+}
+/* #f0effa put --color-text-body-subtle at 4.24:1 and took the definition line
+   and the relative date under AA on exactly the rows the reader is working
+   with. This tint keeps the subtle text at 4.6:1; the left bar carries the
+   weight the colour no longer has to. */
+.dr-t tr.is-picked > td { background: #faf9fe; }
+.dr-t tr.is-picked > td:first-child { box-shadow: inset 3px 0 0 var(--dr-primary); }
+
+.dr-pickbar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  width: 100%; margin: 10px 0 0; padding: 8px 12px;
+  background: #f6f4fd;
+  /* --color-border-light is #f3f4f6 — on a #f9fafb page that is very nearly
+     nothing, so the bar had no edge at all. A real border, tinted the same way
+     the fill is, so the strip reads as one object. */
+  border: 1px solid #ddd8f2;
+  border-radius: var(--dr-radius-sm);
+}
+.dr-pickbar__n { font-size: 13px; color: var(--color-text-heading); margin-right: 4px; }
+.dr-pickbar__n b { font-weight: var(--font-semibold); }
+/* Selection outlives filtering, so when part of it is out of view the bar says
+   how much — otherwise "Archive" appears to act on fewer rows than it does. */
+.dr-pickbar__off { color: var(--color-text-body-subtle); font-weight: var(--font-normal); }
+.dr-pickbar__hint { color: var(--color-text-body-subtle); font-size: 12px; }
+.dr-pickbar .btn[aria-disabled="true"] { opacity: .55; cursor: default; }
+.dr-pickbar #pkClear { margin-left: auto; }
+
+/* Targets that were under 24px. The chip's × and the two text resets are real
+   controls in a toolbar, not links inside a sentence, so the inline exception
+   in WCAG 2.5.8 does not cover them. */
+.dr-sum .btn-link, .dr-pickbar .btn-link {
+  display: inline-flex; align-items: center; min-height: 24px;
+}
+
+/* ── The data-quality line ────────────────────────────────────────────────
+   Was .alert-danger: a filled red block, ~100px tall, the first thing on the
+   page. One line now, on the page's own ground, with the icon carrying the
+   severity instead of a field of colour. --color-text-fg-danger #c70036
+   measures 6.4:1 on white, so quieter is not less readable. */
+/* The library alert, full width, with room for the ✕ at the end. Named
+   .dr-quality rather than .dr-note: that class already existed further up for a
+   small grey caption and carries max-width: 72ch, which was clamping this box
+   to 590px inside a 1164px column. */
+.dr-quality { margin: 0 0 16px; width: 100%; max-width: none; align-items: center; font-size: 13px; line-height: 1.5; }
+.dr-quality .alert-icon { margin-top: 0; }
+.dr-quality .alert-body { flex: 1; }
+.dr-quality .btn-link { font-size: inherit; display: inline; color: inherit; text-decoration: underline; }
+.dr-quality .alert-dismiss {
+  align-self: center; width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* The Result group had the only red in the rail. A filter is not a warning:
+   the triangle keeps its shape, which is what identifies the row, and drops the
+   colour that made it shout across the page. Set at source above, on the rule
+   that owned it. */
+
+/* A value inside a dimension. Indented under the row that revealed it, without
+   its own icon: the dimension above already said what kind of thing this is,
+   and a second column of glyphs would compete with it. */
+.dr-rail .list-group-item.dr-rail__v {
+  padding-left: 34px; font-size: 12.5px;
+  color: var(--color-text-body);
+}
+.dr-rail .list-group-item.dr-rail__v[aria-pressed="true"] { font-weight: var(--font-medium); }
+
+/* Rank among the segments that returned something. Quieter than the share it
+   sits beside — it is context for that number, not a second headline. */
+.dr-rank { color: var(--color-text-body-subtle); }
+
+/* Values nest: country, then postal code inside it. The second level is a
+   refinement of the first, so it steps in again rather than sitting beside it. */
+.dr-rail .list-group-item.dr-rail__v--1 { padding-left: 34px; }
+.dr-rail .list-group-item.dr-rail__v--2 { padding-left: 50px; font-size: 12px; }
+
+/* ── Filters as a panel, not a column ─────────────────────────────────────
+   The rail was a permanent 208px column. It is now behind a Filters button in
+   the toolbar, the way the product's own Cohorts filters are, and the table has
+   the width back. */
+.dr-layout--nofilters { grid-template-columns: minmax(0, 1fr); }
+/* Not a split button. It sat in .dr-split beside New segment, Upload and
+   Export, which draw a divider and a caret onto their second half, so a button
+   with neither read as one of them with its right side cut off. It also belongs
+   with search rather than with them: those three act on segments, these two are
+   how you find one. */
+.dr-filterwrap { position: relative; }
+.dr-toolbar__end { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.dr-filtern {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; margin-left: 2px;
+  border-radius: 9px; background: var(--dr-primary); color: #fff;
+  font-size: 11px; font-weight: var(--font-semibold);
+}
+.dr-panel {
+  /* Anchored to the right edge of its button, which sits at the end of the
+     toolbar: anchored left it ran 188px past the viewport.
+
+     "On the left-hand side on the panel" was said in the first five minutes of
+     the call, before the product owner had given his opinion at all — it is not
+     Marko's, and this build follows Marko. He spoke about the filters once, at
+     07:40, and about their level of detail, not their position. */
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 60;
+  /* 300px broke almost every group onto three rows of chips — two per line with
+     a ragged third. At 360 the dimensions fall two-and-two evenly and the
+     channels sit on one line with their group. */
+  width: 360px; max-height: 70vh; overflow-y: auto; overflow-x: hidden;
+  background: var(--color-bg-white);
+  border: 1px solid var(--dr-border); border-radius: var(--dr-radius);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+}
+.dr-panel__h {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px 8px; font-size: 13px; color: var(--color-text-heading);
+}
+.dr-panel__h .dr-rail__reset { margin-left: 0; }
+.dr-panel .list-group.dr-rail { border: 0; border-radius: 0; padding: 0 6px 8px; }
+@media (max-width: 560px) { .dr-panel { width: calc(100vw - 48px); } }
+
+/* ── Overview: the figures and the picture in one frame ───────────────────
+   The frame belongs to the section; the two blocks inside give up their own
+   borders and corners so there is one outline, not two nested ones. */
+/* One row of four: three figures and the picture, all the same height and all
+   the same weight. Stacked, the figures made a 268px column and the chart
+   stretched to match it — a third of the first screen for three numbers. */
+.dr-overview {
+  margin-bottom: 18px;
+  /* One figure and the picture. It carried three figures; two of them repeated
+     what the table header and the chart's own ceiling line already said.
+
+     The freed width must NOT all go to the chart: at 3.4fr the bars stretched
+     to 904px against a 239px figure, the columns went flabby and the cliff —
+     the whole point of the picture — flattened out. The figure keeps a column
+     it can breathe in, and the chart holds roughly the width it had when there
+     were three figures beside it. */
+  display: grid; grid-template-columns: minmax(230px, 0.62fr) minmax(0, 1fr);
+  border: 1px solid var(--dr-border); border-radius: var(--dr-radius);
+  overflow: hidden; background: var(--color-bg-white);
+}
+/* The three tiles become cells of the row itself rather than a nested grid. */
+.dr-overview .dr-kpis { display: contents; }
+.dr-overview .dr-kpi { border-right: 1px solid var(--dr-border); }
+@media (max-width: 1080px) {
+  .dr-overview { grid-template-columns: minmax(0, 1fr); }
+  .dr-overview .dr-card { grid-column: 1 / -1; border-top: 1px solid var(--dr-border); }
+  .dr-overview .dr-kpi { border-right: 0; }
+}
+@media (max-width: 680px) {
+  .dr-overview { grid-template-columns: minmax(0, 1fr); }
+  .dr-overview .dr-kpi { border-right: 0; border-bottom: 1px solid var(--dr-border); }
+}
+.dr-overview .dr-card {
+  border: 0; border-radius: 0; box-shadow: none; margin: 0;
+}
+
+/* The two halves of the overview are the same height, and the chart was drawn
+   at its own 132px leaving 175px of white under it. It fills the row instead —
+   the bars are percentage heights, so the chain to the grid row has to stay
+   definite all the way down. */
+.dr-overview .dr-card { display: flex; flex-direction: column; height: 100%; }
+.dr-overview .dr-card__b { flex: 1 1 auto; display: flex; min-height: 0; }
+.dr-overview .dr-dist { flex: 1 1 auto; height: auto; min-height: 132px; max-width: 560px; }
+
+/* ── Values as chips ──────────────────────────────────────────────────────
+   The product's filter panel shows AUDIENCE and DTC SALES CHANNELS as rows of
+   chips, each carrying its own name. Hiding those names one level down, behind
+   a category, is the thing that made the old rail unreadable. */
+.dr-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 6px 4px; }
+/* The values of an opened dimension, on their own line and hanging off it, so a
+   country is never mistaken for a dimension standing beside Products. */
+.dr-sub {
+  flex: 1 0 100%; display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 4px 0 6px 4px; padding: 2px 0 2px 10px;
+  border-left: 2px solid var(--dr-border);
+}
+.dr-sub--deep { margin: 4px 0 2px 2px; }
+/* The one group whose values were assigned rather than read. */
+.dr-assigned { flex: 1 0 100%; font-size: 11px; line-height: 1.45; color: var(--dr-muted); margin-bottom: 2px; }
+.dr-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 28px; padding: 0 10px;
+  border: 1px solid var(--dr-border); border-radius: 14px;
+  background: var(--color-bg-white); cursor: pointer;
+  font-family: inherit; font-size: 12.5px; color: var(--color-text-body);
+}
+.dr-chip:hover { background: var(--dr-hover); }
+.dr-chip:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+.dr-chip.is-on {
+  background: var(--dr-primary-soft); border-color: var(--dr-primary);
+  color: var(--dr-primary); font-weight: var(--font-medium);
+}
+.dr-chip.is-empty { color: var(--color-text-body-subtle); cursor: default; }
+.dr-chip.is-empty:hover { background: var(--color-bg-white); }
+/* --color-text-body-subtle on the chip's #f3f4f6 ground measures 4.39:1, under
+   AA at 11.5px. --color-text-body is 6.6:1 there. */
+.dr-chip__n { color: var(--color-text-body); font-size: 11.5px; }
+.dr-chip.is-on .dr-chip__n { color: var(--dr-primary); }
+
+/* The overview grew to 392px because the chart stretched to match a tall column
+   of figures, and a third of the first screen went to three numbers. The tiles
+   give up their vertical padding inside this block and the chart is capped, so
+   the whole thing is a band across the top rather than a panel. */
+.dr-overview .dr-kpi { padding: 9px 14px; }
+.dr-overview .dr-kpi__l { margin-bottom: 1px; line-height: 1.15; }
+.dr-overview .dr-kpi__v { font-size: 21px; line-height: 1.1; margin: 0; }
+.dr-overview .dr-kpi__s {
+  line-height: 1.3; margin-top: 1px;
+  /* The largest-usable subtitle is a full segment name and ran to two lines,
+     making that tile taller than the other two for no gain. */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dr-overview .dr-dist { min-height: 72px; }
+
+/* The chart cell's header, matched to the figure tiles beside it. Its label sat
+   lower than the other three because the tiles pair an icon with their label
+   and this one did not; both now start on the same line. */
+/* All four label rows are the same 24px box and centre their contents, so the
+   labels sit on one line and the info button — 24px, because a target must be —
+   sits on it too instead of hanging below an 11px word. */
+.dr-overview .dr-card__h { padding: 9px 14px 0; border: 0; min-height: 0; align-items: flex-start; }
+.dr-overview .dr-card__h > *:first-child { min-height: 24px; display: inline-flex; align-items: center; }
+.dr-overview .dr-info { display: inline-flex; align-items: center; min-height: 24px; }
+.dr-overview .dr-info button { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; }
+.dr-overview .dr-info svg { width: 13px; height: 13px; }
+.dr-overview .dr-card__t--kpi { display: inline-flex; align-items: center; gap: 6px; line-height: 1.15; }
+.dr-overview .dr-kpi__l { line-height: 1.15; min-height: 24px; display: flex; align-items: center; }
+.dr-card__t--kpi {
+  font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--dr-th); margin: 0;
+}
+.dr-overview .dr-card__b { padding: 4px 14px 10px; }
+.dr-overview .dr-dist__key { font-size: 11px; }
+
+/* ── Chips, matched to the product's filter panel ─────────────────────────
+   Grey fill, no border at rest; the outline appears only when chosen. Mine had
+   a border on every chip, which made a panel of eight look like a grid. */
+.dr-chip {
+  border: 1px solid transparent; background: var(--color-bg-tertiary);
+  color: var(--color-text-body);
+}
+.dr-chip:hover { background: #e9eaee; }
+.dr-chip.is-on {
+  background: var(--dr-primary-soft); border-color: var(--dr-primary);
+  color: var(--dr-primary);
+}
+/* Measured 4.39:1 — #6a7282 on #f3f4f6 — which misses 4.5 by a hair. The chip
+   still says something ("this filter matches nothing right now"), so it is text
+   that has to be readable whatever the disabled-component exception allows. */
+.dr-chip.is-empty { background: var(--color-bg-tertiary); color: var(--color-text-body); }
+
+/* A channel is a round chip holding its mark, three across, as on Cohorts. */
+.dr-chip--logo {
+  width: 34px; height: 34px; min-height: 34px; padding: 0;
+  border-radius: 50%; justify-content: center;
+  background: var(--color-bg-white); border: 1px solid var(--dr-border);
+}
+.dr-chip--logo:hover { background: var(--dr-hover); }
+.dr-chip--logo.is-on { background: var(--dr-primary-soft); border-color: var(--dr-primary); }
+.dr-chip--logo img { display: block; }
+.dr-chip--logo.is-empty img { opacity: .45; }
+
+/* A group with more values than fit gets its own search and a scroll, the way
+   METRIC does, instead of making the whole panel taller. */
+.dr-gsearch { padding: 0 6px 6px; }
+.dr-gsearch .form-input { height: 32px; font-size: 12.5px; }
+.dr-chips--scroll { max-height: 132px; overflow-y: auto; }
+
+/* ── Order-window range picker ────────────────────────────────────────────
+   The library gives the calendar, the day states and the footer; what it has no
+   opinion about is the two-column shell the product uses — named periods beside
+   the months. */
+.dr-rangewrap { position: relative; }
+/* Dates first, calendar last — the order the product's own control uses. */
+.dr-range { display: inline-flex; align-items: center; gap: 10px; height: 34px; cursor: pointer; white-space: nowrap; }
+.dr-range svg { color: var(--dr-muted); flex: none; }
+.dr-cal {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 70;
+  background: var(--color-bg-white);
+  border: 1px solid var(--dr-border); border-radius: var(--dr-radius);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .14);
+}
+.dr-cal__body { display: flex; }
+.dr-cal__presets {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 12px 8px; min-width: 152px;
+  border-right: 1px solid var(--dr-border-soft);
+}
+.dr-cal__preset {
+  text-align: left; padding: 6px 10px; min-height: 28px;
+  border: 0; border-radius: var(--radius-sm); background: none; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; color: var(--color-text-body);
+}
+.dr-cal__preset:hover { background: var(--dr-hover); color: var(--color-text-heading); }
+.dr-cal__preset:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+.dr-cal__cals { padding: 8px 12px 0; }
+.dr-cal__read { margin-right: auto; font-size: 12.5px; color: var(--color-text-body); }
+.dr-cal .iris-cal__footer { display: flex; align-items: center; gap: 8px; }
+.dr-cal .btn[aria-disabled="true"] { opacity: .55; cursor: default; }
+@media (max-width: 720px) {
+  .dr-cal__body { flex-direction: column; }
+  .dr-cal__presets { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--dr-border-soft); }
+}
+
+/* The selection bar is a row of its own now, so it no longer needs to force a
+   wrap inside the result row. */
+/* The selection bar must not move the table. It was inserted above the rows and
+   pushed every one of them down 71px, so the second checkbox a reader clicked
+   was no longer under the cursor: they ticked one row, aimed at the next, and
+   hit either nothing or the wrong row — which is how two boxes end up ticked
+   with the bar still reporting one.
+
+   It occupies the summary row instead of pushing it: same line, same height,
+   the count and the arrangement controls step aside while a selection exists.
+   Nothing above or below moves. */
+/* The taller of the two — the selection bar — is what holds the row open, and
+   the summary line is laid over it. The other way round left the bar spilling
+   out of a 30px row: first it covered 22px of the column titles, then, pinned
+   to exactly the header's top edge, it sat flush against the table with no gap
+   at all and read as one merged block.
+
+   This way the height is the bar's own at every width, the gap below is real,
+   and neither selecting nor clearing moves a single row. */
+.dr-sumwrap { position: relative; margin-bottom: 12px; }
+.dr-sumwrap > .dr-pickbar {
+  /* Vertical padding, not zero: the buttons were pinned flush to the top edge
+     of a 34px box with no air above or below them. */
+  width: auto; margin: 0; padding: 6px 10px; min-height: 34px;
+  visibility: hidden;
+}
+/* The library's smallest button, .btn-xs — 34px, which is what a control row
+   beside a result count should be. The bar wore .btn-md at 40px and stood 61px
+   tall in a 30px row. */
+.dr-pickbar .btn { padding-top: 6px; padding-bottom: 6px; }
+.dr-sumwrap.is-picking > .dr-pickbar { visibility: visible; }
+.dr-sumwrap > .dr-sum {
+  position: absolute; inset: 0 0 auto 0; margin: 0;
+  min-height: 100%; align-content: center;
+}
+.dr-sumwrap.is-picking > .dr-sum { visibility: hidden; }
+
+/* The channel's mark inside an applied-filter chip, matching the one in the
+   panel it was chosen from. */
+.dr-fchip__logo { display: inline-block; vertical-align: -2px; margin-right: 5px; }
+
+/* Upload and Export are icon-only: rare, and between them they were taking a
+   quarter of a row that has to hold six controls. The name survives in the
+   label and the tooltip, and the square keeps the 34px target. */
+.dr-iconbtn { width: 34px; padding: 0; justify-content: center; }
+/* Where finding ends and making begins. */
+.dr-toolbar__sep {
+  width: 1px; height: 22px; margin: 0 4px;
+  background: var(--dr-border); flex: none;
+}
+
+/* An applied channel filter is a round mark with its ✕, matching the round chips
+   in the panel it was chosen from. The name lives on the tooltip and the remove
+   button's label, not beside it — three channels spelled out did not fit. */
+.dr-fchip--logo { padding: 2px 4px 2px 6px; border-radius: 999px; }
+.dr-fchip--logo .dr-fchip__logo { margin: 0 2px 0 0; vertical-align: -4px; }
+
+
+
+/* The band between the toolbar and the table was 58px for two lines of
+   controls: 14 under the toolbar, a 34px row, 10 under that. Tightened to the
+   8px step the rest of the page uses, so the table starts where the eye
+   expects it after the controls rather than a paragraph later. */
+.dr-toolbar { margin-bottom: 8px; }
+.dr-sum { margin-bottom: 8px; min-height: 30px; }
+
+/* ── The rail reads its own labels ────────────────────────────────────────
+   The sidebar is collapsed to 60px, and collapsed hides every label, so the
+   two items just added — Fin AI and Automations — were two unnamed glyphs. The
+   live product's rail is just as narrow and still names everything: a small
+   icon with a word under it. Taken from the item's own aria-label, so the two
+   can never say different things. */
+.seg-nav-contracted .sidebar-contracted-item {
+  flex-direction: column; gap: 3px;
+  width: 60px; height: auto; min-height: 44px; padding: 6px 2px;
+  text-align: center;
+}
+.seg-nav-contracted .sidebar-contracted-item::after {
+  content: attr(aria-label);
+  display: block; max-width: 56px;
+  font-size: 9px; line-height: 1.15; letter-spacing: -0.01em;
+  color: var(--color-text-body);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.seg-nav-contracted .sidebar-contracted-item.active {
+  width: 60px; height: auto; margin: 0;
+}
+.seg-nav-contracted .sidebar-contracted-item.active::after {
+  color: var(--dr-primary); font-weight: var(--font-medium);
+}
+
+/* Row actions appear on hover, the way the product's do — but they also appear
+   on keyboard focus and stay in the tab order, because a control that only
+   exists under a mouse cannot be reached without one. */
+.dr-t .dr-rowacts { white-space: nowrap; text-align: right; }
+.dr-rowact { opacity: 0; transition: opacity .12s; color: var(--color-text-body); }
+.dr-t tbody tr:hover .dr-rowact,
+.dr-t tbody tr:focus-within .dr-rowact,
+.dr-rowact:focus { opacity: 1; }
+.dr-rowact:hover { background: var(--dr-hover); color: var(--color-text-heading); }
+.dr-ask { color: var(--dr-primary); }
+.dr-ask:hover { background: var(--dr-primary-soft); color: var(--dr-primary); }

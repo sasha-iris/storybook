@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-store">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Segments · variant 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/iris-tokens.css">
+<link rel="stylesheet" href="../assets/iris-components.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=16">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=16">
+<!--
+  The segment list in the Data Rooms visual language.
+
+  Data Rooms never showed us a list — both screenshots are the detail page of one
+  room holding three files, so its table has no sort and its rail cannot change
+  the result. At forty segments neither of those holds, so this page keeps the
+  Data Rooms atoms (rail, toolbar, card-wrapped table, tinted icon tiles) and
+  makes them work at this scale.
+
+  Components come from the library wherever it has one: .card-icon for the type
+  tile, .badge for status, .progress for the share-of-base bar, brand purple for
+  the primary action. No Calculate anywhere: metrics are computed on the fly.
+-->
+</head>
+<body style="margin:0;font-family:'Inter',sans-serif;background:var(--color-bg-default);">
+<a class="seg-skip" href="#" id="skipLink">Skip to the segment list</a>
+<div class="seg-app">
+
+  <aside class="sidebar" id="appSidebar" style="height:100vh;position:sticky;top:0;">
+    <div class="sidebar-brand">
+      <img src="../assets/iris-mark-sm.svg" alt="" width="28" height="28">
+      <span class="sidebar-logo-name" style="font-size:16px;font-weight:700;color:var(--color-text-heading);">Iris Finance</span>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main">
+      <!-- Fin AI and Automations lead the product's own navigation and were
+           missing here. Marko spent four minutes of the review inside
+           Automations — "you can create an automation… or you can just tell Fin
+           to do it" — so a prototype of a page in that product that does not
+           show they exist is describing a different product. -->
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/></svg></span><span>Fin AI</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span><span>Overview</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg></span><span>Automations</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg></span><span>P&amp;L</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg></span><span>Inventory</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg></span><span>Cohorts</span></a>
+      <a class="sidebar-item active" aria-current="page" href="./segments-v2.html"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span><span>Customer Segments</span></a>
+      <a class="sidebar-item" href="#" onclick="return false;"><span class="sidebar-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span><span>Reporting</span></a>
+    </nav>
+  </aside>
+
+  <main class="seg-main">
+    <header class="dr-head dr-head--notabs">
+      <div class="dr-inner">
+        <div class="dr-titlerow">
+          <h1 class="dr-h1">Customer Segments</h1>
+          <!-- Creating a segment sits on the title line, where the product puts
+               it: /customer-segments carries Compare and + Create Segment beside
+               its own heading, and /automations carries + Create automation
+               beside "Automations". Ours was down in the toolbar with search,
+               the date range and Filters — four controls of three different
+               kinds in one row, and the page's primary action buried among the
+               ones that narrow what is already there.
+
+               Compare is not here: it used to be, doing the same job as Compare
+               on the selection bar and reaching a screen where you pick two
+               segments from two dropdowns. Comparing starts by choosing what to
+               compare, so it lives on the selection, and the overflow keeps it
+               findable before anything is selected. -->
+          <div class="dr-headactions">
+            <!-- One primary button that opens a menu, not a split button.
+                 That is the product's own shape: + Create automation opens
+                 "Generate with Fin / Tell Fin what you want" above "Manual /
+                 Configure the automation yourself", and no half of the
+                 button does anything on its own. -->
+            <button class="btn btn-md btn-primary" id="lsNew" aria-haspopup="menu" aria-expanded="false" aria-label="New segment">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            New segment
+            </button>
+            <button class="seg-iconbtn dr-kebab" id="lsMore" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="dr-wrap" id="lsBody">
+      <div class="dr-inner">
+        <p class="seg-sr" role="status" aria-live="polite" id="lsLive"></p>
+
+        <div id="lsAlert"></div>
+        <!-- The overview block is gone: three figures and a distribution chart,
+             139px above the table, none of it carrying a fact the page did not
+             already carry.
+
+             "Five segments report your whole customer base" is stated in the
+             banner directly above this, and again on each of the five rows that
+             do it — "Reports your whole customer base · same numbers as 2 other
+             segments". The chart said the same thing as a picture, which is
+             faster to read the first time and pure repetition every time after.
+             "Customer base 35,590" is printed by every row as its own "% of
+             base"; "Segments 40" was repeated verbatim sixty pixels below as
+             "40 of 40 segments"; "Largest usable" is a sort away.
+
+             What is lost is the speed of the first read, not information. -->
+
+        <!-- The filters were a permanent 208px column down the left. Marko,
+             2026-09-03 at 09:00, working that column: "so Type — the left is
+             just featuring which segments to use… there is no clearing", and
+             then "well, yes, it's just filtering, I don't know that this is…".
+             Ten minutes earlier he had opened the Cohorts filter panel, left it
+             open, and said "I would show you kind of this level of detail, and
+             then you can still build the customer segments."
+
+             So the filters now work the way the product's own do: a Filters
+             button that opens a panel of named groups, each with how many are
+             chosen and a way to clear it, and a Reset all across the top. The
+             table gets the width the rail was taking, and what is applied stays
+             visible as chips under the toolbar whether the panel is open or
+             shut. -->
+        <div class="dr-layout dr-layout--nofilters">
+          <div>
+            <!-- Search leads the row: finding a segment is what someone opens
+                 this page to do, and creating, importing and exporting are what
+                 they do once they have found one. Actions and Filters sit
+                 together on the right. -->
+            <!-- Two jobs share this row, and they used to be shuffled: search on
+                 the left, three rarely-used actions across the middle at full
+                 width, then the filters. Finding a segment is what the page is
+                 open for, so search leads and the two controls that refine it
+                 follow; making something comes after, with the primary at the
+                 right end where the product puts its own purple button.
+
+                 Upload and Export are icon-only. Neither was touched once in the
+                 twenty minutes of the review, and between them they were taking
+                 250px of a row that had to hold six things. -->
+            <div class="dr-toolbar">
+              <div class="form-search-wrap" style="min-width:260px;"><label for="lsQ" class="seg-sr">Search segments by name or definition</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="lsQ" type="search" placeholder="Name, condition, country, folder"></div>
+              <div class="dr-toolbar__end">
+                <div class="dr-rangewrap">
+                <button class="iris-datepicker-input dr-range" id="lsRange"
+                aria-haspopup="dialog" aria-expanded="false" aria-controls="lsCal">
+                <span id="lsRangeLabel"></span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                </button>
+                <div class="iris-cal iris-cal--range dr-cal" id="lsCal" role="dialog" aria-label="Order window" hidden></div>
+                </div>
+                <div class="dr-filterwrap">
+                <!-- adjustments-horizontal: the same Heroicon the product puts on
+                this button. A funnel was the wrong one from the right set. -->
+                <button class="btn btn-md btn-alternative" id="lsFilters"
+                aria-haspopup="dialog" aria-expanded="false" aria-controls="lsPanel">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg>
+                Filters<span class="dr-filtern" id="lsFilterN" hidden></span>
+                </button>
+                <div class="dr-panel" id="lsPanel" role="dialog" aria-label="Filter segments" hidden>
+                <div class="dr-panel__h">
+                <b>Filters</b>
+                <button class="dr-rail__reset" id="lsResetAll">Reset all</button>
+                </div>
+                <div class="list-group dr-rail" id="lsRail" role="group" aria-label="Filter segments"></div>
+                </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dr-sumwrap" id="lsSumWrap">
+            <div class="dr-sum">
+              <span id="lsSum"></span>
+              <!-- Appears only when something is selected, and carries what can
+                   be done with it. Placed with the result line because that is
+
+              <!-- Arrangement is a choice between two named views, so both names
+                   stay visible: a segmented control, per the project's own rule
+                   that .btn-group is the view toggle (List/Kanban, Cumulative/Daily).
+                   A pressed icon button would hide the alternative behind a state. -->
+              <!-- The order used to be announced by a grey line of text that appeared
+                   on its own, which read as something the user had switched on. It is
+                   a setting with a current value, so it is a control that shows that
+                   value and can be changed. -->
+              <!-- Marko, 2026-09-03 at 08:38, read at six-second resolution:
+                   "you should be able to select any of these customer segments —
+                   I think you should have like a RANGE PICKER on this page where
+                   you can…". Two things, not one: the checkbox column is the
+                   first half, this is the second.
+
+                   It belongs in the toolbar, not the rail. A period is one value,
+                   and the product already picks one here — Cohorts carries its
+                   range in the toolbar beside the metric. Five stacked options in
+                   a side panel read as five more things to rule out.
+
+                   It filters on OVERLAP, not containment: a segment covering all
+                   of 2025 is relevant to a question about March 2025. It cannot
+                   recompute anyone's metrics for a different period — the figures
+                   are one per segment — so it narrows the list rather than
+                   pretending to rescore it. -->
+              <!-- A real range picker, not a select of buckets. Marko, 08:30 and
+                   08:38: "you should have a date on this page… like a range picker
+                   on this page where you can… you can pick." The product's own is
+                   a button carrying the dates, opening presets beside two months
+                   of calendar with Cancel and Apply, and this is that, on the
+                   library's .iris-cal. -->
+              <label class="dr-sortlab" for="lsSort">Sort</label>
+              <select class="form-select dr-sortsel" id="lsSort">
+                <option value="attention">Needs attention first</option>
+                <option value="c">Customers</option>
+                <option value="net">Net sales</option>
+                <option value="ltv">Avg LTV</option>
+                <option value="cr">Created</option>
+                <option value="up">Updated</option>
+                <option value="n">Name</option>
+              </select>
+              <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
+                <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
+                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
+              </div>
+              <!-- The explanation used to sit here, wedged between the Grouped/Flat
+                   toggle and Summary/Conditions as two lines of grey text. A
+                   toolbar is for controls; the sentence now appears above the
+                   table, where the missing grouping is what you are looking at. -->
+
+              <!-- Not a switch. A switch promises that ON adds something, and this
+                   swaps one reading of the definition for another: the summary says
+                   what the conditions amount to ("no effective filter, every customer
+                   matches"), the condition list says what was literally configured
+                   ("geography (no criteria set)"). Neither is more than the other,
+                   and on a one-condition segment the "full" view was the shorter of
+                   the two. Two named alternatives, both visible. -->
+              <div class="btn-group dr-seg" role="radiogroup" aria-label="Definition">
+                <button class="btn btn-sm active" role="radio" aria-checked="true" data-def="summary">Summary</button>
+                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-def="conditions">Conditions</button>
+              </div>
+            </div>
+            <!-- Between the controls and the table. Above them, appearing pushed
+                 the sort and arrangement row down every time a box was ticked;
+                 here nothing that is already on screen moves except the table
+                 the selection is being made in. -->
+            <div class="dr-pickbar" id="lsPick" role="region" aria-label="Selected segments" aria-live="polite" hidden></div>
+            </div>
+            <div id="lsTable"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="modalHost"></div>
+<input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
+
+<script src="../assets/segments-data.js?v=16"></script>
+<script src="../assets/segments-v2-shared.js?v=16"></script>
+<script>
+/* ── page state ─────────────────────────────────────────────────────────── */
+let fState = 'all', fFolder = 'all', q = '', full = false;
+
+/* ── Grouping ─────────────────────────────────────────────────────────────
+   Data Rooms' table is flat because it holds three files. Ours holds forty
+   segments, and a flat forty-row scroll is the thing the live product already
+   gets wrong: you cannot hold it in your head, so you never find the segment
+   you half-remember.
+
+   Grouping is by FOLDER. It was by a derived Type, which assigned each segment
+   one label from its first matching condition — a machine's guess presented as
+   an arrangement. Folders are the user's own, so grouping by them is the thing
+   that makes creating one worth the trouble.
+
+   Which is why it cannot be the default on a fresh account: with no folders,
+   grouped and flat are the same forty rows under one heading. It turns itself
+   on the moment the first folder exists. */
+/* ── Selecting several segments ───────────────────────────────────────────
+   Marko, 2026-09-03: "I think you should be able to select any of these
+   customer segments". There was no way to act on more than one: Compare took
+   exactly two chosen from two dropdowns on another page, and filing a segment
+   was one trip through one row's overflow menu — forty trips to fill a folder,
+   which is why every one of the forty is still unfiled in the live product.
+
+   Selection survives filtering. Narrowing the rail to find the next few, then
+   widening it again, is how anyone would actually build a folder, and a
+   selection that emptied itself on every filter change would make that
+   impossible. What the bar acts on is stated in it. */
+const PICKED = new Set();
+
+let grouped = FOLDERS.length > 0;
+/* Grouping used to be switched off behind the reader's back — by a column sort,
+   by the rail already being down to one folder, by there being no folders —
+   while the control stayed lit and a screen reader read it as checked. Two of
+   those three refusals were unnecessary:
+     — a column sort orders the rows, and the groups keep whatever order the
+       rows arrive in, so sorting INSIDE groups is what a reader expects anyway;
+     — one folder selected is one group, which the single-group rule below
+       already renders without a header.
+   So nothing is blocked. What remains is the one case worth a word: an account
+   with no folders has nothing to group by. */
+function groupHint() {
+  return FOLDERS.length ? null : 'Grouping is by folder.';
+}
+const COLLAPSED = new Set();
+
+/* ── Folders ──────────────────────────────────────────────────────────────
+   Data Rooms groups its records into folders: the meta row counts them, the
+   rail filters by them, "+ New folder" creates one, and every ungrouped record
+   says "Unfiled" under its name. This redesign had dropped the whole concept
+   and put a saved filter in its place, which is a different thing — a saved
+   filter remembers a question, a folder is where a thing lives. Marko's own
+   note was "it's more about organizing the segments", and grouping forty of
+   them is the plainest reading of that.
+
+   FOLDERS, saveFolders, folderOf and fileInto now live in segments-v2-shared.js
+   so the segment page can file itself into a folder too. Only the filter below
+   is page-local, because only this page has an fFolder to filter by. */
+const matchFolder = s => fFolder === 'all' ? true
+                       : fFolder === 'none' ? !folderOf(s)
+                       : (folderOf(s) || {}).id === fFolder;
+/* Default order is attention, not size.
+   Sorting by customers descending puts the five segments that report the whole
+   customer base at the very top — which is precisely the failure of the live
+   product this redesign exists to fix, reproduced by our own default. v1 had an
+   attention order and v2 had lost it. Anything the user asks for by clicking a
+   header wins; this is only what they see before they ask. */
+let sort = { k: 'attention', dir: 'desc' };
+const ATT = s => s.flags.some(f => f.danger) ? 0
+              : v2state(s) === 'nomatch' ? 1
+              : v2state(s) === 'unknown' ? 2
+              : (v2state(s) === 'ready' && s.ltv < 0) ? 3 : 4;
+
+/* v2state, not s.state: v1 keeps the current product's four-state model, this
+   variant collapses it because metrics are computed on the fly. Both read the
+   same dataset, so the numbers can never disagree between the two variants. */
+/* A segment is under every dimension it filters on, and the rail selects any
+   number of them at once. One dimension was not enough: a real segment carries
+   several parameters — "Geography: 1 country + Has 1 product family + Discount
+   greater than 10%" is three — so the question is usually "which segments touch
+   BOTH geography and discount", and a single choice could never ask it. Roland,
+   2026-09-03: "build the sequence of those parameters ... rather refinement
+   filtration".
+
+   Selections are ANDed: each one narrows what the last one left. "No conditions"
+   is the exception and is exclusive, because a segment cannot both filter on
+   nothing and filter on geography. */
+const DSEL = new Set();
+/* Values chosen inside a dimension, and the order window. Both narrow further
+   and both are ANDed with everything else. VSEL is cleared whenever the set of
+   dimensions changes, because a value belongs to the dimension that revealed
+   it. */
+const VSEL = new Set();
+/* What has been typed into a group's own search box, by group id. */
+const GQ = {};
+/* The product's date control always reads as a range — "Sep 1, 2023 - Aug 31,
+   2026" — never as a word standing in for one, and it carries no label of its
+   own because the dates say what it is. Ours opens on the full span the data
+   covers, which filters nothing and still shows two dates. */
+const SPAN = (() => {
+  const w = SEGMENTS.map(s => s.win).filter(Boolean);
+  if (!w.length) return { from: new Date(TODAY.getFullYear() - 1, 0, 1), to: TODAY };
+  return { from: new Date(Math.min(...w.map(x => +x.from))),
+           to:   new Date(Math.max(...w.map(x => +x.to))) };
+})();
+let fFrom = SPAN.from, fTo = SPAN.to;
+const fullSpan = () => +fFrom === +SPAN.from && +fTo === +SPAN.to;
+let fBy = 'all';
+const matchDimSet = (s, set) => {
+  if (!set.size) return true;
+  /* "No conditions" is not a special case with its own rule. It is a member of
+     the same AND, and asking for it together with geography is a contradiction
+     that returns nothing — which the rail already shows by greying a facet
+     whose count is zero. An exclusivity rule instead silently deleted whatever
+     the reader had already chosen. */
+  if (set.has('none')) return set.size === 1 && !s.dims.length;
+  return [...set].every(k => s.dims.indexOf(k) !== -1);
+};
+/* OR inside a group, AND between groups — what "3 selected" means in the
+   product's own channel filter. Anding them made "Amazon Seller Partner" plus
+   "Manual Order DTC" return 0 of 40, because no segment is both. */
+const matchValues = (s, set) => {
+  if (!set.size) return true;
+  const byDim = {};
+  set.forEach(t => { const k = String(t).split('|')[0]; (byDim[k] = byDim[k] || []).push(t); });
+  return Object.keys(byDim).every(k => byDim[k].some(t => hasValue(s, t)));
+};
+const matchDim = s => matchDimSet(s, DSEL) && matchValues(s, VSEL);
+/* A segment is in range when its own order window OVERLAPS the chosen one — a
+   segment covering all of 2025 is relevant to a question about March 2025. The
+   figures are one per segment and cannot be recomputed for another period, so
+   this narrows the list rather than pretending to rescore it. */
+const matchWin = s => {
+  if (!fFrom || !fTo) return true;
+  /* Six segments carry no order window at all. They are not outside the period
+     — they have no dates to be outside of — so a date filter has nothing to say
+     about them and does not hide them. Dropping them made the resting state
+     read "34 of 40" with no filter applied. */
+  if (!s.win) return true;
+  return s.win.from <= fTo && s.win.to >= fFrom;
+};
+const matchBy = s => fBy === 'all' || !!s.edit;
+const stateOf = (s, k) =>
+  k === 'all'    ? true :
+  k === 'issues' ? s.flags.some(f => f.danger) :
+  k === 'negltv' ? v2state(s) === 'ready' && s.ltv < 0 :
+                   v2state(s) === k;
+const matchState = s => stateOf(s, fState);
+/* Marko, 08:48, with the cursor in this field and nothing typed: "then one
+   other thing was searching."
+
+   It searched the name, the description and the conditions. Three things it did
+   not search are the three a reader would actually type: the folder they filed
+   it in, the country it filters on now that the country is known, and the
+   dimension by its rail name — typing "geography" found nothing, while the rail
+   beside it offers exactly that word. Seven of the forty are called something
+   with "California" in it, so name search alone lands you back in the pile the
+   page exists to sort out. */
+const matchQ = s => {
+  if (!q) return true;
+  const folder = folderOf(s);
+  const hay = [
+    s.n, s.d || '', s.sentence,
+    s.conds.map(c => c.label).join(' '),
+    (s.dims || []).map(k => DIM[k] ? DIM[k].l : '').join(' '),
+    folder ? folder.name : '',
+    s.edit ? s.edit.by + ' ' + s.edit.what : ''
+  ].join(' ').toLowerCase();
+  return hay.includes(q);
+};
+
+const issues = SEGMENTS.filter(s => s.flags.some(f => f.danger));
+const whole  = SEGMENTS.filter(s => s.flags.some(f => f.k === 'wholebase'));
+const nBy    = k => SEGMENTS.filter(s => v2state(s) === k).length;
+
+
+
+
+
+if (whole.length) {
+  /* The banner names the finding; the button opens the filter, which is wider —
+     it also catches the segments that duplicate another one's numbers. Saying
+     "show these 5" and then listing 7 would be its own small lie. */
+  const dupes = SEGMENTS.filter(s => s.flags.some(f => f.k === 'dupe'));
+  const extra = dupes.filter(s => !s.flags.some(f => f.k === 'wholebase')).length;
+  document.getElementById('lsAlert').innerHTML =
+    /* No longer an alert. It was a red block across the top of the page, and the
+       page opened by telling the reader their data is broken — the loudest thing
+       on a screen whose job is to help them find a segment. Marko's note was
+       explicit: the defects are expected, and the page should not be about them.
+
+       What survives is the one sentence that cannot be worked out from the rows:
+       these five are not merely broken, they are DOUBLE-COUNTING at the top of
+       the sorted list. Said once, quietly, with the way to see them. The severity
+       stays where he approved it — on the row, and on the segment's own page. */
+    /* A contained box, the way the product draws its own notices: soft ground,
+       the icon carrying the severity, one line, and an ✕ so it can be put away.
+       Bare text on the page ground read as body copy that could not be
+       dismissed and therefore nagged forever. Still not the red alert it was —
+       .alert-warning, because these are segments to look at, not an outage. */
+    '<div class="alert alert-warning dr-quality" role="region" aria-label="Data quality">' +
+      '<span class="alert-icon">' + svg(IC.warn, 18) + '</span>' +
+      '<div class="alert-body">' + whole.length + ' segments have a condition with no value, so they ' +
+        'return every customer and their revenue reads as the company total. ' +
+        '<button class="btn-link" id="lsShowIssues">Show the ' + issues.length + ' with data issues</button>' +
+      '</div>' +
+      '<button class="alert-dismiss" id="lsNoteX" aria-label="Dismiss">' +
+        svg('M6 18 18 6M6 6l12 12', 15) + '</button>' +
+    '</div>';
+  document.getElementById('lsNoteX').addEventListener('click', () => {
+    document.getElementById('lsAlert').innerHTML = '';
+  });
+  document.getElementById('lsShowIssues').addEventListener('click', () => {
+    /* Same reset as the KPI tiles. Leaving the folder or the search box on made
+       "Show all 7" land on nothing while still promising seven. */
+    fState = 'issues'; DSEL.clear(); VSEL.clear(); fFrom = SPAN.from; fTo = SPAN.to; fFolder = 'all';
+    q = ''; document.getElementById('lsQ').value = '';
+    render();
+    document.getElementById('lsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+/* ── rail ───────────────────────────────────────────────────────────────
+   Two dimensions, cross-filtered: the count beside "Geography" is how many
+   geography segments survive the result filter that is currently on, not how
+   many exist in total. A rail whose numbers ignore the rest of the page walks
+   you into empty results — which is what the Data Rooms rail does, where the
+   folder count sits beside zero folders. */
+function drawRail() {
+  /* ── The filter panel ──────────────────────────────────────────────────
+     Rebuilt against the product's own, which Marko left open on screen at 07:48
+     and again at 09:48 and then said: "I would show you kind of this level of
+     detail, and then you can still build the customer segments."
+
+     What that panel actually does, and what this now copies:
+       — every group is a row of chips carrying its own name, so nothing has to
+         be opened to find out what is inside;
+       — a group states how many are chosen and offers Reset;
+       — WITHIN a group the choices are OR. "3 selected" under DTC SALES
+         CHANNELS means all three are included, not that a row must match all
+         three. Anding them was why picking Amazon and Manual Order DTC
+         returned 0 of 40;
+       — ACROSS groups they are AND, each one narrowing what the last left;
+       — nothing is selected by default, so there is no "All segments" chip
+         standing in for "no filter". The unfiltered state is no chip.
+
+     Two things the old version had that do not belong in a filter: an action
+     (New folder — creating something is not filtering, and it lives on the
+     selection bar and the row menu) and a defect scoreboard at the top. */
+  const pool = extra => SEGMENTS.filter(x =>
+    (extra && extra.skipDim ? true : matchDim(x)) &&
+    (extra && extra.skipState ? true : matchState(x)) &&
+    (extra && extra.skipFolder ? true : matchFolder(x)) &&
+    (extra && extra.skipWin ? true : matchWin(x)) &&
+    matchBy(x) && matchQ(x));
+
+  const chip = (on, attr, k, label, n, dead) => {
+    const logo = CHANNEL_LOGO[label];
+    /* A channel is its mark, the way the product draws it: a round chip holding
+       the logo, the name carried by the label and the tooltip. */
+    return '<button class="dr-chip' + (logo ? ' dr-chip--logo' : '') +
+      (on ? ' is-on' : '') + (dead ? ' is-empty' : '') + '" ' +
+      attr + '="' + esc(k) + '" aria-pressed="' + on + '"' +
+      (dead ? ' aria-disabled="true"' : '') +
+      (logo ? ' title="' + esc(label) + ' · ' + n + '" aria-label="' + esc(label) + ', ' + n + '"' : '') + '>' +
+      (logo ? '<img src="' + logo + '" alt="" width="18" height="18">'
+            : esc(label) + '<span class="dr-chip__n">' + n + '</span>') +
+      '</button>';
+  };
+
+  const group = (id, label, sel, resetKey, body, searchable) => body ?
+    '<div class="dr-rail__g" role="group" aria-labelledby="' + id + '">' +
+      '<div class="dr-rail__lab" id="' + id + '">' + label +
+        (sel ? '<span class="dr-rail__sel">' + sel + ' selected</span>' : '') +
+        (sel ? '<button class="dr-rail__reset" data-reset="' + resetKey + '">Reset</button>' : '') +
+      '</div>' +
+      /* The product's METRIC group carries a search box because it holds
+         fourteen values; the same rule applies to any group long enough to
+         scroll. */
+      (searchable
+        ? '<div class="dr-gsearch"><label class="seg-sr" for="gq-' + id + '">Search ' + label + '</label>' +
+          '<input class="form-input" id="gq-' + id + '" type="search" data-gq="' + id + '"' +
+          ' placeholder="Search…" value="' + esc(GQ[id] || '') + '"></div>' : '') +
+      '<div class="dr-chips' + (searchable ? ' dr-chips--scroll' : '') + '">' + body + '</div></div>' : '';
+
+
+  /* Values inside a dimension, OR within the group. */
+  const nVal = tok => {
+    const k = String(tok).split('|')[0];
+    const others = [...VSEL].filter(t => String(t).split('|')[0] !== k);
+    const probe = new Set(others); probe.add(tok);
+    return SEGMENTS.filter(x => matchDimSet(x, DSEL) && matchValues(x, probe) &&
+      matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x)).length;
+  };
+  /* A value belongs to the dimension it came from, and it has to look like it.
+     Opening Geography used to push US, CA, GB and both postal codes into the
+     same flat row as Products, Order value, Discount and Tags — nothing said
+     which chips were countries, and "postal code IL" sat between US and CA
+     while belonging inside US. The values now take their own indented line
+     under the dimension, and a second level appears only inside the value it
+     belongs to. */
+  const valueChips = (k, nested) => {
+    const one = v => {
+      const n = nVal(v.tok), on = VSEL.has(v.tok);
+      return chip(on, 'data-val', v.tok, v.l, n, !on && n === 0) +
+        (on && v.kids && v.kids.length
+          ? '<span class="dr-sub dr-sub--deep">' + v.kids.map(c => {
+              const cn = nVal(c.tok), con = VSEL.has(c.tok);
+              return chip(con, 'data-val', c.tok, c.l, cn, !con && cn === 0);
+            }).join('') + '</span>'
+          : '');
+    };
+    const body = dimTree(k, pool({ skipDim: true })).map(one).join('');
+    return nested ? '<span class="dr-sub">' + body + '</span>' : body;
+  };
+  const nSel = k => [...VSEL].filter(t => String(t).split('|')[0] === k).length;
+
+  /* What a segment narrows by, for the dimensions that have no values worth
+     listing on their own. */
+  const nDim = k => {
+    const probe = new Set(DSEL); probe.add(k);
+    return SEGMENTS.filter(x => matchDimSet(x, probe) && matchValues(x, VSEL) &&
+      matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x)).length;
+  };
+  const PROMOTED = ['ctype', 'channel'];
+  const rest = DIMS.filter(d => PROMOTED.indexOf(d.k) === -1 &&
+                                SEGMENTS.some(x => x.dims.indexOf(d.k) !== -1));
+  const gq = (GQ['rl-dim'] || '').toLowerCase();
+  const dimChips = rest.filter(d => !gq || d.l.toLowerCase().includes(gq)).map(d => {
+    const n = nDim(d.k), on = DSEL.has(d.k);
+    return chip(on, 'data-dim', d.k, d.l, n, !on && n === 0) +
+      /* Its values open under it, and only when it is the one thing chosen. */
+      (on && DSEL.size === 1
+        ? (d.k === 'product'
+            /* Said on screen, because it is the one place in this build where a
+               value was assigned rather than read. The SKU codes are real; which
+               segment holds which is expanded from its count, and the family
+               names are invented outright. */
+            ? '<span class="dr-sub"><span class="dr-assigned">Assigned from each segment\u2019s SKU and family counts — Iris stores the counts, not the values</span>' +
+              valueChips(d.k).replace(/^/, '') + '</span>'
+            : valueChips(d.k, true))
+        : '');
+  }).join('') +
+  (!gq || 'no conditions'.includes(gq)
+    ? chip(DSEL.has('none'), 'data-dim', 'none', 'No conditions', nDim('none'), false) : '');
+
+  const nState = k => SEGMENTS.filter(x => matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
+  /* Result, trimmed. It answers a question someone asks — "which of these come
+     back with nobody" — and Marko used it himself. What left is the defect
+     scoreboard: Negative LTV and Data issues were two more ways of saying the
+     page is about what is broken, which is the note he made twice. The seven
+     with data issues are still one click away, from the line at the top. */
+  const results = ['ready','nomatch','unknown']
+    .map(k => chip(fState === k, 'data-state', k, STATE[k].l, nState(k), fState !== k && !nState(k))).join('');
+
+  document.getElementById('lsRail').innerHTML =
+    /* No Folders group. A folder is where a segment lives, not a question you
+       ask of the list — the table groups by folder and every row wears its
+       folder's name, which is where that belongs. */
+    group('rl-aud', 'Audience', nSel('ctype'), 'val:ctype', valueChips('ctype')) +
+    group('rl-dim', 'Narrows by', DSEL.size, 'dim', dimChips, true) +
+    group('rl-chan', 'Sales channels', nSel('channel'), 'val:channel', valueChips('channel')) +
+    group('rl-res', 'Result', fState !== 'all' ? 1 : 0, 'state', results) +
+    (SEGMENTS.some(x => x.edit)
+      ? group('rl-by', 'Changed by', fBy !== 'all' ? 1 : 0, 'by',
+          chip(fBy === 'me', 'data-by', 'me', 'You',
+            SEGMENTS.filter(x => x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchQ(x)).length, false))
+      : '');
+}
+
+/* ── table ──────────────────────────────────────────────────────────────── */
+const COLS = [
+  { k:'n',   l:'Segment' },
+  { k:'c',   l:'Customers', n:1 },
+  { k:'o',   l:'Orders',    n:1 },
+  { k:'net', l:'Net sales', n:1 },
+  { k:'ltv', l:'Avg LTV',   n:1 },
+  /* Two date columns, not one. The live product carries Created and Updated
+     side by side, and Marko at 16:40 asked for exactly that pair, by user:
+     "the metrics here should be like a user based — you created, edited, user
+     created, user edited." This variant had collapsed them into a single
+     "Definition updated", which loses the age of a segment: "US Customers" was
+     created and last touched on the same day in Aug 2026, "SKU B004" was made
+     in May and rewritten in August, and with one column those two read alike.
+     Both dates come from the product's own list, pulled on 2026-09-01.
+
+     The person is still missing on both, because segments record none. See M8. */
+  { k:'cr',  l:'Created', n:1 },
+  { k:'up',  l:'Updated', n:1 }
+];
+
+function nameCell(s) {
+  const kind = tileOf(s);
+  const err  = s.flags.filter(f => f.danger);
+  const warn = s.flags.filter(f => f.sev === 'warn');
+  const st   = v2state(s);
+  /* The condition view lists every condition, including the ones that filter
+     nothing, and marks those. That is the whole difference between the two
+     readings: the summary says what the definition amounts to, this says what
+     was actually configured. */
+  const conds = full && s.conds.length
+    ? s.conds.map(c => '<span class="iris-chip iris-chip--light' + (c.noop ? ' dr-chip--dead' : '') + '">' +
+        esc(c.label) + (c.noop ? ' · filters nobody' : '') + '</span>').join(' ')
+    : esc(s.sentence);
+  /* Status only when it is an exception. A green "Active" on 23 of 40 rows is
+     noise; the number in the Customers column already says the segment works. */
+  const badge = st === 'nomatch' ? '<span class="badge badge-yellow badge-sm">No customers match</span>'
+              : st === 'unknown' ? '<span class="badge badge-gray badge-sm">No data</span>' : '';
+  /* Line 1 is the name and, only when it is an exception, a status badge. The
+     condition count moved down to the definition line, where it belongs: on the
+     name line it competed with the title and pushed it onto its own row in a
+     290px column, which broke the name away from its own tile. */
+  return '<div class="dr-name"><span class="card-icon dr-tile ' + kind.c + '" title="' + kind.l + '" aria-hidden="true">' + svg(kind.ic, 19) + '</span>' +
+    '<div class="dr-name__t"><div class="dr-name__l">' +
+      '<a class="dr-name__a" href="./segment-detail-v2.html?id=' + s.id + '">' + esc(s.n) + '</a>' +
+      badge +
+    '</div><div class="dr-name__s">' +
+      (s.conds.length ? '<span class="iris-chip iris-chip--light">' + s.conds.length + ' condition' + (s.conds.length > 1 ? 's' : '') + '</span>' : '') +
+      (folderOf(s) ? '<span class="iris-chip iris-chip--light">' + svg(IC.folder, 12) + esc(folderOf(s).name) + '</span>' : '') +
+      '<span>' + conds + '</span>' +
+      /* the finding gets its own line rather than trailing the definition behind a
+         dot: on a wrapped row the dot was left dangling at the end of a line, and
+         a fixed line lets the eye run down the flags instead of hunting them. */
+      /* Both findings on one line. Two stacked flag lines made the worst rows
+         101px tall at 1180px, and the eye reads "reports the whole base · same
+         numbers as two others" as one problem, which is what it is. */
+      (err.length ? '<span class="flag bad">' + svg(IC.warn, 13) +
+        esc(err[0].t) + err.slice(1).map(f => ' · ' + esc(f.t).replace(/^S/, 's')).join('') + '</span>' : '') +
+      (!err.length && warn.length ? '<span class="flag warn">' + svg(IC.warn, 13) + esc(warn[0].t) + '</span>' : '') +
+      (!err.length && v2state(s) === 'ready' && s.ltv < 0
+        ? '<span class="flag warn">' + svg(IC.warn, 13) + 'Average LTV is negative</span>' : '') +
+    '</div></div></div>';
+}
+
+/* Customers is the lead metric, so it gets the weight and a bar. The bar is the
+   finding made visible: a track filled end to end is a segment that is not a
+   segment, and it is red before you have read a single digit. */
+function customersCell(s) {
+  if (s.c == null) return DASH;
+  const whole = s.share >= 0.95;
+  return '<div class="dr-share"><span class="lead' + (whole ? ' ' : '') + '"' +
+    (whole ? ' style="color:var(--color-text-fg-danger)"' : '') + '>' + fmtN(s.c) + '</span>' +
+    (s.c ? bar(s.share, whole ? 'progress-bar-danger' : 'progress-bar-indigo') +
+           /* He asked for both: "I really like this percentage of base and a
+              number of customers", and then "it might be interesting to see how
+              they rank as well, like other segments, relatively". The share
+              says how much of the business; the rank says where this one sits
+              among the segments that returned anything. */
+           '<span class="sub">' + pct(s.share) + ' of base' +
+           (s.rank ? ' · <span class="dr-rank">#' + s.rank + ' of ' + s.rankOf + '</span>' : '') +
+           '</span>' : '') + '</div>';
+}
+
+/* Drawn on its own so that ticking a checkbox does not rebuild the table under
+   the pointer — and, worse, under the keyboard: a full redraw replaced the very
+   input that had just been given focus with Space, and focus fell to the top of
+   the document. */
+function drawPickBar() {
+  const bar = document.getElementById('lsPick');
+  /* Never removed from the flow: it is what reserves the row's height, so the
+     table cannot move when a selection starts or ends. Hidden with visibility,
+     and taken out of the tab order and the accessibility tree while empty. */
+  bar.hidden = false;
+  bar.setAttribute('aria-hidden', PICKED.size === 0 ? 'true' : 'false');
+  bar.inert = PICKED.size === 0;
+  /* The wrapper carries the state so the bar can sit ON the summary row rather
+     than above it — see .dr-sumwrap.is-picking. */
+  const wrap = document.getElementById('lsSumWrap');
+  if (wrap) wrap.classList.toggle('is-picking', PICKED.size > 0);
+  const shownIds = new Set(SEGMENTS.filter(x => matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x)).map(x => x.id));
+  const hidden = [...PICKED].filter(id => !shownIds.has(id)).length;
+  bar.innerHTML =
+    '<span class="dr-pickbar__n"><b>' + PICKED.size + '</b> selected' +
+      (hidden ? ' <span class="dr-pickbar__off">' + hidden + ' not shown by the current filters</span>' : '') +
+    '</span>' +
+    '<button class="btn btn-xs btn-alternative" id="pkMove" aria-haspopup="menu" aria-expanded="false">' +
+      svg(IC.folder, 15) + 'Move to folder' + svg('m19.5 8.25-7.5 7.5-7.5-7.5', 13) + '</button>' +
+    /* Compare reads two segments against each other, so it says so instead of
+       failing after the click. */
+    '<button class="btn btn-xs btn-alternative" id="pkCompare"' + (PICKED.size === 2 ? '' : ' aria-disabled="true"') + '>' +
+      svg(IC.chart, 15) + 'Compare' + (PICKED.size === 2 ? '' : ' <span class="dr-pickbar__hint">pick 2</span>') + '</button>' +
+    '<button class="btn btn-xs btn-alternative" id="pkArchive">' + svg(IC.box, 15) + 'Archive</button>' +
+    '<button class="btn-link" id="pkClear">Clear selection</button>';
+}
+
+/* The header box reflects three states, and "some" is not "none". */
+function syncPickAll() {
+  const all = document.getElementById('lsAll');
+  if (!all) return;
+  const shown = SEGMENTS.filter(x => matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x));
+  const on = shown.filter(x => PICKED.has(x.id)).length;
+  all.checked = shown.length > 0 && on === shown.length;
+  all.indeterminate = on > 0 && on < shown.length;
+}
+
+function render() {
+  syncArrangement();
+  drawRail();
+  let rows = SEGMENTS.filter(s => matchDim(s) && matchState(s) && matchFolder(s) && matchWin(s) && matchBy(s) && matchQ(s));
+  rows = [...rows].sort((a, b) => {
+    if (sort.k === 'attention') {
+      const d = ATT(a) - ATT(b);
+      return d || (b.c || 0) - (a.c || 0);   /* inside a band, biggest first */
+    }
+    let A = a[sort.k], B = b[sort.k];
+    /* Dates sort as dates. As strings "Aug 14, 2026" lands before "Jul 3, 2026". */
+    if (sort.k === 'up' || sort.k === 'cr') { A = new Date(A); B = new Date(B); }
+    if (A == null && B == null) return 0;
+    if (A == null) return 1;          /* rows with no value sink, either direction */
+    if (B == null) return -1;
+    const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
+    return sort.dir === 'desc' ? -r : r;
+  });
+
+  /* Applied filters are removable chips, not a sentence with one "Clear filters"
+     hammer at the end. Three reasons this is the better control:
+     — you can drop ONE filter. The button could only drop all of them, so
+       narrowing from four filters to three meant starting over.
+     — what is applied is visible as objects, not buried in a run-on line.
+     — "clear all" stops being a bordered button competing with the real actions
+       and becomes what it is: a quiet reset, last in the row.
+     The × is inside the chip, so it is one control per filter, where it applies. */
+  const chips = [];
+  /* A dimension chip is dropped once one of its own values is applied: the value
+     already says which dimension it belongs to, and "Narrows by Products ·
+     Products SKUs" printed the word twice in a row. */
+  DSEL.forEach(k => {
+    if ([...VSEL].some(t => String(t).split('|')[0] === k)) return;
+    chips.push(['dim:' + k, 'Narrows by', k === 'none' ? 'No conditions' : DIM[k].l]);
+  });
+  /* A postal code implies its country, so the country chip beside it says the
+     same thing twice and takes a second click to undo something already gone. */
+  const deepest = [...VSEL].filter(v => ![...VSEL].some(o => o !== v && o.indexOf(v + '|') === 0));
+  /* The child's own words, not geography's. "DTC · postal code Shopify DTC"
+     was the geography formatter applied to a channel. */
+  deepest.forEach(v => {
+    const p = String(v).split('|');
+    /* The deepest name only. "DTC · Amazon Seller Partner" repeated the group
+       the chip is already labelled with and made three channels wider than the
+       row, so they wrapped and shoved the sort controls down. Geography keeps
+       its parent, because "postal code IL" without a country is not a place. */
+    const label = !p[2] ? p[1]
+                : p[0] === 'geo' ? p[1] + ' · postal code ' + p[2]
+                : p[2];
+    chips.push(['val:' + v, DIM[p[0]] ? DIM[p[0]].l : 'Value', label,
+                CHANNEL_LOGO[p[2]] || CHANNEL_LOGO[p[1]] || null]); });
+  /* Only when it narrows something — the full span is the resting state, and a
+     chip for it would claim a filter that is not on. */
+  if (!fullSpan()) chips.push(['win', 'Dates', fmtDate(fFrom) + ' - ' + fmtDate(fTo)]);
+  if (fBy !== 'all')  chips.push(['by', 'Changed by', 'You']);
+    if (fState !== 'all')  chips.push(['state',  'Result', fState === 'issues' ? 'Data issues'
+                                     : fState === 'negltv' ? 'Negative LTV' : STATE[fState].l]);
+  if (fFolder !== 'all') chips.push(['folder', 'Folder', fFolder === 'none' ? 'Ungrouped'
+                                     : (FOLDERS.find(f => f.id === fFolder) || {}).name]);
+  if (q)                 chips.push(['q',      'Search', '“' + q + '”']);
+
+  document.getElementById('lsRangeLabel').textContent = fmtDate(fFrom) + '  -  ' + fmtDate(fTo);
+  document.getElementById('lsRange').classList.toggle('iris-datepicker-input--filled', !fullSpan());
+
+  syncFilterBtn();
+  drawPickBar();
+
+  document.getElementById('lsSum').innerHTML =
+    '<span class="dr-sum__n"><b>' + rows.length + '</b> of ' + SEGMENTS.length + ' segments</span>' +
+    /* No conjunctions and no group name on an applied chip. Both were mine, and
+       neither is theirs: read off /cohorts on 2026-09-08, an applied channel is
+       a 34x30 button carrying its logo and nothing else — no text, no "or", no
+       label in front of it. The group name lives inside the panel, where it
+       reads "DTC Sales channels".
+
+       The kind of filter is still named for a value that is not self-evident —
+       a country code or a percentile means little on its own — but a channel
+       carries its own mark and needs no word in front of it. */
+    chips.map((c, i) =>
+      '<span class="iris-chip iris-chip--light dr-fchip' + (c[3] ? ' dr-fchip--logo' : '') + '">' +
+        (c[3] || (i && chips[i - 1][1] === c[1]) ? '' : '<span class="dr-fchip__k">' + c[1] + '</span>') +
+        /* A channel is its mark and nothing else, the way the product shows one.
+           The name is on the chip's label and its tooltip, so it is there for a
+           screen reader and on hover without spending a third of the row. */
+        /* No remove button. Theirs has none: an applied channel on /cohorts is a
+           logo and nothing else, and a filter comes off in the panel it went on
+           in. The chip is a statement of what is applied, not a control. */
+        (c[3] ? '<img class="dr-fchip__logo" src="' + c[3] + '" alt="' + esc(c[1] + ' ' + c[2]) + '" width="18" height="18" title="' + esc(c[2]) + '">'
+              : esc(c[2])) +
+        '</span>').join('') +
+    (chips.length > 1 ? '<button class="btn-link" id="lsClear">Clear all</button>' : '') +
+    '';
+
+  const head = '<thead><tr>' +
+      '<th class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" id="lsAll"' +
+        ' aria-label="Select all ' + rows.length + ' segments shown"></label></th>' +
+      COLS.map(c =>
+      '<th class="' + (c.n ? 'n' : '') + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
+      '<button class="dr-sort" data-sort="' + c.k + '">' + c.l + ' <span class="c" aria-hidden="true">▾</span></button></th>').join('') +
+      '<th style="width:108px;"><span class="seg-sr">Actions</span></th></tr></thead>';
+
+  const rowHtml = s =>
+    '<tr data-href="./segment-detail-v2.html?id=' + s.id + '"' + (PICKED.has(s.id) ? ' class="is-picked"' : '') + '>' +
+      /* The label is the target, not the 16px box: WCAG 2.5.8 asks 24x24 and a
+         checkbox renders at 16 in every browser. Clicking anywhere in the cell
+         ticks it. */
+      '<td class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" data-pick="' + s.id + '"' +
+        (PICKED.has(s.id) ? ' checked' : '') +
+        ' aria-label="Select ' + esc(s.n) + '"></label></td>' +
+      '<td>' + nameCell(s) + '</td>' +
+      '<td class="n">' + customersCell(s) + '</td>' +
+      '<td class="n">' + (s.o == null ? DASH : fmtN(s.o)) + '</td>' +
+      '<td class="n">' + (s.net == null ? DASH : fmt$(s.net)) + '</td>' +
+      '<td class="n">' + ltvCell(s.ltv) + '</td>' +
+      '<td class="n" style="white-space:nowrap;">' + fmtDate(s.cr) + '</td>' +
+      '<td class="n" style="white-space:nowrap;">' + fmtDate(s.up) +
+        '<div class="sub">' + relTime(s.up) + '</div></td>' +
+      /* The live product reveals four buttons on row hover: Analyze segment
+         (a bar chart), Ask Fin (a robot), Calculate metrics (a play triangle)
+         and the overflow. Two of them are kept, with the product's own glyphs
+         and its own words — I had merged them into one "Analyze with Fin",
+         which is two different actions wearing one name.
+
+         Calculate metrics is not kept. It is the Run button, and Marko's first
+         note was that nothing on this page should need running. */
+      '<td class="dr-rowacts">' +
+      '<button class="seg-iconbtn dr-rowact" data-analyze="' + s.id + '" aria-label="Analyze ' + esc(s.n) + '" title="Analyze segment">' +
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 9h4v11H4zm12 4h4v7h-4zm-6-9h4v16h-4z"/></svg></button>' +
+      '<button class="seg-iconbtn dr-rowact dr-ask" data-ask="' + s.id + '" aria-label="Ask Fin about ' + esc(s.n) + '" title="Ask Fin">' +
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3M7.5 11.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S9.83 13 9 13s-1.5-.67-1.5-1.5M16 17H8v-2h8zm-1-4c-.83 0-1.5-.67-1.5-1.5S14.17 10 15 10s1.5.67 1.5 1.5S15.83 13 15 13"/></svg></button>' +
+      '<button class="seg-iconbtn dr-kebab" data-menu="' + s.id + '" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for ' + esc(s.n) + '">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button></td>' +
+    '</tr>';
+
+  /* Groups are FOLDERS now, not the old derived Type.
+     Type grouped by a machine guess: one label per segment, picked from its
+     first matching condition, so the same segment could not appear beside the
+     others that share its product. Folders are the user's own arrangement, and
+     grouping by them is what makes the folder worth creating.
+
+     Grouping is off while the rail is already showing one folder — the groups
+     would be a single group — and while a column sort is in force, because
+     that sort is a question about all rows at once. */
+  const canGroup = grouped;
+  const groupBody = () => FOLDERS.map(f => [f.id, f.name])
+    .concat([['none', 'Ungrouped']])
+    .map(([k, label]) => {
+      const g = rows.filter(r => (folderOf(r) || { id: 'none' }).id === k);
+      if (!g.length) return '';
+      /* One surviving group still gets its header when that group is a real
+         folder — it says which. "Ungrouped" over everything is the honest
+         picture of an account with no folders yet, and it beats a Grouped
+         control that appears to do nothing. */
+      if (g.length === rows.length && k !== 'none' && !FOLDERS.length)
+        return '<tbody>' + g.map(rowHtml).join('') + '</tbody>';
+      const open = !COLLAPSED.has(k);
+      /* NOT a sum. Segments overlap, so adding their customer counts produced
+         223,690 against a base of 35,590 — the additive trap that got
+         "% of company revenue" removed from the segment page. The largest
+         member is a real number and answers what the header is for. */
+      return '<tbody class="dr-grp">' +
+        '<tr class="dr-grp__h"><td colspan="8">' +
+        '<button class="dr-grp__b" data-grp="' + k + '" aria-expanded="' + open + '">' +
+          svg(open ? 'm19.5 8.25-7.5 7.5-7.5-7.5' : 'm8.25 4.5 7.5 7.5-7.5 7.5', 14) +
+          '<span class="card-icon card-icon-indigo" aria-hidden="true">' +
+            svg(k === 'none' ? IC.folderOpen : IC.folder, 15) + '</span>' +
+          '<b>' + esc(label) + '</b>' +
+          '<span class="dr-grp__n">' + g.length + '</span>' +
+        '</button></td></tr>' +
+        (open ? g.map(rowHtml).join('') : '') + '</tbody>';
+    }).join('');
+
+  const body = rows.length ? (canGroup ? groupBody() : '<tbody>' + rows.map(rowHtml).join('') + '</tbody>')
+    : '<tbody><tr><td colspan="8">' +
+      '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
+      '<h3>No segments match these filters</h3>' +
+      '<p>All ' + SEGMENTS.length + ' segments are still here. Clear the filters to see them.</p>' +
+      '<button class="btn btn-md btn-primary" id="lsClear2" style="display:inline-flex;">Clear filters</button></div></td></tr></tbody>';
+
+  document.getElementById('lsTable').innerHTML =
+    '<div class="dr-tablecard"><div class="dr-tw"><table class="dr-t dr-t--list">' + head + body + '</table></div></div>';
+  /* After the table exists, not before: the header checkbox is part of it, and
+     "some of the shown rows" is a third state that `checked` alone cannot say. */
+  syncPickAll();
+  document.getElementById('lsLive').textContent = rows.length + ' of ' + SEGMENTS.length + ' segments shown.';
+}
+
+/* ── interaction ────────────────────────────────────────────────────────── */
+function clearAll() { DSEL.clear(); VSEL.clear(); fFrom = SPAN.from; fTo = SPAN.to; fBy = 'all'; fState = 'all'; fFolder = 'all'; q = ''; document.getElementById('lsQ').value = ''; render(); }
+
+/* How many filters are applied, on the button, so a closed panel still says
+   whether anything is hiding rows. */
+function countFilters() {
+  return (fFolder !== 'all' ? 1 : 0) + DSEL.size + VSEL.size +
+         (fullSpan() ? 0 : 1) + (fBy !== 'all' ? 1 : 0) +
+         (fState !== 'all' ? 1 : 0) + (q ? 1 : 0);
+}
+function syncFilterBtn() {
+  const n = countFilters(), b = document.getElementById('lsFilterN');
+  if (!b) return;
+  b.hidden = !n; b.textContent = n;
+  document.getElementById('lsFilters').setAttribute('aria-label',
+    n ? 'Filters, ' + n + ' applied' : 'Filters');
+}
+(function panel() {
+  const btn = document.getElementById('lsFilters'), box = document.getElementById('lsPanel');
+  const open = on => {
+    box.hidden = !on;
+    btn.setAttribute('aria-expanded', String(on));
+    if (on) (box.querySelector('.list-group-item') || box).focus();
+  };
+  btn.addEventListener('click', () => open(box.hidden));
+  document.getElementById('lsResetAll').addEventListener('click', () => { clearAll(); open(true); });
+  /* Escape closes and hands focus back; a click outside closes without moving
+     it, because the click has already put focus where the reader wanted it. */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !box.hidden) { open(false); btn.focus(); }
+  });
+  document.addEventListener('click', e => {
+    if (box.hidden) return;
+    if (!box.contains(e.target) && !btn.contains(e.target)) open(false);
+  }, true);
+})();
+
+/* ── The order-window range picker ────────────────────────────────────────
+   Built on the library's .iris-cal / .iris-cal--range, laid out the way the
+   product's own is: named periods down the left, two months of calendar beside
+   them, Cancel and Apply at the foot. Clicking a day sets the start, the next
+   click sets the end, and the days between light up as you move over them.
+
+   The presets are read off the product's own list, minus the ones this data
+   cannot answer. Nothing is applied until Apply, so a half-made range never
+   filters the table underneath. */
+(function rangePicker() {
+  const btn = document.getElementById('lsRange');
+  const box = document.getElementById('lsCal');
+  let a = null, b = null, hover = null, month = new Date(TODAY.getFullYear(), TODAY.getMonth() - 1, 1);
+
+  const PRESETS = [
+    ['Last 7 days',        () => [addDays(TODAY, -7), TODAY]],
+    ['Last 30 days',       () => [addDays(TODAY, -30), TODAY]],
+    ['Last 90 days',       () => [addDays(TODAY, -90), TODAY]],
+    ['This year',          () => [new Date(TODAY.getFullYear(), 0, 1), TODAY]],
+    ['Last year',          () => [new Date(TODAY.getFullYear() - 1, 0, 1), new Date(TODAY.getFullYear() - 1, 11, 31)]],
+    ['Trailing 12 months', () => [addDays(TODAY, -365), TODAY]]
+  ];
+
+  const same = (x, y) => x && y && x.toDateString() === y.toDateString();
+  const mid  = (d, s, e) => s && e && d > s && d < e;
+  const key  = d => d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+
+  function grid(first) {
+    const y = first.getFullYear(), m = first.getMonth();
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;      /* weeks start Monday */
+    const days = new Date(y, m + 1, 0).getDate();
+    let out = '<div><div class="iris-cal__title">' +
+      first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + '</div>' +
+      '<div class="iris-cal__grid">' +
+      ['Mo','Tu','We','Th','Fr','Sa','Su'].map(d => '<span class="iris-cal__day-header">' + d + '</span>').join('');
+    for (let i = 0; i < lead; i++) out += '<span class="iris-cal__day iris-cal__day--muted"></span>';
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(y, m, d);
+      const end = b || hover;
+      const cls = ['iris-cal__day'];
+      if (same(date, a)) cls.push('iris-cal__day--range-start', 'iris-cal__day--range-selected');
+      if (same(date, b)) cls.push('iris-cal__day--range-end', 'iris-cal__day--range-selected');
+      if (mid(date, a, end)) cls.push('iris-cal__day--in-range');
+      if (same(date, TODAY)) cls.push('iris-cal__day--today');
+      out += '<button class="' + cls.join(' ') + '" data-day="' + key(date) + '">' + d + '</button>';
+    }
+    return out + '</div></div>';
+  }
+
+  function draw() {
+    const next = new Date(month.getFullYear(), month.getMonth() + 1, 1);
+    box.innerHTML =
+      '<div class="dr-cal__body">' +
+        '<div class="dr-cal__presets">' + PRESETS.map((p, i) =>
+          '<button class="dr-cal__preset" data-preset="' + i + '">' + p[0] + '</button>').join('') + '</div>' +
+        '<div class="dr-cal__cals">' +
+          '<div class="iris-cal__header">' +
+            '<button class="iris-cal__nav" data-nav="-1" aria-label="Previous month">' +
+              svg('M15.75 19.5 8.25 12l7.5-7.5', 15) + '</button>' +
+            '<button class="iris-cal__nav" data-nav="1" aria-label="Next month">' +
+              svg('m8.25 4.5 7.5 7.5-7.5 7.5', 15) + '</button>' +
+          '</div>' +
+          '<div class="iris-cal__months">' + grid(month) + grid(next) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="iris-cal__footer">' +
+        '<span class="dr-cal__read">' + (a ? fmtDate(a) + (b ? ' – ' + fmtDate(b) : ' – …') : 'Pick a start date') + '</span>' +
+        '<button class="btn btn-sm btn-alternative" data-cal="cancel">Cancel</button>' +
+        '<button class="btn btn-sm btn-primary" data-cal="apply"' + (a && b ? '' : ' aria-disabled="true"') + '>Apply</button>' +
+      '</div>';
+  }
+
+  function open(on) {
+    box.hidden = !on;
+    btn.setAttribute('aria-expanded', String(on));
+    if (!on) return;
+    a = fFrom; b = fTo; hover = null;
+    month = new Date((fFrom || TODAY).getFullYear(), (fFrom || TODAY).getMonth(), 1);
+    draw();
+  }
+
+  btn.addEventListener('click', () => open(box.hidden));
+
+  box.addEventListener('click', e => {
+    const nav = e.target.closest('[data-nav]');
+    if (nav) { month = new Date(month.getFullYear(), month.getMonth() + (+nav.dataset.nav), 1); return draw(); }
+
+    const pre = e.target.closest('[data-preset]');
+    if (pre) { const r = PRESETS[+pre.dataset.preset][1](); a = r[0]; b = r[1]; hover = null; return draw(); }
+
+    const day = e.target.closest('[data-day]');
+    if (day) {
+      const p = day.dataset.day.split('-').map(Number);
+      const d = new Date(p[0], p[1], p[2]);
+      if (!a || b) { a = d; b = null; }             /* start a new range */
+      else if (d < a) { b = a; a = d; }             /* dragged backwards */
+      else b = d;
+      hover = null;
+      return draw();
+    }
+
+    const act = e.target.closest('[data-cal]');
+    if (!act) return;
+    if (act.dataset.cal === 'apply') {
+      if (act.getAttribute('aria-disabled')) return;
+      fFrom = a; fTo = b; render();
+    }
+    open(false); btn.focus();
+  });
+
+  /* The days between light up while the second date is still being chosen. */
+  box.addEventListener('mouseover', e => {
+    const day = e.target.closest('[data-day]');
+    if (!day || !a || b) return;
+    const p = day.dataset.day.split('-').map(Number);
+    hover = new Date(p[0], p[1], p[2]);
+    draw();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !box.hidden) { open(false); btn.focus(); }
+  });
+  document.addEventListener('click', e => {
+    if (box.hidden) return;
+    if (!box.contains(e.target) && !btn.contains(e.target)) open(false);
+  }, true);
+})();
+
+/* Delegated, because the panel is redrawn on every change. Only the group's
+   own chips are redrawn, and focus is put back in the box the reader is in. */
+document.addEventListener('input', e => {
+  const box = e.target.closest('[data-gq]');
+  if (!box) return;
+  GQ[box.dataset.gq] = box.value;
+  const id = box.id, pos = box.selectionStart;
+  drawRail();
+  const again = document.getElementById(id);
+  if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (err) {} }
+});
+
+document.getElementById('lsQ').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
+/* ── Arrangement: radiogroup, with the arrow-key behaviour the pattern owes ── */
+const arrBtns = [...document.querySelectorAll('[data-arr]')];
+function syncArrangement() {
+  /* Queried here rather than closed over: render() runs before the module's
+     own `const arrBtns` in any future reordering, and reading a const in its
+     temporal dead zone throws — `typeof` does not save you from that. */
+  /* The control reports the reader's own choice and never moves on its own. */
+  [...document.querySelectorAll('[data-arr]')].forEach(b => {
+    const sel = b.dataset.arr === (grouped ? 'grouped' : 'flat');
+    b.classList.toggle('active', sel);
+    b.setAttribute('aria-checked', String(sel));
+    b.tabIndex = sel ? 0 : -1;
+  });
+}
+
+function setArrangement(next, focus) {
+  grouped = next === 'grouped';
+  render();
+  if (focus) {
+    const t = arrBtns.find(b => b.dataset.arr === next);
+    if (t) { t.tabIndex = 0; t.focus(); }
+  }
+}
+arrBtns.forEach((b, i) => {
+  b.addEventListener('click', () => setArrangement(b.dataset.arr, false));
+  b.addEventListener('keydown', e => {
+    const map = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: arrBtns.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    setArrangement(arrBtns[(map[e.key] + arrBtns.length) % arrBtns.length].dataset.arr, true);
+  });
+});
+
+/* ── Definition detail: a switch ── */
+document.getElementById('lsSort').addEventListener('change', e => {
+  const k = e.target.value;
+  sort = { k, dir: k === 'n' ? 'asc' : 'desc' };
+  render();
+});
+/* ── Definition: the summary, or the literal condition list ── */
+const defBtns = [...document.querySelectorAll('[data-def]')];
+function setDefinition(next, focus) {
+  full = next === 'conditions';
+  defBtns.forEach(b => {
+    const on = b.dataset.def === next;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', String(on));
+    b.tabIndex = on ? 0 : -1;
+    if (on && focus) b.focus();
+  });
+  render();
+}
+defBtns.forEach((b, i) => {
+  b.addEventListener('click', () => setDefinition(b.dataset.def, false));
+  b.addEventListener('keydown', e => {
+    const map = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: defBtns.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    setDefinition(defBtns[(map[e.key] + defBtns.length) % defBtns.length].dataset.def, true);
+  });
+});
+
+document.addEventListener('click', e => {
+  const inert = e.target.closest('[aria-disabled="true"]');
+  if (inert && inert.closest('#lsRail')) return;
+
+  const an = e.target.closest('[data-analyze]');
+  if (an) {
+    const seg = SEGMENTS.find(x => x.id === an.dataset.analyze);
+    return toast('Opening the analysis', '“' + seg.n + '” in the cohort view.');
+  }
+  const ask = e.target.closest('[data-ask]');
+  if (ask) {
+    const seg = SEGMENTS.find(x => x.id === ask.dataset.ask);
+    return toast('Fin is reading “' + seg.n + '”',
+      'It will come back with what stands out about these ' +
+      (seg.c == null ? 'customers' : fmtN(seg.c) + ' customers') + ' and what to do next.');
+  }
+
+  const pick = e.target.closest('[data-pick]');
+  if (pick) {
+    pick.checked ? PICKED.add(pick.dataset.pick) : PICKED.delete(pick.dataset.pick);
+    const tr = pick.closest('tr');
+    if (tr) tr.classList.toggle('is-picked', pick.checked);
+    drawPickBar(); syncPickAll();
+    return;
+  }
+  if (e.target.id === 'lsAll') {
+    const shown = SEGMENTS.filter(x => matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x));
+    e.target.checked ? shown.forEach(x => PICKED.add(x.id)) : shown.forEach(x => PICKED.delete(x.id));
+    render();
+    const back = document.getElementById('lsAll');
+    if (back) back.focus();
+    return;
+  }
+  if (e.target.closest('#pkClear'))   { PICKED.clear(); return render(); }
+  if (e.target.closest('#pkArchive')) {
+    const n = PICKED.size;
+    return modal({
+      title: 'Archive ' + n + ' segment' + (n > 1 ? 's' : '') + '?', confirmLabel: 'Archive',
+      body: 'Archived segments stop appearing in this list. Anything already built on them keeps working.',
+      onConfirm: () => { PICKED.clear(); render(); toast('Archived', n + ' segment' + (n > 1 ? 's' : '') + ' moved to Archived.'); }
+    });
+  }
+  const cmp = e.target.closest('#pkCompare');
+  if (cmp) {
+    if (cmp.getAttribute('aria-disabled')) return;
+    location.href = './segments-compare.html?v2=1&ids=' + [...PICKED].join(',');
+    return;
+  }
+  const mv = e.target.closest('#pkMove');
+  if (mv) return menu(mv, FOLDERS.map(f => ({ act: 'mv:' + f.id, ic: IC.folder, t: f.name }))
+      .concat([{ act: 'mv:', ic: IC.folderOpen, t: 'Remove from folder' },
+               { sep: true },
+               { act: 'newf', ic: IC.folder, t: 'New folder…' }]), act => {
+    if (act === 'newf') return newFolder([...PICKED]);
+    const ids = [...PICKED];
+    let f = null;
+    ids.forEach(id => { f = fileInto(SEGMENTS.find(x => x.id === id), act.slice(3)); });
+    PICKED.clear(); render();
+    toast(f ? 'Moved to ' + f.name : 'Removed from folder',
+          ids.length + ' segment' + (ids.length > 1 ? 's' : '') + '.');
+  });
+
+  const by = e.target.closest('[data-by]');
+  if (by) { fBy = fBy === by.dataset.by ? 'all' : by.dataset.by; return keepFocus(by, render); }
+
+  const rs = e.target.closest('[data-reset]');
+  if (rs) {
+    const g = rs.dataset.reset;
+    /* A group's Reset clears only that group. */
+    if (g.startsWith('val:')) {
+      const k = g.slice(4);
+      [...VSEL].forEach(t => { if (String(t).split('|')[0] === k) VSEL.delete(t); });
+    }
+    /* Only the values that belong to the dimensions being closed. It cleared
+       every value on the page, so resetting "Narrows by" also turned off
+       Audience and Sales channels — contradicting the line directly above. */
+    if (g === 'dim') {
+      [...VSEL].forEach(t => { if (DSEL.has(String(t).split('|')[0])) VSEL.delete(t); });
+      DSEL.clear();
+    }
+    if (g === 'state')  fState = 'all';
+    if (g === 'folder') fFolder = 'all';
+    if (g === 'by')     fBy = 'all';
+    render();
+    /* The Reset button removes itself, so focus goes to the group it emptied
+       rather than to the top of the document. */
+    const back = document.querySelector('[aria-labelledby="rl-' +
+      (g === 'dim' ? 'dim' : g === 'state' ? 'res' : 'fold') + '"] .list-group-item');
+    if (back) back.focus();
+    return;
+  }
+
+  const gs = e.target.closest('[data-gq]');
+  if (gs) return;
+
+  const vv = e.target.closest('[data-val]');
+  if (vv) {
+    const v = vv.dataset.val;
+    if (VSEL.has(v)) {
+      VSEL.delete(v);
+      /* Closing a country closes the postal codes inside it; leaving them on
+         would filter invisibly, with nothing on screen to say why. */
+      [...VSEL].forEach(o => { if (o.indexOf(v + '|') === 0) VSEL.delete(o); });
+    } else VSEL.add(v);
+    return keepFocus(vv, render);
+  }
+
+  const k = e.target.closest('[data-dim]');
+  if (k) {
+    const v = k.dataset.dim;
+    DSEL.has(v) ? DSEL.delete(v) : DSEL.add(v);
+    /* A value belongs to the dimension that revealed it, so closing a dimension
+       drops ITS values — not everything. Clearing the lot took the Audience and
+       Sales-channels choices down with it, which is why the chip could preview
+       "1" and then deliver 11: it counted the ANDed result and then removed the
+       other half of the AND. Those two groups are not inside "Narrows by" and
+       have no business being cleared by it. */
+    const owned = new Set([v]);
+    [...VSEL].forEach(t => { if (owned.has(String(t).split('|')[0])) VSEL.delete(t); });
+    return keepFocus(k, render);
+  }
+  /* Chips toggle. There is no "Any result" chip standing in for no filter, so
+     pressing the one that is on is how you turn it off. */
+  const st = e.target.closest('[data-state]');
+  if (st) { fState = fState === st.dataset.state ? 'all' : st.dataset.state; return keepFocus(st, render); }
+  const fo = e.target.closest('[data-folder]');
+  if (fo) { fFolder = fFolder === fo.dataset.folder ? 'all' : fo.dataset.folder; return keepFocus(fo, render); }
+  const gp = e.target.closest('[data-grp]');
+  if (gp) {
+    const k = gp.dataset.grp;
+    COLLAPSED.has(k) ? COLLAPSED.delete(k) : COLLAPSED.add(k);
+    return keepFocus(gp, render);
+  }
+  const so = e.target.closest('[data-sort]');
+  if (so) {
+    const key = so.dataset.sort;
+    sort = { k: key, dir: sort.k === key && sort.dir === 'desc' ? 'asc' : 'desc' };
+    const sel = document.getElementById('lsSort');
+    sel.value = [...sel.options].some(o => o.value === key) ? key : 'attention';
+    return keepFocus(so, render);
+  }
+  if (e.target.closest('#lsClear') || e.target.closest('#lsClear2')) return clearAll();
+  if (e.target.closest('#lsNewFolder')) return newFolder();
+
+  const ex = e.target.closest('[data-export]');
+  if (ex) return toast('Export started', 'The segment list is being prepared as CSV.');
+
+  const mb = e.target.closest('[data-menu]');
+  if (mb) { openMenu(mb); return; }
+  /* A click on any menu trigger is handled by that trigger's own listener. Without
+     this guard the delegated close ran in the same event and shut the menu the
+     button had just opened. */
+  if (!e.target.closest('.dr-menu') && !e.target.closest('[aria-haspopup="menu"]')) closeMenu();
+
+  /* Whole-row click. The row carries no role or tabindex: the name link is the
+     single keyboard stop, and this only mirrors it for the mouse. Clicks on the
+     link itself, the overflow button or any text selection are left alone. */
+  const tr = e.target.closest('tr[data-href]');
+  /* The select cell is part of the row but is not a way into the segment: a
+     click there ticks the box and must not navigate away from the list the
+     reader is building a selection in. */
+  if (tr && !e.target.closest('a') && !e.target.closest('button') && !e.target.closest('.dr-pick')) {
+    if ((getSelection() || {}).toString()) return;
+    location.href = tr.dataset.href;
+  }
+});
+
+/* `assign` is a list: the row menu passes one id, the selection bar passes all
+   of them, and a folder created from a selection arrives already filled. */
+function newFolder(assign) {
+  const ids = assign == null ? [] : (Array.isArray(assign) ? assign : [assign]);
+  promptModal({
+    title: 'New folder', confirmLabel: 'Create folder', label: 'Folder name',
+    placeholder: 'High value, Retention, Paused…',
+    onConfirm: name => {
+      const f = { id: 'f' + Date.now().toString(36), name: name, ids: ids.slice() };
+      FOLDERS.push(f); saveFolders();
+      /* Selecting an empty folder shows "No segments match these filters" over
+         a toast saying to move segments in from a row — with no rows on screen
+         to move. Only jump to the folder when it already holds something. */
+      if (ids.length) fFolder = f.id;
+      /* The first folder is the moment grouping starts to say something, so the
+         arrangement follows rather than waiting to be found. */
+      if (FOLDERS.length === 1) setArrangement('grouped', false); else render();
+      PICKED.clear();
+      toast('Folder created', ids.length
+        ? '“' + name + '” now holds ' + ids.length + ' segment' + (ids.length > 1 ? 's' : '') + '.'
+        : '“' + name + '” is empty. Select segments and move them in.');
+    }
+  });
+}
+function moveTo(seg, fid) {
+  const f = fileInto(seg, fid);
+  render();
+  toast(f ? 'Moved to ' + f.name : 'Removed from folder', '“' + seg.n + '”' + (f ? '' : ' is ungrouped again.'));
+}
+
+function openMenu(btn) {
+  const s = SEGMENTS.find(x => x.id === btn.dataset.menu);
+  const here = folderOf(s);
+  menu(btn, [
+    { lab: 'Work with this segment' },
+    /* The live product's row menu is Calculate · Analyze · Edit · Export Emails
+       · Delete. Calculate is gone on purpose — Marko's first note was that
+       nothing should need running. Analyze went with it by accident, and it is
+       the one that hands the segment to Fin, which is the half of the product
+       he spent four minutes of the review inside. */
+    { act: 'analyze', ic: IC.chart, t: 'Analyze segment' },
+    { act: 'ask',     ic: IC.spark, t: 'Ask Fin' },
+    { href: './segment-builder.html?v2=1&id=' + s.id, ic: IC.pencil, t: 'Edit definition' },
+    { act: 'dup',     ic: IC.copy,  t: 'Duplicate' },
+    { act: 'export',  ic: IC.down,  t: 'Export emails' },
+    { sep: true },
+    { lab: here ? 'In folder ' + here.name : 'Not in a folder' }
+  ].concat(FOLDERS.filter(f => !here || f.id !== here.id).map(f =>
+    ({ act: 'mv:' + f.id, ic: IC.folder, t: 'Move to ' + f.name })
+  )).concat(here ? [{ act: 'mv:', ic: IC.folderOpen, t: 'Remove from folder' }] : [])
+   .concat([
+    { act: 'newf', ic: IC.folder, t: 'Move to a new folder…' },
+    { sep: true },
+    { act: 'archive', ic: IC.box,   t: 'Archive' },
+    { act: 'del',     ic: IC.trash, t: 'Delete', danger: true }
+  ]), act => {
+    if (act === 'analyze') return toast('Opening the analysis', '“' + s.n + '” in the cohort view.');
+    if (act === 'ask') return toast('Fin is reading “' + s.n + '”',
+      'It will come back with what stands out about these ' +
+      (s.c == null ? 'customers' : fmtN(s.c) + ' customers') + ' and what to do next.');
+    if (act.startsWith('mv:')) return moveTo(s, act.slice(3));
+    if (act === 'newf')    return newFolder(s.id);
+    if (act === 'dup')     toast('Segment duplicated', '“' + s.n + ' (copy)” is ready to edit.');
+    if (act === 'export')  toast('Export started', 'Emails for “' + s.n + '” will arrive by email.');
+    if (act === 'archive') toast('Segment archived', '“' + s.n + '” moved to Archived.');
+    if (act === 'del') modal({
+      title: 'Delete this segment?', danger: true, confirmLabel: 'Delete segment',
+      body: '<p style="margin:0;font-size:13px;color:var(--color-text-body);">“<strong>' + esc(s.n) +
+            '</strong>” will be removed for everyone. Reports built on it will stop working. This cannot be undone.</p>',
+      onConfirm: () => toast('Segment deleted', '“' + s.n + '” was removed.')
+    });
+  });
+}
+
+/* The two split buttons. Menu items name what they act on, so "Export" from a
+   filtered list cannot be confused with exporting all forty. */
+document.getElementById('lsMore').addEventListener('click', e => {
+  /* Everything that is neither finding nor creating a segment. Upload and
+     Export were two icon-only buttons in the row, each opening a menu of its
+     own — two anonymous squares for actions nobody touched once in the twenty
+     minutes of the review. They are entries here instead.
+
+     Compare and Archive are still not here: both act on a selection, and the
+     selection bar offers them the moment a row is ticked. An entry whose only
+     answer is "pick two first" is a control that exists to refuse. */
+  const shown = document.querySelectorAll('.dr-t tbody tr[data-href]').length;
+  menu(e.currentTarget, [
+    { act: 'newf', ic: IC.folder, t: 'New folder…' },
+    { sep: true },
+    { lab: 'Create from a list' },
+    { act: 'im:emails', ic: IC.users,   t: 'CSV of email addresses' },
+    { act: 'im:ids',    ic: IC.layers,  t: 'CSV of customer IDs' },
+    { act: 'im:orders', ic: IC.receipt, t: 'CSV of order numbers' },
+    { sep: true },
+    { lab: 'Export' },
+    { act: 'ex:view',   ic: IC.down,  t: 'This view as CSV (' + shown + ')' },
+    { act: 'ex:all',    ic: IC.down,  t: 'All ' + SEGMENTS.length + ' segments as CSV' },
+    { act: 'ex:emails', ic: IC.users, t: 'Customer emails for this view' }
+  ], act => {
+    if (act === 'newf') return newFolder(null);
+    if (act.startsWith('im:')) return startImport(act.slice(3));
+    if (act === 'ex:view')   toast('Export started', shown + ' segments are being prepared as CSV.');
+    if (act === 'ex:all')    toast('Export started', 'All ' + SEGMENTS.length + ' segments are being prepared as CSV.');
+    if (act === 'ex:emails') toast('Export started', 'Customer emails for the ' + shown + ' segments in view will arrive by email.');
+  });
+});
+
+document.getElementById('lsNew').addEventListener('click', e => {
+  menu(e.currentTarget, [
+    /* Marko, 2026-09-03, on the two ways he wants to get one: "you can either do
+       it with an LLM, or you can build it by hand", and, on the list itself,
+       "maybe some of them are prebuilt for you". All three ways start here
+       rather than only being discoverable once you are already inside the
+       builder. The prebuilt definitions are not repeated in this menu: one
+       catalogue, in the builder, so the two pages cannot come to disagree
+       about what a template contains.
+
+       The wording is the product's, read off /automations on 2026-09-07 rather
+       than paraphrased: "Generate with Fin — Tell Fin what you want" and
+       "Manual — Configure the automation yourself". Same two lines, same order,
+       Fin first. */
+    { act: 'desc', ic: IC.wand,   t: 'Generate with Fin', sub: 'Tell Fin what you want' },
+    { act: 'tpl',  ic: IC.copy,   t: 'Start from a prebuilt segment', sub: 'Pick a definition and adjust it' },
+    { href: './segment-builder.html?v2=1', ic: IC.pencil, t: 'Manual', sub: 'Configure the segment yourself' },
+    { sep: true },
+    { act: 'dup',  ic: IC.copy,  t: 'Duplicate an existing segment' }
+  ], act => {
+    if (act === 'desc') location.href = './segment-builder.html?v2=1#describe';
+    if (act === 'tpl') location.href = './segment-builder.html?v2=1#templates';
+    if (act === 'dup') toast('Pick a segment', 'Choose Duplicate from any row to start from it.');
+  });
+});
+/* Data Rooms' Upload brings a file into the room. The segment equivalent is
+   bringing a customer list in from outside and treating it as a segment — the
+   path every comparable tool has (Klaviyo, Mailchimp, HubSpot) and the one this
+   redesign had dropped entirely. A list-based segment does not drift, which is
+   also the honest answer to "these 400 people from the trade show". */
+/* ── Import ───────────────────────────────────────────────────────────────
+   His Upload takes a file on the main half and offers variants on the caret.
+   Mine opened the same menu from both, so the primary action did not do the
+   primary thing. The main half now opens a file picker, and the file is read
+   in the browser — the row count and the column names below are read out of
+   the file the user actually chose. Nothing is sent anywhere. */
+function readCsv(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    const text  = String(r.result || '');
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+    const cols  = (lines[0] || '').split(/[,;\t]/).map(c => c.replace(/^["']|["']$/g, '').trim()).filter(Boolean);
+    const rows  = Math.max(0, lines.length - 1);
+    const guess = cols.findIndex(c => /e-?mail/i.test(c));
+    /* modal() clears the dialog before it runs onConfirm, so the select is gone
+       by the time the handler fires. The choice is tracked as it is made. */
+    let chosen = cols[guess < 0 ? 0 : guess] || 'column 1';
+    setTimeout(() => {
+      const sel = document.getElementById('impCol');
+      if (sel) sel.addEventListener('change', e => { chosen = cols[e.target.value] || chosen; });
+    }, 0);
+    modal({
+      title: 'Create a segment from this list',
+      confirmLabel: 'Create segment',
+      body:
+        '<div class="dr-cond" style="padding-top:0;">' +
+          '<span class="card-icon card-icon-teal" aria-hidden="true">' + svg(IC.dash, 15) + '</span>' +
+          '<div class="dr-cond__t"><div class="dr-cond__l">' + esc(file.name) + '</div>' +
+          '<div class="dr-cond__s">' + fmtN(rows) + ' row' + (rows === 1 ? '' : 's') + ' · ' +
+          (file.size < 1024 ? file.size + ' bytes' : fmtN(Math.round(file.size / 1024)) + ' KB') + ' · ' + cols.length + ' column' + (cols.length === 1 ? '' : 's') + '</div></div></div>' +
+        '<div class="form-group" style="margin:14px 0 0;">' +
+          '<label class="form-label" for="impCol">Which column identifies the customer?</label>' +
+          '<select class="form-select dr-select" id="impCol" style="width:100%;">' +
+            cols.map((c, i) => '<option value="' + i + '"' + (i === (guess < 0 ? 0 : guess) ? ' selected' : '') + '>' + esc(c) + '</option>').join('') +
+          '</select></div>' +
+        '<p class="dr-note">Iris matches these against known customers and builds a fixed list. ' +
+        'A list-based segment does not drift when a definition changes, which is the point of importing one. ' +
+        'Nothing leaves this browser in the prototype.</p>',
+      onConfirm: () => {
+        /* The file becomes a segment of its own kind: a fixed membership rather
+           than a rule. It is the only sort that has something you can upload
+           into later, which is why its page carries "Update the list". */
+        const rec = {
+          id: 'L' + Date.now().toString(36),
+          n: file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          file: file.name, rows: rows, col: chosen,
+          cr: fmtDate(new Date()), up: fmtDate(new Date())
+        };
+        const all = loadLists(); all.push(rec); saveLists(all);
+        location.href = './segment-detail-v2.html?id=' + rec.id;
+      }
+    });
+  };
+  r.readAsText(file.slice(0, 65536));
+}
+document.getElementById('lsFile').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (f) readCsv(f);
+});
+
+/* Picking which column the uploaded file is matched on. The menu that used to
+   wrap this moved into the page overflow; this is what its entries call. */
+function startImport(kind) {
+  document.getElementById("lsFile").click();
+}
+
+
+document.getElementById('skipLink').addEventListener('click', e => {
+  e.preventDefault();
+  const b = document.getElementById('lsBody'); b.setAttribute('tabindex', '-1'); b.focus();
+});
+
+/* The markup ships with Grouped pressed. On an account with no folders the
+   state above says otherwise, and the two have to agree before first paint. */
+setArrangement(grouped ? 'grouped' : 'flat', false);
+render();
+initSidebar();
+</script>
+</body>
+</html>

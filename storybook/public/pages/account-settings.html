@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Settings — Iris Library example</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../assets/iris-tokens.css">
+  <link rel="stylesheet" href="../assets/iris-components.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<!-- Page scaffolding only (layout, not component styling): flex shell = sidebar + content -->
+<body style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       COMPONENT: Navigation/Sidebar — contracted variant
+       Source story: Sidebar.stories.js › "Contracted" (Figma 1060:44)
+       Classes: .sidebar .sidebar--collapsed · .sidebar-contracted-item(.active) · .sidebar-divider
+       ════════════════════════════════════════════════════════════════════ -->
+  <!-- height:auto = page scaffolding: let the flex row stretch the rail to full page height
+       (.sidebar's own height:100% resolves to its 600px min inside an auto-height flex parent) -->
+  <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;">
+    <div style="display:flex;flex-direction:column;gap:16px;padding:0 0 12px;">
+      <button type="button" class="sidebar-contracted-item" title="Overview" aria-label="Overview">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Metrics" aria-label="Metrics">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="P&amp;L" aria-label="P&amp;L">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 000 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Cash Flow" aria-label="Cash Flow">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Financial model" aria-label="Financial model">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div class="sidebar-divider" style="margin:0;"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
+      <button type="button" class="sidebar-contracted-item" title="Help" aria-label="Help">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item active" title="Settings" aria-label="Settings" aria-current="page">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Page scaffolding: main column -->
+  <main style="flex:1;padding:32px 40px;max-width:1024px;box-sizing:border-box;">
+
+    <!-- Page heading — Foundation/Typography tokens only -->
+    <h1 style="margin:0 0 4px;font-size:var(--text-2xl);font-weight:var(--font-bold);color:var(--color-text-heading);">Account Settings</h1>
+    <p style="margin:0 0 24px;font-size:var(--text-base);color:var(--color-text-secondary);">Your personal account information, login preferences, and security.</p>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         COMPONENT: Card/Basics — section shell
+         Source story: Card.stories.js › "Header + footer shell"
+         Classes: .card · .card-header · .card-header-title · .card-body-padded
+         ══════════════════════════════════════════════════════════════════ -->
+    <section class="card" style="margin-bottom:24px;">
+      <div class="card-header">
+        <div class="card-header-title">Profile Settings</div>
+      </div>
+      <div class="card-body-padded">
+
+        <!-- Row scaffolding: 2-col grid (label+description | value/control) -->
+        <!-- COMPONENT: Forms — read-only display
+             Source story: Forms.stories.js › "Read-only" (Figma 9481:135673)
+             Classes: .form-readonly · .form-readonly__value (+ .form-label / .form-helper for the left column) -->
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:8px 32px;align-items:center;padding:8px 0;">
+          <div>
+            <span class="form-label" style="margin:0;">Full Name</span>
+            <p class="form-helper" style="margin:2px 0 0;">Your registered full name.</p>
+          </div>
+          <div class="form-readonly"><span class="form-readonly__value">Taylor Fisher</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:8px 32px;align-items:center;padding:8px 0;">
+          <div>
+            <span class="form-label" style="margin:0;">Email</span>
+            <p class="form-helper" style="margin:2px 0 0;">Your primary email address.</p>
+          </div>
+          <div class="form-readonly"><span class="form-readonly__value">taylor@irisfinance.co</span></div>
+        </div>
+
+        <!-- Phone row: Add phone number → inline input + Verify → phone-verification modal -->
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:8px 32px;align-items:center;padding:8px 0;">
+          <div>
+            <span class="form-label" style="margin:0;">Phone Number</span>
+            <p class="form-helper" style="margin:2px 0 0;">The number that receives security and account alerts.</p>
+          </div>
+          <div id="phone-cell">
+            <!-- COMPONENT: Button — outline primary
+                 Source story: Button.stories.js · Classes: .btn .btn-outline-primary .btn-sm -->
+            <button type="button" class="btn btn-outline-primary btn-sm" id="phone-add-btn">Add phone number</button>
+
+            <!-- Inline phone entry (hidden until "Add phone number")
+                 COMPONENT: Forms — input field · Source story: Forms.stories.js › Interactive
+                 Classes: .form-group .form-input .is-error .form-feedback-error -->
+            <div id="phone-entry" hidden>
+              <div class="form-group" style="margin:0;max-width:320px;display:inline-block;vertical-align:middle;">
+                <input type="tel" class="form-input" id="phone-input" placeholder="+1 555 0100" aria-label="Phone number">
+                <p class="form-feedback-error" id="phone-input-error" hidden>Enter a valid phone number.</p>
+              </div>
+              <!-- COMPONENT: Button — primary · Classes: .btn .btn-primary .btn-sm -->
+              <button type="button" class="btn btn-primary btn-sm" id="phone-verify-btn" style="vertical-align:top;margin-left:8px;">Verify</button>
+            </div>
+
+            <!-- Verified phone display (hidden until OTP success)
+                 COMPONENT: Badge · Source story: Badge.stories.js › Colors
+                 Classes: .badge .badge-sm .badge-green -->
+            <div id="phone-verified" class="form-readonly" hidden>
+              <span class="form-readonly__value" id="phone-verified-value"></span>
+              <span class="badge badge-sm badge-green">
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7 7a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.415L9 11.586l6.29-6.296a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Verified</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:8px 32px;align-items:center;padding:8px 0;">
+          <div>
+            <span class="form-label" style="margin:0;">Password</span>
+            <p class="form-helper" style="margin:2px 0 0;">Your account password.</p>
+          </div>
+          <div>
+            <!-- COMPONENT: Button/Link · Source story: ButtonLink.stories.js
+                 Classes: .btn-link .btn-link-medium .btn-sm -->
+            <button type="button" class="btn-link btn-link-semibold btn-sm">Change Password</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COMPONENT: Card/Basics — section shell (same as above) -->
+    <section class="card" style="margin-bottom:24px;">
+      <div class="card-header">
+        <div class="card-header-title">Security</div>
+      </div>
+      <div class="card-body-padded">
+        <p style="margin:0;font-size:var(--text-sm);color:var(--color-text-secondary);">
+          For deleting your account and other security inquiries, please contact our support team at
+          <!-- COMPONENT: Button/Link · Classes: .btn-link .btn-link-medium .btn-sm -->
+          <a href="mailto:support@irisfinance.co" class="btn-link btn-link-semibold btn-sm">support@irisfinance.co</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- COMPONENT: Card/Basics — section shell (same as above) -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-header-title">Login Settings</div>
+      </div>
+      <div class="card-body-padded">
+
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:8px 32px;align-items:start;padding:8px 0;">
+          <div>
+            <span class="form-label" style="margin:0;">Default Organization</span>
+            <p class="form-helper" style="margin:2px 0 0;">The organization you access on login.</p>
+          </div>
+          <div style="position:relative;max-width:320px;">
+            <!-- COMPONENT: Select · Source story: Select.stories.js › "Custom listbox (combobox)" (Figma 12698:50249)
+                 Classes: .form-select [role=combobox] + .dropdown-menu.dropdown-menu--absolute [role=listbox] -->
+            <button type="button" id="org-select" class="form-select" role="combobox"
+                    aria-expanded="false" aria-haspopup="listbox" aria-controls="org-listbox"
+                    aria-label="Default Organization" style="width:100%;text-align:left;">
+              Test Invite
+            </button>
+            <ul class="dropdown-menu dropdown-menu--absolute" id="org-listbox" role="listbox"
+                aria-label="Default Organization" hidden style="width:100%;top:calc(100% + 4px);left:0;">
+              <li class="dropdown-item active" role="option" aria-selected="true">Test Invite</li>
+              <li class="dropdown-item" role="option" aria-selected="false">Test 2005</li>
+              <li class="dropdown-item" role="option" aria-selected="false">Iris Finance</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:8px 32px;align-items:start;padding:8px 0;">
+          <div>
+            <span class="form-label" style="margin:0;">Preferred Verification Method</span>
+            <p class="form-helper" style="margin:2px 0 0;">Choose how you want to receive verification codes when signing in.</p>
+          </div>
+
+          <!-- ══════════════════════════════════════════════════════════
+               COMPONENT: Controls — Radio cards
+               Source story: Controls.stories.js › "Radio cards"
+               Classes: .iris-radio-card (--selected/--disabled) · .iris-radio (--checked/--disabled)
+                        .iris-control__check/__body/__label/__helper
+               ══════════════════════════════════════════════════════════ -->
+          <div role="radiogroup" aria-label="Preferred verification method" style="display:flex;flex-direction:column;gap:12px;max-width:480px;">
+
+            <label class="iris-radio-card iris-radio-card--selected" id="method-email" data-method="email">
+              <span class="iris-control__check"><span class="iris-radio iris-radio--checked" role="radio" aria-checked="true" tabindex="0" aria-label="Email"></span></span>
+              <span class="iris-control__body">
+                <span class="iris-control__label">Email</span>
+                <span class="iris-control__helper">Receive verification codes via email.</span>
+              </span>
+            </label>
+
+            <!-- Locked until the phone number is verified -->
+            <label class="iris-radio-card iris-radio-card--disabled" id="method-sms" data-method="sms">
+              <span class="iris-control__check"><span class="iris-radio iris-radio--disabled" role="radio" aria-checked="false" aria-disabled="true" tabindex="0" aria-label="SMS"></span></span>
+              <span class="iris-control__body">
+                <span class="iris-control__label">SMS</span>
+                <span class="iris-control__helper">Receive verification codes via text message.</span>
+                <span class="iris-control__helper" id="sms-lock-note">Verify your phone number to use SMS.</span>
+              </span>
+            </label>
+
+            <!-- Locked until the authenticator app is set up and verified -->
+            <label class="iris-radio-card iris-radio-card--disabled" id="method-totp" data-method="totp">
+              <span class="iris-control__check"><span class="iris-radio iris-radio--disabled" role="radio" aria-checked="false" aria-disabled="true" tabindex="0" aria-label="Authenticator App"></span></span>
+              <span class="iris-control__body">
+                <span class="iris-control__label" id="totp-label">Authenticator App
+                  <!-- COMPONENT: Badge (shown after verification) · Classes: .badge .badge-sm .badge-green -->
+                  <span class="badge badge-sm badge-green" id="totp-verified-badge" hidden>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.704 5.29a1 1 0 010 1.415l-7 7a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.415L9 11.586l6.29-6.296a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    <span>Verified</span>
+                  </span>
+                </span>
+                <span class="iris-control__helper">Use one-time codes from an app such as Authy or Google Authenticator.</span>
+                <span class="iris-control__helper" id="totp-lock-note">Set up and verify an authenticator app before using it as your preferred method.</span>
+                <!-- COMPONENT: Button/Link · Classes: .btn-link .btn-link-medium .btn-sm -->
+                <span><button type="button" class="btn-link btn-link-semibold btn-sm" id="totp-setup-btn" style="margin-top:4px;">Set up authenticator app</button></span>
+              </span>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- COMPONENT: Alert — success feedback after save
+             Source story: Alerts.stories.js · Classes: .alert .alert-success .alert-icon .alert-body .alert-title -->
+        <div role="alert" class="alert alert-success" id="save-alert" hidden style="margin-top:16px;">
+          <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <div class="alert-body">
+            <div class="alert-title">Settings saved</div>
+            <p style="margin:0;">Your login settings have been updated.</p>
+          </div>
+          <button type="button" class="alert-dismiss" aria-label="Dismiss" onclick="this.parentElement.hidden=true">×</button>
+        </div>
+
+        <!-- COMPONENT: Button — primary · Classes: .btn .btn-primary .btn-md -->
+        <div style="margin-top:20px;">
+          <button type="button" class="btn btn-primary btn-md" id="save-btn" disabled style="width:100%;justify-content:center;">Save Changes</button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MODAL 1: Authenticator App setup (TOTP)
+     COMPONENT: Modal · Source story: Modal.stories.js › "Info" (Figma 3284:23643)
+     Classes: .modal-backdrop · .modal-dialog .modal-dialog-lg · .modal-header
+              .modal-title · .modal-close · .modal-body · .modal-footer
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="totp-modal" hidden>
+  <div role="dialog" aria-modal="true" aria-labelledby="totp-modal-title" class="modal-dialog modal-dialog-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="totp-modal-title">Set up authenticator app</h2>
+      <button type="button" class="modal-close" aria-label="Close dialog" data-close="totp-modal">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <h3 style="margin:0 0 16px;font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-heading);">How it works</h3>
+
+      <!-- ══════════════════════════════════════════════════════════════
+           COMPONENT: Stepper — standalone instructional steps
+           Source story: Stepper.stories.js › "Standalone steps (instructional)"
+           Classes: .stepper · .stepper-item .stepper-item--standalone · .stepper-step-icon
+                    .stepper-step-heading · .stepper-icon · .stepper-step-title · .stepper-step-desc
+           ══════════════════════════════════════════════════════════════ -->
+      <div class="stepper">
+        <div class="stepper-item stepper-item--standalone">
+          <span class="stepper-step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5V18.75C3 19.9926 4.00736 21 5.25 21H18.75C19.9926 21 21 19.9926 21 18.75V16.5M16.5 12L12 16.5M12 16.5L7.5 12M12 16.5V3"/></svg></span>
+          <span class="stepper-step-heading">
+            <span class="stepper-icon" aria-hidden="true">1</span>
+            <span class="stepper-step-title">Install an authenticator app</span>
+          </span>
+          <p class="stepper-step-desc">Download and install an authenticator app on your mobile device.</p>
+          <p class="stepper-step-desc">Examples: Google Authenticator, Authy, Microsoft Authenticator</p>
+        </div>
+        <div class="stepper-item stepper-item--standalone">
+          <span class="stepper-step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.75 4.875C3.75 4.25368 4.25368 3.75 4.875 3.75H9.375C9.99632 3.75 10.5 4.25368 10.5 4.875V9.375C10.5 9.99632 9.99632 10.5 9.375 10.5H4.875C4.25368 10.5 3.75 9.99632 3.75 9.375V4.875Z"/><path d="M3.75 14.625C3.75 14.0037 4.25368 13.5 4.875 13.5H9.375C9.99632 13.5 10.5 14.0037 10.5 14.625V19.125C10.5 19.7463 9.99632 20.25 9.375 20.25H4.875C4.25368 20.25 3.75 19.7463 3.75 19.125V14.625Z"/><path d="M13.5 4.875C13.5 4.25368 14.0037 3.75 14.625 3.75H19.125C19.7463 3.75 20.25 4.25368 20.25 4.875V9.375C20.25 9.99632 19.7463 10.5 19.125 10.5H14.625C14.0037 10.5 13.5 9.99632 13.5 9.375V4.875Z"/><path d="M6.75 6.75H7.5V7.5H6.75V6.75Z"/><path d="M6.75 16.5H7.5V17.25H6.75V16.5Z"/><path d="M16.5 6.75H17.25V7.5H16.5V6.75Z"/><path d="M13.5 13.5H14.25V14.25H13.5V13.5Z"/><path d="M16.5 16.5H17.25V17.25H16.5V16.5Z"/></svg></span>
+          <span class="stepper-step-heading">
+            <span class="stepper-icon" aria-hidden="true">2</span>
+            <span class="stepper-step-title">Scan the QR code</span>
+          </span>
+          <p class="stepper-step-desc">Open the app and scan the QR code or enter the setup key manually.</p>
+        </div>
+        <div class="stepper-item stepper-item--standalone">
+          <span class="stepper-step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12.7498L11.25 14.9998L15 9.74985M12 2.71411C9.8495 4.75073 6.94563 5.99986 3.75 5.99986C3.69922 5.99986 3.64852 5.99955 3.59789 5.99892C3.2099 7.17903 3 8.43995 3 9.74991C3 15.3414 6.82432 20.0397 12 21.3719C17.1757 20.0397 21 15.3414 21 9.74991C21 8.43995 20.7901 7.17903 20.4021 5.99892C20.3515 5.99955 20.3008 5.99986 20.25 5.99986C17.0544 5.99986 14.1505 4.75073 12 2.71411Z"/></svg></span>
+          <span class="stepper-step-heading">
+            <span class="stepper-icon" aria-hidden="true">3</span>
+            <span class="stepper-step-title">Enter the code</span>
+          </span>
+          <p class="stepper-step-desc">Enter the 6-digit code from the app to verify and complete setup.</p>
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--color-border-default);margin:20px 0;">
+
+      <h3 style="margin:0 0 16px;font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-heading);">Setup Authenticator App</h3>
+
+      <!-- Scaffolding row: QR | key + note -->
+      <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
+
+        <!-- ══════════════════════════════════════════════════════════
+             COMPONENT: QR — QR frame (quiet-zone container)
+             Source story: QR.stories.js › "QR frame" — demo QR is real & scannable
+             Classes: .qr-frame
+             ══════════════════════════════════════════════════════════ -->
+        <span class="qr-frame">
+          <svg width="160" height="160" viewBox="0 0 41 41" shape-rendering="crispEdges" role="img" aria-label="QR code for setting up an authenticator app">
+            <rect width="41" height="41" fill="#fff"/>
+            <path stroke="#111928" d="M0 0.5h7m1 0h2m1 0h2m5 0h1m1 0h1m1 0h1m3 0h1m1 0h1m1 0h2m2 0h7m-41 1h1m5 0h1m3 0h2m1 0h1m1 0h2m1 0h3m1 0h1m2 0h2m1 0h5m1 0h1m5 0h1m-41 1h1m1 0h3m1 0h1m2 0h1m4 0h1m1 0h3m1 0h2m4 0h1m1 0h4m2 0h1m1 0h3m1 0h1m-41 1h1m1 0h3m1 0h1m1 0h3m2 0h2m2 0h1m3 0h3m1 0h3m3 0h2m1 0h1m1 0h3m1 0h1m-41 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m3 0h1m2 0h1m2 0h1m1 0h6m3 0h1m1 0h3m1 0h1m-41 1h1m5 0h1m1 0h4m1 0h1m1 0h2m1 0h2m1 0h1m3 0h2m1 0h2m1 0h1m2 0h1m5 0h1m-41 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-33 1h5m1 0h2m1 0h2m1 0h2m1 0h1m3 0h6m-33 1h1m3 0h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h3m1 0h1m2 0h5m1 0h6m2 0h1m-40 1h2m2 0h1m2 0h2m2 0h1m4 0h2m2 0h1m1 0h1m1 0h4m1 0h1m1 0h1m1 0h3m2 0h2m-41 1h1m1 0h1m1 0h4m1 0h2m5 0h1m1 0h1m4 0h3m1 0h2m6 0h4m1 0h1m-41 1h1m10 0h2m1 0h1m1 0h2m1 0h5m3 0h1m1 0h1m1 0h1m2 0h2m1 0h1m-34 1h11m2 0h1m1 0h6m4 0h2m2 0h1m-33 1h2m1 0h1m9 0h1m3 0h2m3 0h1m1 0h4m1 0h1m4 0h6m-41 1h7m3 0h3m5 0h2m1 0h4m1 0h3m3 0h1m1 0h2m1 0h2m1 0h1m-40 1h5m1 0h2m2 0h2m1 0h4m1 0h4m6 0h1m4 0h1m2 0h1m-38 1h3m1 0h4m2 0h3m1 0h1m2 0h1m2 0h2m3 0h1m2 0h1m3 0h2m1 0h1m1 0h1m1 0h2m-40 1h1m2 0h1m3 0h3m1 0h2m1 0h5m2 0h3m2 0h1m3 0h1m1 0h6m1 0h1m-40 1h1m1 0h1m1 0h2m2 0h1m1 0h2m1 0h3m1 0h1m1 0h4m1 0h3m1 0h2m1 0h3m2 0h2m1 0h1m-38 1h2m2 0h3m1 0h4m4 0h1m1 0h3m3 0h4m1 0h1m1 0h2m1 0h1m1 0h1m-40 1h1m1 0h1m2 0h5m1 0h5m3 0h2m2 0h2m2 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h2m-40 1h2m2 0h1m1 0h1m1 0h1m1 0h1m2 0h3m4 0h1m2 0h4m3 0h2m1 0h1m1 0h1m1 0h1m-41 1h2m2 0h1m1 0h2m1 0h1m1 0h1m3 0h1m2 0h1m1 0h2m1 0h1m1 0h4m1 0h1m3 0h4m2 0h1m-41 1h6m4 0h2m2 0h2m1 0h1m1 0h1m1 0h1m2 0h1m1 0h5m1 0h1m1 0h2m1 0h1m-36 1h5m1 0h1m2 0h2m2 0h1m1 0h1m1 0h3m2 0h2m2 0h2m3 0h1m1 0h1m1 0h1m-38 1h1m1 0h1m2 0h1m3 0h2m1 0h1m2 0h2m1 0h2m2 0h2m2 0h3m3 0h5m1 0h3m-40 1h1m1 0h1m1 0h4m1 0h1m2 0h4m4 0h3m3 0h1m1 0h2m2 0h1m2 0h1m3 0h1m-40 1h5m1 0h2m1 0h2m2 0h1m1 0h3m2 0h1m4 0h1m2 0h2m3 0h2m1 0h1m-38 1h2m2 0h3m2 0h1m1 0h2m2 0h3m1 0h1m1 0h2m1 0h1m2 0h1m1 0h2m1 0h2m1 0h1m-36 1h2m1 0h1m1 0h1m1 0h2m2 0h1m2 0h2m1 0h4m2 0h1m1 0h1m2 0h1m4 0h4m1 0h3m-35 1h1m2 0h2m1 0h1m1 0h4m2 0h2m1 0h1m3 0h2m5 0h4m1 0h2m-39 1h1m2 0h1m2 0h1m2 0h3m2 0h3m2 0h2m1 0h1m2 0h5m1 0h4m-37 1h2m2 0h9m2 0h3m1 0h1m2 0h2m1 0h1m2 0h1m2 0h6m2 0h2m-33 1h2m2 0h2m2 0h1m3 0h3m2 0h2m1 0h1m3 0h1m3 0h1m1 0h1m1 0h1m-41 1h7m1 0h1m1 0h3m4 0h1m5 0h2m2 0h1m3 0h2m1 0h1m1 0h2m2 0h1m-41 1h1m5 0h1m2 0h1m1 0h5m1 0h3m2 0h1m3 0h1m2 0h1m2 0h1m3 0h2m2 0h1m-41 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m4 0h1m1 0h1m1 0h3m3 0h10m-38 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h3m7 0h1m2 0h2m3 0h3m4 0h1m1 0h1m-41 1h1m1 0h3m1 0h1m3 0h1m2 0h3m1 0h1m4 0h3m2 0h5m1 0h1m3 0h1m2 0h1m-41 1h1m5 0h1m8 0h8m3 0h2m1 0h1m2 0h2m1 0h1m1 0h1m1 0h2m-41 1h7m1 0h2m1 0h2m1 0h1m1 0h2m3 0h1m7 0h1m2 0h2m2 0h1m2 0h1"/>
+          </svg>
+        </span>
+
+        <!-- Scaffolding column: scan heading + manual key + safety note -->
+        <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px;">
+          <span class="form-label" style="margin:0;">Scan this QR code with your authenticator app</span>
+
+          <div class="form-group" style="margin:0;max-width:360px;">
+            <label class="form-label" for="totp-key">Can't scan? Enter this code manually</label>
+            <!-- ══════════════════════════════════════════════════════
+                 COMPONENT: Forms — input with trailing action (copy)
+                 Source story: Forms.stories.js (anatomy: trailing icon/action)
+                 Classes: .form-search-wrap .form-search-wrap--end · .form-search-icon · .form-input
+                 ══════════════════════════════════════════════════════ -->
+            <div class="form-search-wrap form-search-wrap--end">
+              <input type="text" class="form-input" id="totp-key" value="JBSW Y3DP KX3P 4Z3D" readonly aria-label="Manual setup key">
+              <button type="button" class="form-search-icon" id="totp-copy-btn" aria-label="Copy setup key">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="8" height="8" rx="1"/><path d="M6 14H12C13.1046 14 14 13.1046 14 12V6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- COMPONENT: Alert — info note
+               Source story: Alerts.stories.js · Classes: .alert .alert-info .alert-icon .alert-body -->
+          <div role="alert" class="alert alert-info">
+            <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+            <div class="alert-body">
+              <p style="margin:0;">Keep this code safe. You'll need it if you set up the app on another device.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--color-border-default);margin:20px 0;">
+
+      <h3 style="margin:0 0 4px;font-size:var(--text-base);font-weight:var(--font-semibold);color:var(--color-text-heading);">Verify setup</h3>
+
+      <!-- COMPONENT: Forms — input field, error state
+           Source story: Forms.stories.js › Interactive (fieldState=error)
+           Classes: .form-group .form-label .form-input .is-error .form-feedback-error -->
+      <div class="form-group" style="margin:12px 0 0;max-width:240px;">
+        <label class="form-label" for="totp-code">Enter the 6-digit code from your authenticator app</label>
+        <input type="text" class="form-input" id="totp-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123 456">
+        <p class="form-feedback-error" id="totp-code-error" hidden>The code is invalid or has expired. Try again.</p>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <!-- COMPONENT: Button — alternative + primary · Classes: .btn-alternative / .btn-primary -->
+      <button type="button" class="btn btn-alternative btn-md" data-close="totp-modal">Cancel</button>
+      <button type="button" class="btn btn-primary btn-md" id="totp-verify-btn" disabled>Verify and Enable</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MODAL 2: Phone verification (existing pattern from the product screenshot)
+     COMPONENT: Modal · Source story: Modal.stories.js (Figma 3284:23643)
+     Classes: .modal-backdrop · .modal-dialog · .modal-header · .modal-title
+              .modal-close · .modal-body
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="phone-modal" hidden>
+  <div role="dialog" aria-modal="true" aria-labelledby="phone-modal-title" class="modal-dialog">
+    <div class="modal-header">
+      <h2 class="modal-title" id="phone-modal-title">Enter verification code</h2>
+      <button type="button" class="modal-close" aria-label="Close dialog" data-close="phone-modal">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="margin:0 0 16px;font-size:var(--text-sm);color:var(--color-text-secondary);">Enter the 6-digit code we just sent to your phone number.</p>
+
+      <!-- COMPONENT: Forms — input field, error state (same classes as TOTP code input) -->
+      <div class="form-group" style="margin-bottom:12px;">
+        <input type="text" class="form-input" id="phone-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="1 2 3 4 5 6" aria-label="Verification code" style="text-align:center;">
+        <p class="form-feedback-error" id="phone-code-error" hidden>The code is invalid or has expired. Try again.</p>
+      </div>
+
+      <p class="form-helper" style="text-align:center;margin:0 0 16px;">Didn't receive a code?
+        <span id="resend-wait">Send again in <span id="resend-count">25</span>s</span>
+        <!-- COMPONENT: Button/Link · Classes: .btn-link .btn-link-medium .btn-sm -->
+        <button type="button" class="btn-link btn-link-semibold btn-sm" id="resend-btn" hidden>Send again</button>
+      </p>
+
+      <!-- COMPONENT: Button — primary, full-width (Modal "With forms" pattern) -->
+      <button type="button" class="btn btn-primary btn-md" id="phone-code-verify" disabled style="width:100%;justify-content:center;margin-bottom:12px;">Verify &amp; Continue</button>
+      <p style="text-align:center;margin:0;">
+        <button type="button" class="btn-link btn-link-semibold btn-sm" data-close="phone-modal">Cancel</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var DEMO_OTP = '123456';
+  var state = { phoneVerified: false, totpVerified: false, method: 'email', resendTimer: null };
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ── modals ──────────────────────────────────────────────── */
+  function openModal(id) { $(id).hidden = false; }
+  function closeModal(id) {
+    $(id).hidden = true;
+    if (id === 'phone-modal') { resetCodeInput('phone-code'); stopResend(); }
+    if (id === 'totp-modal') { resetCodeInput('totp-code'); }
+  }
+  document.querySelectorAll('[data-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () { closeModal(btn.dataset.close); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    ['totp-modal', 'phone-modal'].forEach(function (id) { if (!$(id).hidden) closeModal(id); });
+  });
+
+  /* ── code inputs: digits only, enable button at 6 digits ──── */
+  function wireCodeInput(inputId, btnId, errorId) {
+    var input = $(inputId), btn = $(btnId), err = $(errorId);
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(0, 6);
+      btn.disabled = input.value.length !== 6;
+      input.classList.remove('is-error');
+      err.hidden = true;
+    });
+  }
+  function resetCodeInput(inputId) {
+    var input = $(inputId);
+    input.value = '';
+    input.classList.remove('is-error');
+    $(inputId + '-error').hidden = true;
+    if (inputId === 'phone-code') $('phone-code-verify').disabled = true;
+    if (inputId === 'totp-code') $('totp-verify-btn').disabled = true;
+  }
+  function checkCode(inputId, errorId) {
+    var input = $(inputId);
+    if (input.value === DEMO_OTP) return true;
+    input.classList.add('is-error');          // Forms: .form-input.is-error
+    $(errorId).hidden = false;                // Forms: .form-feedback-error
+    return false;
+  }
+  wireCodeInput('totp-code', 'totp-verify-btn', 'totp-code-error');
+  wireCodeInput('phone-code', 'phone-code-verify', 'phone-code-error');
+
+  /* ── phone flow ──────────────────────────────────────────── */
+  $('phone-add-btn').addEventListener('click', function () {
+    this.hidden = true;
+    $('phone-entry').hidden = false;
+    $('phone-input').focus();
+  });
+  $('phone-verify-btn').addEventListener('click', function () {
+    var phone = $('phone-input');
+    var digits = phone.value.replace(/\D/g, '');
+    if (digits.length < 7) {
+      phone.classList.add('is-error');
+      $('phone-input-error').hidden = false;
+      return;
+    }
+    phone.classList.remove('is-error');
+    $('phone-input-error').hidden = true;
+    openModal('phone-modal');
+    startResend();
+    $('phone-code').focus();
+  });
+  $('phone-input').addEventListener('input', function () {
+    this.classList.remove('is-error');
+    $('phone-input-error').hidden = true;
+  });
+  $('phone-code-verify').addEventListener('click', function () {
+    if (!checkCode('phone-code', 'phone-code-error')) return;
+    state.phoneVerified = true;
+    closeModal('phone-modal');
+    // Profile row: show verified number + green badge
+    $('phone-entry').hidden = true;
+    $('phone-verified-value').textContent = $('phone-input').value;
+    $('phone-verified').hidden = false;
+    unlockRadioCard('method-sms');
+    $('sms-lock-note').hidden = true;
+  });
+
+  /* ── resend countdown ────────────────────────────────────── */
+  function startResend() {
+    var left = 25;
+    $('resend-count').textContent = left;
+    $('resend-wait').hidden = false;
+    $('resend-btn').hidden = true;
+    stopResend();
+    state.resendTimer = setInterval(function () {
+      left -= 1;
+      $('resend-count').textContent = left;
+      if (left <= 0) {
+        stopResend();
+        $('resend-wait').hidden = true;
+        $('resend-btn').hidden = false;
+      }
+    }, 1000);
+  }
+  function stopResend() {
+    if (state.resendTimer) { clearInterval(state.resendTimer); state.resendTimer = null; }
+  }
+  $('resend-btn').addEventListener('click', startResend);
+
+  /* ── authenticator (TOTP) flow ───────────────────────────── */
+  $('totp-setup-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    openModal('totp-modal');
+  });
+  $('totp-verify-btn').addEventListener('click', function () {
+    if (!checkCode('totp-code', 'totp-code-error')) return;
+    state.totpVerified = true;
+    closeModal('totp-modal');
+    unlockRadioCard('method-totp');
+    $('totp-lock-note').hidden = true;
+    $('totp-setup-btn').hidden = true;
+    $('totp-verified-badge').hidden = false;   // Badge: .badge .badge-sm .badge-green
+  });
+
+  /* ── copy setup key ──────────────────────────────────────── */
+  $('totp-copy-btn').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText($('totp-key').value).then(function () {
+      var original = btn.innerHTML;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 13 1 11"></polyline></svg>';
+      setTimeout(function () { btn.innerHTML = original; }, 2000);
+    });
+  });
+
+  /* ── radio cards: select / unlock ────────────────────────── */
+  function unlockRadioCard(cardId) {
+    var card = $(cardId);
+    card.classList.remove('iris-radio-card--disabled');
+    var radio = card.querySelector('.iris-radio');
+    radio.classList.remove('iris-radio--disabled');
+    radio.removeAttribute('aria-disabled');
+  }
+  function selectMethod(cardId) {
+    document.querySelectorAll('.iris-radio-card').forEach(function (card) {
+      var radio = card.querySelector('.iris-radio');
+      var on = card.id === cardId;
+      card.classList.toggle('iris-radio-card--selected', on);
+      radio.classList.toggle('iris-radio--checked', on);
+      radio.setAttribute('aria-checked', String(on));
+    });
+    state.method = $(cardId).dataset.method;
+    $('save-btn').disabled = false;
+  }
+  document.querySelectorAll('.iris-radio-card').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('#totp-setup-btn')) return;       // setup link, not a selection
+      if (card.classList.contains('iris-radio-card--disabled')) return;
+      selectMethod(card.id);
+    });
+    card.querySelector('.iris-radio').addEventListener('keydown', function (e) {
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      e.preventDefault();
+      if (!card.classList.contains('iris-radio-card--disabled')) selectMethod(card.id);
+    });
+  });
+
+  /* ── save ────────────────────────────────────────────────── */
+  /* ── org combobox ────────────────────────────────────────── */
+  (function () {
+    var trigger = $('org-select');
+    var listbox = $('org-listbox');
+    var options = listbox.querySelectorAll('[role="option"]');
+
+    function setOpen(open) {
+      listbox.hidden = !open;
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function select(opt) {
+      options.forEach(function (o) {
+        o.classList.toggle('active', o === opt);
+        o.setAttribute('aria-selected', o === opt ? 'true' : 'false');
+      });
+      trigger.textContent = opt.textContent.trim();
+      setOpen(false);
+      $('save-btn').disabled = false;
+    }
+
+    trigger.addEventListener('click', function () { setOpen(listbox.hidden); });
+
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function () { select(opt); });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!trigger.contains(e.target) && !listbox.contains(e.target)) setOpen(false);
+    });
+
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(listbox.hidden); }
+      if (e.key === 'Escape') setOpen(false);
+    });
+  }());
+  $('save-btn').addEventListener('click', function () {
+    this.disabled = true;
+    var alert = $('save-alert');
+    alert.hidden = false;
+    setTimeout(function () { alert.hidden = true; }, 4000);
+  });
+})();
+</script>
+</body>
+</html>

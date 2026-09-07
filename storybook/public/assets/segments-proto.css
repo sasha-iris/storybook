@@ -1,0 +1,141 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Shared prototype layer for the Customer Segments redesign.
+   Loaded by all four pages so they cannot disagree with each other — the second
+   audit caught three pages using three different greens for the same status.
+
+   Everything here is either (a) a documented library gap, or (b) a measured
+   accessibility correction to a library value. Both are listed in
+   SEGMENTS_RESEARCH.md so they can be pushed back into the library.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* LIBRARY GAP: .iris-tag--green ships #009966, which measures 3.65:1 on white
+     and fails WCAG AA for the 12px status text it is used with. The Tag story's
+     own dot colour, #057a55, measures 5.48:1 and is used here instead.
+     Fix belongs in iris-components.css; overridden locally until then. */
+  --seg-ok: #057a55;
+  /* #6b7280 on #f3f4f6 measures 4.39:1. Table headers need 4.5:1 at 10px. */
+  --seg-th: #4b5563;
+  /* Secondary body text that must stay readable at 11–12px. */
+  --seg-muted: #5b6270;
+  /* Links and clickable rows are brand purple #42389d, not --color-bg-primary,
+     which is blue-700 #1C64F2. The token names invite exactly this mistake:
+     --color-bg-primary is a BACKGROUND token and was being used as link colour
+     across these pages. The brand value lives in --btn-primary-bg. */
+  --seg-link: var(--btn-primary-bg);
+}
+
+.seg-ok { color: var(--seg-ok); }
+
+/* LIBRARY GAP: .iris-th ships #6b7280, which measures 4.39:1 on the #f3f4f6 the
+   header row sits on — under AA for its 10px text. #4b5563 measures 6.87:1. */
+.iris-th { color: var(--seg-th); }
+
+/* ── Status dot ───────────────────────────────────────────────────────────
+   The library's .iris-tag__dot is a 12×12 icon SLOT, not a dot: giving it a
+   background paints a square (this bug has now been shipped twice). The round
+   dot component is .indicator-dot. Its 2px white ring exists for overlapping
+   avatars and is unwanted inline, so it is removed here once, for every page,
+   instead of with an inline style at each call site. */
+.iris-tag .indicator-dot { border-width: 0; margin-right: 4px; }
+.indicator-dot-green { background: var(--seg-ok); }
+
+/* ── One focus ring for every local control ───────────────────────────────
+   The library ships :focus-visible for .btn only. */
+.seg-focus:focus-visible,
+.seg-fchip:focus-visible, .seg-select:focus-visible, .page-link:focus-visible,
+.seg-more:focus-visible, .seg-th-sort:focus-visible, .seg-name:focus-visible,
+.seg-kebab:focus-visible, .seg-menu__i:focus-visible, .sb-x:focus-visible,
+.sc-pill button:focus-visible, .form-check-input:focus-visible,
+.iris-tab:focus-visible, .modal-close:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Measured 22×26 in every dialog on this prototype, which is under the 24×24
+   WCAG 2.5.8 asks for. The library's .modal-close pads 4px around a glyph and
+   sets no floor; until that is fixed at library level, the floor is set here so
+   no dialog in this build ships an undersized close. */
+.modal-close { min-width: 24px; min-height: 24px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* The radio input inside a card is visually hidden, so the CARD takes the ring. */
+.iris-radio-card:focus-within {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ── Skip link ────────────────────────────────────────────────────────────
+   NB: these pages carry <base href>, so a bare "#id" href resolves against the
+   base URL and navigates away. Every skip link therefore uses a JS handler and
+   the target gets tabindex="-1" so focus actually lands there. */
+.seg-skip {
+  position: absolute; left: 8px; top: -48px; z-index: 100;
+  padding: 8px 14px; background: var(--color-bg-primary); color: #fff;
+  border-radius: var(--radius-md); font-size: 13px; font-weight: 600; text-decoration: none;
+  transition: top .15s;
+}
+.seg-skip:focus { top: 8px; }
+
+/* ── Target size (WCAG 2.5.8, 24x24) ─────────────────────────────────────
+   Inline links inside a line of text are exempt; standalone controls are not.
+   These three were measured under the minimum. */
+/* the row overflow control matches the row button it stands next to (36px square) */
+/* Overflow is a quiet control: an icon, no border, no fill until you point at it.
+   A bordered button gives it the same weight as the real action beside it. */
+.seg-iconbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; min-height: 36px; padding: 0;
+  border: 0; background: none; border-radius: var(--radius-md);
+  color: var(--seg-th); cursor: pointer;
+}
+.seg-iconbtn:hover { background: var(--color-bg-muted); color: var(--color-text-heading); }
+.seg-kebab { min-width: 36px; min-height: 36px; }
+.breadcrumb-item a { display: inline-flex; align-items: center; min-height: 24px; }
+.seg-th-sort { min-height: 24px; }
+.btn.btn-sm, .btn.btn-xs { min-height: 24px; }
+
+.seg-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Shell ────────────────────────────────────────────────────────────────
+   The rail is 60px at every width, so no drawer or hamburger is needed: even at
+   375px it leaves 315px for content. */
+.seg-app { display: flex; min-height: 100vh; background: var(--color-bg-default); }
+.seg-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+
+/* The backdrop itself had no rule anywhere — only the dialog inside it did — so
+   every dialog on these pages rendered in normal page flow, unpositioned, with
+   no scrim, while claiming aria-modal="true". On a long page that put it wherever
+   the document happened to end, which is why the discard dialog appeared in the
+   bottom-left corner. These are the library's own .modal-backdrop values. */
+.seg-modal-backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: rgba(0, 0, 0, .5);
+}
+.seg-modal-backdrop .modal-dialog {
+  background: #fff; border-radius: 12px; max-width: 460px; width: 100%;
+  max-height: 90vh; overflow: auto; box-shadow: 0 20px 48px rgba(0, 0, 0, .2);
+}
+
+/* ── Collapsed navigation ────────────────────────────────────────────────
+   Always collapsed; there is no expand control. .sidebar--collapsed gives the
+   60px rail, and the items are the library's .sidebar-contracted-item, built at
+   runtime by initSidebar in segments-data.js.
+
+   The contracted sections deliberately do not carry .sidebar-nav: that class is
+   padded 0 8px 0 28px, which leaves a 24px content box inside the rail and clips
+   every 60px item. Sidebar.stories.js uses a bare <nav> for the same reason, and
+   .sidebar-brand needs its 28px left padding removed too. */
+.sidebar--collapsed .sidebar-nav { display: none; }
+.seg-nav-contracted {
+  display: flex; flex-direction: column; gap: 16px; padding: 0 0 12px; width: 100%;
+}
+.sidebar--collapsed .sidebar-brand {
+  padding: 0; display: flex; justify-content: center;
+}
+.sidebar--collapsed .sidebar-divider { margin: 0; }
+.sidebar-contracted-item { text-decoration: none; }
