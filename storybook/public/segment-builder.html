@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- prototype: the review browser must never serve a stale copy while this is being iterated on -->
+<meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New segment · Iris redesign prototype</title>
+<base href="http://localhost:8010/pages/">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=20">
+<link rel="stylesheet" href="./segments-proto.css?v=21">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -30,11 +33,136 @@
 
   .sb-card { background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); margin-bottom: 16px; }
   .sb-card__h { padding: 12px 16px; border-bottom: 1px solid var(--color-border-light); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .sb-card__t { margin: 0; font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sb-card__t { margin: 0; font-size: 15px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+
+  /* A short select. The library's .form-select pads 10px top and bottom; these
+     were given a height of 30-32px inline and kept that padding, which leaves
+     ~10px of content box for 15px of text — so "First-time customers" and
+     "Amazon Seller Partner" were rendered with their descenders sliced off.
+     Height and padding have to be set together. */
+  /* The definition is the work; these two are ways of getting a head start on
+     it. They used to be the same white card with the same border and the same
+     16px gap as the conditions themselves, so nothing said which was which.
+     Now they sit on a tint, close together, with a real break under them. */
+  #sbTplCard { background: var(--color-bg-secondary); border-color: var(--color-border-light); margin-bottom: 24px; }
+  #sbDescCard { margin-bottom: 8px; }
+
+  /* Several channels at once: a row of toggles under their group names, wrapping
+     with the rest of the condition rather than forcing a second control. */
+  .sb-multi { flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 2px; }
+  .sb-multi__g { flex: 1 0 100%; margin-top: 4px; font-size: 10.5px; font-weight: var(--font-semibold); letter-spacing: .05em; text-transform: uppercase; color: var(--seg-muted); }
+  .sb-multi__g:first-child { margin-top: 0; }
+  .sb-multi__i { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; font-size: 12.5px; color: var(--color-text-heading); cursor: pointer; }
+  .sb-multi__i input { flex: none; }
+
+  .sb-sel--sm {
+    height: 32px; font-size: 12.5px; padding: 0 34px 0 10px;
+    min-width: 190px; width: auto;
+  }
+  /* Their cards all carry one line under the title saying what the card is for
+     — "Run automation when any of these conditions are met". It breaks to its
+     own line so a long one never squeezes the title. */
+  .sb-card__sub { flex: 1 0 100%; font-size: 12px; line-height: 1.4; color: var(--seg-muted); }
+
+  /* The name as the page title, in the header bar beside the actions that
+     commit it: borderless at rest, a field once you are in it. flex:1 with
+     min-width:0 so a long name yields to the buttons instead of pushing them
+     off; it scrolls inside itself when focused. */
+  .sb-nameinput {
+    flex: 1; min-width: 0; font-family: inherit; font-size: 20px; font-weight: 700;
+    letter-spacing: -0.01em; color: var(--color-text-heading);
+    padding: 5px 10px; margin-left: -10px;
+    text-overflow: ellipsis;
+    background: transparent; border: 1px solid transparent; border-radius: var(--radius-md);
+  }
+  /* Measured 2.54:1 at the library's placeholder grey, which fails even the 3:1
+     large-text threshold this 20px semibold sits under. Secondary text instead:
+     4.83:1, and still visibly lighter than a real name. */
+  .sb-nameinput::placeholder { color: var(--color-text-secondary); font-weight: 600; }
+  .sb-nameinput:hover { border-color: var(--color-border-default); }
+  .sb-nameinput:focus { outline: 2px solid var(--color-border-focus); outline-offset: 1px; border-color: transparent; background: var(--color-bg-white); }
   .sb-card__b { padding: 14px 16px; }
 
   .sb-cond { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid var(--color-border-light); border-radius: var(--radius-md); }
   .sb-cond--bad { border-color: var(--color-border-danger); background: #fff8f8; }
+  /* A suggestion is not an error and not a settled fact. Dashed, on the page's
+     own ground, so it reads as provisional rather than wrong. */
+  .sb-cond--draft { border-style: dashed; border-color: var(--color-border-default); background: var(--color-bg-secondary); }
+  .sb-sugg {
+    display: inline-flex; align-items: center; height: 20px; padding: 0 7px;
+    border-radius: 10px; background: var(--color-bg-tertiary);
+    font-size: 11px; font-weight: var(--font-medium); color: var(--color-text-body);
+  }
+  /* Its own full-width row under the control, not a flex sibling of it. As a
+     sibling it laid out BESIDE the label, so a 110-character sentence stretched
+     across the card on the same line as "Customer type" and pushed the remove
+     button to the far edge. */
+  .sb-new {
+    margin-left: 6px; padding: 0 6px; height: 17px; border-radius: 9px;
+    display: inline-flex; align-items: center;
+    font-size: 10px; font-weight: var(--font-semibold); letter-spacing: .02em;
+    background: var(--color-bg-tertiary); color: var(--color-text-body);
+  }
+  .sb-cond__new { color: var(--color-text-body); }
+  .sb-cond__why { flex: 1 0 100%; margin: 2px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--color-text-body-subtle); }
+  .sb-empty { color: var(--color-text-body); }
+  /* What the description was understood to mean. Shown every time, because a
+     suggestion nobody can check is a suggestion nobody will trust. */
+  /* The Fin entry, and the two steps of its dialog. */
+  .sb-fin { display: flex; align-items: center; gap: 12px; }
+  /* Fin's card wears a wash of the brand, so the two ways in stop reading at the
+     same weight as the definition below them — and it answers the one note
+     Marko left on the look itself: "much more neutral than the data rooms —
+     can you provide a touch of color to give it more pop?"
+
+     The tint is DERIVED from the brand button, not typed as a new hex: the
+     library has no light purple, its --color-bg-brand-soft family is the legacy
+     blue (#dbeafe) and would fight the purple button sitting on the card. A
+     flat fallback comes first for anything without color-mix. */
+  #sbDescCard {
+    background: #f4f3f9;
+    background: color-mix(in srgb, var(--btn-primary-bg) 6%, #fff);
+    border-color: #ded9ee;
+    border-color: color-mix(in srgb, var(--btn-primary-bg) 20%, #fff);
+  }
+  .sb-fin__mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex: none; border-radius: 50%;
+    background: var(--color-bg-white); color: var(--btn-primary-bg);
+  }
+  .sb-fin__t { display: flex; flex-direction: column; gap: 1px; margin-right: auto; }
+  .sb-fin__t b { font-size: 13px; color: var(--color-text-heading); }
+  .sb-fin__t span { font-size: 12px; color: var(--seg-muted); }
+  .sb-fin__hint { margin: 10px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--seg-muted); }
+  .sb-fin__exlab { margin: 14px 0 6px; font-size: 12px; color: var(--seg-muted); }
+  /* Examples are chips you press to fill the box, not links you read: that is
+     how the product's own Generate with Fin dialog offers its three. A link
+     reads as navigation and nobody presses it. */
+  .sb-fin__ex { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .sb-fin__ex button {
+    font: inherit; font-size: 12.5px; line-height: 1.4; text-align: left;
+    min-height: 26px; padding: 4px 10px; cursor: pointer;
+    color: var(--color-text-body); background: var(--color-bg-white, #fff);
+    border: 1px solid var(--color-border-default, #e5e7eb); border-radius: 6px;
+  }
+  .sb-fin__ex button:hover { background: var(--color-bg-gray-50, #f9fafb); border-color: #d1d5db; }
+  .sb-fin__ex button:focus-visible { outline: 2px solid var(--btn-primary-bg); outline-offset: 2px; }
+  .sb-fin__read { margin: 0 0 10px; font-size: 12px; color: var(--seg-muted); }
+  .sb-fin__prev { margin: 0; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 6px 12px; font-size: 12.5px; }
+  .sb-fin__prev dt { color: var(--seg-muted); }
+  .sb-fin__prev dd { margin: 0; color: var(--color-text-heading); }
+  .sb-fin__prev ul { margin: 0; padding-left: 15px; }
+  .sb-fin__q { color: var(--seg-muted); }
+  .sb-fin__skip { margin: 12px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--seg-muted); }
+
+  .sb-read { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border-light); }
+  .sb-read__t { margin: 0 0 6px; font-size: 12px; font-weight: var(--font-medium); color: var(--color-text-heading); }
+  .sb-read__l { margin: 0; padding-left: 16px; font-size: 12px; line-height: 1.6; color: var(--color-text-body); }
+  .sb-read__q { color: var(--color-text-body-subtle); }
+  .sb-read__s { margin: 8px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--color-text-body-subtle); }
+  /* 149x19. It sits under a field as its own action, not inside a sentence, so
+     the inline exception in WCAG 2.5.8 does not cover it. */
+  #sbGen { display: inline-flex; align-items: center; min-height: 24px; }
   .sb-cond__main { flex: 1; min-width: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .sb-cond__name { font-size: 12.5px; font-weight: var(--font-semibold); color: var(--color-text-heading); min-width: 118px; }
   .sb-cond__n { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--seg-muted); white-space: nowrap; }
@@ -54,7 +182,11 @@
   .sb-add__b:hover { border-color: var(--seg-link); color: var(--seg-link); }
   .sb-add__b[disabled] { opacity: .45; cursor: not-allowed; }
 
-  .sb-rail { position: sticky; top: 70px; }
+  /* Measured: the header is 100px and paints over anything at top:70, so the
+     rail's own card header — the words "Estimated audience" and its tag — slid
+     under it as soon as the page scrolled. 100 for the header plus the 16px
+     card rhythm. */
+  .sb-rail { position: sticky; top: 116px; }
   .sb-est { text-align: center; padding: 18px 16px 14px; }
   .sb-est__n { font-size: 34px; font-weight: 800; color: var(--color-text-heading); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
   .sb-est__l { font-size: 12px; color: var(--seg-muted); margin-top: 2px; }
@@ -72,6 +204,7 @@
   .sb-sample { padding: 10px 14px 14px; }
   .sb-sample__i { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid var(--color-border-light); }
   .sb-sample__i:last-child { border-bottom: 0; }
+  .sb-sample__note { margin: 0; font-size: 12px; line-height: 1.5; color: var(--seg-muted); }
 
   .sb-tpl { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
   .sb-tpl__c { text-align: left; padding: 10px 12px; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); background: var(--color-bg-white); cursor: pointer; }
@@ -121,8 +254,24 @@
           <li class="breadcrumb-item active" aria-current="page" id="sbCrumb">New segment</li>
         </ol>
       </nav>
+      <!-- No heading here. The name IS the page title, in the first card below,
+           the way the product's own automation page does it: its sticky bar
+           carries the breadcrumb and the actions, and the object's name is a
+           large borderless field at the top of the form. Ours used to have both
+           a static "New segment" heading up here and a "Segment name" field
+           halfway down the page, so the one thing Fin fills first appeared in
+           neither place you look. -->
+      <h1 class="seg-sr" id="sbTitle">New segment</h1>
       <div class="sb-title-row">
-      <h1 class="sb-h1" id="sbTitle">New segment</h1>
+      <!-- The name lives here, on the same line as the actions that commit it.
+           It was a card of its own in the body, which cost 107px above the fold
+           on a page whose conditions already started below it. Note this is a
+           deliberate departure from the product's automation page, where the
+           name is the first card of the body and this bar carries only the
+           breadcrumb and the buttons. -->
+      <label class="seg-sr" for="sbName">Segment name</label>
+      <input class="sb-nameinput" id="sbName" type="text" maxlength="120" placeholder="Name this segment" autocomplete="off" aria-describedby="sbNameHelp">
+      <p class="seg-sr" id="sbNameHelp">Used everywhere this segment appears. Two segments may not share a name.</p>
       <div class="sb-head__end">
         <button class="btn btn-sm btn-alternative" id="sbUndo" aria-label="Undo" title="Undo" disabled style="padding:0 9px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
@@ -140,31 +289,69 @@
     <div class="sb-body" id="sbBody">
       <div>
         <p class="seg-sr" role="status" aria-live="polite" id="sbLive"></p>
+
+        <!-- Under the name, not above it. Every warning this box carries is
+             about the name or the definition, and it used to sit above the
+             name card — so a page whose whole job is to show you the object you
+             are building opened on a yellow alert instead. -->
         <div id="sbWarn"></div>
 
-        <div class="sb-card">
-          <div class="sb-card__h"><h2 class="sb-card__t">Name and description</h2></div>
-          <div class="sb-card__b">
-            <div class="form-group" style="margin-bottom:12px;">
-              <label class="form-label" for="sbName">Segment name</label>
-              <input class="form-input" id="sbName" type="text" placeholder="e.g. California high spenders" autocomplete="off" aria-describedby="sbNameHelp">
-              <p class="form-helper" id="sbNameHelp">Used everywhere this segment appears. Two segments may not share a name.</p>
+        <!-- Marko, 2026-09-03: "I don't like the template all the way at the
+             bottom, because it already rolls off the page — it's not even above
+             the fold." It was the last card, under Name, Starting universe and
+             Conditions. A starting point you only reach after doing the work by
+             hand is not a starting point.
+
+             Moved to the top, and hidden while editing an existing segment,
+             where there is nothing to start. That also removes the trap he
+             walked into and backed out of on the call: choosing a template
+             raised "Replace the current conditions?" because the templates sat
+             AFTER the conditions they would overwrite. At the top there is
+             usually nothing to overwrite, and the confirmation still stands for
+             the times there is. -->
+        <!-- Marko, 2026-09-03, after watching Fin write an automation from a
+             sentence: "really nice compromise — you can either do it with an LLM,
+             or you can build it by hand." And on what Fin should do with a
+             request it does not fully understand: "it should not return such a
+             message... it should give you back some kind of answer and then you
+             polish it rather than write it from scratch over and over again. No
+             one reads those warning messages, no one."
+
+             So this never refuses. Whatever it recognises becomes conditions,
+             marked as suggestions; whatever it does not recognise is listed by
+             name, because his next question was "what's the confidence level —
+             how can you guarantee that the pre-populated inputs reflect your
+             idea?" It cannot be guaranteed, so the answer is to show the working:
+             what was understood, and what was passed over. -->
+        <div class="sb-card" id="sbDescCard">
+          <div class="sb-card__b sb-fin">
+            <span class="sb-fin__mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 5.6 10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.9959.9959 0 0 0-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41zm-1.03 5.49-2.12-2.12 2.44-2.44 2.12 2.12z"/></svg></span>
+            <div class="sb-fin__t">
+              <b>Describe it and let Fin build it</b>
+              <span>Fin fills in every field. You change what is wrong.</span>
             </div>
-            <div class="form-group" style="margin-bottom:0;">
-              <label class="form-label" for="sbDesc">Description</label>
-              <textarea class="form-textarea" id="sbDesc" rows="2" placeholder="What is this segment for?"></textarea>
-              <p class="form-helper">
-                <button class="btn-link btn-link-medium" id="sbGen" style="font-size:12px;padding:0;">Write it from the definition</button>
-                — describes the conditions in plain language so the list stays readable.
-              </p>
-            </div>
+            <button class="btn btn-sm btn-primary" id="sbGenFin">Generate with Fin</button>
           </div>
         </div>
+
+        <div class="sb-card" id="sbTplCard">
+          <div class="sb-card__h">
+            <h2 class="sb-card__t">Start from a template</h2>
+            <label class="seg-sr" for="sbTplCat">Template category</label>
+            <select class="form-select sb-sel--sm" id="sbTplCat" style="min-width:0;margin-left:auto;">
+              <option value="">All categories</option>
+              <option>Retention</option><option>Acquisition</option><option>Revenue</option>
+            </select>
+            <span class="sb-card__sub">A ready definition to begin from — everything stays editable</span>
+          </div>
+          <div class="sb-card__b"><div class="sb-tpl" id="sbTpl"></div></div>
+        </div>
+
 
         <div class="sb-card">
           <div class="sb-card__h">
             <h2 class="sb-card__t">Starting universe</h2>
-            <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);">Everything below narrows this set</span>
+            <span class="sb-card__sub">Everything below narrows this set</span>
           </div>
           <div class="sb-card__b">
             <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
@@ -196,10 +383,36 @@
           <div class="sb-card__h">
             <h2 class="sb-card__t">Conditions</h2>
             <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);" id="sbCondN"></span>
+            <span class="sb-card__sub">What narrows the starting universe down to this segment</span>
           </div>
           <div class="sb-card__b">
             <div id="sbConds"></div>
             <div class="sb-add" id="sbAdd"></div>
+          </div>
+        </div>
+
+        <!-- Below the conditions, not above them. Measured at 800px tall the
+             Conditions card started at y=791 — nine pixels of border and
+             nothing else — with 564px of optional cards above it, of which
+             this was 241. Fin and "Write it from the definition" both write
+             the description from the conditions, so it cannot be filled in
+             first anyway. -->
+        <div class="sb-card">
+          <div class="sb-card__h"><h2 class="sb-card__t">Description</h2>
+            <span class="sb-card__sub">What this segment is for, in plain language</span>
+          </div>
+          <div class="sb-card__b">
+            <div class="form-group" style="margin-bottom:0;">
+              <!-- The card title is the label; a second visible "Description"
+                   right under it said the word twice. Their Instructions card
+                   does the same — titled card, unlabelled field. -->
+              <label class="seg-sr" for="sbDesc">Description</label>
+              <textarea class="form-textarea" id="sbDesc" rows="2" placeholder="What is this segment for?"></textarea>
+              <p class="form-helper">
+                <button class="btn-link btn-link-medium" id="sbGen" style="font-size:12px;padding:0;">Write it from the definition</button>
+                — describes the conditions in plain language so the list stays readable.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -227,23 +440,12 @@
           </div>
         </div>
 
-        <div class="sb-card">
-          <div class="sb-card__h">
-            <h2 class="sb-card__t">Start from a template</h2>
-            <label class="seg-sr" for="sbTplCat">Template category</label>
-            <select class="form-select" id="sbTplCat" style="height:30px;font-size:12px;width:auto;padding-right:32px;margin-left:auto;">
-              <option value="">All categories</option>
-              <option>Retention</option><option>Acquisition</option><option>Revenue</option>
-            </select>
-          </div>
-          <div class="sb-card__b"><div class="sb-tpl" id="sbTpl"></div></div>
-        </div>
       </div>
 
       <div class="sb-rail">
         <div class="sb-card" style="margin-bottom:12px;" id="sbEstCard">
           <div class="sb-card__h"><h2 class="sb-card__t">Estimated audience</h2>
-            <span class="iris-tag iris-tag--grey" style="margin-left:auto;font-size:10px;">estimate</span></div>
+            <span class="iris-tag iris-tag--grey" style="margin-left:auto;font-size:10px;">Illustrative</span></div>
           <div class="sb-est">
             <div class="sb-est__n" id="sbEstN">—</div>
             <div class="sb-est__l">customers match</div>
@@ -270,39 +472,475 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=20"></script>
+<script src="./segments-data.js?v=21"></script>
 <script>
+/* Variant 2 renames a segment on its own page and stores the new name under
+   `segNames`. This page is shared with v1 and does not load the v2 runtime, so
+   without this a rename survived exactly one click: "edit the definition" from
+   inside the rename panel opened the builder still showing the old name.
+   Applied only under ?v2=1, so v1 keeps reading the shipped names. */
+if (new URLSearchParams(location.search).get('v2') === '1') {
+  try {
+    const m = JSON.parse(sessionStorage.getItem('segNames') || '{}');
+    if (m && typeof m === 'object' && !Array.isArray(m))
+      SEGMENTS.forEach(s => { if (m[s.id]) s.n = m[s.id]; });
+  } catch (e) {}
+}
+</script>
+<script>
+/* ── The condition vocabulary ─────────────────────────────────────────────
+   Every value here occurs in the seeded data. It did not before: the builder
+   offered SKUs F001/B009/B018, families Cold Brew/Powders/Accessories, tags
+   gift/subscription/vip/wholesale, the country Australia and a "Bottom 50% by
+   revenue" percentile — none of which appears anywhere in the forty segments.
+   A prototype gets read as a specification, so an invented dropdown is a
+   specification for a filter the product does not have.
+
+   The data never exposes a SKU code, a family name or a tag name; it counts
+   them — "Has 3 SKU(s)", "Has 1 tag(s)", "Has 1 product family(s)" — and so
+   does the product's own edit screen ("Bought any of 3 SKUs"). So those are
+   counts here too, which also lets the builder express the seeded segments it
+   previously could not.
+
+   Removed outright: "Wholesale" and "Subscription orders", two dimensions that
+   match nothing in the data and nothing in the list's own model, so a segment
+   built on them was filterable by nothing afterwards. */
 const CATALOG = {
   WHO: [
     { k:'ctype',  n:'Customer type',      ctl:['select', ['First-time customers','Returning customers']], f:.31 },
-    { k:'geo',    n:'Geography',          ctl:['select', ['United States','Canada','United Kingdom','Australia']], f:.42 },
-    { k:'pct',    n:'Percentile rank',    ctl:['select', ['Top 10% by revenue','Top 25% by order count','Bottom 50% by revenue']], f:.19 },
-    { k:'subs',   n:'Subscriber status',  ctl:['select', ['Subscribers only','Non-subscribers only']], f:.27 }
+    /* US, CA and GB are the countries actually held by the segments, read one
+       by one out of the product's edit screen on 2026-09-07. Postal codes are
+       the second level the data carries (IL and CA). */
+    { k:'geo',    n:'Geography',          ctl:['select', ['United States','Canada','United Kingdom']], f:.42 },
+    { k:'pct',    n:'Percentile rank',    ctl:['select', ['Top 10% by Revenue','Top 25% by Order Count']], f:.19 },
+    { k:'subs',   n:'Subscriber status',  ctl:['select', ['Subscribers only']], f:.27 }
   ],
   WHAT: [
-    { k:'sku',    n:'SKU',                ctl:['select', ['F001','B009','B018','B004','B005']], f:.36 },
-    { k:'fam',    n:'Product family',     ctl:['select', ['Cold Brew','Powders','Accessories']], f:.48 }
+    { k:'sku',    n:'SKUs',               ctl:['num', 'Has', 'SKU(s)'], f:.36 },
+    { k:'fam',    n:'Product families',   ctl:['num', 'Has', 'product family(s)'], f:.48 }
   ],
   HOW: [
     { k:'value',  n:'Order value',        ctl:['num', 'greater than $'], f:.44 },
     { k:'disc',   n:'Discount',           ctl:['num', 'greater than %'], f:.38 },
-    { k:'refund', n:'Refunds',            ctl:['select', ['No refunds','Has refunds']], f:.86 },
-    { k:'chan',   n:'Sales channels',     ctl:['select', ['Shopify','Amazon','Wholesale','Retail','TikTok']], f:.63 },
-    { k:'tag',    n:'Order tag',          ctl:['select', ['gift','subscription','vip','wholesale']], f:.22 },
-    { k:'whole',  n:'Wholesale',          ctl:['select', ['Wholesale only','Exclude wholesale']], f:.71 },
-    { k:'subord', n:'Subscription orders',ctl:['select', ['Subscription orders only','Exclude subscriptions']], f:.33 }
+    /* Both halves are real: one segment is "No refunds", another is "Refunds
+       greater than $1". A two-option select could express only the first, and
+       opening the second inverted it. */
+    { k:'refund', n:'Refunds',            ctl:['select', ['No refunds']], f:.86 },
+    { k:'refamt', n:'Refund amount',      ctl:['num', 'greater than $'], f:.52 },
+    /* The channel names are real — read out of the live product's own picker on
+       2026-09-07, a tree of Select All over DTC and Wholesale. The data counts
+       them ("12 sales channel(s)"), so the count is what a condition carries;
+       the names are what you choose from. */
+    /* Many, not one. The data counts channels — "12 sales channel(s)", "9",
+       "2" — and a single select could express exactly one, so the builder could
+       not construct most of the segments the list already holds. Marko, 12:20:
+       "we wanna see here the channel — some segments will become Shopify,
+       Amazon oriented", which is a segment spanning several. */
+    { k:'chan',   n:'Sales channels',     ctl:['multi', [
+        { g:'DTC' }, 'Amazon Seller Partner', 'Manual Order DTC', 'Shopify DTC',
+        { g:'Wholesale' }, 'Manual Order Wholesale', 'Shopify Wholesale', 'SPS Commerce'
+      ]], f:.63 },
+    { k:'tag',    n:'Order tags',         ctl:['num', 'Has', 'tag(s)'], f:.22 },
+    /* Marko, 10:00: "there's a specific discount code that I want to analyze."
+       Iris filters on a discount PERCENTAGE today, not on a code, and no code
+       appears anywhere in the data — which is why this was left out of the
+       build for a while, on the rule against inventing data.
+
+       That was the wrong rule. Inventing data would be shipping a dropdown of
+       made-up codes; this is a field the reader types their own code into, and
+       the value never comes from us. What it does need is to say plainly that
+       Iris cannot do it yet, so the prototype is not read as a description of
+       the current product. */
+    { k:'code',   n:'Discount code',      ctl:['text', 'is', 'e.g. SPRING24'], f:.12, isNew: true }
   ]
 };
 const ALL = Object.values(CATALOG).flat();
 const TEMPLATES = [
   { n:'High-value repeat buyers',  d:'Returning · orders over $100',    cat:'Revenue',     c:[['ctype','Returning customers'],['value','100']] },
-  { n:'At-risk subscribers',       d:'Subscribers · has refunds',       cat:'Retention',   c:[['subs','Subscribers only'],['refund','Has refunds']] },
+  /* Every value here has to be an exact option of its control. "Has refunds"
+     and "Top 10% by revenue" were neither: the select fell back to "Choose a
+     value…" while the rail confidently reported an audience, Save stayed
+     enabled, and the saved segment carried a filter value the catalogue does
+     not contain. */
+  { n:'Subscribers with refunds',  d:'Subscribers · refunded over $1',  cat:'Retention',   c:[['subs','Subscribers only'],['refamt','1']] },
   { n:'Discount-driven first buy', d:'First-time · discount over 20%',  cat:'Acquisition', c:[['ctype','First-time customers'],['disc','20']] },
-  { n:'Top decile by revenue',     d:'Top 10% by revenue',              cat:'Revenue',     c:[['pct','Top 10% by revenue']] }
+  { n:'Top decile by revenue',     d:'Top 10% by Revenue',              cat:'Revenue',     c:[['pct','Top 10% by Revenue']] }
 ];
+
+/* ── Reading a description ────────────────────────────────────────────────
+   Deterministic, and it says so: every value the catalogue offers is matched by
+   name, plus the aliases people actually type, plus the two number shapes that
+   appear in these conditions. No model, no network, nothing invented — if a
+   phrase is not in the catalogue it is reported as passed over rather than
+   guessed at, which is the only honest answer to "what's the confidence level".
+
+   It never returns nothing. A description that matches no condition still gets
+   the sentence explaining what was read, so the reader is never handed a
+   refusal and asked to word it better. */
+/* Keys must be options that exist. It carried aliases for Australia,
+   Non-subscribers only, Has refunds, Cold Brew, Powders, Accessories, gift and
+   vip — every one of them a value removed from the catalogue for being absent
+   from the data. Unreachable today, but they are how an invented value gets
+   quietly revived. */
+const ALIASES = {
+  /* No bare "us". "tell their friends about us" was read as the United States,
+     which is exactly the kind of confident wrong answer that makes a reader
+     stop trusting every other suggestion on the page. */
+  'United States': ['united states', 'usa', 'u\\.s\\.a?', 'america'],
+  'Canada':        ['canada', 'canadian'],
+  'United Kingdom':['united kingdom', 'uk', 'britain', 'british', 'england'],
+  'First-time customers': ['first-time', 'first time', 'new customers', 'newly acquired'],
+  'Returning customers':  ['returning', 'repeat', 'came back'],
+  'Subscribers only':     ['subscriber', 'subscription customers'],
+  'No refunds':           ['no refunds', 'never refunded'],
+  'Amazon Seller Partner': ['amazon'], 'Shopify DTC': ['shopify dtc', 'shopify'],
+  'Manual Order DTC': ['manual order dtc'],
+  'Manual Order Wholesale': ['manual order wholesale'],
+  'Shopify Wholesale': ['shopify wholesale'],
+  'SPS Commerce': ['sps commerce', 'sps'],
+  'Top 10% by Revenue':   ['top 10%', 'top decile'],
+  'Top 25% by Order Count': ['top 25%']
+};
+
+function readDescription(text) {
+  const t = ' ' + text.toLowerCase().replace(/\s+/g, ' ') + ' ';
+  const conds = [], read = [];
+  const used = new Set();
+
+  ALL.forEach(def => {
+    if (def.ctl[0] !== 'select' || used.has(def.k)) return;
+    /* Longest needle first, across every option of the dimension. Taking them
+       in list order let "shopify" claim "Shopify Wholesale" for Shopify DTC,
+       because Shopify DTC comes first and carries the shorter alias. */
+    const cands = [];
+    def.ctl[1].forEach(opt => {
+      if (opt && typeof opt === 'object') return;      /* a group heading */
+      [opt.toLowerCase()].concat(ALIASES[opt] || [])
+        .forEach(n => cands.push({ opt: opt, n: n }));
+    });
+    cands.sort((a, b) => b.n.length - a.n.length);
+
+    for (const cand of cands) {
+      const opt = cand.opt;
+      /* Whole words. Substring matching turned "accessories" into a hit for
+         "access" and "us" into a hit inside a dozen ordinary words. */
+      const needle = cand.n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const m = t.match(new RegExp('\\b' + needle + '\\w*', 'i'));
+      const hit = m ? m[0] : null;
+      if (hit) {
+        conds.push({ k: def.k, v: opt, draft: true });
+        read.push({ phrase: hit.trim(), as: def.n + ' = ' + opt });
+        used.add(def.k);
+        return;
+      }
+    }
+  });
+
+  /* Two number shapes, both of which appear verbatim in the existing segments:
+     "Order value greater than $100" and "Discount greater than 25%". */
+  const money = t.match(/(?:over|above|more than|greater than)\s*\$\s*(\d+)/);
+  if (money && !used.has('value')) {
+    conds.push({ k: 'value', v: money[1], draft: true });
+    read.push({ phrase: money[0].trim(), as: 'Order value greater than $' + money[1] });
+    used.add('value');
+  }
+  const pctm = t.match(/(?:discount|promo|promotion)[^.]{0,20}?(\d+)\s*%|(\d+)\s*%\s*(?:discount|off)/);
+  if (pctm && !used.has('disc') && !used.has('code')) {
+    const v = pctm[1] || pctm[2];
+    conds.push({ k: 'disc', v: v, draft: true });
+    read.push({ phrase: pctm[0].trim(), as: 'Discount greater than ' + v + '%' });
+    used.add('disc');
+  }
+  /* "the discount code SPRING24", "promo code BFCM". Read BEFORE the percentage
+     so that "discount code 2024" cannot be mistaken for a percentage, and taken
+     from the sentence verbatim — the code is the reader's, never ours. */
+  const code = text.match(/(?:discount|promo|promotion|coupon)\s+code\s+["“']?([A-Za-z0-9_-]{2,40})["”']?/i);
+  if (code && !used.has('code')) {
+    conds.push({ k: 'code', v: code[1], draft: true });
+    read.push({ phrase: code[0].trim(), as: 'Discount code is ' + code[1] });
+    used.add('code');
+  }
+  const top = t.match(/top\s*(\d+)\s*%/);
+  if (top && !used.has('pct')) {
+    const opt = ALL.find(d => d.k === 'pct').ctl[1].find(o => o.includes(top[1] + '%'))
+             || ALL.find(d => d.k === 'pct').ctl[1][0];
+    conds.push({ k: 'pct', v: opt, draft: true });
+    read.push({ phrase: top[0].trim(), as: 'Percentile rank = ' + opt });
+    used.add('pct');
+  }
+
+  /* What it passed over, in the reader's own words: any run of letters longer
+     than three that did not contribute to a condition. */
+  /* Lowercased: a phrase read verbatim out of the sentence keeps its own case,
+     so "SPRING24" did not match the lowercased word list and the reader was
+     told "spring" had been passed over immediately after being shown that the
+     code was understood. */
+  const taken = read.map(r => r.phrase).join(' ').toLowerCase();
+  const stop = new Set(['who','with','that','have','has','their','they','from','over','more','than','and','the','customers','customer','segment','people','using','used','only','were','been','last','this','those','some','want','wants','make','made','order','orders','above','below','between','about']);
+  const skipped = [...new Set((text.toLowerCase().match(/[a-z][a-z'-]{3,}/g) || [])
+    .filter(w => !stop.has(w) && !taken.includes(w)))];
+
+  return { conds, read, skipped };
+}
+
+/* The segments made in this session, before anything looks one up by id. The
+   list and the compare page each merge them; this page did not, so Edit on a
+   segment you had just created — the exact create, open, edit path the flow
+   exists for — opened a blank "New segment" form and saving it appended a
+   second copy instead of changing the first. */
+(() => {
+  let made = [];
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segMade') || '[]');
+    if (Array.isArray(v)) made = v;
+  } catch (e) {}
+  made.forEach((raw, j) => {
+    if (!raw || typeof raw !== 'object' || typeof raw.n !== 'string') return;
+    if (SEGMENTS.some(x => x.id === 'made' + j)) return;
+    const seg = makeSegment(raw, 0);
+    seg.id = 'made' + j;
+    SEGMENTS.push(seg);
+  });
+})();
+
+/* Declared above every use. Reading a country back out of a saved condition
+   happens in the edit block, which runs long before condText does, and a `const`
+   below it is in the temporal dead zone — the whole page threw. */
+const GEO_CODE = { 'United States': 'In US', 'Canada': 'In CA', 'United Kingdom': 'In GB' };
+const CODE_GEO = { US: 'United States', CA: 'Canada', GB: 'United Kingdom' };
 
 /* Edit mode: the list, the detail page and the row menu all link here with ?id */
 const EDIT = SEGMENTS.find(s => s.id === new URLSearchParams(location.search).get('id')) || null;
+/* Nothing to start from when you are editing something that already exists. */
+if (EDIT) {
+  ['sbTplCard', 'sbDescCard'].forEach(id => { const t = document.getElementById(id); if (t) t.hidden = true; });
+}
+
+/* Arriving from the list's menu: land on the way in that was chosen. */
+if (location.hash === '#describe') setTimeout(() => generateWithFin(''), 0);
+else if (location.hash === '#templates') {
+  const t = document.getElementById('sbTplCard');
+  if (t) t.scrollIntoView({ block: 'center' });
+}
+
+/* ── Generate with Fin ────────────────────────────────────────────────────
+   Their flow, step for step, from the Automations demo Marko gave at 13:40:
+
+     + Create automation  →  a "Generate with Fin" dialog carrying a prompt box
+     and a short list of examples  →  Generating…  →  a PREVIEW of the finished
+     object with every field filled  →  "Create this automation" beside "No, I
+     want something else".
+
+   Nothing is written into the form until the preview is accepted, which is what
+   makes his own question answerable: "how can you guarantee that the prompt or
+   pre-populated inputs will reflect your idea?" You see all of it first.
+
+   And at 15:24, watching his own: "the UI for creating it, it is populated —
+   all of the fields, and it's got all of the details." So this fills the name,
+   the description, the order window and the conditions, not just the
+   conditions. */
+/* Fin's own mark, read off the product on 2026-09-07: the sidebar's "Fin AI"
+   entry is MUI `AutoFixHigh`, a wand with sparkles, and the same glyph sits on
+   "Generate with Fin" in their create menu. It is a brand mark, not a generic
+   interface icon, so it does NOT get swapped for the Heroicons equivalent the
+   way a funnel or a chevron would — and this prototype had it wrong twice: a
+   robot on the builder card, and a Heroicons sparkle on the button. */
+const FIN_MARK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="margin-right:6px">' +
+  '<path d="M7.5 5.6 10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.9959.9959 0 0 0-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41zm-1.03 5.49-2.12-2.12 2.44-2.44 2.12 2.12z"/></svg>';
+
+const FIN_EXAMPLES = [
+  'Returning customers in the United States who used a discount over 20%',
+  'First-time buyers on Amazon Seller Partner in the last 90 days',
+  'Top 10% by revenue with no refunds'
+];
+
+/* A period named in the sentence sets the order window; the builder's own
+   options are the vocabulary, so nothing is invented. */
+function readWindow(text) {
+  const t = text.toLowerCase();
+  const m = t.match(/last\s+(\d+)\s+days?/);
+  if (m) {
+    const n = +m[1];
+    const closest = [30, 90, 180].reduce((a, b) => Math.abs(b - n) < Math.abs(a - n) ? b : a);
+    return { v: String(closest), phrase: m[0], as: 'Order window = last ' + closest + ' days' };
+  }
+  if (/last\s+(12\s+months|year)/.test(t))
+    return { v: '365', phrase: (t.match(/last\s+(12\s+months|year)/) || [])[0], as: 'Order window = last 12 months' };
+  if (/all[- ]time|ever|any time/.test(t))
+    return { v: '0', phrase: (t.match(/all[- ]time|ever|any time/) || [])[0], as: 'Order window = all time' };
+  return null;
+}
+
+/* The description, written from what was read rather than from the raw sentence:
+   the field's own helper asks for the definition in plain language. */
+/* Lowercase a phrase for a sentence, but never a name inside it. */
+function keepCase(t) {
+  const geo = /^Geography:\s*(In .+)$/i.exec(t);
+  if (geo) return 'geography: ' + geo[1];
+  const ch = /^(\d+ sales channel\(s\)):\s*(.+)$/i.exec(t);
+  if (ch) return ch[1].toLowerCase() + ': ' + ch[2];
+  if (/^Discount code is /.test(t)) return 'discount code ' + t.replace(/^Discount code is /, '');
+  return PROPER.some(x => t.indexOf(x) === 0) ? t : t.toLowerCase();
+}
+
+/* Values that are names and keep their capitals in a sentence. */
+const PROPER = ['United States', 'Canada', 'United Kingdom', 'Amazon Seller Partner',
+  'Manual Order DTC', 'Shopify DTC', 'Manual Order Wholesale', 'Shopify Wholesale',
+  'SPS Commerce', 'Top 10% by Revenue', 'Top 25% by Order Count'];
+
+function finDescription(read) {
+  if (!read.length) return '';
+  return 'Customers matching ' + read.map(x => {
+    const v = x.as.replace(/^[^=]+= /, '');
+    /* "Discount code is SPRING24" keeps its code; everything else is a phrase
+       and reads better lowercased into the sentence. */
+    return keepCase(v);
+  }).join(', ') + '.';
+}
+
+/* What is in the box, kept outside the dialog so that "No, I want something
+   else" can put the reader back in front of their own words rather than an
+   empty field — Marko, 15:00: "it should give you back some kind of answer and
+   then you polish it, rather than write it from scratch over and over again." */
+let finTyped = '';
+
+function generateWithFin(prefill) {
+  finTyped = prefill || '';
+  /* Read off the product's own dialog on 2026-09-07, not paraphrased from the
+     recording: heading "Generate with Fin", the label "Describe the
+     automation", an "e.g. ..." placeholder, one line saying where Fin gets its
+     material and that you can review it, "Examples" and three chips, then
+     Cancel beside a primary that is off until the box has something in it.
+     Same shape here, with segments in place of automations. Their "Type @ to
+     attach artifacts" line is not copied — there is nothing to attach to a
+     segment, and a control that does nothing is worse than no control. */
+  const promptStep = () => {
+    modal({
+      title: 'Generate with Fin',
+      confirmLabel: 'Generate segment',
+      confirmIcon: FIN_MARK,
+      confirmDisabled: !finTyped.trim(),
+      wide: true,
+      body:
+        '<label class="form-label" for="finQ">Describe the segment</label>' +
+        '<textarea class="form-textarea" id="finQ" rows="3" placeholder="e.g. ' + esc(FIN_EXAMPLES[0]) + '">' + esc(finTyped) + '</textarea>' +
+        '<p class="sb-fin__hint">Fin writes the name, the description, the order window and the conditions from your ' +
+        'customer data. You can review and edit everything before you save.</p>' +
+        '<p class="sb-fin__exlab">Examples</p>' +
+        '<ul class="sb-fin__ex">' + FIN_EXAMPLES.map(x =>
+          '<li><button type="button" data-ex="' + esc(x) + '">' + esc(x) + '</button></li>').join('') + '</ul>',
+      onConfirm: () => previewStep(finTyped.trim())
+    });
+    /* Focus starts in the box, not on Close: the dialog exists to be typed in,
+       and it opens with the last thing that was typed still there. */
+    const box = document.getElementById('finQ');
+    if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+  };
+
+  const previewStep = (text) => {
+    const r = readDescription(text);
+    const win = readWindow(text);
+    /* readDescription does not know about the order window, so "last 90 days"
+       came back both as the window and as passed-over words. Whatever the
+       window consumed is struck off the passed-over list. */
+    if (win) {
+      const used = win.phrase.toLowerCase().split(/\s+/);
+      r.skipped = r.skipped.filter(w => !used.includes(String(w).toLowerCase()));
+    }
+    /* The name Fin gives it. A short sentence is already a name; a long one is
+       not, and cutting it produced "Returning customers in the United States
+       who used a" — a fragment that would then be saved, shown in the list and
+       read as truncation everywhere. So a long sentence is named by what was
+       actually read out of it, which is the same material the conditions are
+       built from and therefore invents nothing. */
+    const name = text.length <= 60 ? text
+      : r.read.length ? (v => v[0].toUpperCase() + v.slice(1))(
+          r.read.slice(0, 3).map(x => x.as.replace(/^[^=]+= /, '')).join(', '))
+      : text.slice(0, 60).replace(/\s+\S*$/, '');
+    const desc = finDescription(r.read);
+
+    modal({
+      title: 'Generate with Fin',
+      confirmLabel: 'Create this segment',
+      cancelLabel: 'No, I want something else',
+      /* Straight back to the prompt, with the sentence still in it. */
+      onCancel: promptStep,
+      wide: true,
+      body:
+        '<p class="sb-fin__read">Read from “' + esc(text) + '”</p>' +
+        '<dl class="sb-fin__prev">' +
+          '<dt>Name</dt><dd>' + esc(name) + '</dd>' +
+          '<dt>Description</dt><dd>' + (desc ? esc(desc) : '<i>nothing to write yet</i>') + '</dd>' +
+          '<dt>Order window</dt><dd>' + (win ? esc(win.as.replace('Order window = ', '')) : 'left as it is') + '</dd>' +
+          '<dt>Conditions</dt><dd>' + (r.read.length
+            ? '<ul>' + r.read.map(x => '<li>' + esc(x.as) + ' <span class="sb-fin__q">from “' + esc(x.phrase) + '”</span></li>').join('') + '</ul>'
+            : '<i>none recognised</i>') + '</dd>' +
+        '</dl>' +
+        (r.skipped.length
+          ? '<p class="sb-fin__skip">Passed over: ' + r.skipped.slice(0, 12).map(esc).join(', ') +
+            '. Iris filters on the conditions in the catalogue, so anything else is left for you.</p>' : '') +
+        '<p class="sb-fin__hint">It will not be perfect. Everything above lands in the form marked as a suggestion, ' +
+        'and nothing is saved until you press Save segment.</p>',
+      onConfirm: () => {
+        commit(() => {
+          if (r.conds.length) state.conds = r.conds.map((c, ci) => ({
+            k: c.k, v: c.v, draft: true, phrase: (r.read[ci] || {}).phrase
+          }));
+          state.name = name;
+          /* Only write a description when there is one to write. Accepting a
+             preview that recognised nothing used to blank whatever the reader
+             had typed, while the conditions — guarded — were left alone. */
+          if (desc) { state.desc = desc; lastGenerated = desc; }
+          if (win) state.range = win.v === 'custom' ? state.range : +win.v;
+        });
+        document.getElementById('sbName').value = state.name;
+        document.getElementById('sbDesc').value = state.desc;
+        
+        if (win) document.getElementById('sbRange').value = win.v;
+        render();
+        /* Land at the top of the filled object, on its name — the first thing
+           to check is whether Fin named it the way you meant. Focus used to go
+           to the first condition, which scrolled the name off the screen at the
+           exact moment it had just been written. */
+        const nm = document.getElementById('sbName');
+        window.scrollTo({ top: 0 });
+        nm.focus();
+        nm.setSelectionRange(nm.value.length, nm.value.length);
+      }
+    });
+  };
+
+  promptStep();
+}
+
+/* Registered once on the host, which outlives every dialog it shows: doing it
+   per call left a listener behind on each cancel, all of them writing to a
+   closure that had already gone.
+
+   modal() clears its host before onConfirm runs, so the sentence is kept as it
+   is typed rather than read back at the end. */
+(function finBox() {
+  const host = document.getElementById('modalHost');
+  /* Off until there is something to generate from, as the product's own is.
+     An example fills the box and switches it on in the same press. */
+  const sync = () => {
+    const ok = host.querySelector('[data-md="ok"]');
+    if (ok) ok.disabled = !finTyped.trim();
+  };
+  host.addEventListener('input', e => { if (e.target.id === 'finQ') { finTyped = e.target.value; sync(); } });
+  host.addEventListener('click', e => {
+    const ex = e.target.closest('[data-ex]');
+    if (!ex) return;
+    finTyped = ex.dataset.ex;
+    const box = document.getElementById('finQ');
+    if (box) { box.value = finTyped; box.focus(); }
+    sync();
+  });
+})();
+
+document.getElementById('sbGenFin').addEventListener('click', () => generateWithFin(''));
+
+
 
 /* ── Variant-2 mode ────────────────────────────────────────────────────────
    The v2 pages have no builder of their own, so they link here with ?v2=1.
@@ -327,16 +965,30 @@ if (V2) {
   const card = document.getElementById('sbModeCard');
   if (card) card.remove();
   const note = document.getElementById('sbEstNote');
-  if (note) note.textContent =
-    'The estimate is computed from the conditions above and can differ from the ' +
-    'final size by a few percent. Iris computes the exact figure on the fly when the segment is opened.';
+  /* Says what it is. The figures in this rail are modelled from the conditions,
+     not measured from customers — this prototype has no customer records at
+     all — and the previous wording ("computed from the conditions above")
+     invited them to be read as the real answer. */
+  if (note) note.innerHTML =
+    '<b>Illustrative.</b> The audience is modelled from the conditions to show how the ' +
+    'builder behaves as you narrow it; it is not a query against customer records. ' +
+    'Iris computes the real figure on the fly when the segment is opened.';
   document.querySelectorAll('a[href="./segments.html"]').forEach(a => a.href = './segments-v2.html');
 }
+
+/* The last description this page wrote for itself. A description the reader
+   typed is theirs and is never replaced or cleared behind their back; one that
+   Fin or "Write it from the definition" produced describes a definition, and
+   goes when that definition does. */
+let lastGenerated = '';
 
 let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: '', desc: '', mode: 'auto', join: 'all' };
 let touched = false;   /* opening a segment for editing is not a change to it */
 if (EDIT) {
   document.title = `Edit ${EDIT.n} · Iris`;
+  /* The name field carries the name on screen now, so only the breadcrumb says
+     what is being edited — as their page does. The h1 stays, unseen, because a
+     page still needs one. */
   document.getElementById('sbTitle').textContent = `Edit “${EDIT.n}”`;
   document.getElementById('sbCrumb').textContent = `Edit “${EDIT.n}”`;
   document.getElementById('sbSave').textContent = 'Save changes';
@@ -354,22 +1006,98 @@ if (EDIT) {
     : /Order value/i.test(raw) ? 'value' : /Discount/i.test(raw) ? 'disc'
     : /refund/i.test(raw) ? 'refund' : /sales channel/i.test(raw) ? 'chan'
     : /tag/i.test(raw) ? 'tag' : null;
+  /* The value, read out of the condition string rather than guessed. Filling in
+     the first entry of the list instead turned "Refunds greater than $1" into
+     "No refunds" — the exact inverse — and "Geography (no criteria set)" into
+     "United States", and one Save wrote that back over the real definition.
+     What cannot be read stays empty and says so. */
+  const valueOf = (k, raw) => {
+    const num = (raw.match(/(\d[\d,.]*)/) || [])[1];
+    const n = num ? num.replace(/,/g, '') : '';
+    switch (k) {
+      case 'ctype':  return /First-time/i.test(raw) ? 'First-time customers'
+                          : /Returning/i.test(raw) ? 'Returning customers' : '';
+      case 'pct':    return /Revenue/i.test(raw) ? 'Top 10% by Revenue'
+                          : /Order Count/i.test(raw) ? 'Top 25% by Order Count' : '';
+      case 'subs':   return /Subscribers only/i.test(raw) ? 'Subscribers only' : '';
+      /* "No refunds" is a value; "Refunds greater than $1" is the other
+         dimension entirely, so it is routed to the amount. */
+      case 'refund': return /^No refunds/i.test(raw) ? 'No refunds' : '';
+      case 'sku': case 'fam': case 'tag':
+                     return /^No |selected/i.test(raw) ? '' : n;
+      case 'value': case 'disc': case 'refamt': return n;
+      /* A seeded segment says only "1 country(s)" and the country is not in the
+         payload, so it stays empty. One built here carries it — "Geography:
+         In US" — and that has to be read back, or editing your own segment
+         silently emptied the condition you had just set. */
+      case 'geo': {
+        const g = /In ([A-Z]{2})/i.exec(raw);
+        return g ? (CODE_GEO[g[1].toUpperCase()] || '') : '';
+      }
+      /* Same: "12 sales channel(s)" is a count with no names in it, but
+         "1 sales channel(s): Amazon Seller Partner" names its one. */
+      case 'chan': {
+        const c = /sales channel\(s\):\s*(.+)$/i.exec(raw);
+        return c ? c[1].trim() : '';
+      }
+      default:       return '';
+    }
+  };
   EDIT.conds.forEach(c => {
-    const k = typeOf(c.raw);
-    if (k && !state.conds.some(x => x.k === k)) state.conds.push({ k, v: '' });
+    /* "Refunds greater than $N" is an amount, not the No-refunds switch. */
+    const k = /refund/i.test(c.raw) && /greater than/i.test(c.raw) ? 'refamt' : typeOf(c.raw);
+    if (k && !state.conds.some(x => x.k === k)) {
+      const v = valueOf(k, c.raw);
+      state.conds.push({ k, v, draft: !v, unread: !v, raw: c.raw });
+    }
   });
   /* the order window is part of the definition and must survive the round trip */
   if (EDIT.r) {
     const m = EDIT.r.match(/^(.+?) to (.+)$/);
     if (m) {
-      const iso = d => { const x = new Date(d); return isNaN(x) ? null : x.toISOString().slice(0, 10); };
+      /* Local parts, not toISOString(): "Jul 31, 2026" parses to local midnight
+         and toISOString() rolls it back a day west of UTC, so every open-and-save
+         round trip shortened the window by one day at each end. */
+      const iso = d => { const x = new Date(d); if (isNaN(x)) return null;
+        const p = n => String(n).padStart(2, '0');
+        return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
       const a = iso(m[1]), b = iso(m[2]);
       if (a && b) { state.range = 'custom'; state.from = a; state.to = b; }
     }
   }
 }
 
-const fmtN = v => Math.round(v).toLocaleString('en-US');
+/* An em dash, never "NaN". When the custom range is invalid estimate()
+   deliberately returns no steps at all, and every row then asked fmtN for
+   steps[i+1], which is undefined — the rows read "NaN left · drops NaN". */
+const fmtN = v => Number.isFinite(Number(v)) ? Math.round(Number(v)).toLocaleString('en-US') : '—';
+/* Hoisted above estimate(), which now consults it so an invalid number stops
+   counting as a filled condition. */
+function badNum(v) { return v !== '' && v != null && (!/^\d+$/.test(String(v)) || +v > 1000000); }
+
+/* Written here rather than pulled from segments-v2-shared.js: that module
+   declares its own `fmtN`, and two `const fmtN` in one document is a syntax
+   error that takes the whole page down. Same sessionStorage keys and the same
+   shapes, so the list reads what this writes. */
+const fmtDate = d => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+function saveMade(seg) {
+  let all = [];
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segMade') || '[]');
+    if (Array.isArray(v)) all = v;
+  } catch (e) {}
+  all.push(seg);
+  try { sessionStorage.setItem('segMade', JSON.stringify(all)); } catch (e) {}
+}
+function saveName(id, n) {
+  let m = {};
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segNames') || '{}');
+    if (v && typeof v === 'object' && !Array.isArray(v)) m = v;
+  } catch (e) {}
+  m[id] = n;
+  try { sessionStorage.setItem('segNames', JSON.stringify(m)); } catch (e) {}
+}
 const fmt$ = v => '$' + Math.round(v).toLocaleString('en-US');
 
 /* ── undo / redo ── */
@@ -383,19 +1111,53 @@ function commit(fn) {
   fn();
   render();
 }
-function undo() { if (!history_.past.length) return; history_.future.push(snapshot()); state = history_.past.pop(); syncInputs(); render(); }
-function redo() { if (!history_.future.length) return; history_.past.push(snapshot()); state = history_.future.pop(); syncInputs(); render(); }
+/* Any debounced edit still in flight is landed BEFORE the history moves.
+   Undo pressed inside the name's 600ms window used to leave that timer armed:
+   it fired afterwards, committed, and cleared history_.future — so one Undo
+   swallowed an unrelated condition as well as the name, and Redo went dead and
+   could not bring either back. */
+function flushPending() {
+  /* Landed, not cancelled. Cancelling left state.name holding the newly typed
+     text with no history entry for it, so Undo stepped back past BOTH edits and
+     emptied the field. The pending edit is committed first, exactly as the
+     debounce would have, and then Undo takes one step off it. */
+  if (typeof nameTimer !== 'undefined' && nameTimer) {
+    clearTimeout(nameTimer); nameTimer = null;
+    const prev = nameBefore; nameBefore = null;
+    const now = state.name;
+    if (prev !== null && prev !== now) { state.name = prev; commit(() => state.name = now); }
+  }
+  if (typeof descTimer !== 'undefined' && descTimer) {
+    clearTimeout(descTimer); descTimer = null;
+    const v = document.getElementById('sbDesc').value;
+    if (v !== state.desc) commit(() => state.desc = v);
+  }
+}
+function undo() { flushPending(); if (!history_.past.length) return; history_.future.push(snapshot()); state = history_.past.pop(); syncInputs(); render(); }
+function redo() { flushPending(); if (!history_.future.length) return; history_.past.push(snapshot()); state = history_.future.pop(); syncInputs(); render(); }
 function syncInputs() {
   document.getElementById('sbName').value = state.name;
   document.getElementById('sbDesc').value = state.desc;
   document.getElementById('sbRange').value = String(state.range);
+  /* The two date fields were never written back. Opening a segment left the
+     markup's own defaults on screen — 2026-06-03 / 2026-09-01 — directly above
+     a sentence quoting the segment's real window, and an Undo left the field
+     showing one date while state held another, so validation ran against a
+     value nobody could see. */
+  const f = document.getElementById('sbFrom'), t = document.getElementById('sbTo');
+  if (f) f.value = state.from;
+  if (t) t.value = state.to;
   /* the operator control only exists once there are two conditions to join */
   const j = document.getElementById('sbJoin');
   if (j) j.value = state.join;
 }
 
+/* A single day is a window. Three seeded segments carry "Sep 1, 2026 to Sep 1,
+   2026" — the product produced them — and a strict `to > from` refused to open
+   any of them: audience 0, Save off, "The end date must be after the start
+   date" on data the product itself wrote. */
 function rangeValid() {
-  return state.range !== 'custom' || (new Date(state.to) > new Date(state.from));
+  return state.range !== 'custom' || (new Date(state.to) >= new Date(state.from));
 }
 function windowDays() {
   if (state.range === 'custom') return (new Date(state.to) - new Date(state.from)) / 864e5;
@@ -406,20 +1168,53 @@ const universeSize = () => {
   const d = windowDays();
   return d === 0 ? BASE : Math.round(BASE * (0.34 + Math.min(d, 365) / 365 * 0.62));
 };
+/* How much of the set a condition keeps.
+
+   A select keeps its dimension's share. A NUMBER has to answer to the number:
+   the previous version used the same fixed share whatever was typed, so
+   "order value greater than $0", "greater than $1,000,000" and "greater than
+   $1,000,001" all reported the identical 7,718 customers — under a note saying
+   the figure was computed from the conditions above. A threshold that costs
+   nothing to raise is worse than no estimate, because it invites exactly the
+   comparison it cannot make.
+
+   The curve is a plain decay against a scale for that dimension: at the scale
+   value it keeps the dimension's own share, and it falls away above it. It is
+   still illustrative — the rail says so — but it is at least monotonic, so
+   raising a threshold always shrinks the audience. */
+const NUM_SCALE = { value: 100, disc: 20, refamt: 25, sku: 2, fam: 1, tag: 1 };
+function keepFactor(def, v) {
+  if (def.ctl[0] !== 'num') return def.f;
+  const x = Number(v);
+  if (!isFinite(x) || x < 0) return def.f;
+  const scale = NUM_SCALE[def.k] || 100;
+  return def.f * Math.pow(0.5, x / scale);
+}
+
 function estimate() {
   let n = universeSize();
   if (n == null) return { n: null, steps: [] };
   const steps = [n];
+  /* badNum only means anything on a numeric control — it rejects everything
+     that is not digits, so "Returning customers" counted as a bad number and
+     the condition stopped narrowing at all. The same trap this page fell into
+     once before, on the Save button. */
+  const filledOf = c => {
+    if (c.v === '' || c.v == null) return false;
+    const d = ALL.find(a => a.k === c.k);
+    return !(d && d.ctl[0] === 'num' && badNum(c.v));
+  };
   if (state.join === 'any' && state.conds.length) {
     /* any-of unions rather than narrows */
-    const filled = state.conds.filter(c => c.v !== '' && c.v != null);
-    const keep = filled.length ? 1 - filled.reduce((a, c) => a * (1 - ALL.find(x => x.k === c.k).f), 1) : 1;
+    const filled = state.conds.filter(filledOf);
+    const keep = filled.length
+      ? 1 - filled.reduce((a, c) => a * (1 - keepFactor(ALL.find(x => x.k === c.k), c.v)), 1) : 1;
     n = Math.round(universeSize() * keep);
     state.conds.forEach(() => steps.push(n));
   } else {
     state.conds.forEach(c => {
       const def = ALL.find(a => a.k === c.k);
-      n = Math.round(n * ((c.v !== '' && c.v != null) ? def.f : 1));
+      n = Math.round(n * (filledOf(c) ? keepFactor(def, c.v) : 1));
       steps.push(n);
     });
   }
@@ -427,7 +1222,20 @@ function estimate() {
 }
 
 /* negative, fractional and absurd values were accepted and saved */
-const badNum = v => v !== '' && v != null && (!/^\d+$/.test(String(v)) || +v > 1000000);
+
+/* Once the reader has set a value it is theirs, and the suggestion mark goes. */
+const ownIt = i => { if (state.conds[i]) state.conds[i].draft = false; };
+
+/* A suggested value has one of two origins and they are not the same claim.
+   Fin READ it out of the sentence, and the phrase it read is the honest answer
+   to Marko's "how can you guarantee the pre-populated inputs reflect your
+   idea?" — so the row shows the words. A value the Add button put there was
+   only the first option in the list, and nothing was read at all. Both used to
+   print the second sentence, which made the preview's own mapping look like a
+   lie the moment it landed in the form. */
+const why = c => c.phrase
+  ? `Read from “${esc(c.phrase)}” in your description.`
+  : 'First value in the list — change it if you meant another.';
 
 function condRow(c, i, steps) {
   const def = ALL.find(a => a.k === c.k);
@@ -435,13 +1243,44 @@ function condRow(c, i, steps) {
   const filled = c.v !== '' && c.v != null;
   const id = `cond-${i}`;
   const ctl = kind === 'select'
-    ? `<select class="form-select" id="${id}" data-v="${i}" style="min-width:190px;height:32px;font-size:12.5px;">
-         <option value="">Choose a value…</option>${arg.map(o => `<option ${c.v === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
+    ? `<select class="form-select sb-sel--sm" id="${id}" data-v="${i}">
+         <option value="">Choose a value…</option>${(() => {
+           /* Either a plain list of values, or one broken by { g: 'Group' }
+              markers. The product groups its channels into DTC and Wholesale,
+              and a flat list of six hides that they are different things. */
+           let out = '', open = false;
+           arg.forEach(o => {
+             if (o && typeof o === 'object' && o.g) {
+               if (open) out += '</optgroup>';
+               out += `<optgroup label="${o.g}">`; open = true;
+             } else out += `<option ${c.v === o ? 'selected' : ''}>${o}</option>`;
+           });
+           return out + (open ? '</optgroup>' : '');
+         })()}</select>`
+    : kind === 'multi'
+    /* A group of toggles, not a list you can only pick one line of. The value is
+       a comma-separated list in the order the catalogue lists them, so it reads
+       the same every time and matches what the list page parses back out. */
+    ? `<span class="sb-multi" role="group" aria-labelledby="${id}-lab">${(() => {
+         const picked = String(c.v || '').split(',').map(x => x.trim()).filter(Boolean);
+         let out = '', gi = 0;
+         arg.forEach(o => {
+           if (o && typeof o === 'object' && o.g) { out += `<b class="sb-multi__g">${esc(o.g)}</b>`; gi++; return; }
+           const on = picked.indexOf(o) !== -1;
+           out += `<label class="sb-multi__i"><input type="checkbox" class="iris-checkbox" data-multi="${i}" value="${esc(o)}"${on ? ' checked' : ''}>${esc(o)}</label>`;
+         });
+         return out;
+       })()}</span>`
+    : kind === 'text'
+    ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--seg-muted);">${arg}
+         <input class="form-input" id="${id}" data-v="${i}" type="text" maxlength="40" autocomplete="off"
+           value="${c.v == null ? '' : esc(c.v)}" placeholder="${esc(def.ctl[2] || '')}"
+           style="width:150px;height:32px;font-size:12.5px;"></span>`
     : `<span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--seg-muted);">${arg}
          <input class="form-input" id="${id}" data-v="${i}" type="number" min="0" max="1000000" step="1"
            value="${c.v === '' || c.v == null ? '' : esc(c.v)}" placeholder="0"
            aria-describedby="${badNum(c.v) ? id + '-err' : ''}"
-           style="width:92px;height:32px;font-size:12.5px;${badNum(c.v) ? 'border-color:var(--color-border-danger)' : ''}"></span>
+           style="width:92px;height:32px;font-size:12.5px;${badNum(c.v) ? 'border-color:var(--color-border-danger)' : ''}">${def.ctl[2] || ''}</span>
        ${badNum(c.v) ? `<span class="form-feedback-error" id="${id}-err" style="font-size:11px;">Enter a whole number between 0 and 1,000,000</span>` : ''}`;
   const drop = steps[i] - steps[i + 1];
   /* The operator joins two conditions, so it belongs between them. The first gap
@@ -457,14 +1296,23 @@ function condRow(c, i, steps) {
            </select>
          </div>`
       : `<div class="sb-op">${state.join === 'any' ? 'or' : 'and'}</div>`;
+  /* Marko also asked the question a suggestion has to answer before anyone will
+     trust it: "what's the confidence level — how can you guarantee that the
+     pre-populated inputs reflect your idea?" It cannot be guaranteed, so the
+     row says where the value came from instead of printing a number that
+     pretends to. */
+  const draft = c.draft && filled;
   return `${joiner}
-    <div class="sb-cond ${filled ? '' : 'sb-cond--bad'}">
+    <div class="sb-cond ${draft ? 'sb-cond--draft' : filled ? '' : 'sb-cond--bad'}">
       <div class="sb-cond__main">
-        <label class="sb-cond__name" for="${id}">${def.n}</label>
+        <label class="sb-cond__name" id="${id}-lab" for="${id}">${def.n}</label>
         ${ctl}
+        ${draft ? '<span class="sb-sugg">suggested</span>' : ''}
         <span class="sb-cond__n">${filled
           ? (state.join === 'any' ? `<b>${fmtN(steps[i + 1])}</b> in the union` : `<b>${fmtN(steps[i + 1])}</b> left · drops ${fmtN(drop)}`)
-          : '<span style="color:var(--color-text-fg-danger)">no value — filters nobody</span>'}</span>
+          : '<span class="sb-empty">no value yet — this condition is not filtering</span>'}</span>
+        ${draft ? `<p class="sb-cond__why">${why(c)}</p>` : ''}
+        ${def.isNew ? `<p class="sb-cond__why sb-cond__new">Iris does not filter on a discount code today — it filters on the discount percentage. This is the capability you asked for, drawn so it can be judged.</p>` : ''}
       </div>
       <button class="sb-x" data-x="${i}" aria-label="Remove the ${def.n} condition">✕</button>
     </div>`;
@@ -475,11 +1323,16 @@ function render() {
   const uni = universeSize();
 
   document.getElementById('sbFromWrap').hidden = document.getElementById('sbToWrap').hidden = state.range !== 'custom';
-  const badRange = state.range === 'custom' && !(new Date(state.to) > new Date(state.from));
+  /* rangeValid() is the rule; this line had its own copy with a strict > and
+     the two disagreed, so a one-day window printed "The end date cannot be
+     before the start date" about two dates that are equal, and blocked Save on
+     three seeded segments while the estimate happily computed from that same
+     range. */
+  const badRange = !rangeValid();
   document.getElementById('sbUniverse').textContent = badRange
-    ? 'The end date must be after the start date.'
+    ? 'The end date cannot be before the start date.'
     : state.range === 'custom'
-      ? `${fmtN(uni)} customers placed an order between ${state.from} and ${state.to}.`
+      ? `${fmtN(uni)} customers placed an order between ${fmtDate(state.from)} and ${fmtDate(state.to)}.`
       : `${fmtN(uni)} customers placed an order in this window.`;
   document.getElementById('sbUniverse').style.color = badRange ? 'var(--color-text-fg-danger)' : '';
 
@@ -492,54 +1345,105 @@ function render() {
     `<div class="sb-add__g">${g}</div>` + items.map(it =>
       `<button class="sb-add__b" data-add="${it.k}" ${state.conds.some(c => c.k === it.k) ? 'disabled' : ''}>
          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-         ${it.n}</button>`).join('')).join('');
+         ${it.n}${it.isNew ? '<span class="sb-new">new</span>' : ''}</button>`).join('')).join('');
 
   const cat = document.getElementById('sbTplCat').value;
   document.getElementById('sbTpl').innerHTML = TEMPLATES
     .map((t, i) => [t, i]).filter(([t]) => !cat || t.cat === cat)
     .map(([t, i]) => `<button class="sb-tpl__c" data-tpl="${i}"><b>${t.n}</b><span>${t.d}</span></button>`).join('');
 
-  const share = n / BASE;
-  document.getElementById('sbEstCard').classList.toggle('sb-est--warn', share >= .95);
-  document.getElementById('sbEstN').textContent = fmtN(n);
-  document.getElementById('sbEstBar').style.width = Math.max(1, share * 100) + '%';
-  document.getElementById('sbEstShare').innerHTML = share >= .95
-    ? `<b style="color:var(--color-text-fg-danger)">${(share * 100).toFixed(0)}% of all ${fmtN(BASE)} customers</b> — this is not a segment yet`
-    : `<b>${(share * 100).toFixed(share < .1 ? 1 : 0)}%</b> of all ${fmtN(BASE)} customers`;
+  /* Nothing is asserted before there is a definition to assert it about. With
+     no conditions the segment is the whole 90-day window, and printing that as
+     "17,541 customers match", 49% of the base, $1.2M of net sales and four
+     named people — while Save is switched off because the segment does not yet
+     exist — was the loudest wrong thing on the page. Same for an invalid date
+     range, where estimate() returns nothing at all. */
+  /* An unfilled condition is not a definition either. With "Order value" added
+     and nothing typed, the rail still reported 17,541 customers and $1,212,025
+     — the whole 90-day window wearing the segment's label — while the condition
+     row two columns away said "no value yet, this condition is not filtering"
+     and Save said "fill in the condition that has no value". Three parts of one
+     screen, disagreeing, in the state every reader passes through. */
+  const unfilled = state.conds.some(c => {
+    if (c.v === '' || c.v == null) return true;
+    const d = ALL.find(a => a.k === c.k);
+    return !!(d && d.ctl[0] === 'num' && badNum(c.v));
+  });
+  const noDefinition = !state.conds.length || unfilled || n == null;
+  const share = n == null ? 0 : n / BASE;
+  document.getElementById('sbEstCard').classList.toggle('sb-est--warn', !noDefinition && share >= .95);
+  document.getElementById('sbEstN').textContent = noDefinition ? '—' : fmtN(n);
+  document.getElementById('sbEstBar').style.width = noDefinition ? '0%' : Math.max(1, share * 100) + '%';
+  document.getElementById('sbEstShare').innerHTML = noDefinition
+    ? (n == null ? 'No estimate while the date range is invalid.'
+       : !state.conds.length ? 'Add a condition to see an estimate.'
+       : 'Fill in the condition that has no value to see an estimate.')
+    : share >= .95
+      ? `<b style="color:var(--color-text-fg-danger)">${(share * 100).toFixed(0)}% of all ${fmtN(BASE)} customers</b> — this is not a segment yet`
+      : `<b>${(share * 100).toFixed(share < .1 ? 1 : 0)}%</b> of all ${fmtN(BASE)} customers`;
 
   const aov = 52 + (1 - share) * 26;
-  document.getElementById('sbMini').innerHTML = `
+  /* Nobody matches, so there is no average order and no lifetime value to
+     average. It printed "AOV $78.00" and "Avg LTV $211" beside a count of zero. */
+  document.getElementById('sbMini').innerHTML = (noDefinition || n === 0)
+    ? ['Orders', 'AOV', 'Net sales', 'Avg LTV'].map(l =>
+        `<div><dt>${l}</dt><dd>${n === 0 && !noDefinition ? (l === 'Orders' || l === 'Net sales' ? (l === 'Orders' ? '0' : '$0') : '—') : '—'}</dd></div>`).join('')
+    : `
     <div><dt>Orders</dt><dd>${fmtN(n * 1.06)}</dd></div>
     <div><dt>AOV</dt><dd>$${aov.toFixed(2)}</dd></div>
     <div><dt>Net sales</dt><dd>${fmt$(n * 1.06 * aov)}</dd></div>
     <div><dt>Avg LTV</dt><dd>$${(aov * 2.7).toFixed(0)}</dd></div>`;
 
-  const names = ['A. Whitfield','M. Okafor','J. Lindqvist','R. Baptiste'];
-  document.getElementById('sbSample').innerHTML = n === 0
-    ? `<p style="margin:0;font-size:12px;color:var(--seg-muted);">Nobody matches yet. Loosen the condition that drops the count to zero.</p>`
-    : names.map((nm, i) => `<div class="sb-sample__i">
-        <span class="avatar avatar-sm" style="background:var(--color-bg-brand-softer);color:var(--color-text-fg-brand-strong);font-weight:600;font-size:11px;">${nm.split(' ')[1][0]}${nm[0]}</span>
-        <div><div style="font-size:12px;font-weight:600;color:var(--color-text-heading);">${nm}</div>
-        <div style="font-size:10.5px;color:var(--seg-muted);">${2 + i} orders · $${(aov * (0.9 + i * .1)).toFixed(2)} AOV</div></div>
-      </div>`).join('');
+  /* These were four invented people — A. Whitfield, M. Okafor, J. Lindqvist,
+     R. Baptiste — with invented order counts and invented spend, sitting under
+     the heading "Sample of who qualifies" and reading exactly like four real
+     customers of this business. Nothing in the dataset holds a customer. The
+     card keeps its place, because a sample beside the estimate is a good idea
+     worth showing, but it no longer names anyone. */
+  document.getElementById('sbSample').innerHTML = noDefinition
+    ? `<p class="sb-sample__note">A sample of matching customers appears here once this segment has a definition.</p>`
+    : n === 0
+      ? `<p class="sb-sample__note">Nobody matches yet. Loosen the condition that drops the count to zero.</p>`
+      : `<p class="sb-sample__note">${fmtN(n)} customers match. Iris lists them on the segment's own page once it is saved.</p>`;
 
   const nameClash = duplicates();
-  const emptyCond = state.conds.some(c => c.v === '' || c.v == null || badNum(c.v));
+  /* badNum was applied to every condition, and it rejects anything that is not
+     digits — so "First-time customers" counted as a bad number and Save stayed
+     off with "one condition still needs a number" while every condition had a
+     value. It only means anything on a numeric control. */
+  const isNum = c => { const d = ALL.find(a => a.k === c.k); return d && d.ctl[0] === 'num'; };
+  const emptyCond = state.conds.some(c =>
+    c.v === '' || c.v == null || (isNum(c) && badNum(c.v)));
   document.getElementById('sbUndo').disabled = !history_.past.length;
   document.getElementById('sbRedo').disabled = !history_.future.length;
-  /* A condition with no value is exactly the defect this redesign flags on 11 existing
-     segments. Refusing to save one is the point; warning and saving anyway is not. */
+  /* Select conditions now arrive with a value, so "empty" only happens on a
+     number the reader has not typed yet — and a number has no honest default.
+     That one still blocks, because saving it would create exactly the defect
+     this redesign exists to surface. Everything else saves. */
   document.getElementById('sbSave').disabled =
     !state.name.trim() || !state.conds.length || nameClash || emptyCond || badRange || (EDIT && !touched);
-  document.getElementById('sbSave').title =
-    emptyCond ? 'Every condition needs a value' : badRange ? 'Fix the date range' :
-    nameClash ? 'That name is already taken' : '';
+  /* It used to name only three reasons, none of which is the usual one: a fresh
+     page has no name and no conditions, so Save sat greyed out with an empty
+     tooltip and nothing on screen saying why. And with several problems at once
+     it announced only the first in a fixed order. */
+  const blockers = [
+    !state.name.trim() && 'give it a name',
+    !state.conds.length && 'add at least one condition',
+    emptyCond && 'fill in the condition that has no value',
+    badRange && 'fix the date range',
+    nameClash && 'pick a name that is not already taken',
+    (EDIT && !touched) && 'change something first'
+  ].filter(Boolean);
+  document.getElementById('sbSave').title = blockers.length
+    ? 'To save: ' + blockers.join(', ') + '.' : '';
   const nameEl = document.getElementById('sbName');
   nameEl.setAttribute('aria-invalid', String(nameClash));
   /* the reason for "invalid" has to be reachable, not just announced */
-  nameEl.setAttribute('aria-describedby', nameClash ? 'sbWarnMsg sbNameHelp' : 'sbNameHelp');
+  nameEl.setAttribute('aria-describedby', nameClash ? 'sbWarnMsg0 sbNameHelp' : 'sbNameHelp');
   document.getElementById('sbDirty').textContent = (state.name || state.conds.length) ? 'Unsaved changes' : 'Not saved';
-  document.getElementById('sbLive').textContent = `Estimated audience ${fmtN(n)} customers.`;
+  document.getElementById('sbLive').textContent = noDefinition
+    ? 'No estimate yet — this segment has no definition.'
+    : `Estimated audience ${fmtN(n)} customers.`;
 }
 
 /* Duplicate check — the reason this workspace grew six Californias and four tests.
@@ -552,32 +1456,81 @@ function duplicates() {
 
   if (nm) {
     const exact = SEGMENTS.filter(s => s.n.toLowerCase() === nm && (!EDIT || s.id !== EDIT.id));
+    /* Both names have to be substantial for containment to mean anything. The
+       guard used to be on the typed name alone, so the existing segments named
+       "UK", "test" and "refunds" matched anything with those letters inside:
+       typing "Top 10% by revenue with no refunds" warned that a segment has a
+       similar name and then named it as "refunds", which reads as a fragment of
+       a broken sentence rather than as a name. Names are quoted for the same
+       reason. */
     const near  = SEGMENTS.filter(s => s.n.toLowerCase() !== nm && (!EDIT || s.id !== EDIT.id) &&
-      (s.n.toLowerCase().includes(nm) || nm.includes(s.n.toLowerCase())) && nm.length > 2);
+      s.n.length > 7 && nm.length > 7 &&
+      (s.n.toLowerCase().includes(nm) || nm.includes(s.n.toLowerCase())));
     if (exact.length) { clash = true; out.push(['danger', `A segment named “${esc(exact[0].n)}” already exists`,
       'Two segments with the same name cannot be told apart anywhere else in Iris. Pick a different name, or edit the existing one.']); }
     else if (near.length) out.push(['warn', `${near.length} segment${near.length > 1 ? 's have' : ' has'} a similar name`,
-      near.slice(0, 4).map(s => esc(s.n)).join(', ') + '. Check whether one of them already answers your question.']);
+      near.slice(0, 4).map(s => '“' + esc(s.n) + '”').join(', ') + '. Check whether one of them already answers your question.']);
   }
   if (estimate().n / BASE >= .95 && state.conds.length)
     out.push(['danger', 'This definition matches almost every customer',
-      'One of the conditions has no value, so it is not filtering anything. Fill it in or remove it.']);
+      'One of the conditions is not narrowing anything. Give it a value or remove it — a segment that returns everyone reports company totals under a segment name.']);
 
-  box.innerHTML = out.map(([kind, t, d]) => `
-    <div class="alert ${kind === 'danger' ? 'alert-danger' : 'alert-warning'}" role="region" aria-label="${t}" id="sbWarnMsg" style="margin-bottom:12px;">
+  /* One id per alert. Both used to be id="sbWarnMsg", so the markup was invalid
+     and the name field's aria-describedby resolved to whichever rendered first. */
+  box.innerHTML = out.map(([kind, t, d], x) => `
+    <div class="alert ${kind === 'danger' ? 'alert-danger' : 'alert-warning'}" role="region" aria-label="${t}" id="sbWarnMsg${x}" style="margin-bottom:12px;">
       <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.34 3.94 2.7 17.1A1.5 1.5 0 0 0 4 19.35h16A1.5 1.5 0 0 0 21.3 17.1L13.66 3.94a1.5 1.5 0 0 0-2.6 0Z"/></svg></span>
       <div class="alert-body"><div class="alert-title">${t}</div><div>${d}</div></div>
     </div>`).join('');
   return clash;
 }
 
+/* The product's own edit screen says "In US", "In CA", "In GB"; the builder
+   offers the country by name because a name is what a person picks. */
+
+/* One condition as the data itself writes it: "Order value greater than $100",
+   "Discount greater than 25%", "Has 3 SKU(s)". The old line stripped the "$"
+   out of "greater than $" and left the "%" in front of the number, so a
+   description saved from the form read "discount greater than %20" and lost
+   the dollar sign entirely — a third spelling on top of the data's and the
+   list's. */
+function condText(c) {
+  const def = ALL.find(a => a.k === c.k);
+  if (!def || c.v === '' || c.v == null) return null;
+  if (def.ctl[0] === 'text') return `${def.n} is ${c.v}`;
+  /* Written in the vocabulary the LIST reads, not just the one the builder
+     shows. A geography condition saved as "United States" arrived in the list
+     with no dimension at all — geoParts looks for "In US" and the Geography
+     dimension matches on the word "geography", so the row was findable under
+     nothing. A sales channel saved as "Amazon Seller Partner" missed the
+     channel dimension the same way. */
+  if (def.k === 'geo')  return 'Geography: ' + (GEO_CODE[c.v] || c.v);
+  if (def.k === 'chan') {
+    const list = String(c.v).split(',').map(x => x.trim()).filter(Boolean);
+    return list.length + ' sales channel(s): ' + list.join(', ');
+  }
+  if (def.ctl[0] !== 'num') return String(c.v);
+  const [, prefix, suffix] = def.ctl;
+  return prefix === 'greater than $' ? `${def.n} greater than $${c.v}`
+       : prefix === 'greater than %' ? `${def.n} greater than ${c.v}%`
+       : `${prefix} ${c.v} ${suffix || ''}`.trim();
+}
+
 function describe() {
+  /* Everything is lowercased into a sentence except a value the reader typed:
+     a discount code is theirs, and "SPRING24" is not "spring24". */
   const parts = state.conds.map(c => {
+    const t = condText(c);
+    if (!t) return null;
     const def = ALL.find(a => a.k === c.k);
-    if (!c.v) return null;
-    return def.ctl[0] === 'num' ? `${def.n.toLowerCase()} ${def.ctl[1].replace('$', '')}${c.v}` : String(c.v).toLowerCase();
+    if (def && def.ctl[0] === 'text') return `${def.n.toLowerCase()} is ${c.v}`;
+    /* The same rule Fin's writer uses. The two buttons sit beside each other and
+       write the same field, and only one of them kept a country's capitals —
+       so "Geography: In US" was saved as "geography: in us" and then shown that
+       way on the list, the segment page and the compare picker. */
+    return keepCase(t);
   }).filter(Boolean);
-  const win = { 30:'the last 30 days', 90:'the last 90 days', 180:'the last 180 days', 365:'the last 12 months', 0:'all time', custom:`${state.from} to ${state.to}` }[state.range];
+  const win = { 30:'the last 30 days', 90:'the last 90 days', 180:'the last 180 days', 365:'the last 12 months', 0:'all time', custom:`${fmtDate(state.from)} to ${fmtDate(state.to)}` }[state.range];
   const join = state.join === 'any' ? ' or ' : ', ';
   return parts.length ? `Customers who ordered in ${win}: ${parts.join(join)}.` : `Every customer who ordered in ${win}.`;
 }
@@ -593,18 +1546,29 @@ function toast(title, msg) {
   document.getElementById('toasts').appendChild(el);
   setTimeout(() => el.remove(), 6000);
 }
-function modal({ title, body, confirmLabel, danger, onConfirm }) {
+/* cancelLabel, and a wide variant: the generate-with-Fin flow needs "No, I want
+   something else" where this said "Cancel", and its preview does not fit a
+   320px dialog. */
+/* confirmIcon / confirmDisabled exist for the Fin dialog, which is a copy of the
+   product's: its Generate automation button carries a mark and stays switched
+   off until the box has something in it. */
+function modal({ title, body, confirmLabel, confirmIcon, confirmDisabled, cancelLabel, danger, wide, onConfirm, onCancel }) {
   const host = document.getElementById('modalHost'), opener = document.activeElement;
-  host.innerHTML = `<div class="seg-modal-backdrop"><div class="modal-dialog modal-dialog-sm" role="dialog" aria-modal="true" aria-labelledby="mdT">
+  host.innerHTML = `<div class="seg-modal-backdrop"><div class="modal-dialog ${wide ? 'modal-dialog-lg' : 'modal-dialog-sm'}" role="dialog" aria-modal="true" aria-labelledby="mdT">
       <div class="modal-header"><h2 class="modal-title" id="mdT">${title}</h2><button class="modal-close" data-md="x" aria-label="Close">✕</button></div>
       <div class="modal-body">${body}</div>
-      <div class="modal-footer"><button class="btn btn-sm btn-alternative" data-md="x">Cancel</button>
-        <button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok">${confirmLabel}</button></div></div></div>`;
+      <div class="modal-footer"><button class="btn btn-sm btn-alternative" data-md="x">${cancelLabel || 'Cancel'}</button>
+        <button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok"${confirmDisabled ? ' disabled' : ''}>${confirmIcon || ''}${confirmLabel}</button></div></div></div>`;
   const close = () => { host.innerHTML = ''; document.removeEventListener('keydown', onKey); opener?.focus?.(); };
   const onKey = e => {
     if (e.key === 'Escape') return close();
     if (e.key !== 'Tab') return;
-    const els = [...host.querySelectorAll('button')], first = els[0], last = els[els.length - 1];
+    /* The fields count too, not only the buttons: the Fin dialog's textarea sits
+       between them, and a trap that skipped it sent Tab from the last button
+       past the box the dialog exists for. A switched-off confirm is skipped,
+       because focus() on a disabled button goes nowhere. */
+    const els = [...host.querySelectorAll('button, textarea, input, select')].filter(el => !el.disabled);
+    const first = els[0], last = els[els.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   };
@@ -612,15 +1576,38 @@ function modal({ title, body, confirmLabel, danger, onConfirm }) {
   host.querySelector('[data-md="x"].btn').focus();
   host.onclick = e => {
     if (e.target.closest('[data-md="ok"]')) { const fn = onConfirm; close(); fn(); }
-    else if (e.target.closest('[data-md="x"]') || e.target.classList.contains('seg-modal-backdrop')) close();
+    else if (e.target.closest('[data-md="x"]') || e.target.classList.contains('seg-modal-backdrop')) {
+      const fn = onCancel; close(); if (fn) fn();
+    }
   };
 }
 
 /* ── events ── */
 document.addEventListener('click', e => {
+  /* Marko, 2026-09-03, watching Fin refuse his prompt twice: "It should not
+     return such message... you don't need to think about the prompt", and then
+     "it should give you back some kind of answer and then you polish it rather
+     than write it from scratch over and over again — no one reads those warning
+     messages, no one."
+
+     Adding a condition used to produce an empty control, a red card and the
+     line "no value — filters nobody", with Save switched off until the reader
+     worked out what was wanted. It now arrives filled with a starting value and
+     marked as a suggestion. The reader edits or accepts it; nothing is refused,
+     and nothing is asserted as their intent.
+
+     A number condition gets no suggestion — there is no defensible starting
+     amount for "order value greater than", and a made-up threshold would be the
+     invention this prototype must not make. It gets a placeholder instead. */
+  const suggest = k => {
+    const def = ALL.find(x => x.k === k);
+    return def && def.ctl[0] === 'select'
+      ? (def.ctl[1].find(o => typeof o === 'string') || '') : '';
+  };
+
   const a = e.target.closest('[data-add]');
   if (a && !a.disabled) {
-    commit(() => state.conds.push({ k: a.dataset.add, v: '' }));
+    commit(() => state.conds.push({ k: a.dataset.add, v: suggest(a.dataset.add), draft: true }));
     /* focus the control that was just created, not <body> */
     document.getElementById(`cond-${state.conds.length - 1}`)?.focus();
     return;
@@ -635,10 +1622,17 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-tpl]');
   if (t) {
     const tpl = TEMPLATES[+t.dataset.tpl];
-    const apply = () => commit(() => {
-      state.conds = tpl.c.map(([k, v]) => ({ k, v }));
-      if (!state.name) { state.name = tpl.n; document.getElementById('sbName').value = tpl.n; }
-    });
+    const apply = () => {
+      commit(() => {
+        state.conds = tpl.c.map(([k, v]) => ({ k, v }));
+        if (!state.name) { state.name = tpl.n; document.getElementById('sbName').value = tpl.n; }
+        /* A description written from the previous definition describes a segment
+           that no longer exists. It used to survive the replacement and sit under
+           the new conditions contradicting them, with Save enabled. */
+        if (state.desc && state.desc === lastGenerated) { state.desc = ''; }
+      });
+      document.getElementById('sbDesc').value = state.desc;
+    };
     /* a template replaces the whole definition — never silently */
     if (state.conds.length) modal({
       title: 'Replace the current conditions?', confirmLabel: 'Replace',
@@ -648,11 +1642,81 @@ document.addEventListener('click', e => {
     else apply();
     return;
   }
-  if (e.target.closest('#sbGen')) { const d = describe(); commit(() => state.desc = d); document.getElementById('sbDesc').value = d; return; }
+  if (e.target.closest('#sbGen')) { const d = describe(); commit(() => state.desc = d); lastGenerated = d; document.getElementById('sbDesc').value = d; return; }
   if (e.target.closest('#sbUndo')) return undo();
   if (e.target.closest('#sbRedo')) return redo();
   if (e.target.closest('#sbSave')) {
     saved = true;
+    /* The round trip the whole flow exists for. Save used to toast "Segment
+       created" and return to a list that had never heard of it — a rename made
+       on the detail page persisted, a segment made here did not.
+
+       Written in the RAW shape the seeded forty use, so the list runs it
+       through makeSegment() and it derives its conditions, flags, kind and
+       one-line summary exactly like every other row. The counts are the same
+       illustrative estimate the rail shows, carried over rather than invented a
+       second time; a segment with no estimate is stored with no numbers, which
+       is how the seeded ones that never ran are stored. */
+    if (V2 && !EDIT) {
+      const est = estimate().n;
+      const win = state.range === 'custom'
+        ? `${fmtDate(state.from)} to ${fmtDate(state.to)}`
+        : `${fmtDate(new Date(Date.now() - (state.range || 365) * 864e5))} to ${fmtDate(new Date())}`;
+      const aov = est == null ? null : 52 + (1 - est / BASE) * 26;
+      try {
+        saveMade({
+          n: state.name.trim(),
+          d: state.desc || null,
+          r: win,
+          f: state.conds.map(condText).filter(Boolean),
+          c: est, o: est == null ? null : Math.round(est * 1.06),
+          aov: aov == null ? null : +aov.toFixed(2),
+          net: est == null ? null : Math.round(est * 1.06 * aov),
+          ltv: aov == null ? null : +(aov * 2.7).toFixed(2),
+          cr: fmtDate(new Date()), up: fmtDate(new Date()),
+          /* Marko, 16:40: "user created, user edited". The seeded forty carry no
+             author because the product records none for a segment; one made here
+             was made by whoever is looking at the screen, and "you" is the only
+             true thing this prototype can say — it has no identity to name. */
+          by: 'you',
+          never: est == null
+        });
+      } catch (err) {}
+    }
+    /* D4: "Changes saved" used to save the name and nothing else — a changed
+       condition, window or description was thrown away on the way back to the
+       list, while the toast said otherwise. An edit is stored the same way a new
+       segment is, keyed by id, and both pages read it. A segment made in this
+       session is rewritten in place rather than duplicated. */
+    if (EDIT) {
+      saveName(EDIT.id, state.name.trim());
+      const est = estimate().n;
+      const win = state.range === 'custom'
+        ? `${fmtDate(state.from)} to ${fmtDate(state.to)}`
+        : `${fmtDate(new Date(Date.now() - (state.range || 365) * 864e5))} to ${fmtDate(new Date())}`;
+      const aov = est == null ? null : 52 + (1 - est / BASE) * 26;
+      const body = {
+        n: state.name.trim(), d: state.desc || null, r: win,
+        f: state.conds.map(condText).filter(Boolean),
+        c: est, o: est == null ? null : Math.round(est * 1.06),
+        aov: aov == null ? null : +aov.toFixed(2),
+        net: est == null ? null : Math.round(est * 1.06 * aov),
+        ltv: aov == null ? null : +(aov * 2.7).toFixed(2),
+        cr: EDIT.cr, up: fmtDate(new Date()), never: est == null, by: EDIT.by || null
+      };
+      try {
+        const m = /^made(\d+)$/.exec(EDIT.id);
+        if (m) {
+          const all = JSON.parse(sessionStorage.getItem('segMade') || '[]');
+          if (Array.isArray(all) && all[+m[1]]) { all[+m[1]] = body; sessionStorage.setItem('segMade', JSON.stringify(all)); }
+        } else {
+          const e2 = JSON.parse(sessionStorage.getItem('segEdits') || '{}');
+          const map = (e2 && typeof e2 === 'object' && !Array.isArray(e2)) ? e2 : {};
+          map[EDIT.id] = body;
+          sessionStorage.setItem('segEdits', JSON.stringify(map));
+        }
+      } catch (err) {}
+    }
     toast(EDIT ? 'Changes saved' : 'Segment created',
       `“${esc(state.name)}” saved. ${V2 ? 'Its metrics are computed on the fly.'
         : state.mode === 'auto' ? 'It will recalculate nightly.' : 'It will calculate on demand.'} Estimated audience ${fmtN(estimate().n)} customers.`);
@@ -669,7 +1733,23 @@ document.addEventListener('click', e => {
 });
 
 document.addEventListener('change', e => {
-  if (e.target.dataset.v != null) { const i = +e.target.dataset.v, v = e.target.value; commit(() => state.conds[i].v = v); document.getElementById(`cond-${i}`)?.focus(); }
+  /* A multi-value control reads every box in its own group, in catalogue order,
+     so the stored string is stable and the list can parse it back. */
+  if (e.target.dataset.multi != null) {
+    const i = +e.target.dataset.multi;
+    const box = e.target.closest('.sb-multi');
+    const v = [...box.querySelectorAll('input[data-multi]')].filter(x => x.checked)
+      .map(x => x.value).join(', ');
+    const keep = e.target.value;
+    commit(() => { state.conds[i].v = v; ownIt(i); });
+    /* render() rebuilds the group, so focus goes back to the box just pressed. */
+    const back = document.querySelector(`.sb-multi input[data-multi="${i}"][value="${keep.replace(/"/g, '\\"')}"]`);
+    if (back) back.focus();
+    return;
+  }
+  if (e.target.dataset.v != null) { const i = +e.target.dataset.v, v = e.target.value;
+    commit(() => { state.conds[i].v = v; ownIt(i); });
+    document.getElementById(`cond-${i}`)?.focus(); }
   if (e.target.id === 'sbRange') { const v = e.target.value === 'custom' ? 'custom' : +e.target.value; commit(() => state.range = v); }
   if (e.target.id === 'sbFrom')  { const v = e.target.value; commit(() => state.from = v); }
   if (e.target.id === 'sbTo')    { const v = e.target.value; commit(() => state.to = v); }
@@ -699,7 +1779,15 @@ document.getElementById('sbName').addEventListener('input', e => {
   }, 600);
   render();
 });
-document.getElementById('sbDesc').addEventListener('input', e => { state.desc = e.target.value; });
+/* Debounced commit, like the name. Writing state.desc straight through meant a
+   description-only edit never set `touched`, so on an existing segment Save
+   stayed disabled with an empty tooltip and Undo could not reach the change. */
+let descTimer = null;
+document.getElementById('sbDesc').addEventListener('input', e => {
+  const v = e.target.value;
+  clearTimeout(descTimer);
+  descTimer = setTimeout(() => { descTimer = null; commit(() => state.desc = v); }, 500);
+});
 
 document.addEventListener('keydown', e => {
   /* leave text fields their own undo */

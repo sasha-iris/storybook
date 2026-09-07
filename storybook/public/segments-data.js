@@ -93,7 +93,11 @@ function relTime(d) {
 }
 
 /* ── Derive the state model the current product leaves implicit ── */
-const SEGMENTS = RAW.map((s, i) => {
+/* Named, so variant 2 can put a segment built in this session through exactly
+   the same derivation as the seeded forty. A second, parallel shape for
+   "segments the user just made" is how a list and a detail page start
+   disagreeing about what a segment is. */
+function makeSegment(s, i) {
   const conds  = s.f.map(c => ({ raw: c, label: humanize(c), noop: isNoop(c) }));
   const live   = conds.filter(c => !c.noop);
   const broken = conds.filter(c => c.noop);
@@ -143,7 +147,8 @@ const SEGMENTS = RAW.map((s, i) => {
     sentence: live.length ? live.map(c => c.label).join(' · ')
                           : (broken.length ? 'No effective filter — every customer matches' : 'All customers')
   };
-});
+}
+const SEGMENTS = RAW.map(makeSegment);
 
 /* ── Variant 2 only ────────────────────────────────────────────────────────
    Marko, 2026-09-01: in the new pass Iris computes these metrics on the fly, so

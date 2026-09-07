@@ -44,6 +44,10 @@ const IC = {
   bolt:   'm3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z',
   globe:  'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.95 8.95 0 0 0 4.5-1.207M12 21a8.95 8.95 0 0 1-4.5-1.207M3.6 9h16.8M3.6 15h16.8M12 3a13.5 13.5 0 0 0 0 18 13.5 13.5 0 0 0 0-18Z',
   cube:   'm21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9',
+  /* Fin's brand mark, read off the product's own sidebar ("Fin AI") and its
+     "Generate with Fin" menu row on 2026-09-07: MUI AutoFixHigh. A brand mark,
+     so it is not swapped for a Heroicons lookalike. Filled, not stroked. */
+  wand:   'M7.5 5.6 10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.9959.9959 0 0 0-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41zm-1.03 5.49-2.12-2.12 2.44-2.44 2.12 2.12z',
   spark:  'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z',
   cash:   'M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
   tag:    'M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z',
@@ -67,7 +71,12 @@ const IC = {
   dash:   'M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z',
   receipt:'M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'
 };
-const svg = (d, s) => '<svg width="' + (s || 15) + '" height="' + (s || 15) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="' + d + '"/></svg>';
+/* Heroicons are drawn as strokes; Fin's own mark is a filled MUI glyph, so the
+   renderer has to be able to do both rather than force a stroke onto a path
+   that was designed solid. */
+const svg = (d, s) => d === IC.wand ? svgFill(d, s)
+  : '<svg width="' + (s || 15) + '" height="' + (s || 15) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="' + d + '"/></svg>';
+const svgFill = (d, s) => '<svg width="' + (s || 15) + '" height="' + (s || 15) + '" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="' + d + '"/></svg>';
 
 /* ── Colour that carries meaning ──────────────────────────────────────────
    Data Rooms colours a row by file type. This colours a row by what the segment
@@ -147,6 +156,95 @@ function listSegment(rec) {
   };
 }
 loadLists().forEach(rec => { if (!SEGMENTS.some(s => s.id === rec.id)) SEGMENTS.push(listSegment(rec)); });
+
+/* ── Renames ──────────────────────────────────────────────────────────────
+   A name changed on the segment page has to be the name the list shows, or the
+   rename reads as having failed the moment you navigate back. Held beside the
+   segment data rather than written into it, so v1 keeps reading the original
+   names. */
+function loadNames() {
+  /* try/catch covers a parse failure, not a wrong shape. sessionStorage is
+     shared with every other page on this origin, and a stored "null" or an
+     array here used to take both pages down to a blank screen. */
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segNames') || '{}');
+    return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  } catch (e) { return {}; }
+}
+function saveName(id, n) {
+  const m = loadNames(); m[id] = n;
+  try { sessionStorage.setItem('segNames', JSON.stringify(m)); } catch (e) {}
+}
+(() => { const m = loadNames(); SEGMENTS.forEach(s => { if (m[s.id]) s.n = m[s.id]; }); })();
+
+/* ── Segments made in the builder ─────────────────────────────────────────
+   Held the same way as renames, beside the seeded data rather than inside it,
+   so v1 keeps reading the original forty. Without this the builder's Save
+   toasted "Segment created" and returned to a list that had never heard of it:
+   the one round trip the whole flow exists for did not close. Session-scoped,
+   which is right for a prototype — a reload of the demo starts clean. */
+/* humanize() lowercases a condition for the row summary, which is right for a
+   phrase and wrong for a name. A segment built in this prototype carries the
+   country and the channel as written, so the row reads "In US" and "Amazon
+   Seller Partner" beside the seeded forty rather than "in us" and "amazon
+   seller partner". */
+function normaliseBuilt(seg) {
+  (seg.live || []).forEach(c => {
+    const g = /^Geography:\s*(In .+)$/i.exec(c.raw);
+    if (g) { c.label = g[1]; return; }
+    const ch = /^(\d+ sales channel\(s\)):\s*(.+)$/i.exec(c.raw);
+    if (ch) c.label = ch[1] + ': ' + ch[2];
+  });
+  seg.sentence = seg.live.length ? seg.live.map(c => c.label).join(' · ') : seg.sentence;
+}
+
+function loadMade() {
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segMade') || '[]');
+    return Array.isArray(v) ? v.filter(x => x && typeof x === 'object' && typeof x.n === 'string') : [];
+  } catch (e) { return []; }
+}
+function saveMade(seg) {
+  const all = loadMade().filter(x => x.id !== seg.id);
+  all.push(seg);
+  try { sessionStorage.setItem('segMade', JSON.stringify(all)); } catch (e) {}
+}
+/* Edits made to a seeded segment in the builder. Held beside the data like the
+   renames, so v1 keeps reading the shipped definitions. */
+(() => {
+  let m = {};
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segEdits') || '{}');
+    if (v && typeof v === 'object' && !Array.isArray(v)) m = v;
+  } catch (e) {}
+  Object.keys(m).forEach(id => {
+    const i = SEGMENTS.findIndex(x => x.id === id);
+    if (i === -1 || !m[id] || typeof m[id].n !== 'string') return;
+    const seg = makeSegment(m[id], 0);
+    seg.id = id;
+    normaliseBuilt(seg);
+    SEGMENTS[i] = seg;
+  });
+})();
+
+/* Put through makeSegment(), the same derivation the seeded forty go through,
+   so a new row carries the same conds / flags / kind / sentence as every other
+   row and cannot drift into a second shape. */
+(() => {
+  const made = loadMade();
+  made.forEach((raw, j) => {
+    if (SEGMENTS.some(x => x.id === 'made' + j)) return;
+    const seg = makeSegment(raw, 0);
+    seg.id = 'made' + j;
+    /* The geography label is normalised to the same "In US" the seeded forty
+       carry via GEO_READ. humanize() lowercases everything for the row summary,
+       so without this a segment built here read "geography: in us" beside forty
+       rows reading "In US" — and the country still has to be legible to the
+       Geography facet underneath. */
+    normaliseBuilt(seg);
+    SEGMENTS.push(seg);
+  });
+})();
 
 /* ── Company baseline ─────────────────────────────────────────────────────
    Read off the segments that match every customer: 35,590 customers, 75,437
@@ -290,13 +388,21 @@ function menu(btn, items, onAct) {
   const m = document.createElement('div');
   m.className = 'dropdown-menu dr-menu'; m.setAttribute('role', 'menu');
   m.setAttribute('aria-label', btn.getAttribute('aria-label') || 'Actions');
+  /* An item may carry a second line. The product's own Create automation menu
+     is built that way — "Generate with Fin / Tell Fin what you want" beside
+     "Manual / Configure the automation yourself" — so the reader chooses a way
+     in by what it does, not by a verb they have to interpret. */
+  const label = i => i.sub
+    ? '<span class="dropdown-item__two"><b>' + esc(i.t) + '</b><span>' + esc(i.sub) + '</span></span>'
+    : esc(i.t);
   m.innerHTML = items.map(i =>
     i.sep ? '<div class="dropdown-divider"></div>'
     : i.lab ? '<div class="dropdown-label">' + esc(i.lab) + '</div>'
-    : i.href ? '<a class="dropdown-item" role="menuitem" href="' + i.href + '">' +
-               '<span class="dropdown-item__icon">' + svg(i.ic, 16) + '</span>' + esc(i.t) + '</a>'
-    : '<button class="dropdown-item' + (i.danger ? ' danger' : '') + '" role="menuitem" data-act="' + i.act + '">' +
-      '<span class="dropdown-item__icon">' + svg(i.ic, 16) + '</span>' + esc(i.t) + '</button>').join('');
+    : i.href ? '<a class="dropdown-item' + (i.sub ? ' dropdown-item--two' : '') + '" role="menuitem" href="' + i.href + '">' +
+               '<span class="dropdown-item__icon">' + svg(i.ic, 16) + '</span>' + label(i) + '</a>'
+    : '<button class="dropdown-item' + (i.danger ? ' danger' : '') + (i.sub ? ' dropdown-item--two' : '') +
+      '" role="menuitem" data-act="' + i.act + '">' +
+      '<span class="dropdown-item__icon">' + svg(i.ic, 16) + '</span>' + label(i) + '</button>').join('');
   document.body.appendChild(m);
 
   const r = btn.getBoundingClientRect();
@@ -334,7 +440,9 @@ function menu(btn, items, onAct) {
    For a mouse that is invisible; on a keyboard focus falls back to the top of
    the document and the list becomes unusable. */
 function keepFocus(el, redraw) {
-  const sel = el && (el.dataset.kind  ? '[data-kind="'  + el.dataset.kind  + '"]'
+  const sel = el && (el.dataset.dim    ? '[data-dim="'    + el.dataset.dim    + '"]'
+                   : el.dataset.folder ? '[data-folder="' + el.dataset.folder + '"]'
+                   : el.dataset.by     ? '[data-by="'     + el.dataset.by     + '"]'
                    : el.dataset.state ? '[data-state="' + el.dataset.state + '"]'
                    : el.dataset.sort  ? '[data-sort="'  + el.dataset.sort  + '"]'
                    : el.dataset.psort ? '[data-psort="' + el.dataset.psort + '"]'
@@ -344,6 +452,418 @@ function keepFocus(el, redraw) {
   if (!sel) return;
   const next = document.querySelector(sel);
   if (next) next.focus();
+}
+
+/* ── What a segment filters on ────────────────────────────────────────────
+   This replaces the TYPE rail. TYPE gave every segment exactly one label
+   guessed from its conditions, so "Geography: 1 country + Has 1 product
+   family + Discount greater than 10%" was filed under Geography alone and was
+   unfindable by anyone looking for the product it names. Marko, on the call of
+   2026-09-03, first said TYPE did not behave as he expected — "it's not
+   clearing, well, it's just filtering" — and then, clicking down the list:
+   "you can probably kill it and just have folders ... you can provide some
+   geography for instance and product sub items".
+
+   So: folders organise, dimensions describe, and a segment belongs to EVERY
+   dimension it actually filters on. The dimensions are read from the condition
+   strings themselves, not assigned. Counts therefore overlap and do not sum to
+   40, which is correct for a facet and is why the group is labelled with what
+   it does rather than with a total.
+
+   Only live conditions count. "No SKUs selected" names products without
+   filtering by them, and a segment that mentions a dimension it does not
+   actually narrow must not be findable under it. */
+const DIMS = [
+  { k: 'geo',      l: 'Geography',      ic: IC.globe,   c: 'card-icon-blue',   re: /geograph|postal/i },
+  { k: 'product',  l: 'Products',       ic: IC.cube,    c: 'card-icon-indigo', re: /sku|product famil/i },
+  { k: 'channel',  l: 'Sales channels', ic: IC.receipt, c: 'card-icon-teal',   re: /sales channel/i },
+  { k: 'ctype',    l: 'Customer type',  ic: IC.users,   c: 'card-icon-sky',    re: /first-time|returning|subscriber/i },
+  { k: 'value',    l: 'Order value',    ic: IC.cash,    c: 'card-icon-green',  re: /order value/i },
+  { k: 'discount', l: 'Discount',       ic: IC.tag,     c: 'card-icon-purple', re: /discount/i },
+  { k: 'refund',   l: 'Refunds',        ic: IC.arrDn,   c: 'card-icon-yellow', re: /refund/i },
+  { k: 'rank',     l: 'Percentile rank',ic: IC.chart,   c: 'card-icon-sky',    re: /top \d+%/i },
+  { k: 'tag',      l: 'Tags',           ic: IC.spark,   c: 'card-icon-gray',   re: /tag\(s\)/i }
+];
+/* The tile on a row used to be coloured by the removed Type, which assigned one
+   label per segment from its first matching condition. Ten of forty rows then
+   carried a tile naming a dimension the segment does not filter on — "refunds"
+   wore the order-value tile, and the five whose only condition was never given
+   a value wore the geography globe while the rail said they filter on nothing.
+   The tile now says what the FIRST real dimension is, and segments that narrow
+   by nothing get a neutral one, so the icon and the rail cannot disagree. */
+const NODIM = { l: 'No conditions', ic: IC.slash, c: 'card-icon-gray' };
+const tileOf = s => (s.dims && s.dims.length) ? DIM[s.dims[0]] : NODIM;
+const DIM = Object.fromEntries(DIMS.map(d => [d.k, d]));
+function dimsOf(s) {
+  const raw = (s.live || []).map(c => c.raw).join(' ; ');
+  return DIMS.filter(d => d.re.test(raw)).map(d => d.k);
+}
+SEGMENTS.forEach(s => { s.dims = dimsOf(s); });
+
+/* ── The countries the list summary throws away ───────────────────────────
+   Read one by one out of the live product's own edit screen on 2026-09-07, not
+   inferred from anything. The product resolves geography to a country code —
+   "In US", "In CA or US", "In GB" — and the list summary replaces that with
+   "Geography: 1 country(s)".
+
+   What that costs is exact and demonstrable: "Geo + Offer" is In US and
+   "Geo + offer 2" is In CA, and both print the identical line
+   "Geography: 1 country(s) AND Discount greater than 25%". Two different
+   segments, one sentence. Roland opened the call with precisely this — "there
+   were absolutely similar segments, just different at some very small little
+   point, so it's difficult to distinguish it."
+
+   Worse, three of them are named after a place they do not filter on:
+   "California Buyers", "California High Spenders" and "Illinois Customers"
+   all resolve to In US. The name is not the definition, which is why the
+   definition has to be readable.
+
+   Channels, SKUs and product families are NOT here: the product's own summary
+   leaves those as counts too ("Through 2 channels", "Bought any of 3 SKUs"),
+   so there is nothing to carry through yet. */
+/* The five SKU codes this account actually uses — F001 and B009 read off the
+   product's own Products tab, the rest present in the segment names. The family
+   names below them are INVENTED: nothing anywhere names a product family. */
+const SKU_CODES = ['F001', 'B009', 'B018', 'B004', 'B005'];
+const FAMILIES  = ['Cold brew', 'Powders', 'Accessories'];
+
+const GEO_READ = {
+  'US Customers':                             'In US',
+  'US or CA':                                 'In US or CA',
+  'US v CA':                                  'In CA or US',
+  'US Customers -':                           'In US',
+  'Geo + Offer':                              'In US',
+  'Geo + offer 2':                            'In CA',
+  'California Buyers':                        'In US',
+  'UK Recent Purchasers':                     'In GB',
+  'Illinois Customers - Last Year Purchases': 'In US, postal code IL',
+  'California High Spenders':                 'In US, postal code CA'
+};
+SEGMENTS.forEach(s => {
+  const v = GEO_READ[s.n];
+  if (!v) return;
+  (s.live || []).forEach(c => { if (/geograph/i.test(c.raw)) c.label = v; });
+  /* The one-line summary under the name is built from the same labels. */
+  s.sentence = s.live.length ? s.live.map(c => c.label).join(' · ') : s.sentence;
+});
+
+/* ── Which channels, not how many ─────────────────────────────────────────
+   Marko, 12:20, with his cursor by the rail on our own page: "we wanna see HERE
+   the channel — remember, we agreed that some segments will become Shopify,
+   Amazon oriented." A row that says "2 sales channel(s)" does not let anyone see
+   the channel; it is the same omission as "Geography: 1 country(s)".
+
+   The vocabulary below is real, read out of the live product's channel picker on
+   2026-09-07: two groups, DTC and Wholesale, six named channels, and a badge of
+   32 because every channel opens again into sub-channels.
+
+   WHICH channels a given segment uses is the one thing the product does not
+   show — its own summary says "Through 2 channels" and the picker shows the
+   whole DTC group ticked, indistinguishable from the default. So unlike the
+   countries in GEO_READ, which were read off the screen one segment at a time,
+   the assignments here are PLACEHOLDERS: the right shape, the right names,
+   the counts the product reports, and no claim about which is true. They exist
+   so the design can be judged, and they are the first thing to replace when the
+   API answers. */
+const CHANNELS = {
+  DTC:       ['Amazon Seller Partner', 'Manual Order DTC', 'Shopify DTC'],
+  Wholesale: ['Manual Order Wholesale', 'Shopify Wholesale', 'SPS Commerce']
+};
+/* The product shows a channel as its logo and nothing else — a 44px round chip,
+   three of them in a row, name in the title only. Same files, taken from the
+   product's own /applications-logos/. */
+const CHANNEL_LOGO = {
+  'Amazon Seller Partner':  './channel-logos/amazon-logo.svg',
+  'Shopify DTC':            './channel-logos/shopify-logo.svg',
+  'Manual Order DTC':       './channel-logos/manual-order-dtc-blue-logo.svg',
+  'Shopify Wholesale':      './channel-logos/shopify-logo.svg',
+  'Manual Order Wholesale': './channel-logos/manual-order-dtc-blue-logo.svg'
+};
+const CHAN_PLACEHOLDER = {
+  /* "2 sales channel(s)" in the list; the editor agrees. */
+  'DTC Subscribers': ['Shopify DTC', 'Manual Order DTC'],
+  /* "2 sales channel(s)" in the list. */
+  'refunds':         ['Amazon Seller Partner', 'Shopify DTC'],
+  /* "9 sales channel(s)" — more than the six parents, so it reaches into the
+     sub-channels and is described by group rather than named. */
+  'April Segment':   ['DTC', 'Wholesale']
+};
+SEGMENTS.forEach(s => {
+  const v = CHAN_PLACEHOLDER[s.n];
+  if (!v) return;
+  (s.live || []).forEach(c => {
+    if (!/sales channel/i.test(c.raw)) return;
+    const named = v.every(x => !CHANNELS[x]);
+    c.label = named
+      ? 'Through ' + v.join(', ')
+      : 'Through 9 channels across ' + v.join(' and ');
+  });
+  s.sentence = s.live.length ? s.live.map(c => c.label).join(' · ') : s.sentence;
+});
+
+/* ── Values inside a dimension ────────────────────────────────────────────
+   "Narrows by geography" is a category; the reader wants the value. What the
+   product actually publishes for a segment is the SHAPE of the condition, never
+   the value: "Geography: 1 country(s)", never which country. Checked against
+   all forty — no country name appears anywhere in the data, and the only values
+   that survive into the summary are two postal codes, IL and CA.
+
+   That omission is itself the finding. Roland opened the call with "there were
+   absolutely similar segments, just different at some very small little point,
+   so it's difficult to distinguish it" — US Customers and UK Customers both
+   read "Geography: 1 country(s)", and no amount of layout fixes that.
+
+   So this shows every value the data really carries, verbatim, and no more.
+   When the API supplies the country, it lands here without a redesign. */
+/* Marko, 11:40: "I can provide some geography for instance and product SUB
+   ITEMS". Sub items, not items — the values have levels of their own. The live
+   product works the same way: its three DTC sales channels are parents, and a
+   segment reporting "12 sales channel(s)" is counting the sub-channels beneath
+   them. Geography is country then postal code; products would be family then
+   SKU; channels, channel then sub-channel.
+
+   Only geography has a second level in the data we hold, so only geography
+   grows one. The shape is the same for all of them, so the day a family or a
+   sub-channel arrives it lands here without a redesign. */
+/* Which group a channel belongs to, and which channels a condition names. */
+const CHAN_GROUP = {};
+Object.keys(CHANNELS).forEach(g => CHANNELS[g].forEach(c => { CHAN_GROUP[c] = g; }));
+function chanParts(label) {
+  const t = String(label || '');
+  const chans = Object.keys(CHAN_GROUP).filter(c => t.indexOf(c) !== -1);
+  /* A condition that reaches into the sub-channels names its groups instead. */
+  const groups = chans.length ? [...new Set(chans.map(c => CHAN_GROUP[c]))]
+                             : Object.keys(CHANNELS).filter(g => new RegExp('\\b' + g + '\\b').test(t));
+  return { chans: chans, groups: groups };
+}
+
+function geoParts(label) {
+  /* "Geography: In US" as well as "In US": a segment built in this prototype
+     writes the dimension name in front so the Geography facet matches it, and
+     the country still has to be readable out of the tail. */
+  /* Case-insensitive, and the code is upper-cased on the way out: humanize()
+     lowercases a condition label for the row summary, so a segment built in
+     this prototype arrived as "geography: in us" and the country resolved to
+     nothing — the row was then filterable under Geography but under no country
+     inside it. */
+  const m = /(?:^|:\s*)In ([A-Za-z]{2}(?: or [A-Za-z]{2})*)/i.exec(label || '');
+  return {
+    cc: m ? m[1].split(' or ').map(x => x.toUpperCase()) : [],
+    pc: [...String(label || '').matchAll(/postal code ([A-Za-z]{2})/gi)].map(x => x[1].toUpperCase())
+  };
+}
+
+/* A token addresses a node: "geo|US" is a country, "geo|US|IL" a postal code
+   inside it, "product|Has 3 SKUs" a flat value in a dimension with no second
+   level yet. */
+function dimTree(k, pool) {
+  const d = DIM[k];
+  if (!d) return [];
+  if (k === 'channel') {
+    /* Group, then channel inside it — the shape the product's own picker uses:
+       Select All over DTC and Wholesale, each holding named channels. */
+    const g = new Map(), c = new Map();
+    pool.forEach(s => (s.live || []).forEach(cond => {
+      if (!d.re.test(cond.raw)) return;
+      const p = chanParts(cond.label);
+      p.groups.forEach(x => g.set(x, (g.get(x) || 0) + 1));
+      p.chans.forEach(x => c.set(x, (c.get(x) || 0) + 1));
+    }));
+    return [...g.entries()].map(([x, n]) => ({
+      tok: 'channel|' + x, l: x, n: n,
+      kids: (CHANNELS[x] || []).filter(ch => c.has(ch))
+        .map(ch => ({ tok: 'channel|' + x + '|' + ch, l: ch, n: c.get(ch), kids: [] }))
+    })).sort((a, b) => b.n - a.n || a.l.localeCompare(b.l));
+  }
+  if (k === 'product') {
+    /* ── Second level for Products ─────────────────────────────────────────
+       ASSIGNED, NOT READ. The data counts a segment's products and never names
+       them — "Has 3 SKU(s)", "Has 1 product family(s)" — and the product's own
+       editor says the same ("Bought any of 3 SKUs"). Asked for the second level
+       anyway, so the count is expanded deterministically: a segment with N SKUs
+       takes the first N codes, one with N families the first N families.
+
+       The SKU CODES are real — F001, B009, B018, B004 and B005 all appear in
+       this account, the first two with real figures on the Products tab. What is
+       invented is which segment holds which, and the family names entirely. The
+       group says so on screen, so nobody reads it as a specification. */
+    const bySku = new Map(), byFam = new Map();
+    pool.forEach(s => (s.live || []).forEach(c => {
+      const sk = /Has (\d+) SKU/i.exec(c.raw);
+      if (sk) SKU_CODES.slice(0, +sk[1]).forEach(x => bySku.set(x, (bySku.get(x) || 0) + 1));
+      const fm = /Has (\d+) product famil/i.exec(c.raw);
+      if (fm) FAMILIES.slice(0, +fm[1]).forEach(x => byFam.set(x, (byFam.get(x) || 0) + 1));
+    }));
+    const node = (label, map, tag) => {
+      const kids = [...map.entries()].map(([v, n]) => ({ tok: 'product|' + label + '|' + v, l: v, n: n, kids: [] }))
+        .sort((a, b) => b.n - a.n || a.l.localeCompare(b.l));
+      const total = pool.filter(s => (s.live || []).some(c => tag.test(c.raw))).length;
+      return kids.length ? [{ tok: 'product|' + label, l: label, n: total, kids: kids }] : [];
+    };
+    return node('SKUs', bySku, /Has \d+ SKU/i).concat(node('Product families', byFam, /Has \d+ product famil/i));
+  }
+  if (k !== 'geo') {
+    const seen = new Map();
+    pool.forEach(s => (s.live || []).forEach(c => {
+      if (d.re.test(c.raw)) seen.set(c.label, (seen.get(c.label) || 0) + 1);
+    }));
+    return [...seen.entries()].map(([v, n]) => ({ tok: k + '|' + v, l: v, n: n, kids: [] }))
+      .sort((a, b) => b.n - a.n || a.l.localeCompare(b.l));
+  }
+  const cc = new Map(), pc = new Map();
+  pool.forEach(s => (s.live || []).forEach(c => {
+    if (!d.re.test(c.raw)) return;
+    const g = geoParts(c.label);
+    g.cc.forEach(x => cc.set(x, (cc.get(x) || 0) + 1));
+    g.pc.forEach(x => g.cc.forEach(y => {
+      const key = y + '|' + x; pc.set(key, (pc.get(key) || 0) + 1);
+    }));
+  }));
+  return [...cc.entries()].map(([x, n]) => ({
+    tok: 'geo|' + x, l: x, n: n,
+    kids: [...pc.entries()].filter(([key]) => key.split('|')[0] === x)
+      .map(([key, m]) => ({ tok: 'geo|' + key, l: 'postal code ' + key.split('|')[1], n: m, kids: [] }))
+  })).sort((a, b) => b.n - a.n || a.l.localeCompare(b.l));
+}
+
+function hasValue(s, tok) {
+  const [k, a, b] = String(tok).split('|');
+  const d = DIM[k];
+  if (!d) return false;
+  return (s.live || []).some(c => {
+    if (!d.re.test(c.raw)) return false;
+    if (k === 'channel') {
+      const p = chanParts(c.label);
+      return p.groups.indexOf(a) !== -1 && (b == null || p.chans.indexOf(b) !== -1);
+    }
+    if (k === 'product') {
+      /* "product|SKUs" is every segment with any SKU condition;
+         "product|SKUs|F001" is the ones whose count reaches that code. */
+      const sk = /Has (\d+) SKU/i.exec(c.raw), fm = /Has (\d+) product famil/i.exec(c.raw);
+      if (a === 'SKUs')  return !!sk && (b == null || SKU_CODES.slice(0, +sk[1]).indexOf(b) !== -1);
+      if (a === 'Product families') return !!fm && (b == null || FAMILIES.slice(0, +fm[1]).indexOf(b) !== -1);
+      return false;
+    }
+    if (k !== 'geo') return c.label === a;
+    const g = geoParts(c.label);
+    return g.cc.indexOf(a) !== -1 && (b == null || g.pc.indexOf(b) !== -1);
+  });
+}
+
+/* ── Who touched it ───────────────────────────────────────────────────────
+   Marko, 2026-09-03 at 16:40: "the metrics here should be like a user based —
+   you created, edited, you know, like user created, user edited."
+
+   The live product does not record it for a segment: the list has Created and
+   Updated as dates and no author, though the same product does stamp
+   "Created by Richie Mashiko" on an automation. So there is no history to show
+   and none is invented — the forty seeded segments say so plainly.
+
+   What IS real is what happens in front of you: rename a segment or file it in
+   a folder here and it is stamped with who did it, because that is a fact this
+   page witnessed. It makes the field work, and it makes the gap visible to the
+   person who has to close it. */
+const ME = 'You';
+function loadEdits() {
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segEdits') || '{}');
+    return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  } catch (e) { return {}; }
+}
+function markEdit(id, what) {
+  const m = loadEdits();
+  m[id] = { by: ME, what: what, at: Date.now() };
+  try { sessionStorage.setItem('segEdits', JSON.stringify(m)); } catch (e) {}
+  const s = SEGMENTS.find(x => x.id === id);
+  if (s) s.edit = m[id];
+}
+(() => { const m = loadEdits(); SEGMENTS.forEach(s => { s.edit = m[s.id] || null; }); })();
+
+/* ── Where a segment stands among the others ──────────────────────────────
+   Marko, 2026-09-03, right after saying he likes the share-of-base figure: "it
+   might be interesting to see how they rank as well, like other segments, you
+   know, relatively." A number on its own answers "how big"; it does not answer
+   "is this one of my important ones", which is the question someone scanning
+   forty of them is actually asking.
+
+   Ranked among the segments that returned something. A segment with no result
+   has no place in an order of size and is left without a rank rather than being
+   given last place, which would read as a verdict. */
+(function rank() {
+  const ranked = SEGMENTS.filter(s => s.c > 0).sort((a, b) => b.c - a.c);
+  ranked.forEach((s, i) => { s.rank = i + 1; });
+  SEGMENTS.forEach(s => { s.rankOf = ranked.length; });
+})();
+
+/* ── The order window ─────────────────────────────────────────────────────
+   Marko, 2026-09-03: "you should have a range on this page." Every segment in
+   the live product carries its own window frozen into the definition — "Jul 31,
+   2026 to Aug 31, 2026", "Dec 3, 2024 to Dec 3, 2025" — so two segments with
+   identical conditions and different windows are two different segments. That
+   is a large part of why there are forty of them and why so many read as
+   near-duplicates.
+
+   The page cannot recompute anyone's metrics for a different window; the data
+   we were given is one figure per segment. What it CAN do is let the reader ask
+   which segments look at the period they care about, which is the question the
+   window is actually asked. Parsed from the same string the product prints, and
+   nothing is modelled. */
+function winOf(s) {
+  if (!s.r) return null;
+  const m = String(s.r).split(' to ');
+  if (m.length !== 2) return null;
+  const a = new Date(m[0]), b = new Date(m[1]);
+  return (isNaN(a) || isNaN(b)) ? null : { from: a, to: b, label: s.r };
+}
+SEGMENTS.forEach(s => { s.win = winOf(s); });
+
+/* Presets, not a date picker. Two dates to pick before the list responds is a
+   lot of work for a question usually shaped "recent" or "last year"; the custom
+   range stays available for the rest. A segment matches when its window
+   OVERLAPS the period — a segment covering all of 2025 is relevant to a
+   question about March 2025. */
+const WINDOWS = [
+  { k: 'all',   l: 'Any window',      test: () => true },
+  { k: 'd90',   l: 'Last 90 days',    test: w => w && w.to  >= addDays(TODAY, -90) },
+  { k: 'y1',    l: 'Last 12 months',  test: w => w && w.to  >= addDays(TODAY, -365) },
+  { k: 'older', l: 'Older than a year', test: w => w && w.to < addDays(TODAY, -365) },
+  { k: 'none',  l: 'No window set',   test: w => !w }
+];
+function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+const WIN = Object.fromEntries(WINDOWS.map(w => [w.k, w]));
+
+/* ── Folders ──────────────────────────────────────────────────────────────
+   Data Rooms files its records into folders. Both v2 pages need them: the list
+   filters and moves by folder, the segment page shows and changes the one it
+   sits in. They lived on the list page and the segment page could not read
+   them, so a segment could be filed from the list but not from itself.
+
+   Starts empty, exactly as his screen does: zero folders, everything ungrouped.
+   Nothing about which segment belongs where is invented — the mechanism is
+   shown, the assignments are the user's. */
+const FOLDERS = (() => {
+  try {
+    const v = JSON.parse(sessionStorage.getItem('segFolders') || '[]');
+    /* Not just parseable — the right shape, and every entry usable. A stored
+       object here threw "FOLDERS.find is not a function" and left both pages
+       blank with nothing on screen to say why. */
+    return Array.isArray(v)
+      ? v.filter(f => f && typeof f.id === 'string' && typeof f.name === 'string')
+         .map(f => ({ id: f.id, name: f.name, ids: Array.isArray(f.ids) ? f.ids : [] }))
+      : [];
+  } catch (e) { return []; }
+})();
+const saveFolders = () => { try { sessionStorage.setItem('segFolders', JSON.stringify(FOLDERS)); } catch (e) {} };
+const folderOf = s => (FOLDERS.find(f => f.ids.includes(s.id)) || null);
+/* One segment lives in one folder, so filing it anywhere removes it everywhere
+   else first. `fid` empty means ungrouped. */
+function fileInto(seg, fid) {
+  FOLDERS.forEach(f => { f.ids = f.ids.filter(x => x !== seg.id); });
+  const f = FOLDERS.find(x => x.id === fid);
+  if (f) f.ids.push(seg.id);
+  saveFolders();
+  markEdit(seg.id, f ? 'filed in ' + f.name : 'removed from a folder');
+  return f || null;
 }
 
 addEventListener('resize', closeMenu);

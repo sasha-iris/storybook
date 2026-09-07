@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Segment · variant 2</title>
+<base href="http://localhost:8010/pages/">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=20">
-<link rel="stylesheet" href="./segments-v2.css?v=20">
+<link rel="stylesheet" href="./segments-proto.css?v=21">
+<link rel="stylesheet" href="./segments-v2.css?v=21">
 <!--
   Variant 2 of the segment page, in the Data Rooms visual language.
 
@@ -71,6 +73,13 @@
             <button class="btn btn-md btn-alternative" id="drUpdateList" hidden>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 7.5 12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
               Update the list
+            </button>
+            <!-- Ask Fin, in the product's own words and with its own robot glyph. It
+                 reveals on row hover in the live list; on the segment's own page
+                 there is one segment and nothing to hover, so it is a button. -->
+            <button class="btn btn-md btn-alternative" id="drAsk">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3M7.5 11.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S9.83 13 9 13s-1.5-.67-1.5-1.5M16 17H8v-2h8zm-1-4c-.83 0-1.5-.67-1.5-1.5S14.17 10 15 10s1.5.67 1.5 1.5S15.83 13 15 13"/></svg>
+              Ask Fin
             </button>
             <a class="btn btn-md btn-alternative" id="drCompare" href="./segments-compare.html?v2=1">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5h13.5m0 0-3-3m3 3-3 3M21 16.5H7.5m0 0 3 3m-3-3 3-3"/></svg>
@@ -217,12 +226,59 @@
   </main>
 </div>
 
+<!-- Rename and filing, in a side panel.
+     The pencil used to turn the <h1> itself into a contenteditable field. That
+     blurred the line between reading and editing, blur committed whatever had
+     been typed, there was nowhere to put the empty-name and duplicate-name
+     errors without the header jumping, and the element changed role under a
+     screen reader with nothing announced.
+
+     A panel, not a screen: the segment stays visible behind it, so you can see
+     what you are renaming. Editing the DEFINITION is the thing that changes
+     every number on the page, and that still gets a whole screen of its own —
+     the builder. Label here, logic there. -->
+<div class="iris-drawer-backdrop dr-drawer-bd" id="edBd" hidden></div>
+<aside class="iris-drawer dr-drawer" id="edPanel" role="dialog" aria-modal="true"
+       aria-labelledby="edTitle" hidden>
+  <div class="iris-drawer__inner dr-drawer__inner">
+    <div class="iris-drawer__header">
+      <h2 class="iris-drawer__title" id="edTitle">Segment details</h2>
+      <button class="iris-drawer__close" id="edClose" aria-label="Close without saving">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" d="M6 18 18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="edName">Segment name</label>
+      <input class="form-input" id="edName" type="text" autocomplete="off" spellcheck="false"
+             aria-describedby="edNameHelp">
+      <p class="form-helper" id="edNameHelp">Used everywhere this segment appears. Two segments may not share a name.</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="edFolder">Folder</label>
+      <select class="form-select" id="edFolder" aria-describedby="edFolderHelp"></select>
+      <p class="form-helper" id="edFolderHelp">A segment lives in one folder. Create folders on the segments list.</p>
+    </div>
+
+    <p class="dr-drawer__note">
+      Renaming changes the label only. To change who this segment matches,
+      <a class="btn-link" id="edToBuilder" href="#">edit the definition</a>.
+    </p>
+  </div>
+
+  <div class="dr-drawer__foot">
+    <button class="btn btn-md btn-alternative" id="edCancel">Cancel</button>
+    <button class="btn btn-md btn-primary" id="edSave">Save changes</button>
+  </div>
+</aside>
+
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 <input type="file" id="drFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="./segments-data.js?v=20"></script>
-<script src="./segments-v2-shared.js?v=20"></script>
+<script src="./segments-data.js?v=21"></script>
+<script src="./segments-v2-shared.js?v=21"></script>
 <script>
 /* ── Unknown id ───────────────────────────────────────────────────────────
    An id that does not exist used to fall through to a default segment, so
@@ -258,21 +314,23 @@ const HAS_DATA = SEG.c != null && SEG.c > 0;
    dressed as a finding. */
 const IS_COMPANY = SEG.share != null && SEG.share >= 0.95;
 
-/* F001 and B009 are read from the live Products tab. The rest of the catalogue is
-   scaled to this segment's net sales and the product names are invented — only
-   the SKU codes are real. Logged in SEGMENTS_BA_REVIEW.md. */
+/* Only what was actually read. The BA review's line 9 is exact: the SKU codes
+   F001 / B009 / B018 / B004 / B005 are real and the F001 and B009 FIGURES are
+   real; every product name was invented, as were seven of the nine rows and
+   every other share, margin and price.
+
+   The invented rows are gone rather than labelled, because a table of product
+   revenue is read as a fact about this business, not as a sketch. What is left
+   is the two products whose numbers came out of the product's own Products tab,
+   carrying their SKU codes — the names are not ours to write.
+
+   B018, B004 and B005 are real codes with invented figures, so they are not
+   here: a real code attached to a made-up revenue is the more convincing lie of
+   the two. */
 const CATALOG = [
-  { sku:'F001', name:'Cold Brew Concentrate 32oz', share:.452, margin:.653, price:30.37, ret:.001 },
-  { sku:'B009', name:'Vanilla Bean Cold Brew 12pk', share:.121, margin:.661, price:57.73, ret:.000 },
-  { sku:'B018', name:'Texture Powder 8oz',          share:.098, margin:.612, price:42.10, ret:.004 },
-  { sku:'B004', name:'Original Blend 16oz',         share:.087, margin:.588, price:26.40, ret:.007 },
-  { sku:'B005', name:'Decaf Cold Brew 32oz',        share:.071, margin:.641, price:34.95, ret:.002 },
-  { sku:'F014', name:'Starter Kit',                 share:.063, margin:.503, price:64.00, ret:.011 },
-  { sku:'A002', name:'Ceramic Mug',                 share:.041, margin:.702, price:18.00, ret:.003 },
-  { sku:'A007', name:'Reusable Filter',             share:.038, margin:.735, price:12.50, ret:.005 },
-  { sku:'B021', name:'Shampoo Bar',                 share:.029, margin:.556, price:14.00, ret:.019 }
-];
-let cum = 0;
+  { sku:'F001', name:'', share:.452, margin:.653, price:30.37, ret:.001 },
+  { sku:'B009', name:'', share:.121, margin:.661, price:57.73, ret:.000 }
+];let cum = 0;
 /* An uploaded list knows who is in it and nothing else until Iris matches those
    customers to orders. Deriving a product table from a revenue figure that does
    not exist produced nine rows of $0.00. */
@@ -284,7 +342,11 @@ const PROD = (HAS_DATA && SEG.net != null) ? CATALOG.map(p => {
   return { ...p, net, units, cogs: net - gp, gp, cum, uniq: Math.min(SEG.c, Math.round(SEG.c * p.share * 2.3)) };
 }) : [];
 
-const KI = KIND[SEG.kind];
+/* Was KIND[SEG.kind] — the removed Type, which named one dimension picked from
+   the first matching condition. It disagreed with the list for ten of the forty
+   segments. Same resolver as the list now, so the two cannot say different
+   things about one segment. */
+const KI = tileOf(SEG);
 
 /* ── What depends on this segment ─────────────────────────────────────────
    The first two rows are real: this page links to both, and the Cohorts filter
@@ -309,46 +371,130 @@ tile.className = 'card-icon dr-tile ' + KI.c;
 tile.innerHTML = svg(KI.ic, 20);
 document.getElementById('drEdit2').href = './segment-builder.html?v2=1&id=' + SEG.id;
 
-/* ── Rename in place ──────────────────────────────────────────────────────
-   His pencil edits the title where it stands. Ours navigated to the builder,
-   which is a whole screen and a whole mode for changing four characters in a
-   name — and the builder edits the DEFINITION, which is a different and far
-   riskier thing than the label. Renaming is now what the pencil does.
+/* ── Rename and file, in the side panel ───────────────────────────────────
+   The pencil opens the panel declared at the end of the document. Nothing is
+   written until Save, so nothing can be committed by accident, and both
+   validation messages have a place to appear that does not move the header.
 
-   The heading itself becomes the field, so the text never moves and nothing
-   below it shifts. Enter commits, Escape restores, blur commits. */
-(function rename() {
-  const h1 = document.getElementById('drName'), pencil = document.getElementById('drPencil');
-  let before = null;
-  const stop = (commit) => {
-    if (before === null) return;
-    const next = h1.textContent.replace(/\s+/g, ' ').trim();
-    h1.removeAttribute('contenteditable');
-    h1.classList.remove('dr-h1--editing');
-    if (!commit || !next) { h1.textContent = before; }
-    else if (next !== before) {
-      SEG.n = next; document.title = next + ' · Customer Segments · Iris';
-      toast('Segment renamed', '“' + before + '” is now “' + next + '”.');
+   Filing lives here too because the segment page had no way to do it at all:
+   folders could be created and assigned from the list, and a segment looked at
+   on its own could not be put into one. */
+const editPanel = (function editor() {
+  const bd     = document.getElementById('edBd');
+  const panel  = document.getElementById('edPanel');
+  const name   = document.getElementById('edName');
+  const folder = document.getElementById('edFolder');
+  const help   = document.getElementById('edNameHelp');
+  const save   = document.getElementById('edSave');
+  const pencil = document.getElementById('drPencil');
+  let opener = null;
+
+  document.getElementById('edToBuilder').href = './segment-builder.html?v2=1&id=' + SEG.id;
+
+  /* Its own current name is not a collision. Four names in the live data are
+     already duplicated — two "California", two "test" — so checking against
+     every other segment opened the panel already in an error state, with Save
+     disabled and the folder select unreachable, before a single keystroke. */
+  const taken = v => v.toLowerCase() !== SEG.n.toLowerCase() &&
+                     SEGMENTS.some(s => s.id !== SEG.id && s.n.toLowerCase() === v.toLowerCase());
+  const clean = () => name.value.replace(/\s+/g, ' ').trim();
+
+  /* Validation reports on every keystroke but only blocks on Save, so the field
+     does not turn red while a name is half typed. */
+  function check(loud) {
+    const v = clean();
+    const msg = !v ? 'A segment needs a name.'
+              : taken(v) ? 'Another segment is already called “' + v + '”.' : null;
+    save.disabled = !!msg;
+    name.classList.toggle('is-error', !!msg && loud);
+    name.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    help.textContent = msg ||
+      'Used everywhere this segment appears. Two segments may not share a name.';
+    help.classList.toggle('dr-drawer__err', !!msg && loud);
+    return !msg;
+  }
+
+  function open() {
+    /* Where focus goes back to on close. document.activeElement is <body> when
+       the panel is opened by anything other than a real click, and focusing
+       <body> drops a keyboard user at the top of the document. */
+    const from = document.activeElement;
+    opener = (from && from !== document.body && from !== document.documentElement) ? from : pencil;
+    name.value = SEG.n;
+    const here = folderOf(SEG);
+    folder.innerHTML = '<option value="">Ungrouped</option>' +
+      FOLDERS.map(f => '<option value="' + esc(f.id) + '"' +
+        (here && here.id === f.id ? ' selected' : '') + '>' + esc(f.name) + '</option>').join('');
+    check(false);
+    bd.hidden = false; panel.hidden = false;
+    document.body.style.overflow = 'hidden';
+    name.focus(); name.select();
+  }
+
+  function close() {
+    bd.hidden = true; panel.hidden = true;
+    document.body.style.overflow = '';
+    (opener || pencil).focus();
+  }
+
+  function commit() {
+    if (!check(true)) { name.focus(); return; }
+    const before = SEG.n, next = clean();
+    const wasIn = folderOf(SEG), wantId = folder.value;
+    const moved = (wasIn ? wasIn.id : '') !== wantId;
+
+    if (next !== before) {
+      SEG.n = next;
+      saveName(SEG.id, next);
+      markEdit(SEG.id, 'renamed it');
+      document.getElementById('drName').textContent = next;
+      document.title = next + ' · Customer Segments · Iris';
+      /* The heading is not the only place the name is printed. Five blocks were
+         rendered from SEG.n on load — the two empty states, the product table,
+         the retention block and the journey block — and kept the old name while
+         the title said something else. */
+      redrawNamed();
     }
-    before = null;
-    pencil.focus();
-  };
-  const start = () => {
-    if (before !== null) return;
-    before = h1.textContent;
-    h1.setAttribute('contenteditable', 'plaintext-only');
-    h1.classList.add('dr-h1--editing');
-    h1.focus();
-    const r = document.createRange(); r.selectNodeContents(h1);
-    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
-  };
-  pencil.addEventListener('click', start);
-  h1.addEventListener('keydown', e => {
-    if (e.key === 'Enter')  { e.preventDefault(); stop(true); }
-    if (e.key === 'Escape') { e.preventDefault(); stop(false); }
+    let now = wasIn;
+    if (moved) { now = fileInto(SEG, wantId); renderMeta(); }
+    close();
+
+    /* One toast, saying only what actually changed. */
+    if (next !== before && moved)
+      toast('Segment updated', '“' + before + '” is now “' + next + '”, ' +
+            (now ? 'in ' + now.name + '.' : 'and ungrouped.'));
+    else if (next !== before)
+      toast('Segment renamed', '“' + before + '” is now “' + next + '”.');
+    else if (moved)
+      toast(now ? 'Moved to ' + now.name : 'Removed from folder', '“' + next + '”');
+  }
+
+  pencil.addEventListener('click', open);
+  document.getElementById('edClose').addEventListener('click', close);
+  document.getElementById('edCancel').addEventListener('click', close);
+  bd.addEventListener('click', close);
+  save.addEventListener('click', commit);
+  name.addEventListener('input', () => check(false));
+  name.addEventListener('blur', () => check(true));
+
+  panel.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    if (e.key === 'Enter' && e.target === name) { e.preventDefault(); commit(); }
+    /* The panel is modal, so Tab must not walk out of it into the page behind. */
+    if (e.key === 'Tab') {
+      const f = panel.querySelectorAll('button, input, select, a[href]');
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   });
-  h1.addEventListener('blur', () => stop(true));
+
+  return { open: open };
 })();
+document.getElementById('drAsk').addEventListener('click', () =>
+  toast('Fin is reading “' + SEG.n + '”',
+    'It will come back with what stands out about these ' +
+    (SEG.c == null ? 'customers' : fmtN(SEG.c) + ' customers') + ' and what to do next.'));
 document.getElementById('drCompare').href =
   './segments-compare.html?v2=1&ids=' + SEG.id + ',' + (SEGMENTS.find(x => x.id !== SEG.id && v2state(x) === 'ready') || SEGMENTS[6]).id;
 
@@ -367,6 +513,8 @@ document.getElementById('drPill').innerHTML =
 /* Meta row. One icon per fact, spaced, no dot run: the icon says what kind of
    fact is coming before you read it. Nothing here mentions freshness — the
    metrics are computed on the fly. */
+function renderMeta() {
+const here = folderOf(SEG);
 const meta = [
   [IC.users, SEG.c == null ? 'No customers counted'
            : '<b>' + fmtN(SEG.c) + '</b> customers' + (SEG.share >= .95 ? ' — your whole base' : SEG.c ? ' · ' + pct(SEG.share) + ' of base' : ''),
@@ -375,35 +523,65 @@ const meta = [
     ? [IC.dash, 'Uploaded list · <b>' + esc(SEG.source.file) + '</b> · matched on ' + esc(SEG.source.col), '']
     : [IC.funnel, SEG.conds.length ? '<b>' + SEG.conds.length + '</b> condition' + (SEG.conds.length > 1 ? 's' : '') : 'No conditions', ''],
   [IC.cal,    SEG.r ? 'Orders ' + esc(SEG.r) : 'No order window set', ''],
-  [KI.ic,     KI.l + ' segment', ''],
+  /* What it narrows by, all of it, not one guessed label. A segment with
+     geography, product and discount conditions used to print "Geography
+     segment" and the other two facts were nowhere on the page. */
+  [KI.ic, SEG.dims && SEG.dims.length
+            ? 'Narrows by ' + SEG.dims.map(k => '<b>' + DIM[k].l.toLowerCase() + '</b>').join(', ')
+            : 'Narrows by nothing', ''],
   /* His meta row carries ADDED. Ours has the same fact and was not showing it. */
-  [IC.cal,    'Created ' + fmtDate(SEG.cr), ''],
+  /* Skipped when the author line below carries the same date, or the row said
+     "Created Sep 8, 2026" and then "Created by you on Sep 8, 2026". */
+  ...(SEG.by ? [] : [[IC.cal, 'Created ' + fmtDate(SEG.cr), '']]),
   /* No "Created by" slot. It existed only because his meta row has ADDED BY, and
      a field that can only ever print "not available" is a copied checklist item,
      not information. "Used in" stays: it answers what breaks if this changes,
      which is a question a segment actually raises and a file does not. */
   [IC.link,   'Used in <b>' + USED.length + '</b> place' + (USED.length === 1 ? '' : 's'), ''],
+  /* Marko, 16:40: "the metrics here should be like a user based — you created,
+     edited, user created, user edited." The product records no author for a
+     segment, so the seeded forty say so rather than showing an invented name.
+     Anything changed here carries who changed it, because that much is true. */
+  [IC.user, SEG.by ? 'Created by <b>' + esc(SEG.by) + '</b> on ' + fmtDate(SEG.cr)
+          : SEG.edit ? '<b>' + esc(SEG.edit.by) + '</b> ' + esc(SEG.edit.what)
+          : 'No author recorded', ''],
   [IC.clock,  'Definition updated ' + fmtDate(SEG.up) + ' · ' + relTime(SEG.up), ''],
-  [IC.bolt,   'Calculated live', '']
+  [IC.bolt,   'Calculated live', ''],
+  /* Where it is filed, stated as a fact like the rest. It is also the only
+     place the panel's folder change shows up, so the change has somewhere to
+     land instead of only living in a toast. */
+  [here ? IC.folder : IC.folderOpen, here ? 'In <b>' + esc(here.name) + '</b>' : 'Ungrouped', '']
 ];
 document.getElementById('drMeta').innerHTML =
   meta.map(m => '<li class="' + m[2] + '">' + svg(m[0], 14) + '<span>' + m[1] + '</span></li>').join('');
+}
+renderMeta();
 
 if (danger.length) {
   const whole = danger.some(f => f.k === 'wholebase');
   document.getElementById('drAlert').innerHTML =
-    /* Two lines, and the action is a link at the end of the sentence. The same
-       trim the list banner got: a 17px heading over a paragraph over a bordered
-       button was a hundred pixels of red before any of the numbers. */
-    '<div class="alert alert-danger dr-alert" role="region" aria-label="Definition problem" style="margin-bottom:16px;">' +
-      '<span class="alert-icon">' + svg(IC.warn, 17) + '</span>' +
-      '<div class="alert-body"><div class="alert-title">' +
-      (whole ? 'These numbers describe your whole business, not a segment' : 'This segment has a definition problem') + '</div>' +
-      '<p>' + (whole
-        ? 'It matches all ' + fmtN(BASE) + ' customers, so the revenue below is total company revenue. '
+    /* Built the same way as the list's data-quality banner: one line, the icon
+       carrying the severity, the action as a link inside the sentence, and an
+       ✕ so it can be put away. It used to be a heading over a paragraph over a
+       link — three stacked lines of red above every number on the page, for a
+       fact that fits in one sentence.
+
+       Severity stays red here. On the list the notice is a survey of OTHER
+       segments; on a segment's own page it says the figures under it are
+       company totals, which is not a warning about someone else's work. */
+    '<div class="alert alert-danger dr-quality" role="region" aria-label="Definition problem" style="margin-bottom:16px;">' +
+      '<span class="alert-icon">' + svg(IC.warn, 18) + '</span>' +
+      '<div class="alert-body">' + (whole
+        ? 'This segment matches all ' + fmtN(BASE) + ' customers, so every figure below is a company total, not a segment. '
         : danger.map(f => esc(f.t)).join('. ') + '. ') +
-      '<a class="btn-link" href="./segment-builder.html?v2=1&id=' + SEG.id + '">Fix the definition</a></p>' +
-      '</div></div>';
+        '<a class="btn-link" href="./segment-builder.html?v2=1&id=' + SEG.id + '">Fix the definition</a>' +
+      '</div>' +
+      '<button class="alert-dismiss" id="drAlertX" aria-label="Dismiss">' +
+        svg('M6 18 18 6M6 6l12 12', 15) + '</button>' +
+    '</div>';
+  document.getElementById('drAlertX').addEventListener('click', () => {
+    document.getElementById('drAlert').innerHTML = '';
+  });
 }
 
 /* ── KPIs ─────────────────────────────────────────────────────────────────
@@ -411,7 +589,9 @@ if (danger.length) {
    its own answers nothing — the question a segment page exists to answer is
    whether these customers are worth more than the average one. The baseline is
    named in the label, not implied. */
-(function kpis() {
+/* Named and called, not an IIFE: the rename panel has to redraw it, because
+   both of its empty states print the segment by name. */
+function kpis() {
   const box = document.getElementById('drKpis');
   const nd  = document.getElementById('drNoData');
 
@@ -429,7 +609,8 @@ if (danger.length) {
       'Created ' + fmtDate(SEG.cr),
       'Definition updated ' + fmtDate(SEG.up),
       SEG.conds.length + ' condition' + (SEG.conds.length > 1 ? 's' : ''),
-      esc(KI.l) + ' segment',
+      /* Was "Products segment" — the first dimension standing in for all six,
+         four lines under a meta row that lists every one of them correctly. */
       SEG.r ? 'Orders ' + esc(SEG.r) : 'No order window set'
     ];
     nd.innerHTML =
@@ -491,7 +672,8 @@ if (danger.length) {
       : 'Company figures cover all history. This segment covers ' +
         (SEG.r ? esc(SEG.r) : 'all history') + ', so the comparison is rough.') +
     '</p>';
-})();
+}
+kpis();
 
 /* ── conditions ─────────────────────────────────────────────────────────
    No per-condition counts. Conditions are AND-composed, so there is no ordering,
@@ -510,7 +692,12 @@ if (danger.length) {
   /* The order window is a condition like any other, and it is the reason the
      ladder can end lower than the base without any filter appearing to cut. */
   if (SEG.r) rows.push(row(IC.cal, 'card-icon-gray', 'Ordered ' + esc(SEG.r), 'the segment’s order window', DASH));
-  SEG.live.forEach(c => rows.push(row(KI.ic, KI.c, esc(c.label), 'counted together with the others', DASH)));
+  /* Each condition wears its OWN dimension's tile. They all wore the segment's
+     first one, so on a six-condition segment the colour mislabelled five. */
+  SEG.live.forEach(c => {
+    const d = DIMS.find(x => x.re.test(c.raw)) || NODIM;
+    rows.push(row(d.ic, d.c, esc(c.label), 'counted together with the others', DASH));
+  });
   SEG.broken.forEach(c => rows.push(row(IC.warn, 'card-icon-red', esc(c.label), 'never given a value, so it matches everyone', fmtN(BASE), 'dr-cond--bad')));
   if (!SEG.live.length && !SEG.broken.length)
     /* Only claim the base on this row when the segment actually returns it: three
@@ -596,8 +783,8 @@ const PCOLS = [
          tail. Two colours, one meaning, and the shape of the catalogue is visible
          before any number is read. */
       '<div class="dr-name"><span class="card-icon dr-tile card-icon-gray" aria-hidden="true">' + svg(IC.cube, 18) + '</span>' +
-      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name) + '</span>' +
-      '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span></div>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name || p.sku) + '</span>' +
+      (p.name ? '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span>' : '') + '</div>' +
       '<div class="dr-name__s">' + fmtN(p.units) + ' units' +
       (p.cum <= 0.8 ? '<span>·</span>top 80% of sales' : '') +
       (p.ret > 0.005 ? '<span class="flag warn">' + svg(IC.warn, 13) + pct(p.ret) + ' returned</span>' : '') +
@@ -614,7 +801,7 @@ function drawRail() {
     '<div class="dr-rail__g"><div class="dr-rail__lab">Products</div>' +
     PFILTERS.map(f => {
       const n = PROD.filter(f.f).filter(p => !pQuery ||
-        p.sku.toLowerCase().includes(pQuery) || p.name.toLowerCase().includes(pQuery)).length;
+        p.sku.toLowerCase().includes(pQuery) || (p.name || '').toLowerCase().includes(pQuery)).length;
       return '<button class="list-group-item" data-pf="' + f.k + '" aria-pressed="' + (pFilter === f.k) + '">' +
         svg(f.ic, 16) + '<span>' + f.l + '</span><span class="dr-rail__n">' + n + '</span></button>';
     }).join('') + '</div>';
@@ -625,7 +812,7 @@ function drawProducts() {
   if (!PROD.length) { wrap.innerHTML = '<div class="dr-tablecard">' + emptyBlock('product data') + '</div>'; return; }
   const active = PFILTERS.find(f => f.k === pFilter) || PFILTERS[0];
   let rows = PROD.filter(active.f)
-    .filter(p => !pQuery || p.sku.toLowerCase().includes(pQuery) || p.name.toLowerCase().includes(pQuery));
+    .filter(p => !pQuery || p.sku.toLowerCase().includes(pQuery) || (p.name || '').toLowerCase().includes(pQuery));
   rows = [...rows].sort((a, b) => {
     const A = a[pSort.k], B = b[pSort.k];
     const r = typeof A === 'string' ? A.localeCompare(B) : A - B;
@@ -660,8 +847,8 @@ function drawTop() {
     '<th>Product</th><th class="n">Units</th><th class="n">Net sales</th><th class="n">Share</th></tr></thead><tbody>' +
     rows.map(p => '<tr><td><div class="dr-name">' +
       '<span class="card-icon dr-tile card-icon-gray" aria-hidden="true">' + svg(IC.cube, 18) + '</span>' +
-      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name) + '</span>' +
-      '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span></div></div></div></td>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name || p.sku) + '</span>' +
+      (p.name ? '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span>' : '') + '</div></div></div></td>' +
       '<td class="n">' + fmtN(p.units) + '</td><td class="n"><span class="lead">' + fmt$(p.net) + '</span></td>' +
       '<td class="n" style="width:120px;">' + bar(p.share, 'progress-bar-indigo') +
       '<div class="sub">' + pct(p.share) + '</div></td></tr>').join('') +
@@ -670,6 +857,19 @@ function drawTop() {
 
 if (PROD.length) { const c = document.getElementById('drProdN'); c.hidden = false; c.textContent = PROD.length; }
 drawRail(); drawProducts(); drawTop();
+
+/* Everything that prints the segment's name and was rendered once on load.
+   The rename panel calls this so the page does not end up with a new title
+   over five paragraphs still using the old one. */
+function redrawNamed() {
+  try {
+    kpis();
+    drawProducts(); drawTop();
+    if (typeof drawJourney === 'function') drawJourney();
+    const ret = document.getElementById('drRetWrap');
+    if (ret && !HAS_DATA) ret.innerHTML = emptyBlock('retention data');
+  } catch (e) { /* a block that is not on this segment's page is not an error */ }
+}
 
 /* ── customer metrics ───────────────────────────────────────────────────── */
 (function customers() {
@@ -721,14 +921,14 @@ function drawJourney() {
     '<thead><tr><th>Next product</th><th class="n">Customers</th><th class="n">Confidence</th><th style="width:180px;"><span class="seg-sr">Share</span></th></tr></thead><tbody>' +
     rest.map(p => '<tr><td><div class="dr-name">' +
       '<span class="card-icon dr-tile card-icon-gray" aria-hidden="true">' + svg(IC.cube, 18) + '</span>' +
-      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name) + '</span>' +
-      '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span></div></div></div></td>' +
+      '<div class="dr-name__t"><div class="dr-name__l"><span class="dr-name__a" style="cursor:default;">' + esc(p.name || p.sku) + '</span>' +
+      (p.name ? '<span class="iris-chip iris-chip--light">' + esc(p.sku) + '</span>' : '') + '</div></div></div></td>' +
       '<td class="n">' + fmtN(SEG.c * p.conf) + '</td><td class="n"><span class="lead">' + pct(p.conf) + '</span></td>' +
       '<td>' + bar(p.conf, 'progress-bar-indigo') + '</td></tr>').join('') +
     '</tbody></table></div></div>';
 }
 if (PROD.length) {
-  document.getElementById('drFirst').innerHTML = PROD.map(p => '<option value="' + esc(p.sku) + '">' + esc(p.sku + ' — ' + p.name) + '</option>').join('');
+  document.getElementById('drFirst').innerHTML = PROD.map(p => '<option value="' + esc(p.sku) + '">' + esc(p.name ? p.sku + ' — ' + p.name : p.sku) + '</option>').join('');
   document.getElementById('drFirst').addEventListener('change', drawJourney);
   document.getElementById('drJSort').addEventListener('change', drawJourney);
 }

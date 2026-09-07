@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- prototype: the review browser must never serve a stale copy while this is being iterated on -->
+<meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compare segments · Iris redesign prototype</title>
+<base href="http://localhost:8010/pages/">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=20">
+<link rel="stylesheet" href="./segments-proto.css?v=21">
 <!--
   The live product compares exactly two segments on cohort RETENTION
   (Segment 1 Primary / Segment 2 Comparison, View: Retention). That job is kept
@@ -25,7 +28,12 @@
   /* Variant-2 mode only — same reason as the builder: capped but not centred. */
   /* Same alignment rule as the builder: the body's 24px padding is outside its
      max-width, the header's inner box is already inside the header's padding. */
-  .v2 .sc-body { box-sizing: border-box; max-width: 1368px; margin-left: auto; margin-right: auto; }
+  /* No auto side margins: .sc-body is a flex item of main.seg-main, and auto
+     margins on the main axis stop it shrinking below its content — the page
+     scrolled sideways by 97px at 640 and by 311px when it carried the
+     one-segment banner. min-width:0 lets it shrink; the cap still centres it
+     through the grid line, not through margins. */
+  .v2 .sc-body { box-sizing: border-box; max-width: 1368px; min-width: 0; width: 100%; align-self: center; }
   .v2 .sc-head__in { max-width: 1320px; margin: 0 auto; }
   @media (max-width: 768px) { .sc-head, .sc-body { padding-left: 14px; padding-right: 14px; } }
 
@@ -162,7 +170,35 @@
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 
-<script src="./segments-data.js?v=20"></script>
+<script src="./segments-data.js?v=21"></script>
+<script>
+/* Variant 2 renames a segment on its own page and stores the new name under
+   `segNames`. This page is shared with v1 and does not load the v2 runtime, so
+   without this a rename survived exactly one click: "edit the definition" from
+   inside the rename panel opened the builder still showing the old name.
+   Applied only under ?v2=1, so v1 keeps reading the shipped names. */
+if (new URLSearchParams(location.search).get('v2') === '1') {
+  try {
+    const m = JSON.parse(sessionStorage.getItem('segNames') || '{}');
+    if (m && typeof m === 'object' && !Array.isArray(m))
+      SEGMENTS.forEach(s => { if (m[s.id]) s.n = m[s.id]; });
+  } catch (e) {}
+  /* And the segments made in the builder, through makeSegment() like everywhere
+     else. Without this the most obvious path in the whole demo — create a
+     segment, open it, press Compare — dropped it and announced a comparison
+     against a segment the reader had never touched. */
+  try {
+    const made = JSON.parse(sessionStorage.getItem('segMade') || '[]');
+    if (Array.isArray(made)) made.forEach((raw, j) => {
+      if (!raw || typeof raw !== 'object' || typeof raw.n !== 'string') return;
+      if (SEGMENTS.some(x => x.id === 'made' + j)) return;
+      const seg = makeSegment(raw, 0);
+      seg.id = 'made' + j;
+      SEGMENTS.push(seg);
+    });
+  } catch (e) {}
+}
+</script>
 <script>
 const CALC = SEGMENTS.filter(s => s.c != null);
 const q = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);
@@ -343,7 +379,7 @@ function render() {
       <div class="alert-body"><div class="alert-title">${t}</div><div>${d}</div></div></div>`).join('');
 
   const opts = (chosen, blocked) => SEGMENTS.map(s =>
-    `<option value="${s.id}" ${s.id === chosen ? 'selected' : ''} ${s.id === blocked ? 'disabled' : ''}>${s.n}${s.d ? ' — ' + s.d.slice(0, 32) : ''}</option>`).join('');
+    `<option value="${s.id}" ${s.id === chosen ? 'selected' : ''} ${s.id === blocked ? 'disabled' : ''}>${s.n}${s.d ? ' — ' + (s.d.length > 32 ? s.d.slice(0, 31).replace(/\s+\S*$/, '') + '…' : s.d) : ''}</option>`).join('');
   document.getElementById('scPrimary').innerHTML = opts(picked[0].id, picked[1].id);
   document.getElementById('scSecond').innerHTML  = opts(picked[1].id, picked[0].id);
 
