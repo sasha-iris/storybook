@@ -356,16 +356,14 @@
      other way round — value first, a bare <svg> last — copied off .dr-range on
      the list page, which is a page-local override there, not the component and
      not Iris.
-     The ONE thing still overridden is the size. The library ships this control
-     at 42px / --text-sm and offers only a larger variant above it; every other
-     control in this 300px column is .form-input-sm at 31px / --text-xs, so at
-     42 it would be the tallest thing on the card by a clear step. Height,
-     padding and type are brought onto the small field's metrics and nothing
-     else is touched: ground #f9fafb, border #d1d5db, gap 8px and the icon
-     colour are all the component's own, verified against it.
-     A <button> centres its text, which a <div> does not, so the value is told
-     to sit left. */
-  #sbRange { height: 31px; padding: 0 10px; font-size: var(--text-xs); white-space: nowrap; }
+     Nothing else is overridden. It had been squeezed to 31px at --text-xs to sit
+     level with the .form-input-sm fields elsewhere on the card, and at that size
+     it stopped reading as the shipped control and started reading as a squashed
+     one: 42px and --text-sm are its own metrics, along with the #f9fafb ground,
+     the #d1d5db border and the 8px gap.
+     The only thing said here is what a <button> needs and a <div> does not: its
+     text is centred by default, so the value is told to sit left. */
+  #sbRange { white-space: nowrap; }
   #sbRangeLabel { text-align: left; }
   .sb-uni--inline .form-select { width: 100%; min-width: 0; }
 
