@@ -11,6 +11,20 @@
 <link rel="stylesheet" href="portfolio.css">
 </head>
 <body>
+<svg class="pf-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="ico-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0 0 12 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 0 1-2.031.352 5.988 5.988 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971Zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 0 1-2.031.352 5.989 5.989 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971Z"/></symbol>
+  <symbol id="ico-chart-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></symbol>
+  <symbol id="ico-clipboard-document-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"/></symbol>
+  <symbol id="ico-code-bracket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"/></symbol>
+  <symbol id="ico-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></symbol>
+  <symbol id="ico-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></symbol>
+  <symbol id="ico-no-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></symbol>
+  <symbol id="ico-swatch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"/></symbol>
+  <symbol id="ico-cursor-arrow-rays" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"/></symbol>
+  <symbol id="ico-code-bracket-square" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></symbol>
+</svg>
+
 <a class="pf-skip" href="#main">Skip to content</a>
 
 <header class="pf-masthead">
@@ -85,24 +99,24 @@
 
       <h2>Decisions</h2>
       <ul class="pf-facts">
-        <li><b>Sorted by what cannot be trusted, not by what earns most</b>
+        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg><b>Sorted by what cannot be trusted, not by what earns most</b>
           <span>The live product ranks broken segments top because revenue puts them there. My
           first version reproduced that by sorting on customer count.</span></li>
-        <li><b><span class="pf-no">Refused</span> to fill empty rows with plausible numbers</b>
+        <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg><b><span class="pf-no">Refused</span> to fill empty rows with plausible numbers</b>
           <span>Eight segments never ran; they read &ldquo;no data&rdquo;. Also removed: a
           catalogue inventing SKUs and a country found nowhere in the data, and an estimate panel
           naming four customers on an empty form.</span></li>
-        <li><b><span class="pf-no">Removed</span> &ldquo;% of company revenue&rdquo;</b>
+        <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg><b><span class="pf-no">Removed</span> &ldquo;% of company revenue&rdquo;</b>
           <span>Segments overlap, so the column sums to 855% across the forty.</span></li>
-        <li><b>Measured a layout, deleted it, withdrew my own review note</b>
+        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg><b>Measured a layout, deleted it, withdrew my own review note</b>
           <span>I had argued a condition column gives the eye a rail. Across 40 rows both layouts
           aligned at an identical left edge, sd 0px. The column version lost on five of seven
           measures: 235px of travel from name to condition, 44 wrapped conditions against none,
           898px more table height.</span></li>
-        <li><b>No rank for empty segments, no confidence score</b>
+        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg><b>No rank for empty segments, no confidence score</b>
           <span>Last place reads as a verdict on a segment that never ran. Instead of a made-up
           percentage for the plain-language parse, the screen shows its working.</span></li>
-        <li><b>Took the defect counts out of the headline</b>
+        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg><b>Took the defect counts out of the headline</b>
           <span>The product owner expects future data to have its own problems. Three counts left
           the summary strip, the chart lost eight red bars, and a filter that would return nothing
           is dimmed and inert. The information stayed reachable.</span></li>
