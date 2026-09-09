@@ -34,7 +34,7 @@ body {
   border-radius: 0 0 var(--radius-md) 0;
 }
 .pf-skip:focus { left: 0; }
-.pf-skip:focus-visible,
+.pf-skip:focus-visible { outline-color: var(--slate-12); }
 .pf-footer :focus-visible { outline-color: var(--violet-8); }
 
 /* ── Grid ────────────────────────────────────
@@ -262,9 +262,8 @@ button:focus-visible {
 /* ── Link list (live artifacts, prototypes) ─ */
 .pf-list {
   list-style: none;
-  margin: 0;
+  margin: var(--pf-step-3) 0 0;
   padding: 0;
-  border-top: 1px solid var(--color-border-default);
 }
 .pf-list > li {
   border-bottom: 1px solid var(--color-border-default);
@@ -272,7 +271,7 @@ button:focus-visible {
 .pf-list__row {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.25rem 1rem;
   padding: 1rem 0.25rem;
   text-decoration: none;
@@ -286,11 +285,13 @@ button:focus-visible {
   font-weight: var(--font-medium);
   color: var(--pf-accent);
   flex: 0 0 15rem;
+  line-height: 1.5;
 }
 .pf-list__desc {
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
   flex: 1 1 18rem;
+  line-height: 1.65;   /* first line sits on the name's line */
 }
 
 /* ── Case study article ──────────────────── */
@@ -379,6 +380,8 @@ button:focus-visible {
 .pf-body li { max-width: 40rem; }
 .pf-body p { margin: 0 0 1rem; }
 .pf-body ul { padding-left: 1.25rem; }
+.pf-body .pf-facts { padding-left: 0; }
+.pf-body .pf-facts > li { margin-bottom: 0; }
 .pf-body li { margin-bottom: 0.5rem; }
 
 
@@ -397,7 +400,7 @@ button:focus-visible {
    a slashed circle for a refusal, a ring for a decision. The one red thing
    in the list stays the word Refused. */
 .pf-ico--no { color: var(--slate-9); }
-.pf-ico--row { align-self: center; margin-right: 0.125rem; }
+.pf-ico--row { align-self: flex-start; margin-top: 0.15rem; margin-right: 0.125rem; }
 /* On the stat block the icon labels the number without competing with it:
    smaller, in the quiet tone, on its own line above. */
 .pf-ico--stat {
@@ -427,6 +430,7 @@ button:focus-visible {
 }
 .pf-facts > li {
   display: grid;
+  align-content: start;   /* slack goes below the row, not between claim and reason */
   grid-template-columns: 1.25rem minmax(0, 1fr);
   column-gap: 0.75rem;
   padding: 0.875rem 0;
@@ -531,25 +535,32 @@ button:focus-visible {
 
 .pf-strip figure { margin: 0; min-width: 0; }
 .pf-strip__frame {
-  height: 19rem;
+  display: block;
   width: 100%;
+  aspect-ratio: 1272 / 530;   /* height follows the frame's width, so the
+                                 ground under the component stays constant */
   overflow: hidden;
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--color-bg-surface);
 }
-/* The story renders at its own width and is scaled to the column, so the
-   frame holds the whole component rather than its top-left corner. */
+/* The story renders at the width its widest column needs (the financial table
+   runs to 1272px including its Total column) and is then scaled to whatever
+   width the frame actually has — so the whole component survives at every
+   breakpoint, not only where the shell has hit its maximum. */
 .pf-strip__frame iframe {
-  width: 1038px;
-  height: 33rem;
+  width: 1272px;
+  height: 600px;
   border: 0;
   transform-origin: top left;
+  transform: scale(0.26);
 }
-@media (min-width: 62rem) {
-  .pf-strip__frame { height: 16rem; }
-  .pf-strip__frame iframe { transform: scale(0.489); }
-}
+/* The scale has to match the frame's real width, and CSS cannot divide two
+   lengths, so it is stepped per breakpoint and always errs small: a little
+   empty ground beats a clipped component. Frame widths measured at each step. */
+@media (min-width: 48rem)  { .pf-strip__frame iframe { transform: scale(0.55); } }  /* frame ~720 */
+@media (min-width: 62rem)  { .pf-strip__frame iframe { transform: scale(0.355); } } /* two up, frame ~460 */
+@media (min-width: 71rem)  { .pf-strip__frame iframe { transform: scale(0.399); } } /* frame 508 at the shell's max */
 .pf-strip figcaption {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
