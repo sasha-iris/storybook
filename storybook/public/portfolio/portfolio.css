@@ -176,7 +176,8 @@ button:focus-visible {
 }
 .pf-case h3 {
   margin: 0;
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
+  line-height: 1.3;
   font-weight: var(--font-semibold);
   letter-spacing: -0.01em;
 }
@@ -336,6 +337,34 @@ button:focus-visible {
   margin-bottom: 0.25rem;
 }
 
+/* Fact list: a claim and the one line that backs it. Replaces prose blocks
+   where the reader wants to scan, not read. */
+.pf-facts {
+  list-style: none;
+  margin: 1rem 0 2rem;
+  padding: 0;
+  max-width: 44rem;
+  border-top: 1px solid var(--color-border-default);
+}
+.pf-facts > li {
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--color-border-default);
+}
+.pf-facts b {
+  display: block;
+  font-weight: var(--font-semibold);
+}
+.pf-facts span {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  margin-top: 0.125rem;
+}
+.pf-facts .pf-no {
+  color: var(--color-danger);
+  font-weight: var(--font-semibold);
+}
+
 /* Try-it callout */
 .pf-try {
   display: block;
@@ -374,18 +403,47 @@ button:focus-visible {
   background: var(--color-bg-default);
 }
 
+/* Component strip: real stories from the library, rendered live at their own
+   size. Not a screenshot — this is the same build the case study links to. */
+.pf-strip {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+}
+@media (min-width: 48rem) {
+  .pf-strip { grid-template-columns: 1fr 1fr; }
+}
+.pf-strip figure { margin: 0; }
+.pf-strip__frame {
+  height: 13.5rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-bg-surface);
+}
+.pf-strip__frame iframe { width: 100%; height: 100%; border: 0; }
+.pf-strip figcaption {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--color-border-default);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: var(--color-bg-default);
+}
+
 /* Live embed of a running prototype.
    The frame renders the page at desktop width and scales it down, so what the
    reader sees is the real thing, not a screenshot of it. Below 48rem the frame
    is dropped and the caption link carries the weight. */
 .pf-embed {
   margin: 2rem 0 2.5rem;
-  max-width: 56.25rem;
+  max-width: 60rem;
 }
 .pf-embed__frame {
   display: none;
   position: relative;
-  width: 56.25rem;
+  width: 60rem;
   max-width: 100%;
   aspect-ratio: 1200 / 760;
   overflow: hidden;
@@ -400,7 +458,7 @@ button:focus-visible {
   width: 1200px;
   height: 760px;
   border: 0;
-  transform: scale(0.75);
+  transform: scale(0.8);
   transform-origin: top left;
 }
 .pf-embed figcaption {
@@ -411,7 +469,7 @@ button:focus-visible {
   border-radius: var(--radius-lg);
   background: var(--color-bg-default);
 }
-@media (min-width: 62rem) {
+@media (min-width: 66rem) {
   .pf-embed__frame { display: block; }
   .pf-embed__frame + figcaption {
     border-top: 0;

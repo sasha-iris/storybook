@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A component library developers can copy from — Oleksandra Melnyk</title>
-<meta name="description" content="An audit of 447 CSS classes against their documentation. Twelve component families were rebuilt, and the accessibility fixes went into the tokens.">
+<title>Iris design system — Oleksandra Melnyk</title>
+<meta name="description" content="447 CSS classes audited against their documentation. Twelve component families rebuilt, accessibility fixed in the tokens.">
 <link rel="icon" href="../assets/iris-mark-xs.svg">
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="portfolio.css">
@@ -17,8 +17,8 @@
     <a class="pf-wordmark" href="./">Oleksandra Melnyk</a>
     <nav class="pf-nav" aria-label="Sections">
       <a href="./#work">Work</a>
-      <a href="./#artifacts">Live artifacts</a>
-      <a href="./#method">How I work</a>
+      <a href="./#artifacts">Live</a>
+      <a href="./#method">Method</a>
     </nav>
   </div>
 </header>
@@ -31,26 +31,14 @@
       <a class="pf-back" href="./">&larr; All work</a>
       <span class="pf-case__kicker">Design system</span>
       <h1>A component library developers can copy from</h1>
-      <p class="pf-dek">Forty-seven components documented so that what you see in the story is the
-      class that ships. Most of the work was an audit, and most of the audit was saying no.</p>
+      <p class="pf-dek">47 components documented so that the story shows the class that ships.
+      Mostly an audit, and mostly saying no.</p>
 
       <dl class="pf-meta">
-        <div>
-          <dt>Role</dt>
-          <dd>Sole designer — Figma extraction, CSS, stories, documentation</dd>
-        </div>
-        <div>
-          <dt>Product</dt>
-          <dd>Financial analytics platform for ecommerce brands</dd>
-        </div>
-        <div>
-          <dt>Consumers</dt>
-          <dd>Storybook, the production CSS bundle, and a low-code build environment</dd>
-        </div>
-        <div>
-          <dt>Live</dt>
-          <dd><a href="../">The library, running</a></dd>
-        </div>
+        <div><dt>Role</dt><dd>Sole designer — Figma extraction, CSS, stories, docs</dd></div>
+        <div><dt>Product</dt><dd>Financial analytics platform for ecommerce brands</dd></div>
+        <div><dt>Consumers</dt><dd>Storybook, the production CSS, a low-code environment</dd></div>
+        <div><dt>Live</dt><dd><a href="../">The library</a></dd></div>
       </dl>
     </div>
   </div>
@@ -58,130 +46,74 @@
   <div class="pf-body">
     <div class="pf-shell">
 
-      <h2>The problem</h2>
-      <p>The library looked finished. Every component family had stories, the sidebar was full, and
-      the site built cleanly. The question nobody had asked was narrower and more awkward: if a
-      developer copies what a story shows, do they get the component?</p>
-      <p>Often they did not. A story could be drawn with inline styles and no signature class in
-      the markup, which makes it a picture of a component rather than the component. The audit I
-      wrote defines the failure state in one line: the preview is not the component, so it cannot
-      be handed to developers as it stands.</p>
-      <p>So I extracted all 447 classes from the shipped CSS and checked each family against them,
-      by computed style in the browser rather than by eye. Twelve families failed. Those twelve
-      were rebuilt on the real classes; the rest were spot-checked and left alone.</p>
-
-      <a class="pf-try" href="../">
-        <strong>Open the library &rarr;</strong>
-        <span>47 components, 249 stories, tokens and interactive controls. Every story carries a
-        three-tier code snippet: HTML, the class list, and the React wrapper.</span>
-      </a>
+      <h2>Problem</h2>
+      <p>Every family had stories and the build was clean, but a story could be drawn with inline
+      styles and no library class in the markup — a picture of a component, not the component.
+      Copying it gave a developer something that would not ship.</p>
+      <p>I extracted all 447 classes from the shipped CSS and checked every family against them by
+      computed style, not by eye. Twelve failed and were rebuilt.</p>
 
       <h2>Decisions</h2>
-
-      <div class="pf-decision">
-        <span class="pf-label">Structure</span>
-        <h3>One top-level slot per family, and no <code>Components/</code> wrapper</h3>
-        <p>The wrapper folder was removed on purpose and the rule written into the project's own
-        instructions with a wrong-example beside it, because a convention that only lives in
-        someone's head gets undone by the next person who adds a story. Flat by family means every component sits at the top level of the sidebar, so there is one place to look for it.</p>
-      </div>
-
-      <div class="pf-decision pf-decision--rejected">
-        <span class="pf-label">Refused</span>
-        <h3>Deleting components that were never designed</h3>
-        <p>A KPI card, a set of datepicker presets, a metric card and several select and search
-        types existed in the stories but not in Figma. Someone had invented them while documenting.
-        I deleted them rather than backfill designs, and made the rule explicit: if it is not in Figma, it does not go in Storybook.</p>
-      </div>
-
-      <div class="pf-decision pf-decision--rejected">
-        <span class="pf-label">Refused</span>
-        <h3>Deleting CSS that looked orphaned</h3>
-        <p>Seven banner rules, eight drawer rules, five range-slider rules and thirteen select
-        rules had no story and no page using them. The tidy move is to delete them. I left them,
-        because the low-code environment consumes the same file and I could not see inside it. They are documented as orphaned, with the three consumers of the file named, so the deletion can be made by someone who can see inside all three.</p>
-      </div>
-
-      <div class="pf-decision">
-        <span class="pf-label">Accepted a limit</span>
-        <h3>The Actions tab does not work here, and four attempts is enough</h3>
-        <p>Interaction logging never worked in this static build. I tried four approaches, wrote
-        down what each one did, and then wrote down that the next person should not spend time on
-        it without browser access. Controls, docs and source snippets deliver more, so the four attempts are written up as a known limitation with the reason each one failed.</p>
-      </div>
-
-      <div class="pf-decision">
-        <span class="pf-label">Accessibility</span>
-        <h3>Fixing the success green in the token</h3>
-        <p>The success green failed contrast at 3.0:1 on white. It would have been faster to
-        darken it on the page that surfaced it. Instead the token itself moved to
-        <code>#007a55</code>, and the comment recording why sits in the token file where the next
-        person will see it. The same pattern repeats through the work: the collapsed sidebar lost
-        its hardcoded white background because that background broke dark theme, and three
-        components stopped hardcoding a system font stack because the product's font is set higher
-        up.</p>
-      </div>
-
-      <div class="pf-decision">
-        <span class="pf-label">Content</span>
-        <h3>Real content in every story</h3>
-        <p>Placeholder text hides the problems a story exists to expose: truncation, wrapping,
-        spacing under a long label. This one is written into the project's story patterns as a
-        rule, next to the argTypes template, because it is the kind of shortcut that gets taken
-        under time pressure by whoever documents the next component.</p>
-      </div>
-
-      <div class="pf-decision">
-        <span class="pf-label">Consistency</span>
-        <h3>Two CSS files, one truth</h3>
-        <p>The preview and the export consume different files, so any change has to land in both
-        in the same commit. Auditing the pair turned up six token conflicts and a legacy duplicate block. One of them, a blue-versus-purple <code>--color-bg-primary</code>, was already breaking form checkboxes.</p>
-      </div>
+      <ul class="pf-facts">
+        <li><b>Deleted components that were never designed</b>
+          <span>A KPI card, datepicker presets, a metric card, several select and search types
+          existed in the docs but not in Figma. Rule since: not in Figma, not in Storybook.</span></li>
+        <li><b><span class="pf-no">Did not</span> delete CSS that looked orphaned</b>
+          <span>33 rules with no story and no page using them. The low-code environment consumes
+          the same file and I could not see inside it. Documented as orphaned instead.</span></li>
+        <li><b>Fixed accessibility in the token, not on the page</b>
+          <span>Success green measured 3.0:1 on white; the token moved to <code>#007a55</code>,
+          with the reason recorded beside it. Page-level fixes would not have travelled.</span></li>
+        <li><b>Stopped after four attempts at the Actions tab</b>
+          <span>Interaction logging does not work in this static build. Each attempt is written up
+          as a known limitation, so nobody repeats the investigation.</span></li>
+        <li><b>Kept the two CSS files in lockstep</b>
+          <span>Preview and export consume different files. Auditing the pair found six token
+          conflicts — one, a blue-versus-purple <code>--color-bg-primary</code>, was breaking form
+          checkboxes.</span></li>
+        <li><b>Flat sidebar, one slot per family</b>
+          <span>The <code>Components/</code> wrapper was removed and the rule written into the
+          project instructions with a counter-example, so it stays removed.</span></li>
+        <li><b>Real content in every story</b>
+          <span>Placeholder text hides truncation, wrapping and spacing bugs. Written into the
+          story patterns next to the argTypes template.</span></li>
+      </ul>
 
       <h2>Evidence</h2>
-
       <div class="pf-table-wrap" tabindex="0" role="region" aria-label="Audit and build figures">
         <table class="pf-table">
           <caption>Audit and build figures</caption>
-          <thead>
-            <tr><th scope="col">Measure</th><th scope="col">Value</th></tr>
-          </thead>
+          <thead><tr><th scope="col">Measure</th><th scope="col">Value</th></tr></thead>
           <tbody>
-            <tr><td>CSS classes extracted and checked against stories</td><td>447</td></tr>
-            <tr><td>Component families whose stories were drawings, not components</td><td>12 — all rebuilt</td></tr>
-            <tr><td>Components documented in the live build</td><td>47</td></tr>
-            <tr><td>Stories in the live build</td><td>249</td></tr>
-            <tr><td>Stories given three-tier code snippets</td><td>242, across 47 components</td></tr>
-            <tr><td>Component families given standalone docs for the low-code environment</td><td>30</td></tr>
-            <tr><td>Token conflicts between the two CSS files, found and fixed</td><td>6</td></tr>
-            <tr><td>Verification method</td><td>Computed style in the browser, not visual comparison</td></tr>
+            <tr><td>CSS classes audited against stories</td><td>447</td></tr>
+            <tr><td>Families whose stories were drawings</td><td>12 — all rebuilt</td></tr>
+            <tr><td>Components documented, live build</td><td>47</td></tr>
+            <tr><td>Stories, live build</td><td>249</td></tr>
+            <tr><td>Stories given three-tier code snippets</td><td>242</td></tr>
+            <tr><td>Families documented for the low-code environment</td><td>30</td></tr>
+            <tr><td>Token conflicts found and fixed</td><td>6</td></tr>
+            <tr><td>Verification</td><td>Computed style in the browser</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h2>What using it revealed</h2>
-      <p>The library got its real test when I built product pages using nothing but its classes.
-      That rule — zero custom CSS on consuming pages — turns every gap into a recorded finding
-      instead of a private workaround.</p>
-      <p>It found real ones. The drawer component was not usable, so a page that wanted a drawer
-      used a modal and the gap was written down. A progress bar had no danger variant, so a
-      &ldquo;broken&rdquo; state had been coloured with a chart palette pink that means
-      &ldquo;trend down&rdquo;, not &ldquo;error&rdquo;. Two colour tokens measured below AA at the
-      sizes the pages actually used them. None of that is visible from inside Figma.</p>
+      <h2>What building on it exposed</h2>
+      <p>Product pages were built with library classes only, so every gap became a finding: the drawer was unusable and a page used a modal instead; the progress bar had no
+      danger variant, so a broken state had been coloured with the chart palette's trend-down
+      pink; two tokens measured below AA at the sizes pages actually used them.</p>
 
-      <h2>Handoff</h2>
-      <p>The library is consumed by three different things, so the documentation is written three
-      ways: a copyable snippet on every story, a per-component reference for the low-code
-      environment, and a set of thin React wrappers with a stated boundary — each one says what to
-      use it for, what not to, and which existing component it replaces. Charts and complex data
-      grids are explicitly out of scope and point at other libraries.</p>
+      <a class="pf-try" href="../">
+        <strong>Open the library &rarr;</strong>
+        <span>47 components, 249 stories, tokens, and a three-tier snippet on every story: HTML,
+        class list, React wrapper.</span>
+      </a>
 
     </div>
   </div>
 
   <div class="pf-next">
     <div class="pf-shell">
-      <a class="pf-back" href="case-segments.html">Next case &rarr; Customer segments: the best-looking rows were the broken ones</a>
+      <a class="pf-back" href="case-segments.html">Next &rarr; Customer segments: the best-looking rows were the broken ones</a>
     </div>
   </div>
 

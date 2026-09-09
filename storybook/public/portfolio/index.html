@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Oleksandra Melnyk — product designer</title>
-<meta name="description" content="Product designer working on dense financial software. Design system, research and running prototypes — with the measurements behind each decision.">
+<meta name="description" content="Product designer on dense financial software. Design system, research, and prototypes built in code — with the measurements behind each decision.">
 <link rel="icon" href="../assets/iris-mark-xs.svg">
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="portfolio.css">
@@ -17,8 +17,8 @@
     <a class="pf-wordmark" href="./">Oleksandra Melnyk</a>
     <nav class="pf-nav" aria-label="Sections">
       <a href="#work">Work</a>
-      <a href="#artifacts">Live artifacts</a>
-      <a href="#method">How I work</a>
+      <a href="#artifacts">Live</a>
+      <a href="#method">Method</a>
     </nav>
   </div>
 </header>
@@ -28,26 +28,15 @@
   <section class="pf-hero">
     <div class="pf-shell">
       <div class="pf-measure">
-        <h1>I design dense financial software, and I build the prototype myself.</h1>
-        <p>Product designer on an analytics platform for ecommerce brands. What I hand over is usually a running page rather than a Figma file, built from the design system I maintain, with the measurements behind each decision written down beside it.</p>
+        <h1>Product designer. Dense financial software, and the prototypes are mine.</h1>
+        <p>Design system, research, and running pages built from it — for an analytics platform
+        used by ecommerce brands.</p>
       </div>
       <div class="pf-proof">
-        <div>
-          <span class="pf-proof__n">47</span>
-          <span class="pf-proof__l">components documented</span>
-        </div>
-        <div>
-          <span class="pf-proof__n">249</span>
-          <span class="pf-proof__l">stories in the live library</span>
-        </div>
-        <div>
-          <span class="pf-proof__n">40</span>
-          <span class="pf-proof__l">real segments audited, row by row</span>
-        </div>
-        <div>
-          <span class="pf-proof__n">3</span>
-          <span class="pf-proof__l">review passes before a stakeholder sees it</span>
-        </div>
+        <div><span class="pf-proof__n">47</span><span class="pf-proof__l">components documented</span></div>
+        <div><span class="pf-proof__n">249</span><span class="pf-proof__l">stories, live</span></div>
+        <div><span class="pf-proof__n">15</span><span class="pf-proof__l">prototype pages built on the library</span></div>
+        <div><span class="pf-proof__n">48</span><span class="pf-proof__l">defects closed before one review call</span></div>
       </div>
     </div>
   </section>
@@ -55,9 +44,7 @@
   <section class="pf-section pf-section--tint" id="work">
     <div class="pf-shell">
       <div class="pf-section__head">
-        <h2>Selected work</h2>
-        <p>Written the way I actually worked: what the problem turned out to be, what I decided,
-        what I refused to do, and what I measured to know the difference.</p>
+        <h2>Work</h2>
       </div>
 
       <div class="pf-cases">
@@ -65,9 +52,8 @@
         <article class="pf-case">
           <span class="pf-case__kicker">Design system · 2026</span>
           <h3><a href="case-design-system.html">A component library developers can copy from</a></h3>
-          <p>Forty-seven components, built so that what you see in the documentation is the class
-          that ships. The work was mostly an audit: 447 CSS classes checked against the stories,
-          twelve families rebuilt because their previews were drawings rather than components.</p>
+          <p>447 CSS classes audited against their documentation; 12 families rebuilt because the
+          story was a drawing, not the component.</p>
           <ul class="pf-tags" aria-label="Topics">
             <li>Design systems</li><li>Documentation</li><li>Accessibility</li><li>Figma to CSS</li>
           </ul>
@@ -76,9 +62,8 @@
         <article class="pf-case">
           <span class="pf-case__kicker">Product redesign · 2026</span>
           <h3><a href="case-segments.html">Customer segments: the best-looking rows were the broken ones</a></h3>
-          <p>A one-sentence brief, no spec. The research found that five of the forty segments
-          returned the entire customer base and ranked top because they carried the most revenue.
-          The redesign had to make that legible without turning the page into a defect report.</p>
+          <p>Five of forty segments returned the entire customer base — and ranked first, because
+          they carried the most revenue.</p>
           <ul class="pf-tags" aria-label="Topics">
             <li>Research</li><li>Data-heavy UI</li><li>Stakeholder review</li><li>Two variants</li>
           </ul>
@@ -86,10 +71,9 @@
 
         <article class="pf-case">
           <span class="pf-case__kicker">UX refinement · 2026</span>
-          <h3><a href="case-pnl.html">Profit &amp; Loss: replacing a percentage that could not be added up</a></h3>
-          <p>A financial statement where every line carried a green or red percentage, and nobody
-          could say what it compared against. Changing it to dollars was not a style preference —
-          it was the only version where the parts sum to the whole.</p>
+          <h3><a href="case-pnl.html">Profit &amp; Loss: a percentage that could not be added up</a></h3>
+          <p>A &minus;13% shipping miss was $1K; a &minus;4% Amazon miss was $18K. Dollars sum to
+          the total, percentages do not.</p>
           <ul class="pf-tags" aria-label="Topics">
             <li>Financial UI</li><li>Comparison design</li><li>Edit mode</li><li>Formula rendering</li>
           </ul>
@@ -102,31 +86,46 @@
   <section class="pf-section" id="artifacts">
     <div class="pf-shell">
       <div class="pf-section__head">
-        <h2>Live artifacts</h2>
-        <p>Everything below is running, not screenshotted. The prototypes carry real product data with
-        the numbers untouched, so some rows are genuinely broken. Nothing is calculated live, and
-        where a value is estimated the page says so.</p>
+        <h2>Live, not screenshotted</h2>
       </div>
+      <div class="pf-strip">
+        <figure>
+          <div class="pf-strip__frame" inert>
+            <iframe src="../iframe.html?id=iris-library-card-kpi--all-variants&amp;viewMode=story"
+                    title="KPI card variants, rendered from the live component library" loading="lazy"></iframe>
+          </div>
+          <figcaption>KPI cards, rendered from the library.
+            <a href="../?path=/story/iris-library-card-kpi--all-variants">Open the story &rarr;</a>
+          </figcaption>
+        </figure>
+        <figure>
+          <div class="pf-strip__frame" inert>
+            <iframe src="../iframe.html?id=iris-library-badge--all-colors&amp;viewMode=story"
+                    title="Badge themes, rendered from the live component library" loading="lazy"></iframe>
+          </div>
+          <figcaption>Badge themes, all eight.
+            <a href="../?path=/story/iris-library-badge--all-colors">Open the story &rarr;</a>
+          </figcaption>
+        </figure>
+      </div>
+
       <ul class="pf-list">
         <li>
           <a class="pf-list__row" href="../">
-            <span class="pf-list__name">Iris component library</span>
-            <span class="pf-list__desc">The design system itself: 47 components, 249 stories, tokens,
-            and a three-tier code snippet on every story.</span>
+            <span class="pf-list__name">Component library</span>
+            <span class="pf-list__desc">47 components, 249 stories, tokens, a code snippet on every story.</span>
           </a>
         </li>
         <li>
           <a class="pf-list__row" href="../pages/">
-            <span class="pf-list__name">Prototype index</span>
-            <span class="pf-list__desc">Fifteen working pages — segments, P&amp;L, dashboards, settings —
-            each built only from library classes.</span>
+            <span class="pf-list__name">Prototypes</span>
+            <span class="pf-list__desc">15 pages. Real product data, numbers untouched — some rows are genuinely broken.</span>
           </a>
         </li>
         <li>
           <a class="pf-list__row" href="https://github.com/sasha-iris/storybook">
-            <span class="pf-list__name">Source on GitHub</span>
-            <span class="pf-list__desc">Stories, tokens, the CSS the product consumes, and the React
-            wrappers built on top of it.</span>
+            <span class="pf-list__name">Source</span>
+            <span class="pf-list__desc">Stories, tokens, the CSS the product consumes, React wrappers.</span>
           </a>
         </li>
       </ul>
@@ -136,26 +135,22 @@
   <section class="pf-section pf-section--tint" id="method">
     <div class="pf-shell">
       <div class="pf-section__head">
-        <h2>How I work</h2>
+        <h2>Method</h2>
       </div>
-      <div class="pf-measure pf-method">
-        <h3>I measure before I argue</h3>
-        <p>When a layout question comes up, I build both versions and measure them. One of the
-        case studies above records an argument I made in a review, that a column layout gives the eye a rail. The measurement threw it out: both layouts aligned at the same left edge. The proposal it supported went with it.</p>
-
-        <h3>Prototypes use only classes that already ship</h3>
-        <p>Every prototype page uses only classes that exist in the shipped CSS. When a page needs
-        something the library does not have, that is a finding about the library, not a licence to
-        invent a class. Accessibility fixes reached the design system that way, including a success green that measured 3.0:1 on white.</p>
-
-        <h3>Three reviews before a stakeholder sees it</h3>
-        <p>Business analysis against the brief, a usability and design-system pass, and risk-based
-        QA in the running page — plus measured contrast, not assumed contrast. On the segments work
-        those passes closed 48 defects before the review call.</p>
-
-        <h3>A prototype never invents data</h3>
-        <p>Prototypes get read as specification. So segments that were never calculated show &ldquo;no data&rdquo; instead of a plausible number, and an estimated channel split says on the screen that it is estimated.</p>
-      </div>
+      <ul class="pf-facts">
+        <li><b>Measure, then argue</b>
+          <span>I built both versions of a disputed layout and measured 40 rows. The result killed
+          my own review argument, and the redesign it supported.</span></li>
+        <li><b>Prototypes use only classes that ship</b>
+          <span>A gap becomes a finding against the library, not a local class. That is how a
+          3.0:1 success green got fixed in the token.</span></li>
+        <li><b>Three passes before a stakeholder sees it</b>
+          <span>Business analysis, usability and design system, risk-based QA — plus measured
+          contrast. On the segments work: 48 defects closed first.</span></li>
+        <li><b>No invented data</b>
+          <span>Records that were never calculated show &ldquo;no data&rdquo;. Estimates say they
+          are estimates. Prototypes get read as specification.</span></li>
+      </ul>
     </div>
   </section>
 
@@ -163,8 +158,8 @@
 
 <footer class="pf-footer">
   <div class="pf-shell">
-    <p>Built with the design system it documents: layout here uses the same tokens the library
-    ships. Hosted on GitHub Pages out of the library repository.</p>
+    <p>Built with the design system it documents — colour, type, radii and shadow from the same
+    tokens the library ships.</p>
     <p><a href="https://github.com/sasha-iris">github.com/sasha-iris</a></p>
   </div>
 </footer>
