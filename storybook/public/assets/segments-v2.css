@@ -1268,6 +1268,13 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-rail__find.is-on { background: var(--dr-primary-soft); color: var(--dr-primary); }
 .dr-rail__find:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
 .dr-rail__find + .dr-rail__sel { margin-left: auto; }
+/* WebKit draws its own clear cross inside <input type="search"> the moment
+   there is text in it. It is the browser's control, in the browser's shape, on
+   top of a field the design system otherwise owns — and there is already a way
+   to clear this box: Escape, or the mark that opened it. Suppressed on every
+   search field on the page, not just this one. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
 .dr-gsearch { padding: 0 6px 6px; }
 .dr-gsearch .form-input { height: 32px; font-size: var(--text-xs); }
 .dr-chips--scroll { max-height: 132px; overflow-y: auto; }

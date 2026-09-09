@@ -1521,6 +1521,20 @@ function syncFilterBtn() {
   }, true);
 })();
 
+/* Escape closes the group search and hands focus back to the mark that opened
+   it, so there is a way out that is not "press the magnifier again". */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const box = e.target.closest && e.target.closest('[data-gq]');
+  if (!box) return;
+  const id = box.dataset.gq;
+  GQ[id] = ''; searchGrp = null;
+  render();
+  /* After the panel's own focus handling, not before it — render() puts focus
+     back on the Filters trigger, which would swallow this. */
+  setTimeout(() => document.querySelector('[data-find="' + id + '"]')?.focus(), 0);
+});
+
 /* Delegated, because the panel is redrawn on every change. Only the group's
    own chips are redrawn, and focus is put back in the box the reader is in. */
 document.addEventListener('input', e => {

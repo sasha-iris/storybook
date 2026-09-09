@@ -139,3 +139,9 @@
 }
 .sidebar--collapsed .sidebar-divider { margin: 0; }
 .sidebar-contracted-item { text-decoration: none; }
+
+/* WebKit draws its own clear cross inside <input type="search"> as soon as
+   there is text in it: the browser's control, in the browser's shape, on a
+   field the design system otherwise owns. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
