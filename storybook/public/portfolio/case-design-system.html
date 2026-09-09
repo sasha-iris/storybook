@@ -38,6 +38,8 @@
         <div><dt>Role</dt><dd>Sole designer — Figma extraction, CSS, stories, docs</dd></div>
         <div><dt>Product</dt><dd>Financial analytics platform for ecommerce brands</dd></div>
         <div><dt>Consumers</dt><dd>Storybook, the production CSS, a low-code environment</dd></div>
+        <div><dt>When</dt><dd>April–June 2026, ongoing maintenance since</dd></div>
+        <div><dt>Outcome</dt><dd>12 of 47 families rebuilt on shippable classes; 3 consumers on one source</dd></div>
         <div><dt>Live</dt><dd><a href="../">The library</a></dd></div>
       </dl>
     </div>
@@ -45,6 +47,17 @@
 
   <div class="pf-body">
     <div class="pf-shell">
+
+      <figure class="pf-embed">
+        <div class="pf-embed__frame" inert>
+          <iframe src="../?path=/story/iris-library-card-kpi--all-variants"
+                  title="The Iris component library, running in Storybook" loading="lazy"></iframe>
+        </div>
+        <figcaption>
+          The library itself, running, at 80%.
+          <a href="../">Open it full size &rarr;</a>
+        </figcaption>
+      </figure>
 
       <h2>Problem</h2>
       <p>Every family had stories and the build was clean, but a story could be drawn with inline
@@ -101,6 +114,25 @@
       <p>Product pages were built with library classes only, so every gap became a finding: the drawer was unusable and a page used a modal instead; the progress bar had no
       danger variant, so a broken state had been coloured with the chart palette's trend-down
       pink; two tokens measured below AA at the sizes pages actually used them.</p>
+
+      <h2>Adoption</h2>
+      <ul class="pf-facts">
+        <li><b>Three consumers, one source</b>
+          <span>Storybook preview, the production CSS bundle, and the low-code environment all
+          read the same stylesheet. Keeping them identical is a rule with a pre-push check, not
+          an intention.</span></li>
+        <li><b>15 pages built with zero page-local CSS</b>
+          <span>The constraint is what turns a missing component into a recorded gap instead of
+          a private workaround.</span></li>
+        <li><b>A React wrapper per component, with stated boundaries</b>
+          <span>Each says what to use it for, what not to, and which existing component it
+          replaces. Charts and data grids are declared out of scope and point elsewhere.</span></li>
+      </ul>
+
+      <h2>What I would change</h2>
+      <p>The drawer is still unusable and 33 CSS rules are still marked orphaned rather than
+      deleted. Both need visibility into the low-code environment that I do not have, so they
+      stay open questions instead of guesses.</p>
 
       <a class="pf-try" href="../">
         <strong>Open the library &rarr;</strong>

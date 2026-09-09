@@ -407,15 +407,13 @@ button:focus-visible {
    size. Not a screenshot — this is the same build the case study links to. */
 .pf-strip {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
   margin: 1.5rem 0 0;
 }
-@media (min-width: 48rem) {
-  .pf-strip { grid-template-columns: 1fr 1fr; }
-}
+
 .pf-strip figure { margin: 0; }
 .pf-strip__frame {
-  height: 13.5rem;
+  height: 33rem;
   overflow: hidden;
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
