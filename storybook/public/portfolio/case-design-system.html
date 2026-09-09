@@ -35,7 +35,8 @@
       Mostly an audit, and mostly saying no.</p>
 
       <dl class="pf-meta">
-        <div><dt>Role</dt><dd>Sole designer — Figma extraction, CSS, stories, docs</dd></div>
+        <div><dt>Inherited</dt><dd>The design language and component specs, in Figma, owned by the product</dd></div>
+        <div><dt>Mine</dt><dd>The coded library, its documentation, the fidelity audit and the token fixes</dd></div>
         <div><dt>Product</dt><dd>Financial analytics platform for ecommerce brands</dd></div>
         <div><dt>Consumers</dt><dd>Storybook, the production CSS, a low-code environment</dd></div>
         <div><dt>When</dt><dd>April–June 2026, ongoing maintenance since</dd></div>
@@ -53,10 +54,14 @@
         <figcaption><b>47 components, 249 stories.</b> Every story carries the class list a developer copies, so the documentation and the product cannot drift apart silently.</figcaption>
       </figure>
 
+      <h2>Where this came from</h2>
+      <p>The design system already existed in Figma, and it is the product's, not mine. What did
+      not exist was the version anyone could build from: developers and a low-code environment
+      were both consuming a stylesheet that had drifted from the Figma file, with no documentation
+      tying the two together. This repository is that system turned into code, documented against
+      the CSS the product ships — assigned work, not a side project.</p>
+
       <h2>Problem</h2>
-      <p>The system already existed in Figma, as a design system. What did not exist was the
-      version a developer could build from: this repository is that system turned into code and
-      documented against the CSS the product ships.</p>
       <p>A story could be drawn with inline styles and no library class in the markup: a picture of a component, not the component. Copying it gave a developer something that would not ship.</p>
       <p>So I checked all 447 shipped classes against the stories by computed style, not by eye. Twelve families failed and were rebuilt.</p>
 
