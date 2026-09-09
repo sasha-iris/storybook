@@ -913,7 +913,11 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
    nothing. MEASURED: the tile's centre sits at 30.5 from the row's top and the
    row's actions at 29.5, so the checkbox is dropped onto the same line instead
    of floating above the object it selects. */
-.dr-t .dr-pick { width: 40px; padding: 13px 0 0; }
+/* The header's box centres on its own short row; only the BODY cells need the
+   drop. This rule hit both, so the 13px meant for a 107px row was also pushing
+   the header box below the SEGMENT label beside it. */
+.dr-t .dr-pick { width: 40px; padding: 0; }
+.dr-t tbody td.dr-pick { padding: 13px 0 0; }
 /* The label is the target. A checkbox renders at 16px in every browser and
    ::before does not paint on a replaced element, so the hit area has to come
    from something wrapping it. */
