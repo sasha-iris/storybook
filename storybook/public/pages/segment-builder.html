@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=14">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=22">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=16">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=22">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1351,7 +1351,9 @@
   .sb-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--color-border-light); border-top: 1px solid var(--color-border-light); margin: 0; }
   .sb-mini > div { background: var(--color-bg-white); padding: 10px 12px; }
   .sb-mini dt { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--seg-th); font-weight: var(--font-semibold); }
-  .sb-mini dd { margin: 2px 0 0; font-size: 15px; font-weight: 700; color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
+  /* 15px is on no scale and 700 is the browser's bold; the system's sizes are
+     12 / 14 / 16 and its weights stop at 600. */
+  .sb-mini dd { margin: 2px 0 0; font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
 
   .sb-sample { padding: 10px 14px 14px; }
   .sb-sample__i { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid var(--color-border-light); }
@@ -1662,6 +1664,7 @@
                is the caveat that matters about them. -->
           <div class="sb-card__h"><h2 class="sb-card__t">Preview</h2></div>
           <div class="sb-card__b" id="sbV2Preview"></div>
+          <div id="sbMiniHome"></div>
         </div>
 
         <div class="sb-card" style="margin-bottom:12px;" id="sbEstCard">
@@ -2442,6 +2445,16 @@ function startBar() {
   const cHome = document.getElementById('sbCondNHome');
   const cSlot = document.querySelector('.sb2__mthead');
   if (cN) (CARD2 && cSlot ? cSlot : cHome).insertBefore(cN, CARD2 && cSlot ? cSlot.querySelector('#sbClear') : null);
+  /* The four tiles under the estimate belong to whichever card is showing the
+     estimate. Hiding the whole Estimated audience card took them off the page
+     in Proposed, and Iris's own Create Segment carries them: read off
+     dashboard.irisfinance.co on 2026-09-09, its PREVIEW column is a funnel and
+     then three tiles, AOV / ORDERS / NET SALES. Same element, moved, so the two
+     variants cannot come to hold different numbers. */
+  const mini = document.getElementById('sbMini');
+  const mHome = document.getElementById('sbMiniHome');
+  const mCard = document.getElementById('sbEstCard');
+  if (mini) (CARD2 && mHome ? mHome : mCard).appendChild(mini);
   document.getElementById('sbTplCard').hidden  = CARD2 || EDIT;
   document.getElementById('sbV2Card').hidden   = !CARD2;
   /* The card is called Conditions and its first control is labelled ORDERS
