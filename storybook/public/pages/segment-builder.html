@@ -877,7 +877,11 @@
      mark, and a tinted box with "Pick a filter" in it would be marking absence. */
   .sb2__ed { margin-top: 28px; padding: 14px;
              background: var(--dr-primary-soft, #f0effa);
-             border: 1px solid color-mix(in srgb, var(--btn-primary-bg, #42389d) 35%, #fff);
+             /* The fill already says where the block is; the border only has to
+                close it. At 35% of the brand it was a drawn line around a tinted
+                box, two statements of one boundary. 18% keeps the edge and lets
+                the tint do the work. */
+             border: 1px solid color-mix(in srgb, var(--btn-primary-bg, #42389d) 18%, #fff);
              border-radius: 8px; }
   .sb2__ed--none { margin-top: 28px; padding: 0; background: none; border: 0; }
   /* The control keeps its own surface so it still reads as a field on the tint;
