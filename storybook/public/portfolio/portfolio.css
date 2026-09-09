@@ -245,6 +245,7 @@ button:focus-visible {
 .pf-tags {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;   /* a chip keeps its own height in a stretched row */
   gap: 0.375rem;
   margin-top: 0.5rem;
   padding: 0;
@@ -651,7 +652,7 @@ main:focus { outline: none; }
     margin: 0;
     aspect-ratio: 16 / 10;
   }
-  .pf-case--lead > :not(.pf-case__shot) { grid-column: 2; }
+  .pf-case--lead > :not(.pf-case__shot) { grid-column: 2; align-self: start; }
   .pf-case--lead h3 { font-size: var(--text-2xl); }
 
   /* A figure is not one block: the image takes columns 1-7 and its caption
