@@ -77,7 +77,11 @@
      beside it, which is true in general and not what this library does. The one
      place it does step icons down is .dropdown-item__icon, and that is a menu
      row, not a heading. The mark takes the heading's own colour. */
-  .sb-card__ic { display: inline-flex; flex: none; color: var(--color-text-heading); }
+  /* No glyph on a card heading. Four cards in one column each wore one, and
+     they were decoration: a mark that repeats the word beside it adds nothing a
+     reader uses, and it made every heading two objects wide. The marks that do
+     work are the ones inside the cards, where they say what KIND of row you are
+     looking at. */
   /* The counter sits with the title; the button keeps the right end to itself.
      .iris-tab__counter ships grey on grey — #d1d5db behind #4b5563 — the only
      grey chip on a card where every other marked state is the brand's soft.
@@ -1514,7 +1518,7 @@
         <div id="sbSummary"></div>
         <div class="sb-card">
           <div class="sb-card__h">
-            <span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="4" r="1.5" fill="currentColor"/><circle cx="10" cy="8" r="1.5" fill="currentColor"/><circle cx="6" cy="12" r="1.5" fill="currentColor"/></svg></span><h2 class="sb-card__t">Conditions</h2>
+            <h2 class="sb-card__t">Conditions</h2>
             <span id="sbSegLock"></span>
             <!-- Next to the title, not stranded at the far end of the header.
                  A count belongs to the thing it counts, and the library has a
@@ -1566,7 +1570,7 @@
         </div>
 
         <div class="sb-card">
-          <div class="sb-card__h"><span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 1.5H4a1.5 1.5 0 0 0-1.5 1.5v10A1.5 1.5 0 0 0 4 14.5h8a1.5 1.5 0 0 0 1.5-1.5V5.5L9.5 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9.5 1.5v4h4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 8.5h5M5.5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><h2 class="sb-card__t">Description</h2>
+          <div class="sb-card__h"><h2 class="sb-card__t">Description</h2>
             <span class="sb-card__sub">What this segment is for, in plain language</span>
           </div>
           <div class="sb-card__b">
@@ -1582,7 +1586,7 @@
         </div>
 
         <div class="sb-card" id="sbModeCard">
-          <div class="sb-card__h"><span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 8a5.5 5.5 0 0 1-9.4 3.9M2.5 8a5.5 5.5 0 0 1 9.4-3.9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12.5 1.5v3h-3M3.5 14.5v-3h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h2 class="sb-card__t">How this segment stays current</h2></div>
+          <div class="sb-card__h"><h2 class="sb-card__t">How this segment stays current</h2></div>
           <div class="sb-card__b sb-modecards">
             <label class="iris-radio-card iris-radio-card--selected" for="modeAuto">
               <span class="iris-control__check"><span class="iris-radio iris-radio--checked" aria-hidden="true"></span></span>
@@ -1632,7 +1636,7 @@
 
         <div class="sb-card">
           <div class="sb-card__h">
-            <span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.5 13.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10.5 3.2a2.5 2.5 0 0 1 0 4.6M12 9.6a4.5 4.5 0 0 1 2.5 3.9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><h2 class="sb-card__t">Sample of who qualifies</h2></div>
+            <h2 class="sb-card__t">Sample of who qualifies</h2></div>
           <div class="sb-sample" id="sbSample"></div>
         </div>
 
