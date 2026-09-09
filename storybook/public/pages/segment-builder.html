@@ -163,7 +163,9 @@
      min-width:0 so a long name yields to the buttons instead of pushing them
      off; it scrolls inside itself when focused. */
   .sb-nameinput {
-    flex: 1; min-width: 0; font-family: inherit; font-size: 20px; font-weight: 700;
+    /* 700 is the browser's bold; the system's UI weights stop at 600. */
+    flex: 1; min-width: 0; font-family: inherit; font-size: 20px;
+    font-weight: var(--font-semibold);
     letter-spacing: -0.01em; color: var(--color-text-heading);
     padding: 5px 10px; margin-left: -10px;
     text-overflow: ellipsis;
@@ -172,9 +174,14 @@
   /* Measured 2.54:1 at the library's placeholder grey, which fails even the 3:1
      large-text threshold this 20px semibold sits under. Secondary text instead:
      4.83:1, and still visibly lighter than a real name. */
-  .sb-nameinput::placeholder { color: var(--color-text-secondary); font-weight: 600; }
+  .sb-nameinput::placeholder { color: var(--color-text-secondary); font-weight: var(--font-semibold); }
   .sb-nameinput:hover { border-color: var(--color-border-default); }
-  .sb-nameinput:focus { outline: 2px solid var(--color-border-focus); outline-offset: 1px; border-color: transparent; background: var(--color-bg-white); }
+  /* The library focuses a field by changing its BORDER colour — Figma 84:19145,
+     "State=Active: stroke #1c64f2, NO glow" — and .form-input, .form-select and
+     .form-textarea all do exactly that. This one drew a 2px ring outside itself
+     instead, which is why it read as a control from somewhere else. */
+  .sb-nameinput:focus-visible { outline: none; border-color: var(--color-border-focus);
+                                background: var(--color-bg-white); }
   .sb-card__b { padding: 14px 16px; }
 
   .sb-cond { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid var(--color-border-light); border-radius: var(--radius-md); }
@@ -1143,7 +1150,10 @@
      brand measures 9.19:1 on white against the blue's 4.9, so the ring gets
      stronger, not weaker. LIBRARY QUESTION: should the focus token follow the
      brand now that the brand is purple? */
-  .sb-body { --color-border-focus: var(--btn-primary-bg); }
+  /* On .seg-app, not .sb-body: the header sits outside the body, so the name
+     field was the one control on the page still ringed in the library's default
+     blue while everything under it focused in the brand. */
+  .seg-app { --color-border-focus: var(--btn-primary-bg); }
 
   /* Centres, not baselines. Two of the three things on this line are not text:
      the counter is a pill and Reset all is an inline-flex whose first child is
