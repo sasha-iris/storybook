@@ -1,0 +1,85 @@
+/* =============================================================
+   Portfolio palette — Radix Colors 3.0.0 (MIT), vendored.
+   https://www.radix-ui.com/colors · scales: slate, slate alpha, violet
+   Radix scales are perceptually even and define which steps are safe
+   for text, so the accessible pairs are a property of the scale rather
+   than something re-derived by hand on this page.
+
+   The block at the end maps the Iris semantic names that portfolio.css
+   already uses onto these steps, so the swap touches values, not rules.
+   The work this site documents still uses the Iris tokens; this page does
+   not, and says so in the footer.
+   ============================================================= */
+
+:root, .light, .light-theme {
+  --slate-1: #fcfcfd;
+  --slate-2: #f9f9fb;
+  --slate-3: #f0f0f3;
+  --slate-4: #e8e8ec;
+  --slate-5: #e0e1e6;
+  --slate-6: #d9d9e0;
+  --slate-7: #cdced6;
+  --slate-8: #b9bbc6;
+  --slate-9: #8b8d98;
+  --slate-10: #80838d;
+  --slate-11: #60646c;
+  --slate-12: #1c2024;
+}
+
+:root, .light, .light-theme {
+  --slate-a1: #00005503;
+  --slate-a2: #00005506;
+  --slate-a3: #0000330f;
+  --slate-a4: #00002d17;
+  --slate-a5: #0009321f;
+  --slate-a6: #00002f26;
+  --slate-a7: #00062e32;
+  --slate-a8: #00083046;
+  --slate-a9: #00051d74;
+  --slate-a10: #00071b7f;
+  --slate-a11: #0007149f;
+  --slate-a12: #000509e3;
+}
+
+:root, .light, .light-theme {
+  --violet-1: #fdfcfe;
+  --violet-2: #faf8ff;
+  --violet-3: #f4f0fe;
+  --violet-4: #ebe4ff;
+  --violet-5: #e1d9ff;
+  --violet-6: #d4cafe;
+  --violet-7: #c2b5f5;
+  --violet-8: #aa99ec;
+  --violet-9: #6e56cf;
+  --violet-10: #654dc4;
+  --violet-11: #6550b9;
+  --violet-12: #2f265f;
+}
+
+/* ── Semantic mapping ─────────────────────────────────────────
+   Radix step semantics: 1 app background · 2 subtle background ·
+   3 component background · 6 subtle border · 7 border · 9 solid ·
+   11 low-contrast text · 12 high-contrast text.                */
+:root {
+  --color-bg-surface:      var(--slate-1);
+  --color-bg-default:      var(--slate-2);
+  --color-bg-muted:        var(--slate-3);
+  --color-bg-dark:         var(--slate-12);
+
+  --color-text-primary:    var(--slate-12);
+  --color-text-body:       var(--slate-12);
+  --color-text-secondary:  var(--slate-11);
+  --color-text-disabled:   var(--slate-9);
+  --color-text-inverse:    var(--slate-1);
+
+  --color-border-default:  var(--slate-6);
+
+  --pf-accent:             var(--violet-11);
+  --pf-accent-hover:       var(--violet-12);
+  --pf-accent-solid:       var(--violet-9);
+  --pf-accent-wash:        var(--violet-3);
+
+  --pf-shadow-card:        0 1px 2px var(--slate-a3), 0 8px 24px -16px var(--slate-a6);
+  --pf-shadow-lift:        0 2px 4px var(--slate-a3), 0 16px 32px -18px var(--slate-a8);
+  --pf-shadow-shot:        0 2px 6px var(--slate-a3), 0 18px 40px -20px var(--slate-a8);
+}
