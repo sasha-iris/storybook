@@ -48,23 +48,14 @@
   <div class="pf-body">
     <div class="pf-shell">
 
-      <figure class="pf-embed">
-        <div class="pf-embed__frame" inert>
-          <iframe src="../?path=/story/iris-library-card-kpi--all-variants"
-                  title="The Iris component library, running in Storybook" loading="lazy"></iframe>
-        </div>
-        <figcaption>
-          The library itself, running, at 80%.
-          <a href="../">Open it full size &rarr;</a>
-        </figcaption>
+      <figure class="pf-shot">
+        <img src="img/lib-storybook.png" alt="The Iris component library running in Storybook" loading="lazy" width="1800" height="1125">
+        <figcaption><b>47 components, 249 stories.</b> Every story carries the class list a developer copies, so the documentation and the product cannot drift apart silently.</figcaption>
       </figure>
 
       <h2>Problem</h2>
-      <p>Every family had stories and the build was clean, but a story could be drawn with inline
-      styles and no library class in the markup — a picture of a component, not the component.
-      Copying it gave a developer something that would not ship.</p>
-      <p>I extracted all 447 classes from the shipped CSS and checked every family against them by
-      computed style, not by eye. Twelve failed and were rebuilt.</p>
+      <p>A story could be drawn with inline styles and no library class in the markup: a picture of a component, not the component. Copying it gave a developer something that would not ship.</p>
+      <p>So I checked all 447 shipped classes against the stories by computed style, not by eye. Twelve families failed and were rebuilt.</p>
 
       <h2>Decisions</h2>
       <ul class="pf-facts">
@@ -77,16 +68,10 @@
         <li><b>Fixed accessibility in the token, not on the page</b>
           <span>Success green measured 3.0:1 on white; the token moved to <code>#007a55</code>,
           with the reason recorded beside it. Page-level fixes would not have travelled.</span></li>
-        <li><b>Stopped after four attempts at the Actions tab</b>
-          <span>Interaction logging does not work in this static build. Each attempt is written up
-          as a known limitation, so nobody repeats the investigation.</span></li>
         <li><b>Kept the two CSS files in lockstep</b>
           <span>Preview and export consume different files. Auditing the pair found six token
           conflicts — one, a blue-versus-purple <code>--color-bg-primary</code>, was breaking form
           checkboxes.</span></li>
-        <li><b>Flat sidebar, one slot per family</b>
-          <span>The <code>Components/</code> wrapper was removed and the rule written into the
-          project instructions with a counter-example, so it stays removed.</span></li>
         <li><b>Real content in every story</b>
           <span>Placeholder text hides truncation, wrapping and spacing bugs. Written into the
           story patterns next to the argTypes template.</span></li>
@@ -111,10 +96,12 @@
       </div>
 
       <h2>What building on it exposed</h2>
-      <p>Building product pages on the library is what exposed its gaps: the drawer was unusable
-      and a page used a modal instead; the progress bar had no danger variant, so a broken state
-      had been coloured with the chart palette's trend-down pink; two tokens measured below AA at
-      the sizes the pages actually used them.</p>
+      <p>Building on it is what exposed the gaps: an unusable drawer, a progress bar with no danger variant — so a broken state wore the chart palette's trend-down pink — and two tokens below AA at the sizes pages actually used.</p>
+
+      <figure class="pf-shot">
+        <img src="img/lib-financial.png" alt="A financial table assembled from library table cells" loading="lazy" width="1800" height="1125">
+        <figcaption><b>The library is built for this.</b> A P&amp;L excerpt, actuals against forecast, assembled entirely from table-cell components — the same cells the prototypes use.</figcaption>
+      </figure>
 
       <h2>Adoption</h2>
       <ul class="pf-facts">
@@ -142,14 +129,15 @@
           </tbody>
         </table>
       </div>
-      <p>The segments figure is low on purpose: the product owner asked for a second visual
-      language, so that prototype ships its own stylesheet. Naming the number is the point —
-      a system that reports 16% where 16% is the truth is one you can plan against.</p>
+      <p>Segments is low on purpose: the product owner asked for a second visual language, so it ships its own stylesheet. A system that reports 16% where 16% is true is one you can plan against.</p>
+
+      <figure class="pf-shot">
+        <img src="img/lib-cohort.png" alt="Cohort retention heatmap built from library cells" loading="lazy" width="1800" height="1125">
+        <figcaption><b>Cohort retention, from the same cell set.</b> The badge ramp flips its label to white at 60%, and the cell padding is the Figma value, not an approximation of it.</figcaption>
+      </figure>
 
       <h2>What I would change</h2>
-      <p>The drawer is still unusable and 33 CSS rules are still marked orphaned rather than
-      deleted. Both need visibility into the low-code environment that I do not have, so they
-      stay open questions instead of guesses.</p>
+      <p>The drawer is still unusable and 33 rules are still marked orphaned rather than deleted. Both need visibility into the low-code environment I do not have.</p>
 
       <a class="pf-try" href="../">
         <strong>Open the library &rarr;</strong>

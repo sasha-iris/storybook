@@ -48,14 +48,9 @@
   <div class="pf-body">
     <div class="pf-shell">
 
-      <figure class="pf-embed">
-        <div class="pf-embed__frame" inert>
-          <iframe src="../pages/pnl-v2.html" title="Profit and Loss prototype, running" loading="lazy"></iframe>
-        </div>
-        <figcaption>
-          The prototype itself, running, at 80%.
-          <a href="../pages/pnl-v2.html">Open it full size &rarr;</a>
-        </figcaption>
+      <figure class="pf-shot">
+        <img src="img/pnl-statement.png" alt="P&L statement prototype with dollar variance against plan" loading="lazy" width="1800" height="1125">
+        <figcaption><b>Variance in dollars, not percent.</b> The column that used to carry a coloured percentage now carries the number that adds up to the total below it.</figcaption>
       </figure>
 
       <h2>Why dollars, not percent</h2>
@@ -76,45 +71,21 @@
         </table>
       </div>
 
-      <p>On percentages the loudest line is a $1K shipping miss, while an $18K Amazon miss reads
-      as rounding. And dollars add up: Amazon &minus;$18K, Shopify +$5K, Shipping &minus;$1K,
-      Discounts $0, Refunds +$3K sum to the &minus;$12K miss on Net Sales. The percentages above
-      those lines sum to nothing.</p>
-      <p>I wrote three options, recommended shipping one and holding another until the axis was
-      confirmed.</p>
+      <p>On percentages the loudest line is a $1K shipping miss, while an $18K Amazon miss reads as rounding. And dollars add up: &minus;$18K, +$5K, &minus;$1K, $0 and +$3K sum to the &minus;$12K miss on Net Sales. The percentages sum to nothing.</p>
+      <p>Three options went to the review; I recommended shipping one and holding another until the axis was confirmed.</p>
 
       <h2>Decisions</h2>
       <ul class="pf-facts">
-        <li><b>The formula replaced the prose instead of joining it</b>
-          <span>Three strings covered 24 rows, and the only word they added was
-          &ldquo;net&rdquo;, wrong on most rows. Keeping both would have been the safe call.</span></li>
-        <li><b><span class="pf-no">No</span> truncation, ever</b>
-          <span>A cut formula is worse than the sentence it replaced: the reader cannot tell a
-          term was dropped. Longest is 80 characters against ~57 per line, so it wraps to two;
-          hard cap three. Cost: 0 to +5px of row height.</span></li>
-        <li><b>Wrote the formula as accountants read it</b>
-          <span>Costs are stored signed and the code adds them. Printing
-          <code>Gross Profit = Net Sales + Total COGS</code> to a finance team reads as a bug.</span></li>
-        <li><b>Moved the forecast control onto the column it changes</b>
-          <span>It sat in the toolbar looking like a twin of &ldquo;Compare to&rdquo;. It now
-          lives in the Run Rate column header.</span></li>
-        <li><b>Edit mode went back to a button after three iterations</b>
-          <span>Button, then a Viewing/Editing toggle, then an inline pencil. The property that
-          mattered: editing must look unlike reading. One path only, no inline alternative.</span></li>
-        <li><b><span class="pf-no">Refused</span> to reinstate the cell drill-down that was asked for</b>
-          <span>It had been removed for reasons that still held. The existing contribution list
-          became clickable instead. Deleted the dead 55-line function so nobody re-wires it.</span></li>
-        <li><b><span class="pf-no">Refused</span> to fix a layout complaint without the reference</b>
-          <span>A previous attempt without the production screenshot made it worse. Logged as
-          open, with what closing it needs.</span></li>
-        <li><b><span class="pf-no">Refused</span> to change a library token alone</b>
-          <span>A date-field border measured 1.13:1 against a 3:1 requirement. Shared token, so it
-          is a design-system question, not a page-local override.</span></li>
         <li><b>Stopped the panel inventing an order count</b>
           <span>It printed orders and average order value for rows that are records, not orders.
           Replaced with one honest metric; the estimated channel split now says it is
           estimated.</span></li>
       </ul>
+
+      <figure class="pf-shot">
+        <img src="img/assumptions.png" alt="The assumptions and configuration page behind the statement" loading="lazy" width="1800" height="1125">
+        <figcaption><b>Every number on the statement has a setting behind it.</b> Baselines, forecast models and accrual treatment live on one page rather than in the toolbar of the statement.</figcaption>
+      </figure>
 
       <h2>Evidence</h2>
       <div class="pf-table-wrap" tabindex="0" role="region" aria-label="Measured contrast">
@@ -148,13 +119,10 @@
       </div>
 
       <h2>Out of scope, named</h2>
-      <p>Daily and weekly granularity, geography and product filters, a real backend,
-      reconciliation detail. Seven review rows stayed open product questions rather than closed
-      with a guess — including whether published periods should recalculate. My answer was no.</p>
+      <p>Daily and weekly granularity, geography and product filters, a real backend, reconciliation detail. Seven rows stayed open questions rather than closed with a guess — including whether published periods should recalculate. My answer was no.</p>
 
       <h2>What I would change</h2>
-      <p>The narrow-screen panel still differs from the production build. Closing it needs a
-      reference screenshot I did not have, and the previous attempt without one made it worse.</p>
+      <p>The narrow-screen panel still differs from the production build. Closing it needs a reference screenshot I did not have; the previous attempt without one made it worse.</p>
 
       <a class="pf-try" href="../pages/pnl-v2.html">
         <strong>Open the prototype &rarr;</strong>

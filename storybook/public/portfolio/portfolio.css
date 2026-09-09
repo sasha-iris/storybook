@@ -32,12 +32,29 @@ body {
 }
 .pf-skip:focus { left: 0; }
 
-/* ── Shell ───────────────────────────────── */
+/* ── Grid ────────────────────────────────────
+   12 columns, 24px gutter, 1088px of content. Prose sits in 7,
+   evidence in 10, full-bleed artefacts in 12. Nothing is placed
+   by eye: every block names its columns. */
+:root {
+  --pf-cols: 12;
+  --pf-gutter: 1.5rem;
+  --pf-step-1: 0.5rem;
+  --pf-step-2: 1rem;
+  --pf-step-3: 1.5rem;
+  --pf-step-4: 2.5rem;
+  --pf-step-5: 4rem;
+}
 .pf-shell {
   width: 100%;
   max-width: 68rem;
   margin: 0 auto;
   padding: 0 1.5rem;
+}
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--pf-cols), minmax(0, 1fr));
+  gap: var(--pf-gutter);
 }
 .pf-measure { max-width: 40rem; }
 
@@ -89,7 +106,17 @@ button:focus-visible {
 }
 
 /* ── Hero ────────────────────────────────── */
-.pf-hero { padding: 3.25rem 0 3rem; }
+.pf-hero { padding: var(--pf-step-5) 0 var(--pf-step-4); }
+@media (min-width: 62rem) {
+  .pf-hero .pf-shell {
+    display: grid;
+    grid-template-columns: repeat(var(--pf-cols), minmax(0, 1fr));
+    gap: var(--pf-gutter);
+    align-items: end;
+  }
+  .pf-hero .pf-measure { grid-column: 1 / span 7; }
+  .pf-hero .pf-proof { grid-column: 9 / span 4; }
+}
 .pf-hero h1 {
   margin: 0 0 1.25rem;
   font-size: clamp(var(--text-3xl), 1.2rem + 3vw, var(--text-5xl));
@@ -106,11 +133,11 @@ button:focus-visible {
 
 /* ── Proof strip ─────────────────────────── */
 .pf-proof {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2.5rem;
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pf-step-3) var(--pf-gutter);
+  margin-top: var(--pf-step-4);
+  padding-top: var(--pf-step-3);
   border-top: 1px solid var(--color-border-default);
 }
 .pf-proof__n {
@@ -125,10 +152,9 @@ button:focus-visible {
 }
 
 /* ── Sections ────────────────────────────── */
-.pf-section { padding: 3.5rem 0; }
+.pf-section { padding: var(--pf-step-5) 0; border-top: 1px solid var(--color-border-default); }
 .pf-section--tint {
   background: var(--color-bg-default);
-  border-top: 1px solid var(--color-border-default);
   border-bottom: 1px solid var(--color-border-default);
 }
 .pf-section__head { margin-bottom: 2rem; }
@@ -147,7 +173,12 @@ button:focus-visible {
 /* ── Case cards ──────────────────────────── */
 .pf-cases {
   display: grid;
-  gap: 1rem;
+  gap: var(--pf-gutter);
+}
+@media (min-width: 62rem) {
+  .pf-cases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pf-case { padding: var(--pf-step-3); }
+  .pf-case h3 { font-size: var(--text-xl); }
 }
 .pf-case {
   position: relative;
@@ -275,10 +306,10 @@ button:focus-visible {
 /* ── Meta table ──────────────────────────── */
 .pf-meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-  gap: 1.25rem 2rem;
-  margin: 2.5rem 0 0;
-  padding: 1.5rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--pf-step-3) var(--pf-gutter);
+  margin: var(--pf-step-4) 0 0;
+  padding: var(--pf-step-3) 0;
   border-top: 1px solid var(--color-border-default);
   border-bottom: 1px solid var(--color-border-default);
 }
@@ -296,7 +327,20 @@ button:focus-visible {
 }
 
 /* ── Body prose ──────────────────────────── */
-.pf-body { padding: 1rem 0 3.5rem; }
+.pf-body { padding: var(--pf-step-3) 0 var(--pf-step-5); }
+@media (min-width: 62rem) {
+  .pf-body .pf-shell {
+    display: grid;
+    grid-template-columns: repeat(var(--pf-cols), minmax(0, 1fr));
+    column-gap: var(--pf-gutter);
+  }
+  .pf-body .pf-shell > * { grid-column: 1 / span 7; }
+  .pf-body .pf-shell > h2 { grid-column: 1 / span 12; }
+  .pf-body .pf-shell > .pf-table-wrap,
+  .pf-body .pf-shell > .pf-facts { grid-column: 1 / span 10; }
+  .pf-body .pf-shell > .pf-embed,
+  .pf-body .pf-shell > .pf-shot { grid-column: 1 / span 10; }
+}
 .pf-body h2 {
   margin: 3rem 0 1rem;
   font-size: var(--text-xl);
@@ -341,10 +385,18 @@ button:focus-visible {
    where the reader wants to scan, not read. */
 .pf-facts {
   list-style: none;
-  margin: 1rem 0 2rem;
+  margin: var(--pf-step-2) 0 var(--pf-step-4);
   padding: 0;
-  max-width: 44rem;
   border-top: 1px solid var(--color-border-default);
+}
+@media (min-width: 62rem) {
+  .pf-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--pf-gutter);
+    border-top: 0;
+  }
+  .pf-facts > li { border-top: 1px solid var(--color-border-default); border-bottom: 0; }
 }
 .pf-facts > li {
   padding: 0.875rem 0;
@@ -386,6 +438,44 @@ button:focus-visible {
   margin-top: 0.125rem;
 }
 
+/* Screenshot of the work. The image leads; the caption carries the decision. */
+.pf-shot { margin: var(--pf-step-3) 0 var(--pf-step-4); }
+.pf-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+}
+.pf-shot figcaption {
+  margin-top: var(--pf-step-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  max-width: 40rem;
+}
+.pf-shot figcaption b {
+  color: var(--color-text-primary);
+  font-weight: var(--font-semibold);
+}
+
+/* Card thumbnail: the top-left of the real screenshot, cropped by the frame */
+.pf-case__shot {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  margin: 0 0 var(--pf-step-2);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-muted);
+}
+.pf-case__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
 /* Evidence figures */
 .pf-figure {
   margin: 2rem 0;
@@ -407,19 +497,23 @@ button:focus-visible {
    size. Not a screenshot — this is the same build the case study links to. */
 .pf-strip {
   display: grid;
-  gap: 1.5rem;
-  margin: 1.5rem 0 0;
+  gap: var(--pf-gutter);
+  margin: var(--pf-step-3) 0 0;
+}
+@media (min-width: 62rem) {
+  .pf-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-.pf-strip figure { margin: 0; }
+.pf-strip figure { margin: 0; min-width: 0; }
 .pf-strip__frame {
-  height: 33rem;
+  height: 19rem;
+  width: 100%;
   overflow: hidden;
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--color-bg-surface);
 }
-.pf-strip__frame iframe { width: 100%; height: 100%; border: 0; }
+.pf-strip__frame iframe { width: 1038px; height: 33rem; border: 0; }
 .pf-strip figcaption {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
