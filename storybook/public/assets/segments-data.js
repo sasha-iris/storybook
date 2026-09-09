@@ -151,7 +151,7 @@ function makeSegment(s, i) {
 const SEGMENTS = RAW.map(makeSegment);
 
 /* ── Variant 2 only ────────────────────────────────────────────────────────
-   Marko, 2026-09-01: in the new pass Iris computes these metrics on the fly, so
+   the product owner, 2026-09-01: in the new pass Iris computes these metrics on the fly, so
    there is no run step, nothing can be stale, and "never calculated" cannot
    exist. The state model collapses to what the definition returns. The 8
    segments never run in the old product have no numbers in this snapshot, so

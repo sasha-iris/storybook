@@ -63,8 +63,7 @@
       padding: 10px 14px;
     }
     body.pnl-editing .pnl-editbar { display: flex; }
-    /* Edit Mode must clearly stand out from the page (Marko: "щоб воно більш
-       відрізнювалося від сторінки") — tinted canvas, purple frame, corner ribbon. */
+    /* Edit Mode must clearly stand out from the page (the product owner asked for editing to look clearly unlike the page) — tinted canvas, purple frame, corner ribbon. */
     body.pnl-editing .pnl-content { background: #faf9ff; box-shadow: inset 0 0 0 2px #8074e8; border-radius: 12px; }
     body.pnl-editing .pnl-tablewrap { outline: 2px solid #b4a9f7; outline-offset: -2px; }
     .pnl-mode-ribbon { display: none; }
@@ -118,7 +117,7 @@
     .pnl-row--sel .pnl-c-label { box-shadow: inset 3px 0 0 #42389d; }
     body.pnl-editing .pnl-row--click:hover .iris-cell { background: #fdf6b2; }
     /* Edit affordance: the pencil appears on row hover, not on every row at once */
-    /* Edit affordance lives ONLY in the distinct Edit Mode (Marko: not a
+    /* Edit affordance lives ONLY in the distinct Edit Mode (the product owner: not a
        near-invisible pencil in the normal viewing mode). Hidden by default;
        in Edit Mode every editable row shows it, brighter on hover. */
     .pnl-row-pencil { all: unset; display: none; align-items: center; cursor: pointer; color: #42389d; }
@@ -296,7 +295,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M9.5 4v16"/></svg>
       </button>
 
-      <!-- Channels — the global filter Marko asked about -->
+      <!-- Channels — the global filter the product owner asked about -->
       <div data-menu-wrap style="position:relative;">
         <button type="button" class="btn-link btn-link-semibold btn-sm" data-menu-toggle aria-haspopup="menu" aria-expanded="false" id="channelsBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72"/></svg>
@@ -394,8 +393,7 @@
           <button type="button" class="btn btn-md" data-gran="quarterly">Quarterly</button>
         </div>
 
-        <!-- Accounting-view selector. Marko: "треба додати description, щоб людина
-             явно розуміла, що вона взагалі дивиться." Each option carries its own (i)
+        <!-- Accounting-view selector. The product owner asked for a description so the reader knows exactly what they are looking at. Each option carries its own (i)
              icon INSIDE the selector — the description reveals on hover/focus, so you
              learn what a view is while choosing it, no separate icon to hunt for. -->
         <div class="btn-group" role="group" aria-label="Accounting view" id="viewGroup">
@@ -1191,7 +1189,7 @@ function renderPanel(){
         '</section>';
     }
 
-    /* E · Methodology — persistent, not a tooltip (Marko: "Methodology треба постійно нагадувати") */
+    /* E · Methodology — persistent, not a tooltip (the product owner asked for the methodology to be a standing reminder, not a tooltip) */
     h += methodologySection(row, meta);
 
     /* State 4 · Why is this different? — collapsed hint, shown only when the gap
@@ -1286,7 +1284,7 @@ function breakdownSection(row, m){
 
 function methodologySection(row, meta){
   var accrual = state.view === 'accrual';
-  /* Marko: methodology must stay PERSISTENTLY visible, not hidden in hover/collapse
+  /* The product owner: methodology must stay PERSISTENTLY visible, not hidden in hover/collapse
      (spec: "must persistently show the source, calculation basis, recognition basis").
      So source + calculation + recognition + date/FX are always shown; only the
      exhaustive included/excluded record lists (level-2 detail) collapse. */

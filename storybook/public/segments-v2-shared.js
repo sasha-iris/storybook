@@ -458,7 +458,7 @@ function keepFocus(el, redraw) {
    This replaces the TYPE rail. TYPE gave every segment exactly one label
    guessed from its conditions, so "Geography: 1 country + Has 1 product
    family + Discount greater than 10%" was filed under Geography alone and was
-   unfindable by anyone looking for the product it names. Marko, on the call of
+   unfindable by anyone looking for the product it names. The product owner, on the call of
    2026-09-03, first said TYPE did not behave as he expected — "it's not
    clearing, well, it's just filtering" — and then, clicking down the list:
    "you can probably kill it and just have folders ... you can provide some
@@ -548,7 +548,7 @@ SEGMENTS.forEach(s => {
 });
 
 /* ── Which channels, not how many ─────────────────────────────────────────
-   Marko, 12:20, with his cursor by the rail on our own page: "we wanna see HERE
+   the product owner, 12:20, with his cursor by the rail on our own page: "we wanna see HERE
    the channel — remember, we agreed that some segments will become Shopify,
    Amazon oriented." A row that says "2 sales channel(s)" does not let anyone see
    the channel; it is the same omission as "Geography: 1 country(s)".
@@ -615,7 +615,7 @@ SEGMENTS.forEach(s => {
 
    So this shows every value the data really carries, verbatim, and no more.
    When the API supplies the country, it lands here without a redesign. */
-/* Marko, 11:40: "I can provide some geography for instance and product SUB
+/* The product owner, 11:40: "I can provide some geography for instance and product SUB
    ITEMS". Sub items, not items — the values have levels of their own. The live
    product works the same way: its three DTC sales channels are parents, and a
    segment reporting "12 sales channel(s)" is counting the sub-channels beneath
@@ -751,7 +751,7 @@ function hasValue(s, tok) {
 }
 
 /* ── Who touched it ───────────────────────────────────────────────────────
-   Marko, 2026-09-03 at 16:40: "the metrics here should be like a user based —
+   the product owner, 2026-09-03 at 16:40: "the metrics here should be like a user based —
    you created, edited, you know, like user created, user edited."
 
    The live product does not record it for a segment: the list has Created and
@@ -780,7 +780,7 @@ function markEdit(id, what) {
 (() => { const m = loadEdits(); SEGMENTS.forEach(s => { s.edit = m[s.id] || null; }); })();
 
 /* ── Where a segment stands among the others ──────────────────────────────
-   Marko, 2026-09-03, right after saying he likes the share-of-base figure: "it
+   the product owner, 2026-09-03, right after saying he likes the share-of-base figure: "it
    might be interesting to see how they rank as well, like other segments, you
    know, relatively." A number on its own answers "how big"; it does not answer
    "is this one of my important ones", which is the question someone scanning
@@ -796,7 +796,7 @@ function markEdit(id, what) {
 })();
 
 /* ── The order window ─────────────────────────────────────────────────────
-   Marko, 2026-09-03: "you should have a range on this page." Every segment in
+   the product owner, 2026-09-03: "you should have a range on this page." Every segment in
    the live product carries its own window frozen into the definition — "Jul 31,
    2026 to Aug 31, 2026", "Dec 3, 2024 to Dec 3, 2025" — so two segments with
    identical conditions and different windows are two different segments. That

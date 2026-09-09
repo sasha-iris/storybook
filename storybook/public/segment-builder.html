@@ -111,7 +111,7 @@
   .sb-fin { display: flex; align-items: center; gap: 12px; }
   /* Fin's card wears a wash of the brand, so the two ways in stop reading at the
      same weight as the definition below them — and it answers the one note
-     Marko left on the look itself: "much more neutral than the data rooms —
+     the product owner left on the look itself: "much more neutral than the data rooms —
      can you provide a touch of color to give it more pop?"
 
      The tint is DERIVED from the brand button, not typed as a new hex: the
@@ -295,7 +295,7 @@
              are building opened on a yellow alert instead. -->
         <div id="sbWarn"></div>
 
-        <!-- Marko, 2026-09-03: "I don't like the template all the way at the
+        <!-- The product owner, 2026-09-03: "I don't like the template all the way at the
              bottom, because it already rolls off the page — it's not even above
              the fold." It was the last card, under Name, Starting universe and
              Conditions. A starting point you only reach after doing the work by
@@ -308,7 +308,7 @@
              AFTER the conditions they would overwrite. At the top there is
              usually nothing to overwrite, and the confirmation still stands for
              the times there is. -->
-        <!-- Marko, 2026-09-03, after watching Fin write an automation from a
+        <!-- The product owner, 2026-09-03, after watching Fin write an automation from a
              sentence: "really nice compromise — you can either do it with an LLM,
              or you can build it by hand." And on what Fin should do with a
              request it does not fully understand: "it should not return such a
@@ -532,7 +532,7 @@ const CATALOG = {
        the names are what you choose from. */
     /* Many, not one. The data counts channels — "12 sales channel(s)", "9",
        "2" — and a single select could express exactly one, so the builder could
-       not construct most of the segments the list already holds. Marko, 12:20:
+       not construct most of the segments the list already holds. The product owner, 12:20:
        "we wanna see here the channel — some segments will become Shopify,
        Amazon oriented", which is a segment spanning several. */
     { k:'chan',   n:'Sales channels',     ctl:['multi', [
@@ -540,7 +540,7 @@ const CATALOG = {
         { g:'Wholesale' }, 'Manual Order Wholesale', 'Shopify Wholesale', 'SPS Commerce'
       ]], f:.63 },
     { k:'tag',    n:'Order tags',         ctl:['num', 'Has', 'tag(s)'], f:.22 },
-    /* Marko, 10:00: "there's a specific discount code that I want to analyze."
+    /* The product owner, 10:00: "there's a specific discount code that I want to analyze."
        Iris filters on a discount PERCENTAGE today, not on a code, and no code
        appears anywhere in the data — which is why this was left out of the
        build for a while, on the rule against inventing data.
@@ -723,7 +723,7 @@ else if (location.hash === '#templates') {
 }
 
 /* ── Generate with Fin ────────────────────────────────────────────────────
-   Their flow, step for step, from the Automations demo Marko gave at 13:40:
+   Their flow, step for step, from the Automations demo the product owner gave at 13:40:
 
      + Create automation  →  a "Generate with Fin" dialog carrying a prompt box
      and a short list of examples  →  Generating…  →  a PREVIEW of the finished
@@ -799,7 +799,7 @@ function finDescription(read) {
 
 /* What is in the box, kept outside the dialog so that "No, I want something
    else" can put the reader back in front of their own words rather than an
-   empty field — Marko, 15:00: "it should give you back some kind of answer and
+   empty field — The product owner, 15:00: "it should give you back some kind of answer and
    then you polish it, rather than write it from scratch over and over again." */
 let finTyped = '';
 
@@ -943,7 +943,7 @@ document.getElementById('sbGenFin').addEventListener('click', () => generateWith
 
 /* ── Variant-2 mode ────────────────────────────────────────────────────────
    The v2 pages have no builder of their own, so they link here with ?v2=1.
-   Marko, 2026-09-01: in the new pass Iris computes the metrics on the fly, so
+   the product owner, 2026-09-01: in the new pass Iris computes the metrics on the fly, so
    there is no run step to schedule and nothing to calculate on demand. In that
    mode the scheduling card is removed, the estimate footnote stops promising a
    nightly figure, and Back and Cancel return to the v2 list.
@@ -1227,7 +1227,7 @@ const ownIt = i => { if (state.conds[i]) state.conds[i].draft = false; };
 
 /* A suggested value has one of two origins and they are not the same claim.
    Fin READ it out of the sentence, and the phrase it read is the honest answer
-   to Marko's "how can you guarantee the pre-populated inputs reflect your
+   to the product owner's "how can you guarantee the pre-populated inputs reflect your
    idea?" — so the row shows the words. A value the Add button put there was
    only the first option in the list, and nothing was read at all. Both used to
    print the second sentence, which made the preview's own mapping look like a
@@ -1295,7 +1295,7 @@ function condRow(c, i, steps) {
            </select>
          </div>`
       : `<div class="sb-op">${state.join === 'any' ? 'or' : 'and'}</div>`;
-  /* Marko also asked the question a suggestion has to answer before anyone will
+  /* The product owner also asked the question a suggestion has to answer before anyone will
      trust it: "what's the confidence level — how can you guarantee that the
      pre-populated inputs reflect your idea?" It cannot be guaranteed, so the
      row says where the value came from instead of printing a number that
@@ -1583,7 +1583,7 @@ function modal({ title, body, confirmLabel, confirmIcon, confirmDisabled, cancel
 
 /* ── events ── */
 document.addEventListener('click', e => {
-  /* Marko, 2026-09-03, watching Fin refuse his prompt twice: "It should not
+  /* The product owner, 2026-09-03, watching Fin refuse his prompt twice: "It should not
      return such message... you don't need to think about the prompt", and then
      "it should give you back some kind of answer and then you polish it rather
      than write it from scratch over and over again — no one reads those warning
@@ -1673,7 +1673,7 @@ document.addEventListener('click', e => {
           net: est == null ? null : Math.round(est * 1.06 * aov),
           ltv: aov == null ? null : +(aov * 2.7).toFixed(2),
           cr: fmtDate(new Date()), up: fmtDate(new Date()),
-          /* Marko, 16:40: "user created, user edited". The seeded forty carry no
+          /* The product owner, 16:40: "user created, user edited". The seeded forty carry no
              author because the product records none for a segment; one made here
              was made by whoever is looking at the screen, and "you" is the only
              true thing this prototype can say — it has no identity to name. */

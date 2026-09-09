@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profit &amp; Loss · UX refinement prototype (Iris Library)</title>
-  <!-- base = iris-examples preview server: the Launch preview panel opens this file
-       standalone and cannot resolve ../assets/ relative paths; with base, assets load
-       from http://localhost:8000 in both the panel and the browser. -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="../assets/iris-tokens.css">
   <link rel="stylesheet" href="../assets/iris-components.css">
@@ -66,8 +63,7 @@
       padding: 10px 14px;
     }
     body.pnl-editing .pnl-editbar { display: flex; }
-    /* Edit Mode must clearly stand out from the page (Marko: "щоб воно більш
-       відрізнювалося від сторінки") — tinted canvas, purple frame, corner ribbon. */
+    /* Edit Mode must clearly stand out from the page (the product owner asked for editing to look clearly unlike the page) — tinted canvas, purple frame, corner ribbon. */
     body.pnl-editing .pnl-content { background: #faf9ff; box-shadow: inset 0 0 0 2px #8074e8; border-radius: 12px; }
     body.pnl-editing .pnl-tablewrap { outline: 2px solid #b4a9f7; outline-offset: -2px; }
     .pnl-mode-ribbon { display: none; }
@@ -121,7 +117,7 @@
     .pnl-row--sel .pnl-c-label { box-shadow: inset 3px 0 0 #42389d; }
     body.pnl-editing .pnl-row--click:hover .iris-cell { background: #fdf6b2; }
     /* Edit affordance: the pencil appears on row hover, not on every row at once */
-    /* Edit affordance lives ONLY in the distinct Edit Mode (Marko: not a
+    /* Edit affordance lives ONLY in the distinct Edit Mode (the product owner: not a
        near-invisible pencil in the normal viewing mode). Hidden by default;
        in Edit Mode every editable row shows it, brighter on hover. */
     .pnl-row-pencil { all: unset; display: none; align-items: center; cursor: pointer; color: #42389d; }
@@ -171,7 +167,7 @@
     .pnl-panel-h, .pnl-panel-scroll { width: 474px; box-sizing: border-box; }
     .pnl-panel-scroll { overflow-y: auto; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 12px; }
     .pnl-panel-h { padding: 14px 18px 0; }
-    /* Source monogram chip (Marko #4): the connected system as a compact identity
+    /* Source monogram chip (the product owner #4): the connected system as a compact identity
        chip instead of a full-width text badge. Library .avatar sizing/shape, only
        the palette is tuned here — the default avatar grey fails AA at this size. */
     .pnl-src-chip { width: 22px; height: 22px; font-size: 10px; letter-spacing: .01em;
@@ -313,7 +309,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M9.5 4v16"/></svg>
       </button>
 
-      <!-- Channels — the global filter Marko asked about -->
+      <!-- Channels — the global filter the product owner asked about -->
       <div data-menu-wrap style="position:relative;">
         <button type="button" class="btn-link btn-link-semibold btn-sm" data-menu-toggle aria-haspopup="menu" aria-expanded="false" id="channelsBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72"/></svg>
@@ -411,8 +407,7 @@
           <button type="button" class="btn btn-md" data-gran="quarterly">Quarterly</button>
         </div>
 
-        <!-- Accounting-view selector. Marko: "треба додати description, щоб людина
-             явно розуміла, що вона взагалі дивиться." Each option carries its own (i)
+        <!-- Accounting-view selector. The product owner asked for a description so the reader knows exactly what they are looking at. Each option carries its own (i)
              icon INSIDE the selector — the description reveals on hover/focus, so you
              learn what a view is while choosing it, no separate icon to hunt for. -->
         <div class="btn-group" role="group" aria-label="Accounting view" id="viewGroup">
@@ -1010,7 +1005,7 @@ function closeDrill(){
   d.classList.remove('open'); d.style.flexBasis = ''; d.style.minWidth = '';
   state.drillCell = null;
   /* NOTE: do NOT strip .pnl-cell--selmonth here — that is the SELECTED-cell
-     highlight owned by renderTable (Marko: the clicked cell must stay highlighted). */
+     highlight owned by renderTable (the product owner: the clicked cell must stay highlighted). */
 }
 function el0(){ return document.getElementById('pnlTable'); }
 
@@ -1072,7 +1067,7 @@ function openCellDrill(rid, periodIndex){
     '</div>';
 }
 
-/* ═══════════════════ Formula rendering (Marko #5b) ═══════════════════
+/* ═══════════════════ Formula rendering (the product owner #5b) ═══════════════════
    "The calculation should display like a formula, not text." Every row gets its own
    expression instead of one of three prose sentences.
 
@@ -1098,7 +1093,7 @@ var FX_MAXC = 51;
 /* Break a long formula at operator boundaries only — never mid-term — filling each
    line to the budget and hanging-indenting the continuation by two spaces. Greedy
    fill rather than an unconditional break after "=": it keeps Net Sales at two lines
-   instead of three, and vertical space in this panel is what Marko keeps objecting to. */
+   instead of three, and vertical space in this panel is what the product owner keeps objecting to. */
 function fxWrap(line, maxc){
   if (line.length <= maxc) return [line];
   var parts = line.split(/(?= [+−] )|(?= AND )/);
@@ -1252,7 +1247,7 @@ function renderPanel(){
   var acVal = opVal * VIEW_FACTOR.accrual;
 
   var cogSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>';
-  /* Condensed header (Marko): source badges INLINE with the title, Config as an icon
+  /* Condensed header (the product owner): source badges INLINE with the title, Config as an icon
      next to expand/close — not their own rows. */
   var h = '<div class="pnl-panel-h">' +
     '<div style="display:flex;align-items:flex-start;gap:6px;">' +
@@ -1294,7 +1289,7 @@ function renderPanel(){
         'synced ' + meta.sync.toLowerCase() + ' · ' + (accrual ? '96%' : '100%') + ' complete' +
       '</div></section>';
 
-    /* B · Methodology — persistent, not a tooltip (Marko #5a: "the placement is
+    /* B · Methodology — persistent, not a tooltip (the product owner #5a: "the placement is
        wrong, it's too hidden"). Sits directly under Summary so it is on screen
        without scrolling; it used to render after Transactions. */
     h += methodologySection(row, meta);
@@ -1449,12 +1444,12 @@ function breakdownSection(row, m){
 
 function methodologySection(row, meta){
   var accrual = state.view === 'accrual';
-  /* Marko: methodology must stay PERSISTENTLY visible, not hidden in hover/collapse
+  /* The product owner: methodology must stay PERSISTENTLY visible, not hidden in hover/collapse
      (spec: "must persistently show the source, calculation basis, recognition basis").
      So source + calculation + recognition + date/FX are always shown; only the
      exhaustive included/excluded record lists (level-2 detail) collapse.
 
-     Marko #5(b): the Calculation row was a prose sentence — one of only three strings
+     the product owner #5(b): the Calculation row was a prose sentence — one of only three strings
      for all twenty-four rows, every clause of which was already on screen in the meta
      line, the panel header or the Recognition basis row. It is REPLACED by the row's
      own formula; there is no prose fallback. Recognition basis and the included /

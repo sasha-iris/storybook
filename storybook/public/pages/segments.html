@@ -1054,8 +1054,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { hidePop(); closeMenu(); }
 });
 
-/* These pages carry <base href>, so "#segTable" in an href would navigate to the
-   pages directory instead of scrolling. Handle it, and make the target focusable. */
+/* Handle the skip link in script so the target is focused, not merely scrolled to. */
 document.getElementById('skipLink').addEventListener('click', e => {
   e.preventDefault();
   const t = document.getElementById('segTable');

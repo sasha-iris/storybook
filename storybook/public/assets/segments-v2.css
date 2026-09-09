@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════════════
    Customer Segments — variant 2, in the Data Rooms visual language.
 
-   Marko, 2026-09-01: "this view is much more neutral than the work i had liked
+   the product owner, 2026-09-01: "this view is much more neutral than the work i had liked
    on the data rooms. can you provide a touch of color or something to give it
    more pop?" — with two Data Rooms screenshots attached.
 
@@ -614,7 +614,7 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 }
 .dr-dist__col:hover .dr-dist__b { filter: brightness(.86); }
 /* Eight bars in --color-bg-danger were the loudest thing on the page, and they
-   said the same thing the ceiling line says: these reach the top. Marko's note
+   said the same thing the ceiling line says: these reach the top. The product owner's note
    was that the defects are expected and the page should not be about them, so
    the chart shows the SHAPE of the library — one colour, sorted, with the base
    drawn across it — and lets the line do the pointing. A bar that touches the
@@ -928,7 +928,7 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 
      "On the left-hand side on the panel" was said in the first five minutes of
      the call, before the product owner had given his opinion at all — it is not
-     Marko's, and this build follows Marko. He spoke about the filters once, at
+     the product owner's, and this build follows the product owner. He spoke about the filters once, at
      07:40, and about their level of detail, not their position. */
   position: absolute; top: calc(100% + 6px); right: 0; z-index: 60;
   /* 300px broke almost every group onto three rows of chips — two per line with

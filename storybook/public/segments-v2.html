@@ -36,7 +36,7 @@
     </div>
     <nav class="sidebar-nav" aria-label="Main">
       <!-- Fin AI and Automations lead the product's own navigation and were
-           missing here. Marko spent four minutes of the review inside
+           missing here. The product owner spent four minutes of the review inside
            Automations — "you can create an automation… or you can just tell Fin
            to do it" — so a prototype of a page in that product that does not
            show they exist is describing a different product. -->
@@ -107,7 +107,7 @@
 
              What is lost is the speed of the first read, not information. -->
 
-        <!-- The filters were a permanent 208px column down the left. Marko,
+        <!-- The filters were a permanent 208px column down the left. The product owner,
              2026-09-03 at 09:00, working that column: "so Type — the left is
              just featuring which segments to use… there is no clearing", and
              then "well, yes, it's just filtering, I don't know that this is…".
@@ -181,7 +181,7 @@
                    on its own, which read as something the user had switched on. It is
                    a setting with a current value, so it is a control that shows that
                    value and can be changed. -->
-              <!-- Marko, 2026-09-03 at 08:38, read at six-second resolution:
+              <!-- The product owner, 2026-09-03 at 08:38, read at six-second resolution:
                    "you should be able to select any of these customer segments —
                    I think you should have like a RANGE PICKER on this page where
                    you can…". Two things, not one: the checkbox column is the
@@ -197,7 +197,7 @@
                    recompute anyone's metrics for a different period — the figures
                    are one per segment — so it narrows the list rather than
                    pretending to rescore it. -->
-              <!-- A real range picker, not a select of buckets. Marko, 08:30 and
+              <!-- A real range picker, not a select of buckets. The product owner, 08:30 and
                    08:38: "you should have a date on this page… like a range picker
                    on this page where you can… you can pick." The product's own is
                    a button carrying the dates, opening presets beside two months
@@ -273,7 +273,7 @@ let fState = 'all', fFolder = 'all', q = '', full = false;
    grouped and flat are the same forty rows under one heading. It turns itself
    on the moment the first folder exists. */
 /* ── Selecting several segments ───────────────────────────────────────────
-   Marko, 2026-09-03: "I think you should be able to select any of these
+   the product owner, 2026-09-03: "I think you should be able to select any of these
    customer segments". There was no way to act on more than one: Compare took
    exactly two chosen from two dropdowns on another page, and filing a segment
    was one trip through one row's overflow menu — forty trips to fill a folder,
@@ -306,7 +306,7 @@ const COLLAPSED = new Set();
    rail filters by them, "+ New folder" creates one, and every ungrouped record
    says "Unfiled" under its name. This redesign had dropped the whole concept
    and put a saved filter in its place, which is a different thing — a saved
-   filter remembers a question, a folder is where a thing lives. Marko's own
+   filter remembers a question, a folder is where a thing lives. The product owner's own
    note was "it's more about organizing the segments", and grouping forty of
    them is the plainest reading of that.
 
@@ -403,7 +403,7 @@ const stateOf = (s, k) =>
   k === 'negltv' ? v2state(s) === 'ready' && s.ltv < 0 :
                    v2state(s) === k;
 const matchState = s => stateOf(s, fState);
-/* Marko, 08:48, with the cursor in this field and nothing typed: "then one
+/* The product owner, 08:48, with the cursor in this field and nothing typed: "then one
    other thing was searching."
 
    It searched the name, the description and the conditions. Three things it did
@@ -443,7 +443,7 @@ if (whole.length) {
   document.getElementById('lsAlert').innerHTML =
     /* No longer an alert. It was a red block across the top of the page, and the
        page opened by telling the reader their data is broken — the loudest thing
-       on a screen whose job is to help them find a segment. Marko's note was
+       on a screen whose job is to help them find a segment. The product owner's note was
        explicit: the defects are expected, and the page should not be about them.
 
        What survives is the one sentence that cannot be worked out from the rows:
@@ -485,7 +485,7 @@ if (whole.length) {
    folder count sits beside zero folders. */
 function drawRail() {
   /* ── The filter panel ──────────────────────────────────────────────────
-     Rebuilt against the product's own, which Marko left open on screen at 07:48
+     Rebuilt against the product's own, which the product owner left open on screen at 07:48
      and again at 09:48 and then said: "I would show you kind of this level of
      detail, and then you can still build the customer segments."
 
@@ -603,7 +603,7 @@ function drawRail() {
 
   const nState = k => SEGMENTS.filter(x => matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
   /* Result, trimmed. It answers a question someone asks — "which of these come
-     back with nobody" — and Marko used it himself. What left is the defect
+     back with nobody" — and the product owner used it himself. What left is the defect
      scoreboard: Negative LTV and Data issues were two more ways of saying the
      page is about what is broken, which is the note he made twice. The seven
      with data issues are still one click away, from the line at the top. */
@@ -633,7 +633,7 @@ const COLS = [
   { k:'net', l:'Net sales', n:1 },
   { k:'ltv', l:'Avg LTV',   n:1 },
   /* Two date columns, not one. The live product carries Created and Updated
-     side by side, and Marko at 16:40 asked for exactly that pair, by user:
+     side by side, and the product owner at 16:40 asked for exactly that pair, by user:
      "the metrics here should be like a user based — you created, edited, user
      created, user edited." This variant had collapsed them into a single
      "Definition updated", which loses the age of a segment: "US Customers" was
@@ -873,7 +873,7 @@ function render() {
          and its own words — I had merged them into one "Analyze with Fin",
          which is two different actions wearing one name.
 
-         Calculate metrics is not kept. It is the Run button, and Marko's first
+         Calculate metrics is not kept. It is the Run button, and the product owner's first
          note was that nothing on this page should need running. */
       '<td class="dr-rowacts">' +
       '<button class="seg-iconbtn dr-rowact" data-analyze="' + s.id + '" aria-label="Analyze ' + esc(s.n) + '" title="Analyze segment">' +
@@ -1380,7 +1380,7 @@ function openMenu(btn) {
   menu(btn, [
     { lab: 'Work with this segment' },
     /* The live product's row menu is Calculate · Analyze · Edit · Export Emails
-       · Delete. Calculate is gone on purpose — Marko's first note was that
+       · Delete. Calculate is gone on purpose — The product owner's first note was that
        nothing should need running. Analyze went with it by accident, and it is
        the one that hands the segment to Fin, which is the half of the product
        he spent four minutes of the review inside. */
@@ -1453,7 +1453,7 @@ document.getElementById('lsMore').addEventListener('click', e => {
 
 document.getElementById('lsNew').addEventListener('click', e => {
   menu(e.currentTarget, [
-    /* Marko, 2026-09-03, on the two ways he wants to get one: "you can either do
+    /* The product owner, 2026-09-03, on the two ways he wants to get one: "you can either do
        it with an LLM, or you can build it by hand", and, on the list itself,
        "maybe some of them are prebuilt for you". All three ways start here
        rather than only being discoverable once you are already inside the
