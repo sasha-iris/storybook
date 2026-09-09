@@ -1360,13 +1360,16 @@
 
   <main class="seg-main">
     <header class="sb-head">
-      <nav aria-label="Breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="./segments.html">Customer Segments</a></li>
-          <li class="breadcrumb-sep" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg></li>
-          <li class="breadcrumb-item active" aria-current="page" id="sbCrumb">New segment</li>
-        </ol>
-      </nav>
+      <!-- The same way out as the segment's own page: one Back control, not a
+           trail. Iris's Create Segment header carries Back and no breadcrumb
+           either (read off dashboard.irisfinance.co on 2026-09-09), and the two
+           pages in this redesign should not leave by two different doors.
+           The crumb's second half said what page you are on, which the title
+           below already says, so nothing is lost by dropping it. -->
+      <a class="dr-back" href="./segments.html" id="sbBack">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+        All segments
+      </a>
       <!-- No heading here. The name IS the page title, in the first card below,
            the way the product's own automation page does it: its sticky bar
            carries the breadcrumb and the actions, and the object's name is a
@@ -2553,11 +2556,9 @@ function syncVariantBtns() {
 let touched = false;   /* opening a segment for editing is not a change to it */
 if (EDIT) {
   document.title = `Edit ${EDIT.n} · Iris`;
-  /* The name field carries the name on screen now, so only the breadcrumb says
-     what is being edited — as their page does. The h1 stays, unseen, because a
-     page still needs one. */
+  /* The name field carries the name on screen, so the h1 stays unseen — a page
+     still needs one. */
   document.getElementById('sbTitle').textContent = `Edit “${EDIT.n}”`;
-  document.getElementById('sbCrumb').textContent = `Edit “${EDIT.n}”`;
   document.getElementById('sbSave').textContent = 'Save changes';
   state.name = EDIT.n;
   state.desc = EDIT.d || '';

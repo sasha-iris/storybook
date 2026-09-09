@@ -71,7 +71,8 @@
 .dr-back {
   display: inline-flex; align-items: center; gap: 7px;
   min-height: 24px; margin-bottom: 12px;
-  font-size: 13.5px; color: var(--dr-muted); text-decoration: none;
+  /* 13.5 is on no scale; the system has 12 / 14 / 16. */
+  font-size: var(--text-sm); color: var(--dr-muted); text-decoration: none;
 }
 .dr-back:hover { color: var(--color-text-heading); }
 .dr-back svg { flex: none; }
@@ -298,7 +299,11 @@
    a different component. What is genuinely missing is a focus indicator:
    .form-input sets outline:none and moves the border only, which is a 3:1
    non-text change, not a focus ring. */
-.form-search-wrap { min-width: 240px; }
+/* The 240 is the TOOLBAR search's floor, not a property of the component: it
+   was set page-wide, so the 194px box in the navigation column inherited a
+   minimum wider than the column itself and ran 49px past its edge. */
+.dr-toolbar .form-search-wrap { min-width: 240px; }
+.dr-navsearch .form-search-wrap, .dr-gsearch .form-search-wrap { min-width: 0; }
 /* the field sits in the same row as the buttons and must share their height */
 .dr-toolbar .form-search-wrap .form-input { height: 36px; font-size: 13px; }
 .form-search-wrap .form-input:focus-visible {
@@ -1072,9 +1077,16 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 }
 /* Typeahead inside a dimension, for the values that cannot be listed. Indented
    to the second level, because that is what it searches. */
-.dr-navsearch { padding: 3px 8px 5px 47px; }
-.dr-navsearch .form-input { height: 30px; font-size: var(--text-xs); }
-.dr-navempty { padding: 4px 10px 6px 47px; font-size: 12px; color: var(--dr-muted); }
+/* MEASURED: the box ran 86px past the 208px rail. A 47px left indent, meant to
+   line it up under the dimension's label, plus an input that was not being held
+   to its container's width. The indent comes back to the rail's own 10px — a
+   field indented by a third of the column is not aligned to anything anyway —
+   and the input is told to fill what is left. */
+.dr-navsearch { padding: 3px 8px 5px 10px; }
+.dr-navsearch .form-search-wrap { width: 100%; }
+.dr-navsearch .form-input { width: 100%; min-width: 0; box-sizing: border-box;
+                            height: 30px; font-size: var(--text-xs); }
+.dr-navempty { padding: 4px 10px 6px 10px; font-size: var(--text-xs); color: var(--dr-muted); }
 .dr-nav .dr-nv__more { color: var(--dr-primary); font-size: var(--text-xs); }
 .dr-nav .dr-nv__more:hover { background: var(--dr-hover); }
 
@@ -1342,8 +1354,10 @@ input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appe
    a full-height input, and .form-search-wrap--end also pads the left for an
    icon that is not there on this one. */
 .dr-gsearch { padding: 0 6px 6px; }
+.dr-gsearch .form-search-wrap { width: 100%; }
 .dr-gsearch .form-search-wrap--end .form-input,
-.dr-navsearch .form-search-wrap--end .form-input { padding-left: 10px; padding-right: 30px; }
+.dr-navsearch .form-search-wrap--end .form-input { width: 100%; min-width: 0; box-sizing: border-box;
+                                                   padding-left: 10px; padding-right: 30px; }
 .dr-gsearch .form-search-wrap--end .form-search-icon,
 .dr-navsearch .form-search-wrap--end .form-search-icon {
   right: 8px; display: inline-flex; align-items: center; justify-content: center;

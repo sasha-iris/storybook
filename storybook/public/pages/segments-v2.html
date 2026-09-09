@@ -250,17 +250,16 @@
                    toolbar is for controls; the sentence now appears above the
                    table, where the missing grouping is what you are looking at. -->
 
-              <!-- Not a switch. A switch promises that ON adds something, and this
-                   swaps one reading of the definition for another: the summary says
-                   what the conditions amount to ("no effective filter, every customer
-                   matches"), the condition list says what was literally configured
-                   ("geography (no criteria set)"). Neither is more than the other,
-                   and on a one-condition segment the "full" view was the shorter of
-                   the two. Two named alternatives, both visible. -->
-              <div class="btn-group dr-seg" role="radiogroup" aria-label="Definition">
-                <button class="btn btn-sm active" role="radio" aria-checked="true" data-def="summary">Summary</button>
-                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-def="conditions">Conditions</button>
-              </div>
+              <!-- The Summary/Conditions switch is gone. It was never asked for:
+                   MARKO_REQUIREMENTS M26, 16:40, "there was lack of information
+                   regarding the definition — that was just something vague",
+                   which was praise for the per-row SUMMARY. The Conditions
+                   reading listed what was literally configured — "geography (no
+                   criteria set) · filters nobody" — which the summary line
+                   already says in words and the row's mark already says as a
+                   mark. Three tellings of one fact per row, and the chips ran
+                   the Segment cell wide enough to push the actions column off
+                   the right. -->
             </div>
             <!-- Between the controls and the table. Above them, appearing pushed
                  the sort and arrangement row down every time a box was ticked;
@@ -284,7 +283,7 @@
 <script src="../assets/segments-v2-shared.js?v=16"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
-let fState = 'all', fFolder = 'all', q = '', full = false;
+let fState = 'all', fFolder = 'all', q = '';
 
 /* ── Grouping ─────────────────────────────────────────────────────────────
    Data Rooms' table is flat because it holds three files. Ours holds forty
@@ -1012,10 +1011,7 @@ function nameCell(s) {
      nothing, and marks those. That is the whole difference between the two
      readings: the summary says what the definition amounts to, this says what
      was actually configured. */
-  const conds = full && s.conds.length
-    ? s.conds.map(c => '<span class="iris-chip iris-chip--light' + (c.noop ? ' dr-chip--dead' : '') + '">' +
-        esc(c.label) + (c.noop ? ' · filters nobody' : '') + '</span>').join(' ')
-    : esc(s.sentence);
+  const conds = esc(s.sentence);
   /* ── One mark, no sentence ──────────────────────────────────────────────
      the product owner, 2026-09-08: "the alerts in the main list are too loud, it's too
      difficult for me to parse through what's important and what isn't. I think
@@ -1600,29 +1596,6 @@ document.getElementById('lsSort').addEventListener('change', e => {
   sort = { k, dir: k === 'n' ? 'asc' : 'desc' };
   render();
 });
-/* ── Definition: the summary, or the literal condition list ── */
-const defBtns = [...document.querySelectorAll('[data-def]')];
-function setDefinition(next, focus) {
-  full = next === 'conditions';
-  defBtns.forEach(b => {
-    const on = b.dataset.def === next;
-    b.classList.toggle('active', on);
-    b.setAttribute('aria-checked', String(on));
-    b.tabIndex = on ? 0 : -1;
-    if (on && focus) b.focus();
-  });
-  render();
-}
-defBtns.forEach((b, i) => {
-  b.addEventListener('click', () => setDefinition(b.dataset.def, false));
-  b.addEventListener('keydown', e => {
-    const map = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: defBtns.length - 1 };
-    if (!(e.key in map)) return;
-    e.preventDefault();
-    setDefinition(defBtns[(map[e.key] + defBtns.length) % defBtns.length].dataset.def, true);
-  });
-});
-
 document.addEventListener('click', e => {
   const inert = e.target.closest('[aria-disabled="true"]');
   if (inert && (inert.closest('#lsRail') || inert.closest('#lsNav'))) return;
