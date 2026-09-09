@@ -215,6 +215,35 @@
 .dr-seg .btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
 .dr-seg .btn:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
 
+/* ── One radius for buttons on these pages ────────────────────────────────
+   MEASURED: on the list, New segment / Filters / the range trigger were 8px
+   while the selection bar's buttons two rows below were 12; on the builder,
+   Save / Cancel / Start from template / Generate with Fin were 12 while the
+   order window was 8. Two radii per page, three across the pair.
+
+   The library's .btn is --radius-lg, 12px, straight from Figma. 8px started as
+   an override on this toolbar and is the one the reader picked out as the one
+   she wants. So it is applied once, here, to every button on the pages that
+   load this sheet, instead of being set case by case.
+
+   LIBRARY QUESTION: a corner radius is a token-level decision, not a page one.
+   If 8 is right for a dense product surface it should move in --radius-lg for
+   .btn, and this block should disappear. Until Iris decides, this is a stated
+   deviation in one place rather than an unstated one in six.
+   Pills keep their own shape; a pill is not a button with a smaller corner. */
+.dr-app .btn,
+.sb-app .btn,
+.seg-app .btn,
+.dr-app .dropdown-trigger,
+.sb-app .dropdown-trigger,
+.seg-app .dropdown-trigger { border-radius: var(--radius-md); }
+.dr-app .btn-pill, .sb-app .btn-pill, .seg-app .btn-pill,
+.dr-app .dr-chip, .sb-app .dr-chip, .seg-app .dr-chip { border-radius: 999px; }
+/* A run of joined buttons rounds only its outer corners, and the library sets
+   those to --radius-lg too. */
+.seg-app .btn-group .btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.seg-app .btn-group .btn:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
 /* A condition that exists but was left empty is listed, and listed as dead. */
 .iris-chip.dr-chip--dead { background: var(--color-bg-danger-soft); color: var(--color-text-fg-danger); }
 .dr-split > .btn:last-child { padding: 0 7px; }
