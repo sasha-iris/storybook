@@ -3829,7 +3829,10 @@ function render() {
        <div class="dr-cond__t"><div class="dr-cond__l">${l}</div>
        <div class="dr-cond__s">${sub}</div></div></div>`;
   document.getElementById('sbSample').innerHTML = noDefinition
-    ? samRow('card-icon-gray', SAM_USERS, 'A sample of matching customers appears here',
+    /* "of matching customers" is what the card's own heading already says —
+       "Sample of who qualifies" is directly above this line — so the top half
+       was carrying the heading a third time and running to two rows for it. */
+    ? samRow('card-icon-gray', SAM_USERS, 'A sample appears here',
              'once this segment has a definition')
     : n === 0
       ? samRow('card-icon-red', SAM_WARN, 'Nobody matches yet',
