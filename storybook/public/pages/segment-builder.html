@@ -336,13 +336,17 @@
   .sb-uni--inline .sb-card__b > div { display: block !important; }
   .sb-uni--inline .form-group { display: block; margin: 0; }
   .sb-uni--inline .form-label { display: block; margin: 0 0 5px; }
-  .sb-uni--inline #sbUniverse { display: none; }
-  /* Label left, figure right, on one line over the control they describe. */
+  /* Was an inline style, which beat every rule written for it. */
+  #sbUniverse { margin: 10px 0 0; font-size: var(--text-xs); color: var(--seg-muted); }
+  /* The sentence under the control, as the old card had it, rather than a bare
+     figure beside the label: "17,541 customers placed an order in this window"
+     says what the number IS, and the control it sits under is what changes it.
+     The figure alone was the same number in a place that had to be read
+     twice — once for the count, once for what it counted. */
+  .sb-uni--inline #sbUniverse { display: block; margin: 6px 0 0; font-size: 10px;
+                                line-height: 1.5; color: var(--seg-muted); }
   .sb-unilab { display: flex; align-items: baseline; gap: 8px; }
   .sb-unilab .form-label { flex: 1; }
-  .sb-unin { font-size: 10px; font-weight: var(--font-medium); color: var(--seg-muted);
-             font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .sb-unin.is-bad { color: var(--color-text-fg-danger); }
   /* The list page hangs this popover off the right end of a wide toolbar. Here
      it sits in a 300px column, so at right:0 it ran 361px past the left edge of
      the window. It opens from the column's left edge instead. */
@@ -567,6 +571,9 @@
      it so it does not tower over its own sentence. #5b6270 on white is 6.6:1. */
   .sb2__empty { display: flex; align-items: center; gap: 6px; margin: 2px 0 4px;
                 padding: 4px 2px; font-size: 10px; color: var(--seg-muted); }
+  /* The ladder's row, standing alone in a panel rather than in a list, so it
+     gives up the hairline it would have drawn against the row below it. */
+  .sb2__pvnone { padding-top: 2px; border-bottom: 0; }
 
 
   /* A row, not a card. The chosen one is tinted rather than ringed — a 2px
@@ -1491,11 +1498,6 @@
               <div class="form-group" style="margin:0;">
                 <div class="sb-unilab">
                   <label class="form-label" for="sbRange">Orders between</label>
-                  <!-- The size of the window, on the control that sets it. The
-                       old card said it in a sentence under the field, "17,541
-                       customers placed an order in this window"; the words are
-                       the label's job, so only the figure is left. -->
-                  <span class="sb-unin" id="sbUniN"></span>
                 </div>
                 <div class="dr-rangewrap">
                   <button type="button" class="iris-datepicker-input" id="sbRange"
@@ -1507,7 +1509,7 @@
                 </div>
               </div>
             </div>
-            <p style="margin:10px 0 0;font-size:12px;color:var(--seg-muted);" id="sbUniverse"></p>
+            <p id="sbUniverse"></p>
           </div>
         </div></div>
 
@@ -3602,7 +3604,19 @@ function previewV2() {
   const head = '';
 
   if (!g.conds.length) {
-    return head + `<p class="sb2__pvempty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg>Everyone in the window. Add a filter to narrow it.</p>`;
+    /* The pattern the segment's own page already uses for exactly this row:
+       .dr-cond — the ladder's tinted .card-icon tile, then the fact, then what
+       to do about it. Its first row there is "Everyone in Iris / all customers,
+       all history" on card-icon-gray, and this is the same statement about the
+       same starting set, so it wears the same tile and the same glyph rather
+       than a loose icon invented for one line. */
+    return head + `<div class="dr-cond sb2__pvnone">
+        <span class="card-icon card-icon-gray" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg></span>
+        <div class="dr-cond__t">
+          <div class="dr-cond__l">Everyone in the window</div>
+          <div class="dr-cond__s">Add a filter to narrow it</div>
+        </div>
+      </div>`;
   }
 
   /* Only conditions that carry a value. An unset one has no cost to report, so
@@ -3659,12 +3673,6 @@ function render() {
      three seeded segments while the estimate happily computed from that same
      range. */
   const badRange = !rangeValid();
-  /* Beside the label in v2, in the sentence under the field in v1. */
-  const uniN = document.getElementById('sbUniN');
-  if (uniN) {
-    uniN.textContent = badRange ? 'check the dates' : fmtN(uni) + ' customers';
-    uniN.classList.toggle('is-bad', !!badRange);
-  }
   document.getElementById('sbUniverse').textContent = badRange
     ? 'The end date cannot be before the start date.'
     : state.range === 'custom'
