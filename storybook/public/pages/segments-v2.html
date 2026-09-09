@@ -378,6 +378,11 @@ const DSEL = new Set();
 const VSEL = new Set();
 /* What has been typed into a group's own search box, by group id. */
 const GQ = {};
+/* Only one group's search box is open at a time, and it is opened by a mark in
+   that group's own heading. Two boxes standing open and empty in a five-group
+   panel were two controls asking to be filled in before anything had been
+   looked for. */
+let searchGrp = null;
 /* The product's date control always reads as a range — "Sep 1, 2023 - Aug 31,
    2026" — never as a word standing in for one, and it carries no label of its
    own because the dates say what it is. Ours opens on the full span the data
@@ -580,13 +585,16 @@ function drawRail() {
   const group = (id, label, sel, resetKey, body, searchable) => body ?
     '<div class="dr-rail__g" role="group" aria-labelledby="' + id + '">' +
       '<div class="dr-rail__lab" id="' + id + '">' + label +
+        (searchable
+          ? '<button class="dr-rail__find' + (searchGrp === id ? ' is-on' : '') + '" data-find="' + id + '"' +
+            ' aria-expanded="' + (searchGrp === id) + '" aria-controls="gq-' + id + '"' +
+            ' aria-label="Search ' + label + '" title="Search ' + label + '">' +
+            svg('m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z', 14) + '</button>' : '') +
         (sel ? '<span class="dr-rail__sel">' + sel + ' selected</span>' : '') +
         (sel ? '<button class="dr-rail__reset" data-reset="' + resetKey + '">Reset</button>' : '') +
       '</div>' +
-      /* The product's METRIC group carries a search box because it holds
-         fourteen values; the same rule applies to any group long enough to
-         scroll. */
-      (searchable
+      /* The box is here only while this group holds the open search. */
+      (searchable && searchGrp === id
         ? '<div class="dr-gsearch"><label class="seg-sr" for="gq-' + id + '">Search ' + label + '</label>' +
           '<input class="form-input" id="gq-' + id + '" type="search" data-gq="' + id + '"' +
           ' placeholder="Search…" value="' + esc(GQ[id] || '') + '"></div>' : '') +
@@ -1744,6 +1752,21 @@ document.addEventListener('click', e => {
   }
   /* Chips toggle. There is no "Any result" chip standing in for no filter, so
      pressing the one that is on is how you turn it off. */
+  /* One at a time: opening a group's search closes whichever was open, and
+     closing one drops its query — a filter still applied behind a box nobody
+     can see is a group quietly hiding its own values. */
+  const fnd = e.target.closest('[data-find]');
+  if (fnd) {
+    const id = fnd.dataset.find;
+    if (searchGrp && searchGrp !== id) GQ[searchGrp] = '';
+    if (searchGrp === id) { GQ[id] = ''; searchGrp = null; }
+    else searchGrp = id;
+    render();
+    const box = document.getElementById('gq-' + id);
+    (box || document.querySelector('[data-find="' + id + '"]'))?.focus();
+    return;
+  }
+
   const st = e.target.closest('[data-state]');
   if (st) { fState = fState === st.dataset.state ? 'all' : st.dataset.state; return keepFocus(st, render); }
   const fo = e.target.closest('[data-folder]');

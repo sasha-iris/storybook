@@ -2185,15 +2185,11 @@ if (V2) {
   }
   const card = document.getElementById('sbModeCard');
   if (card) card.remove();
+  /* The rail's own header carries the word Illustrative, in the corner where a
+     panel says what kind of figure it holds. A four-line paragraph repeating it
+     underneath was the longest text on the page, about a caveat already made. */
   const note = document.getElementById('sbEstNote');
-  /* Says what it is. The figures in this rail are modelled from the conditions,
-     not measured from customers — this prototype has no customer records at
-     all — and the previous wording ("computed from the conditions above")
-     invited them to be read as the real answer. */
-  if (note) note.innerHTML =
-    '<b style="font-weight:var(--font-semibold);">Illustrative.</b> The audience is modelled from the conditions to show how the ' +
-    'builder behaves as you narrow it; it is not a query against customer records. ' +
-    'Iris computes the real figure on the fly when the segment is opened.';
+  if (note) note.remove();
   document.querySelectorAll('a[href="./segments.html"]').forEach(a => a.href = './segments-v2.html');
 }
 

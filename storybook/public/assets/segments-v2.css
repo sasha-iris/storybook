@@ -1256,6 +1256,18 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 
 /* A group with more values than fit gets its own search and a scroll, the way
    METRIC does, instead of making the whole panel taller. */
+/* The mark that opens the search, in the group's own heading beside Reset.
+   Same bare-button treatment as Reset, sized to the 11px label it sits on. */
+.dr-rail__find {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; margin: -4px 0; padding: 0;
+  border: 0; border-radius: var(--radius-sm); background: none; cursor: pointer;
+  color: var(--dr-muted);
+}
+.dr-rail__find:hover { background: var(--dr-hover); color: var(--color-text-heading); }
+.dr-rail__find.is-on { background: var(--dr-primary-soft); color: var(--dr-primary); }
+.dr-rail__find:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+.dr-rail__find + .dr-rail__sel { margin-left: auto; }
 .dr-gsearch { padding: 0 6px 6px; }
 .dr-gsearch .form-input { height: 32px; font-size: var(--text-xs); }
 .dr-chips--scroll { max-height: 132px; overflow-y: auto; }
