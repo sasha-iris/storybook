@@ -595,9 +595,15 @@ function drawRail() {
       '</div>' +
       /* The box is here only while this group holds the open search. */
       (searchable && searchGrp === id
-        ? '<div class="dr-gsearch"><label class="seg-sr" for="gq-' + id + '">Search ' + label + '</label>' +
+        ? '<div class="dr-gsearch"><div class="form-search-wrap form-search-wrap--end">' +
+          '<label class="seg-sr" for="gq-' + id + '">Search ' + label + '</label>' +
           '<input class="form-input" id="gq-' + id + '" type="search" data-gq="' + id + '"' +
-          ' placeholder="Search…" value="' + esc(GQ[id] || '') + '"></div>' : '') +
+          ' placeholder="Search…" value="' + esc(GQ[id] || '') + '">' +
+          /* Ours, not the browser's: the library's trailing action slot, shown
+             only once there is something to clear. */
+          (GQ[id] ? '<button class="form-search-icon" data-gqclear="' + id + '"' +
+                    ' aria-label="Clear the search">' + svg('M6 18 18 6M6 6l12 12', 14) + '</button>' : '') +
+          '</div></div>' : '') +
       '<div class="dr-chips' + (searchable ? ' dr-chips--scroll' : '') + '">' + body + '</div></div>' : '';
 
 
@@ -838,11 +844,13 @@ function drawNav() {
   const lab = t => '<div class="dr-rail__lab">' + t + '</div>';
 
   const navSearchBox = k =>
-    '<div class="dr-navsearch">' +
+    '<div class="dr-navsearch"><div class="form-search-wrap form-search-wrap--end">' +
       '<label class="seg-sr" for="navq-' + k + '">Search ' + esc(DIM[k].l) + '</label>' +
       '<input class="form-input" id="navq-' + k + '" type="search" data-navq="' + k + '"' +
       ' placeholder="Country or postal code" value="' + esc(GQ['nav:' + k] || '') + '">' +
-    '</div>';
+      (GQ['nav:' + k] ? '<button class="form-search-icon" data-navqclear="' + k + '"' +
+                        ' aria-label="Clear the search">' + svg('M6 18 18 6M6 6l12 12', 14) + '</button>' : '') +
+    '</div></div>';
 
   /* All segments. Its count ignores both axes, because clicking it drops them. */
   const atRoot = !DSEL.size && !navSel.size && fFolder === 'all';
@@ -1769,6 +1777,20 @@ document.addEventListener('click', e => {
   /* One at a time: opening a group's search closes whichever was open, and
      closing one drops its query — a filter still applied behind a box nobody
      can see is a group quietly hiding its own values. */
+  const gcl = e.target.closest('[data-gqclear]');
+  if (gcl) {
+    const id = gcl.dataset.gqclear;
+    GQ[id] = ''; render();
+    setTimeout(() => document.getElementById('gq-' + id)?.focus(), 0);
+    return;
+  }
+  const ncl = e.target.closest('[data-navqclear]');
+  if (ncl) {
+    const k2 = ncl.dataset.navqclear;
+    GQ['nav:' + k2] = ''; render();
+    setTimeout(() => document.getElementById('navq-' + k2)?.focus(), 0);
+    return;
+  }
   const fnd = e.target.closest('[data-find]');
   if (fnd) {
     const id = fnd.dataset.find;
