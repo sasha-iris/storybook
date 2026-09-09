@@ -851,8 +851,7 @@
      ladder the rows and the template cards were put on. */
   .sb2__pill:hover:not([disabled]):not(.is-used) {
     border-color: var(--color-ctrl-off-hover); }
-  .sb2__pill.is-used:hover {
-    background: color-mix(in srgb, var(--btn-primary-bg) 14%, #fff); }
+  .sb2__pill.is-used:hover { background: #e9eaee; }
   /* In the definition: the brand's own soft, the same fill every other chosen
      surface on this page takes, plus a tick. (#e5edff was a blue tint on a
      purple brand — the same drift as .btn-link.) */
@@ -873,7 +872,15 @@
      tinted, and the editor underneath is headed with the condition's name. The
      pills are a menu to add from; a menu item does not need to report the state
      of the panel below it. */
-  .sb2__pill.is-used { color: var(--color-text-heading); }
+  /* A filter already in the definition is spent: it is still readable and still
+     pressable, but it stops competing with the ones left to choose from. The
+     system's own quiet ground, --color-bg-tertiary #f3f4f6 — which is what
+     .dr-chip takes at rest everywhere else — and the border goes with it, so
+     the row reads as chosen-and-set-aside rather than as one more option.
+     MEASURED: #101828 on #f3f4f6 is 15.0:1, the tick's #42389d is 8.4:1. */
+  .sb2__pill.is-used { color: var(--color-text-heading);
+                       background: var(--color-bg-tertiary);
+                       border-color: transparent; }
   .sb2__pill.is-used svg { color: var(--btn-primary-bg, #42389d); }
   /* Not done yet, so not the brand's confirmation colour either. */
   .sb2__pill .sb2__q { color: var(--color-text-secondary); }
