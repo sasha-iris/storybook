@@ -211,13 +211,33 @@
   .seg-share--warn { color: #92400e; font-weight: var(--font-semibold); }
   .seg-none { color: #6b7280; }
   .seg-when { font-size: 11px; color: #5b6270; display: block; margin-top: 2px; }
-  .seg-rowbtns { display: flex; gap: 4px; justify-content: flex-end; position: relative; }
-  /* the overflow control is a library button; this only makes it square */
-  .seg-kebab { width: 36px; min-width: 36px; padding: 0; }
+  /* align-items defaulted to stretch, so every button in the cell was pulled to
+     the height of the tallest one and the smaller padding below changed nothing
+     on screen. */
+  .seg-rowbtns { display: flex; align-items: center; gap: 4px; justify-content: flex-end; position: relative; }
+  /* Below the library's floor, deliberately, and only here. .btn-xs is the
+     smallest button the system ships and it measures 36px; forty rows of a 36px
+     button made the action column the heaviest thing in a table whose subject is
+     names and numbers. Padding 6/10 brings it to 32 and the kebab to a 32
+     square, still well over the 24x24 target minimum (2.5.8). Type, colour and
+     every state stay the component's own. */
+  .seg-rowbtns .btn { padding: 6px 10px; }
+  /* .seg-iconbtn carries min-width/min-height 36 in segments-proto.css, which is
+     what kept the kebab 4px taller than the two buttons beside it. Overridden
+     here only, so the other pages that use that control are untouched. */
+  .seg-rowbtns .seg-kebab { width: 32px; min-width: 32px; height: 32px; min-height: 32px; padding: 0; }
 
   /* Red only where the reported numbers are wrong. Amber where the definition is
      incomplete but the numbers may still hold. Grey for anything informational. */
-  .seg-flag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: var(--font-medium); margin: 3px 0 0; }
+  .seg-flag { display: inline-flex; align-items: flex-start; gap: 4px; font-size: 11px; font-weight: var(--font-medium); margin: 3px 0 0; }
+  /* MEASURED 7.2 x 12: the triangle is a flex item next to a much longer text
+     item, and with the default flex-shrink the cell took the width it needed out
+     of the icon. Squashed to sixty per cent of its width it stopped reading as a
+     triangle at all. flex:none is the whole fix.
+     align-items was centre, which on a finding that wraps to two lines floated
+     the icon into the gap between them instead of sitting on the line it marks;
+     it aligns to the top now, nudged to the first line's optical centre. */
+  .seg-flag svg { flex: none; margin-top: 2px; }
   .seg-flag--error { color: var(--color-text-fg-danger); }
   .seg-flag--warn  { color: #92400e; }
   .seg-flag--info  { color: var(--seg-muted); font-weight: 400; }

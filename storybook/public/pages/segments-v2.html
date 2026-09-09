@@ -1193,7 +1193,7 @@ function render() {
         (c[3] ? '<img class="dr-fchip__logo" src="' + c[3] + '" alt="' + esc(c[1] + ' ' + c[2]) + '" width="18" height="18" title="' + esc(c[2]) + '">'
               : esc(c[2])) +
         '</span>').join('') +
-    (chips.length > 1 ? '<button class="btn-link" id="lsClear">Clear all</button>' : '') +
+    (chips.length > 1 ? '<button class="dr-rail__reset dr-appliedreset" id="lsClear">Reset all</button>' : '') +
     '';
 
   const head = '<thead><tr>' +
@@ -1280,7 +1280,7 @@ function render() {
       '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
       '<h3>No segments match these filters</h3>' +
       '<p>All ' + SEGMENTS.length + ' segments are still here. Clear the filters to see them.</p>' +
-      '<button class="btn btn-md btn-primary" id="lsClear2" style="display:inline-flex;">Clear filters</button></div></td></tr></tbody>';
+      '<button class="btn btn-md btn-primary" id="lsClear2" style="display:inline-flex;">Reset all</button></div></td></tr></tbody>';
 
   document.getElementById('lsTable').innerHTML =
     '<div class="dr-tablecard"><div class="dr-tw"><table class="dr-t dr-t--list">' + head + body + '</table></div></div>';
@@ -1291,8 +1291,11 @@ function render() {
 }
 
 /* ── interaction ────────────────────────────────────────────────────────── */
-/* "Clear all" under the toolbar is on the line that lists everything applied,
-   navigation included, so it clears everything. */
+/* "Reset all" under the toolbar is on the line that lists everything applied,
+   navigation included, so it resets everything. One word for one idea across
+   the whole redesign: "Reset all" wherever a control empties a whole set,
+   "Reset" where it empties one group. It used to say "Clear all" here and
+   "Reset all" in the panel eighty pixels away, for the same kind of act. */
 function clearAll() { DSEL.clear(); VSEL.clear(); fFrom = SPAN.from; fTo = SPAN.to; fBy = 'all'; fCreatedBy = 'all'; fState = 'all'; fFolder = 'all'; q = ''; document.getElementById('lsQ').value = ''; render(); }
 /* "Reset all" inside the Filters panel clears the filters and leaves you
    standing where you were. It is inside a dialog headed "Filters"; taking the
