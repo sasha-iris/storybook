@@ -337,6 +337,12 @@
   .sb-uni--inline .form-group { display: block; margin: 0; }
   .sb-uni--inline .form-label { display: block; margin: 0 0 5px; }
   .sb-uni--inline #sbUniverse { display: none; }
+  /* Label left, figure right, on one line over the control they describe. */
+  .sb-unilab { display: flex; align-items: baseline; gap: 8px; }
+  .sb-unilab .form-label { flex: 1; }
+  .sb-unin { font-size: 10px; font-weight: var(--font-medium); color: var(--seg-muted);
+             font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sb-unin.is-bad { color: var(--color-text-fg-danger); }
   /* The list page hangs this popover off the right end of a wide toolbar. Here
      it sits in a 300px column, so at right:0 it ran 361px past the left edge of
      the window. It opens from the column's left edge instead. */
@@ -1483,7 +1489,14 @@
                    dates; picking days switches to a custom range. The segments
                    list page already uses this exact composition. -->
               <div class="form-group" style="margin:0;">
-                <label class="form-label" for="sbRange">Orders between</label>
+                <div class="sb-unilab">
+                  <label class="form-label" for="sbRange">Orders between</label>
+                  <!-- The size of the window, on the control that sets it. The
+                       old card said it in a sentence under the field, "17,541
+                       customers placed an order in this window"; the words are
+                       the label's job, so only the figure is left. -->
+                  <span class="sb-unin" id="sbUniN"></span>
+                </div>
                 <div class="dr-rangewrap">
                   <button type="button" class="iris-datepicker-input" id="sbRange"
                           aria-haspopup="dialog" aria-expanded="false" aria-controls="sbCal">
@@ -3582,10 +3595,11 @@ function previewV2() {
   });
   const top = Math.max(1, ...rows.filter(r => !r.unset).map(r => r.delta));
 
-  const head = `<div class="sb2__pv is-head">
-      <div class="sb2__pvt">All customers</div>
-      <div class="sb2__pvn">${uni == null ? '—' : fmtN(uni) + ' customers'}</div>
-    </div>`;
+  /* No "All customers" row. It carried the size of the window, which now sits
+     on the control that sets the window, four inches to the left — the same
+     number twice on one screen. The panel is what each condition costs and what
+     is left, which is the only thing the left column cannot say. */
+  const head = '';
 
   if (!g.conds.length) {
     return head + `<p class="sb2__pvempty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"/></svg>Everyone in the window. Add a filter to narrow it.</p>`;
@@ -3645,6 +3659,12 @@ function render() {
      three seeded segments while the estimate happily computed from that same
      range. */
   const badRange = !rangeValid();
+  /* Beside the label in v2, in the sentence under the field in v1. */
+  const uniN = document.getElementById('sbUniN');
+  if (uniN) {
+    uniN.textContent = badRange ? 'check the dates' : fmtN(uni) + ' customers';
+    uniN.classList.toggle('is-bad', !!badRange);
+  }
   document.getElementById('sbUniverse').textContent = badRange
     ? 'The end date cannot be before the start date.'
     : state.range === 'custom'

@@ -519,7 +519,7 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
    on every row and the eye runs down a column of them rather than hunting the
    end of forty names of different lengths. The words are on its tooltip.
 
-   Amber, not red. There is one severity now: something to look at. */
+   One severity, and it is the one the row's own figures are already drawn in. */
 .dr-flagmark { flex: none; align-self: flex-start; margin: 0 0 0 8px; }
 /* LIBRARY GAP, recorded not patched: .tooltip-bubble in iris-components.css has
    no show/hide rule at all — it is drawn permanently, because the stories need
@@ -530,17 +530,20 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
   display: inline-flex; align-items: center; justify-content: center;
   width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%;
   background: none; cursor: pointer;
-  /* #92400E, the foreground .alert-warning uses in iris-components.css — the
-     same colour as the notice at the top of this page, which describes these
-     same findings.
-
-     NOT --color-text-fg-warning-subtle. That token is #d03801 — hue 16°, thirty
-     degrees from --color-text-fg-danger at #c70036, and at a 15px glyph the two
-     are not told apart: the mark read as an error on a page whose whole point is
-     that these are things to look at, not outages. --color-text-fg-warning is
-     #771d1d, a maroon, which is further from amber still. Both are worth raising
-     against the token set rather than working around here. */
-  color: #92400E;
+  /* The same red as the fault it marks. It was #92400E, the amber
+     .alert-warning uses — chosen to match the notice at the top of the page —
+     but MEASURED on a flagged row that put an amber mark beside a customer
+     count already drawn in --color-text-fg-danger #c70036, for the same fault,
+     and the segment's own page tells that fault in #c70036 too. One fault, one
+     red, on both pages.
+     The page-level notice stays amber: it is a summary pointing at these rows
+     with a filter attached, not the fault itself, and forty rows under a red
+     banner is the loudness the product owner asked us to take out twice.
+     NOT --color-text-fg-warning-subtle #d03801 and NOT --color-text-fg-warning
+     #771d1d — the first is thirty degrees of hue from the danger token and at a
+     15px glyph the two are not told apart, the second is a maroon. Both are
+     worth raising against the token set rather than working around here. */
+  color: var(--color-text-fg-danger);
 }
 .dr-flagbtn svg { display: block; }
 /* The page's own hover, the one every other icon control here uses. The first

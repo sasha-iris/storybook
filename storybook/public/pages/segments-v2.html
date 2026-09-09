@@ -1323,7 +1323,10 @@ function render() {
          "% of company revenue" removed from the segment page. The largest
          member is a real number and answers what the header is for. */
       return '<tbody class="dr-grp">' +
-        '<tr class="dr-grp__h"><td colspan="8">' +
+        /* Nine columns, not eight: the pick box, the seven in COLS and the
+           actions. At 8 the group header stopped 132px short of the table's
+           right edge and the band looked cut off. */
+        '<tr class="dr-grp__h"><td colspan="' + (COLS.length + 2) + '">' +
         '<button class="dr-grp__b" data-grp="' + k + '" aria-expanded="' + open + '">' +
           svg(open ? 'm19.5 8.25-7.5 7.5-7.5-7.5' : 'm8.25 4.5 7.5 7.5-7.5 7.5', 14) +
           '<span class="card-icon card-icon-indigo" aria-hidden="true">' +
@@ -1335,7 +1338,7 @@ function render() {
     }).join('');
 
   const body = rows.length ? (canGroup ? groupBody() : '<tbody>' + rows.map(rowHtml).join('') + '</tbody>')
-    : '<tbody><tr><td colspan="8">' +
+    : '<tbody><tr><td colspan="' + (COLS.length + 2) + '">' +
       '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
       '<h3>No segments match these filters</h3>' +
       '<p>All ' + SEGMENTS.length + ' segments are still here. Clear the filters to see them.</p>' +
