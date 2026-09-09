@@ -412,13 +412,21 @@
   font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em;
   text-transform: uppercase; color: var(--dr-th);
 }
-.dr-t td { padding: 11px 12px; font-size: 13px; color: var(--color-text-body); border-bottom: 1px solid var(--dr-border-soft); vertical-align: middle; }
+/* MEASURED on a 107px row: with vertical-align: middle the first line of every
+   cell landed somewhere different — the name at 12px from the row's top, the
+   customer count at 19, the single-line numbers floating at about 50, the date
+   at 44. The Segment cell is three lines tall and the rest are one or two, so
+   centring each cell in a row sized by the tallest of them scattered the row.
+   Top-aligned, every cell starts its first line on the same baseline as the
+   name it belongs to, which is the only line all nine share. 13.5px was on no
+   scale either; the lead number is 14. */
+.dr-t td { padding: 11px 12px; font-size: 13px; color: var(--color-text-body); border-bottom: 1px solid var(--dr-border-soft); vertical-align: top; }
 .dr-t tbody tr:last-child td { border-bottom: 0; }
 .dr-t tbody tr:hover { background: var(--dr-hover); }
 .dr-t .n { text-align: right; font-variant-numeric: tabular-nums; }
 /* the primary metric carries more weight than the ones beside it, so the eye
    has somewhere to land after the name */
-.dr-t .lead { font-weight: var(--font-semibold); color: var(--color-text-heading); font-size: 13.5px; }
+.dr-t .lead { font-weight: var(--font-semibold); color: var(--color-text-heading); font-size: var(--text-sm); }
 .dr-t .sub { margin-top: 2px; font-size: 11.5px; font-weight: var(--font-normal); color: var(--dr-muted); }
 .dr-t tfoot td { background: var(--dr-head-bg); border-top: 1px solid var(--dr-border); border-bottom: 0; font-weight: var(--font-semibold); color: var(--color-text-heading); }
 .dr-sort {
@@ -478,7 +486,10 @@ th[aria-sort="ascending"] .dr-sort .c { transform: rotate(180deg); }
   /* padded to clear the 24px minimum of WCAG 2.5.8: the bare text box measured
      20px tall. The row itself is the pointer target; this is the keyboard stop. */
   display: inline-block; padding: 3px 0; min-width: 24px;
-  font-size: 13.5px; font-weight: var(--font-semibold); color: var(--color-text-heading); text-decoration: none;
+  /* 13.5 is on no scale. At --text-sm with the page's own 1.4 the name's first
+     line lands within a pixel of the numbers beside it. */
+  font-size: var(--text-sm); line-height: 1.4;
+  font-weight: var(--font-semibold); color: var(--color-text-heading); text-decoration: none;
 }
 /* Scoped to real anchors: the detail page reuses this class on <span>s for
    product names, which were announcing themselves as links and doing nothing. */
@@ -898,7 +909,11 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 /* ── Selecting several segments ───────────────────────────────────────────
    The checkbox column is 40px and never wraps: it is the first thing on every
    row and the table already fights for width at 780px. */
-.dr-t .dr-pick { width: 40px; padding: 0; }
+/* Top-aligned cells put the box at the very top of a 107px row, level with
+   nothing. MEASURED: the tile's centre sits at 30.5 from the row's top and the
+   row's actions at 29.5, so the checkbox is dropped onto the same line instead
+   of floating above the object it selects. */
+.dr-t .dr-pick { width: 40px; padding: 13px 0 0; }
 /* The label is the target. A checkbox renders at 16px in every browser and
    ::before does not paint on a replaced element, so the hit area has to come
    from something wrapping it. */
