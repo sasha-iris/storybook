@@ -635,7 +635,13 @@ function kpis() {
   /* Only reached when the segment has customers — both empty cases returned. */
   const K = [
     { ic: IC.users, l: 'Customers', v: fmtN(SEG.c),
-      s: pct(SEG.share) + ' of all ' + fmtN(BASE), tone: SEG.share >= .95 ? 'warn' : '',
+      /* A segment that matches the whole base is a broken definition, and the
+         page says so in --color-text-fg-danger everywhere else: the number
+         above this line, the bar below it, the flag in the definition panel.
+         This one line was on --color-text-fg-warning-subtle, #d03801 against
+         #c70036 — thirty degrees of hue apart, stacked in one cell, so the same
+         fault was told in two reds. It is the same fault, so it is one red. */
+      s: pct(SEG.share) + ' of all ' + fmtN(BASE), tone: SEG.share >= .95 ? 'bad' : '',
       bar: SEG.share, barCls: SEG.share >= .95 ? 'progress-bar-danger' : 'progress-bar-primary' },
     { ic: IC.receipt, l: 'Orders', v: SEG.o == null ? DASH : fmtN(SEG.o),
       s: SEG.o == null ? 'order data missing' : opc.toFixed(2) + ' per customer ' + delta(opc, opcB, { self: IS_COMPANY }),

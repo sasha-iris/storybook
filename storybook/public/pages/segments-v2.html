@@ -1095,9 +1095,13 @@ function customersCell(s) {
               they rank as well, like other segments, relatively". The share
               says how much of the business; the rank says where this one sits
               among the segments that returned anything. */
-           '<span class="sub">' + pct(s.share) + ' of base' +
-           (s.rank ? ' · <span class="dr-rank">#' + s.rank + ' of ' + s.rankOf + '</span>' : '') +
-           '</span>' : '') + '</div>';
+           /* Two facts, two lines. Joined by a middot they were one phrase too
+              long for a 110px column, so it broke wherever it ran out of room
+              — "100.0% of" over "base · #1 of 23" — and the cell read as
+              ragged rather than as two readings of the same number. */
+           '<span class="sub">' + pct(s.share) + ' of base</span>' +
+           (s.rank ? '<span class="sub dr-rank">#' + s.rank + ' of ' + s.rankOf + '</span>' : '')
+           : '') + '</div>';
 }
 
 /* Drawn on its own so that ticking a checkbox does not rebuild the table under
@@ -1258,7 +1262,7 @@ function render() {
         ' aria-label="Select all ' + rows.length + ' segments shown">' +
         '<span class="iris-checkbox" aria-hidden="true"></span></label></th>' +
       COLS.map(c =>
-      '<th class="' + (c.n ? 'n' : '') + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
+      '<th class="' + (c.n ? 'n' : '') + '" data-col="' + c.k + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
       '<button class="dr-sort" data-sort="' + c.k + '">' + c.l + ' <span class="c" aria-hidden="true">▾</span></button></th>').join('') +
       '<th style="width:108px;"><span class="seg-sr">Actions</span></th></tr></thead>';
 

@@ -436,7 +436,14 @@
   text-transform: uppercase; color: var(--dr-th);
 }
 .dr-sort:hover { color: var(--color-text-heading); }
+/* MEASURED: the label in every numeric header sat 11 to 24px left of the
+   figures under it. The caret is hidden at rest with opacity, so it keeps its
+   box and its gap — the header's words ended before the column did, for a glyph
+   nobody can see. In the right-aligned columns it goes to the LEFT of the
+   label, so the label's right edge is the column's right edge in every state,
+   sorted or not, and the two wrapping headers align both their lines. */
 .dr-sort .c { opacity: 0; }
+.dr-t th.n .dr-sort { flex-direction: row-reverse; text-align: right; }
 th[aria-sort] .dr-sort { color: var(--dr-primary); }
 th[aria-sort] .dr-sort .c { opacity: 1; }
 th[aria-sort="ascending"] .dr-sort .c { transform: rotate(180deg); }
@@ -567,7 +574,15 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
    error and is a different red from every other warning on the page. */
 .progress-bar-danger { background: var(--color-bg-danger); }
 
+/* MEASURED: the column was 110px, which leaves 86 inside the padding — exactly
+   the width of the bar and nine pixels short of "100.0% of base", so the phrase
+   broke after "of" and the cell read as ragged. 124 gives the line room to
+   stand on one row. */
+.dr-t th[data-col="c"] { min-width: 124px; }
 .dr-share { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+/* The share and the rank are two readings of the same number, so they sit
+   closer to each other than either does to the bar above them. */
+.dr-share .sub + .sub { margin-top: -3px; }
 .dr-share .progress { width: 86px; }
 
 /* ── Row overflow ─────────────────────────────────────────────────────────
