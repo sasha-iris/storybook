@@ -1,13 +1,16 @@
 /* =============================================================
    Portfolio layout.
-   Colour, type, radii and shadow come from iris-tokens.css — the same
-   tokens the design system ships. This file adds layout only: no new
-   colours, no new type scale, no hardcoded radii.
+   Layout only. Colour comes from tokens.css (Radix, vendored); the type
+   scale, radii and weights still come from iris-tokens.css. No value here
+   is invented: everything references a token.
    ============================================================= */
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 6rem;
+}
 
 body {
   margin: 0;
@@ -31,6 +34,8 @@ body {
   border-radius: 0 0 var(--radius-md) 0;
 }
 .pf-skip:focus { left: 0; }
+.pf-skip:focus-visible,
+.pf-footer :focus-visible { outline-color: var(--violet-8); }
 
 /* ── Grid ────────────────────────────────────
    12 columns, 24px gutter, 1088px of content. Prose sits in 7,
@@ -50,11 +55,6 @@ body {
   max-width: 68rem;
   margin: 0 auto;
   padding: 0 1.5rem;
-}
-.pf-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--pf-cols), minmax(0, 1fr));
-  gap: var(--pf-gutter);
 }
 .pf-measure { max-width: 40rem; }
 
@@ -158,7 +158,6 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
   font-weight: var(--font-bold);
-  letter-spacing: -0.02em;
 }
 .pf-proof__l {
   font-size: var(--text-sm);
@@ -168,7 +167,7 @@ button:focus-visible {
 /* ── Sections ────────────────────────────── */
 .pf-section { padding: 5rem 0; border-top: 1px solid var(--color-border-default); }
 .pf-section--tint {
-  background: var(--color-bg-default);
+  background: var(--slate-3);
   border-bottom: 1px solid var(--color-border-default);
 }
 .pf-section__head { margin-bottom: 2rem; }
@@ -188,11 +187,6 @@ button:focus-visible {
 .pf-cases {
   display: grid;
   gap: var(--pf-gutter);
-}
-@media (min-width: 62rem) {
-  .pf-cases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .pf-case { padding: var(--pf-step-3); }
-  .pf-case h3 { font-size: var(--text-xl); }
 }
 .pf-case {
   position: relative;
@@ -243,8 +237,6 @@ button:focus-visible {
   border-radius: inherit;
 }
 .pf-case h3 a:focus-visible { outline: none; }
-.pf-case p,
-.pf-tags { position: relative; z-index: 1; }
 .pf-case p {
   margin: 0;
   color: var(--color-text-secondary);
@@ -312,6 +304,7 @@ button:focus-visible {
 .pf-article h1 {
   margin: 0.5rem 0 1rem;
   font-size: clamp(var(--text-2xl), 1.1rem + 2.4vw, var(--text-4xl));
+  max-width: 22ch;
   line-height: 1.12;
   letter-spacing: -0.03em;
   font-weight: var(--font-extrabold);
@@ -330,6 +323,7 @@ button:focus-visible {
 .pf-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  align-items: start;
   gap: var(--pf-step-3) var(--pf-gutter);
   margin: var(--pf-step-4) 0 0;
   padding: var(--pf-step-3) 0;
@@ -357,16 +351,18 @@ button:focus-visible {
     grid-template-columns: repeat(var(--pf-cols), minmax(0, 1fr));
     column-gap: var(--pf-gutter);
   }
-  .pf-body .pf-shell > * { grid-column: 1 / span 7; }
+  .pf-body .pf-shell { row-gap: var(--pf-step-3); }
+  .pf-body .pf-shell > * { grid-column: 1 / span 7; margin-top: 0; margin-bottom: 0; }
+  .pf-body .pf-shell > h2 { margin-top: var(--pf-step-4); }
   .pf-body .pf-shell > h2 { grid-column: 1 / span 12; }
   .pf-body .pf-shell > .pf-table-wrap,
   .pf-body .pf-shell > .pf-facts { grid-column: 1 / span 10; }
-  .pf-body .pf-shell > .pf-embed,
   .pf-body .pf-shell > .pf-shot { grid-column: 1 / span 10; }
 }
 .pf-body h2 {
   margin: 3rem 0 1rem;
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
   font-weight: var(--font-semibold);
   letter-spacing: -0.01em;
 }
@@ -384,25 +380,6 @@ button:focus-visible {
 .pf-body ul { padding-left: 1.25rem; }
 .pf-body li { margin-bottom: 0.5rem; }
 
-/* Decision block: the claim, then the reasoning */
-.pf-decision {
-  margin: 0 0 1.75rem;
-  padding-left: 1rem;
-  border-left: 2px solid var(--color-border-default);
-}
-.pf-decision h3 { margin-top: 0; }
-.pf-decision p:last-child { margin-bottom: 0; }
-.pf-decision--rejected { border-left-color: var(--color-danger); }
-.pf-decision--rejected .pf-label { color: var(--color-danger); }
-.pf-label {
-  display: block;
-  font-size: var(--text-xs);
-  font-weight: var(--font-semibold);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.25rem;
-}
 
 /* Icons: Heroicons 2.2 (MIT), inlined as a sprite. They mark the kind of
    row — a decision, a refusal, a route — so a list can be scanned by shape
@@ -413,10 +390,22 @@ button:focus-visible {
   width: 1.25rem;
   height: 1.25rem;
   flex: none;
-  color: var(--pf-accent);
+  color: var(--slate-9);
 }
-.pf-ico--no { color: var(--color-danger); }
+/* The kind of row is carried by the shape of the mark, not by its colour:
+   a slashed circle for a refusal, a ring for a decision. The one red thing
+   in the list stays the word Refused. */
+.pf-ico--no { color: var(--slate-9); }
 .pf-ico--row { align-self: center; margin-right: 0.125rem; }
+/* On the stat block the icon labels the number without competing with it:
+   smaller, in the quiet tone, on its own line above. */
+.pf-ico--stat {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-bottom: var(--pf-step-1);
+  color: var(--color-text-secondary);
+}
 
 /* Fact list: a claim and the one line that backs it. Replaces prose blocks
    where the reader wants to scan, not read. */
@@ -486,7 +475,7 @@ button:focus-visible {
 .pf-shot__ground {
   display: block;
   padding: var(--pf-step-2);
-  background: var(--color-bg-default);
+  background: var(--pf-accent-wash);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-xl);
 }
@@ -527,22 +516,6 @@ button:focus-visible {
   object-position: top left;
 }
 
-/* Evidence figures */
-.pf-figure {
-  margin: 2rem 0;
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--color-bg-surface);
-}
-.pf-figure img { display: block; width: 100%; height: auto; }
-.pf-figure figcaption {
-  padding: 0.75rem 1rem;
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  border-top: 1px solid var(--color-border-default);
-  background: var(--color-bg-default);
-}
 
 /* Component strip: real stories from the library, rendered live at their own
    size. Not a screenshot — this is the same build the case study links to. */
@@ -564,7 +537,18 @@ button:focus-visible {
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--color-bg-surface);
 }
-.pf-strip__frame iframe { width: 1038px; height: 33rem; border: 0; }
+/* The story renders at its own width and is scaled to the column, so the
+   frame holds the whole component rather than its top-left corner. */
+.pf-strip__frame iframe {
+  width: 1038px;
+  height: 33rem;
+  border: 0;
+  transform-origin: top left;
+}
+@media (min-width: 62rem) {
+  .pf-strip__frame { height: 16rem; }
+  .pf-strip__frame iframe { transform: scale(0.489); }
+}
 .pf-strip figcaption {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
@@ -575,50 +559,6 @@ button:focus-visible {
   background: var(--color-bg-default);
 }
 
-/* Live embed of a running prototype.
-   The frame renders the page at desktop width and scales it down, so what the
-   reader sees is the real thing, not a screenshot of it. Below 48rem the frame
-   is dropped and the caption link carries the weight. */
-.pf-embed {
-  margin: 2rem 0 2.5rem;
-  max-width: 60rem;
-}
-.pf-embed__frame {
-  display: none;
-  position: relative;
-  width: 60rem;
-  max-width: 100%;
-  aspect-ratio: 1200 / 760;
-  overflow: hidden;
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  background: var(--color-bg-default);
-}
-.pf-embed__frame iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1200px;
-  height: 760px;
-  border: 0;
-  transform: scale(0.8);
-  transform-origin: top left;
-}
-.pf-embed figcaption {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-lg);
-  background: var(--color-bg-default);
-}
-@media (min-width: 66rem) {
-  .pf-embed__frame { display: block; }
-  .pf-embed__frame + figcaption {
-    border-top: 0;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  }
-}
 
 /* Data table inside a case study */
 .pf-table-wrap { overflow-x: auto; margin: 1.5rem 0; }
@@ -689,6 +629,46 @@ main:focus { outline: none; }
 
 @media (min-width: 48rem) {
   .pf-cases { gap: 1.25rem; }
+}
+
+@media (min-width: 62rem) {
+  /* Two cards to a row, with the first one running the full width and
+     turning on its side. Three equal cards forced every thumbnail down to
+     273px, where a screenshot of an application is only texture. */
+  .pf-cases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pf-case { padding: var(--pf-step-3); }
+  .pf-case h3 { font-size: var(--text-xl); }
+  .pf-case--lead {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: var(--pf-step-4);
+    align-content: center;
+  }
+  .pf-case--lead .pf-case__shot {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    align-self: center;
+    margin: 0;
+    aspect-ratio: 16 / 10;
+  }
+  .pf-case--lead > :not(.pf-case__shot) { grid-column: 2; }
+  .pf-case--lead h3 { font-size: var(--text-2xl); }
+
+  /* A figure is not one block: the image takes columns 1-7 and its caption
+     is held in the margin beside it, which is what the right-hand columns
+     were there for. */
+  .pf-body .pf-shell > .pf-shot {
+    grid-column: 1 / span 10;
+    display: grid;
+    grid-template-columns: subgrid;
+    column-gap: var(--pf-gutter);
+    align-items: start;
+  }
+  .pf-shot__ground { grid-column: 1 / span 7; }
+  .pf-shot figcaption { grid-column: 8 / span 3; margin-top: 0; }
+
+  /* The opening fact strip sits on the page grid, three columns per item */
+  .pf-meta { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media print {

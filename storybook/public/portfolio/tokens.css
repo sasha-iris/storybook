@@ -56,6 +56,21 @@
   --violet-12: #2f265f;
 }
 
+:root, .light, .light-theme {
+  --red-1: #fffcfc;
+  --red-2: #fff7f7;
+  --red-3: #feebec;
+  --red-4: #ffdbdc;
+  --red-5: #ffcdce;
+  --red-6: #fdbdbe;
+  --red-7: #f4a9aa;
+  --red-8: #eb8e90;
+  --red-9: #e5484d;
+  --red-10: #dc3e42;
+  --red-11: #ce2c31;
+  --red-12: #641723;
+}
+
 /* ── Semantic mapping ─────────────────────────────────────────
    Radix step semantics: 1 app background · 2 subtle background ·
    3 component background · 6 subtle border · 7 border · 9 solid ·
@@ -74,6 +89,7 @@
 
   --color-border-default:  var(--slate-6);
 
+  --color-danger:          var(--red-11);
   --pf-accent:             var(--violet-11);
   --pf-accent-hover:       var(--violet-12);
   --pf-accent-solid:       var(--violet-9);
