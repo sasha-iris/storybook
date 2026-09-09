@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profit &amp; Loss: replacing a percentage that could not be added up — Oleksandra Melnyk</title>
+<meta name="description" content="Redesigning comparison, edit mode and formula display on a financial statement, with the arithmetic that decided each choice.">
+<link rel="icon" href="../assets/iris-mark-xs.svg">
+<link rel="stylesheet" href="../assets/iris-tokens.css">
+<link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+<a class="pf-skip" href="#main">Skip to content</a>
+
+<header class="pf-masthead">
+  <div class="pf-shell pf-masthead__inner">
+    <a class="pf-wordmark" href="./">Oleksandra Melnyk</a>
+    <nav class="pf-nav" aria-label="Sections">
+      <a href="./#work">Work</a>
+      <a href="./#artifacts">Live artifacts</a>
+      <a href="./#method">How I work</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<article>
+
+  <div class="pf-article">
+    <div class="pf-shell">
+      <a class="pf-back" href="./">&larr; All work</a>
+      <span class="pf-case__kicker">UX refinement</span>
+      <h1>Profit &amp; Loss: replacing a percentage that could not be added up</h1>
+      <p class="pf-dek">Every line of the statement carried a green or red percentage, and nobody
+      could say what it compared against. Labelling them would not have helped. The column had to stop being a percentage.</p>
+
+      <dl class="pf-meta">
+        <div>
+          <dt>Role</dt>
+          <dd>Interaction design and prototype, reviewed against a written brief</dd>
+        </div>
+        <div>
+          <dt>Surface</dt>
+          <dd>P&amp;L statement, 24 rows, plus a configuration and assumptions page</dd>
+        </div>
+        <div>
+          <dt>Constraint</dt>
+          <dd>Library classes only; match the production build rather than outrun it</dd>
+        </div>
+        <div>
+          <dt>Live</dt>
+          <dd><a href="../pages/pnl-v2.html">The prototype, running</a></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="pf-body">
+    <div class="pf-shell">
+
+      <h2>The complaint</h2>
+      <p>The product owner's words were that the coloured percentages under each value were unfinished:
+      a reader cannot tell what each one compares against — last period, budget, plan, forecast.
+      The obvious response is to label them. I went looking for what the number would be worth once
+      labelled.</p>
+
+      <h2>Why dollars, not percent</h2>
+      <p>Take one month of the statement, operating view, against plan. The percentage and the
+      dollar delta rank the same rows in opposite orders.</p>
+
+      <div class="pf-table-wrap" tabindex="0" role="region" aria-label="Same month, same comparison, two axes">
+        <table class="pf-table">
+          <caption>Same month, same comparison, two axes</caption>
+          <thead>
+            <tr><th scope="col">Line</th><th scope="col">Variance %</th><th scope="col">Variance $</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Shipping Revenue</td><td>&minus;13%</td><td>&minus;$1K</td></tr>
+            <tr><td>Refunds</td><td>+13%</td><td>+$3K</td></tr>
+            <tr><td>Payroll</td><td>+13%</td><td>+$18K</td></tr>
+            <tr><td>Amazon Sales</td><td>&minus;4%</td><td>&minus;$18K</td></tr>
+            <tr><td>Gross Profit</td><td>&minus;0.8%</td><td>&minus;$3K</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>On percentages, the loudest line on the page is a shipping miss worth a thousand dollars,
+      while an eighteen-thousand-dollar Amazon miss reads as a rounding error. And there is a
+      second property that settles it: dollars add up and percentages do not. Amazon &minus;$18K,
+      Shopify +$5K, Shipping &minus;$1K, Discounts $0 and Refunds +$3K sum to exactly the
+      &minus;$12K miss on Net Sales. The percentages above those same lines sum to nothing at all.
+      A statement is a structure of parts and totals; the comparison axis has to respect that
+      structure or it cannot be read down the page.</p>
+      <p>I wrote up three options and recommended shipping one of them and holding another back
+      until the product owner had confirmed dollars were the right axis. Building all three would have
+      looked more generous and would have made the decision harder to take.</p>
+
+      <figure class="pf-embed">
+        <div class="pf-embed__frame" inert>
+          <iframe src="../pages/pnl-v2.html" title="Profit and Loss prototype, running" loading="lazy"></iframe>
+        </div>
+        <figcaption>
+          The prototype, running.
+          <a href="../pages/pnl-v2.html">Open full size &rarr;</a>
+        </figcaption>
+      </figure>
+
+      <h2>Decisions</h2>
+
+      <div class="pf-decision">
+        <span class="pf-label">Explanation</span>
+        <h3>The formula replaces the prose</h3>
+        <p>The product owner liked the idea of explaining how a row is calculated, but the placement was
+        too hidden and the explanation read as a sentence when it should have read as arithmetic. Turning it
+        into a formula was straightforward; the harder call was deleting the sentence. Keeping both
+        would have been the safe move. But the prose was not row-specific. Three strings covered twenty-four rows, and the only word in them the formula did not restate was &ldquo;net&rdquo;, which was wrong on most rows anyway.</p>
+      </div>
+
+      <div class="pf-decision pf-decision--rejected">
+        <span class="pf-label">Refused</span>
+        <h3>Truncating a long formula</h3>
+        <p>The formula is never truncated, scrolled sideways, or pushed into a tooltip. A truncated formula is
+        strictly worse than the prose it replaced, because the reader cannot tell whether a term
+        was dropped. The line wraps to a hard cap of three lines; if a future row would exceed
+        that, the row needs a shorter name, not a smaller font. Measured: the longest formula is 80
+        characters against roughly 57 per line, so it wraps to two, and the whole swap costs
+        between zero and five pixels of row height.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Domain</span>
+        <h3>Write the formula the way an accountant reads it, not the way the code computes it</h3>
+        <p>Internally, costs are stored as signed values and the code adds them. Rendering that
+        honestly would put <code>Gross Profit = Net Sales + Total COGS</code> in front of a finance
+        team, where it reads as a bug. The display follows the reading convention and subtracts.
+        The stored sign and the printed sign differ, and the display follows the one a finance reader expects.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Placement</span>
+        <h3>Move the control to the thing it changes</h3>
+        <p>The forecast model sat in the toolbar as a dropdown that looked like a twin of
+        &ldquo;Compare to&rdquo;. It moved onto the header of the Run Rate column, the only column it affects, so cause and effect sit together.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Reversal</span>
+        <h3>Edit mode went back to a button after the product owner preferred it</h3>
+        <p>Editing had been a plain button, then a segmented Viewing / Editing toggle, then a
+        pencil inline in the normal view. The product owner wanted editing to feel unmistakably different from reading, and preferred the original button. It went back, and the decision was recorded as one path only, with no inline alternative. Three iterations landed on the original control, but they isolated the property that mattered: editing has to look unlike reading.</p>
+      </div>
+
+      <div class="pf-decision pf-decision--rejected">
+        <span class="pf-label">Refused</span>
+        <h3>Reinstating a drill-down after it had been removed</h3>
+        <p>The product owner asked for every cell to support a drilldown. The cell-level drill had been
+        removed earlier for good reasons, and bringing it back would have re-created the pattern
+        the removal solved. Instead the contribution list that Gross Profit and EBITDA already show
+        became clickable, which answers the same question from a place that has the context to
+        answer it. I also deleted the dead drill function itself, so fifty-five orphaned lines are not sitting there for someone to silently re-wire later.</p>
+      </div>
+
+      <div class="pf-decision pf-decision--rejected">
+        <span class="pf-label">Refused</span>
+        <h3>Fixing a layout complaint without the reference in front of me</h3>
+        <p>A narrow-screen panel squeeze differed from the production build. I left it untouched, because the previous attempt to fix it without a real reference screenshot produced confident changes that made it worse. It is logged as an open issue, with a note that closing it needs a screenshot of the production build.</p>
+      </div>
+
+      <div class="pf-decision pf-decision--rejected">
+        <span class="pf-label">Refused</span>
+        <h3>Changing a design-system colour on my own</h3>
+        <p>The accessibility pass flagged a date-field border at 1.13:1 against a 3:1 requirement.
+        That border is a shared library token, not a page-local choice, so it is written up as a design-system question. I did not override it on the page. The same pass produced
+        one deliberate deviation, also recorded: Escape returns focus to the trigger, an outside
+        click does not, because forcing focus back would fight wherever the user actually clicked.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Honesty</span>
+        <h3>The panel stopped inventing an order count</h3>
+        <p>The detail panel printed an order count and an average order value for every row,
+        including rows that are records rather than orders. Those numbers were fabricated. They are
+        now a single honest metric, and an estimated channel split says in words that it is
+        estimated and not measured, instead of borrowing the phrasing that real per-channel queries
+        had earned.</p>
+      </div>
+
+      <h2>Evidence</h2>
+      <p>Contrast was measured on the rendered page, not read off the palette. Two pairs failed and were changed.</p>
+
+      <div class="pf-table-wrap" tabindex="0" role="region" aria-label="Measured contrast (AA: 4.5:1 text, 3:1 large and UI)">
+        <table class="pf-table">
+          <caption>Measured contrast (AA: 4.5:1 text, 3:1 large and UI)</caption>
+          <thead>
+            <tr><th scope="col">Pair</th><th scope="col">Ratio</th><th scope="col">Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Favourable green on white, 11px</td><td>5.36:1</td><td>Pass</td></tr>
+            <tr><td>Unfavourable red on white, 11px</td><td>6.03:1</td><td>Pass</td></tr>
+            <tr><td>Hint purple on white, 10px</td><td>3.76:1</td><td>Fail — changed to a 9.19:1 brand purple</td></tr>
+            <tr><td>Placeholder grey, 11px</td><td>2.54:1</td><td>Fail — darkened</td></tr>
+            <tr><td>Secondary text on subtotal background</td><td>4.39:1</td><td>Borderline — raised as a token question</td></tr>
+            <tr><td>Segmented control, inactive label</td><td>4.23:1</td><td>Fail — changed to 6.61:1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pf-table-wrap" tabindex="0" role="region" aria-label="Verification and density work">
+        <table class="pf-table">
+          <caption>Verification and density work</caption>
+          <thead><tr><th scope="col">What</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            <tr><td>Formula output checked across 3 views &times; 5 channel sets &times; 12 months</td><td>1,080 assertions, 0 failures</td></tr>
+            <tr><td>Full QA regression, 20-step review flow</td><td>Console clean; 1 defect found and fixed — Discard was wiping saved overrides, not just unsaved ones</td></tr>
+            <tr><td>Detail panel content height</td><td>1,282px &rarr; 1,087px (&minus;15%); visible share 54% &rarr; 64%</td></tr>
+            <tr><td>Panel header</td><td>89.5px &rarr; 59.5px, 30px reclaimed in the operating view</td></tr>
+            <tr><td>Methodology block position</td><td>Was 167px below the fold; now sits above it</td></tr>
+            <tr><td>Interaction smoke tests</td><td>24 and 36 row/view/granularity combinations exercised programmatically</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>What is deliberately not in it</h2>
+      <p>Daily and weekly granularity, geography and product filters, a real backend, and
+      reconciliation detail are out of scope and named as such. Seven review rows are marked as
+      open product questions, not closed with a guess. One of them is whether published periods should ever recalculate. My answer there was no, because a deck exported last quarter would stop matching the app.</p>
+
+      <a class="pf-try" href="../pages/pnl-v2.html">
+        <strong>Open the prototype &rarr;</strong>
+        <span>Comparison modes, edit mode, the formula panel and the assumptions page, all
+        interactive.</span>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="pf-next">
+    <div class="pf-shell">
+      <a class="pf-back" href="case-design-system.html">Next case &rarr; A component library developers can copy from</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="pf-footer">
+  <div class="pf-shell">
+    <p><a href="./">All work</a> · <a href="https://github.com/sasha-iris">github.com/sasha-iris</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

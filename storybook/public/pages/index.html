@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototypes — Iris component library</title>
+<meta name="description" content="Working prototype pages built only from Iris component library classes: customer segments, profit and loss, dashboards and settings.">
+<link rel="icon" href="../assets/iris-mark-xs.svg">
+<link rel="stylesheet" href="../assets/iris-tokens.css">
+<link rel="stylesheet" href="../portfolio/portfolio.css">
+</head>
+<body>
+<a class="pf-skip" href="#main">Skip to content</a>
+
+<header class="pf-masthead">
+  <div class="pf-shell pf-masthead__inner">
+    <a class="pf-wordmark" href="../portfolio/">Oleksandra Melnyk</a>
+    <nav class="pf-nav" aria-label="Sections">
+      <a href="../portfolio/#work">Work</a>
+      <a href="../">Component library</a>
+      <a href="./" aria-current="page">Prototypes</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="pf-hero">
+    <div class="pf-shell">
+      <div class="pf-measure">
+        <h1>Prototypes</h1>
+        <p>Working pages, each built only from classes that exist in the component library — no
+        page-local CSS. When a page needed something the library did not have, that became a
+        recorded gap in the library rather than an invented class.</p>
+        <p>The data is real product data with the numbers untouched, so some rows are genuinely
+        broken. Nothing here is calculated live: these are prototypes, and where a value is
+        estimated the page says so.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pf-section pf-section--tint">
+    <div class="pf-shell">
+      <div class="pf-section__head">
+        <h2>Customer segments</h2>
+        <p>A redesign of the product's segments page, in two visual variants.
+        <a href="../portfolio/case-segments.html">Read the case study</a>.</p>
+      </div>
+      <ul class="pf-list">
+        <li><a class="pf-list__row" href="segments-v2.html">
+          <span class="pf-list__name">Segments list — variant 2</span>
+          <span class="pf-list__desc">Forty real segments, sorted so the ones that cannot be trusted come first.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="segment-detail-v2.html?id=s26">
+          <span class="pf-list__name">Segment detail — variant 2</span>
+          <span class="pf-list__desc">One segment, its definition in plain language, and the working behind the parse.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="segments.html">
+          <span class="pf-list__name">Segments list — variant 1</span>
+          <span class="pf-list__desc">The first variant, keeping the four separate data states rather than collapsing them.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="segment-detail.html?id=s4">
+          <span class="pf-list__name">Segment detail — variant 1</span>
+          <span class="pf-list__desc">Detail page for the same dataset in the first visual language.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="segment-builder.html?id=s4">
+          <span class="pf-list__name">Segment builder</span>
+          <span class="pf-list__desc">Building a segment from conditions, with an estimate panel that refuses to name customers it cannot know.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="segments-compare.html?ids=s26,s29">
+          <span class="pf-list__name">Compare segments</span>
+          <span class="pf-list__desc">Two segments side by side. Documented as answering a different question than the live comparison does.</span>
+        </a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="pf-section">
+    <div class="pf-shell">
+      <div class="pf-section__head">
+        <h2>Profit &amp; Loss</h2>
+        <p>Comparison modes, edit mode and formula display on a 24-row statement.
+        <a href="../portfolio/case-pnl.html">Read the case study</a>.</p>
+      </div>
+      <ul class="pf-list">
+        <li><a class="pf-list__row" href="pnl-v2.html">
+          <span class="pf-list__name">P&amp;L statement — v2</span>
+          <span class="pf-list__desc">Dollar variance, run-rate forecasting, edit mode, and a detail panel with the row's formula.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="assumptions-v2.html">
+          <span class="pf-list__name">Assumptions &amp; configuration — v2</span>
+          <span class="pf-list__desc">The settings behind the statement: baselines, forecast models, accrual treatment.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="pnl.html">
+          <span class="pf-list__name">P&amp;L statement — first version</span>
+          <span class="pf-list__desc">Kept live and untouched, so the two iterations can be compared directly.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="assumptions.html">
+          <span class="pf-list__name">Assumptions — first version</span>
+          <span class="pf-list__desc">The configuration page as it stood before the second pass.</span>
+        </a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="pf-section pf-section--tint">
+    <div class="pf-shell">
+      <div class="pf-section__head">
+        <h2>Other pages built from the library</h2>
+        <p>Smaller builds, each of which stress-tested the design system and produced findings for it.</p>
+      </div>
+      <ul class="pf-list">
+        <li><a class="pf-list__row" href="financial-advisor-dashboard.html">
+          <span class="pf-list__name">Financial advisor dashboard</span>
+          <span class="pf-list__desc">A dashboard concept assembled entirely from library cards, tables and indicators.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="account-settings.html">
+          <span class="pf-list__name">Account settings</span>
+          <span class="pf-list__desc">Settings and two-factor authentication flow, forms straight from the library.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="marketing-toolbar.html">
+          <span class="pf-list__name">Marketing toolbar</span>
+          <span class="pf-list__desc">A dense filter toolbar, where every control keeps its full name in a title tooltip.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="margin-trend-chart.html">
+          <span class="pf-list__name">Margin trend chart</span>
+          <span class="pf-list__desc">A single chart, done carefully — axis, labels and headroom measured rather than eyeballed.</span>
+        </a></li>
+        <li><a class="pf-list__row" href="add-widget.html">
+          <span class="pf-list__name">Add widget</span>
+          <span class="pf-list__desc">A small React test page, checking the wrapper components against the CSS they wrap.</span>
+        </a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="pf-footer">
+  <div class="pf-shell">
+    <p><a href="../portfolio/">Case studies</a> · <a href="../">Component library</a> ·
+    <a href="https://github.com/sasha-iris/storybook">Source</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

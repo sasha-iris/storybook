@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer segments: the best-looking rows were the broken ones — Oleksandra Melnyk</title>
+<meta name="description" content="A one-sentence brief, forty real segments, and a research pass that found five of them returning the entire customer base while ranking top on revenue.">
+<link rel="icon" href="../assets/iris-mark-xs.svg">
+<link rel="stylesheet" href="../assets/iris-tokens.css">
+<link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+<a class="pf-skip" href="#main">Skip to content</a>
+
+<header class="pf-masthead">
+  <div class="pf-shell pf-masthead__inner">
+    <a class="pf-wordmark" href="./">Oleksandra Melnyk</a>
+    <nav class="pf-nav" aria-label="Sections">
+      <a href="./#work">Work</a>
+      <a href="./#artifacts">Live artifacts</a>
+      <a href="./#method">How I work</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<article>
+
+  <div class="pf-article">
+    <div class="pf-shell">
+      <a class="pf-back" href="./">&larr; All work</a>
+      <span class="pf-case__kicker">Product redesign</span>
+      <h1>Customer segments: the best-looking rows were the broken ones</h1>
+      <p class="pf-dek">The brief was one sentence. The research found that five of the forty
+      segments returned the entire customer base. Because they carried the most revenue, the page ranked them first.</p>
+
+      <dl class="pf-meta">
+        <div>
+          <dt>Role</dt>
+          <dd>Research, interaction design, prototype, review facilitation</dd>
+        </div>
+        <div>
+          <dt>Brief</dt>
+          <dd>&ldquo;Have a look at our customer segments page and take a stab at an updated UI&rdquo;</dd>
+        </div>
+        <div>
+          <dt>Data</dt>
+          <dd>All 40 segments are the product's real ones, numbers untouched</dd>
+        </div>
+        <div>
+          <dt>Output</dt>
+          <dd>Two variants, six pages, reviewed by the product owner point by point</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="pf-body">
+    <div class="pf-shell">
+
+      <h2>Starting without a spec</h2>
+      <p>There was no written requirement. The live page became the specification, so I inventoried it from the DOM. Every figure in the table below was read off the running product.</p>
+
+      <div class="pf-table-wrap" tabindex="0" role="region" aria-label="The page as it stood">
+        <table class="pf-table">
+          <caption>The page as it stood</caption>
+          <thead>
+            <tr><th scope="col">Measure</th><th scope="col">Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Table height</td><td>4,837px — roughly six screens</td></tr>
+            <tr><td>Row height, shortest to tallest</td><td>73px to 248px</td></tr>
+            <tr><td>The word <code>AND</code> printed on one page</td><td>58 times</td></tr>
+            <tr><td>Sortable column headers</td><td>0 of 10</td></tr>
+            <tr><td>Search, filter, pagination, bulk selection</td><td>none of the four</td></tr>
+            <tr><td>Rows showing no data</td><td>17 of 40 (8 blank, 9 zero)</td></tr>
+            <tr><td>Contrast of the &ldquo;—&rdquo; placeholder</td><td>2.31:1 (AA needs 4.5:1)</td></tr>
+            <tr><td>Headings inside <code>&lt;main&gt;</code></td><td>0 — the page title is not an <code>h1</code></td></tr>
+            <tr><td>Analyze modal</td><td>1143&times;972 in a 1207&times;1056 viewport, 95% of the width, holding 463px of content</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>The finding that changed the brief</h2>
+      <p>Against a customer base of 35,590, five segments reported between 31,000 and 35,600
+      customers. Three of them returned byte-identical numbers: 35,590 customers, 75,437 orders,
+      $3,745,567 in net sales. Their geography filter existed but had never been given a value, so
+      it filtered nothing.</p>
+      <p>In the live product these look like the best segments on the page, because they have the
+      biggest revenue. Seven of the forty had &ldquo;California&rdquo; in the name, one of them
+      spelled <code>Calfirnoia</code>. Eight had never been calculated at all; twenty-two were more
+      than thirty days stale.</p>
+      <p>That turned a visual refresh into a different question: how does a list tell you which of
+      its rows you can trust, without becoming a wall of error states?</p>
+
+      <figure class="pf-embed">
+        <div class="pf-embed__frame" inert>
+          <iframe src="../pages/segments-v2.html" title="Customer Segments prototype, variant 2, running" loading="lazy"></iframe>
+        </div>
+        <figcaption>
+          The prototype, running with the real forty segments.
+          <a href="../pages/segments-v2.html">Open full size &rarr;</a>
+        </figcaption>
+      </figure>
+
+      <h2>Decisions</h2>
+
+      <div class="pf-decision">
+        <span class="pf-label">Ordering</span>
+        <h3>Lead with what cannot be trusted, not with what earns most</h3>
+        <p>The live product's implicit ranking put the broken segments on top because revenue put
+        them there. An early version of my redesign reproduced that by sorting on customer count.
+        The default now leads with the rows whose numbers cannot be relied on.</p>
+      </div>
+
+      <div class="pf-decision pf-decision--rejected">
+        <span class="pf-label">Refused</span>
+        <h3>Filling the empty rows with plausible numbers</h3>
+        <p>Eight segments had never run. A prototype is read as a specification, so inventing
+        numbers for them would have quietly promised a calculation that does not exist. They read
+        &ldquo;no data&rdquo;. In the same pass I removed a condition catalogue that had been
+        inventing SKUs, product families, tags and a country appearing nowhere in the dataset, and
+        an estimate panel that named four customers and printed their spend on an empty form.</p>
+      </div>
+
+      <div class="pf-decision pf-decision--rejected">
+        <span class="pf-label">Removed</span>
+        <h3>&ldquo;% of company revenue&rdquo;, because the column invited an addition it could not survive</h3>
+        <p>Segments overlap. Across the forty, those percentages sum to 855%. A column that looks like a share of something, and cannot be added up, will be added up by someone.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Controls</span>
+        <h3>A switch has to add something when it is on</h3>
+        <p>A &ldquo;Full definitions&rdquo; toggle turned a row from &ldquo;no effective filter,
+        every customer matches&rdquo; into &ldquo;geography (no criteria set)&rdquo;. That is not
+        more detail, it is a different reading of the same fact, and the control had no visible on-state at all. It became a two-option control, Summary or Conditions, where picking one
+        makes it clear you are picking a view.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Measurement over opinion</span>
+        <h3>I built a layout, measured it, deleted it — and withdrew my own review note</h3>
+        <p>I had argued in a review that putting conditions in their own column gives the eye a
+        rail to read down. Building both and measuring forty rows at 1600px said otherwise: both
+        layouts placed every condition list at an identical left edge, standard deviation 0px. The column version lost on five of seven measures: 235px of horizontal travel from name to condition, 44 wrapped conditions against none, and 898px more table height. The argument
+        was wrong, so it went, and the redesign proposal it supported went with it.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Reversal</span>
+        <h3>Restoring the order window I had cut</h3>
+        <p>The first version dropped the time window from the condition row for tidiness, which
+        made two segments with identical conditions and different windows impossible to tell apart.
+        Two segments that differ only by their window have to stay tellable apart.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Colour</span>
+        <h3>One visual token, one meaning</h3>
+        <p>Purple marked segment type on the list, and had been recoloured by performance band on
+        the detail page, so it meant two things inside one page family. Three purples became two,
+        with the split stated: brand for interactive chrome, a second for data. A &ldquo;broken&rdquo;
+        share bar had been coloured with the chart palette's trend-down pink, which is not a
+        semantic error colour. The library has no danger variant for progress bars, and that gap is now on the library's list.</p>
+      </div>
+
+      <div class="pf-decision">
+        <span class="pf-label">Restraint</span>
+        <h3>Withholding a rank, and refusing a confidence score</h3>
+        <p>A segment that returns nobody gets no rank, because last place reads as a verdict on a
+        segment that was simply never run. When the reviewer asked for a confidence level on the
+        plain-language parsing, I did not invent a percentage. The screen shows its working instead: each phrase, the condition it became, and the words it passed over.</p>
+      </div>
+
+      <h2>The review</h2>
+      <p>Before the product owner saw it, the prototype went through three passes: business
+      analysis against the brief, a usability and design-system review, and risk-based QA in the
+      running page. Together they closed 48 defects. The QA round alone logged 13, four of them
+      accessibility.</p>
+      <p>Accessibility was measured, not assumed. Both pages at 375, 1120, 1280 and 1440 finished at
+      zero contrast failures, zero controls under the 24px target minimum, zero unnamed controls,
+      no horizontal overflow and a clean console. Getting there meant fixing a separator at 1.68:1,
+      an em-dash placeholder at 2.54:1, a 20px row link under the 24px minimum, a screen-reader-only
+      label pushing the document 38px sideways, and an inline grid rule holding the page 29px wider
+      than a phone.</p>
+
+      <div class="pf-table-wrap" tabindex="0" role="region" aria-label="Review outcome">
+        <table class="pf-table">
+          <caption>Review outcome</caption>
+          <thead><tr><th scope="col">Pass</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            <tr><td>Business analysis</td><td>14 assumptions surfaced, 12 open questions written for the product owner</td></tr>
+            <tr><td>Usability + design system</td><td>Library components replacing three hand-rolled ones</td></tr>
+            <tr><td>QA, risk-based</td><td>13 defects, all closed</td></tr>
+            <tr><td>Across all three</td><td>48 defects closed before the review call</td></tr>
+            <tr><td>Product owner's review</td><td>29 points raised, 28 closed</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The point left open is not a design question: four segment templates exist and every value
+      in them is real, but deciding which templates the product should ship is the owner's call,
+      not a layout's.</p>
+
+      <p>One instruction from that call sent me back through the page. He did not want the
+      product's data problems in the headline, because he expects future data to have its own
+      problems. So the three defect counts left the summary strip, the red banner became one line
+      of ordinary text, the chart lost its eight red bars, and a filter that would return nothing
+      is dimmed and inert instead of shouting. The information is still reachable. It stopped being the first thing the page says about itself.</p>
+
+      <h2>What I would still fix</h2>
+      <p>The comparison page answers a different question than the one the live comparison answers.
+      I wrote that into the handoff as the biggest coverage gap in the prototype, rather than leave it to be discovered in build.</p>
+
+      <a class="pf-try" href="../pages/">
+        <strong>All six pages, running &rarr;</strong>
+        <span>Both variants: list, detail, builder and comparison. Real data, including the
+        segments that are genuinely broken.</span>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="pf-next">
+    <div class="pf-shell">
+      <a class="pf-back" href="case-pnl.html">Next case &rarr; Profit &amp; Loss: replacing a percentage that could not be added up</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="pf-footer">
+  <div class="pf-shell">
+    <p><a href="./">All work</a> · <a href="https://github.com/sasha-iris">github.com/sasha-iris</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
