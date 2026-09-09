@@ -114,3 +114,41 @@ links already sent to the client would all break.
   "a financial analytics platform for ecommerce brands".
 - The published prototypes carry real product numbers. They have been live for months, but the
   case studies now point at them deliberately — worth one conversation with the employer.
+
+---
+
+## Final state (2026-09-09)
+
+Built and committed locally; **not pushed**. Live after a push at
+`https://sasha-iris.github.io/storybook/portfolio/`.
+
+**What the site is now**
+
+- Landing, three case studies, an index of nine prototypes.
+- Nine screenshots captured from the running prototypes with Playwright at
+  1440×900, 2× (`portfolio/img/`), plus two tight thumbnail crops.
+- Two live component frames on the landing, scaled to their column, so the
+  claim "live, not screenshotted" is demonstrable.
+- 12-column grid: prose in 1-7, evidence tables in 1-10, figure captions held
+  in the margin at 8-10 via subgrid.
+- Palette: Radix Colors (slate, violet, red), vendored in `portfolio/tokens.css`
+  and mapped onto the semantic names the CSS already used. The Iris type scale,
+  radii and weights are still in use.
+- Icons: Heroicons 2.2, inlined as a sprite, normalised to one optical height
+  (each glyph's ink box was measured and scaled, with stroke width compensated).
+- Word counts: landing 428, design system 720, segments 687, P&L 514.
+
+**Regression traps found the hard way, worth knowing**
+
+- Non-greedy regex with `re.S` over HTML crosses element boundaries and silently
+  eats neighbouring items. It cost a decision list once. Use a tempered pattern:
+  `<li>(?:(?!</li>)[\s\S])*?</li>`.
+- Grid rows take their height from the tallest item; flex children in those rows
+  stretch by default. That turned 23px tag chips into 90px slabs.
+- A media block written before the base rule it overrides never applies.
+
+**Still open, and needing the owner**
+
+- Revoke the personal access token that was in `.git/config`.
+- Decide whether to name the employer in the case-study prose.
+- Push, which deploys.
