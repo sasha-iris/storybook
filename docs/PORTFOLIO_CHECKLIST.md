@@ -82,3 +82,35 @@ including what was rejected) → evidence → how it was handed to engineering.
 - The `vwd/`, `brochure/`, and `iris-examples/` directories stay local. Their content
   feeds the case studies; the raw working repos are not published.
 - No new prototypes are built. This job is packaging what already exists.
+
+---
+
+## Paste-ready copy for the manual steps
+
+These need the owner's GitHub account and cannot be done from a shell.
+
+**Repository → About (top right of github.com/sasha-iris/storybook)**
+
+- Description: `Design system for a financial analytics product — 47 components, 249 stories — with the prototypes built on it and the case studies behind them.`
+- Website: `https://sasha-iris.github.io/storybook/portfolio/`
+- Topics: `design-system` `storybook` `accessibility` `design-tokens` `product-design` `prototypes`
+- Tick "Use your GitHub Pages website" if offered, and pin the repository on the profile.
+
+**Profile → Edit profile**
+
+- Name: `Oleksandra Melnyk`
+- Bio: `Product designer. Dense financial software, design systems, and prototypes I build myself.`
+- Website: `https://sasha-iris.github.io/storybook/portfolio/`
+
+**Do not rename the repository.** The Pages URL is derived from its name, and the prototype
+links already sent to the client would all break.
+
+## Still open
+
+- Revoke the personal access token that was stored in `.git/config` (github.com/settings/tokens).
+- Add a contact route to the portfolio footer — the site currently has no email or LinkedIn,
+  so a reader who wants to reach out has nowhere to go.
+- Decide whether the case studies should name the employer. They currently describe it as
+  "a financial analytics platform for ecommerce brands".
+- The published prototypes carry real product numbers. They have been live for months, but the
+  case studies now point at them deliberately — worth one conversation with the employer.
