@@ -347,17 +347,28 @@
   .sb-uni--inline .sb-card__b > div { display: block !important; }
   .sb-uni--inline .form-group { display: block; margin: 0; }
   .sb-uni--inline .form-label { display: block; margin: 0 0 5px; }
-  /* Was an inline style, which beat every rule written for it. */
-  #sbUniverse { margin: 10px 0 0; font-size: var(--text-xs); color: var(--seg-muted); }
-  /* The sentence under the control, as the old card had it, rather than a bare
-     figure beside the label: "17,541 customers placed an order in this window"
-     says what the number IS, and the control it sits under is what changes it.
-     The figure alone was the same number in a place that had to be read
-     twice — once for the count, once for what it counted. */
-  .sb-uni--inline #sbUniverse { display: block; margin: 6px 0 0; font-size: 10px;
-                                line-height: 1.5; color: var(--seg-muted); }
-  .sb-unilab { display: flex; align-items: baseline; gap: 8px; }
-  .sb-unilab .form-label { flex: 1; }
+  .sb-unilab { display: flex; align-items: center; gap: 4px; }
+  .sb-unilab .form-label { margin: 0; }
+  /* The mark that carries the window's size. Quiet at rest, because it is an
+     aside, and a real target — 24px, which is 2.5.8's floor, around a 14px
+     glyph. */
+  .sb-info { display: inline-flex; }
+  .sb-info__b {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; padding: 0; margin: -4px 0;
+    border: 0; border-radius: var(--radius-sm); background: none; cursor: pointer;
+    color: var(--color-text-secondary);
+  }
+  .sb-info__b:hover { background: var(--color-bg-tertiary); color: var(--color-text-body); }
+  .sb-info__b:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+  /* LIBRARY GAP, the same one recorded in segments-v2.css: .tooltip-bubble
+     ships with no show/hide rule at all, so every consumer writes its own
+     reveal. Here it is hover and focus-within, which is what the row flag on
+     the list uses. */
+  .sb-info__t { display: none; white-space: normal; width: max-content; max-width: 220px;
+                line-height: 1.45; text-align: left; }
+  .sb-info:hover .sb-info__t,
+  .sb-info:focus-within .sb-info__t { display: block; }
   /* The list page hangs this popover off the right end of a wide toolbar. Here
      it sits in a 300px column, so at right:0 it ran 361px past the left edge of
      the window. It opens from the column's left edge instead. */
@@ -1510,6 +1521,19 @@
               <div class="form-group" style="margin:0;">
                 <div class="sb-unilab">
                   <label class="form-label" for="sbRange">Orders between</label>
+                  <!-- The size of the window on hover, not standing under the
+                       field. It is a fact about the control, wanted once while
+                       the dates are being chosen and never again, so it lives
+                       behind the mark rather than taking a line of the column
+                       for good. A <button>, not a bare glyph: a tooltip nobody
+                       can reach from a keyboard is decoration. -->
+                  <span class="tooltip-wrap sb-info">
+                    <button type="button" class="sb-info__b" id="sbUniInfo"
+                            aria-describedby="sbUniverse" aria-label="How many customers are in this window">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg>
+                    </button>
+                    <span class="tooltip-bubble tooltip-top sb-info__t" role="tooltip" id="sbUniverse"></span>
+                  </span>
                 </div>
                 <div class="dr-rangewrap">
                   <button type="button" class="iris-datepicker-input" id="sbRange"
@@ -1521,7 +1545,6 @@
                 </div>
               </div>
             </div>
-            <p id="sbUniverse"></p>
           </div>
         </div></div>
 
@@ -3695,7 +3718,8 @@ function render() {
     : state.range === 'custom'
       ? `${fmtN(uni)} customers placed an order between ${fmtDate(state.from)} and ${fmtDate(state.to)}.`
       : `${fmtN(uni)} customers placed an order in this window.`;
-  document.getElementById('sbUniverse').style.color = badRange ? 'var(--color-text-fg-danger)' : '';
+  /* The bubble is dark, so the danger token would be unreadable on it. A bad
+     range says so in words instead. */
 
   /* Only drawCondsV2 ever touched this flag, so switching back to Current left
      the two-column body on screen under the Current header. */
