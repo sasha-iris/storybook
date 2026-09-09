@@ -3651,6 +3651,9 @@ function previewV2() {
 
   const live = g.conds.filter(filledOf);
   const total = size(live);
+  /* The four tiles sit under this panel in Proposed, so they must answer the
+     same question it answers. Handed out rather than recomputed. */
+  window.__pvTotal = total;
   /* Leave one out: the segment as it would be without this condition. In an
      ALL chain that is always bigger, so the figure is what the condition costs;
      in an ANY chain it is always smaller, so the figure is what it adds. */
@@ -3824,14 +3827,23 @@ function render() {
   const aov = 52 + (1 - share) * 26;
   /* Nobody matches, so there is no average order and no lifetime value to
      average. It printed "AOV $78.00" and "Avg LTV $211" beside a count of zero. */
-  document.getElementById('sbMini').innerHTML = (noDefinition || n === 0)
+  /* In Proposed the tiles live inside the Preview card, and that panel counts
+     from the conditions that HAVE a value while the flat card's estimate
+     refuses to compute at all until every one is filled. Two rules for one
+     question, six millimetres apart: the card read "1,964 customers match" with
+     four dashes directly under it. The tiles follow whichever panel they are
+     sitting in; the flat card keeps its own rule. */
+  const mN    = CARD2 && Number.isFinite(window.__pvTotal) ? window.__pvTotal : n;
+  const mNone = CARD2 ? !Number.isFinite(mN) : noDefinition;
+  const mAov  = 52 + (1 - (mN == null ? 0 : mN / BASE)) * 26;
+  document.getElementById('sbMini').innerHTML = (mNone || mN === 0)
     ? ['Orders', 'AOV', 'Net sales', 'Avg LTV'].map(l =>
-        `<div><dt>${l}</dt><dd>${n === 0 && !noDefinition ? (l === 'Orders' || l === 'Net sales' ? (l === 'Orders' ? '0' : '$0') : '—') : '—'}</dd></div>`).join('')
+        `<div><dt>${l}</dt><dd>${mN === 0 && !mNone ? (l === 'Orders' ? '0' : l === 'Net sales' ? '$0' : '—') : '—'}</dd></div>`).join('')
     : `
-    <div><dt>Orders</dt><dd>${fmtN(n * 1.06)}</dd></div>
-    <div><dt>AOV</dt><dd>$${aov.toFixed(2)}</dd></div>
-    <div><dt>Net sales</dt><dd>${fmt$(n * 1.06 * aov)}</dd></div>
-    <div><dt>Avg LTV</dt><dd>$${(aov * 2.7).toFixed(0)}</dd></div>`;
+    <div><dt>Orders</dt><dd>${fmtN(mN * 1.06)}</dd></div>
+    <div><dt>AOV</dt><dd>$${mAov.toFixed(2)}</dd></div>
+    <div><dt>Net sales</dt><dd>${fmt$(mN * 1.06 * mAov)}</dd></div>
+    <div><dt>Avg LTV</dt><dd>$${(mAov * 2.7).toFixed(0)}</dd></div>`;
 
   /* These were four invented people — A. Whitfield, M. Okafor, J. Lindqvist,
      R. Baptiste — with invented order counts and invented spend, sitting under
