@@ -412,7 +412,7 @@ th[aria-sort="ascending"] .dr-sort .c { transform: rotate(180deg); }
      segment names in the rows it introduces */
   display: flex; align-items: center; gap: 9px; width: 100%;
   padding: 7px 12px; border: 0; background: none; cursor: pointer;
-  font-family: inherit; font-size: 12.5px; color: var(--dr-muted); text-align: left;
+  font-family: inherit; font-size: var(--text-xs); color: var(--dr-muted); text-align: left;
 }
 .dr-grp__b:hover { background: var(--dr-sel); }
 .dr-grp__b:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
@@ -877,16 +877,26 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
   display: flex; align-items: center; justify-content: center;
   min-width: 40px; min-height: 34px; cursor: pointer;
 }
-.dr-t .dr-pick input {
-  width: 16px; height: 16px; margin: 0; cursor: pointer;
-  accent-color: var(--dr-primary);
+/* The native input is clipped, so the focus ring has to be put on the span the
+   reader can actually see. */
+.dr-t .dr-pick__hit input:focus-visible + .iris-checkbox {
+  outline: 2px solid var(--color-border-focus); outline-offset: 2px;
 }
-/* #f0effa put --color-text-body-subtle at 4.24:1 and took the definition line
-   and the relative date under AA on exactly the rows the reader is working
-   with. This tint keeps the subtle text at 4.6:1; the left bar carries the
-   weight the colour no longer has to. */
+.dr-t .dr-pick__hit:hover .iris-checkbox:not(.iris-checkbox--checked):not(.iris-checkbox--intermediate) {
+  border-color: var(--color-ctrl-off-hover);
+}
+/* A selected row is the brand's soft fill, the same surface every other chosen
+   thing on these pages takes. The 3px purple bar down its left edge was mine:
+   the library ships no selected state for a table row at all, and a coloured
+   left accent is the generic dashboard reflex, not this system's language.
+   It was there to compensate for a tint that had been weakened — #f0effa put
+   --color-text-body-subtle at 4.24:1, under AA, so the fill had been lightened
+   to #faf9fe and the bar asked to carry what the colour no longer could. The
+   A whisper of the brand is all a selected row needs — the checkbox beside it
+   is already ticked, and forty rows of a strong tint would be louder than the
+   names they carry. #faf9fe keeps the quiet text at 4.6:1, over the AA floor,
+   so the fill can carry the state on its own with nothing drawn on top. */
 .dr-t tr.is-picked > td { background: #faf9fe; }
-.dr-t tr.is-picked > td:first-child { box-shadow: inset 3px 0 0 var(--dr-primary); }
 
 .dr-pickbar {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -941,7 +951,7 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
    its own icon: the dimension above already said what kind of thing this is,
    and a second column of glyphs would compete with it. */
 .dr-rail .list-group-item.dr-rail__v {
-  padding-left: 34px; font-size: 12.5px;
+  padding-left: 34px; font-size: var(--text-xs);
   color: var(--color-text-body);
 }
 .dr-rail .list-group-item.dr-rail__v[aria-pressed="true"] { font-weight: var(--font-medium); }
@@ -1000,9 +1010,9 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 /* Typeahead inside a dimension, for the values that cannot be listed. Indented
    to the second level, because that is what it searches. */
 .dr-navsearch { padding: 3px 8px 5px 47px; }
-.dr-navsearch .form-input { height: 30px; font-size: 12.5px; }
+.dr-navsearch .form-input { height: 30px; font-size: var(--text-xs); }
 .dr-navempty { padding: 4px 10px 6px 47px; font-size: 12px; color: var(--dr-muted); }
-.dr-nav .dr-nv__more { color: var(--dr-primary); font-size: 12.5px; }
+.dr-nav .dr-nv__more { color: var(--dr-primary); font-size: var(--text-xs); }
 .dr-nav .dr-nv__more:hover { background: var(--dr-hover); }
 
 /* ── Where you are, and how you got there ─────────────────────────────────
@@ -1160,7 +1170,7 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
   min-height: 28px; padding: 0 10px;
   border: 1px solid var(--dr-border); border-radius: 14px;
   background: var(--color-bg-white); cursor: pointer;
-  font-family: inherit; font-size: 12.5px; color: var(--color-text-body);
+  font-family: inherit; font-size: var(--text-xs); color: var(--color-text-body);
 }
 .dr-chip:hover { background: var(--dr-hover); }
 .dr-chip:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
@@ -1229,11 +1239,16 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-chip.is-empty { background: var(--color-bg-tertiary); color: var(--color-text-body); }
 
 /* A channel is a round chip holding its mark, three across, as on Cohorts. */
+/* The same height as the chips it sits in a row with. It was a 34px circle
+   beside 28px pills, so the four channel marks read as the biggest thing in a
+   panel where they are one filter among five, and the logo inside was 18px
+   against 12px chip text. */
 .dr-chip--logo {
-  width: 34px; height: 34px; min-height: 34px; padding: 0;
+  width: 28px; height: 28px; min-height: 28px; padding: 0;
   border-radius: 50%; justify-content: center;
   background: var(--color-bg-white); border: 1px solid var(--dr-border);
 }
+.dr-chip--logo img { width: 15px; height: 15px; }
 .dr-chip--logo:hover { background: var(--dr-hover); }
 .dr-chip--logo.is-on { background: var(--dr-primary-soft); border-color: var(--dr-primary); }
 .dr-chip--logo img { display: block; }
@@ -1242,7 +1257,7 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 /* A group with more values than fit gets its own search and a scroll, the way
    METRIC does, instead of making the whole panel taller. */
 .dr-gsearch { padding: 0 6px 6px; }
-.dr-gsearch .form-input { height: 32px; font-size: 12.5px; }
+.dr-gsearch .form-input { height: 32px; font-size: var(--text-xs); }
 .dr-chips--scroll { max-height: 132px; overflow-y: auto; }
 
 /* ── Order-window range picker ────────────────────────────────────────────
@@ -1250,9 +1265,12 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
    opinion about is the two-column shell the product uses — named periods beside
    the months. */
 .dr-rangewrap { position: relative; }
-/* Dates first, calendar last — the order the product's own control uses. */
-.dr-range { display: inline-flex; align-items: center; gap: 10px; height: 34px; cursor: pointer; white-space: nowrap; }
-.dr-range svg { color: var(--dr-muted); flex: none; }
+/* Width and height only. Order, gap and the icon's colour are the component's:
+   .iris-datepicker-input__icon first at #6b7280, then the value. This rule used
+   to reverse them and repaint the glyph, which is how a hand-built trigger ends
+   up looking like a different control from the one the library ships. */
+.dr-range { height: 34px; white-space: nowrap; }
+.dr-range svg { flex: none; }
 .dr-cal {
   position: absolute; top: calc(100% + 6px); right: 0; z-index: 70;
   background: var(--color-bg-white);
@@ -1268,12 +1286,12 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-cal__preset {
   text-align: left; padding: 6px 10px; min-height: 28px;
   border: 0; border-radius: var(--radius-sm); background: none; cursor: pointer;
-  font-family: inherit; font-size: 12.5px; color: var(--color-text-body);
+  font-family: inherit; font-size: var(--text-xs); color: var(--color-text-body);
 }
 .dr-cal__preset:hover { background: var(--dr-hover); color: var(--color-text-heading); }
 .dr-cal__preset:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
 .dr-cal__cals { padding: 8px 12px 0; }
-.dr-cal__read { margin-right: auto; font-size: 12.5px; color: var(--color-text-body); }
+.dr-cal__read { margin-right: auto; font-size: var(--text-xs); color: var(--color-text-body); }
 .dr-cal .iris-cal__footer { display: flex; align-items: center; gap: 8px; }
 .dr-cal .btn[aria-disabled="true"] { opacity: .55; cursor: default; }
 @media (max-width: 720px) {

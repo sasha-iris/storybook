@@ -165,10 +165,14 @@
               <div class="form-search-wrap" style="min-width:260px;"><label for="lsQ" class="seg-sr">Search segments by name or definition</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="lsQ" type="search" placeholder="Name, condition, country, folder"></div>
               <div class="dr-toolbar__end">
                 <div class="dr-rangewrap">
+                <!-- The component as the library draws it: its own 16-grid
+                     calendar glyph, first, inside .iris-datepicker-input__icon.
+                     It had a 24-grid Heroicon on the far right, which is
+                     neither the library's glyph nor its order. -->
                 <button class="iris-datepicker-input dr-range" id="lsRange"
                 aria-haspopup="dialog" aria-expanded="false" aria-controls="lsCal">
-                <span id="lsRangeLabel"></span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                <span class="iris-datepicker-input__icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 7H15" stroke="currentColor" stroke-width="1.5"/><path d="M5 1V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M11 1V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                <span class="iris-datepicker-input__value" id="lsRangeLabel"></span>
                 </button>
                 <div class="iris-cal iris-cal--range dr-cal" id="lsCal" role="dialog" aria-label="Order window" hidden></div>
                 </div>
@@ -668,6 +672,14 @@ function drawRail() {
       }).join('');
   };
 
+  /* One author group's chips, filtered by that group's own search box. */
+  const people = (id, attr, cur, entries) => {
+    const q2 = (GQ[id] || '').trim().toLowerCase();
+    const hit = entries.filter(([, label]) => !q2 || label.toLowerCase().indexOf(q2) !== -1);
+    if (!hit.length) return '<div class="dr-navempty">Nothing matches “' + esc(GQ[id]) + '”</div>';
+    return hit.map(([k, label, n]) => chip(cur === k, attr, k, label, n, false)).join('');
+  };
+
   const nState = k => SEGMENTS.filter(x => matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
   /* Result, trimmed. It answers a question someone asks — "which of these come
      back with nobody" — and the product owner used it himself. What left is the defect
@@ -695,22 +707,27 @@ function drawRail() {
        and Wholesale stay as the labels over their own rows, so the grouping is
        still there — it is a heading now, not a gate. */
     group('rl-chan', 'Sales channels', nSel('channel'), 'val:channel', channelChips()) +
-    group('rl-res', 'Result', fState !== 'all' ? 1 : 0, 'state', results) +
     /* The product owner's 2026-09-08 ask, in the place he asked for it — the filter panel,
        not a column. Both groups are always present, because "who made this" is
        the question at 40-50 objects whether or not anyone has touched one in
        this session. `Not recorded` is not a placeholder: it is the true answer
        for all forty seeded segments, and it counts them. */
+    /* Both author groups are searched, the same way the long value groups are.
+       Two names is not a list you need to search today, but "who made this" is
+       the group that grows with the team, and it is the one place in the panel
+       whose values are people rather than a fixed vocabulary. The box filters
+       whatever the group holds; it holds the two answers that are true while
+       Iris records no author. */
     group('rl-cre', 'Created by', fCreatedBy !== 'all' ? 1 : 0, 'created',
-      chip(fCreatedBy === 'me', 'data-created', 'me', 'You',
-        SEGMENTS.filter(x => createdBy(x) && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && byOk(x) && matchQ(x)).length, false) +
-      chip(fCreatedBy === 'none', 'data-created', 'none', 'Not recorded',
-        SEGMENTS.filter(x => !createdBy(x) && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && byOk(x) && matchQ(x)).length, false)) +
+      people('rl-cre', 'data-created', fCreatedBy, [
+        ['me',   'You',          SEGMENTS.filter(x => createdBy(x) && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && byOk(x) && matchQ(x)).length],
+        ['none', 'Not recorded', SEGMENTS.filter(x => !createdBy(x) && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && byOk(x) && matchQ(x)).length]
+      ]), true) +
     group('rl-by', 'Updated by', fBy !== 'all' ? 1 : 0, 'by',
-      chip(fBy === 'me', 'data-by', 'me', 'You',
-        SEGMENTS.filter(x => x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && createdOk(x) && matchQ(x)).length, false) +
-      chip(fBy === 'none', 'data-by', 'none', 'Not recorded',
-        SEGMENTS.filter(x => !x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && createdOk(x) && matchQ(x)).length, false));
+      people('rl-by', 'data-by', fBy, [
+        ['me',   'You',          SEGMENTS.filter(x => x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && createdOk(x) && matchQ(x)).length],
+        ['none', 'Not recorded', SEGMENTS.filter(x => !x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && createdOk(x) && matchQ(x)).length]
+      ]), true);
 }
 
 /* ── The navigation column ───────────────────────────────────────────────
@@ -934,6 +951,18 @@ function drawNav() {
         countIf(new Set(['none']), filterVals(), fFolder), 0, IC.slash) +
     '</div>';
 
+  /* Result belongs in the navigation column, not the filter panel. "Which of
+     these come back with nobody" is a place you go and stand, the same as a
+     dimension or a folder, and it was the one group in the panel that answered
+     that kind of question. Pressing the row you are already on clears it, the
+     way every other row here does. */
+  const nStateNav = k => SEGMENTS.filter(x =>
+    matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
+  html += '<div class="dr-rail__g">' + lab('Result') +
+    ['ready', 'nomatch', 'unknown'].map(k =>
+      row(fState === k ? 'current' : 'off', 'state:' + k, STATE[k].l, nStateNav(k), 0, STATE[k].ic)
+    ).join('') + '</div>';
+
   document.getElementById('lsNav').innerHTML = '<div class="list-group dr-rail">' + html + '</div>';
 }
 
@@ -1095,6 +1124,13 @@ function syncPickAll() {
   const on = shown.filter(x => PICKED.has(x.id)).length;
   all.checked = shown.length > 0 && on === shown.length;
   all.indeterminate = on > 0 && on < shown.length;
+  /* Three states, and the drawn span carries all three: the library ships
+     --checked and --intermediate for exactly this. */
+  const box = all.parentElement.querySelector('.iris-checkbox');
+  if (box) {
+    box.classList.toggle('iris-checkbox--checked', all.checked);
+    box.classList.toggle('iris-checkbox--intermediate', all.indeterminate);
+  }
 }
 
 function render() {
@@ -1197,8 +1233,14 @@ function render() {
     '';
 
   const head = '<thead><tr>' +
-      '<th class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" id="lsAll"' +
-        ' aria-label="Select all ' + rows.length + ' segments shown"></label></th>' +
+      /* The library's checkbox, not the browser's. .iris-checkbox is a
+         <span role="checkbox"> in the library; the native input stays because
+         it is what a keyboard and a screen reader operate, clipped out of
+         sight, and the span is what is drawn. Tinting the native control with
+         accent-color left the operating system drawing the box. */
+      '<th class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" id="lsAll" class="seg-sr"' +
+        ' aria-label="Select all ' + rows.length + ' segments shown">' +
+        '<span class="iris-checkbox" aria-hidden="true"></span></label></th>' +
       COLS.map(c =>
       '<th class="' + (c.n ? 'n' : '') + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
       '<button class="dr-sort" data-sort="' + c.k + '">' + c.l + ' <span class="c" aria-hidden="true">▾</span></button></th>').join('') +
@@ -1209,9 +1251,10 @@ function render() {
       /* The label is the target, not the 16px box: WCAG 2.5.8 asks 24x24 and a
          checkbox renders at 16 in every browser. Clicking anywhere in the cell
          ticks it. */
-      '<td class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" data-pick="' + s.id + '"' +
+      '<td class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" class="seg-sr" data-pick="' + s.id + '"' +
         (PICKED.has(s.id) ? ' checked' : '') +
-        ' aria-label="Select ' + esc(s.n) + '"></label></td>' +
+        ' aria-label="Select ' + esc(s.n) + '">' +
+        '<span class="iris-checkbox' + (PICKED.has(s.id) ? ' iris-checkbox--checked' : '') + '" aria-hidden="true"></span></label></td>' +
       '<td>' + nameCell(s) + '</td>' +
       '<td class="n">' + customersCell(s) + '</td>' +
       '<td class="n">' + (s.o == null ? DASH : fmtN(s.o)) + '</td>' +
@@ -1568,6 +1611,11 @@ document.addEventListener('click', e => {
     pick.checked ? PICKED.add(pick.dataset.pick) : PICKED.delete(pick.dataset.pick);
     const tr = pick.closest('tr');
     if (tr) tr.classList.toggle('is-picked', pick.checked);
+    /* A row is toggled in place rather than re-rendered, so the drawn box has
+       to be told too — the native input is only the mechanism, the span is what
+       anyone sees. */
+    pick.parentElement.querySelector('.iris-checkbox')
+        ?.classList.toggle('iris-checkbox--checked', pick.checked);
     drawPickBar(); syncPickAll();
     return;
   }
@@ -1677,6 +1725,10 @@ document.addEventListener('click', e => {
       const was = DSEL.has(k2);
       DSEL.clear(); dropNavVals();
       if (!was) DSEL.add(k2);
+    }
+    else if (v.startsWith('state:')) {
+      const k2 = v.slice(6);
+      fState = fState === k2 ? 'all' : k2;
     }
     else if (v.startsWith('val:')) {
       const tok = v.slice(4), was = VSEL.has(tok);
