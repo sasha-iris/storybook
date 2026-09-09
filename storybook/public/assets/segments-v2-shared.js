@@ -440,7 +440,13 @@ function menu(btn, items, onAct) {
    For a mouse that is invisible; on a keyboard focus falls back to the top of
    the document and the list becomes unusable. */
 function keepFocus(el, redraw) {
-  const sel = el && (el.dataset.dim    ? '[data-dim="'    + el.dataset.dim    + '"]'
+  /* nav and val were missing, so every click in the navigation column and every
+     chip in the filter panel dropped focus to the top of the document — the one
+     place a keyboard user cannot afford to lose it, because those are the
+     controls you press several times in a row. */
+  const sel = el && (el.dataset.nav    ? '[data-nav="'    + el.dataset.nav    + '"]'
+                   : el.dataset.val    ? '[data-val="'    + el.dataset.val    + '"]'
+                   : el.dataset.dim    ? '[data-dim="'    + el.dataset.dim    + '"]'
                    : el.dataset.folder ? '[data-folder="' + el.dataset.folder + '"]'
                    : el.dataset.by     ? '[data-by="'     + el.dataset.by     + '"]'
                    : el.dataset.state ? '[data-state="' + el.dataset.state + '"]'

@@ -11,6 +11,11 @@
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
 <link rel="stylesheet" href="../assets/segments-proto.css?v=14">
+<!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
+     here. The picker was carrying a fourth chip of my own invention with the
+     same four states; this file's :root defines only --dr-* variables, so it
+     cannot move a library token under this page. -->
+<link rel="stylesheet" href="../assets/segments-v2.css?v=16">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -21,18 +26,53 @@
 <style>
   /* same header anatomy as segment-detail and segments-compare */
   .sb-head { background: var(--color-bg-white); border-bottom: 1px solid var(--color-border-default); padding: 14px 24px; position: sticky; top: 0; z-index: 30; }
+  /* The header's rule spans the window, but its CONTENT keeps the body's
+     measure, so the title sits over the first card rather than starting well to
+     its left once the body is centred. */
+  .sb-head > * { max-width: 1192px; margin-inline: auto; }
   .breadcrumb { margin: 0 0 8px; padding: 0; }
   .sb-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .sb-h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--color-text-heading); letter-spacing: -0.01em; }
   .sb-head__end { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 
-  .sb-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; padding: 20px 24px 60px; align-items: start; max-width: 1240px; }
+  /* max-width without margin:auto is a measure pinned to the left edge: on a
+     1400px screen the page ended at 1240 and left 160px of nothing on the right,
+     which reads as a layout that failed rather than one that was set. */
+  .sb-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; padding: 20px 24px 60px; align-items: start; max-width: 1240px; margin-inline: auto; }
   @media (max-width: 1080px) { .sb-body { grid-template-columns: 1fr; } }
   @media (max-width: 768px) { .sb-head, .sb-body { padding-left: 14px; padding-right: 14px; } }
 
   .sb-card { background: var(--color-bg-white); border: 1px solid var(--color-border-default); border-radius: var(--radius-lg); margin-bottom: 16px; }
   .sb-card__h { padding: 12px 16px; border-bottom: 1px solid var(--color-border-light); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .sb-card__t { margin: 0; font-size: 15px; font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  /* A mark on each card heading. Not .card-icon — that is the 40px tinted tile
+     the KPI and Reporting cards use to say what KIND of number they hold, and
+     at the top of a form section it would outweigh the words it introduces. A
+     plain glyph, one step quieter than the heading, because an icon carries
+     more weight per unit area than letterforms: at the same colour it shouts
+     over its own title. The header is already a flex row with an 8px gap, so
+     nothing about the component changes. */
+  /* The system's stroke family is 24-viewBox at stroke-width 2 — that is what
+     card-icons.js ships and what the Card badges draw. These were Heroicons v2
+     outline, a 24 grid at 1.5, then shrunk to 16px, which puts the stroke at
+     1.07px: thinner than anything else on the page and thinner than the letters
+     beside it. Drawn at the family's own weight, at 18px. */
+  /* One convention for all five, and it is the library's: the named 16-grid set
+     in ListGroup.stories.js — user-circle, adjustments, inbox, cloud-download —
+     drawn at stroke-width 1.3 on a 16 box. Conditions takes `adjustments`
+     verbatim; that icon exists and is exactly this. The other four are not in
+     any set the library ships, so they are drawn to the same grid and the same
+     stroke, which is what makes them sit together. Mine were on a 24 grid at
+     stroke 2, so no two of them had the same optical weight.
+
+     currentColor, per the system's own rule for a leading icon:
+     ListGroup.stories.js — "Leading icon (optional) — .list-group-item__icon,
+     16×16px, currentColor (inherits item text color)". I had set it to
+     --color-text-secondary on the reasoning that an icon out-weighs the letters
+     beside it, which is true in general and not what this library does. The one
+     place it does step icons down is .dropdown-item__icon, and that is a menu
+     row, not a heading. The mark takes the heading's own colour. */
+  .sb-card__ic { display: inline-flex; flex: none; color: var(--color-text-heading); }
 
   /* A short select. The library's .form-select pads 10px top and bottom; these
      were given a height of 30-32px inline and kept that padding, which leaves
@@ -49,15 +89,22 @@
   /* Several channels at once: a row of toggles under their group names, wrapping
      with the rest of the condition rather than forcing a second control. */
   .sb-multi { flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 2px; }
-  .sb-multi__g { flex: 1 0 100%; margin-top: 4px; font-size: 10.5px; font-weight: var(--font-semibold); letter-spacing: .05em; text-transform: uppercase; color: var(--seg-muted); }
+  .sb-multi__g { flex: 1 0 100%; margin-top: 4px; font-size: 10px; font-weight: var(--font-semibold); letter-spacing: .05em; text-transform: uppercase; color: var(--seg-muted); }
   .sb-multi__g:first-child { margin-top: 0; }
-  .sb-multi__i { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; font-size: 12.5px; color: var(--color-text-heading); cursor: pointer; }
-  .sb-multi__i input { flex: none; }
+  .sb-multi__i { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; font-size: var(--text-xs); color: var(--color-text-heading); cursor: pointer; }
+  .sb-multi__i .iris-checkbox { flex: none; }
+  .sb-multi__i .iris-control__label { font-size: var(--text-xs); }
+  /* The ring belongs on what is drawn, since what is focused is 1px wide. */
+  .sb-multi__in:focus-visible + .iris-checkbox { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
 
-  .sb-sel--sm {
-    height: 32px; font-size: 12.5px; padding: 0 34px 0 10px;
-    min-width: 190px; width: auto;
-  }
+  /* No height and no padding: .form-select computes its own, and the one time
+     this rule set them the value line was clipped. Width only. */
+  .sb-sel--sm { font-size: var(--text-xs); min-width: 190px; width: auto; }
+  .sb-val { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px;
+            font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb-in--text { width: 150px; }
+  .sb-in--num  { width: 92px; }
+  .sb-val .form-input { font-size: var(--text-xs); }
   /* Their cards all carry one line under the title saying what the card is for
      — "Run automation when any of these conditions are met". It breaks to its
      own line so a long one never squeezes the title. */
@@ -90,7 +137,7 @@
   .sb-sugg {
     display: inline-flex; align-items: center; height: 20px; padding: 0 7px;
     border-radius: 10px; background: var(--color-bg-tertiary);
-    font-size: 11px; font-weight: var(--font-medium); color: var(--color-text-body);
+    font-size: var(--text-xs); font-weight: var(--font-medium); color: var(--color-text-body);
   }
   /* Its own full-width row under the control, not a flex sibling of it. As a
      sibling it laid out BESIDE the label, so a 110-character sentence stretched
@@ -103,7 +150,799 @@
     background: var(--color-bg-tertiary); color: var(--color-text-body);
   }
   .sb-cond__new { color: var(--color-text-body); }
-  .sb-cond__why { flex: 1 0 100%; margin: 2px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--color-text-body-subtle); }
+  /* ── The channel a condition lives on ──────────────────────────────────
+     A logo and the word "only", beside the condition's name. The logo carries
+     the channel because that is how a channel is drawn everywhere else here and
+     on the list; the word carries the meaning, because a logo on its own reads
+     as decoration and a scope drawn in colour alone is not a scope. */
+  .sb-scope {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 2px; padding: 1px 6px 1px 3px; border-radius: 9px;
+    background: var(--color-bg-tertiary);
+  }
+  .sb-scope img { display: block; border-radius: 50%; }
+  .sb-scope__t { font-size: 10px; font-weight: var(--font-semibold); color: var(--color-text-body); }
+  .sb-add__b--scoped { justify-content: flex-start; }
+  .sb-add__b .sb-scope { margin-left: auto; }
+
+  /* ── Variant switch: scaffolding, not product chrome ────────────────── */
+  /* At the foot, not the head. In the header row it sat beside Cancel and Save
+     and read as a product control — the reader has to stop and work out whether
+     it changes their segment. Down here it is plainly scaffolding. Sticky,
+     because comparing two builds means pressing it repeatedly and scrolling to
+     the bottom each time is its own tax. */
+  .sb-vswitch {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin: 0; padding: 8px 12px;
+    border: 1px dashed var(--color-border-default); border-radius: var(--dr-radius, 8px);
+    background: var(--color-bg-tertiary);
+  }
+  .sb-vswitch--foot {
+    position: sticky; bottom: 10px; z-index: 40;
+    margin: 18px 20px 12px; width: fit-content; max-width: calc(100% - 40px);
+    background: var(--color-bg-white);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .10);
+  }
+  /* So the bar never covers the last card. */
+  .sb-body { padding-bottom: 8px; }
+  .sb-vswitch__l { font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .05em;
+                   text-transform: uppercase; color: var(--seg-muted); }
+  .sb-vswitch__n { font-size: 12px; color: var(--seg-muted); }
+
+  /* ── v2: one level of groups ───────────────────────────────────────────
+     A group is a BAND, not a card. It used to be a bordered, rounded box drawn
+     inside the Conditions card, which is a container inside a container: two
+     borders 10px apart, saying nothing that the indent alone does not. The band
+     is a left rule and a tinted head — the reader sees where a group starts
+     without the page growing another frame. */
+  .sb-g--bare { padding: 0; border: 0; background: none; }
+  .sb-g:not(.sb-g--bare) {
+    border-left: 3px solid var(--color-border-default);
+    border-radius: 0 6px 6px 0; background: var(--color-bg-secondary, #fbfbfc);
+  }
+  .sb-g--scoped { border-left-color: var(--btn-primary-bg, #42389d); }
+  .sb-g__h { display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap; padding: 8px 10px 2px; }
+  .sb-g__t { font-size: 12.5px; color: var(--color-text-body-subtle); }
+  .sb-g__x { margin-left: auto; border: 0; background: none; cursor: pointer;
+             color: var(--seg-muted); font-size: 13px; line-height: 1; padding: 4px 6px; border-radius: 6px; }
+  .sb-g__x:hover { background: var(--color-bg-tertiary); color: var(--color-text-body); }
+  .sb-g__b { padding: 4px 10px 0; }
+  .sb-g--bare > .sb-g__b { padding-left: 0; padding-right: 0; }
+  .sb-g__f { padding: 6px 10px 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .sb-g--bare > .sb-g__f { padding-left: 0; padding-right: 0; }
+  .sb-g--bare > .sb-g__f .sb-add--v2 { flex: 1 0 100%; }
+  /* Inline, at the weight of the sentence it sits in. As a .form-select it was
+     the size of the Order window picker and read as the main content of the
+     card, which it is not. */
+  /* WCAG 2.5.8: these measured 61x17 and 44x17 — pointer targets under 24px in
+     both dimensions. They are inline by design, so the box grows, not the type. */
+  .sb-inline { min-height: 24px; }
+  .sb-inline {
+    min-width: 0; width: auto; height: auto; padding: 1px 20px 1px 4px;
+    border: 0; background-color: transparent; background-position: right 2px center;
+    font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--color-text-heading);
+    border-radius: 5px; cursor: pointer;
+  }
+  .sb-inline:hover { background-color: var(--color-bg-tertiary); }
+  .sb-inline:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+  /* .sb-add is a grid of auto-filled 150px columns, so a bare <p> became one
+     150px cell — a paragraph rendered as a single narrow column beside
+     full-width rows of chips. Headings already span; so must this. */
+  .sb-g__tpl { font-size: 12.5px; padding: 0; }
+  .sb-add__note { grid-column: 1 / -1; margin: 10px 0 0; font-size: var(--text-xs); line-height: 1.5; color: var(--seg-muted); }
+
+
+
+
+  /* ── Proposed: the starting universe is one field, so it gets one row ───
+     It had a full section: a heading block, the line "Everything below narrows
+     this set", and a single select — a container the size of the work it
+     precedes, for one control. The heading now sits inline with its field and
+     the sentence is gone: the words "Starting universe" above a card of
+     conditions already say that everything below narrows it.
+
+     Kept as a card rather than folded into the outline, because the control is
+     a live <select> with its own custom-range inputs; relocating a stateful
+     control between columns on every render is how a builder starts losing
+     values. Same component, less of it. */
+  /* Inside the Conditions card it stops being a card: no frame, no heading
+     block, no field label. One line — what it is, the control, and what it
+     leaves you with. */
+  /* This block was declared twice, a few hundred lines apart, and both copies
+     drew a rule under the select. The second one is the live rule; this one is
+     removed rather than left to contradict it. */
+
+  /* ── In a 254px column a label goes ABOVE its control ──────────────────
+     This was built as a horizontal sentence — label, then select, then a
+     result — which is a composition for a wide row. In the outline column it
+     wrapped: the label landed on its own line and, as a flex item in a
+     centre-aligned row, sat 41px in from the left while the select it belongs to
+     started at 0. A label indented away from its own field is the specific thing
+     that looked broken.
+
+     Same rhythm as everything else in this column now: a small-caps name, the
+     control beneath it, both flush left, control full width. The result sentence
+     stayed deleted — it was the first row of the Preview funnel printed twice.
+
+     Nothing here fights the library: .form-group is left in normal block flow,
+     which is what it is everywhere else in the product. */
+  /* No rule under it. The gap already separates the order window from the
+     groups, and a line floating under a control with nothing above it reads as
+     the bottom edge of a box that is not there. */
+  .sb-uni--inline { display: block; margin: 0 0 14px; padding: 0;
+                    border: 0; background: none; }
+  .sb-uni--inline .sb-card__h { display: none; }
+  .sb-uni--inline .sb-card__b { padding: 0; }
+  .sb-uni--inline .sb-card__b > div { display: block !important; }
+  .sb-uni--inline .form-group { display: block; margin: 0; }
+  .sb-uni--inline .form-label { display: block; margin: 0 0 5px; }
+  .sb-uni--inline #sbUniverse { display: none; }
+  .sb-uni--inline .form-select { width: 100%; min-width: 0; }
+
+  /* ── Proposed: outline | add a filter | (preview lives in the right rail) ─
+     Their proportions: a narrow outline against a fluid working column. */
+  /* 254 was too narrow for what this column ended up holding: a name, a channel
+     badge, a joiner, "orders on" and a channel trigger, and every one of those
+     rows wrapped. Measured at 254 the group's own meta row ran onto two lines;
+     the picker beside it had 49px of vertical slack to give. 300 buys the
+     column one more line of pills at most and stops the wrapping. */
+  /* .seg-sr is declared once, in segments-proto.css, and that sheet stopped
+     applying here — so every label written for a screen reader rendered as
+     visible text, including "How the conditions in this group combine" sitting
+     as a heading over the group. A three-line visually-hidden utility is not
+     something to depend on another file for. */
+  .seg-sr {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* The library ships this: .alert with .alert-danger. Only the spacing above
+     the card is added. */
+  .sb-sum {
+    margin: 0 0 14px; padding: 12px 14px;
+    background: var(--color-bg-danger-subtle, #fef2f2);
+    border: 1px solid var(--color-ctrl-danger-strong, #e02424); border-radius: 8px;
+  }
+  .sb-sum:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
+  .sb-sum__t { margin: 0 0 6px; font-size: var(--text-sm); font-weight: var(--font-semibold);
+               color: var(--color-text-fg-danger, #c81e1e); }
+  .sb-sum__l { margin: 0; padding-left: 18px; font-size: var(--text-xs); }
+  .sb-sum__l li + li { margin-top: 3px; }
+  .sb-sum__l a { color: var(--color-text-fg-danger, #c81e1e); }
+
+  .sb2 { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 24px; align-items: stretch; }
+  /* The two columns had nothing between them, so a narrow list of conditions and
+     a wide field of pills read as one field with a ragged left edge. A rule is
+     the cheapest thing that says "these are two things". */
+  /* ── Two surfaces, not one grey field ─────────────────────────────────
+     The card was white on white with a hairline between the columns, so the
+     definition and the picker read as one flat sheet. The outline column is
+     what the segment IS, so it gets a ground of its own: the softest step of
+     the brand, mixed from --dr-primary-soft rather than picked by eye, so it
+     stays on the same hue as the active group and the brand border.
+
+     Four steps now, all from two real tokens: column ground (lightest), group
+     boxes white (they lift off it), the active group at full --dr-primary-soft,
+     and the brand at #42389d for its border and label. The rule between the
+     columns comes off; a change of surface separates them better than a line. */
+  /* The gutter is the grid's now, so the column stops paying for it twice. */
+  .sb2__main { min-width: 0; }
+  .sb2__side {
+    /* The padding was holding a tinted band that is gone. Left in place it just
+       pushed this column's first line 14px below the other one's — measured. */
+    padding: 0; min-width: 0; border-radius: 10px;
+    /* The band was a fourth surface. Three is the ceiling every system
+       stops at, and the group being filled needs one of them. */
+  }
+  @media (max-width: 900px) {
+    .sb2 { grid-template-columns: minmax(0, 1fr); }
+    .sb2__main { border-top: 1px solid var(--color-border-default);
+                 padding: 18px 0 0; margin-top: 18px; }
+  }
+
+  .sb2__seg { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  /* Fourth member of the one eyebrow tier — this rule was written once and never
+     landed, so "Groups combine with" rendered as body text while the three
+     labels around it were small caps. Section names are one tier or they are
+     not a tier. */
+
+  /* ── The outline reads, it does not stack ──────────────────────────────
+     Every condition was a bordered box, inside a group with its own left rule,
+     inside the Conditions card: three frames deep, and the eye counts frames
+     before it reads anything. And "+ Add a group" was a full-width bordered
+     button — the loudest object in the column, for the rarest action in it.
+
+     The column is a statement of what the segment is. So the conditions are
+     ROWS, the group is a hairline and a label, and the one rare action is a
+     quiet link at the foot. Weight now follows importance instead of inverting
+     it. */
+  /* ── A group is a container, in every state ────────────────────────────
+     Only the ACTIVE group had a box; the others were separated by a hairline
+     and nothing else. So one group read as an object and the rest as loose
+     text, and "which of these is a group" had to be worked out rather than
+     seen. Active is a STATE of the container, not the reason there is one.
+
+     Not a left accent bar: their own product boxes things in this column —
+     STARTING UNIVERSE and each chosen filter are bordered boxes — so a border
+     and a tint is the language already in use here. */
+  /* ── Three surfaces, one border, one accent ───────────────────────────
+     Measured, the column had five surfaces — card, band, group, active group,
+     row — every adjacent pair 1.05 to 1.14 apart, with a 1.24:1 border doing
+     the work neither of them could. Carbon, Atlassian and Material all stop at
+     three levels and none of them defines a fourth; the level to give up is the
+     row, which now has no surface of its own at rest.
+
+     The card keeps the only border. A group is drawn by SPACE — Refactoring UI:
+     "always make sure there's more space around the group than there is within
+     it" — so between-group gap is four times the between-row gap and no box is
+     needed to say where a group ends. The one exception is the group being
+     filled, which is the single focal point Atlassian allows emphasis for: it
+     takes the brand tint and the brand border, and nothing else on the card
+     does. */
+  /* ── Fill inversion, HubSpot's ────────────────────────────────────────
+     Space alone did not draw the group — it never does at this density, and
+     the survey says so: of six devices in shipping use, the one that reads
+     without any line work is HubSpot's, where the GROUP is a tinted panel and
+     each condition inside it is a WHITE card. Figure and ground swap, so the
+     boundary is a change of surface rather than a border, and the rows become
+     obvious units without a border of their own.
+
+     Three surfaces in the whole card, which is the ceiling: the page, white,
+     and this tint. The step from white is 1.10:1 — the strongest a nested
+     surface is allowed before it stops reading as nesting and starts reading
+     as a different component. */
+  .sb2__g { margin-bottom: 12px; padding: 8px; border: 1px solid transparent;
+            border-radius: 8px; background: var(--color-bg-tertiary); }
+  .sb2__g:last-of-type { margin-bottom: 0; }
+  .sb2__g.is-active {
+    border-color: var(--btn-primary-bg, #42389d);
+    background: var(--dr-primary-soft, #f0effa);
+  }
+  .sb2__g.is-active .sb2__glabel { color: var(--btn-primary-bg, #42389d); }
+
+  .sb2__gh { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  /* Lost its rule when this block was rewritten and fell back to 16px near-black
+     — the loudest text in the group, over the conditions it introduces. */
+  /* MEASURED 4.39:1 against the group's tint — under 1.4.3. The tint is the
+     price of the group reading as a group, so the text pays for it. */
+  .sb2__gt { font-size: var(--text-xs); color: var(--color-text-body); flex: none; }
+  .sb2__gchan { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 5px;
+                min-width: 0; margin-bottom: 6px; }
+  .sb2__gchan .sb-inline { flex: none; }
+  /* The trigger takes the rest of the row so its chevron lands on the column's
+     right edge, in line with everything else that closes a row here. Sized to
+     its content it sat wherever the label happened to end, which made the row
+     look ragged against the conditions under it. */
+  .sb2__gchan .sb-chanwrap { flex: 1; min-width: 0; }
+  .sb2__gchan .sb-chanbtn { width: 100%; max-width: none; }
+  .sb2__gchan .sb-chanbtn svg:last-child { margin-left: auto; }
+  .sb2__gh .sb-lock { order: 2; margin-top: 1px; }
+  .sb2__gh::after { content: ''; order: 1; flex: 1 0 100%; height: 0; }
+  .sb2__gx svg { flex: none; }
+  /* ── The group's remove ────────────────────────────────────────────────
+     .btn-table is the library's own row-action button (ButtonSpecial): 28px,
+     white, bordered, shadowed, icon only — made for exactly this, an action
+     that belongs to one row of a list. It also separates the two deletes on
+     screen: a condition is removed by a bare ✕, a whole group by a raised
+     button, so they no longer read as the same control at the same cost.
+
+     The bin inside it is the project's own — same path and stroke as the
+     Delete row in the segment menus. The two broken attempts were the same
+     glyph forced to 13px and 16px, which parts its lid from its body. */
+  /* .btn-table ships raised — white, bordered, shadowed — which is right for a
+     table row where it is the only action, and wrong here: on a group nobody is
+     working in, the loudest object in the card was the button that deletes it.
+
+     The row-action convention (GitHub, Linear, Notion) is the fix, and it is not
+     hover-to-reveal: the icon is always drawn, always focusable, always tappable.
+     What appears on hover and focus is the CHROME — the component's own white
+     fill, border and shadow-sm, restated here because that is what suppressing
+     them at rest costs. Red only once it is under the pointer. */
+  /* Name and bin hold the first line; the lock badge takes the next one whole.
+     Otherwise a long cause ("Shopify only · Discount percentage") pushed the
+     bin off the line and it ended up floating under the badge. */
+  .sb2__gh .sb-lock { order: 2; margin-top: 1px; }
+  .sb2__gh::after { content: ''; order: 1; flex: 1 0 100%; height: 0; }
+  .sb2__gx svg { flex: none; }
+  .sb2__gx {
+    margin-left: auto; padding: 0;
+    background: none; border-color: transparent; box-shadow: none;
+    color: var(--color-text-secondary);
+  }
+  .sb2__gx:hover, .sb2__gx:focus-visible {
+    background: var(--color-bg-white);
+    border-color: var(--color-border-base);
+    box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1);
+    color: var(--color-text-fg-danger);
+  }
+  .sb2__gx:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+  .sb2__empty { display: flex; align-items: center; gap: 7px; margin: 2px 0 4px;
+                padding: 8px; font-size: var(--text-xs); color: var(--seg-muted);
+                background: var(--color-bg-white); border-radius: 6px; }
+  .sb2__empty svg { flex: none; margin-left: auto; color: var(--color-text-disabled, #9ca3af); }
+
+  /* A row, not a card. The chosen one is tinted rather than ringed — a 2px
+     purple outline on a 260px column was a frame around a frame. */
+  /* The rows step in from the group's own line, so a group reads as a heading
+     over its members rather than as one more row among them. */
+  /* No inner rule: the group's own border is the boundary, and a line inside a
+     box is a frame within a frame. */
+  .sb2__gb { display: flex; flex-direction: column; }
+
+  /* ── The row has no surface ───────────────────────────────────────────
+     It is a line of text with a hover state. Selected is a tint, not a border —
+     the accent at full strength is reserved for Save, and Linear's own
+     selection is quieter still: a neutral tint, not the brand. */
+  /* Every row is the height of a filled one. An unfilled condition has one line
+     instead of two, and left to itself it came out half the height of its
+     neighbours — a ragged column where a short box reads as a cramped box
+     rather than as a shorter fact. The box stays; only the text inside it is
+     shorter, and it sits centred in the same space. */
+  /* The ✕ was flush against the row's edge: the row had no padding of its own,
+     so the button's 24px box ended exactly where the white ended. The row pays
+     for its own inset on both sides now — 8px, the same step the text uses. */
+  .sb2__item { display: flex; align-items: center; min-height: 38px; border-radius: 6px;
+               padding-right: 8px; border: 1px solid transparent;
+               background: var(--color-bg-white); }
+  .sb2__item + .sb2__item { margin-top: 4px; }
+  /* Same ladder. This was a colour-mix of the brand I invented; the system has
+     a token for exactly this step. */
+  /* --color-ctrl-off-hover is #9ca3af, which the library uses on a 16px control
+     where it is a thin ring. Around a 38px row it is a hard frame. One step
+     lighter, still the library's own: --color-ctrl-off, the unchecked border. */
+  .sb2__item:hover:not(.is-on) { border-color: var(--color-ctrl-off); }
+  /* ── The row whose editor is open elsewhere ───────────────────────────
+     A 3px inset bar was Carbon's answer, not this product's, and it is nowhere
+     in the design system — it also came out clipped by the row's own radius, so
+     it read as a stray bracket rather than a marker.
+
+     The system already has one way of saying "selected", and it says it the
+     same way in two places: .iris-radio-card--selected sets border-color to
+     --btn-primary-bg, and a chosen pill takes that border with the brand's soft
+     fill. So the row does exactly that. The border is transparent at rest so
+     nothing shifts by a pixel when it appears. */
+  /* The fill already says which row this is; the border only has to close it.
+     At full --btn-primary-bg it was a hard frame around a 38px box, heavier
+     than the card's own edge. Softened to the same step the chosen pill takes,
+     so "chosen" is written the same way in both columns. */
+  .sb2__item.is-on {
+    background: var(--dr-primary-soft, #f0effa);
+    border-color: color-mix(in srgb, var(--btn-primary-bg, #42389d) 35%, #fff);
+  }
+
+  /* On a tinted row every text colour loses ground, so both step up one level.
+     Measured: the field name was 3.96:1 on the 12% tint. */
+
+  .sb2__item.is-na .sb2__n,
+  .sb2__item.is-na .sb2__v { color: var(--color-text-secondary); }
+
+  /* One line: name, the connecting word, the value. It reads as the fact it
+     states rather than as a form with its labels left in, and eight of them
+     scan down the column at one height. It wraps only when a value is long
+     enough to need it. */
+  .sb2__pick { flex: 1; min-width: 0; display: flex; align-items: baseline;
+               flex-wrap: wrap; gap: 0 4px;
+               padding: 4px 8px 4px 10px; border: 0; background: none;
+               cursor: pointer; text-align: left; font-family: inherit; }
+  .sb2__pick:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; border-radius: 6px; }
+
+  /* Three colours, one size, two weights — and the label/value separation is
+     carried by colour, which is the strong signal, not by weight, which at 12px
+     is about one stem pixel. */
+  /* The name was set as a label — quiet secondary grey — on the reasoning that
+     the value is the information. True when a row has both, false for the row
+     itself: on an unfilled condition the name is the ONLY thing there, and at
+     12px in secondary grey it was barely there. It takes the primary colour;
+     the separation from the value moves onto weight and position, which is
+     where it can afford to live, since the two sit on different lines. The
+     operator keeps the quiet colour — it is the one word that really is
+     connective tissue. */
+  .sb2__n  { font-size: var(--text-xs); line-height: 1.4; font-weight: var(--font-medium);
+             color: var(--color-text-primary); }
+  /* MEASURED 2.54:1 at --color-text-disabled. A word that is part of the
+     sentence has to be readable; it goes quiet by being the middle term between
+     two stronger ones, not by fading out. */
+  .sb2__op { font-size: var(--text-xs); line-height: 1.4; color: var(--color-text-secondary); }
+  .sb2__v  { font-size: var(--text-xs); line-height: 1.4; font-weight: var(--font-semibold);
+             color: var(--color-text-primary); min-width: 0;
+             overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* The row being edited is marked by its SURFACE, not by recolouring its text.
+     Painting both the tint and the words in the brand is the failure the craft
+     survey names outright: brand on the container and on the item inside it,
+     and the item's contrast collapses — measured 2.27:1 for the name on its own
+     highlight. It also flattened the two things that carry the row, because the
+     name and the value became one colour.
+
+     So the tint says "this one", and the type keeps doing its own job: the
+     field name quiet, the value the darkest thing in the column. */
+
+  /* ── The remove has three states, not one ─────────────────────────────
+     It was drawn at full body colour on every row, so eight identical crosses
+     shouted as loudly as the conditions they sit on — and on a row nobody is
+     touching, the loudest thing was the way to delete it.
+
+     It stays in the DOM at every state, because hiding it would take it from
+     the keyboard and from touch, which have no hover: what changes is weight.
+     At rest --color-text-disabled, 2.8:1, which 1.4.11 allows for a control
+     whose accessible name carries the meaning. When the pointer or the keyboard
+     reaches its row it comes up to full strength, and on itself it turns red.
+     Polaris does the same thing with clip and reveals on hover AND focus. */
+  .sb2__x { flex: none; width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
+            color: var(--color-text-disabled); font-size: var(--text-xs); border-radius: 6px;
+            transition: color .12s; }
+  .sb2__item:hover .sb2__x,
+  .sb2__item.is-on .sb2__x,
+  .sb2__x:focus-visible { color: var(--color-text-body); }
+  .sb2__x:hover { color: var(--color-text-fg-danger); background: var(--color-bg-tertiary); }
+  .sb2__x:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+  /* The rare action, sized like one. LIBRARY GAP, already on the register:
+     .btn-link in iris-components.css has no :focus-visible at all, so every
+     link-styled button in the product is invisible to a keyboard until its
+     consumer draws the ring itself. Drawn here; the fix belongs in the
+     library. */
+  /* A button, at the smallest size the library has. As a bare link it read as
+     neither a control nor a label — a half thing. */
+  /* ── The button that makes the structure ───────────────────────────────
+     The library does have a component for this and I had missed it:
+     .iris-autocomplete__cta, the "divider, plus, Add new" row that closes a
+     list in Autocomplete. It is the same job — one more of the thing above it,
+     added from the end of the list — so it is used as it ships: the top rule,
+     the 14/500 type, the 9/12 padding, the plus at 14px.
+
+     Two consumer changes, both recorded. It is a <button> rather than the
+     story's <div>, which needs the UA button reset undone. And the colour:
+     .iris-autocomplete__cta uses --color-primary (#1C64F2), the same blue drift
+     already corrected in .btn-link — the brand action colour on this product is
+     #42389d. LIBRARY GAP: the CTA also ships with no hover and no focus ring. */
+  /* Adds a group: the library CTA, undone from the UA button styles it inherits
+     as a <button> rather than the story's <div>. */
+  .sb2__addg {
+    width: 100%; background: none; border: 0;
+    color: var(--btn-primary-bg, #42389d);
+    cursor: pointer; font-family: inherit;
+  }
+  .sb2__addg:hover { background: var(--dr-primary-soft, #f0effa); }
+  .sb2__addg:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+
+  /* No rule above it. The component ships one because in Autocomplete it closes
+     a list of flush rows; here the groups are separated cards on a tinted
+     column, so a line between the last card and the button attaches to neither
+     of them. Recorded deviation. */
+  .sb2__addg { margin-top: 6px; border-radius: 8px; }
+  /* ── Adds a condition: a button, not a panel ──────────────────────────
+     It was the same brand-coloured CTA row, full width. Inside an empty group
+     that is the only thing in the box, so a quiet link-shaped control became a
+     large tinted slab with nothing to be quiet next to.
+
+     .btn-alternative at .btn-xs — the library's neutral secondary: white, grey
+     border, near-black text. It sits at its own width, reads as a control at
+     any size, and leaves the brand colour to the two things that earn it: the
+     group in focus and Save. */
+
+  /* One eyebrow, the library's: .sidebar-section-label is 10px / 600 /
+     uppercase / 0.08em / --color-text-disabled. Four different small-caps of my
+     own invention were in this card, none of them these values. */
+  /* LIBRARY GAP: .sidebar-section-label sets --color-text-disabled (#9ca3af),
+     which measures 2.54:1 on white — the library's own section label fails
+     1.4.3 wherever it is used. Its size and tracking are kept; the colour steps
+     to --color-text-secondary (#6b7280, 4.83:1). The token is the thing to fix. */
+  /* Small caps are a SECTION marker — WHO, WHAT, HOW, and the caption over the
+     picker. They are not how this product labels a control: .form-label in the
+     library is sentence case, medium weight. Four form labels had been turned
+     into eyebrows, so "Orders between" and "Groups combine with" were shouting
+     at the same volume as the headings that organise the card. */
+  .sb2__pt, .sb2__ph {
+    font-size: 10px; font-weight: var(--font-semibold);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+  }
+  /* Labels for controls: the library's own shape, one step down in size for a
+     254px column. */
+  .sb-uni--inline .form-label, .sb2__seglab {
+    font-size: var(--text-xs); font-weight: var(--font-medium);
+    text-transform: none; letter-spacing: 0;
+    color: var(--color-text-secondary);
+  }
+  /* A group's name is neither a section nor a label — it is what the thing is
+     called. Sentence case, and it takes the brand colour when the group is the
+     one being filled. */
+  .sb2__glabel {
+    font-size: var(--text-xs); font-weight: var(--font-semibold);
+    text-transform: none; letter-spacing: 0;
+    color: var(--color-text-body);
+  }
+  /* MEASURED: --color-text-secondary (#6b7280) on the active band (#f0effa) is
+     4.24:1, under 1.4.3. Every other surface it sits on clears it; this one
+     does not, so on the tinted band the label steps to the body colour. */
+  .sb2__g.is-active .sb2__glabel,
+  .sb2__g.is-active .sb2__gt,
+  .sb2__g.is-active .sb2__v { color: var(--color-text-body); }
+  .sb2__pt { margin-bottom: 8px; }
+  /* A caps eyebrow sitting on top of three caps eyebrows has no rank — the pane
+     title read as a fourth section rather than as the thing they belong to. It
+     is a heading, one step under the card's own 15px title. */
+  .sb2__mt { margin: 0 0 12px; font-size: var(--text-sm); font-weight: var(--font-semibold);
+             color: var(--color-text-heading); }
+  /* ── The pane wears the group it is adding to ──────────────────────────
+     Same tint and same border colour as .sb2__g.is-active, and the same channel
+     marks, so the picker and the box read as one object split by the rule
+     between the columns. Before this the only link across the divider was the
+     phrase "Adding to Group 2" in grey body text, and the eye does not follow
+     words across a rule. */
+  .sb2__pg + .sb2__pg { margin-top: 10px; }
+  .sb2__ph { margin-bottom: 5px; }
+  .sb2__pl { display: flex; flex-wrap: wrap; gap: 6px; }
+  /* Pills, the way theirs are — not bordered "+ Name" buttons. */
+  .sb2__pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border: 1px solid var(--color-border-default); border-radius: 999px;
+    background: var(--color-bg-white); font-size: var(--text-xs); color: var(--color-text-heading); cursor: pointer;
+  }
+  .sb2__pill:hover:not([disabled]) { border-color: var(--seg-link); color: var(--seg-link); }
+  /* In the definition: the brand's own soft, the same fill every other chosen
+     surface on this page takes, plus a tick. (#e5edff was a blue tint on a
+     purple brand — the same drift as .btn-link.) */
+  /* ── Two facts, two marks ─────────────────────────────────────────────
+     Both states shared a fill and differed only by how strong the border was,
+     which at 35% against 100% is a difference nobody can see across a menu of
+     fifteen. They are not two strengths of one thing anyway: "already in the
+     definition" and "open in the editor below" are different facts.
+
+     In the definition — the tick, and nothing else. The pill stays as it was.
+     Open in the editor — the page's own selected language: brand border, the
+     brand's soft fill, brand text. The same way the chosen row is drawn in the
+     left column. */
+  .sb2__pill.is-used { color: var(--color-text-heading); }
+  .sb2__pill.is-used svg { color: var(--btn-primary-bg, #42389d); }
+  .sb2__pill.is-on {
+    border-color: var(--btn-primary-bg, #42389d);
+    background: var(--dr-primary-soft, #f0effa);
+    color: var(--btn-primary-bg, #42389d);
+  }
+  /* A filter this group's channels cannot answer. It had no rule at all, so it
+     looked exactly like an available one until you clicked it. Dashed, because
+     "not solid" is the convention for a control that is present but not
+     applicable, and the text stays at full strength so it can be read. */
+  .sb2__pill.is-empty { border-style: dashed; color: var(--color-text-secondary); }
+  .sb2__pill[disabled],
+  .sb2__pill[aria-disabled="true"] { border-style: dashed; color: var(--color-text-secondary); cursor: not-allowed; }
+  .sb2__pill[aria-disabled="true"]:hover { border-color: var(--color-border-default); color: var(--color-text-secondary); }
+  .sb-card__h .sb-lock { margin-left: 10px; }
+  .sb-lock img { flex: none; }
+  .sb-lock__by { font-weight: var(--font-normal); color: var(--color-text-secondary); }
+  .sb2__pill:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+
+  /* ── No panel ─────────────────────────────────────────────────────────
+     This was a filled, bordered card, put there so the editor would stop
+     reading as a footnote under the menu. It over-corrected: a heading and one
+     small input inside a grey box is more chrome than the content, and it left
+     the right column carrying a surface the left column does not have.
+
+     Rank comes from the heading and from the space above it instead — which is
+     what gives every other section on this page its rank. */
+  /* No rule either. The pill groups above already end, and a line under them
+     is a second hard divide next to the first — NN/g's own advice on grouping
+     is that whitespace does this with less visual debt than a border. The gap
+     is what separates: 28px against the 10px between pill groups, so the break
+     is unambiguous by proximity alone. */
+  .sb2__ed { margin-top: 28px; }
+  .sb2__ed--none p { margin: 0; font-size: var(--text-xs); color: var(--seg-muted); }
+  /* Was 16px — a pane heading INSIDE a card whose own title is 15px, so the
+     detail outranked its container. A sub-heading sits below its parent. */
+  /* ── The place a value is typed, composed as a field ───────────────────
+     Stripping the grey panel left the heading and the control floating with
+     nothing holding them together — the heading sat tight against the rule
+     above and the control drifted under it. It is a form field, so it is built
+     like one: the library's own shape, label over control, with the label
+     given the room a heading needs and the control on its own line.
+
+     Nothing is filled or boxed. Rank comes from the rule above it, the space,
+     and the type. */
+  .sb2__edt { display: flex; align-items: center; gap: 7px; margin: 0 0 10px;
+              font-size: var(--text-sm); font-weight: var(--font-semibold);
+              line-height: 1.4; color: var(--color-text-heading); }
+  .sb2__eds { margin: -6px 0 12px; font-size: var(--text-xs);
+              line-height: 1.5; color: var(--seg-muted); }
+  .sb2__ed .sb-cond { border: 0; padding: 0; background: none; }
+  .sb2__ed .sb-x { display: none; }
+  /* The operator and the field on one baseline, at the size the rest of the
+     column uses, with the control big enough to be the thing you reach for. */
+  .sb2__ed .sb-val { gap: 8px; font-size: var(--text-sm); }
+  .sb2__ed .sb-val .form-input { font-size: var(--text-sm); }
+  .sb2__ed .sb-sel--sm { font-size: var(--text-sm); }
+  .sb2__ed .sb-cond__why { margin-top: 10px; }
+
+  /* ── Preview funnel ─────────────────────────────────────────────────── */
+  .sb2__pv { margin-bottom: 10px; }
+  .sb2__pv.is-head .sb2__pvt { color: var(--color-text-heading); font-weight: var(--font-semibold); }
+  .sb2__pvt { font-size: var(--text-xs); color: var(--color-text-body); display: flex; flex-direction: column; }
+  .sb2__pvt span { font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb2__pvbar { height: 5px; margin: 4px 0 3px; border-radius: 3px; background: var(--color-bg-tertiary); overflow: hidden; }
+  .sb2__pvbar i { display: block; height: 100%; background: var(--btn-primary-bg, #42389d); }
+  .sb2__pv.is-head .sb2__pvbar i { background: var(--btn-primary-bg, #42389d); }
+  .sb2__pvn { display: flex; justify-content: space-between; gap: 6px; font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb2__pvn span { color: var(--color-text-body-subtle); }
+  .sb2__pvsep { margin: 12px 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+                color: var(--color-text-secondary); font-weight: var(--font-semibold); }
+  .sb2__pvtot { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--color-border-default);
+                font-size: var(--text-xs); color: var(--color-text-body); }
+
+  /* ── Channel picker ─────────────────────────────────────────────────── */
+  .sb-chanwrap { position: relative; display: inline-flex; }
+  .sb-chanbtn {
+    display: inline-flex; align-items: center; gap: 5px;
+    min-height: 24px;                                   /* 2.5.8: measured 99x18 */
+    padding: 2px 6px; border: 0; border-radius: 6px; background: transparent;
+    font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--color-text-heading);
+    cursor: pointer;
+  }
+  .sb-chanbtn:hover { background: var(--color-bg-tertiary); }
+  /* "Amazon Seller Partner" wrapped onto two lines in a 260px column and took
+     the chevron down with it. The name truncates; the full one is on the
+     trigger's own title and in the popover. */
+  .sb-chanbtn { max-width: 168px; }
+  .sb-chanbtn__l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sb-chanbtn svg { flex: none; }
+  .sb-chanbtn:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+  .sb-chanbtn svg { color: var(--seg-muted); }
+  /* The marks ride on the trigger, so what is chosen is legible without opening
+     anything — the thing their own "Sales Channels: 0" cannot do. */
+  .sb-chan__marks { display: inline-flex; }
+  .sb-chan__marks img { display: block; border-radius: 50%; background: #fff; }
+  .sb-chan__marks img + img { margin-left: -4px; box-shadow: -1px 0 0 #fff; }
+  .sb-chan__dot { width: 15px; height: 15px; border-radius: 50%; background: var(--color-bg-tertiary); display: inline-block; }
+
+  .sb-chan {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 70; width: 268px;
+    max-height: 62vh; overflow-y: auto; padding: 8px;
+    background: var(--color-bg-white); border: 1px solid var(--color-border-default);
+    border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,.14);
+  }
+  .sb-chan__h { margin-bottom: 6px; }
+  .sb-chan__h .form-input { height: 32px; font-size: var(--text-xs); }
+  .sb-chan__g + .sb-chan__g { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--color-border-default); }
+  .sb-chan__i, .sb-chan__gh {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 6px 7px; border: 0; border-radius: 7px; background: none;
+    font-size: var(--text-xs); color: var(--color-text-body); cursor: pointer; text-align: left;
+  }
+  .sb-chan__i { padding-left: 16px; }
+  .sb-chan__gh { font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sb-chan__i:hover, .sb-chan__gh:hover { background: var(--color-bg-tertiary); }
+  .sb-chan__i:focus-visible, .sb-chan__gh:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+  .sb-chan__i img { display: block; border-radius: 50%; }
+  .sb-chan__n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sb-chan__all { font-size: var(--text-xs); color: var(--seg-link); }
+  .sb-chan__box {
+    flex: none; width: 15px; height: 15px; border-radius: 4px;
+    /* The unchecked box's border is the whole control: at
+       --color-border-default it measured 1.24:1 and 1.4.11 wants 3:1. */
+    border: 1.5px solid #9aa2af; background: #fff;
+    display: inline-flex; align-items: center; justify-content: center; color: #fff;
+  }
+  .sb-chan__i.is-on .sb-chan__box, .sb-chan__gh.is-on .sb-chan__box {
+    background: var(--btn-primary-bg, #42389d); border-color: var(--btn-primary-bg, #42389d);
+  }
+  /* A half-chosen group says so. Theirs shows an empty box for a group whose
+     channels are partly selected, which reads as "none of this is on". */
+  .sb-chan__gh.is-part .sb-chan__box { border-color: var(--btn-primary-bg, #42389d); }
+  .sb-chan__gh.is-part .sb-chan__box i { width: 7px; height: 2px; border-radius: 1px; background: var(--btn-primary-bg, #42389d); }
+  .sb-chan__f {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--color-border-default);
+    font-size: var(--text-xs); color: var(--seg-muted);
+  }
+  /* 30x19 before: a link standing alone in a footer is not inline text, so
+     2.5.8's inline exception does not cover it. */
+  .sb-chan__f .btn-link { font-size: var(--text-xs); padding: 4px 6px; min-height: 24px; border-radius: 5px; }
+  .sb-chan__none { margin: 8px 7px; font-size: var(--text-xs); color: var(--seg-muted); }
+
+  /* ── The template library ────────────────────────────────────────────── */
+  .sb-lib__lead { margin: 0 0 12px; font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb-lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 8px;
+            max-height: 46vh; overflow-y: auto; }
+  /* The card is a row now — the mark on the left, the words stacked beside it.
+     The three text rules below used to target the button directly; with the
+     text moved into its own block they were selecting the icon's wrapper too
+     and the whole card collapsed onto one line. */
+  .sb-lib__c {
+    display: flex; flex-direction: row; gap: 12px; align-items: flex-start;
+    padding: 10px 12px; text-align: left; cursor: pointer;
+    /* The button never set a colour, so it inherited the UA's #000 — a black
+       that is in no palette. Nothing visible sat on it, because both lines set
+       their own, but anything added here would have arrived off-palette. */
+    color: var(--color-text-body);
+    border: 1px solid var(--color-border-default); border-radius: 8px; background: var(--color-bg-white);
+  }
+  /* ── Lit the way Fin's card is lit ────────────────────────────────────
+     Not the .iris-radio-card ladder after all: that one is for an option you
+     SELECT, and these are actions — pressing one applies the template and
+     closes the dialog. The page already has a treatment for "an offer you can
+     take", and it is the Fin card: the brand at 6% for the fill and 20% for the
+     border, both derived from the button rather than typed as new hexes. Same
+     two values here, so the two offers on this page look like the same kind of
+     thing. */
+  .sb-lib__c:hover, .sb-lib__c:focus-visible {
+    background: color-mix(in srgb, var(--btn-primary-bg) 6%, #fff);
+    border-color: color-mix(in srgb, var(--btn-primary-bg) 20%, #fff);
+  }
+  .sb-lib__c:active { border-color: var(--btn-primary-hover); }
+  .sb-lib__c:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+  /* Neither line had a line-height of its own, so both inherited the card's and
+     sat on top of each other. Hobday's rule for a type stack: leading rises as
+     the size falls — the title at 1.4, the line under it at 1.5. */
+  /* ── A lighter tile than the set has ──────────────────────────────────
+     .card-icon ships ten variants and every one is a PAIR — a tint with a
+     foreground of the same family — and there is no softer tier. The tokens
+     have one only for the brand, --color-bg-brand-softer #eef6ff, and that is
+     the legacy blue family, which would argue with the purple glyph.
+
+     So the fill is derived the way this page already derives Fin's card: from
+     the brand button through color-mix, with the flat value first for anything
+     that cannot compute it. The pair still holds — the glyph keeps the set's
+     own #5B21B6 — and the tile stops out-weighing the title beside it. */
+  /* ── An icon and a word, not a button ─────────────────────────────────
+     A button here eats a 36px row in a card header for something used once in a
+     while. .btn-link was worse: it draws a bottom border on hover because that
+     is what a link IS, so recolouring the text left a red word with a purple
+     rule under it.
+
+     .card-footer-link is the library's own answer — a link-shaped action inside
+     a card, text-decoration:none, and its hover changes the colour and nothing
+     else. As a <button> it needs the UA chrome undone, and that is the whole
+     deviation. */
+  .sb-clear {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    font-family: inherit;
+  }
+  .sb-clear svg { flex: none; }
+
+  .sb-lib__c .card-icon {
+    background: #f6f4fd;
+    background: color-mix(in srgb, var(--btn-primary-bg) 5%, #fff);
+  }
+
+  .sb-lib__t { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; }
+  /* A bare <b> renders at the browser's 700. The system's UI weights are
+     400 / 500 / 600 and nothing in it is bolder, so these titles were the only
+     700 on the page — which is what read as a different typeface. */
+  .sb-lib__t b { font-size: var(--text-sm); font-weight: var(--font-semibold);
+                 line-height: 1.4; color: var(--color-text-heading); }
+  .sb-lib__t > span { font-size: var(--text-xs); line-height: 1.5; color: var(--seg-muted); }
+  /* The category was a third line of its own, left-aligned under the summary,
+     so every card ended on a ragged stub. It is metadata about the row, not
+     part of what the row says, so it goes where metadata goes in a list: on the
+     title's line, pushed to the right edge. Two lines, one ragged edge fewer. */
+  /* ── What came off this list, and why ─────────────────────────────────
+     The search: four rows, all visible, nothing to search. The category
+     filter: three categories over four rows. The category itself, as a chip:
+     the row already carried a soft purple tile, and a soft purple label beside
+     it put two objects of the same hue and weight on one line, arguing. It was
+     also mine — their product has no categories on presets at all.
+
+     What is left is what a preset actually is: a mark, a name, and the one line
+     that says what the definition does. Their own menu shows the name alone. */
+  .sb-lib__none { grid-column: 1/-1; margin: 0; font-size: var(--text-xs); color: var(--seg-muted); }
+  /* The joiner between groups, drawn as a rule with the word on it — the shape
+     Braze and HubSpot both use, so the reader sees a boundary rather than
+     guessing where one group stops. */
+  .sb-g__sep { display: flex; align-items: center; gap: 8px; margin: 8px 2px; }
+  .sb-g__sep::before, .sb-g__sep::after { content: ""; flex: 1; height: 1px; background: var(--color-border-default); }
+  .sb-g__sep span { font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .06em;
+                    text-transform: uppercase; color: var(--seg-muted); }
+  .sb-g__lead { margin: 0 0 10px; font-size: 12.5px; color: var(--color-text-body); }
+  .sb-g__addg { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .sb-g__hint { font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb-add--v2 { margin-top: 8px; }
+  /* Availability is a row state, the way SLDS marks an expression row, not a
+     blocked save and not a red error: the condition is legal, it simply has no
+     data on the channel this group is about. */
+  .sb-cond--na { opacity: .78; }
+  .sb-cond__na { color: var(--color-text-body-subtle); }
+  .sb-add__b--na { opacity: .6; }
+  .sb-na { margin-left: 6px; font-size: 10px; color: var(--seg-muted); }
+  .sb-cond__why { flex: 1 0 100%; margin: 2px 0 0; font-size: var(--text-xs); line-height: 1.45; color: var(--color-text-body-subtle); }
   .sb-empty { color: var(--color-text-body); }
   /* What the description was understood to mean. Shown every time, because a
      suggestion nobody can check is a suggestion nobody will trust. */
@@ -124,15 +963,32 @@
     border-color: #ded9ee;
     border-color: color-mix(in srgb, var(--btn-primary-bg) 20%, #fff);
   }
+  /* Sparkles on the badge, the wand on the button — the same glyph twice on one
+     card read as a repeat rather than as two things. The sparkles are this
+     product's own mark for Fin: it is what "Fin AI" carries in the sidebar and
+     what "Ask Fin" carries in the segment menu. */
   .sb-fin__mark {
     display: inline-flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; flex: none; border-radius: 50%;
     background: var(--color-bg-white); color: var(--btn-primary-bg);
   }
+  /* White, so the page keeps one brand fill — Save segment — but not silent:
+     Fin's own mark leads the label in the brand colour. It is the same glyph
+     the card's badge carries, so the button and the card read as one offer. */
+  /* .btn-alternative hovers to --color-bg-muted (#F3F4F6), a neutral grey. On
+     white that is right; on this card's lilac wash it is a different hue at the
+     same lightness, so the button goes muddy the moment the pointer lands.
+     The hover steps in the card's own family instead — same derivation from the
+     brand button the card itself uses, one stop further in. */
+  .sb-fin__go:hover {
+    background: #efedf8;
+    background: color-mix(in srgb, var(--btn-primary-bg) 9%, #fff);
+    border-color: color-mix(in srgb, var(--btn-primary-bg) 22%, #fff);
+  }
   .sb-fin__t { display: flex; flex-direction: column; gap: 1px; margin-right: auto; }
   .sb-fin__t b { font-size: 13px; color: var(--color-text-heading); }
   .sb-fin__t span { font-size: 12px; color: var(--seg-muted); }
-  .sb-fin__hint { margin: 10px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--seg-muted); }
+  .sb-fin__hint { margin: 10px 0 0; font-size: var(--text-xs); line-height: 1.5; color: var(--seg-muted); }
   .sb-fin__exlab { margin: 14px 0 6px; font-size: 12px; color: var(--seg-muted); }
   /* Examples are chips you press to fill the box, not links you read: that is
      how the product's own Generate with Fin dialog offers its three. A link
@@ -152,13 +1008,13 @@
   .sb-fin__prev dd { margin: 0; color: var(--color-text-heading); }
   .sb-fin__prev ul { margin: 0; padding-left: 15px; }
   .sb-fin__q { color: var(--seg-muted); }
-  .sb-fin__skip { margin: 12px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--seg-muted); }
+  .sb-fin__skip { margin: 12px 0 0; font-size: var(--text-xs); line-height: 1.5; color: var(--seg-muted); }
 
   .sb-read { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border-light); }
   .sb-read__t { margin: 0 0 6px; font-size: 12px; font-weight: var(--font-medium); color: var(--color-text-heading); }
   .sb-read__l { margin: 0; padding-left: 16px; font-size: 12px; line-height: 1.6; color: var(--color-text-body); }
   .sb-read__q { color: var(--color-text-body-subtle); }
-  .sb-read__s { margin: 8px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--color-text-body-subtle); }
+  .sb-read__s { margin: 8px 0 0; font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-body-subtle); }
   /* 149x19. It sits under a field as its own action, not inside a sentence, so
      the inline exception in WCAG 2.5.8 does not cover it. */
   #sbGen { display: inline-flex; align-items: center; min-height: 24px; }
@@ -212,7 +1068,13 @@
   .sb-tpl__c span { font-size: 11px; color: var(--seg-muted); }
 
   .sb-modecards { display: flex; gap: 10px; flex-wrap: wrap; }
-  .sb-modecards .iris-radio-card { flex: 1; min-width: 230px; display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  /* The component, as Controls.stories.js ships it, and nothing else: check on
+     the left, body on the right, gap 12, padding 16, label over helper. The
+     icons were mine — the card has no slot for one, and putting it in the label
+     set a second mark next to the radio. Two up on a wide card is the only
+     thing added. */
+  .sb-modecards { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sb-modecards .iris-radio-card { flex: 1; min-width: 230px; }
 
   /* Variant-2 mode only. The container was capped at 1240px but never centred,
      so on a wide monitor the whole form sat against the left edge with a third
@@ -279,6 +1141,11 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3"/></svg>
         </button>
         <span id="sbDirty" class="iris-tag iris-tag--grey" style="font-size:11px;">Not saved</span>
+        <!-- Their placement, read off the live Create Segment header on 9 Sep:
+             beside Save. It was a link buried in the Conditions card that only
+             appeared while the card was empty, so with three conditions on
+             screen there was no way to reach a template at all. -->
+        <button class="btn btn-sm btn-alternative" id="sbTplHead" data-start="tpl" hidden>Start from template</button>
         <button class="btn btn-sm btn-alternative" id="sbCancel">Cancel</button>
         <button class="btn btn-sm btn-primary" id="sbSave" disabled>Save segment</button>
       </div>
@@ -294,6 +1161,7 @@
              name card — so a page whose whole job is to show you the object you
              are building opened on a yellow alert instead. -->
         <div id="sbWarn"></div>
+
 
         <!-- The product owner, 2026-09-03: "I don't like the template all the way at the
              bottom, because it already rolls off the page — it's not even above
@@ -324,12 +1192,19 @@
              what was understood, and what was passed over. -->
         <div class="sb-card" id="sbDescCard">
           <div class="sb-card__b sb-fin">
-            <span class="sb-fin__mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 5.6 10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a.9959.9959 0 0 0-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41zm-1.03 5.49-2.12-2.12 2.44-2.44 2.12 2.12z"/></svg></span>
+            <span class="sb-fin__mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/></svg></span>
             <div class="sb-fin__t">
               <b>Describe it and let Fin build it</b>
               <span>Fin fills in every field. You change what is wrong.</span>
             </div>
-            <button class="btn btn-sm btn-primary" id="sbGenFin">Generate with Fin</button>
+            <!-- Not btn-primary. Two full brand fills on one screen — this and
+                 Save segment — both read as "the thing to press", and the accent
+                 stops meaning anything when it is spent twice. Save is the
+                 page's commit and keeps the fill; Fin is one of three ways to
+                 start, alongside a template and typing it out, so it takes the
+                 library's neutral secondary. The card it sits on already
+                 carries the brand tint and the brand mark. -->
+            <button class="btn btn-sm btn-alternative sb-fin__go" id="sbGenFin">Generate with Fin</button>
           </div>
         </div>
 
@@ -347,7 +1222,7 @@
         </div>
 
 
-        <div class="sb-card">
+        <div id="sbUniHome"><div class="sb-card" id="sbUniCard">
           <div class="sb-card__h">
             <h2 class="sb-card__t">Starting universe</h2>
             <span class="sb-card__sub">Everything below narrows this set</span>
@@ -355,7 +1230,7 @@
           <div class="sb-card__b">
             <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
               <div class="form-group" style="margin:0;">
-                <label class="form-label" for="sbRange">Order window</label>
+                <label class="form-label" for="sbRange">Orders between</label>
                 <select class="form-select" id="sbRange" style="min-width:190px;">
                   <option value="30">Last 30 days</option>
                   <option value="90" selected>Last 90 days</option>
@@ -376,35 +1251,42 @@
             </div>
             <p style="margin:10px 0 0;font-size:12px;color:var(--seg-muted);" id="sbUniverse"></p>
           </div>
-        </div>
+        </div></div>
 
+        <div id="sbSummary"></div>
         <div class="sb-card">
           <div class="sb-card__h">
-            <h2 class="sb-card__t">Conditions</h2>
+            <span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="4" r="1.5" fill="currentColor"/><circle cx="10" cy="8" r="1.5" fill="currentColor"/><circle cx="6" cy="12" r="1.5" fill="currentColor"/></svg></span><h2 class="sb-card__t">Conditions</h2>
+            <span id="sbSegLock"></span>
             <span style="margin-left:auto;font-size:11px;color:var(--seg-muted);" id="sbCondN"></span>
-            <span class="sb-card__sub">What narrows the starting universe down to this segment</span>
+            <!-- Emptying the definition in one move. Not in Iris today — checked
+                 the live Create Segment page on 2026-09-09, which has Back,
+                 Start from template, Save and the filter pills and nothing
+                 else — so with eight conditions the only way back to nothing is
+                 eight presses. It is destructive but not irreversible: it goes
+                 through commit(), so undo puts it back, which is why it asks
+                 nothing before doing it. -->
+            <button class="card-footer-link sb-clear" id="sbClear" hidden><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5h11"/><path d="M6.5 4.5V3.3a.8.8 0 0 1 .8-.8h1.4a.8.8 0 0 1 .8.8v1.2"/><path d="M4.3 4.5v8.2a1.3 1.3 0 0 0 1.3 1.3h4.8a1.3 1.3 0 0 0 1.3-1.3V4.5"/><path d="M6.6 7.2v3.9M9.4 7.2v3.9"/></svg>Clear all</button>
+            <span class="sb-card__sub" id="sbCondSub">What narrows the starting universe down to this segment</span>
           </div>
           <div class="sb-card__b">
             <div id="sbConds"></div>
+            <!-- The two-column body of the Proposed card. Static scaffold, so the
+                 live <select> inside it survives a re-render. -->
+            <div class="sb2" id="sb2" hidden>
+              <aside class="sb2__side"><div id="sbUniSlot"></div><div id="sbOutline"></div></aside>
+              <div class="sb2__main" id="sbMain"></div>
+            </div>
             <div class="sb-add" id="sbAdd"></div>
           </div>
         </div>
 
-        <!-- Below the conditions, not above them. Measured at 800px tall the
-             Conditions card started at y=791 — nine pixels of border and
-             nothing else — with 564px of optional cards above it, of which
-             this was 241. Fin and "Write it from the definition" both write
-             the description from the conditions, so it cannot be filled in
-             first anyway. -->
         <div class="sb-card">
-          <div class="sb-card__h"><h2 class="sb-card__t">Description</h2>
+          <div class="sb-card__h"><span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 1.5H4a1.5 1.5 0 0 0-1.5 1.5v10A1.5 1.5 0 0 0 4 14.5h8a1.5 1.5 0 0 0 1.5-1.5V5.5L9.5 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9.5 1.5v4h4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 8.5h5M5.5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><h2 class="sb-card__t">Description</h2>
             <span class="sb-card__sub">What this segment is for, in plain language</span>
           </div>
           <div class="sb-card__b">
             <div class="form-group" style="margin-bottom:0;">
-              <!-- The card title is the label; a second visible "Description"
-                   right under it said the word twice. Their Instructions card
-                   does the same — titled card, unlabelled field. -->
               <label class="seg-sr" for="sbDesc">Description</label>
               <textarea class="form-textarea" id="sbDesc" rows="2" placeholder="What is this segment for?"></textarea>
               <p class="form-helper">
@@ -416,24 +1298,22 @@
         </div>
 
         <div class="sb-card" id="sbModeCard">
-          <div class="sb-card__h"><h2 class="sb-card__t">How this segment stays current</h2></div>
+          <div class="sb-card__h"><span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 8a5.5 5.5 0 0 1-9.4 3.9M2.5 8a5.5 5.5 0 0 1 9.4-3.9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12.5 1.5v3h-3M3.5 14.5v-3h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h2 class="sb-card__t">How this segment stays current</h2></div>
           <div class="sb-card__b sb-modecards">
-            <!-- The choice the current product never offers, which is why 8 segments sat
-                 uncalculated and 22 more are serving data from last year. -->
             <label class="iris-radio-card iris-radio-card--selected" for="modeAuto">
-              <span class="iris-radio iris-radio--checked" aria-hidden="true"></span>
+              <span class="iris-control__check"><span class="iris-radio iris-radio--checked" aria-hidden="true"></span></span>
               <input type="radio" name="sbMode" id="modeAuto" value="auto" checked class="seg-sr">
-              <span>
-                <b style="display:block;font-size:12.5px;color:var(--color-text-heading);">Recalculate nightly</b>
-                <span style="font-size:11.5px;color:var(--seg-muted);">A new version is written each night. Older versions stay readable, so a number you quoted last week still resolves.</span>
+              <span class="iris-control__body">
+                <span class="iris-control__label">Recalculate nightly</span>
+                <span class="iris-control__helper">A new version is written each night. Older versions stay readable, so a number you quoted last week still resolves.</span>
               </span>
             </label>
             <label class="iris-radio-card" for="modeSnap">
-              <span class="iris-radio" aria-hidden="true"></span>
+              <span class="iris-control__check"><span class="iris-radio" aria-hidden="true"></span></span>
               <input type="radio" name="sbMode" id="modeSnap" value="snapshot" class="seg-sr">
-              <span>
-                <b style="display:block;font-size:12.5px;color:var(--color-text-heading);">Calculate on demand</b>
-                <span style="font-size:11.5px;color:var(--seg-muted);">Runs only when someone asks for it. Use it for a fixed list you want to measure against.</span>
+              <span class="iris-control__body">
+                <span class="iris-control__label">Calculate on demand</span>
+                <span class="iris-control__helper">Runs only when someone asks for it. Use it for a fixed list you want to measure against.</span>
               </span>
             </label>
           </div>
@@ -442,6 +1322,13 @@
       </div>
 
       <div class="sb-rail">
+        <!-- Proposed replaces the single estimate with the funnel. -->
+        <div class="sb-card" style="margin-bottom:12px;" id="sbV2Card" hidden>
+          <div class="sb-card__h"><span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 8s2.7-4.5 7-4.5S15 8 15 8s-2.7 4.5-7 4.5S1 8 1 8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/></svg></span><h2 class="sb-card__t">Preview</h2>
+            <span class="iris-tag iris-tag--grey" style="margin-left:auto;font-size:10px;">Illustrative</span></div>
+          <div class="sb-card__b" id="sbV2Preview"></div>
+        </div>
+
         <div class="sb-card" style="margin-bottom:12px;" id="sbEstCard">
           <div class="sb-card__h"><h2 class="sb-card__t">Estimated audience</h2>
             <span class="iris-tag iris-tag--grey" style="margin-left:auto;font-size:10px;">Illustrative</span></div>
@@ -454,8 +1341,9 @@
           <dl class="sb-mini" id="sbMini"></dl>
         </div>
 
-        <div class="sb-card" style="margin-bottom:12px;">
-          <div class="sb-card__h"><h2 class="sb-card__t">Sample of who qualifies</h2></div>
+        <div class="sb-card">
+          <div class="sb-card__h">
+            <span class="sb-card__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.5 13.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10.5 3.2a2.5 2.5 0 0 1 0 4.6M12 9.6a4.5 4.5 0 0 1 2.5 3.9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><h2 class="sb-card__t">Sample of who qualifies</h2></div>
           <div class="sb-sample" id="sbSample"></div>
         </div>
 
@@ -465,7 +1353,28 @@
         </p>
       </div>
     </div>
-  </main>
+      <!-- Prototype scaffolding, deliberately not styled as product chrome: this
+         is a control for the review, not a feature of the page. Two builds of the
+         Conditions card on one URL, so the comparison is a click rather than two
+         tabs and a memory test. Everything outside this card is identical, and
+         the definition carries across the switch. -->
+    <div class="sb-vswitch sb-vswitch--foot" role="group" aria-label="Prototype variant">
+      <span class="sb-vswitch__l">Conditions card</span>
+      <!-- LIBRARY GAP, recorded not patched: in iris-components.css
+           `.btn-group .btn:hover` and `.btn-group .btn.active` declare the SAME
+           background, so while the pointer is over the unselected half the two
+           halves look identical and nothing says which one you are on. A toggle
+           whose selected state is indistinguishable under the cursor is not a
+           toggle. --primary is used here because it gives the selected half a
+           brand tint the neutral hover cannot imitate. -->
+      <div class="btn-group btn-group--primary btn-group--sm" role="radiogroup" aria-label="Prototype variant">
+        <button class="btn" role="radio" data-ver="1">Current</button>
+        <button class="btn" role="radio" data-ver="2">Proposed</button>
+      </div>
+      <span class="sb-vswitch__n" id="sbVerNote"></span>
+    </div>
+
+</main>
 </div>
 
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
@@ -515,17 +1424,56 @@ const CATALOG = {
     { k:'subs',   n:'Subscriber status',  ctl:['select', ['Subscribers only']], f:.27 }
   ],
   WHAT: [
-    { k:'sku',    n:'SKUs',               ctl:['num', 'Has', 'SKU(s)'], f:.36 },
-    { k:'fam',    n:'Product families',   ctl:['num', 'Has', 'product family(s)'], f:.48 }
+    { k:'sku',    n:'SKU',                ctl:['num', 'Has', 'SKU(s)'], f:.36 },
+    { k:'fam',    n:'Product family',     ctl:['num', 'Has', 'product family(s)'], f:.48 }
   ],
   HOW: [
     { k:'value',  n:'Order value',        ctl:['num', 'greater than $'], f:.44 },
-    { k:'disc',   n:'Discount',           ctl:['num', 'greater than %'], f:.38 },
+    /* ── Channel-scoped ────────────────────────────────────────────────────
+       the product owner, 2026-09-08: "how do I do channel-specific filters? Amazon uses
+       promotion dropdowns, Shopify uses a numeric discount input."
+
+       So a discount is not one condition. On Shopify it is a percentage you
+       type; on Amazon it is a promotion you pick. A form that offers both to
+       every segment lets someone build "Amazon only AND discount code SPRING24"
+       and hands back nothing, with no word about why.
+
+       `chan` names the channels a condition exists on. Absent means every
+       channel. ONLY THESE TWO ARE KNOWN — they are the two he gave on the call.
+       The rest of the matrix has to come from Iris; see the note in the
+       Conditions card, which says so on screen rather than guessing. */
+    /* The one discount fact that survives every channel. Shopify carries
+       `totalDiscountsSet` on the order and Amazon carries `PromotionDiscount` on
+       the order ITEM, so a money amount exists on both — which a percentage does
+       not. Unreliable only on EDI, where the SAC allowance segment is optional
+       and is a trade allowance rather than a consumer discount. */
+    /* ONE filter, the way the product has it. Read off their page on
+       2026-09-09: "Discount" carries a type — Percentage or Amount — and then a
+       Condition, "Greater than". I had split it into two separate filters,
+       "Discount amount" and "Discount percentage", which is a catalogue this
+       product does not have. The channel note stays on the percentage, because
+       that is the half Amazon cannot answer. */
+    { k:'disctype', n:'Discount',        ctl:['select', ['Percentage','Amount']], f:.40 },
+
+    /* Listable, so it is a list. Amazon SP-API's Promotions 2025-12-01 has
+       `searchPromotions`, returning promotionTitle, type and status — the names
+       below are shaped like that response and are OURS, not read from an
+       account, which the row says. */
+    { k:'promo',  n:'Amazon promotion',   ctl:['select', ['Lightning Deal','Best Deal','Coupon','Percentage Off','Buy One Get One']], f:.20,
+      chan:['Amazon Seller Partner'], isNew: true,
+      /* The open question this used to carry in full — whether an order's
+         PromotionIds are the same identifiers searchPromotions returns — is a
+         thing for Iris to prove against live data, and it lives in the handoff
+         note. It was four lines of API doubt inside a filter row. */ },
     /* Both halves are real: one segment is "No refunds", another is "Refunds
        greater than $1". A two-option select could express only the first, and
        opening the second inverted it. */
-    { k:'refund', n:'Refunds',            ctl:['select', ['No refunds']], f:.86 },
-    { k:'refamt', n:'Refund amount',      ctl:['num', 'greater than $'], f:.52 },
+    /* Their Refunds filter holds the threshold too — its own help text says
+       "Exclude refunded: only orders with zero refunds. Greater / less / equal:
+       threshold on refund amount. Between: refunds within a specific range."
+       So "Refund amount" was never a separate filter; it is a condition of this
+       one, and it goes back inside. */
+    { k:'refund', n:'Refunds',            ctl:['select', ['Exclude refunded orders','Refund amount greater than']], f:.86 },
     /* The channel names are real — read out of the live product's own picker on
        2026-09-07, a tree of Select All over DTC and Wholesale. The data counts
        them ("12 sales channel(s)"), so the count is what a condition carries;
@@ -539,7 +1487,10 @@ const CATALOG = {
         { g:'DTC' }, 'Amazon Seller Partner', 'Manual Order DTC', 'Shopify DTC',
         { g:'Wholesale' }, 'Manual Order Wholesale', 'Shopify Wholesale', 'SPS Commerce'
       ]], f:.63 },
-    { k:'tag',    n:'Order tags',         ctl:['num', 'Has', 'tag(s)'], f:.22 },
+    { k:'tag',    n:'Order tag',          ctl:['num', 'Has', 'tag(s)'], f:.22 },
+    /* Both of these are in the product and were missing here. */
+    { k:'whsl',   n:'Wholesale',           ctl:['select', ['Wholesale only','Exclude wholesale']], f:.30 },
+    { k:'subo',   n:'Subscription orders', ctl:['select', ['Subscription only','Exclude subscription']], f:.25 },
     /* The product owner, 10:00: "there's a specific discount code that I want to analyze."
        Iris filters on a discount PERCENTAGE today, not on a code, and no code
        appears anywhere in the data — which is why this was left out of the
@@ -550,7 +1501,8 @@ const CATALOG = {
        the value never comes from us. What it does need is to say plainly that
        Iris cannot do it yet, so the prototype is not read as a description of
        the current product. */
-    { k:'code',   n:'Discount code',      ctl:['text', 'is', 'e.g. SPRING24'], f:.12, isNew: true }
+    { k:'code',   n:'Discount code',      ctl:['text', 'is', 'e.g. SPRING24'], f:.12, isNew: true,
+      chan:['Shopify DTC', 'Shopify Wholesale'] }
   ]
 };
 const ALL = Object.values(CATALOG).flat();
@@ -561,8 +1513,8 @@ const TEMPLATES = [
      value…" while the rail confidently reported an audience, Save stayed
      enabled, and the saved segment carried a filter value the catalogue does
      not contain. */
-  { n:'Subscribers with refunds',  d:'Subscribers · refunded over $1',  cat:'Retention',   c:[['subs','Subscribers only'],['refamt','1']] },
-  { n:'Discount-driven first buy', d:'First-time · discount over 20%',  cat:'Acquisition', c:[['ctype','First-time customers'],['disc','20']] },
+  { n:'Subscribers with refunds',  d:'Subscribers · refunded over $1',  cat:'Retention',   c:[['subs','Subscribers only'],['refund','Refund amount greater than']] },
+  { n:'Discount-driven first buy', d:'First-time · discount over 20%',  cat:'Acquisition', c:[['ctype','First-time customers'],['disctype','Percentage']] },
   { n:'Top decile by revenue',     d:'Top 10% by Revenue',              cat:'Revenue',     c:[['pct','Top 10% by Revenue']] }
 ];
 
@@ -715,12 +1667,6 @@ if (EDIT) {
   ['sbTplCard', 'sbDescCard'].forEach(id => { const t = document.getElementById(id); if (t) t.hidden = true; });
 }
 
-/* Arriving from the list's menu: land on the way in that was chosen. */
-if (location.hash === '#describe') setTimeout(() => generateWithFin(''), 0);
-else if (location.hash === '#templates') {
-  const t = document.getElementById('sbTplCard');
-  if (t) t.scrollIntoView({ block: 'center' });
-}
 
 /* ── Generate with Fin ────────────────────────────────────────────────────
    Their flow, step for step, from the Automations demo the product owner gave at 13:40:
@@ -882,9 +1828,12 @@ function generateWithFin(prefill) {
         'and nothing is saved until you press Save segment.</p>',
       onConfirm: () => {
         commit(() => {
-          if (r.conds.length) state.conds = r.conds.map((c, ci) => ({
-            k: c.k, v: c.v, draft: true, phrase: (r.read[ci] || {}).phrase
-          }));
+          if (r.conds.length) {
+            state.conds = r.conds.map((c, ci) => ({
+              k: c.k, v: c.v, draft: true, phrase: (r.read[ci] || {}).phrase
+            }));
+            adoptFlat();
+          }
           state.name = name;
           /* Only write a description when there is one to write. Accepting a
              preview that recognised nothing used to blank whatever the reader
@@ -982,6 +1931,290 @@ if (V2) {
 let lastGenerated = '';
 
 let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: '', desc: '', mode: 'auto', join: 'all' };
+
+/* ── Which build of the Conditions card ──────────────────────────────────
+   `?variant=2` on the same URL. NOT `?v2`, which this page already uses for
+   something else entirely — it means "opened from the v2 list", and it changes
+   the back links and removes the scheduling card. Two flags, two jobs.
+
+   The rest of the page — name, order window, Fin,
+   description, estimate, save — is one implementation shared by both, and the
+   estimate runs off the same flattened condition list either way, so what the
+   two variants are being judged on is the card and nothing else. */
+let CARD2 = new URLSearchParams(location.search).get('variant') === '2';
+
+/* ── v2: one level of groups, per the market scan ────────────────────────
+   Every serious 2026 segment builder gives group-level nesting and stops there:
+   Braze, HubSpot, Klaviyo, Airtable and Notion all cap it, react-querybuilder
+   ships `maxLevels` to enforce a cap, and Adobe states the reason plainly —
+   "without using containers, you cannot mix both AND with OR logic in a single
+   level." Our card cannot express "Shopify OR Amazon, AND over $100" at all
+   today, which is why the product owner called it the main UX problem.
+
+   One level, not recursion. Pencil & Paper's rule for enterprise filtering is
+   to let filter depth track data volume, and at two to five conditions a
+   recursive tree costs more than it returns.
+
+   A group carries two things: how its own conditions combine, and OPTIONALLY
+   which channel's orders it is about. The scope is the container pattern from
+   Salesforce Data Cloud, Segment's Linked Audiences and Adobe AEP, and it earns
+   its place here for a reason the generic pattern does not mention: Shopify
+   attaches a discount to the ORDER and Amazon attaches it to the ORDER ITEM, so
+   "over $100 and discounted" is only a meaningful question once you have said
+   which orders you mean. */
+/* scope is a LIST of channels, not one. A single-channel scope could not ask
+   "orders on either Shopify storefront", which is the shape the product owner named at
+   12:20 — a segment spanning several channels. */
+let groups = [{ join: 'all', scope: [], conds: [] }];
+let joinTop = 'all';          /* how the groups combine with each other */
+let picking = null;           /* index of the group whose picker is open */
+let chanOpen = null;          /* index of the group whose channel picker is open */
+let chanQ = '';               /* typed into that picker's search */
+let focused = null;           /* {gi, ci} — the condition the editor is showing */
+let activeGroup = 0;          /* the group a pill adds to */
+
+/* The estimate, Save, Fin and the description all read state.conds. v2 keeps
+   the groups and writes the flat list from them, so nothing downstream had to
+   learn about groups — and the two variants are scored by the same maths. */
+/* Anything that writes state.conds WHOLESALE has to hand the result to the
+   groups, or the next render throws it away: syncFlat() rebuilds state.conds
+   FROM groups, so a flat write outside them survives exactly until the next
+   paint. Fin hit this — it filled the name and the window, and the conditions
+   it had just read out of the sentence vanished before they were drawn. */
+function adoptFlat() {
+  if (!CARD2) return;
+  groups = [{ join: state.join === 'any' ? 'any' : 'all', scope: [], conds: state.conds.slice() }];
+  joinTop = 'all'; focused = null; activeGroup = 0;
+}
+function syncFlat() {
+  state.conds = groups.reduce((a, g) => a.concat(g.conds), []);
+  /* A single group hands its own joiner up; several groups are joined by the
+     top-level one. The flat estimate cannot model "all of A, any of B", and the
+     card is labelled Illustrative for exactly this kind of reason. */
+  state.join = groups.length === 1 ? (groups[0].join === 'any' ? 'any' : 'all')
+                                   : (joinTop === 'any' ? 'any' : 'all');
+}
+/* Switching variants must not lose the definition, so the flat list becomes one
+   group and a group set becomes the flat list. */
+/* Toggling to the flat card and back should not quietly destroy the grouping.
+   The signature is the flat condition list as it stood when the groups were last
+   true of it; if nothing was added or removed while the flat card was up, the
+   groups are still valid and are kept. */
+let groupsSig = null;
+const flatSig = () => state.conds.map(c => c.k + '=' + (c.v == null ? '' : c.v)).join('|');
+/* ── What is missing, said once, at the top, with a way to each thing ────
+   GOV.UK's error summary: shown whenever validation fails even for a single
+   error, placed above the card's own heading, focus moved to it, and worded
+   the same as the thing it points at. Each line is a link, so the keyboard
+   reaches the row that needs work in one press. */
+function saveSummary() {
+  const host = document.getElementById('sbSummary');
+  if (!host) return;
+  const items = [];
+  if (!state.name.trim()) items.push(['sbName', 'Give the segment a name']);
+  if (!state.conds.length) items.push([null, 'Add at least one condition']);
+  groups.forEach((g, gi) => g.conds.forEach((c, ci) => {
+    if (!hasValue(c)) {
+      const def = ALL.find(a => a.k === c.k);
+      items.push([`focus:${gi}:${ci}`, `Give ${def ? def.n : 'the condition'} a value`]);
+    }
+  }));
+  if (!CARD2) state.conds.forEach((c, i) => {
+    if (!hasValue(c)) {
+      const def = ALL.find(a => a.k === c.k);
+      items.push([`cond-${i}`, `Give ${def ? def.n : 'the condition'} a value`]);
+    }
+  });
+  if (window.__badRange) items.push(['sbFrom', 'Fix the date range']);
+  if (window.__nameClash) items.push(['sbName', 'Pick a name that is not already taken']);
+  if (EDIT && !touched) items.push([null, 'Change something before saving']);
+
+  host.innerHTML = `<div class="sb-sum" tabindex="-1" role="alert" aria-labelledby="sbSumT">
+      <h3 class="sb-sum__t" id="sbSumT">Before this can be saved</h3>
+      <ul class="sb-sum__l">${items.map(([t, l]) =>
+        `<li>${t ? `<a href="#" data-sum="${t}">${esc(l)}</a>` : esc(l)}</li>`).join('')}</ul>
+    </div>`;
+  /* Now the controls carry it too, bound to the row rather than announced once. */
+  document.querySelectorAll('.sb2__ed [data-v2], .sb2__ed [data-v]').forEach(el => {
+    if (!el.value) el.setAttribute('aria-invalid', 'true');
+  });
+  host.querySelector('.sb-sum').focus();
+}
+
+function condsToGroups() {
+  if (groupsSig !== null && groupsSig === flatSig()) return;   /* untouched — keep them */
+  /* ── Sales channels is not a condition here ──────────────────────────
+     The flat card asks which channels with a condition, because it has nowhere
+     else to put the question. This variant asks it on the GROUP — "Orders on" —
+     which is the whole point of the variant: the scope is per group, and it is
+     what the availability rule reads. Keeping both meant two controls writing
+     the same fact, in two places, with no rule about which wins.
+
+     So a Sales channels condition arriving from the flat card, a template or
+     Fin is not dropped: it becomes this group's scope, which is the same
+     statement in the model this card actually uses. */
+  const conds = [];
+  let scope = [];
+  state.conds.forEach(c => {
+    if (c.k === 'chan') {
+      scope = String(c.v || '').split(',').map(x => x.trim()).filter(Boolean);
+    } else conds.push(c);
+  });
+  groups = [{ join: state.join === 'any' ? 'any' : 'all', scope: scope, conds: conds }];
+  joinTop = 'all';
+}
+
+/* ── v2: one way in, not two cards of it ─────────────────────────────────
+   the product owner, 2026-09-08: "'Start from template' to be removed from its current
+   position. Separate creation modes — manual, generate with Fin, from template.
+   The template option should open a dedicated template library."
+
+   The page opened with two full cards of scaffolding — Describe it and let Fin
+   build it, and four template tiles under All categories — before the reader
+   reached the thing they came to make. Both are ways to START, and a way to
+   start is a choice you make once, not a permanent fixture of the page.
+
+   So in v2 they collapse into one quiet line, and the templates move into a
+   library with its own search rather than four tiles that were only ever the
+   first four. Iris already has this menu on New segment in the list; this is the
+   same three doors, reachable again from inside. */
+function startBar() {
+  /* Proposed keeps the Fin card — brand mark, one primary action, the door
+     the product owner liked — and drops only the template CARD, which is the one he asked
+     to move. Templates become the second button inside the card that is already
+     there, opening the library.
+
+     The first attempt replaced both cards with a row of three text links. It
+     lost the Fin mark, the primary button and any hierarchy, and read as three
+     unequal sentences in a row. */
+  document.getElementById('sbDescCard').hidden = EDIT;
+  document.getElementById('sbTplCard').hidden  = CARD2 || EDIT;
+  document.getElementById('sbV2Card').hidden   = !CARD2;
+  /* The card is called Conditions and its first control is labelled ORDERS
+     BETWEEN. "What narrows the starting universe down to this segment" restated
+     the title and named a thing that is no longer on the page. */
+  document.getElementById('sbCondSub').hidden  = CARD2;
+  document.getElementById('sbTplHead').hidden  = !CARD2 || EDIT;
+  /* The order window is the first row of the outline in Proposed, so its own
+     card would be the same thing said twice. */
+  /* ── The starting universe is one line, not a section ──────────────────
+     It was a full card: a heading, a field label, a select and a sentence, for
+     ONE setting, sitting above the work at the same weight as the work. In
+     Proposed the same node moves inside the Conditions card and becomes its
+     first line — which is where their own product puts it, boxed at the top of
+     the outline.
+
+     Moved rather than re-rendered. The control is stateful and has its own
+     custom-range inputs; rebuilding it from markup on every keystroke is how a
+     builder loses the dates someone just typed. */
+  const uniCard = document.getElementById('sbUniCard');
+  const slot = document.getElementById('sbUniSlot');
+  const home = document.getElementById('sbUniHome');
+  uniCard.classList.toggle('sb-uni--inline', CARD2);
+  if (CARD2 && uniCard.parentNode !== slot) slot.appendChild(uniCard);
+  if (!CARD2 && uniCard.parentNode !== home) home.appendChild(uniCard);
+  document.getElementById('sbEstCard').hidden  = CARD2;
+}
+/* One implementation, two doors: the inline tiles in Current and the library in
+   Proposed both land here, so "a template replaces the whole definition, and
+   never silently" is stated once.
+
+   This was deleted by accident: an edit that replaced startBar() sliced from its
+   opening brace to the next function, and this sat in between. Both callers
+   survived, so pressing a template threw ReferenceError and nothing else said a
+   word. */
+function applyTemplate(tpl) {
+  const apply = () => {
+    commit(() => {
+      state.conds = tpl.c.map(([k, v]) => ({ k, v }));
+      adoptFlat();
+      if (!state.name) { state.name = tpl.n; document.getElementById('sbName').value = tpl.n; }
+      /* A description written from the previous definition describes a segment
+         that no longer exists. It used to survive the replacement and sit under
+         the new conditions contradicting them, with Save enabled. */
+      if (state.desc && state.desc === lastGenerated) { state.desc = ''; }
+    });
+    document.getElementById('sbDesc').value = state.desc;
+  };
+  if (state.conds.length) modal({
+    title: 'Replace the current conditions?', confirmLabel: 'Replace',
+    body: `<p style="margin:0;font-size:13px;color:#374151;">The template \u201C<strong>${esc(tpl.n)}</strong>\u201D replaces all ${state.conds.length} conditions you have set. Undo will bring them back.</p>`,
+    onConfirm: apply
+  });
+  else apply();
+}
+
+/* ── A mark per template ─────────────────────────────────────────────────
+   .card-icon at the size it ships, in ONE neutral variant for every row. The
+   first pass gave each category its own colour — green, indigo, sky — and four
+   coloured tiles in a list of four told the reader nothing the word under each
+   title does not already say. Colour spent decoratively stops being a signal
+   anywhere else on the screen; the shapes differ, and that is enough.
+   The variant is .card-icon-purple — the library ships each colour as a PAIR,
+   a tint with a foreground of the same family. card-icon-gray was the wrong
+   one: its pair is grey on grey, so the glyph came out near-black on a neutral
+   tile, which is the one combination in the set that belongs to no hue at all.
+   Purple is the brand's own family and it is the same on every row.
+   Icons are the project's own, from segments-v2-shared.js. */
+const CAT_ICON = {
+  Revenue:     ['card-icon-purple', '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>'],
+  Retention:   ['card-icon-purple', '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>'],
+ Acquisition: ['card-icon-purple', '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>']
+};
+
+function templateLibrary() {
+  const list = () => TEMPLATES.map((t, i) => [t, i])
+    .map(([t, i]) => `<button class="sb-lib__c" data-lib="${i}">
+        <span class="card-icon ${CAT_ICON[t.cat] ? CAT_ICON[t.cat][0] : 'card-icon-purple'}" aria-hidden="true">${CAT_ICON[t.cat] ? CAT_ICON[t.cat][1] : ''}</span>
+        <span class="sb-lib__t">
+          <b>${esc(t.n)}</b><span>${esc(t.d)}</span></span>
+      </button>`).join('')
+    || '<p class="sb-lib__none">Nothing matches that.</p>';
+  modal({
+    title: 'Start from a template',
+    wide: true,
+    body: `<p class="sb-lib__lead">A ready definition to begin from — everything stays editable once it is in.</p>
+      <div class="sb-lib" id="libList">${list()}</div>`,
+    cancelLabel: 'Close'
+  });
+  document.querySelector('.sb-lib__c')?.focus();
+}
+
+/* The switch is a URL, so a link to one variant is a link to that variant —
+   which is the point of putting both on one page for a review. History is
+   replaced rather than pushed: Back should leave the builder, not step through
+   however many times someone toggled. */
+function setVariant(on) {
+  if (on === CARD2) return;
+  /* Going back to the flat card loses the grouping, because the flat card has
+     nowhere to put it. Said out loud rather than discovered: the conditions all
+     survive, their arrangement does not. */
+  const lost = !on && CARD2 && groups.length > 1;
+  CARD2 = on;
+  if (CARD2) condsToGroups();
+  else { syncFlat(); groupsSig = flatSig(); }
+  if (lost) toast('Groups set aside',
+    'The current card holds one list. Your groups come back when you switch, unless you change the conditions here.');
+  picking = null;
+  const u = new URL(location.href);
+  if (CARD2) u.searchParams.set('variant', '2'); else u.searchParams.delete('variant');
+  history.replaceState(null, '', u.pathname + u.search + u.hash);
+  document.getElementById('sbAdd').hidden = CARD2;
+  syncVariantBtns();
+  startBar();
+  render();
+}
+function syncVariantBtns() {
+  document.querySelectorAll('[data-ver]').forEach(b => {
+    const on = (b.dataset.ver === '2') === CARD2;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-checked', String(on));
+    b.tabIndex = on ? 0 : -1;
+  });
+  document.getElementById('sbVerNote').textContent = CARD2
+    ? 'The definition is tied to a channel, and each filter says which channel it exists on.'
+    : 'One flat list, one and/or for all of it.';
+}
 let touched = false;   /* opening a segment for editing is not a change to it */
 if (EDIT) {
   document.title = `Edit ${EDIT.n} · Iris`;
@@ -1101,7 +2334,20 @@ const fmt$ = v => '$' + Math.round(v).toLocaleString('en-US');
 
 /* ── undo / redo ── */
 const history_ = { past: [], future: [] };
-const snapshot = () => JSON.parse(JSON.stringify(state));
+/* ── History has to cover the grouping too ───────────────────────────────
+   The snapshot was `state` alone, which is right while state.conds is the only
+   copy of the definition. In Proposed the conditions live in `groups` and
+   state.conds is DERIVED from them on every render — so undo restored a state
+   whose conds were immediately overwritten from the untouched groups, and
+   pressing it did nothing at all. The arrangement is part of the definition, so
+   it is part of the history. */
+const snapshot = () => JSON.parse(JSON.stringify({ state: state, groups: groups, joinTop: joinTop }));
+function restore(snap) {
+  state = snap.state;
+  groups = snap.groups && snap.groups.length ? snap.groups : [{ join:'all', scope:[], conds:[] }];
+  joinTop = snap.joinTop || 'all';
+  picking = null; focused = null; activeGroup = 0;
+}
 function commit(fn) {
   touched = true;
   history_.past.push(snapshot());
@@ -1132,8 +2378,8 @@ function flushPending() {
     if (v !== state.desc) commit(() => state.desc = v);
   }
 }
-function undo() { flushPending(); if (!history_.past.length) return; history_.future.push(snapshot()); state = history_.past.pop(); syncInputs(); render(); }
-function redo() { flushPending(); if (!history_.future.length) return; history_.past.push(snapshot()); state = history_.future.pop(); syncInputs(); render(); }
+function undo() { flushPending(); if (!history_.past.length) return; history_.future.push(snapshot()); restore(history_.past.pop()); syncInputs(); render(); }
+function redo() { flushPending(); if (!history_.future.length) return; history_.past.push(snapshot()); restore(history_.future.pop()); syncInputs(); render(); }
 function syncInputs() {
   document.getElementById('sbName').value = state.name;
   document.getElementById('sbDesc').value = state.desc;
@@ -1199,7 +2445,7 @@ function estimate() {
      the condition stopped narrowing at all. The same trap this page fell into
      once before, on the Save button. */
   const filledOf = c => {
-    if (c.v === '' || c.v == null) return false;
+    if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
     return !(d && d.ctl[0] === 'num' && badNum(c.v));
   };
@@ -1232,17 +2478,97 @@ const ownIt = i => { if (state.conds[i]) state.conds[i].draft = false; };
    only the first option in the list, and nothing was read at all. Both used to
    print the second sentence, which made the preview's own mapping look like a
    lie the moment it landed in the form. */
-const why = c => c.phrase
-  ? `Read from “${esc(c.phrase)}” in your description.`
-  : 'First value in the list — change it if you meant another.';
+/* Only when there is something to say. A value the Add button put there is
+   already labelled "suggested" on the row; telling the reader in a sentence
+   that it is the first option and they may change it is a line about how a
+   dropdown works. Fin reading a phrase out of the description is a fact about
+   THEIR text, and that one stays. */
+const why = c => c.phrase ? `Read from "${esc(c.phrase)}" in your description.` : '';
 
-function condRow(c, i, steps) {
+/* ── Which channels the segment is standing on ───────────────────────────
+   No Sales channels condition means every channel, so a scoped condition is
+   fine. With one, a scoped condition has to intersect it or it matches nobody —
+   and saying so on the row is the whole point of scoping. */
+function pickedChannels() {
+  const c = state.conds.find(x => x.k === 'chan');
+  if (!c) return null;                       /* null = all channels */
+  return String(c.v || '').split(',').map(x => x.trim()).filter(Boolean);
+}
+function scopeState(def) {
+  if (!def.chan) return null;
+  const picked = pickedChannels();
+  if (picked === null) return { ok: true };
+  const hit = def.chan.filter(x => picked.indexOf(x) !== -1);
+  return { ok: hit.length > 0, picked: picked };
+}
+/* The same files the list page uses, from the product's own /applications-logos/.
+   Written out here because this page does not load segments-v2-shared.js and
+   two paths are not worth pulling the whole module in for. */
+const CHANNEL_LOGO = {
+  'Amazon Seller Partner':  '../assets/channel-logos/amazon-logo.svg',
+  'Shopify DTC':            '../assets/channel-logos/shopify-logo.svg',
+  'Shopify Wholesale':      '../assets/channel-logos/shopify-logo.svg'
+};
+/* The channels a condition lives on, drawn the way channels are drawn
+   everywhere else in this build: the logo, name on the tooltip. */
+/* The same mark scopeMark() puts on a condition, for a group or a segment that
+   has been tied to a channel by the conditions inside it. Says the brand, not
+   the six channel names, and carries the full list in its title. */
+/* ── What tied this to a channel, and by what ────────────────────────────
+   The first version was the same 10px "only" tick the pills carry, which is
+   right on a pill — a footnote on a menu item — and wrong here: this is the
+   segment saying it can no longer read half the business, and it arrived with
+   no explanation of when or why.
+
+   So it is .badge, the library's own, at its shipped size, and it NAMES the
+   condition that caused it. Nobody should have to work out which of five rows
+   made the decision. */
+function lockChip(chans, what, by, cause) {
+  if (!chans || !chans.length) return '';
+  const seen = [];
+  chans.forEach(ch => { const l = CHANNEL_LOGO[ch]; if (l && seen.indexOf(l) === -1) seen.push(l); });
+  const why = by || cause;
+  const t = what + ' can only read ' + chans.join(', ') + ' orders' +
+            (why ? ', because ' + why + ' exists nowhere else.' : '.');
+  return `<span class="badge badge-gray sb-lock" title="${esc(t)}" aria-label="${esc(t)}">` +
+    seen.map(src => `<img src="${src}" alt="" width="15" height="15">`).join('') +
+    `${esc(lockName(chans))} only${by ? ` <span class="sb-lock__by">· ${esc(by)}</span>` : ''}</span>`;
+}
+/* The condition that narrowed it: the first one in the group whose channels are
+   not the whole list. */
+function lockCause(g) {
+  const d = (g.conds || []).map(c => ALL.find(a => a.k === c.k))
+    .find(x => x && x.chan && x.chan.length < CHAN_ALL.length);
+  return d ? d.n : null;
+}
+
+function scopeMark(def) {
+  if (!def.chan) return '';
+  const seen = [];
+  def.chan.forEach(ch => {
+    const l = CHANNEL_LOGO[ch];
+    if (l && seen.indexOf(l) === -1) seen.push(l);
+  });
+  const names = def.chan.join(', ');
+  return `<span class="sb-scope" title="${esc('Only on ' + names)}" aria-label="${esc('Only on ' + names)}">` +
+    seen.map(src => `<img src="${src}" alt="" width="14" height="14">`).join('') +
+    `<span class="sb-scope__t">only</span></span>`;
+}
+
+function condRow(c, i, steps, v2) {
   const def = ALL.find(a => a.k === c.k);
   const [kind, arg] = def.ctl;
   const filled = c.v !== '' && c.v != null;
-  const id = `cond-${i}`;
+  /* In v2 the row's `i` is its index WITHIN ITS GROUP, because the editor is
+     handed that group's own funnel. The control used to carry that number as
+     data-v, and the change handler wrote state.conds[i] — the FLAT list. So
+     typing a value for the second group's first condition wrote it into the
+     first group's first condition, and nothing in the second group could ever
+     be filled. `addr` is the address the handler can actually resolve. */
+  const addr = v2 ? `data-v2="${v2.gi}:${v2.ci}"` : `data-v="${i}"`;
+  const id = v2 ? `cond-${v2.gi}-${v2.ci}` : `cond-${i}`;
   const ctl = kind === 'select'
-    ? `<select class="form-select sb-sel--sm" id="${id}" data-v="${i}">
+    ? `<select class="form-select sb-sel--sm" id="${id}" ${addr}>
          <option value="">Choose a value…</option>${(() => {
            /* Either a plain list of values, or one broken by { g: 'Group' }
               markers. The product groups its channels into DTC and Wholesale,
@@ -1266,26 +2592,49 @@ function condRow(c, i, steps) {
          arg.forEach(o => {
            if (o && typeof o === 'object' && o.g) { out += `<b class="sb-multi__g">${esc(o.g)}</b>`; gi++; return; }
            const on = picked.indexOf(o) !== -1;
-           out += `<label class="sb-multi__i"><input type="checkbox" class="iris-checkbox" data-multi="${i}" value="${esc(o)}"${on ? ' checked' : ''}>${esc(o)}</label>`;
+           /* .iris-checkbox is a <span role="checkbox"> in the library, not a
+              class for an <input> — put on an input it does nothing at all, and
+              what showed was the browser's own control in the operating
+              system's accent colour. Hence a blue tick in a purple product.
+
+              The input stays, hidden, because it is what a keyboard and a
+              screen reader operate; the library's span is what is drawn. The
+              card re-renders on change, so the modifier is written here rather
+              than chased in CSS. */
+           out += `<label class="iris-control sb-multi__i">
+             <input type="checkbox" class="seg-sr sb-multi__in" data-multi="${i}" value="${esc(o)}"${on ? ' checked' : ''}>
+             <span class="iris-checkbox${on ? ' iris-checkbox--checked' : ''}" aria-hidden="true"></span>
+             <span class="iris-control__label">${esc(o)}</span></label>`;
          });
          return out;
        })()}</span>`
     : kind === 'text'
-    ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--seg-muted);">${arg}
-         <input class="form-input" id="${id}" data-v="${i}" type="text" maxlength="40" autocomplete="off"
-           value="${c.v == null ? '' : esc(c.v)}" placeholder="${esc(def.ctl[2] || '')}"
-           style="width:150px;height:32px;font-size:12.5px;"></span>`
-    : `<span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--seg-muted);">${arg}
-         <input class="form-input" id="${id}" data-v="${i}" type="number" min="0" max="1000000" step="1"
+    ? `<span class="sb-val">${arg}
+         <input class="form-input sb-in--text" id="${id}" ${addr} type="text" maxlength="40" autocomplete="off"
+           value="${c.v == null ? '' : esc(c.v)}" placeholder="${esc(def.ctl[2] || '')}"></span>`
+    /* Sizes and a height were written inline here, off the token scale and on a
+       library control that computes its own. */
+    : `<span class="sb-val">${arg}
+         <input class="form-input sb-in--num" id="${id}" ${addr} type="number" min="0" max="1000000" step="1"
            value="${c.v === '' || c.v == null ? '' : esc(c.v)}" placeholder="0"
            aria-describedby="${badNum(c.v) ? id + '-err' : ''}"
-           style="width:92px;height:32px;font-size:12.5px;${badNum(c.v) ? 'border-color:var(--color-border-danger)' : ''}">${def.ctl[2] || ''}</span>
-       ${badNum(c.v) ? `<span class="form-feedback-error" id="${id}-err" style="font-size:11px;">Enter a whole number between 0 and 1,000,000</span>` : ''}`;
+           ${badNum(c.v) ? 'style="border-color:var(--color-border-danger)"' : ''}>${def.ctl[2] || ''}</span>
+       ${badNum(c.v) ? `<span class="form-feedback-error" id="${id}-err">Enter a whole number between 0 and 1,000,000</span>` : ''}`;
   const drop = steps[i] - steps[i + 1];
   /* The operator joins two conditions, so it belongs between them. The first gap
      carries the control; the rest just state what was chosen. With a single
      condition there is nothing to join and nothing is shown. */
-  const joiner = i === 0 ? ''
+  /* In v2 the group header already carries the joiner, and it carries it once
+     for the whole group. Drawing the flat card's global and/or control inside a
+     group put a second, contradicting control on the first row of every group
+     after the first — it keys off the FLAT index, which is 1 there. The joiner
+     between rows is now a word, not a control. */
+  const joiner = v2
+    /* In the detail pane the row stands alone: there is nothing above it to join
+       to, and the count belongs in the preview funnel beside every other step,
+       not printed twice. */
+    ? (v2.bare || v2.ci === 0 ? '' : `<div class="sb-op">${v2.join === 'any' ? 'or' : v2.join === 'none' ? 'nor' : 'and'}</div>`)
+    : i === 0 ? ''
     : i === 1
       ? `<div class="sb-op sb-op--ctl">
            <label class="seg-sr" for="sbJoin">How conditions combine</label>
@@ -1301,23 +2650,541 @@ function condRow(c, i, steps) {
      row says where the value came from instead of printing a number that
      pretends to. */
   const draft = c.draft && filled;
+  /* A condition that cannot apply is a worse problem than one with no value, so
+     it takes the same red row and says the specific thing instead. */
+  /* v1 asks "do the segment's chosen channels include this condition's?" and
+     paints the row red when they do not. v2 asks the same question of the
+     GROUP the row sits in, and answers it as an availability statement rather
+     than an error — Adobe's "No Data Ingested" badge, not a failure. */
+  const sc = CARD2 ? null : scopeState(def);
+  const dead = sc && !sc.ok;
+  const na = v2 && v2.avail;
   return `${joiner}
-    <div class="sb-cond ${draft ? 'sb-cond--draft' : filled ? '' : 'sb-cond--bad'}">
+    <div class="sb-cond ${na ? 'sb-cond--na' : draft ? 'sb-cond--draft' : (filled && !dead) ? '' : 'sb-cond--bad'}">
       <div class="sb-cond__main">
-        <label class="sb-cond__name" id="${id}-lab" for="${id}">${def.n}</label>
+        <label class="${v2 && v2.bare ? 'seg-sr' : 'sb-cond__name'}" id="${id}-lab" for="${id}">${def.n}</label>
+        ${/* The editor already has the name as its heading, with the channel
+             mark beside it. Printing both again one line below put the same
+             two things on the screen twice, four pixels apart. The label stays
+             for the control that needs one, and stops being visible. */
+          v2 && v2.bare ? '' : scopeMark(def)}
         ${ctl}
         ${draft ? '<span class="sb-sugg">suggested</span>' : ''}
-        <span class="sb-cond__n">${filled
-          ? (state.join === 'any' ? `<b>${fmtN(steps[i + 1])}</b> in the union` : `<b>${fmtN(steps[i + 1])}</b> left · drops ${fmtN(drop)}`)
+        <span class="sb-cond__n"${v2 && v2.bare ? ' hidden' : ''}>${na
+          ? `<span class="sb-empty">not available on this group’s channel</span>`
+          : dead
+          ? `<span class="sb-empty">none of its channels are selected — this condition matches nobody</span>`
+          : filled
+          /* The wording follows the joiner that actually governs this row. In v2
+             that is the GROUP's, not the page's: with groups unioned at the top
+             but ANDed inside, every row inside a group was labelled "in the
+             union" while printing a genuine funnel. */
+          ? ((v2 ? v2.join : state.join) === 'any'
+              ? `<b>${fmtN(steps[i + 1])}</b> in the union`
+              : (v2 && v2.join === 'none'
+                  ? `<b>${fmtN(steps[i + 1])}</b> left · removes ${fmtN(drop)}`
+                  : `<b>${fmtN(steps[i + 1])}</b> left · drops ${fmtN(drop)}`))
           : '<span class="sb-empty">no value yet — this condition is not filtering</span>'}</span>
-        ${draft ? `<p class="sb-cond__why">${why(c)}</p>` : ''}
-        ${def.isNew ? `<p class="sb-cond__why sb-cond__new">Iris does not filter on a discount code today — it filters on the discount percentage. This is the capability you asked for, drawn so it can be judged.</p>` : ''}
+        ${/* ── One line under a condition, never four ───────────────────────
+              A row could stack the suggestion, the dead-channel warning, the
+              unavailable reason and the catalogue note all at once, and a
+              hardcoded fifth paragraph for Discount code said the same thing
+              the note says. Four paragraphs of small print under one input is
+              not something anybody reads.
+
+              So they queue by urgency and one wins: what is broken, then what
+              is worth knowing, then how the value got there. */
+          (() => {
+            const line =
+              na   ? { c: 'sb-cond__na',  t: na }
+            : dead ? { c: 'sb-cond__new', t: `${def.n} is ${lockName(def.chan)} only. Sales channels is set to ${sc.picked.length ? sc.picked.join(', ') : 'nothing'}.` }
+            : def.note ? { c: 'sb-cond__new', t: def.note }
+            : (draft && why(c)) ? { c: '', t: why(c) }
+            : null;
+            return line ? `<p class="sb-cond__why ${line.c}">${esc(line.t)}</p>` : '';
+          })()}
       </div>
-      <button class="sb-x" data-x="${i}" aria-label="Remove the ${def.n} condition">✕</button>
+      <button class="sb-x" ${v2 ? `data-x2="${v2.gi}:${v2.ci}"` : `data-x="${i}"`} aria-label="Remove the ${def.n} condition">✕</button>
     </div>`;
 }
 
+/* ── v2 ───────────────────────────────────────────────────────────────────
+   Plain language, not AND/OR. Hearst's information-retrieval work reports that
+   users read AND as WIDENING — "dogs and cats" is taken to mean documents about
+   dogs plus documents about cats — and NN/g found the same failure in the
+   field. Young and Shneiderman measured the fix: twenty Boolean-naive subjects
+   wrote significantly more correct queries against a graphical builder than
+   against SQL. So the joiner reads "matches all of / any of / none of", the
+   wording Pencil & Paper record for enterprise filtering and Salesforce ships in
+   its own product. */
+/* Their two, and only their two. Opened the SEGMENT joiner on
+   dashboard.irisfinance.co/customer-segments/new on 2026-09-09: the menu holds
+   exactly "all of" and "any of". "none of" was mine and is gone. */
+const JOINS = [['all', 'all of'], ['any', 'any of']];
+
+const CHAN_GROUPS = [
+  { g:'DTC',       chans:['Amazon Seller Partner', 'Manual Order DTC', 'Shopify DTC'] },
+  { g:'Wholesale', chans:['Manual Order Wholesale', 'Shopify Wholesale', 'SPS Commerce'] }
+];
+const CHAN_ALL = CHAN_GROUPS.reduce((a, x) => a.concat(x.chans), []);
+/* Which group a channel belongs to, for the trigger's summary. */
+const CHAN_OF = {};
+CHAN_GROUPS.forEach(x => x.chans.forEach(c => { CHAN_OF[c] = x.g; }));
+
+/* ── The channel picker ───────────────────────────────────────────────────
+   Ours, not theirs. The product's own is a checkbox tree in a popover: Select
+   All over DTC and Wholesale, six rows, a chevron into each channel's
+   sub-channels, and an Apply button at the foot. It works, and four things in it
+   are worth doing differently:
+
+     — the LOGO is what a reader recognises, and theirs is a 20px mark beside a
+       checkbox at the end of an indent. The product owner asked for this dimension by name
+       — "we want to see the channel, Shopify, Amazon oriented segments" — so the
+       marks lead, at a size you can actually read them at;
+     — WHAT IS CHOSEN is invisible until you open the popover; theirs shows
+       "Sales Channels: 0". The trigger here carries the marks themselves;
+     — a GROUP is one press. Theirs has a group checkbox too, but no partial
+       state, so a half-selected DTC reads as unselected;
+     — APPLY is a step. Baymard's filtering work puts real-time filtering as the
+       desktop expectation, and everything else on this page already recomputes
+       live, so a modal commit here would be the only one.
+
+   No counts on the options: how many customers came through each channel is not
+   in this data, and a plausible-looking number is the one thing this prototype
+   must not print. */
+function chanTrigger(gi, sel) {
+  /* Only real logos, and each seller once. A channel without one used to render
+     an empty grey disc, so "Amazon + Manual Order DTC + Shopify" came out as a
+     logo, a hole, a logo — which reads as a gap, not as a channel. Manual Order
+     and SPS have no mark to show; the count beside the stack says they are
+     there. */
+  const seen = [];
+  sel.forEach(c => { const l = CHANNEL_LOGO[c]; if (l && seen.indexOf(l) === -1) seen.push(l); });
+  const marks = seen.slice(0, 3).map(l => `<img src="${l}" alt="" width="15" height="15">`).join('');
+  /* Once a channel is chosen the MARK is the label. "Amazon Seller Partner"
+     spelled out ran the trigger past the column and had to be truncated to
+     "Amazon Seller Pa…", which is worse than the logo it already sits next to.
+     A whole group keeps its short name — DTC, Wholesale — because a group has no
+     mark of its own; several loose channels are counted. */
+  const whole = CHAN_GROUPS.find(x => x.chans.length === sel.length && x.chans.every(c => sel.indexOf(c) !== -1));
+  const label = !sel.length ? 'Any channel'
+    : whole ? whole.g
+    : sel.length === 1 ? ''
+    : sel.length + ' channels';
+  return `<button class="sb-chanbtn${sel.length ? ' is-set' : ''}" data-chanopen="${gi}"
+      title="${esc(sel.length ? sel.join(', ') : 'Any channel')}"
+      aria-expanded="${chanOpen === gi}" aria-controls="chanpop-${gi}">
+      ${marks ? `<span class="sb-chan__marks">${marks}</span>` : ''}
+      ${label ? `<span class="sb-chanbtn__l">${esc(label)}</span>` : ''}
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+    </button>`;
+}
+function chanPicker(gi, sel) {
+  const q = (chanQ || '').trim().toLowerCase();
+  const row = c => {
+    const on = sel.indexOf(c) !== -1;
+    return `<button class="sb-chan__i${on ? ' is-on' : ''}" data-chanpick="${gi}:${esc(c)}" role="checkbox" aria-checked="${on}">
+      <span class="sb-chan__box" aria-hidden="true">${on ? '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>' : ''}</span>
+      ${CHANNEL_LOGO[c] ? `<img src="${CHANNEL_LOGO[c]}" alt="" width="17" height="17">` : '<span class="sb-chan__dot" aria-hidden="true"></span>'}
+      <span class="sb-chan__n">${esc(c)}</span></button>`;
+  };
+  const body = CHAN_GROUPS.map(x => {
+    const hits = x.chans.filter(c => !q || c.toLowerCase().includes(q));
+    if (!hits.length) return '';
+    const all = x.chans.every(c => sel.indexOf(c) !== -1);
+    const some = !all && x.chans.some(c => sel.indexOf(c) !== -1);
+    return `<div class="sb-chan__g">
+        <button class="sb-chan__gh${all ? ' is-on' : ''}${some ? ' is-part' : ''}" data-changroup="${gi}:${x.g}"
+          role="checkbox" aria-checked="${all ? 'true' : some ? 'mixed' : 'false'}">
+          <span class="sb-chan__box" aria-hidden="true">${all
+            ? '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>'
+            : some ? '<i></i>' : ''}</span>
+          <span class="sb-chan__n">${x.g}</span>
+          <span class="sb-chan__all">${all ? 'None' : 'All'}</span>
+        </button>${hits.map(row).join('')}</div>`;
+  }).join('') || '<p class="sb-chan__none">No channel matches that.</p>';
+  /* role="group", not "dialog". It has no focus trap, no aria-modal and no
+     focus restore, so calling it a dialog promised behaviour it does not have.
+     It is a labelled group of checkboxes, which is what it is. */
+  return `<div class="sb-chan" id="chanpop-${gi}" role="group" aria-label="Which channels' orders">
+      <div class="sb-chan__h">
+        <label class="seg-sr" for="chanq-${gi}">Search channels</label>
+        <input class="form-input" id="chanq-${gi}" type="search" data-chanq="${gi}" placeholder="Search channels" value="${esc(chanQ || '')}">
+      </div>
+      ${body}
+      <div class="sb-chan__f">
+        <span>${sel.length ? sel.length + ' selected' : 'Every channel'}</span>
+        ${sel.length ? `<button class="btn-link btn-link-medium" data-chanclear="${gi}">Clear</button>` : ''}
+      </div>
+    </div>`;
+}
+
+/* A condition is offered where it exists. Klaviyo keeps a separate metric per
+   integration with the source's own icon on the row; Braze prefixes the
+   attribute name. Both put the source ON THE ATTRIBUTE, and neither ships a
+   global channel switch that greys conditions out — which is what the first
+   pass of this page did. */
+function catalogueByChannel(scope) {
+  /* The catalogue's OWN grouping — WHO, WHAT, HOW — is what the reader is
+     looking for: they are hunting a kind of question, not a data source. The
+     first draft regrouped the whole picker by channel and produced one flat wall
+     of eleven chips under "ANY CHANNEL", which is less organised than what it
+     replaced.
+
+     The market pattern does not ask for this: Klaviyo and Braze put the source
+     ON THE ATTRIBUTE — an icon, a prefix — and leave the picker's own structure
+     alone. So the channel rides on the chip, as a logo, and the groups stay. */
+  return Object.entries(CATALOG);
+}
+
+/* Availability, stated — not an error. Adobe AEP badges a field "No Data
+   Ingested" rather than hiding it or failing on it, and the failure mode both
+   Shopify and Braze document is the opposite: the caveat lives in the help
+   centre and never on screen. */
+/* ── A channel a group has already committed to ──────────────────────────
+   Asked for by the client's engineer: "disable Amazon channel specific filters
+   whenever we select shopify ones & mark the whole segment shopify-only".
+
+   The reason it is right: conditions inside a group joined by ALL have to hold
+   on the same orders, and no order is both a Shopify order and an Amazon one.
+   So "Discount code" (Shopify only) and "Amazon promotion" (Amazon only) in one
+   ALL group can never both be true — the segment is empty and nothing on screen
+   says why. Once a Shopify-only condition is in, the group IS Shopify.
+
+   The one place this is applied narrower than asked: a group joined by ANY, and
+   the second group of a segment. Conditions ORed can span channels by design,
+   and groups are the reason this variant exists — "Amazon promotion, or a
+   Shopify discount code" is a legitimate segment. Locking that would delete the
+   feature. So the lock is computed per group, and the SEGMENT is marked only
+   when every group agrees. */
+function lockOf(g) {
+  if (!g || g.join !== 'all') return null;
+  let lock = null;
+  (g.conds || []).forEach(c => {
+    const def = ALL.find(a => a.k === c.k);
+    if (!def || !def.chan) return;
+    lock = lock == null ? def.chan.slice() : lock.filter(x => def.chan.indexOf(x) !== -1);
+  });
+  return lock;
+}
+/* Which condition did the locking, so the message can name it rather than
+   saying "something in this group". */
+function lockedBy(g, chan) {
+  const hit = (g.conds || []).map(c => ALL.find(a => a.k === c.k))
+    .find(d => d && d.chan && !d.chan.some(x => chan.indexOf(x) !== -1));
+  return hit ? hit.n : null;
+}
+/* The channels a whole definition can touch. Groups joined by ANY are a union,
+   and a single unlocked group unlocks the segment, because that group can read
+   any channel's orders. */
+function segLock() {
+  const lk = lockOf(groups[0]);
+  return lk && lk.length && lk.length < CHAN_ALL.length && oneBrand(lk) ? lk : null;
+}
+const oneBrand = cs => cs.map(c => c.split(' ')[0]).every((b, _, a) => b === a[0]);
+/* Shopify DTC + Shopify Wholesale is "Shopify", not two names. A lock that
+   covers every channel a brand sells through is named by the brand. */
+function lockName(chans) {
+  const brand = c => c.split(' ')[0];
+  const brands = chans.map(brand).filter((b, i, a) => a.indexOf(b) === i);
+  if (brands.length === 1) {
+    const whole = CHAN_ALL.filter(c => brand(c) === brands[0]);
+    return whole.length === chans.length ? brands[0] : chans.join(', ');
+  }
+  return chans.length + ' channels';
+}
+
+function availability(def, g) {
+  if (!def.chan) return null;
+  const sel = (g && g.scope) || [];
+  /* Two facts and no instructions. It used to run to three sentences, one of
+     which explained what the reader could do about it — which they can see. */
+  if (sel.length && !def.chan.some(c => sel.indexOf(c) !== -1))
+    return def.n + ' is ' + lockName(def.chan) + ' only. This segment reads ' + lockName(sel) + '.';
+  /* A condition already in the group can never block itself: the lock is the
+     intersection of every chosen condition's channels, so its own are in it. */
+  const lock = lockOf(g);
+  if (lock && !def.chan.some(c => lock.indexOf(c) !== -1)) {
+    const by = lockedBy(g, def.chan);
+    return def.n + ' is ' + lockName(def.chan) + ' only, and this segment is ' + lockName(lock) +
+           ' only' + (by ? ' — ' + by + ' made it so.' : '.');
+  }
+  return null;
+}
+
+/* ── The funnel is per group, not per page ───────────────────────────────
+   The flat card runs one funnel down the whole list, which is right when the
+   whole list is one AND. With groups it is wrong twice over: the numbers of the
+   second group would continue the first group's funnel, and when the groups are
+   joined by "any of" every row printed the same union total — the same figure
+   four times, which is worse than no figure.
+
+   Each group narrows the starting universe on its own, so each group gets its
+   own funnel. Only HubSpot and Braze show per-filter impact at all, and Braze's
+   is exactly this: the count "targeted by all filters up to that point" WITHIN
+   its group. */
+function groupFunnel(g) {
+  const uni = universeSize();
+  if (uni == null) return [null];
+  const filledOf = c => {
+    if (!hasValue(c)) return false;
+    const d = ALL.find(a => a.k === c.k);
+    return !(d && d.ctl[0] === 'num' && badNum(c.v));
+  };
+  const steps = [uni];
+  if (g.join === 'any') {
+    /* Any-of unions: every filled condition widens the same starting set, so the
+       group's total is the same after each of them and the row says how much
+       that one condition contributes rather than how much it removes. */
+    const filled = g.conds.filter(filledOf);
+    const keep = filled.length
+      ? 1 - filled.reduce((a, c) => a * (1 - keepFactor(ALL.find(x => x.k === c.k), c.v)), 1) : 1;
+    const n = Math.round(uni * keep);
+    g.conds.forEach(() => steps.push(n));
+  } else {
+    let n = uni;
+    g.conds.forEach(c => {
+      const def = ALL.find(a => a.k === c.k);
+      /* "none of" removes what it matches instead of keeping it. */
+      const f = filledOf(c) ? keepFactor(def, c.v) : 1;
+      n = Math.round(n * (g.join === 'none' && filledOf(c) ? 1 - f : f));
+      steps.push(n);
+    });
+  }
+  return steps;
+}
+
+/* ── Proposed: their shell ────────────────────────────────────────────────
+   Read off dashboard.irisfinance.co on 2026-09-09, not remembered. Their Create
+   Segment screen is a master–detail in three columns:
+
+     outline            what the segment is made of, grouped WHO / WHAT / HOW,
+                        each entry a button that focuses it, each with an ✕
+     add a filter       PILLS in the same three groups; the focused one carries
+                        a ✓ — and under them, the editor for that one filter
+     preview            a funnel: the universe, then a row per filter with a bar
+                        and "−N dropped"
+
+   This build keeps that shape and adds the two things it cannot express:
+   GROUPS with their own joiner, and a group tied to one or more channels'
+   orders. The name, description, undo/redo and Save stay in the page header
+   where they already are — duplicating those inputs into a second column would
+   be two controls writing one value, which is a bug, not a resemblance. */
+/* ── The bin, drawn for the size it is used at ───────────────────────────
+   Measured, three times, because it kept being wrong for a different reason.
+
+   1. It rendered 10 x 15: .btn-table lays its child out with flex and nothing
+      said the icon could not be squeezed. Fixed with flex:none.
+   2. Then it still looked cut, and the geometry said otherwise — the path sat
+      wholly inside its viewBox. The loss was in RENDERING: Heroicons are drawn
+      on a 24 grid with a 1.6 stroke, and at 15px that stroke scales to 1.0 and
+      lands between device pixels. The lid and the base are single horizontal
+      lines, so they are what antialiasing eats first.
+
+   So this one is not a scaled 24-grid glyph. It is drawn on a 16 grid and used
+   at 16px — one to one, no fractional scaling, every stroke on the pixel it was
+   drawn on. Same silhouette and the same 1.3 weight the rest of the page's
+   stroke icons carry at their own sizes. */
+/* The bin that used to sit on a group header is inlined in the Clear all
+   button now — the only place left that deletes more than one thing. */
+
+/* The word between a condition and its value, so the row reads as a sentence
+   rather than as a form with the labels left in. Taken from the control, which
+   already carries it: "greater than $", "Has", "is". */
+function condOp(def, c) {
+  const k = def.ctl[0];
+  if (k === 'text') return String(def.ctl[1] || 'is').trim();
+  if (k === 'num')  return String(def.ctl[1] || '').trim();
+  return 'is';
+}
+
+/* ── One line, read as language ──────────────────────────────────────────
+   The row was a two-line form: the field name over its value, plus a delete
+   control, plus a click target. With eight of them, half one line tall and half
+   two, the column stopped being scannable — which is the complaint.
+
+   Refactoring UI, "Labels are a last resort": the data is what matters and the
+   label is only there for clarity, so fold the label into the value and write
+   the fact. "Customer type is Returning customers" is one line, one type size,
+   and it scans as a sentence instead of as three fields.
+
+   Filled and empty are then told apart by the sentence itself, not by a colour
+   or a surface: a finished condition reads whole and dark, an unfinished one is
+   a name and an operator with nothing after them, in the tertiary colour. Two
+   stacked signals in the same direction, which is Erik Kennedy's up-pop and
+   down-pop, rather than one loud one. */
+function outlineItem(g, gi, c, ci) {
+  const def = ALL.find(a => a.k === c.k);
+  const on = focused && focused.gi === gi && focused.ci === ci;
+  const unset = !hasValue(c);
+  const na = availability(def, g);
+  return `<div class="sb2__item${on ? ' is-on' : ''}${na ? ' is-na' : ''}${unset ? ' is-unset' : ''}">
+      <button class="sb2__pick" data-focus="${gi}:${ci}">
+        <span class="sb2__n">${esc(def.n)}</span>
+        ${/* One line. No dangling operator either — "Discount code is" with
+             nothing after it is a sentence cut off mid-word, so an unfilled
+             condition is just its name. */
+          unset ? '' : `<span class="sb2__op">${esc(condOp(def, c))}</span><span class="sb2__v">${esc(String(c.v))}${def.ctl[2] && def.ctl[0] === 'num' ? ' ' + esc(def.ctl[2]) : ''}</span>`}
+      </button>
+      <button class="sb2__x" data-x2="${gi}:${ci}" title="Remove ${esc(def.n)}" aria-label="Remove the ${esc(def.n)} condition">✕</button>
+    </div>`;
+}
+
+/* ── One definition, no groups ───────────────────────────────────────────
+   Groups came out. They were never Iris's: opened their Create Segment page on
+   2026-09-09 and the joiner is a single control labelled SEGMENT, holding
+   exactly "all of" and "any of", applied to one flat list. The word "group"
+   appears nowhere in the product.
+
+   They were also solving a problem nobody had asked about. the product owner's question was
+   "how do I do channel specific filters?", which needs two things — a channel
+   scope on the definition and a mark on each condition saying which channel it
+   exists on — and neither of those needs containers. And the engineer's
+   requirement points the other way: he wants the WHOLE segment marked
+   Shopify-only, which only makes sense if a segment is single-channel.
+
+   So this renders the one definition: their joiner, the channel scope beside
+   it, and the conditions under it. */
+function outlineGroup(g, gi) {
+  const gsel = g.scope || [];
+  const showJoin = g.conds.length > 1;
+  const meta = `<div class="sb2__gchan">
+      ${showJoin ? `<label class="seg-sr" for="gjoin-0">How the conditions combine</label>
+        <select class="form-select sb-inline" id="gjoin-0" data-gjoin="0">
+          ${JOINS.map(([v, l]) => `<option value="${v}" ${g.join === v ? 'selected' : ''}>${l}</option>`).join('')}
+        </select>` : ''}
+      <span class="sb2__gt">${showJoin ? '· orders on' : 'Orders on'}</span>
+      <span class="sb-chanwrap">${chanTrigger(0, gsel)}${chanOpen === 0 ? chanPicker(0, gsel) : ''}</span>
+    </div>`;
+  const body = g.conds.length
+    ? g.conds.map((c, ci) => outlineItem(g, gi, c, ci)).join('')
+    /* The arrow points at the picker, so it goes on the side it points to —
+       leading the line it was contradicting. */
+    : `<p class="sb2__empty">Pick a filter on the right to start the definition.<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg></p>`;
+  return `<section class="sb2__g" data-group="0"
+      aria-label="Conditions${gsel.length ? ', orders on ' + gsel.join(', ') : ''}">
+      ${meta}<div class="sb2__gb">${body}</div></section>`;
+}
+
+/* The pills. One kind of filter per segment, the way theirs works, so a kind
+   already in use is switched off rather than silently duplicated. */
+/* Where a condition already sits, so a used pill can lead back to it. */
+function findCond(k) {
+  for (let gi = 0; gi < groups.length; gi++) {
+    const ci = groups[gi].conds.findIndex(c => c.k === k);
+    if (ci !== -1) return { gi: gi, ci: ci };
+  }
+  return null;
+}
+function pills() {
+  return Object.entries(CATALOG).map(([head, items]) => {
+    const list = items.filter(it => it.k !== 'chan').map(it => {
+      const used = state.conds.some(c => c.k === it.k);
+      const g = groups[activeGroup] || groups[0];
+      const na = availability(it, g);
+      const on = focused && (groups[focused.gi].conds[focused.ci] || {}).k === it.k;
+      /* A used pill was `disabled`, and disabled is drawn at 40% — so the pill
+         for the condition being edited, which is by definition used, rendered
+         its selected state at 2.01:1. Unreadable, and it also meant the only
+         way back to a condition was the outline.
+
+         Used is not disabled: it is SELECTED, and pressing it goes to that
+         condition. aria-pressed says which, at full strength. */
+      const where = used ? findCond(it.k) : null;
+      /* ── A pill that is already in the definition says so ────────────────
+         `used` drove aria-pressed and nothing else, so a filter sitting in the
+         left column looked exactly like one that was not — and only the pill
+         open in the editor was marked. Two different facts, two states:
+         `is-used` is "this is in the definition", `is-on` is "and it is the one
+         being edited". A reader scanning the menu can now see what is already
+         spent without reading the column beside it. */
+      return `<button class="dr-chip sb2__pill${used ? ' is-used' : ''}${on ? ' is-on' : ''}${na ? ' is-empty' : ''}"
+          ${used ? `data-focus="${where.gi}:${where.ci}"` : na ? '' : `data-add2="${activeGroup}:${it.k}"`}
+          aria-pressed="${!!used}"
+          ${/* aria-disabled, not disabled: the reason a filter cannot be used is
+                the thing the reader needs, and a disabled button is skipped by
+                the keyboard and drops its tooltip. It stays reachable and says
+                why; the handler ignores it. */
+            na && !used ? 'aria-disabled="true"' : ''}
+          ${na ? `title="${esc(na)}"` : ''}>
+          ${esc(it.n)}${it.isNew ? '<span class="sb-new">new</span>' : ''}${scopeMark(it)}
+          ${used ? '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>' : ''}
+        </button>`;
+    }).join('');
+    return `<div class="sb2__pg" role="group" aria-labelledby="ph-${esc(head)}">
+        <div class="sb2__ph" id="ph-${esc(head)}">${esc(head)}</div>
+        <div class="sb2__pl">${list}</div></div>`;
+  }).join('');
+}
+
+/* The editor for the one filter in focus. Their middle column carries a heading,
+   a line saying what the filter does, and then the control — so a reader who has
+   just pressed a pill is told what they picked before being asked for a value. */
+function editor(steps) {
+  if (!focused || !groups[focused.gi] || !groups[focused.gi].conds[focused.ci]) {
+    return `<div class="sb2__ed sb2__ed--none">
+        <p>Pick a filter to set its value.</p>
+      </div>`;
+  }
+  const g = groups[focused.gi], c = g.conds[focused.ci];
+  const def = ALL.find(a => a.k === c.k);
+  const na = availability(def, g);
+  const gs = groupFunnel(g);
+  return `<div class="sb2__ed">
+      <h3 class="sb2__edt">${esc(def.n)}${scopeMark(def)}</h3>
+      ${def.blurb ? `<p class="sb2__eds">${esc(def.blurb)}</p>` : ''}
+      ${condRow(c, focused.ci, gs, { v2: true, gi: focused.gi, ci: focused.ci, avail: na, join: g.join, bare: true })}
+    </div>`;
+}
+
+/* The funnel. Theirs is one chain because it has one joiner; ours has a chain
+   per group, and then a line for how the groups came together — the honest
+   consequence of adding groups, and the place where a copied linear funnel
+   would have started lying. */
+function previewV2() {
+  const uni = universeSize();
+  const rows = [];
+  rows.push({ t: 'All customers', s: fmtDate(state.from) + ' – ' + fmtDate(state.to), n: uni, drop: null, head: true });
+  groups.forEach((g, gi) => {
+    const st = groupFunnel(g);
+    if (groups.length > 1) rows.push({ t: 'Group ' + (gi + 1) + ((g.scope || []).length ? ' · ' + g.scope.length + ' channel' + (g.scope.length > 1 ? 's' : '') : ''), sep: true });
+    g.conds.forEach((c, ci) => {
+      const def = ALL.find(a => a.k === c.k);
+      rows.push({ t: def.n, n: st[ci + 1], drop: st[ci] - st[ci + 1], any: g.join === 'any' });
+    });
+  });
+  const { n } = estimate();
+  const bar = v => uni ? Math.max(2, Math.round((v / uni) * 100)) : 0;
+  return rows.map(r => r.sep
+    ? `<div class="sb2__pvsep">${esc(r.t)}</div>`
+    : `<div class="sb2__pv${r.head ? ' is-head' : ''}">
+        <div class="sb2__pvt">${esc(r.t)}${r.s ? `<span>${esc(r.s)}</span>` : ''}</div>
+        <div class="sb2__pvbar"><i style="width:${bar(r.n)}%"></i></div>
+        <div class="sb2__pvn">${r.n == null ? '—' : fmtN(r.n) + ' customers'}
+          ${r.drop == null ? '' : `<span>${r.any ? '+' + fmtN(Math.max(0, -r.drop)) + ' added' : '−' + fmtN(Math.max(0, r.drop)) + ' dropped'}</span>`}</div>
+      </div>`).join('') +
+    '';
+}
+
+function drawCondsV2(steps) {
+  syncFlat();
+  activeGroup = 0;
+  if (focused && (!groups[0] || !groups[0].conds[focused.ci])) focused = null;
+  document.getElementById('sbOutline').innerHTML = outlineGroup(groups[0], 0);
+  /* Their name for this column, verbatim: the product's picker is headed
+     "ADD A FILTER". The left column is the definition and needs no title — the
+     card it sits in is already called Conditions. */
+  const target = '<h3 class="sb2__mt">Add a filter</h3>';
+  document.getElementById('sbMain').innerHTML = target + pills() + editor(steps);
+  document.getElementById('sb2').hidden = false;
+  document.getElementById('sbConds').innerHTML = '';
+  document.getElementById('sbAdd').hidden = true;
+  const pv = document.getElementById('sbV2Preview');
+  if (pv) pv.innerHTML = previewV2();
+}
+
 function render() {
+  if (CARD2) syncFlat();
   const { n, steps } = estimate();
   const uni = universeSize();
 
@@ -1335,16 +3202,37 @@ function render() {
       : `${fmtN(uni)} customers placed an order in this window.`;
   document.getElementById('sbUniverse').style.color = badRange ? 'var(--color-text-fg-danger)' : '';
 
-  document.getElementById('sbConds').innerHTML = state.conds.length
+  /* Only drawCondsV2 ever touched this flag, so switching back to Current left
+     the two-column body on screen under the Current header. */
+  document.getElementById('sb2').hidden = !CARD2;
+  if (CARD2) drawCondsV2(steps);
+  else document.getElementById('sbConds').innerHTML = state.conds.length
     ? state.conds.map((c, i) => condRow(c, i, steps)).join('')
     : `<p style="margin:0 0 12px;font-size:12.5px;color:var(--seg-muted);">No conditions yet — this segment would include every customer in the window. Add at least one.</p>`;
+  /* Carbon's rule for a collapsed filter set: say how many are applied. */
   document.getElementById('sbCondN').textContent = state.conds.length ? `${state.conds.length} condition${state.conds.length > 1 ? 's' : ''}` : '';
+  document.getElementById('sbClear').hidden = !state.conds.length;
+  /* "mark the whole segment shopify-only" — said once, at the top of the card,
+     and only when it is true of every group. */
+  /* The flat card is one implicit group, and it carries its own joiner — an
+     "any of" list can span channels there for the same reason a group can. */
+  const sl = CARD2 ? segLock() : (() => {
+    const lk = lockOf({ join: state.join === 'any' ? 'any' : 'all', conds: state.conds });
+    return lk && lk.length && oneBrand(lk) ? lk : null;
+  })();
+  document.getElementById('sbSegLock').innerHTML =
+    sl && sl.length && sl.length < CHAN_ALL.length
+      ? lockChip(sl, 'This segment', groups.length === 1 || !CARD2
+          ? lockCause(CARD2 ? groups[0] : { conds: state.conds }) : null) : '';
 
+  /* The scope is on the picker too, not only on the row after the fact. Picking
+     a condition and then being told it cannot apply is the same trap one step
+     later; the logo is on the button before it is pressed. */
   document.getElementById('sbAdd').innerHTML = Object.entries(CATALOG).map(([g, items]) =>
     `<div class="sb-add__g">${g}</div>` + items.map(it =>
-      `<button class="sb-add__b" data-add="${it.k}" ${state.conds.some(c => c.k === it.k) ? 'disabled' : ''}>
+      `<button class="sb-add__b${it.chan ? ' sb-add__b--scoped' : ''}" data-add="${it.k}" ${state.conds.some(c => c.k === it.k) ? 'disabled' : ''}${it.chan ? ` title="${esc('Only on ' + it.chan.join(', '))}"` : ''}>
          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-         ${it.n}${it.isNew ? '<span class="sb-new">new</span>' : ''}</button>`).join('')).join('');
+         ${it.n}${it.isNew ? '<span class="sb-new">new</span>' : ''}${scopeMark(it)}</button>`).join('')).join('');
 
   const cat = document.getElementById('sbTplCat').value;
   document.getElementById('sbTpl').innerHTML = TEMPLATES
@@ -1411,16 +3299,26 @@ function render() {
      off with "one condition still needs a number" while every condition had a
      value. It only means anything on a numeric control. */
   const isNum = c => { const d = ALL.find(a => a.k === c.k); return d && d.ctl[0] === 'num'; };
-  const emptyCond = state.conds.some(c =>
-    c.v === '' || c.v == null || (isNum(c) && badNum(c.v)));
+  const emptyCond = state.conds.some(c => !hasValue(c) || (isNum(c) && badNum(c.v)));
   document.getElementById('sbUndo').disabled = !history_.past.length;
   document.getElementById('sbRedo').disabled = !history_.future.length;
   /* Select conditions now arrive with a value, so "empty" only happens on a
      number the reader has not typed yet — and a number has no honest default.
      That one still blocks, because saving it would create exactly the defect
      this redesign exists to surface. Everything else saves. */
-  document.getElementById('sbSave').disabled =
-    !state.name.trim() || !state.conds.length || nameClash || emptyCond || badRange || (EDIT && !touched);
+  /* ── Save is not disabled ──────────────────────────────────────────────
+     GOV.UK, in the button component itself: "Disabled buttons have poor
+     contrast and can confuse some users, so avoid them if possible. Only use
+     disabled buttons if research shows it makes the user interface easier to
+     understand." Nielsen Norman say the same and add the reason — a greyed
+     button gives no way to find out what is wrong.
+
+     So the button stays live and answers when pressed: what is missing is
+     listed at the top of the card, each item a link to the thing that needs
+     doing. The count also sits beside the button in a polite status region, so
+     the state is known before anyone presses anything (4.1.3). */
+  const saveBlocked = !state.name.trim() || !state.conds.length || nameClash || emptyCond || badRange || (EDIT && !touched);
+  document.getElementById('sbSave').disabled = false;
   /* It used to name only three reasons, none of which is the usual one: a fresh
      page has no name and no conditions, so Save sat greyed out with an empty
      tooltip and nothing on screen saying why. And with several problems at once
@@ -1435,6 +3333,12 @@ function render() {
   ].filter(Boolean);
   document.getElementById('sbSave').title = blockers.length
     ? 'To save: ' + blockers.join(', ') + '.' : '';
+  /* badRange and nameClash are computed in here; the summary needs them and it
+     is called from the click handler, which is a different scope. */
+  window.__blockers = blockers;
+  window.__saveBlocked = saveBlocked;
+  window.__badRange = badRange;
+  window.__nameClash = nameClash;
   const nameEl = document.getElementById('sbName');
   nameEl.setAttribute('aria-invalid', String(nameClash));
   /* the reason for "invalid" has to be reachable, not just announced */
@@ -1493,9 +3397,33 @@ function duplicates() {
    description saved from the form read "discount greater than %20" and lost
    the dollar sign entirely — a third spelling on top of the data's and the
    list's. */
+/* ── "Empty" is an operator, not an empty field ──────────────────────────
+   Salesforce treats a blank filter value as a deliberate "is null" query;
+   Klaviyo treats it as an unfinished form. Both are defensible and they cannot
+   both be true of the same control, which is how a blank field ends up meaning
+   two things at once.
+
+   This builder takes Klaviyo's position — blank means unfinished — and so it
+   owes the other question a control of its own. A text condition chooses its
+   operator: "is", "is empty", "is not empty". With either of the last two there
+   is no value to type, the value input goes away, and the condition is
+   complete. A blank field is then never ambiguous: it is always unfinished,
+   because "empty" has somewhere else to live. */
+/* Whether a condition says anything yet. One place answers it, because the
+   funnel, the Save summary and the outline row all ask.
+
+   NOT an "is empty" operator. Read off dashboard.irisfinance.co on 2026-09-09:
+   Iris has no empty-operator anywhere, and its text-like filters carry no
+   operator control at all. Where the product needs to say "none of it", it uses
+   a named value inside the filter's own options — "No refunds", "Exclude
+   subscribers", "Exclude wholesale". The full survey is in
+   scratchpad/their-operators.md. An operator vocabulary this product does not
+   have is not something a prototype gets to introduce. */
+function hasValue(c) { return !(c.v === '' || c.v == null); }
+
 function condText(c) {
   const def = ALL.find(a => a.k === c.k);
-  if (!def || c.v === '' || c.v == null) return null;
+  if (!def || !hasValue(c)) return null;
   if (def.ctl[0] === 'text') return `${def.n} is ${c.v}`;
   /* Written in the vocabulary the LIST reads, not just the one the builder
      shows. A geography condition saved as "United States" arrived in the list
@@ -1522,7 +3450,8 @@ function describe() {
     const t = condText(c);
     if (!t) return null;
     const def = ALL.find(a => a.k === c.k);
-    if (def && def.ctl[0] === 'text') return `${def.n.toLowerCase()} is ${c.v}`;
+    if (def && def.ctl[0] === 'text')
+      return `${def.n.toLowerCase()} is ${c.v}`;
     /* The same rule Fin's writer uses. The two buttons sit beside each other and
        write the same field, and only one of them kept a country's capitals —
        so "Geography: In US" was saved as "geography: in us" and then shown that
@@ -1538,7 +3467,7 @@ function describe() {
 function toast(title, msg) {
   const el = document.createElement('div');
   el.className = 'toast'; el.setAttribute('role', 'status');
-  el.innerHTML = `<span class="toast-icon toast-icon-success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg></span>
+  el.innerHTML = `<span class="toast-icon toast-icon-success"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg></span>
     <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
     <button class="toast-close" aria-label="Dismiss">✕</button>`;
   el.querySelector('.toast-close').onclick = () => el.remove();
@@ -1553,11 +3482,20 @@ function toast(title, msg) {
    off until the box has something in it. */
 function modal({ title, body, confirmLabel, confirmIcon, confirmDisabled, cancelLabel, danger, wide, onConfirm, onCancel }) {
   const host = document.getElementById('modalHost'), opener = document.activeElement;
+  /* .modal-dialog-lg is 720px and .modal-dialog-sm is 320. The template library
+     was asking for the wide one and getting it, but the dialog's own max-width
+     was fighting the viewport at this zoom — it takes the library's xl for a
+     surface that holds a list with a title, a search and four rows. */
   host.innerHTML = `<div class="seg-modal-backdrop"><div class="modal-dialog ${wide ? 'modal-dialog-lg' : 'modal-dialog-sm'}" role="dialog" aria-modal="true" aria-labelledby="mdT">
       <div class="modal-header"><h2 class="modal-title" id="mdT">${title}</h2><button class="modal-close" data-md="x" aria-label="Close">✕</button></div>
       <div class="modal-body">${body}</div>
       <div class="modal-footer"><button class="btn btn-sm btn-alternative" data-md="x">${cancelLabel || 'Cancel'}</button>
-        <button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok"${confirmDisabled ? ' disabled' : ''}>${confirmIcon || ''}${confirmLabel}</button></div></div></div>`;
+        ${/* A dialog that only offers a choice among its own contents has nothing
+              to confirm. Without this the footer drew a primary button reading
+              literally "undefined" — the template library shipped with one. */
+          confirmLabel
+          ? `<button class="btn btn-sm ${danger ? 'btn-red' : 'btn-primary'}" data-md="ok"${confirmDisabled ? ' disabled' : ''}>${confirmIcon || ''}${confirmLabel}</button>`
+          : ''}</div></div></div>`;
   const close = () => { host.innerHTML = ''; document.removeEventListener('keydown', onKey); opener?.focus?.(); };
   const onKey = e => {
     if (e.key === 'Escape') return close();
@@ -1589,62 +3527,164 @@ document.addEventListener('click', e => {
      than write it from scratch over and over again — no one reads those warning
      messages, no one."
 
-     Adding a condition used to produce an empty control, a red card and the
-     line "no value — filters nobody", with Save switched off until the reader
-     worked out what was wanted. It now arrives filled with a starting value and
-     marked as a suggestion. The reader edits or accepts it; nothing is refused,
-     and nothing is asserted as their intent.
+     That reasoning was applied to the wrong thing. It is right for a NAME, a
+     description, a date window — things where a starting point saves work and
+     costs nothing if it is wrong. It is wrong for the value of a filter, which
+     is the definition itself. Adding "Customer type" and getting
+     "First-time customers" for free means the builder decided who the segment
+     is about, the estimate counted it, and the only thing standing between that
+     and a saved segment was the reader noticing a grey word.
 
-     A number condition gets no suggestion — there is no defensible starting
-     amount for "order value greater than", and a made-up threshold would be the
-     invention this prototype must not make. It gets a placeholder instead. */
-  const suggest = k => {
-    const def = ALL.find(x => x.k === k);
-    return def && def.ctl[0] === 'select'
-      ? (def.ctl[1].find(o => typeof o === 'string') || '') : '';
-  };
+     This is a finance product. Nothing writes a condition's value except the
+     person making the segment, or Fin reading it out of their own description —
+     and Fin's is labelled as read from their words. An empty condition is now
+     an empty condition: it says so, it is marked, it holds Save shut, and the
+     preview does not count it. */
 
-  const a = e.target.closest('[data-add]');
-  if (a && !a.disabled) {
-    commit(() => state.conds.push({ k: a.dataset.add, v: suggest(a.dataset.add), draft: true }));
-    /* focus the control that was just created, not <body> */
-    document.getElementById(`cond-${state.conds.length - 1}`)?.focus();
+  /* ── v2 controls ──────────────────────────────────────────────────────── */
+  const ver = e.target.closest('[data-ver]');
+  if (ver) return setVariant(ver.dataset.ver === '2');
+
+  const st = e.target.closest('[data-start]');
+  if (st) {
+    if (st.dataset.start === 'tpl') return templateLibrary();
+    if (st.dataset.start === 'fin') return generateWithFin('');
+    document.getElementById('sbName').focus();
     return;
   }
-  const x = e.target.closest('[data-x]');
-  if (x) {
-    const i = +x.dataset.x;
-    commit(() => state.conds.splice(i, 1));
-    (document.querySelector(`[data-x="${Math.min(i, state.conds.length - 1)}"]`) || document.querySelector('[data-add]:not([disabled])'))?.focus();
+  const lib = e.target.closest('[data-lib]');
+  if (lib) {
+    const tpl = TEMPLATES[+lib.dataset.lib];
+    /* Close the library BEFORE applying. applyTemplate may open the "Replace the
+       current conditions?" dialog, and modal() empties its host on close — so
+       closing afterwards wiped the confirmation that had just been raised, and
+       the template silently did nothing. */
+    document.querySelector('#modalHost [data-md="x"]')?.click();
+    setTimeout(() => applyTemplate(tpl), 0);
+    return;
+  }
+
+  const co = e.target.closest('[data-chanopen]');
+  if (co) {
+    const gi = +co.dataset.chanopen;
+    chanOpen = chanOpen === gi ? null : gi; chanQ = '';
+    render();
+    document.querySelector(`[data-chanopen="${gi}"]`)?.focus();
+    return;
+  }
+  const cp = e.target.closest('[data-chanpick]');
+  if (cp) {
+    const i = cp.dataset.chanpick.indexOf(':');
+    const gi = +cp.dataset.chanpick.slice(0, i), ch = cp.dataset.chanpick.slice(i + 1);
+    commit(() => {
+      const sel = groups[gi].scope || (groups[gi].scope = []);
+      const at = sel.indexOf(ch);
+      at === -1 ? sel.push(ch) : sel.splice(at, 1);
+      syncFlat();
+    });
+    document.querySelector(`[data-chanpick="${CSS.escape(gi + ':' + ch)}"]`)?.focus();
+    return;
+  }
+  const cg = e.target.closest('[data-changroup]');
+  if (cg) {
+    const i = cg.dataset.changroup.indexOf(':');
+    const gi = +cg.dataset.changroup.slice(0, i), gname = cg.dataset.changroup.slice(i + 1);
+    const grp = CHAN_GROUPS.find(x => x.g === gname);
+    commit(() => {
+      const sel = groups[gi].scope || (groups[gi].scope = []);
+      const all = grp.chans.every(c => sel.indexOf(c) !== -1);
+      grp.chans.forEach(c => {
+        const at = sel.indexOf(c);
+        if (all && at !== -1) sel.splice(at, 1);
+        if (!all && at === -1) sel.push(c);
+      });
+      syncFlat();
+    });
+    document.querySelector(`[data-changroup="${CSS.escape(gi + ':' + gname)}"]`)?.focus();
+    return;
+  }
+  const cc = e.target.closest('[data-chanclear]');
+  if (cc) {
+    const gi = +cc.dataset.chanclear;
+    commit(() => { groups[gi].scope = []; syncFlat(); });
+    return;
+  }
+  /* A press anywhere else closes it — the same rule the Filters panel on the
+     list uses, and the reason there is no Apply button to hunt for. */
+  if (chanOpen !== null && !e.target.closest('.sb-chanwrap')) { chanOpen = null; render(); }
+
+  const gadd = e.target.closest('[data-gadd]');
+  if (gadd) {
+    const gi = +gadd.dataset.gadd;
+    picking = picking === gi ? null : gi;
+    render();
+    document.querySelector(`[data-gadd="${gi}"]`)?.focus();
+    return;
+  }
+  const a2 = e.target.closest('[data-add2]');
+  if (a2 && !a2.disabled) {
+    const [gi, k] = a2.dataset.add2.split(':');
+    commit(() => {
+      groups[+gi].conds.push({ k: k, v: '', draft: false });
+      /* Adding focuses what was added — the middle column is a detail pane, and
+         a pill that files something away out of sight is a pill that looks
+         broken. */
+      focused = { gi: +gi, ci: groups[+gi].conds.length - 1 };
+      picking = null; syncFlat();
+    });
+    /* The editor's control carries data-v2 in this variant; this selector
+       still said data-v, so adding a condition left the caret nowhere. */
+    document.querySelector('.sb2__ed [data-v2], .sb2__ed [data-v]')?.focus();
+    return;
+  }
+  const fc = e.target.closest('[data-focus]');
+  if (fc) {
+    const [gi, ci] = fc.dataset.focus.split(':').map(Number);
+    focused = { gi: gi, ci: ci }; activeGroup = gi;
+    render();
+    /* The editor's control carries data-v2 in this variant; this selector
+       still said data-v, so adding a condition left the caret nowhere. */
+    document.querySelector('.sb2__ed [data-v2], .sb2__ed [data-v]')?.focus();
+    return;
+  }
+  const x2 = e.target.closest('[data-x2]');
+  if (x2) {
+    const [gi, ci] = x2.dataset.x2.split(':').map(Number);
+    commit(() => { groups[gi].conds.splice(ci, 1); focused = null; syncFlat(); });
+    document.querySelector('.sb2__pill:not([disabled])')?.focus();
+    return;
+  }
+  const gsel2 = e.target.closest('[data-group]');
+  /* Clicking anywhere in a group makes it the active one, which re-renders the
+     column — and that killed the group's own <select> mid-gesture: the dropdown
+     opened, the click bubbled here, the element it belonged to was replaced,
+     and no value could ever be picked. A control is not the group's background. */
+  if (gsel2 && !e.target.closest('[data-focus], select, input, textarea, label, .sb-chanwrap')) {
+    activeGroup = +gsel2.dataset.group;
+    render();
     return;
   }
   const t = e.target.closest('[data-tpl]');
-  if (t) {
-    const tpl = TEMPLATES[+t.dataset.tpl];
-    const apply = () => {
-      commit(() => {
-        state.conds = tpl.c.map(([k, v]) => ({ k, v }));
-        if (!state.name) { state.name = tpl.n; document.getElementById('sbName').value = tpl.n; }
-        /* A description written from the previous definition describes a segment
-           that no longer exists. It used to survive the replacement and sit under
-           the new conditions contradicting them, with Save enabled. */
-        if (state.desc && state.desc === lastGenerated) { state.desc = ''; }
-      });
-      document.getElementById('sbDesc').value = state.desc;
-    };
-    /* a template replaces the whole definition — never silently */
-    if (state.conds.length) modal({
-      title: 'Replace the current conditions?', confirmLabel: 'Replace',
-      body: `<p style="margin:0;font-size:13px;color:#374151;">The template “<strong>${esc(tpl.n)}</strong>” replaces all ${state.conds.length} conditions you have set. Undo will bring them back.</p>`,
-      onConfirm: apply
+  if (t) { applyTemplate(TEMPLATES[+t.dataset.tpl]); return; }
+  if (e.target.closest('#sbGen')) { const d = describe(); commit(() => state.desc = d); lastGenerated = d; document.getElementById('sbDesc').value = d; return; }
+  if (e.target.closest('#sbClear')) {
+    commit(() => {
+      groups = [{ join: 'all', scope: [], conds: [] }];
+      joinTop = 'all'; focused = null; activeGroup = 0; picking = null;
+      state.conds = [];
     });
-    else apply();
+    toast('Definition cleared', 'Undo puts it back.');
+    document.getElementById('sbUndo').focus();
     return;
   }
-  if (e.target.closest('#sbGen')) { const d = describe(); commit(() => state.desc = d); lastGenerated = d; document.getElementById('sbDesc').value = d; return; }
   if (e.target.closest('#sbUndo')) return undo();
   if (e.target.closest('#sbRedo')) return redo();
   if (e.target.closest('#sbSave')) {
+    /* Only now is anything an error. Before a press nothing has been detected,
+       and MDN is explicit that aria-invalid must not be set on an empty
+       required field until the reader has tried to submit — they may still be
+       filling it in. */
+    if (window.__saveBlocked) return saveSummary();
     saved = true;
     /* The round trip the whole flow exists for. Save used to toast "Segment
        created" and return to a list that had never heard of it — a rename made
@@ -1746,9 +3786,30 @@ document.addEventListener('change', e => {
     if (back) back.focus();
     return;
   }
-  if (e.target.dataset.v != null) { const i = +e.target.dataset.v, v = e.target.value;
+  if (e.target.dataset.v2 != null) {
+    const [gi, ci] = e.target.dataset.v2.split(':').map(Number), v = e.target.value;
+    commit(() => {
+      const c = groups[gi].conds[ci];
+      c.v = v; c.draft = false;
+      syncFlat();
+    });
+    document.getElementById(`cond-${gi}-${ci}`)?.focus();
+  }
+  else if (e.target.dataset.v != null) { const i = +e.target.dataset.v, v = e.target.value;
     commit(() => { state.conds[i].v = v; ownIt(i); });
     document.getElementById(`cond-${i}`)?.focus(); }
+  if (e.target.dataset.gjoin != null) {
+    const gi = +e.target.dataset.gjoin, v = e.target.value;
+    commit(() => { groups[gi].join = v; syncFlat(); });
+    document.getElementById(`gjoin-${gi}`)?.focus();
+    return;
+  }
+  if (e.target.dataset.gscope != null) {
+    const gi = +e.target.dataset.gscope, v = e.target.value || null;
+    commit(() => { groups[gi].scope = v; syncFlat(); });
+    document.getElementById(`gscope-${gi}`)?.focus();
+    return;
+  }
   if (e.target.id === 'sbRange') { const v = e.target.value === 'custom' ? 'custom' : +e.target.value; commit(() => state.range = v); }
   if (e.target.id === 'sbFrom')  { const v = e.target.value; commit(() => state.from = v); }
   if (e.target.id === 'sbTo')    { const v = e.target.value; commit(() => state.to = v); }
@@ -1766,6 +3827,30 @@ document.addEventListener('change', e => {
 /* Name edits go into the history, debounced, so Undo restores what was typed instead
    of silently clearing the field from an older snapshot. */
 let nameTimer = null, nameBefore = null;
+/* Escape closes the channel popover. It had no key handler at all: a keyboard
+   user could Tab out of it but never dismiss it, and the only close was a click
+   somewhere else. */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || chanOpen === null) return;
+  const gi = chanOpen;
+  chanOpen = null; chanQ = '';
+  render();
+  document.querySelector(`[data-chanopen="${gi}"]`)?.focus();
+});
+
+/* The channel picker's search. Delegated, because the popover is redrawn on
+   every keystroke and the box the reader is typing in has to come back with the
+   caret where they left it. */
+document.addEventListener('input', e => {
+  const cq = e.target.closest && e.target.closest('[data-chanq]');
+  if (!cq) return;
+  chanQ = cq.value;
+  const gi = +cq.dataset.chanq, pos = cq.selectionStart;
+  render();
+  const again = document.getElementById('chanq-' + gi);
+  if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (err) {} }
+});
+
 document.getElementById('sbName').addEventListener('input', e => {
   if (nameBefore === null) nameBefore = state.name;
   state.name = e.target.value;
@@ -1805,9 +3890,32 @@ document.getElementById('skipLink').addEventListener('click', e => {
   const b = document.getElementById('sbBody'); b.setAttribute('tabindex', '-1'); b.focus();
 });
 
+/* ── Arriving from the list's menu: land on the way in that was chosen ────
+   This used to sit a thousand lines further up, above `let CARD2`. Reading it
+   there is a temporal-dead-zone throw, so every arrival at #templates would
+   have died before the page drew anything — a branch that no ordinary load
+   takes, which is exactly how it stayed invisible. Boot code belongs with boot
+   code. */
+function openStartDoor() {
+  if (location.hash === '#describe') return generateWithFin('');
+  if (location.hash !== '#templates') return;
+  /* Proposed has no template card to scroll to — the templates are a library
+     now, so the same door opens the library instead of hunting for a card that
+     is not there. */
+  if (CARD2) return templateLibrary();
+  document.getElementById('sbTplCard')?.scrollIntoView({ block: 'center' });
+}
+
 syncInputs();
+/* The seeded definition arrives in state.conds either way; v2 folds it into one
+   group before the first paint so nothing is lost on a deep link to ?v2=1. */
+if (CARD2) condsToGroups();
+document.getElementById('sbAdd').hidden = CARD2;
+syncVariantBtns();
+startBar();
 render();
 initSidebar();
+setTimeout(openStartDoor, 0);
 </script>
 </body>
 </html>

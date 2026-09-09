@@ -460,12 +460,57 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
    As inline content the chip and the sentence wrap together like normal text. */
 .dr-name__s { margin-top: 1px; font-size: 12px; line-height: 1.45; color: var(--dr-muted); }
 .dr-name__s > .iris-chip { margin-right: 6px; vertical-align: 1px; }
-/* a finding always occupies its own line under the definition, so the flags in a
-   forty-row table line up in a column instead of hiding at the end of a sentence */
-.dr-name__s .flag { display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: var(--font-medium); }
-.dr-name__s .flag svg { flex: none; }
-.dr-name__s .flag.bad { color: var(--color-text-fg-danger); }
-.dr-name__s .flag.warn { color: var(--color-text-fg-warning-subtle); }
+/* ── The one mark a row can carry ─────────────────────────────────────────
+   It used to be a red line and an amber line of prose under the definition, the
+   thing the product owner called too loud to parse. Now it is a single icon pinned to the
+   right edge of the Segment cell — margin-left:auto, so it lands at the same x
+   on every row and the eye runs down a column of them rather than hunting the
+   end of forty names of different lengths. The words are on its tooltip.
+
+   Amber, not red. There is one severity now: something to look at. */
+.dr-flagmark { flex: none; align-self: flex-start; margin: 0 0 0 8px; }
+/* LIBRARY GAP, recorded not patched: .tooltip-bubble in iris-components.css has
+   no show/hide rule at all — it is drawn permanently, because the stories need
+   to show it. Every consumer therefore has to write the reveal itself, which
+   means every consumer writes a different one. The component wants
+   :hover/:focus-within built in. */
+.dr-flagbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%;
+  background: none; cursor: pointer;
+  /* #92400E, the foreground .alert-warning uses in iris-components.css — the
+     same colour as the notice at the top of this page, which describes these
+     same findings.
+
+     NOT --color-text-fg-warning-subtle. That token is #d03801 — hue 16°, thirty
+     degrees from --color-text-fg-danger at #c70036, and at a 15px glyph the two
+     are not told apart: the mark read as an error on a page whose whole point is
+     that these are things to look at, not outages. --color-text-fg-warning is
+     #771d1d, a maroon, which is further from amber still. Both are worth raising
+     against the token set rather than working around here. */
+  color: #92400E;
+}
+.dr-flagbtn svg { display: block; }
+/* The page's own hover, the one every other icon control here uses. The first
+   version washed it in #fef3c7 through a --color-bg-warning-subtle that does not
+   exist in iris-tokens.css — an invented colour behind a token name, which is
+   the worst of both. There is no "warning hover" in this system. */
+.dr-flagbtn:hover { background: var(--dr-hover); }
+.dr-flagbtn:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; }
+.dr-flagtip {
+  /* The library's bubble is one nowrap line. A finding is a sentence and a row
+     can carry two, so this instance wraps and stacks them. */
+  display: none; white-space: normal; width: max-content; max-width: 240px;
+  line-height: 1.45; text-align: left;
+}
+.dr-flagtip > span { display: block; }
+.dr-flagtip > span + span { margin-top: 3px; }
+.dr-flagmark:hover .dr-flagtip,
+.dr-flagmark:focus-within .dr-flagtip { display: block; }
+/* The mark is the only thing between the definition and the row's edge, so it
+   takes the space rather than being pushed by it. */
+.dr-name { align-items: flex-start; }
+.dr-name__t { flex: 1 1 auto; min-width: 0; }
 
 
 /* ── Share-of-base bar ────────────────────────────────────────────────────
@@ -904,11 +949,106 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-rail .list-group-item.dr-rail__v--1 { padding-left: 34px; }
 .dr-rail .list-group-item.dr-rail__v--2 { padding-left: 50px; font-size: 12px; }
 
-/* ── Filters as a panel, not a column ─────────────────────────────────────
-   The rail was a permanent 208px column. It is now behind a Filters button in
-   the toolbar, the way the product's own Cohorts filters are, and the table has
-   the width back. */
-.dr-layout--nofilters { grid-template-columns: minmax(0, 1fr); }
+/* ── The navigation column ────────────────────────────────────────────────
+   208px again, because it holds rows and not chips: one place per line, its
+   count at the end, and the drill-down stepping in under the place it belongs
+   to. That is what makes it readable as an index at a glance — a wrapping field
+   of chips is a control panel, which is the thing it stopped being.
+
+   The 208px track is the one .dr-layout already declares further up; this must
+   NOT restate it. Restated here it also beat .dr-layout--wide, which is
+   declared earlier and carries the same specificity — the two split panes on
+   the segment page collapsed to a 208px sliver beside everything else. */
+.dr-nav .list-group.dr-rail { padding: 6px; }
+/* Groups are separated by their label alone, not by a rule: at three groups the
+   hairlines drew more lines than the content had. The root is the exception —
+   "All segments" is not one of the two axes, it is the way out of both, so it
+   gets the one rule in the column. */
+.dr-nav .dr-rail__g + .dr-rail__g { margin-top: 12px; padding-top: 0; border-top: 0; }
+.dr-nav .dr-rail__g--root { padding-bottom: 6px; border-bottom: 1px solid var(--dr-border-soft); }
+.dr-nav .dr-rail__g--root + .dr-rail__g { margin-top: 8px; }
+.dr-nav .dr-rail__lab { padding: 2px 10px 3px; }
+
+/* ── A row ────────────────────────────────────────────────────────────────
+   Four slots in a fixed order: the indent, the icon, the label, the count.
+   Reserving the icon slot on every level is what makes a child's label land one
+   step to the right of its PARENT'S LABEL. Indenting the text alone put "US"
+   and "postal code IL" at two x positions that had nothing to do with each
+   other, and the eye could not tell which belonged inside which. */
+.dr-nav .list-group-item.dr-nv {
+  position: relative;
+  min-height: 28px; padding: 4px 8px 4px 10px; gap: 8px;
+  font-size: 13px;
+}
+.dr-nv__i { display: inline-flex; flex: none; width: 15px; }
+.dr-nv__l { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 10 (padding) + 15 (icon) + 8 (gap) = 33px, where a top-level label starts.
+   The second level steps 14px in from there. There is no third: see the note in
+   valueRows. One guide line, drawn per row at the parent's icon centre, so
+   consecutive children read as one continuous line down from the parent. */
+.dr-nav .list-group-item.dr-nv--1 { padding-left: 47px; }
+.dr-nav .dr-nv--1::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 17px; width: 1px;
+  background: var(--dr-border);
+}
+/* Typeahead inside a dimension, for the values that cannot be listed. Indented
+   to the second level, because that is what it searches. */
+.dr-navsearch { padding: 3px 8px 5px 47px; }
+.dr-navsearch .form-input { height: 30px; font-size: 12.5px; }
+.dr-navempty { padding: 4px 10px 6px 47px; font-size: 12px; color: var(--dr-muted); }
+.dr-nav .dr-nv__more { color: var(--dr-primary); font-size: 12.5px; }
+.dr-nav .dr-nv__more:hover { background: var(--dr-hover); }
+
+/* ── Where you are, and how you got there ─────────────────────────────────
+   ONE row is current. Its ancestors are the path, and a path is not a second
+   current: it carries the colour in the label and nothing else. Three stacked
+   fills read as one slab and said nothing about which was which. */
+/* Tinted fill and brand text, the same active state the library gives every
+   other .list-group-item — no left marker. The 2px inset bar was mine, it is in
+   no component in this system, and inside a radius it clipped into a dark
+   crescent at the left edge that read as a rendering fault. */
+.dr-nav .dr-nv.is-current {
+  background: var(--dr-primary-soft); color: var(--dr-primary);
+  font-weight: var(--font-semibold);
+}
+.dr-nav .dr-nv.is-current .dr-rail__n,
+.dr-nav .dr-nv.is-current svg { color: var(--dr-primary); }
+
+.dr-nav .dr-nv.is-path {
+  background: none; color: var(--dr-primary); font-weight: var(--font-medium);
+}
+.dr-nav .dr-nv.is-path svg { color: var(--dr-primary); }
+.dr-nav .dr-nv.is-path .dr-rail__n { color: var(--dr-primary); }
+.dr-nav .dr-nv.is-path:hover { background: var(--dr-hover); }
+
+/* Below 1024px the column cannot be spared, so the places become a strip that
+   scrolls sideways above the toolbar — still visible, still single-select,
+   which is the part that matters. */
+@media (max-width: 1024px) {
+  /* This page's layout only. The shared .dr-layout breakpoint is 900px and the
+     two-pane pages are entitled to keep it. */
+  #lsLayout { grid-template-columns: minmax(0, 1fr); }
+  .dr-nav { margin-bottom: 10px; }
+  .dr-nav .list-group.dr-rail {
+    display: flex; gap: 6px; overflow-x: auto; padding: 4px;
+    scrollbar-width: thin;
+  }
+  .dr-nav .dr-rail__g { display: flex; gap: 6px; align-items: center; margin: 0; flex: none; }
+  .dr-nav .dr-rail__lab { display: none; }
+  .dr-nav .list-group-item {
+    width: auto; flex: none; white-space: nowrap;
+    border: 1px solid var(--dr-border); border-radius: 999px; padding: 5px 12px;
+  }
+  /* Flattened: a strip has no vertical to indent along, so the guides and the
+     indent come off and the path is carried by the order of the pills, which is
+     the order you pressed them in. */
+  .dr-nav .list-group-item.dr-nv--1 { padding-left: 12px; }
+  .dr-nav .dr-nv--1::before { display: none; }
+  .dr-nav .dr-nv.is-path { border-color: var(--dr-primary-soft); }
+  .dr-nav .dr-nv.is-current { border-color: var(--dr-primary); box-shadow: none; }
+  .dr-nav .dr-rail__g--root { padding-bottom: 0; border-bottom: 0; }
+}
+
 /* Not a split button. It sat in .dr-split beside New segment, Upload and
    Export, which draw a divider and a caret onto their second half, so a button
    with neither read as one of them with its right side cut off. It also belongs
@@ -924,15 +1064,10 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 }
 .dr-panel {
   /* Anchored to the right edge of its button, which sits at the end of the
-     toolbar: anchored left it ran 188px past the viewport.
-
-     "On the left-hand side on the panel" was said in the first five minutes of
-     the call, before the product owner had given his opinion at all — it is not
-     the product owner's, and this build follows the product owner. He spoke about the filters once, at
-     07:40, and about their level of detail, not their position. */
+     toolbar: anchored left it ran 188px past the viewport. */
   position: absolute; top: calc(100% + 6px); right: 0; z-index: 60;
   /* 300px broke almost every group onto three rows of chips — two per line with
-     a ragged third. At 360 the dimensions fall two-and-two evenly and the
+     a ragged third. At 360 the audiences fall two-and-two evenly and the
      channels sit on one line with their group. */
   width: 360px; max-height: 70vh; overflow-y: auto; overflow-x: hidden;
   background: var(--color-bg-white);
@@ -1006,6 +1141,14 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-sub--deep { margin: 4px 0 2px 2px; }
 /* The one group whose values were assigned rather than read. */
 .dr-assigned { flex: 1 0 100%; font-size: 11px; line-height: 1.45; color: var(--dr-muted); margin-bottom: 2px; }
+/* DTC / Wholesale over their own channels: a heading inside the group, not a
+   chip you have to press to see what is under it. */
+.dr-chansub {
+  flex: 1 0 100%; margin: 4px 0 1px;
+  font-size: 11px; font-weight: var(--font-semibold); letter-spacing: .04em;
+  text-transform: uppercase; color: var(--dr-th);
+}
+.dr-chansub:first-of-type { margin-top: 0; }
 .dr-chip {
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 28px; padding: 0 10px;
