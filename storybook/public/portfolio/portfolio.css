@@ -259,37 +259,50 @@ button:focus-visible {
   padding: 0.125rem 0.5rem;
 }
 
-/* The method is a sequence, so it is numbered rather than bulleted: the
-   ordinal is the point, and a reader can see there are four steps before
-   reading any of them. The rule below the list governs all four. */
+/* The method is a chain, not a column: four steps in a row, joined by a rule
+   that runs through the numbered badges. Stacked below 62rem, where the same
+   connector turns vertical. */
 .pf-loop {
   counter-reset: step;
   list-style: none;
   margin: var(--pf-step-3) 0 0;
   padding: 0;
   display: grid;
-  gap: 0;
-}
-@media (min-width: 62rem) {
-  .pf-loop { grid-template-columns: 1fr 1fr; column-gap: var(--pf-step-4); }
+  gap: var(--pf-step-3);
 }
 .pf-loop > li {
   counter-increment: step;
+  position: relative;
   display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr);
-  align-content: start;
+  grid-template-columns: 2rem minmax(0, 1fr);
   column-gap: var(--pf-step-2);
-  padding: var(--pf-step-3) 0;
-  border-top: 1px solid var(--color-border-default);
+  align-content: start;
 }
 .pf-loop > li::before {
   content: counter(step, decimal-leading-zero);
   grid-row: 1 / span 2;
-  font-size: var(--text-sm);
+  position: relative;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+  color: var(--pf-accent);
+  font-size: var(--text-xs);
   font-weight: var(--font-semibold);
   font-variant-numeric: tabular-nums;
-  color: var(--pf-accent);
-  padding-top: 0.15rem;
+}
+.pf-loop > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 2rem;
+  bottom: calc(-1 * var(--pf-step-3));
+  width: 1px;
+  background: var(--color-border-default);
 }
 .pf-loop b { display: block; font-weight: var(--font-semibold); }
 .pf-loop span {
@@ -297,6 +310,25 @@ button:focus-visible {
   margin-top: 0.125rem;
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
+}
+@media (min-width: 62rem) {
+  .pf-loop {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--pf-gutter);
+  }
+  .pf-loop > li {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--pf-step-2);
+  }
+  .pf-loop > li::before { grid-row: auto; }
+  .pf-loop > li:not(:last-child)::after {
+    left: 2.25rem;
+    right: calc(-1 * var(--pf-gutter) - 0.25rem);
+    top: 1rem;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
 }
 .pf-rule {
   display: grid;
