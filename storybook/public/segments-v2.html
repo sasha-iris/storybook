@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=21">
-<link rel="stylesheet" href="./segments-v2.css?v=21">
+<link rel="stylesheet" href="./segments-proto.css?v=22">
+<link rel="stylesheet" href="./segments-v2.css?v=22">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -107,21 +107,45 @@
 
              What is lost is the speed of the first read, not information. -->
 
-        <!-- The filters were a permanent 208px column down the left. The product owner,
-             2026-09-03 at 09:00, working that column: "so Type — the left is
-             just featuring which segments to use… there is no clearing", and
-             then "well, yes, it's just filtering, I don't know that this is…".
-             Ten minutes earlier he had opened the Cohorts filter panel, left it
-             open, and said "I would show you kind of this level of detail, and
-             then you can still build the customer segments."
+        <!-- ── Two components, not one in two places ────────────────────────
+             The left column was a filter rail, then it was demoted to a Filters
+             button, and it now comes back as something else: NAVIGATION.
 
-             So the filters now work the way the product's own do: a Filters
-             button that opens a panel of named groups, each with how many are
-             chosen and a way to clear it, and a Reset all across the top. The
-             table gets the width the rail was taking, and what is applied stays
-             visible as chips under the toolbar whether the panel is open or
-             shut. -->
-        <div class="dr-layout dr-layout--nofilters">
+             the product owner said both halves of this. 2026-09-03 at 09:00, working the old
+             column: "so Type — the left is just featuring which segments to
+             use… THERE IS NO CLEARING". Then on the build, 2026-09-08: "I liked
+             the sidebar you had originally with the additional type filters —
+             thought it was more helpful than just the massive list."
+
+             Read together those are not a contradiction. The column is useful
+             because it says what forty rows are made of before he reads them —
+             that is an index. It was maddening because it took six ticks at once
+             and offered no way back — that is a filter wearing an index's
+             clothes. So the two jobs are now two components, split by the shape
+             of the interaction rather than by importance:
+
+               — LEFT, navigation. Single-select. One active place at a time,
+                 "All segments" always on top, so picking anything else is also
+                 the way out of where you are. Folders, and what a segment
+                 narrows on — his "additional type filters" — with a drill-down
+                 inside the active one.
+               — BEHIND THE BUTTON, filtering. Multi-select, OR within a group
+                 and AND across, stacking on top of wherever you are standing.
+                 Audience, Sales channels, Result, Changed by.
+
+             Sales channels sit on the filter side for a second reason: the API
+             stores a COUNT, never the names — "12 sales channel(s)". Which
+             channels a segment uses is expanded from that count, like the SKUs.
+             An index has to be true; a filter can carry the caveat that says so.
+
+             Search and the order window stay in the toolbar. Neither is a facet:
+             one is free text, the other a single value, and the product carries
+             its own range there too. -->
+        <div class="dr-layout" id="lsLayout">
+          <!-- First child, so the single-column layout stacks it above the
+               toolbar, where CSS turns it into a scrolling strip of the same
+               places. -->
+          <nav class="dr-nav" id="lsNav" aria-label="Browse segments"></nav>
           <div>
             <!-- Search leads the row: finding a segment is what someone opens
                  this page to do, and creating, importing and exporting are what
@@ -141,10 +165,14 @@
               <div class="form-search-wrap" style="min-width:260px;"><label for="lsQ" class="seg-sr">Search segments by name or definition</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="lsQ" type="search" placeholder="Name, condition, country, folder"></div>
               <div class="dr-toolbar__end">
                 <div class="dr-rangewrap">
+                <!-- The component as the library draws it: its own 16-grid
+                     calendar glyph, first, inside .iris-datepicker-input__icon.
+                     It had a 24-grid Heroicon on the far right, which is
+                     neither the library's glyph nor its order. -->
                 <button class="iris-datepicker-input dr-range" id="lsRange"
                 aria-haspopup="dialog" aria-expanded="false" aria-controls="lsCal">
-                <span id="lsRangeLabel"></span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                <span class="iris-datepicker-input__icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 7H15" stroke="currentColor" stroke-width="1.5"/><path d="M5 1V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M11 1V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                <span class="iris-datepicker-input__value" id="lsRangeLabel"></span>
                 </button>
                 <div class="iris-cal iris-cal--range dr-cal" id="lsCal" role="dialog" aria-label="Order window" hidden></div>
                 </div>
@@ -222,17 +250,16 @@
                    toolbar is for controls; the sentence now appears above the
                    table, where the missing grouping is what you are looking at. -->
 
-              <!-- Not a switch. A switch promises that ON adds something, and this
-                   swaps one reading of the definition for another: the summary says
-                   what the conditions amount to ("no effective filter, every customer
-                   matches"), the condition list says what was literally configured
-                   ("geography (no criteria set)"). Neither is more than the other,
-                   and on a one-condition segment the "full" view was the shorter of
-                   the two. Two named alternatives, both visible. -->
-              <div class="btn-group dr-seg" role="radiogroup" aria-label="Definition">
-                <button class="btn btn-sm active" role="radio" aria-checked="true" data-def="summary">Summary</button>
-                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-def="conditions">Conditions</button>
-              </div>
+              <!-- The Summary/Conditions switch is gone. It was never asked for:
+                   the requirements note M26, 16:40, "there was lack of information
+                   regarding the definition — that was just something vague",
+                   which was praise for the per-row SUMMARY. The Conditions
+                   reading listed what was literally configured — "geography (no
+                   criteria set) · filters nobody" — which the summary line
+                   already says in words and the row's mark already says as a
+                   mark. Three tellings of one fact per row, and the chips ran
+                   the Segment cell wide enough to push the actions column off
+                   the right. -->
             </div>
             <!-- Between the controls and the table. Above them, appearing pushed
                  the sort and arrangement row down every time a box was ticked;
@@ -252,11 +279,11 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="./segments-data.js?v=21"></script>
-<script src="./segments-v2-shared.js?v=21"></script>
+<script src="./segments-data.js?v=16"></script>
+<script src="./segments-v2-shared.js?v=16"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
-let fState = 'all', fFolder = 'all', q = '', full = false;
+let fState = 'all', fFolder = 'all', q = '';
 
 /* ── Grouping ─────────────────────────────────────────────────────────────
    Data Rooms' table is flat because it holds three files. Ours holds forty
@@ -335,7 +362,7 @@ const ATT = s => s.flags.some(f => f.danger) ? 0
    number of them at once. One dimension was not enough: a real segment carries
    several parameters — "Geography: 1 country + Has 1 product family + Discount
    greater than 10%" is three — so the question is usually "which segments touch
-   BOTH geography and discount", and a single choice could never ask it. Roland,
+   BOTH geography and discount", and a single choice could never ask it. the client's analyst,
    2026-09-03: "build the sequence of those parameters ... rather refinement
    filtration".
 
@@ -350,6 +377,11 @@ const DSEL = new Set();
 const VSEL = new Set();
 /* What has been typed into a group's own search box, by group id. */
 const GQ = {};
+/* Only one group's search box is open at a time, and it is opened by a mark in
+   that group's own heading. Two boxes standing open and empty in a five-group
+   panel were two controls asking to be filled in before anything had been
+   looked for. */
+let searchGrp = null;
 /* The product's date control always reads as a range — "Sep 1, 2023 - Aug 31,
    2026" — never as a word standing in for one, and it carries no label of its
    own because the dates say what it is. Ours opens on the full span the data
@@ -362,7 +394,21 @@ const SPAN = (() => {
 })();
 let fFrom = SPAN.from, fTo = SPAN.to;
 const fullSpan = () => +fFrom === +SPAN.from && +fTo === +SPAN.to;
-let fBy = 'all';
+/* ── Created by / Updated by ──────────────────────────────────────────────
+   the product owner, 2026-09-08 call: "created by can be tracked and added; agreed to
+   surface it as a FILTER, not a column — filtering by creator is the priority,
+   not displaying it inline. 40-50 dashboards per customer, getting hard to
+   manage." So both live in the panel, beside the other filters, and neither
+   takes a column.
+
+   The values are the two that are TRUE, and no others. A segment made or edited
+   in this prototype records who did it; the forty seeded ones record nobody,
+   because Iris does not store an author on a segment today. So the chips are
+   `You` and `Not recorded` — no invented colleagues, and the gap is on screen
+   where the person who can close it will see it. Real names arrive with the
+   field. */
+let fBy = 'all';     /* updated by: 'all' | 'me' | 'none' */
+let fCreatedBy = 'all';
 const matchDimSet = (s, set) => {
   if (!set.size) return true;
   /* "No conditions" is not a special case with its own rule. It is a member of
@@ -396,7 +442,16 @@ const matchWin = s => {
   if (!s.win) return true;
   return s.win.from <= fTo && s.win.to >= fFrom;
 };
-const matchBy = s => fBy === 'all' || !!s.edit;
+/* A segment built in this prototype has an author; the seeded forty do not,
+   because Iris records none. That is the whole of what we can say truthfully. */
+const createdBy = s => String(s.id).indexOf('made') === 0 ? ME : null;
+const byOk      = s => fBy === 'all' || (fBy === 'me' ? !!s.edit : !s.edit);
+const createdOk = s => fCreatedBy === 'all' ||
+                       (fCreatedBy === 'me' ? !!createdBy(s) : !createdBy(s));
+/* Both ride in the one matcher every chain on this page already calls, so
+   adding a second author filter did not mean editing eight filter chains and
+   getting seven of them right. */
+const matchBy = s => byOk(s) && createdOk(s);
 const stateOf = (s, k) =>
   k === 'all'    ? true :
   k === 'issues' ? s.flags.some(f => f.danger) :
@@ -511,7 +566,7 @@ function drawRail() {
     (extra && extra.skipWin ? true : matchWin(x)) &&
     matchBy(x) && matchQ(x));
 
-  const chip = (on, attr, k, label, n, dead) => {
+  const chip = (on, attr, k, label, n, dead, spoken) => {
     const logo = CHANNEL_LOGO[label];
     /* A channel is its mark, the way the product draws it: a round chip holding
        the logo, the name carried by the label and the tooltip. */
@@ -519,7 +574,8 @@ function drawRail() {
       (on ? ' is-on' : '') + (dead ? ' is-empty' : '') + '" ' +
       attr + '="' + esc(k) + '" aria-pressed="' + on + '"' +
       (dead ? ' aria-disabled="true"' : '') +
-      (logo ? ' title="' + esc(label) + ' · ' + n + '" aria-label="' + esc(label) + ', ' + n + '"' : '') + '>' +
+      (logo ? ' title="' + esc(label) + ' · ' + n + '" aria-label="' + esc(label) + ', ' + n + '"'
+            : spoken ? ' title="' + esc(spoken) + '" aria-label="' + esc(spoken) + ', ' + n + '"' : '') + '>' +
       (logo ? '<img src="' + logo + '" alt="" width="18" height="18">'
             : esc(label) + '<span class="dr-chip__n">' + n + '</span>') +
       '</button>';
@@ -528,16 +584,25 @@ function drawRail() {
   const group = (id, label, sel, resetKey, body, searchable) => body ?
     '<div class="dr-rail__g" role="group" aria-labelledby="' + id + '">' +
       '<div class="dr-rail__lab" id="' + id + '">' + label +
+        (searchable
+          ? '<button class="dr-rail__find' + (searchGrp === id ? ' is-on' : '') + '" data-find="' + id + '"' +
+            ' aria-expanded="' + (searchGrp === id) + '" aria-controls="gq-' + id + '"' +
+            ' aria-label="Search ' + label + '" title="Search ' + label + '">' +
+            svg('m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z', 14) + '</button>' : '') +
         (sel ? '<span class="dr-rail__sel">' + sel + ' selected</span>' : '') +
         (sel ? '<button class="dr-rail__reset" data-reset="' + resetKey + '">Reset</button>' : '') +
       '</div>' +
-      /* The product's METRIC group carries a search box because it holds
-         fourteen values; the same rule applies to any group long enough to
-         scroll. */
-      (searchable
-        ? '<div class="dr-gsearch"><label class="seg-sr" for="gq-' + id + '">Search ' + label + '</label>' +
+      /* The box is here only while this group holds the open search. */
+      (searchable && searchGrp === id
+        ? '<div class="dr-gsearch"><div class="form-search-wrap form-search-wrap--end">' +
+          '<label class="seg-sr" for="gq-' + id + '">Search ' + label + '</label>' +
           '<input class="form-input" id="gq-' + id + '" type="search" data-gq="' + id + '"' +
-          ' placeholder="Search…" value="' + esc(GQ[id] || '') + '"></div>' : '') +
+          ' placeholder="Search…" value="' + esc(GQ[id] || '') + '">' +
+          /* Ours, not the browser's: the library's trailing action slot, shown
+             only once there is something to clear. */
+          (GQ[id] ? '<button class="form-search-icon" data-gqclear="' + id + '"' +
+                    ' aria-label="Clear the search">' + svg('M6 18 18 6M6 6l12 12', 14) + '</button>' : '') +
+          '</div></div>' : '') +
       '<div class="dr-chips' + (searchable ? ' dr-chips--scroll' : '') + '">' + body + '</div></div>' : '';
 
 
@@ -559,7 +624,7 @@ function drawRail() {
   const valueChips = (k, nested) => {
     const one = v => {
       const n = nVal(v.tok), on = VSEL.has(v.tok);
-      return chip(on, 'data-val', v.tok, v.l, n, !on && n === 0) +
+      return chip(on, 'data-val', v.tok, navLabel(k, v.l), n, !on && n === 0) +
         (on && v.kids && v.kids.length
           ? '<span class="dr-sub dr-sub--deep">' + v.kids.map(c => {
               const cn = nVal(c.tok), con = VSEL.has(c.tok);
@@ -567,39 +632,66 @@ function drawRail() {
             }).join('') + '</span>'
           : '');
     };
-    const body = dimTree(k, pool({ skipDim: true })).map(one).join('');
+    /* A value that is ON is always drawn, even when the pool no longer offers
+       it. The tree is built from the segments the OTHER groups left standing, so
+       "returning buyers" could disappear from Audience the moment Result was set
+       to "Has customers" — while still filtering the table, with its chip gone
+       and no way to switch it off. It filters, so it is on screen. */
+    const tree = dimTree(k, pool({ skipDim: true }));
+    const drawn = new Set();
+    const walk = ns => ns.forEach(v => { drawn.add(v.tok); walk(v.kids || []); });
+    walk(tree);
+    const orphans = [...VSEL]
+      .filter(t => String(t).split('|')[0] === k && !drawn.has(t))
+      .map(t => ({ tok: t, l: String(t).split('|').slice(1).join(' · '), kids: [] }));
+    const body = tree.concat(orphans).map(one).join('');
     return nested ? '<span class="dr-sub">' + body + '</span>' : body;
   };
   const nSel = k => [...VSEL].filter(t => String(t).split('|')[0] === k).length;
 
-  /* What a segment narrows by, for the dimensions that have no values worth
-     listing on their own. */
-  const nDim = k => {
-    const probe = new Set(DSEL); probe.add(k);
-    return SEGMENTS.filter(x => matchDimSet(x, probe) && matchValues(x, VSEL) &&
-      matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x)).length;
+  /* Channels, flat and named. The tree gives DTC and Wholesale each holding
+     their channels; this draws the channels and uses the groups as headings.
+     A group that no segment in the pool uses is left out entirely rather than
+     printed over an empty row. */
+  const channelChips = () => {
+    const tree = dimTree('channel', pool({ skipDim: true }));
+    if (!tree.length) return '';
+    const seen = new Set();
+    const body = tree.map(g => {
+      const kids = (g.kids || []).filter(c => !seen.has(c.tok) && seen.add(c.tok));
+      seen.add(g.tok);
+      /* The group chip stays beside its channels, because a segment can be
+         "through 9 channels across DTC and Wholesale" — in the group and named
+         by none of them. Without it that segment is unreachable from here. */
+      const gn = nVal(g.tok), gon = VSEL.has(g.tok);
+      /* "Any", not "Any DTC": the heading directly above it is DTC. The name
+         survives where it is still needed — the tooltip and the accessible name,
+         which a screen reader reaches without the heading beside it. */
+      return '<span class="dr-chansub">' + esc(g.l) + '</span>' +
+        chip(gon, 'data-val', g.tok, 'Any', gn, !gon && gn === 0, 'Any ' + g.l + ' channel') +
+        kids.map(c => {
+          const n = nVal(c.tok), on = VSEL.has(c.tok);
+          return chip(on, 'data-val', c.tok, c.l, n, !on && n === 0);
+        }).join('');
+    }).join('');
+    /* Any channel that is ON but no longer offered by the pool still has to be
+       reachable, for the same reason as everywhere else in this panel. */
+    const orphans = [...VSEL].filter(t => String(t).split('|')[0] === 'channel' && !seen.has(t));
+    return '<span class="dr-assigned">Expanded from each segment’s channel count — Iris stores the count, not the names</span>' +
+      body +
+      orphans.map(t => {
+        const parts = String(t).split('|');
+        return chip(true, 'data-val', t, parts[parts.length - 1], nVal(t), false);
+      }).join('');
   };
-  const PROMOTED = ['ctype', 'channel'];
-  const rest = DIMS.filter(d => PROMOTED.indexOf(d.k) === -1 &&
-                                SEGMENTS.some(x => x.dims.indexOf(d.k) !== -1));
-  const gq = (GQ['rl-dim'] || '').toLowerCase();
-  const dimChips = rest.filter(d => !gq || d.l.toLowerCase().includes(gq)).map(d => {
-    const n = nDim(d.k), on = DSEL.has(d.k);
-    return chip(on, 'data-dim', d.k, d.l, n, !on && n === 0) +
-      /* Its values open under it, and only when it is the one thing chosen. */
-      (on && DSEL.size === 1
-        ? (d.k === 'product'
-            /* Said on screen, because it is the one place in this build where a
-               value was assigned rather than read. The SKU codes are real; which
-               segment holds which is expanded from its count, and the family
-               names are invented outright. */
-            ? '<span class="dr-sub"><span class="dr-assigned">Assigned from each segment\u2019s SKU and family counts — Iris stores the counts, not the values</span>' +
-              valueChips(d.k).replace(/^/, '') + '</span>'
-            : valueChips(d.k, true))
-        : '');
-  }).join('') +
-  (!gq || 'no conditions'.includes(gq)
-    ? chip(DSEL.has('none'), 'data-dim', 'none', 'No conditions', nDim('none'), false) : '');
+
+  /* One author group's chips, filtered by that group's own search box. */
+  const people = (id, attr, cur, entries) => {
+    const q2 = (GQ[id] || '').trim().toLowerCase();
+    const hit = entries.filter(([, label]) => !q2 || label.toLowerCase().indexOf(q2) !== -1);
+    if (!hit.length) return '<div class="dr-navempty">Nothing matches “' + esc(GQ[id]) + '”</div>';
+    return hit.map(([k, label, n]) => chip(cur === k, attr, k, label, n, false)).join('');
+  };
 
   const nState = k => SEGMENTS.filter(x => matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
   /* Result, trimmed. It answers a question someone asks — "which of these come
@@ -611,18 +703,282 @@ function drawRail() {
     .map(k => chip(fState === k, 'data-state', k, STATE[k].l, nState(k), fState !== k && !nState(k))).join('');
 
   document.getElementById('lsRail').innerHTML =
-    /* No Folders group. A folder is where a segment lives, not a question you
-       ask of the list — the table groups by folder and every row wears its
-       folder's name, which is where that belongs. */
+    /* No Folders and no "Narrows by". Both are places a segment can be found —
+       they are the navigation column now. What is left here is what stacks on
+       top of a place: several audiences at once, several channels at once, a
+       result state, an author. */
     group('rl-aud', 'Audience', nSel('ctype'), 'val:ctype', valueChips('ctype')) +
-    group('rl-dim', 'Narrows by', DSEL.size, 'dim', dimChips, true) +
-    group('rl-chan', 'Sales channels', nSel('channel'), 'val:channel', valueChips('channel')) +
-    group('rl-res', 'Result', fState !== 'all' ? 1 : 0, 'state', results) +
-    (SEGMENTS.some(x => x.edit)
-      ? group('rl-by', 'Changed by', fBy !== 'all' ? 1 : 0, 'by',
-          chip(fBy === 'me', 'data-by', 'me', 'You',
-            SEGMENTS.filter(x => x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchQ(x)).length, false))
-      : '');
+    /* The one group whose values are expanded rather than read: the API stores
+       "12 sales channel(s)" and never says which twelve. Said on screen, because
+       it is a filter and a filter can carry its own caveat — which is also why
+       these are not in the navigation column, where everything has to be true. */
+    /* Every named channel on screen at once, with its logo — not two group
+       chips you have to open first. The product owner asked for this by name at 12:20: "we
+       want to see the channel — Shopify, Amazon oriented segments". Behind DTC
+       and Wholesale, Amazon and Shopify were two clicks deep and the group chips
+       were the only thing the panel showed of the one dimension he named. DTC
+       and Wholesale stay as the labels over their own rows, so the grouping is
+       still there — it is a heading now, not a gate. */
+    group('rl-chan', 'Sales channels', nSel('channel'), 'val:channel', channelChips()) +
+    /* The product owner's 2026-09-08 ask, in the place he asked for it — the filter panel,
+       not a column. Both groups are always present, because "who made this" is
+       the question at 40-50 objects whether or not anyone has touched one in
+       this session. `Not recorded` is not a placeholder: it is the true answer
+       for all forty seeded segments, and it counts them. */
+    /* Both author groups are searched, the same way the long value groups are.
+       Two names is not a list you need to search today, but "who made this" is
+       the group that grows with the team, and it is the one place in the panel
+       whose values are people rather than a fixed vocabulary. The box filters
+       whatever the group holds; it holds the two answers that are true while
+       Iris records no author. */
+    group('rl-cre', 'Created by', fCreatedBy !== 'all' ? 1 : 0, 'created',
+      people('rl-cre', 'data-created', fCreatedBy, [
+        ['me',   'You',          SEGMENTS.filter(x => createdBy(x) && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && byOk(x) && matchQ(x)).length],
+        ['none', 'Not recorded', SEGMENTS.filter(x => !createdBy(x) && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && byOk(x) && matchQ(x)).length]
+      ]), true) +
+    group('rl-by', 'Updated by', fBy !== 'all' ? 1 : 0, 'by',
+      people('rl-by', 'data-by', fBy, [
+        ['me',   'You',          SEGMENTS.filter(x => x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && createdOk(x) && matchQ(x)).length],
+        ['none', 'Not recorded', SEGMENTS.filter(x => !x.edit && matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && createdOk(x) && matchQ(x)).length]
+      ]), true);
+}
+
+/* ── The navigation column ───────────────────────────────────────────────
+   Single-select, one active place at a time. "All segments" sits on top and is
+   the way out, which is the whole of the product owner's 09:00 complaint about the old
+   rail: "there is no clearing."
+
+   Two axes, the way a mail sidebar carries mailboxes and smart folders:
+   FOLDERS, which is where a segment lives, and WHAT IT NARROWS ON, which is his
+   "additional type filters". Picking one clears the other level below it, never
+   the filters in the panel.
+
+   What is lost by making it single-select is asking for two dimensions at once
+   — "which segments touch BOTH geography and discount". That was the analyst's ask,
+   2026-09-03 ("build the sequence of those parameters... rather refinement
+   filtration"), not the product owner's, and it is the exact thing that turned the column
+   into a filter with no way back. It stays available where it belongs: the
+   builder ANDs as many conditions as you like.
+
+   Every count answers one question — how many rows you land on if you click
+   this — holding the panel filters, the search and the order window, and
+   holding the other axis. */
+const NAV_DIMS = ['product', 'geo', 'value', 'discount', 'rank', 'refund', 'tag'];
+/* Dimensions whose value list the reader has asked to see in full. */
+const NAV_MORE = new Set();
+
+/* ── A child does not repeat its parent ──────────────────────────────────
+   Under "Discount" the values arrived as the product writes them in a sentence
+   — "discount over 25%", "discount over 0%", "discount over 10%" — so the word
+   the reader had just clicked was printed again on every line under it, and the
+   number, which is the only thing that differs, sat at the end of four
+   near-identical strings. Same under Order value: "orders over $100".
+
+   An explicit table, not a rule that strips the group's name: "no refunds"
+   would become "no" under one, and it means None. */
+const NAV_TRIM = {
+  discount: [[/^discount /i, '']],
+  value:    [[/^orders /i, '']],
+  refund:   [[/^no refunds$/i, 'None'], [/^refunds /i, '']],
+  /* The filter panel has the same disease. Under a heading reading AUDIENCE,
+     "first-time buyers / returning buyers / subscribers" says buyers twice and
+     the group's own name once more. */
+  ctype:    [[/ buyers$/i, '']],
+  /* "Products → SKUs / Product families". The second one says product again. */
+  product:  [[/^product families$/i, 'Families']]
+};
+function navLabel(k, l) {
+  let s = l;
+  (NAV_TRIM[k] || []).some(([re, to]) => re.test(s) && (s = s.replace(re, to), true));
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+/* Thresholds read as a scale, so they are ordered as one. "over 25%, over 0%,
+   over 10%, over 5%" is the facet convention — commonest first — and it is the
+   wrong convention for a number line: nobody scans a scale by popularity. Only
+   when every value in the group carries a number; otherwise the count order
+   stands. */
+const NAV_NUM = s => { const m = String(s).match(/-?[\d.]+/); return m ? parseFloat(m[0]) : null; };
+const FILTER_DIMS = ['ctype', 'channel'];
+const isFilterTok = t => FILTER_DIMS.indexOf(String(t).split('|')[0]) !== -1;
+const filterVals = () => new Set([...VSEL].filter(isFilterTok));
+/* Everything the column is NOT responsible for: what the panel, the search box
+   and the range picker have already ruled out. */
+const navBase = () => SEGMENTS.filter(x =>
+  matchValues(x, filterVals()) && matchState(x) && matchWin(x) && matchBy(x) && matchQ(x));
+
+function drawNav() {
+  const base = navBase();
+  const navSel = new Set([...VSEL].filter(t => !isFilterTok(t)));
+
+  const countIf = (dims, vals, folder) => base.filter(x =>
+    matchDimSet(x, dims) && matchValues(x, vals) &&
+    (folder === 'all' ? true : folder === 'none' ? !folderOf(x) : (folderOf(x) || {}).id === folder)).length;
+
+  /* ── One row ────────────────────────────────────────────────────────────
+     `state` is 'off', 'path' or 'current', and only ONE row on screen is
+     'current'. The column used to paint Geography, US and postal code CA with
+     the same filled block, three rounded slabs stacked on top of each other:
+     nothing said which of the three was the place and which two were the way to
+     it, and the fill read as one shape rather than three rows.
+
+     So the deepest choice is the current one and takes the fill and the left
+     marker; its ancestors carry the brand colour in the label alone. Cloudscape
+     puts it plainly — one link in a side navigation is active, and the parent of
+     an active child is shown as its parent, not as a second active item.
+
+     The indent is a reserved column rather than padding on the text, the way
+     Primer builds its tree rows, so a child's label lands one step right of its
+     parent's label — not one step right of the parent's ICON, which is what put
+     "postal code IL" and "US" at two unrelated x positions. */
+  const row = (state, nav, label, n, depth, icon) =>
+    '<button class="list-group-item dr-nv dr-nv--' + depth +
+      (state === 'current' ? ' is-current' : state === 'path' ? ' is-path' : '') +
+      '" data-nav="' + esc(nav) + '" aria-pressed="' + (state !== 'off') + '"' +
+      (state === 'current' ? ' aria-current="true"' : '') +
+      (n === 0 && state === 'off' ? ' aria-disabled="true"' : '') + '>' +
+      (icon ? '<span class="dr-nv__i">' + svg(icon, 15) + '</span>' : '') +
+      '<span class="dr-nv__l">' + esc(label) + '</span>' +
+      '<span class="dr-rail__n">' + n + '</span></button>';
+
+  const lab = t => '<div class="dr-rail__lab">' + t + '</div>';
+
+  const navSearchBox = k =>
+    '<div class="dr-navsearch"><div class="form-search-wrap form-search-wrap--end">' +
+      '<label class="seg-sr" for="navq-' + k + '">Search ' + esc(DIM[k].l) + '</label>' +
+      '<input class="form-input" id="navq-' + k + '" type="search" data-navq="' + k + '"' +
+      ' placeholder="Country or postal code" value="' + esc(GQ['nav:' + k] || '') + '">' +
+      (GQ['nav:' + k] ? '<button class="form-search-icon" data-navqclear="' + k + '"' +
+                        ' aria-label="Clear the search">' + svg('M6 18 18 6M6 6l12 12', 14) + '</button>' : '') +
+    '</div></div>';
+
+  /* All segments. Its count ignores both axes, because clicking it drops them. */
+  const atRoot = !DSEL.size && !navSel.size && fFolder === 'all';
+  let html = '<div class="dr-rail__g dr-rail__g--root">' +
+    row(atRoot ? 'current' : 'off', 'all', 'All segments',
+        countIf(new Set(), filterVals(), 'all'), 0, IC.layers) + '</div>';
+
+  if (FOLDERS.length) {
+    /* A folder is a place and so is a dimension, and they can be true at once —
+       "Retention, narrowing by geography". So a chosen folder is 'current' only
+       when nothing in the other axis is. */
+    const folderState = id => fFolder !== id ? 'off'
+      : (DSEL.size || navSel.size) ? 'path' : 'current';
+    html += '<div class="dr-rail__g">' + lab('Folders') +
+      FOLDERS.map(f => row(folderState(f.id), 'folder:' + f.id, f.name,
+        countIf(DSEL, VSEL, f.id), 0, IC.folder)).join('') +
+      row(folderState('none'), 'folder:none', 'Unfiled',
+        countIf(DSEL, VSEL, 'none'), 0, IC.folder) + '</div>';
+  }
+
+  /* The drill-down inside the active dimension: one value at a time, and a
+     second level only inside the value it belongs to. A path, not a set — so
+     the deepest chosen node is the current one and the rest of the path is
+     shown as the path. */
+  /* ONE token, the deepest one. Holding "geo|US" alongside "geo|US|CA" put two
+     values of the same dimension in VSEL, and matchValues ORs within a
+     dimension — so picking a postal code inside the US widened the result back
+     to every US segment and the header read "8 of 40" under a row counting 1.
+     A path is not an OR. The ancestors are read off the token itself. */
+  const sel = [...navSel][0] || null;
+
+  /* ── Two levels, and a ceiling on the second ────────────────────────────
+     There WAS a third level: postal codes inside a country, SKU codes inside
+     SKUs. It came out, because it does not survive a real account. This one has
+     five SKU codes; an account can have thousands, and so can its postal codes.
+     A navigation column that lists them is a column that is taller than the
+     table it is navigating, and the values it would list here were expanded from
+     a count rather than read — the caveat under Products was a sign that the
+     level should not have been there, not a way of keeping it.
+
+     Which loses the product owner's "product sub items" at 11:40 as CODES, and keeps it as
+     the split he can actually act on: SKUs against product families. That is two
+     items, read straight from the conditions, invented nowhere.
+
+     The second level is also capped. Baymard's filtering work puts the ceiling
+     at four to eight before a list starts costing more than it gives; at eight
+     the rest go behind one more row rather than off the page, and the toolbar
+     search reaches any of them by name. */
+  const NAV_CAP = 8;
+  const valueRows = k => {
+    const tree = dimTree(k, base.filter(x => matchFolder(x)));
+
+    /* ── Geography and the postal codes ───────────────────────────────────
+       the product owner, 2026-09-08: "most filters stay in the left column — products,
+       geography, zip/postcode COMBINED". Combined, not enumerated: one filter
+       reaches both, and the postal codes are found by typing rather than listed.
+       This account has two of them; an account has thousands, and a column that
+       lists them is taller than the table it navigates.
+
+       So the rows stay countries, and a search box under the dimension matches
+       BOTH levels — "US" finds the country, "IL" finds the postal code inside
+       it. Which is the pattern every product we looked at uses for a facet that
+       does not fit: top-N plus typeahead, never the full list. */
+    const q2 = (GQ['nav:' + k] || '').trim().toLowerCase();
+    const deep = [];
+    if (k === 'geo') tree.forEach(c => (c.kids || []).forEach(x => deep.push(x)));
+    if (q2 && deep.length) {
+      const hits = deep.filter(x => x.l.toLowerCase().includes(q2) ||
+                                    String(x.tok).toLowerCase().includes(q2));
+      const cs = tree.filter(c => c.l.toLowerCase().includes(q2));
+      const rows = cs.concat(hits);
+      return navSearchBox(k) + (rows.length
+        ? rows.map(v => {
+            const probe = new Set([...VSEL].filter(isFilterTok)); probe.add(v.tok);
+            const p = String(v.tok).split('|');
+            return row(sel === v.tok ? 'current' : 'off', 'val:' + v.tok,
+                       p.length > 2 ? p[1] + ' · ' + v.l : v.l,
+                       countIf(new Set([k]), probe, fFolder), 1);
+          }).join('')
+        : '<div class="dr-navempty">Nothing matches “' + esc(q2) + '”</div>');
+    }
+
+    const nodes = tree
+      /* Anything below the top level is a code, not a place. */
+      .filter(v => String(v.tok).split('|').length === 2);
+    /* One value is not a drill-down. Tags held exactly one — "1 tag" under a
+       heading reading Tags — so opening it added a row that repeated its parent
+       and led somewhere the parent already was. */
+    if (nodes.length < 2) return '';
+    if (nodes.every(v => NAV_NUM(v.l) != null)) {
+      nodes.sort((a, b) => NAV_NUM(a.l) - NAV_NUM(b.l));
+    }
+    const open = NAV_MORE.has(k) || nodes.length <= NAV_CAP + 1;
+    const shown = open ? nodes : nodes.slice(0, NAV_CAP);
+    return (deep.length ? navSearchBox(k) : '') + shown.map(v => {
+      const probe = new Set([...VSEL].filter(isFilterTok)); probe.add(v.tok);
+      return row(sel === v.tok ? 'current' : 'off',
+                 'val:' + v.tok, navLabel(k, v.l), countIf(new Set([k]), probe, fFolder), 1);
+    }).join('') +
+      (open ? '' :
+        '<button class="list-group-item dr-nv dr-nv--1 dr-nv__more" data-more="' + esc(k) + '">' +
+          '<span class="dr-nv__l">Show all ' + nodes.length + '</span></button>');
+  };
+
+  const dims = NAV_DIMS.filter(k => SEGMENTS.some(x => x.dims.indexOf(k) !== -1));
+  const dimState = k => !DSEL.has(k) ? 'off' : (navSel.size ? 'path' : 'current');
+  html += '<div class="dr-rail__g">' + lab('Narrows by') +
+    dims.map(k => {
+      const on = DSEL.has(k);
+      return row(dimState(k), 'dim:' + k, DIM[k].l, countIf(new Set([k]), filterVals(), fFolder), 0, DIM[k].ic) +
+        (on ? valueRows(k) : '');
+    }).join('') +
+    row(dimState('none'), 'dim:none', 'No conditions',
+        countIf(new Set(['none']), filterVals(), fFolder), 0, IC.slash) +
+    '</div>';
+
+  /* Result belongs in the navigation column, not the filter panel. "Which of
+     these come back with nobody" is a place you go and stand, the same as a
+     dimension or a folder, and it was the one group in the panel that answered
+     that kind of question. Pressing the row you are already on clears it, the
+     way every other row here does. */
+  const nStateNav = k => SEGMENTS.filter(x =>
+    matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
+  html += '<div class="dr-rail__g">' + lab('Result') +
+    ['ready', 'nomatch', 'unknown'].map(k =>
+      row(fState === k ? 'current' : 'off', 'state:' + k, STATE[k].l, nStateNav(k), 0, STATE[k].ic)
+    ).join('') + '</div>';
+
+  document.getElementById('lsNav').innerHTML = '<div class="list-group dr-rail">' + html + '</div>';
 }
 
 /* ── table ──────────────────────────────────────────────────────────────── */
@@ -655,38 +1011,70 @@ function nameCell(s) {
      nothing, and marks those. That is the whole difference between the two
      readings: the summary says what the definition amounts to, this says what
      was actually configured. */
-  const conds = full && s.conds.length
-    ? s.conds.map(c => '<span class="iris-chip iris-chip--light' + (c.noop ? ' dr-chip--dead' : '') + '">' +
-        esc(c.label) + (c.noop ? ' · filters nobody' : '') + '</span>').join(' ')
-    : esc(s.sentence);
-  /* Status only when it is an exception. A green "Active" on 23 of 40 rows is
-     noise; the number in the Customers column already says the segment works. */
-  const badge = st === 'nomatch' ? '<span class="badge badge-yellow badge-sm">No customers match</span>'
-              : st === 'unknown' ? '<span class="badge badge-gray badge-sm">No data</span>' : '';
-  /* Line 1 is the name and, only when it is an exception, a status badge. The
-     condition count moved down to the definition line, where it belongs: on the
-     name line it competed with the title and pushed it onto its own row in a
-     290px column, which broke the name away from its own tile. */
+  const conds = esc(s.sentence);
+  /* ── One mark, no sentence ──────────────────────────────────────────────
+     the product owner, 2026-09-08: "the alerts in the main list are too loud, it's too
+     difficult for me to parse through what's important and what isn't. I think
+     if you just have some alert and no text, it might be fine."
+
+     A row used to carry up to three of them: a filled status pill on the name
+     line, a red line reading "Reports your whole customer base · same numbers as
+     2 other segments", and an amber "Average LTV is negative" under it. Forty
+     rows of that is a page about what is broken, which is the note he has now
+     made three times.
+
+     So every finding on a row collapses into ONE mark, and the mark says only
+     that there is something to look at. It sits at the right edge of the Segment
+     cell, so the marks line up in a column and the eye runs down them instead of
+     hunting them at the end of names of different lengths.
+
+     One severity, not two. Red-for-error beside amber-for-warning is a
+     distinction carried by colour alone — which is both a WCAG 1.4.1 failure and
+     the exact thing he says he cannot parse. What is behind the mark is still
+     written out in full, in three places that are not the list: the tooltip, the
+     Result filter, and the segment's own page.
+
+     The status pills go with them. "No customers match" is the Customers column
+     reading 0, and "No data" is that column reading —; the pill repeated in
+     colour what the number already said plainly. */
+  /* Negative LTV is NOT one of these. It is not a fault in the definition — the
+     segment is built correctly and the customers in it cost more than they
+     bring — and the Avg LTV column already says it, in red, in the column whose
+     job that is. Carrying it here too put the mark on 19 of 40 rows and made it
+     mean "something or other", which is the complaint. It means one thing now:
+     the definition has a problem. Fourteen rows. */
+  const findings = err.map(f => f.t).concat(warn.map(f => f.t));
+  /* A mark with no affordance is decoration. The first version was a bare icon
+     carrying a `title`: nothing on hover but the OS tooltip half a second later,
+     nothing on focus, nothing at all on a touch screen — so the row said "there
+     is a problem" and gave you no way to find out what.
+
+     It is a button now, with a hover and a focus state, and what it holds is the
+     library's own .tooltip-bubble rather than the browser's. The findings are
+     one per line: this is the "no text" the product owner asked for, in the sense that the
+     text is not ON the row, it is one hover away from it. */
+  const mark = findings.length
+    ? '<span class="tooltip-wrap dr-flagmark">' +
+        '<button class="dr-flagbtn" aria-describedby="fl-' + s.id + '"' +
+        ' aria-label="' + findings.length + ' finding' + (findings.length > 1 ? 's' : '') +
+        ' on this segment">' + svg(IC.warn, 15) + '</button>' +
+        '<span class="tooltip-bubble tooltip-left dr-flagtip" role="tooltip" id="fl-' + s.id + '">' +
+          findings.map(t => '<span>' + esc(t) + '</span>').join('') +
+        '</span>' +
+      '</span>'
+    : '';
+  /* Line 1 is the name, and nothing else. The condition count moved down to the
+     definition line, where it belongs: on the name line it competed with the
+     title and pushed it onto its own row in a 290px column, which broke the name
+     away from its own tile. */
   return '<div class="dr-name"><span class="card-icon dr-tile ' + kind.c + '" title="' + kind.l + '" aria-hidden="true">' + svg(kind.ic, 19) + '</span>' +
     '<div class="dr-name__t"><div class="dr-name__l">' +
       '<a class="dr-name__a" href="./segment-detail-v2.html?id=' + s.id + '">' + esc(s.n) + '</a>' +
-      badge +
     '</div><div class="dr-name__s">' +
       (s.conds.length ? '<span class="iris-chip iris-chip--light">' + s.conds.length + ' condition' + (s.conds.length > 1 ? 's' : '') + '</span>' : '') +
       (folderOf(s) ? '<span class="iris-chip iris-chip--light">' + svg(IC.folder, 12) + esc(folderOf(s).name) + '</span>' : '') +
       '<span>' + conds + '</span>' +
-      /* the finding gets its own line rather than trailing the definition behind a
-         dot: on a wrapped row the dot was left dangling at the end of a line, and
-         a fixed line lets the eye run down the flags instead of hunting them. */
-      /* Both findings on one line. Two stacked flag lines made the worst rows
-         101px tall at 1180px, and the eye reads "reports the whole base · same
-         numbers as two others" as one problem, which is what it is. */
-      (err.length ? '<span class="flag bad">' + svg(IC.warn, 13) +
-        esc(err[0].t) + err.slice(1).map(f => ' · ' + esc(f.t).replace(/^S/, 's')).join('') + '</span>' : '') +
-      (!err.length && warn.length ? '<span class="flag warn">' + svg(IC.warn, 13) + esc(warn[0].t) + '</span>' : '') +
-      (!err.length && v2state(s) === 'ready' && s.ltv < 0
-        ? '<span class="flag warn">' + svg(IC.warn, 13) + 'Average LTV is negative</span>' : '') +
-    '</div></div></div>';
+    '</div></div>' + mark + '</div>';
 }
 
 /* Customers is the lead metric, so it gets the weight and a bar. The bar is the
@@ -703,9 +1091,13 @@ function customersCell(s) {
               they rank as well, like other segments, relatively". The share
               says how much of the business; the rank says where this one sits
               among the segments that returned anything. */
-           '<span class="sub">' + pct(s.share) + ' of base' +
-           (s.rank ? ' · <span class="dr-rank">#' + s.rank + ' of ' + s.rankOf + '</span>' : '') +
-           '</span>' : '') + '</div>';
+           /* Two facts, two lines. Joined by a middot they were one phrase too
+              long for a 110px column, so it broke wherever it ran out of room
+              — "100.0% of" over "base · #1 of 23" — and the cell read as
+              ragged rather than as two readings of the same number. */
+           '<span class="sub">' + pct(s.share) + ' of base</span>' +
+           (s.rank ? '<span class="sub dr-rank">#' + s.rank + ' of ' + s.rankOf + '</span>' : '')
+           : '') + '</div>';
 }
 
 /* Drawn on its own so that ticking a checkbox does not rebuild the table under
@@ -748,10 +1140,18 @@ function syncPickAll() {
   const on = shown.filter(x => PICKED.has(x.id)).length;
   all.checked = shown.length > 0 && on === shown.length;
   all.indeterminate = on > 0 && on < shown.length;
+  /* Three states, and the drawn span carries all three: the library ships
+     --checked and --intermediate for exactly this. */
+  const box = all.parentElement.querySelector('.iris-checkbox');
+  if (box) {
+    box.classList.toggle('iris-checkbox--checked', all.checked);
+    box.classList.toggle('iris-checkbox--intermediate', all.indeterminate);
+  }
 }
 
 function render() {
   syncArrangement();
+  drawNav();
   drawRail();
   let rows = SEGMENTS.filter(s => matchDim(s) && matchState(s) && matchFolder(s) && matchWin(s) && matchBy(s) && matchQ(s));
   rows = [...rows].sort((a, b) => {
@@ -796,7 +1196,11 @@ function render() {
        the chip is already labelled with and made three channels wider than the
        row, so they wrapped and shoved the sort controls down. Geography keeps
        its parent, because "postal code IL" without a country is not a place. */
-    const label = !p[2] ? p[1]
+    /* Trimmed the same way the column trims it. An applied chip is a group name
+       and a value side by side, so "Order value · orders over $20" said order
+       twice in four words — the same repetition, in the one line that reports
+       what is currently on. */
+    const label = !p[2] ? navLabel(p[0], p[1])
                 : p[0] === 'geo' ? p[1] + ' · postal code ' + p[2]
                 : p[2];
     chips.push(['val:' + v, DIM[p[0]] ? DIM[p[0]].l : 'Value', label,
@@ -804,7 +1208,8 @@ function render() {
   /* Only when it narrows something — the full span is the resting state, and a
      chip for it would claim a filter that is not on. */
   if (!fullSpan()) chips.push(['win', 'Dates', fmtDate(fFrom) + ' - ' + fmtDate(fTo)]);
-  if (fBy !== 'all')  chips.push(['by', 'Changed by', 'You']);
+  if (fBy !== 'all')  chips.push(['by', 'Updated by', fBy === 'me' ? 'You' : 'Not recorded']);
+  if (fCreatedBy !== 'all') chips.push(['created', 'Created by', fCreatedBy === 'me' ? 'You' : 'Not recorded']);
     if (fState !== 'all')  chips.push(['state',  'Result', fState === 'issues' ? 'Data issues'
                                      : fState === 'negltv' ? 'Negative LTV' : STATE[fState].l]);
   if (fFolder !== 'all') chips.push(['folder', 'Folder', fFolder === 'none' ? 'Ungrouped'
@@ -840,14 +1245,20 @@ function render() {
         (c[3] ? '<img class="dr-fchip__logo" src="' + c[3] + '" alt="' + esc(c[1] + ' ' + c[2]) + '" width="18" height="18" title="' + esc(c[2]) + '">'
               : esc(c[2])) +
         '</span>').join('') +
-    (chips.length > 1 ? '<button class="btn-link" id="lsClear">Clear all</button>' : '') +
+    (chips.length > 1 ? '<button class="dr-rail__reset dr-appliedreset" id="lsClear">Reset all</button>' : '') +
     '';
 
   const head = '<thead><tr>' +
-      '<th class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" id="lsAll"' +
-        ' aria-label="Select all ' + rows.length + ' segments shown"></label></th>' +
+      /* The library's checkbox, not the browser's. .iris-checkbox is a
+         <span role="checkbox"> in the library; the native input stays because
+         it is what a keyboard and a screen reader operate, clipped out of
+         sight, and the span is what is drawn. Tinting the native control with
+         accent-color left the operating system drawing the box. */
+      '<th class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" id="lsAll" class="seg-sr"' +
+        ' aria-label="Select all ' + rows.length + ' segments shown">' +
+        '<span class="iris-checkbox" aria-hidden="true"></span></label></th>' +
       COLS.map(c =>
-      '<th class="' + (c.n ? 'n' : '') + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
+      '<th class="' + (c.n ? 'n' : '') + '" data-col="' + c.k + '"' + (sort.k === c.k ? ' aria-sort="' + (sort.dir === 'desc' ? 'descending' : 'ascending') + '"' : '') + '>' +
       '<button class="dr-sort" data-sort="' + c.k + '">' + c.l + ' <span class="c" aria-hidden="true">▾</span></button></th>').join('') +
       '<th style="width:108px;"><span class="seg-sr">Actions</span></th></tr></thead>';
 
@@ -856,9 +1267,10 @@ function render() {
       /* The label is the target, not the 16px box: WCAG 2.5.8 asks 24x24 and a
          checkbox renders at 16 in every browser. Clicking anywhere in the cell
          ticks it. */
-      '<td class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" data-pick="' + s.id + '"' +
+      '<td class="dr-pick"><label class="dr-pick__hit"><input type="checkbox" class="seg-sr" data-pick="' + s.id + '"' +
         (PICKED.has(s.id) ? ' checked' : '') +
-        ' aria-label="Select ' + esc(s.n) + '"></label></td>' +
+        ' aria-label="Select ' + esc(s.n) + '">' +
+        '<span class="iris-checkbox' + (PICKED.has(s.id) ? ' iris-checkbox--checked' : '') + '" aria-hidden="true"></span></label></td>' +
       '<td>' + nameCell(s) + '</td>' +
       '<td class="n">' + customersCell(s) + '</td>' +
       '<td class="n">' + (s.o == null ? DASH : fmtN(s.o)) + '</td>' +
@@ -911,7 +1323,10 @@ function render() {
          "% of company revenue" removed from the segment page. The largest
          member is a real number and answers what the header is for. */
       return '<tbody class="dr-grp">' +
-        '<tr class="dr-grp__h"><td colspan="8">' +
+        /* Nine columns, not eight: the pick box, the seven in COLS and the
+           actions. At 8 the group header stopped 132px short of the table's
+           right edge and the band looked cut off. */
+        '<tr class="dr-grp__h"><td colspan="' + (COLS.length + 2) + '">' +
         '<button class="dr-grp__b" data-grp="' + k + '" aria-expanded="' + open + '">' +
           svg(open ? 'm19.5 8.25-7.5 7.5-7.5-7.5' : 'm8.25 4.5 7.5 7.5-7.5 7.5', 14) +
           '<span class="card-icon card-icon-indigo" aria-hidden="true">' +
@@ -923,11 +1338,11 @@ function render() {
     }).join('');
 
   const body = rows.length ? (canGroup ? groupBody() : '<tbody>' + rows.map(rowHtml).join('') + '</tbody>')
-    : '<tbody><tr><td colspan="8">' +
+    : '<tbody><tr><td colspan="' + (COLS.length + 2) + '">' +
       '<div class="dr-empty"><span class="card-icon card-icon-gray">' + svg(IC.box, 22) + '</span>' +
       '<h3>No segments match these filters</h3>' +
       '<p>All ' + SEGMENTS.length + ' segments are still here. Clear the filters to see them.</p>' +
-      '<button class="btn btn-md btn-primary" id="lsClear2" style="display:inline-flex;">Clear filters</button></div></td></tr></tbody>';
+      '<button class="btn btn-md btn-primary" id="lsClear2" style="display:inline-flex;">Reset all</button></div></td></tr></tbody>';
 
   document.getElementById('lsTable').innerHTML =
     '<div class="dr-tablecard"><div class="dr-tw"><table class="dr-t dr-t--list">' + head + body + '</table></div></div>';
@@ -938,14 +1353,29 @@ function render() {
 }
 
 /* ── interaction ────────────────────────────────────────────────────────── */
-function clearAll() { DSEL.clear(); VSEL.clear(); fFrom = SPAN.from; fTo = SPAN.to; fBy = 'all'; fState = 'all'; fFolder = 'all'; q = ''; document.getElementById('lsQ').value = ''; render(); }
+/* "Reset all" under the toolbar is on the line that lists everything applied,
+   navigation included, so it resets everything. One word for one idea across
+   the whole redesign: "Reset all" wherever a control empties a whole set,
+   "Reset" where it empties one group. It used to say "Clear all" here and
+   "Reset all" in the panel eighty pixels away, for the same kind of act. */
+function clearAll() { DSEL.clear(); VSEL.clear(); fFrom = SPAN.from; fTo = SPAN.to; fBy = 'all'; fCreatedBy = 'all'; fState = 'all'; fFolder = 'all'; q = ''; document.getElementById('lsQ').value = ''; render(); }
+/* "Reset all" inside the Filters panel clears the filters and leaves you
+   standing where you were. It is inside a dialog headed "Filters"; taking the
+   reader out of the folder or the dimension they had opened, from a control
+   that never mentions either, is the panel reaching outside itself. */
+function clearFilters() {
+  [...VSEL].forEach(t => { if (isFilterTok(t)) VSEL.delete(t); });
+  fState = 'all'; fBy = 'all'; fCreatedBy = 'all';
+  render();
+}
 
-/* How many filters are applied, on the button, so a closed panel still says
-   whether anything is hiding rows. */
+/* What the badge counts is what the button HIDES. The navigation column, the
+   search box and the range picker are all on screen already and say their own
+   state; adding them here made the badge read 3 when nothing was behind the
+   button at all. */
 function countFilters() {
-  return (fFolder !== 'all' ? 1 : 0) + DSEL.size + VSEL.size +
-         (fullSpan() ? 0 : 1) + (fBy !== 'all' ? 1 : 0) +
-         (fState !== 'all' ? 1 : 0) + (q ? 1 : 0);
+  return filterVals().size + (fBy !== 'all' ? 1 : 0) +
+         (fCreatedBy !== 'all' ? 1 : 0) + (fState !== 'all' ? 1 : 0);
 }
 function syncFilterBtn() {
   const n = countFilters(), b = document.getElementById('lsFilterN');
@@ -959,10 +1389,10 @@ function syncFilterBtn() {
   const open = on => {
     box.hidden = !on;
     btn.setAttribute('aria-expanded', String(on));
-    if (on) (box.querySelector('.list-group-item') || box).focus();
+    if (on) (box.querySelector('.dr-chip') || box).focus();
   };
   btn.addEventListener('click', () => open(box.hidden));
-  document.getElementById('lsResetAll').addEventListener('click', () => { clearAll(); open(true); });
+  document.getElementById('lsResetAll').addEventListener('click', () => { clearFilters(); open(true); });
   /* Escape closes and hands focus back; a click outside closes without moving
      it, because the click has already put focus where the reader wanted it. */
   document.addEventListener('keydown', e => {
@@ -1102,14 +1532,29 @@ function syncFilterBtn() {
   }, true);
 })();
 
+/* Escape closes the group search and hands focus back to the mark that opened
+   it, so there is a way out that is not "press the magnifier again". */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const box = e.target.closest && e.target.closest('[data-gq]');
+  if (!box) return;
+  const id = box.dataset.gq;
+  GQ[id] = ''; searchGrp = null;
+  render();
+  /* After the panel's own focus handling, not before it — render() puts focus
+     back on the Filters trigger, which would swallow this. */
+  setTimeout(() => document.querySelector('[data-find="' + id + '"]')?.focus(), 0);
+});
+
 /* Delegated, because the panel is redrawn on every change. Only the group's
    own chips are redrawn, and focus is put back in the box the reader is in. */
 document.addEventListener('input', e => {
-  const box = e.target.closest('[data-gq]');
+  const box = e.target.closest('[data-gq]') || e.target.closest('[data-navq]');
   if (!box) return;
-  GQ[box.dataset.gq] = box.value;
+  const nav = !!box.dataset.navq;
+  GQ[nav ? 'nav:' + box.dataset.navq : box.dataset.gq] = box.value;
   const id = box.id, pos = box.selectionStart;
-  drawRail();
+  nav ? drawNav() : drawRail();
   const again = document.getElementById(id);
   if (again) { again.focus(); try { again.setSelectionRange(pos, pos); } catch (err) {} }
 });
@@ -1154,32 +1599,9 @@ document.getElementById('lsSort').addEventListener('change', e => {
   sort = { k, dir: k === 'n' ? 'asc' : 'desc' };
   render();
 });
-/* ── Definition: the summary, or the literal condition list ── */
-const defBtns = [...document.querySelectorAll('[data-def]')];
-function setDefinition(next, focus) {
-  full = next === 'conditions';
-  defBtns.forEach(b => {
-    const on = b.dataset.def === next;
-    b.classList.toggle('active', on);
-    b.setAttribute('aria-checked', String(on));
-    b.tabIndex = on ? 0 : -1;
-    if (on && focus) b.focus();
-  });
-  render();
-}
-defBtns.forEach((b, i) => {
-  b.addEventListener('click', () => setDefinition(b.dataset.def, false));
-  b.addEventListener('keydown', e => {
-    const map = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: defBtns.length - 1 };
-    if (!(e.key in map)) return;
-    e.preventDefault();
-    setDefinition(defBtns[(map[e.key] + defBtns.length) % defBtns.length].dataset.def, true);
-  });
-});
-
 document.addEventListener('click', e => {
   const inert = e.target.closest('[aria-disabled="true"]');
-  if (inert && inert.closest('#lsRail')) return;
+  if (inert && (inert.closest('#lsRail') || inert.closest('#lsNav'))) return;
 
   const an = e.target.closest('[data-analyze]');
   if (an) {
@@ -1199,6 +1621,11 @@ document.addEventListener('click', e => {
     pick.checked ? PICKED.add(pick.dataset.pick) : PICKED.delete(pick.dataset.pick);
     const tr = pick.closest('tr');
     if (tr) tr.classList.toggle('is-picked', pick.checked);
+    /* A row is toggled in place rather than re-rendered, so the drawn box has
+       to be told too — the native input is only the mechanism, the span is what
+       anyone sees. */
+    pick.parentElement.querySelector('.iris-checkbox')
+        ?.classList.toggle('iris-checkbox--checked', pick.checked);
     drawPickBar(); syncPickAll();
     return;
   }
@@ -1242,6 +1669,12 @@ document.addEventListener('click', e => {
   const by = e.target.closest('[data-by]');
   if (by) { fBy = fBy === by.dataset.by ? 'all' : by.dataset.by; return keepFocus(by, render); }
 
+  const cre = e.target.closest('[data-created]');
+  if (cre) {
+    fCreatedBy = fCreatedBy === cre.dataset.created ? 'all' : cre.dataset.created;
+    return keepFocus(cre, render);
+  }
+
   const rs = e.target.closest('[data-reset]');
   if (rs) {
     const g = rs.dataset.reset;
@@ -1250,26 +1683,21 @@ document.addEventListener('click', e => {
       const k = g.slice(4);
       [...VSEL].forEach(t => { if (String(t).split('|')[0] === k) VSEL.delete(t); });
     }
-    /* Only the values that belong to the dimensions being closed. It cleared
-       every value on the page, so resetting "Narrows by" also turned off
-       Audience and Sales channels — contradicting the line directly above. */
-    if (g === 'dim') {
-      [...VSEL].forEach(t => { if (DSEL.has(String(t).split('|')[0])) VSEL.delete(t); });
-      DSEL.clear();
-    }
     if (g === 'state')  fState = 'all';
-    if (g === 'folder') fFolder = 'all';
-    if (g === 'by')     fBy = 'all';
+    if (g === 'by')      fBy = 'all';
+    if (g === 'created') fCreatedBy = 'all';
     render();
     /* The Reset button removes itself, so focus goes to the group it emptied
        rather than to the top of the document. */
-    const back = document.querySelector('[aria-labelledby="rl-' +
-      (g === 'dim' ? 'dim' : g === 'state' ? 'res' : 'fold') + '"] .list-group-item');
+    const id = g === 'state' ? 'rl-res' : g === 'by' ? 'rl-by'
+             : g === 'created' ? 'rl-cre'
+             : g === 'val:channel' ? 'rl-chan' : 'rl-aud';
+    const back = document.querySelector('[aria-labelledby="' + id + '"] .dr-chip');
     if (back) back.focus();
     return;
   }
 
-  const gs = e.target.closest('[data-gq]');
+  const gs = e.target.closest('[data-gq]') || e.target.closest('[data-navq]');
   if (gs) return;
 
   const vv = e.target.closest('[data-val]');
@@ -1284,22 +1712,77 @@ document.addEventListener('click', e => {
     return keepFocus(vv, render);
   }
 
-  const k = e.target.closest('[data-dim]');
-  if (k) {
-    const v = k.dataset.dim;
-    DSEL.has(v) ? DSEL.delete(v) : DSEL.add(v);
-    /* A value belongs to the dimension that revealed it, so closing a dimension
-       drops ITS values — not everything. Clearing the lot took the Audience and
-       Sales-channels choices down with it, which is why the chip could preview
-       "1" and then deliver 11: it counted the ANDed result and then removed the
-       other half of the AND. Those two groups are not inside "Narrows by" and
-       have no business being cleared by it. */
-    const owned = new Set([v]);
-    [...VSEL].forEach(t => { if (owned.has(String(t).split('|')[0])) VSEL.delete(t); });
-    return keepFocus(k, render);
+  /* ── The navigation column ─────────────────────────────────────────────
+     Single-select at every level. Choosing a place replaces the place you were
+     in; it never adds to it, and it never touches the filter panel. Pressing
+     the place you are already in is the second way out, beside "All segments". */
+  const more = e.target.closest('[data-more]');
+  if (more) { NAV_MORE.add(more.dataset.more); return keepFocus(more, render); }
+
+  const nv = e.target.closest('[data-nav]');
+  if (nv) {
+    const v = nv.dataset.nav;
+    const dropNavVals = () =>
+      [...VSEL].forEach(t => { if (!isFilterTok(t)) VSEL.delete(t); });
+
+    if (v === 'all') { DSEL.clear(); dropNavVals(); fFolder = 'all'; }
+    else if (v.startsWith('folder:')) {
+      const id = v.slice(7);
+      fFolder = fFolder === id ? 'all' : id;
+    }
+    else if (v.startsWith('dim:')) {
+      const k2 = v.slice(4);
+      const was = DSEL.has(k2);
+      DSEL.clear(); dropNavVals();
+      if (!was) DSEL.add(k2);
+    }
+    else if (v.startsWith('state:')) {
+      const k2 = v.slice(6);
+      fState = fState === k2 ? 'all' : k2;
+    }
+    else if (v.startsWith('val:')) {
+      const tok = v.slice(4), was = VSEL.has(tok);
+      /* One token at a time: the place you are standing, not the trail of
+         breadcrumbs behind you. Two values of one dimension in VSEL are an OR,
+         which is the opposite of drilling in. */
+      dropNavVals();
+      /* Pressing the value you are already on clears it and leaves you on the
+         dimension, which is the second way out. */
+      if (!was) VSEL.add(tok);
+    }
+    return keepFocus(nv, render);
   }
   /* Chips toggle. There is no "Any result" chip standing in for no filter, so
      pressing the one that is on is how you turn it off. */
+  /* One at a time: opening a group's search closes whichever was open, and
+     closing one drops its query — a filter still applied behind a box nobody
+     can see is a group quietly hiding its own values. */
+  const gcl = e.target.closest('[data-gqclear]');
+  if (gcl) {
+    const id = gcl.dataset.gqclear;
+    GQ[id] = ''; render();
+    setTimeout(() => document.getElementById('gq-' + id)?.focus(), 0);
+    return;
+  }
+  const ncl = e.target.closest('[data-navqclear]');
+  if (ncl) {
+    const k2 = ncl.dataset.navqclear;
+    GQ['nav:' + k2] = ''; render();
+    setTimeout(() => document.getElementById('navq-' + k2)?.focus(), 0);
+    return;
+  }
+  const fnd = e.target.closest('[data-find]');
+  if (fnd) {
+    const id = fnd.dataset.find;
+    if (searchGrp && searchGrp !== id) GQ[searchGrp] = '';
+    if (searchGrp === id) { GQ[id] = ''; searchGrp = null; }
+    else searchGrp = id;
+    render();
+    const box = document.getElementById('gq-' + id);
+    (box || document.querySelector('[data-find="' + id + '"]'))?.focus();
+    return;
+  }
+
   const st = e.target.closest('[data-state]');
   if (st) { fState = fState === st.dataset.state ? 'all' : st.dataset.state; return keepFocus(st, render); }
   const fo = e.target.closest('[data-folder]');

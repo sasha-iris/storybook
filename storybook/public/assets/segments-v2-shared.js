@@ -515,7 +515,7 @@ SEGMENTS.forEach(s => { s.dims = dimsOf(s); });
    What that costs is exact and demonstrable: "Geo + Offer" is In US and
    "Geo + offer 2" is In CA, and both print the identical line
    "Geography: 1 country(s) AND Discount greater than 25%". Two different
-   segments, one sentence. Roland opened the call with precisely this — "there
+   segments, one sentence. The reviewer opened the call with precisely this — "there
    were absolutely similar segments, just different at some very small little
    point, so it's difficult to distinguish it."
 
@@ -614,7 +614,7 @@ SEGMENTS.forEach(s => {
    all forty — no country name appears anywhere in the data, and the only values
    that survive into the summary are two postal codes, IL and CA.
 
-   That omission is itself the finding. Roland opened the call with "there were
+   That omission is itself the finding. The reviewer opened the call with "there were
    absolutely similar segments, just different at some very small little point,
    so it's difficult to distinguish it" — US Customers and UK Customers both
    read "Geography: 1 country(s)", and no amount of layout fixes that.

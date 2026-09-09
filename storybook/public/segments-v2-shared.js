@@ -440,7 +440,13 @@ function menu(btn, items, onAct) {
    For a mouse that is invisible; on a keyboard focus falls back to the top of
    the document and the list becomes unusable. */
 function keepFocus(el, redraw) {
-  const sel = el && (el.dataset.dim    ? '[data-dim="'    + el.dataset.dim    + '"]'
+  /* nav and val were missing, so every click in the navigation column and every
+     chip in the filter panel dropped focus to the top of the document — the one
+     place a keyboard user cannot afford to lose it, because those are the
+     controls you press several times in a row. */
+  const sel = el && (el.dataset.nav    ? '[data-nav="'    + el.dataset.nav    + '"]'
+                   : el.dataset.val    ? '[data-val="'    + el.dataset.val    + '"]'
+                   : el.dataset.dim    ? '[data-dim="'    + el.dataset.dim    + '"]'
                    : el.dataset.folder ? '[data-folder="' + el.dataset.folder + '"]'
                    : el.dataset.by     ? '[data-by="'     + el.dataset.by     + '"]'
                    : el.dataset.state ? '[data-state="' + el.dataset.state + '"]'
@@ -509,7 +515,7 @@ SEGMENTS.forEach(s => { s.dims = dimsOf(s); });
    What that costs is exact and demonstrable: "Geo + Offer" is In US and
    "Geo + offer 2" is In CA, and both print the identical line
    "Geography: 1 country(s) AND Discount greater than 25%". Two different
-   segments, one sentence. Roland opened the call with precisely this — "there
+   segments, one sentence. The reviewer opened the call with precisely this — "there
    were absolutely similar segments, just different at some very small little
    point, so it's difficult to distinguish it."
 
@@ -573,11 +579,11 @@ const CHANNELS = {
    three of them in a row, name in the title only. Same files, taken from the
    product's own /applications-logos/. */
 const CHANNEL_LOGO = {
-  'Amazon Seller Partner':  './channel-logos/amazon-logo.svg',
-  'Shopify DTC':            './channel-logos/shopify-logo.svg',
-  'Manual Order DTC':       './channel-logos/manual-order-dtc-blue-logo.svg',
-  'Shopify Wholesale':      './channel-logos/shopify-logo.svg',
-  'Manual Order Wholesale': './channel-logos/manual-order-dtc-blue-logo.svg'
+  'Amazon Seller Partner':  '../assets/channel-logos/amazon-logo.svg',
+  'Shopify DTC':            '../assets/channel-logos/shopify-logo.svg',
+  'Manual Order DTC':       '../assets/channel-logos/manual-order-dtc-blue-logo.svg',
+  'Shopify Wholesale':      '../assets/channel-logos/shopify-logo.svg',
+  'Manual Order Wholesale': '../assets/channel-logos/manual-order-dtc-blue-logo.svg'
 };
 const CHAN_PLACEHOLDER = {
   /* "2 sales channel(s)" in the list; the editor agrees. */
@@ -608,7 +614,7 @@ SEGMENTS.forEach(s => {
    all forty — no country name appears anywhere in the data, and the only values
    that survive into the summary are two postal codes, IL and CA.
 
-   That omission is itself the finding. Roland opened the call with "there were
+   That omission is itself the finding. The reviewer opened the call with "there were
    absolutely similar segments, just different at some very small little point,
    so it's difficult to distinguish it" — US Customers and UK Customers both
    read "Geography: 1 country(s)", and no amount of layout fixes that.
