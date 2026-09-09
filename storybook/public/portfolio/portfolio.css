@@ -259,6 +259,59 @@ button:focus-visible {
   padding: 0.125rem 0.5rem;
 }
 
+/* The method is a sequence, so it is numbered rather than bulleted: the
+   ordinal is the point, and a reader can see there are four steps before
+   reading any of them. The rule below the list governs all four. */
+.pf-loop {
+  counter-reset: step;
+  list-style: none;
+  margin: var(--pf-step-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+@media (min-width: 62rem) {
+  .pf-loop { grid-template-columns: 1fr 1fr; column-gap: var(--pf-step-4); }
+}
+.pf-loop > li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-content: start;
+  column-gap: var(--pf-step-2);
+  padding: var(--pf-step-3) 0;
+  border-top: 1px solid var(--color-border-default);
+}
+.pf-loop > li::before {
+  content: counter(step, decimal-leading-zero);
+  grid-row: 1 / span 2;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-accent);
+  padding-top: 0.15rem;
+}
+.pf-loop b { display: block; font-weight: var(--font-semibold); }
+.pf-loop span {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+.pf-rule {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  align-items: start;
+  max-width: 44rem;
+  margin: var(--pf-step-4) 0 0;
+  padding: var(--pf-step-3);
+  background: var(--pf-accent-wash);
+  border-radius: var(--radius-lg);
+}
+.pf-rule .pf-ico { margin-top: 0.15rem; color: var(--pf-accent); }
+.pf-rule span { font-size: var(--text-sm); color: var(--color-text-body); }
+
 /* ── Link list (live artifacts, prototypes) ─ */
 .pf-list {
   list-style: none;

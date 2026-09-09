@@ -160,25 +160,41 @@
     <div class="pf-shell">
       <div class="pf-section__head">
         <h2>Method</h2>
+        <p>One loop, run on every piece of work below.</p>
       </div>
-      <ul class="pf-facts">
-        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-scale"></use></svg><b>Measure, then argue</b>
-          <span>I built both versions of a disputed layout and measured 40 rows. The result killed
-          my own review argument, and the redesign it supported.</span></li>
-        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-chart-pie"></use></svg><b>Adoption is measured, not claimed</b>
-          <span>Every classed element on a prototype is checked against the 616 the library
-          defines: dashboard 80%, P&amp;L 49%, segments 16%. A gap becomes a finding against the
-          library — that is how a 3.0:1 success green got fixed in the token.</span></li>
-        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-clipboard-document-check"></use></svg><b>Three passes before a stakeholder sees it</b>
-          <span>Business analysis, usability and design system, risk-based QA — plus measured
-          contrast. On the segments work: 48 defects closed first.</span></li>
-        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-code-bracket"></use></svg><b>Built in code, AI-assisted</b>
-          <span>Prototypes are HTML on the library's own CSS, not Figma frames — which is why
-          they can be opened, clicked and handed to a developer as they are.</span></li>
-        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-shield-check"></use></svg><b>No invented data</b>
-          <span>Records that were never calculated show &ldquo;no data&rdquo;. Estimates say they
-          are estimates. Prototypes get read as specification.</span></li>
-      </ul>
+      <ol class="pf-loop">
+        <li>
+          <b>Build it in code, from the system</b>
+          <span>Prototypes are HTML on the library's own CSS, not Figma frames — which is why they
+          open, click, and hand to a developer as they are.</span>
+        </li>
+        <li>
+          <b>Measure it instead of arguing about it</b>
+          <span>Measuring 40 rows killed an argument I had made in a review, and the redesign it
+          supported. Library coverage is measured the same way: 80% on the dashboard, 49% on the
+          P&amp;L, 16% where a second visual language was asked for.</span>
+        </li>
+        <li>
+          <b>Three review passes before a stakeholder sees it</b>
+          <span>Business analysis against the brief, usability and design system, risk-based QA —
+          plus measured contrast, not assumed contrast. On the segments work that closed 48
+          defects before the review call.</span>
+        </li>
+        <li>
+          <b>Hand it over with the gaps named</b>
+          <span>The drawer that is still unusable; the comparison page that answers a different
+          question than the live one. A handoff listing only what works gets discovered in
+          build.</span>
+        </li>
+      </ol>
+
+      <p class="pf-rule">
+        <svg class="pf-ico" aria-hidden="true"><use href="#ico-shield-check"></use></svg>
+        <span><b>And never invent data.</b> Records that were never calculated show
+        &ldquo;no data&rdquo;; estimates say on the screen that they are estimates. A prototype
+        gets read as specification, so the loop is worth nothing if the numbers in it are made
+        up.</span>
+      </p>
     </div>
   </section>
 
