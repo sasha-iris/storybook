@@ -42,6 +42,11 @@ body {
    evidence in 10, full-bleed artefacts in 12. Nothing is placed
    by eye: every block names its columns. */
 :root {
+  /* One display face carries the character; Inter keeps the tables, captions
+     and UI legible next to product screenshots. Red Hat Display is SIL OFL,
+     the pairing borrowed from Eleventy Excellent (ISC). */
+  --pf-font-display: 'Red Hat Display', 'Segoe UI', system-ui, sans-serif;
+  --pf-edge: var(--slate-9);      /* 3.22:1 on the page — an edge you can see */
   --pf-cols: 12;
   --pf-gutter: 1.5rem;
   --pf-step-1: 0.5rem;
@@ -77,8 +82,9 @@ body {
   padding-bottom: 1.25rem;
 }
 .pf-wordmark {
+  font-family: var(--pf-font-display);
   font-size: var(--text-base);
-  font-weight: var(--font-semibold);
+  font-weight: 900;
   color: var(--color-text-primary);
   text-decoration: none;
   letter-spacing: -0.01em;
@@ -123,7 +129,7 @@ button:focus-visible {
     gap: var(--pf-gutter);
     align-items: end;
   }
-  .pf-hero .pf-measure { grid-column: 1 / span 7; }
+  .pf-hero .pf-measure { grid-column: 1 / span 8; max-width: 44rem; }
   .pf-hero .pf-proof {
     grid-column: 9 / span 4;
     margin-top: 0;
@@ -133,10 +139,11 @@ button:focus-visible {
 }
 .pf-hero h1 {
   margin: 0 0 1.25rem;
-  font-size: clamp(var(--text-3xl), 1.2rem + 3vw, var(--text-5xl));
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-  font-weight: var(--font-extrabold);
+  font-family: var(--pf-font-display);
+  font-size: clamp(var(--text-4xl), 1.4rem + 2.6vw, 3.5rem);
+  line-height: 1.06;
+  letter-spacing: -0.05ch;
+  font-weight: 900;
   text-wrap: balance;
 }
 .pf-hero p {
@@ -171,6 +178,8 @@ button:focus-visible {
 }
 .pf-proof__n {
   display: block;
+  font-family: var(--pf-font-display);
+  font-weight: 900;
   font-size: var(--text-3xl);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
@@ -190,9 +199,10 @@ button:focus-visible {
 .pf-section__head { margin-bottom: 2rem; }
 .pf-section h2 {
   margin: 0 0 0.5rem;
-  font-size: var(--text-xl);
-  font-weight: var(--font-semibold);
-  letter-spacing: -0.01em;
+  font-family: var(--pf-font-display);
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  letter-spacing: -0.045ch;
 }
 .pf-section__head p {
   margin: 0;
@@ -238,10 +248,11 @@ button:focus-visible {
 }
 .pf-case h3 {
   margin: 0;
+  font-family: var(--pf-font-display);
   font-size: var(--text-2xl);
-  line-height: 1.3;
-  font-weight: var(--font-semibold);
-  letter-spacing: -0.01em;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.04ch;
 }
 .pf-case h3 a {
   color: inherit;
@@ -407,11 +418,12 @@ button:focus-visible {
 .pf-back:hover { text-decoration: underline; }
 .pf-article h1 {
   margin: 0.5rem 0 1rem;
-  font-size: clamp(var(--text-2xl), 1.1rem + 2.4vw, var(--text-4xl));
-  max-width: 22ch;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  font-weight: var(--font-extrabold);
+  font-family: var(--pf-font-display);
+  font-size: clamp(var(--text-3xl), 1.2rem + 2.6vw, 3rem);
+  max-width: 20ch;
+  line-height: 1.08;
+  letter-spacing: -0.05ch;
+  font-weight: 900;
   text-wrap: balance;
 }
 .pf-dek {
@@ -465,10 +477,10 @@ button:focus-visible {
 }
 .pf-body h2 {
   margin: 3rem 0 1rem;
+  font-family: var(--pf-font-display);
   font-size: var(--text-2xl);
-  letter-spacing: -0.02em;
-  font-weight: var(--font-semibold);
-  letter-spacing: -0.01em;
+  font-weight: 900;
+  letter-spacing: -0.045ch;
 }
 .pf-body h3,
 .pf-method h3 {
@@ -590,7 +602,7 @@ button:focus-visible {
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid var(--color-border-default);
+  border: 1px solid var(--pf-edge);
   border-radius: var(--radius-md);
   background: var(--color-bg-surface);
   box-shadow: var(--pf-shadow-shot);
@@ -642,7 +654,7 @@ button:focus-visible {
   aspect-ratio: 1272 / 530;   /* height follows the frame's width, so the
                                  ground under the component stays constant */
   overflow: hidden;
-  border: 1px solid var(--color-border-default);
+  border: 1px solid var(--pf-edge);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--color-bg-surface);
 }
@@ -706,6 +718,7 @@ main:focus { outline: none; }
   border-bottom: 1px solid var(--color-border-default);
   vertical-align: top;
 }
+.pf-table thead th { border-bottom: 1px solid var(--pf-edge); }
 .pf-table th {
   font-weight: var(--font-semibold);
   color: var(--color-text-secondary);
