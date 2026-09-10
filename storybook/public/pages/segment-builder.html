@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=53">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=54">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=53">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=54">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1024,11 +1024,17 @@
                 color: var(--color-text-secondary); font-weight: var(--font-semibold); }
   .sb2__pvtot { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--color-border-default);
                 font-size: var(--text-xs); color: var(--color-text-body); }
-  /* A bare <b> renders at the browser's 700; the system's weights stop at 600,
-     so this was the only 700 in the rail. And the answer is the one thing here
-     that earns 14px — it is what the whole panel is for. */
-  .sb2__pvtot b { font-size: var(--text-sm); font-weight: var(--font-semibold);
-                  color: var(--color-text-heading); }
+  /* The answer the page exists for, at the size of an answer. MEASURED against
+     the flat card, which prints the same figure at 34px: this was 14px inside a
+     sentence, so the one number a reader came for was smaller than the card's
+     own heading. --text-3xl at 600 — the system's largest step and the last
+     weight it has; the flat card's 34/800 is on neither scale.
+     "customers match" drops to its own line under it, the way the flat card
+     already sets them. */
+  .sb2__pvtot__n { font-size: var(--text-3xl); font-weight: var(--font-semibold);
+                   line-height: 1.1; letter-spacing: -0.02em;
+                   color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
+  .sb2__pvtot__l { margin-top: 1px; font-size: var(--text-xs); color: var(--seg-muted); }
   /* It was inline, so the caveat ran on from the number as one sentence:
      "2,175 customers match Conditions overlap, so these do not add up." */
   .sb2__pvtot span { display: block; margin-top: 4px; font-size: 10px;
@@ -1756,7 +1762,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=53"></script>
+<script src="../assets/segments-data.js?v=54"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3797,7 +3803,8 @@ function previewV2() {
      on the estimate, but the estimate already carries its caveat twice over:
      the word Illustrative in the panel's header, and the paragraph under it. */
   return head + body + `<div class="sb2__pvtot">
-      <b>${total == null ? '—' : fmtN(total)}</b> customers match
+      <div class="sb2__pvtot__n">${total == null ? '—' : fmtN(total)}</div>
+      <div class="sb2__pvtot__l">customers match</div>
       <span>Conditions overlap, so these do not add up.</span>
     </div>`;
 }
