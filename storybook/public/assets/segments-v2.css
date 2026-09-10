@@ -302,7 +302,10 @@
 /* The 240 is the TOOLBAR search's floor, not a property of the component: it
    was set page-wide, so the 194px box in the navigation column inherited a
    minimum wider than the column itself and ran 49px past its edge. */
-.dr-toolbar .form-search-wrap { min-width: 240px; }
+/* MEASURED 483px of nothing between the search and the right-hand group: the
+   field was pinned at its minimum in a 1056px row and the rest of the line was
+   a hole. It grows into it. The minimum stays as the floor for narrow screens. */
+.dr-toolbar .form-search-wrap { flex: 1; min-width: 240px; }
 .dr-navsearch .form-search-wrap, .dr-gsearch .form-search-wrap { min-width: 0; }
 /* The field shares the row's height, and nothing else. 13px was on no scale at
    all — the system has 12 / 14 / 16 — so the search box was one step off its own
