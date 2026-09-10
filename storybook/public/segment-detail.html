@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- prototype: the review browser must never serve a stale copy while this is being iterated on -->
+<meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Segment · Iris redesign prototype</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=22">
+<link rel="stylesheet" href="./segments-proto.css?v=23">
 <!--
   The current product shows this as a 1143x972 modal (95% of the viewport) with no
   URL of its own. Here it is a page: it has an address, a back button, and room for
@@ -255,7 +257,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=20"></script>
+<script src="./segments-data.js?v=14"></script>
 <script>
 const params = new URLSearchParams(location.search);
 const SEG = SEGMENTS.find(s => s.id === params.get('id')) || SEGMENTS[6]; /* US or CA */
