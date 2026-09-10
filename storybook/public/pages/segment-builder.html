@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=42">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=43">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=42">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=43">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1723,7 +1723,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=42"></script>
+<script src="../assets/segments-data.js?v=43"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -2916,10 +2916,15 @@ function scopeState(def) {
 /* The same files the list page uses, from the product's own /applications-logos/.
    Written out here because this page does not load segments-v2-shared.js and
    two paths are not worth pulling the whole module in for. */
+/* The same five the list page maps in segments-v2-shared.js, from the same
+   three files. This copy had three of them, so Manual Order came out markless
+   here and marked there — one channel drawn two ways in one product. */
 const CHANNEL_LOGO = {
   'Amazon Seller Partner':  '../assets/channel-logos/amazon-logo.svg',
   'Shopify DTC':            '../assets/channel-logos/shopify-logo.svg',
-  'Shopify Wholesale':      '../assets/channel-logos/shopify-logo.svg'
+  'Manual Order DTC':       '../assets/channel-logos/manual-order-dtc-blue-logo.svg',
+  'Shopify Wholesale':      '../assets/channel-logos/shopify-logo.svg',
+  'Manual Order Wholesale': '../assets/channel-logos/manual-order-dtc-blue-logo.svg'
 };
 /* The channels a condition lives on, drawn the way channels are drawn
    everywhere else in this build: the logo, name on the tooltip. */
@@ -3195,7 +3200,12 @@ function chanTrigger(gi, sel) {
      there. */
   const seen = [];
   sel.forEach(c => { const l = CHANNEL_LOGO[c]; if (l && seen.indexOf(l) === -1) seen.push(l); });
-  const marks = seen.slice(0, 3).map(l => `<img src="${l}" alt="" width="15" height="15">`).join('');
+  /* Five, not three. The stack is what the reader recognises at a glance, and a
+     "+N" is what they cannot; this account has three distinct marks across six
+     channels, but a real one carries more, and the cap should not be the thing
+     that hides them. Each seller once — Shopify DTC and Shopify Wholesale are
+     one brand and one mark. */
+  const marks = seen.slice(0, 5).map(l => `<img src="${l}" alt="" width="15" height="15">`).join('');
   /* Once a channel is chosen the MARK is the label. "Amazon Seller Partner"
      spelled out ran the trigger past the column and had to be truncated to
      "Amazon Seller Pa…", which is worse than the logo it already sits next to.
@@ -3207,7 +3217,7 @@ function chanTrigger(gi, sel) {
      fact twice and the reader can count to two. It earns its place when a
      selected channel has no mark to show (Manual Order, SPS) or when there are
      more than the three the stack holds. */
-  const shown = Math.min(seen.length, 3);
+  const shown = Math.min(seen.length, 5);
   /* What the stack does not show, as the number it does not show. "5 channels"
      made the reader subtract the logos in front of it to find out how many were
      hidden; "+2" is that answer already worked out. */
