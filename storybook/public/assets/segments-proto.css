@@ -131,6 +131,11 @@
    every 60px item. Sidebar.stories.js uses a bare <nav> for the same reason, and
    .sidebar-brand needs its 28px left padding removed too. */
 .sidebar--collapsed .sidebar-nav { display: none; }
+/* LIBRARY GAP: .sidebar sets overflow-y: auto and says nothing about the other
+   axis, and CSS computes an unspecified `visible` to `auto` the moment one axis
+   scrolls. So the 60px collapsed rail grew a horizontal scrollbar over a
+   one-pixel overflow. A rail this narrow has nothing to scroll sideways to. */
+.sidebar--collapsed { overflow-x: hidden; }
 .seg-nav-contracted {
   display: flex; flex-direction: column; gap: 16px; padding: 0 0 12px; width: 100%;
 }

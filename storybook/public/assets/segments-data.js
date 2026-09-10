@@ -238,6 +238,12 @@ function initSidebar() {
       if (item.hasAttribute('aria-current')) el.setAttribute('aria-current', 'page');
       el.setAttribute('aria-label', label);
       el.title = label;
+      /* The rail is 60px and the printed label is clipped at 56, so a long name
+         came out as "Customer ...". The SHORT form is what gets printed; the
+         full one stays on aria-label and title, so nothing is lost to a screen
+         reader or to a hover. */
+      const short = { 'Customer Segments': 'Segments', 'Automations': 'Automate' }[label];
+      if (short) el.setAttribute('data-short', short);
       if (icon) el.appendChild(icon.cloneNode(true));
       c.appendChild(el);
     });

@@ -3839,7 +3839,13 @@ function render() {
      four dashes directly under it. The tiles follow whichever panel they are
      sitting in; the flat card keeps its own rule. */
   const mN    = CARD2 && Number.isFinite(window.__pvTotal) ? window.__pvTotal : n;
-  const mNone = CARD2 ? !Number.isFinite(mN) : noDefinition;
+  /* An empty definition has no segment to describe, so the tiles stay on
+     dashes even though the panel above can still say how many people are in
+     the window. Without this they reported the whole base's orders and revenue
+     under a card that says "Everyone in the window", which reads as a segment
+     that already has 18,593 orders in it. */
+  const mNone = CARD2 ? (!groups[0] || !groups[0].conds.length || !Number.isFinite(mN))
+                      : noDefinition;
   const mAov  = 52 + (1 - (mN == null ? 0 : mN / BASE)) * 26;
   document.getElementById('sbMini').innerHTML = (mNone || mN === 0)
     ? ['Orders', 'AOV', 'Net sales', 'Avg LTV'].map(l =>

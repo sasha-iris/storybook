@@ -1485,10 +1485,13 @@ input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appe
    live product's rail is just as narrow and still names everything: a small
    icon with a word under it. Taken from the item's own aria-label, so the two
    can never say different things. */
+/* 100%, not 60px: the rail is 60 wide and its own scrollbar takes a pixel of
+   that, so a fixed-width item overflowed by one and the browser answered with a
+   horizontal scrollbar. */
 .seg-nav-contracted .sidebar-contracted-item {
   flex-direction: column; gap: 3px;
-  width: 60px; height: auto; min-height: 44px; padding: 6px 2px;
-  text-align: center;
+  width: 100%; height: auto; min-height: 44px; padding: 6px 2px;
+  box-sizing: border-box; text-align: center;
 }
 .seg-nav-contracted .sidebar-contracted-item::after {
   content: attr(aria-label);
@@ -1497,8 +1500,10 @@ input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appe
   color: var(--color-text-body);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+/* A name too long for 56px prints its short form instead of an ellipsis. */
+.seg-nav-contracted .sidebar-contracted-item[data-short]::after { content: attr(data-short); }
 .seg-nav-contracted .sidebar-contracted-item.active {
-  width: 60px; height: auto; margin: 0;
+  width: 100%; height: auto; margin: 0;
 }
 .seg-nav-contracted .sidebar-contracted-item.active::after {
   color: var(--dr-primary); font-weight: var(--font-medium);
