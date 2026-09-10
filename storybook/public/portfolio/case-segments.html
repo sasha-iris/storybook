@@ -95,7 +95,7 @@
 
       <figure class="pf-shot">
         <span class="pf-shot__ground"><img src="img/segments-detail.png" alt="Segment detail page showing the definition in plain language" loading="lazy" width="2880" height="1800"></span>
-        <figcaption><b>The definition, in plain language, with its working shown.</b> Asked for a confidence score on the parse, I did not invent a percentage: each phrase, the condition it became, and the words passed over.</figcaption>
+        <figcaption><b>How the segment is built, one step at a time.</b> Everyone in the base, 35,590. Then geography, with no criteria set: 35,590. Then this segment: 35,590. The ladder shows the filter doing nothing, which a customer count alone never does.</figcaption>
       </figure>
 
       <h2>Decisions</h2>
@@ -104,11 +104,11 @@
           <span>The live product ranks broken segments top because revenue puts them there. My
           first version reproduced that by sorting on customer count.</span></li>
         <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg><b><span class="pf-no">Refused</span> to fill empty rows with plausible numbers</b>
-          <span>Eight segments never ran; they read &ldquo;no data&rdquo;. Also removed: a
+          <span>Eight segments never ran, so they show no number rather than a plausible one. Also removed: a
           catalogue inventing SKUs and a country found nowhere in the data, and an estimate panel
           naming four customers on an empty form.</span></li>
         <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg><b><span class="pf-no">Removed</span> &ldquo;% of company revenue&rdquo;</b>
-          <span>Segments overlap, so the column sums to 855% across the forty.</span></li>
+          <span>Segments overlap, so in the live product that column summed to 855% across the forty.</span></li>
         <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg><b>Measured a layout, deleted it, withdrew my own review note</b>
           <span>I had argued a condition column gives the eye a rail. Across 40 rows both layouts
           aligned at an identical left edge, sd 0px. The column version lost on five of seven
@@ -125,7 +125,7 @@
 
       <figure class="pf-shot">
         <span class="pf-shot__ground"><img src="img/segments-builder.png" alt="The segment builder with its estimate panel" loading="lazy" width="2880" height="1800"></span>
-        <figcaption><b>The estimate panel names no customers.</b> It cannot know them from an empty form, so it does not print four plausible names and their spend.</figcaption>
+        <figcaption><b>The estimate panel names no customers.</b> It says how many match and where the list will appear once the segment is saved — it does not print four plausible names and their spend.</figcaption>
       </figure>
 
       <h2>Review</h2>
@@ -138,7 +138,7 @@
             <tr><td>QA, risk-based</td><td>13 defects, all closed</td></tr>
             <tr><td>All three passes</td><td>48 defects closed before the review call</td></tr>
             <tr><td>Product owner's review</td><td>29 points, 28 closed</td></tr>
-            <tr><td>Accessibility, 375–1440px</td><td>0 contrast failures, 0 targets under 24px, 0 unnamed controls</td></tr>
+            <tr><td>Accessibility at the review, 375–1440px</td><td>0 contrast failures, 0 targets under 24px, 0 unnamed controls</td></tr>
           </tbody>
         </table>
       </div>
