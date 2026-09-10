@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=59">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=60">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=59">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=60">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1778,7 +1778,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=59"></script>
+<script src="../assets/segments-data.js?v=60"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3832,12 +3832,16 @@ function previewV2() {
      not sum to the difference between the window and the total is a thing a
      reader will check and disbelieve, so it is worth saying — under the numbers
      it explains, not under the headline it was dampening. */
+  /* Two costs at least, or the sentence is about nothing: one condition
+     overlaps with no other condition, and one number does not fail to add up.
+     It printed under a single line and read as a caveat invented to fill the
+     space under it. */
+  const note = live.length > 1
+    ? '<span class="sb2__pvnote">Conditions overlap, so these do not add up.</span>' : '';
   return head + `<div class="sb2__pvtot">
       <div class="sb2__pvtot__n">${total == null ? '—' : fmtN(total)}</div>
       <div class="sb2__pvtot__l">customers match</div>
-    </div>` + (body ? `<div class="sb2__pvlist">${body}
-      <span class="sb2__pvnote">Conditions overlap, so these do not add up.</span>
-    </div>` : '');
+    </div>` + (body ? `<div class="sb2__pvlist">${body}${note}</div>` : '');
 }
 
 function drawCondsV2(steps) {
