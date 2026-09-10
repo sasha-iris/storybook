@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=45">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=46">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=45">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=46">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1037,9 +1037,13 @@
   .sb-chanbtn__c { color: #6b7280; }
   /* The marks ride on the trigger, so what is chosen is legible without opening
      anything — the thing their own "Sales Channels: 0" cannot do. */
-  .sb-chan__marks { display: inline-flex; }
+  /* Side by side, not stacked. The overlap is the avatar-group treatment, which
+     is for faces that repeat and where the count matters more than any one of
+     them. These are BRANDS: each one is the whole point of being there, and a
+     shopify mark half under an amazon mark is neither read. The column is 300px
+     wide and this line holds two words — there is room for all five. */
+  .sb-chan__marks { display: inline-flex; gap: 4px; }
   .sb-chan__marks img { display: block; border-radius: 50%; background: #fff; }
-  .sb-chan__marks img + img { margin-left: -4px; box-shadow: -1px 0 0 #fff; }
   .sb-chan__dot { width: 15px; height: 15px; border-radius: 50%; background: var(--color-bg-tertiary); display: inline-block; }
 
   .sb-chan {
@@ -1727,7 +1731,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=45"></script>
+<script src="../assets/segments-data.js?v=46"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
