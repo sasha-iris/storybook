@@ -73,9 +73,11 @@ including what was rejected) → evidence → how it was handed to engineering.
 
 ## Phase 4 — Publish
 
-- [ ] **[C]** Commit locally, grouped into readable commits.
-- [ ] **[O]** Explicit go-ahead to push — push deploys the live site.
-- [ ] **[C]** After push: confirm the Pages workflow ran and the new URLs return 200.
+- [x] **[C]** Commit locally, grouped into readable commits.
+- [x] **[O]** Explicit go-ahead to push — given 2026-09-10.
+- [x] **[C]** Published in `30723f5`, which also removed the two `.gitignore` lines that had
+      been keeping the portfolio local. Every URL returns 200 and every page loads with no
+      console errors and no broken images.
 
 ## Deliberately out of scope
 
@@ -117,10 +119,9 @@ links already sent to the client would all break.
 
 ---
 
-## Final state (2026-09-09)
+## Final state (2026-09-10)
 
-Built and committed locally; **not pushed**. Live after a push at
-`https://sasha-iris.github.io/storybook/portfolio/`.
+**Live** at `https://sasha-iris.github.io/storybook/portfolio/`.
 
 **What the site is now**
 
@@ -151,4 +152,4 @@ Built and committed locally; **not pushed**. Live after a push at
 
 - Revoke the personal access token that was in `.git/config`.
 - Decide whether to name the employer in the case-study prose.
-- Push, which deploys.
+- Re-shoot `img/thumb-segments.png`: the crop clips the rail heading to "ULT".
