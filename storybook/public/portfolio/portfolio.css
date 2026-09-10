@@ -147,6 +147,15 @@ button:focus-visible {
   text-wrap: pretty;
 }
 .pf-hero p strong { color: var(--color-text-primary); font-weight: var(--font-semibold); }
+/* The statement of scope: quieter than the positioning line above it, but it
+   is the sentence that says these screens are requirements work, not layout. */
+.pf-hero .pf-stance {
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  border-left: 2px solid var(--pf-accent);
+  padding-left: var(--pf-step-2);
+}
 
 /* ── Proof strip ─────────────────────────── */
 /* Stacked under the headline, a rule separates the two blocks. Beside it —
