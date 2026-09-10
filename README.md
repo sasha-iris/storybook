@@ -1,11 +1,9 @@
 # Iris component library, and the pages built from it
 
 A design system for a financial analytics product — 47 components, 249 stories — together with
-the prototype pages built on top of it and the case studies explaining the decisions behind them.
+the prototype pages built on top of it.
 
-**[Case studies](https://sasha-iris.github.io/storybook/portfolio/)** ·
-**[The component library, running](https://sasha-iris.github.io/storybook/)** ·
-**[Prototypes](https://sasha-iris.github.io/storybook/pages/)**
+**[The component library, running](https://sasha-iris.github.io/storybook/)**
 
 ---
 
@@ -16,7 +14,6 @@ the prototype pages built on top of it and the case studies explaining the decis
 | `storybook/stories/` | The library: 47 component families, documented as stories with copyable code |
 | `storybook/iris-components.css`, `iris-tokens.css` | The CSS the product consumes, and its design tokens |
 | `storybook/public/pages/` | Prototype pages, each built only from library classes |
-| `storybook/public/portfolio/` | Three written case studies |
 | `iris-react/` | Thin React wrappers over the same CSS — no runtime CSS-in-JS |
 | `.lovable/` | Component rules for the low-code environment that consumes the same stylesheet |
 
