@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=49">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=53">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=49">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=53">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -277,10 +277,13 @@
   /* WCAG 2.5.8: these measured 61x17 and 44x17 — pointer targets under 24px in
      both dimensions. They are inline by design, so the box grows, not the type. */
   .sb-inline {
+    /* The 28px height stays: what made this hard to hit was the TARGET at
+       2.5.8's 24px floor, not the type. The 13px matches .sb-chanbtn on the
+       line below — a stated exception to the scale, not a drift. */
     min-height: 28px;
     min-width: 0; width: auto; height: auto; padding: 2px 22px 2px 6px;
     border: 1px solid transparent; background-color: transparent; background-position: right 3px center;
-    font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--color-text-heading);
+    font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading);
     border-radius: 5px; cursor: pointer;
   }
   .sb-inline:hover { background-color: var(--color-bg-tertiary); }
@@ -600,8 +603,13 @@
      one line in it. It drops to the rail's supporting step — 10px, the size this
      page already uses for the line under a fact — and the arrow comes down with
      it so it does not tower over its own sentence. #5b6270 on white is 6.6:1. */
+  /* 10px is the page's smallest step and it is right for WHO / WHAT / HOW and
+     for the micro-tags — short words in capitals, which hold their size. A
+     lowercase SENTENCE at the same 10px reads smaller than all of them, and
+     this is the only sentence down there. It goes to --text-xs, where the rest
+     of the page's sentences are. */
   .sb2__empty { display: flex; align-items: center; gap: 6px; margin: 2px 0 4px;
-                padding: 4px 2px; font-size: 10px; color: var(--seg-muted); }
+                padding: 4px 2px; font-size: var(--text-xs); color: var(--seg-muted); }
   /* The ladder's row, standing alone in a panel rather than in a list, so it
      gives up the hairline it would have drawn against the row below it. */
   .sb2__pvnone { padding-top: 2px; border-bottom: 0; }
@@ -841,7 +849,16 @@
      phrase "Adding to Group 2" in grey body text, and the eye does not follow
      words across a rule. */
   .sb2__pg + .sb2__pg { margin-top: 10px; }
+  /* MEASURED 10px between one group's pills and the next group's heading
+     against 5px between a heading and its own — twice, which is not enough for
+     a heading to read as belonging downward. The space above a heading is now
+     four times the space below it, so WHO, WHAT and HOW each own the rows under
+     them instead of floating between two sets. */
   .sb2__ph { margin-bottom: 5px; }
+  .sb2__ph + .sb2__pl { margin-bottom: 16px; }
+  /* The LAST GROUP, not the last row: every row is the last child of its own
+     .sb2__pg, so scoping the reset to the row cancelled the margin everywhere. */
+  .sb2__pg:last-child .sb2__pl { margin-bottom: 0; }
   .sb2__pl { display: flex; flex-wrap: wrap; gap: 6px; }
   /* Pills, the way theirs are — not bordered "+ Name" buttons. */
   .sb2__pill {
@@ -1028,7 +1045,10 @@
     display: inline-flex; align-items: center; gap: 6px;
     min-height: 28px;
     padding: 3px 7px; border: 0; border-radius: 6px; background: transparent;
-    font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--color-text-heading);
+    /* 13px is off the 12 / 14 / 16 scale, and it is here on purpose: 12 reads
+       too small for the one line that carries the segment's scope, 14 too loud
+       beside the labels. Called as an exception rather than left as a drift. */
+    font-size: 13px; font-weight: var(--font-semibold); color: var(--color-text-heading);
     cursor: pointer;
   }
   .sb-chanbtn:hover { background: var(--color-bg-tertiary); }
@@ -1736,7 +1756,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=49"></script>
+<script src="../assets/segments-data.js?v=53"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3242,7 +3262,7 @@ function chanTrigger(gi, sel) {
      channels, but a real one carries more, and the cap should not be the thing
      that hides them. Each seller once — Shopify DTC and Shopify Wholesale are
      one brand and one mark. */
-  const marks = seen.slice(0, 4).map(l => `<img src="${l}" alt="" width="17" height="17">`).join('');
+  const marks = seen.slice(0, 4).map(l => `<img src="${l}" alt="" width="16" height="16">`).join('');
   /* Once a channel is chosen the MARK is the label. "Amazon Seller Partner"
      spelled out ran the trigger past the column and had to be truncated to
      "Amazon Seller Pa…", which is worse than the logo it already sits next to.
@@ -3265,7 +3285,7 @@ function chanTrigger(gi, sel) {
      change with the viewport and a character count is not a width. */
   const over = sel.slice(shown);
   const words = over.join(', ');
-  const spare = chanRoom() - shown * 23;
+  const spare = chanRoom() - shown * 20;
   const label = !sel.length ? 'Any channel'
     : whole ? whole.g
     : !over.length ? ''
