@@ -139,11 +139,22 @@
 .seg-nav-contracted {
   display: flex; flex-direction: column; gap: 16px; padding: 0 0 12px; width: 100%;
 }
+/* Only the LEFT padding has to go — .sidebar-brand carries 28px of it, which
+   pushes the mark off centre in a 60px rail. Zeroing the shorthand also threw
+   away the library's own `0 0 20px`, and the logo ended up 6px from Overview
+   while the items sit 16px apart: the one thing on this rail that is not a
+   destination was the thing closest to the first one. */
 .sidebar--collapsed .sidebar-brand {
-  padding: 0; display: flex; justify-content: center;
+  padding: 0 0 20px; display: flex; justify-content: center;
 }
 .sidebar--collapsed .sidebar-divider { margin: 0; }
-.sidebar-contracted-item { text-decoration: none; }
+/* At rest and on hover. The library underlines every <a> on hover and cancels
+   it again on .sidebar-item, but .sidebar-contracted-item was never given the
+   same cancel, so the label under the icon underlined itself under the pointer.
+   A whole item is the target here; the word is a caption, not a link. */
+.sidebar-contracted-item,
+.sidebar-contracted-item:hover,
+.sidebar-contracted-item:focus { text-decoration: none; }
 
 /* WebKit draws its own clear cross inside <input type="search"> as soon as
    there is text in it: the browser's control, in the browser's shape, on a
