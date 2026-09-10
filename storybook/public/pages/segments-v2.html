@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=30">
-<link rel="stylesheet" href="../assets/segments-v2.css?v=30">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=33">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=33">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -162,7 +162,7 @@
                  twenty minutes of the review, and between them they were taking
                  250px of a row that had to hold six things. -->
             <div class="dr-toolbar">
-              <div class="form-search-wrap" style="min-width:260px;"><label for="lsQ" class="seg-sr">Search segments by name or definition</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="lsQ" type="search" placeholder="Name, condition, country, folder"></div>
+              <div class="form-search-wrap"><label for="lsQ" class="seg-sr">Search segments by name or definition</label><span class="form-search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg></span><input class="form-input" id="lsQ" type="search" placeholder="Name, condition, country, folder"></div>
               <div class="dr-toolbar__end">
                 <div class="dr-rangewrap">
                 <!-- The component as the library draws it: its own 16-grid
@@ -191,6 +191,29 @@
                 </div>
                 <div class="list-group dr-rail" id="lsRail" role="group" aria-label="Filter segments"></div>
                 </div>
+                </div>
+                <!-- ── Arranging what the three controls to the left found ────
+                     MEASURED: the six controls come to 863px at their own
+                     widths, 923 with gaps, in a 1056px row — they were on two
+                     lines because that is how they grew, not because they did
+                     not fit. On one line the slack between the two groups reads
+                     as the divide between them: narrowing on the left, ordering
+                     on the right. The count stays behind, with the table it
+                     counts. -->
+                <span class="dr-toolbar__div" aria-hidden="true"></span>
+                <label class="dr-sortlab" for="lsSort">Sort</label>
+                <select class="form-select dr-sortsel" id="lsSort">
+                  <option value="attention">Needs attention first</option>
+                  <option value="c">Customers</option>
+                  <option value="net">Net sales</option>
+                  <option value="ltv">Avg LTV</option>
+                  <option value="cr">Created</option>
+                  <option value="up">Updated</option>
+                  <option value="n">Name</option>
+                </select>
+                <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
+                  <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
+                  <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
                 </div>
               </div>
             </div>
@@ -231,20 +254,6 @@
                    a button carrying the dates, opening presets beside two months
                    of calendar with Cancel and Apply, and this is that, on the
                    library's .iris-cal. -->
-              <label class="dr-sortlab" for="lsSort">Sort</label>
-              <select class="form-select dr-sortsel" id="lsSort">
-                <option value="attention">Needs attention first</option>
-                <option value="c">Customers</option>
-                <option value="net">Net sales</option>
-                <option value="ltv">Avg LTV</option>
-                <option value="cr">Created</option>
-                <option value="up">Updated</option>
-                <option value="n">Name</option>
-              </select>
-              <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
-                <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
-                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
-              </div>
               <!-- The explanation used to sit here, wedged between the Grouped/Flat
                    toggle and Summary/Conditions as two lines of grey text. A
                    toolbar is for controls; the sentence now appears above the
@@ -279,8 +288,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="../assets/segments-data.js?v=30"></script>
-<script src="../assets/segments-v2-shared.js?v=30"></script>
+<script src="../assets/segments-data.js?v=33"></script>
+<script src="../assets/segments-v2-shared.js?v=33"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fState = 'all', fFolder = 'all', q = '';

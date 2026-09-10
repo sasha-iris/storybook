@@ -188,6 +188,17 @@
    Until it is settled, the toolbar is set to the Data Rooms values so the two
    screens can be compared honestly — scoped to the toolbar, not a fork of .btn. */
 .dr-toolbar, .dr-headactions { gap: 12px; }
+/* The two groups in one row, and the space between them is the boundary rather
+   than a hole: narrowing on the left, ordering on the right. */
+.dr-toolbar__div { flex: 1; min-width: 12px; }
+/* Everything in this row is 36. The pieces arrived from two different rows and
+   brought three heights with them: the range trigger at 34, the sort select at
+   30, the segmented buttons at 30. MEASURED 36 / 34 / 36 / 30 / 36 across one
+   line. */
+.dr-toolbar .dr-seg .btn,
+.dr-toolbar .dr-sortsel.form-select,
+.dr-toolbar .dr-range { height: 36px; }
+.dr-toolbar .dr-sortlab { white-space: nowrap; }
 .dr-toolbar .btn, .dr-headactions .btn, .dr-sum .btn {
   /* 36px, not 40. The Data Rooms button is 40px, but his toolbar carries three
      controls and ours carries three SPLIT controls — six boxes in the same run —
@@ -302,7 +313,9 @@
 /* The 240 is the TOOLBAR search's floor, not a property of the component: it
    was set page-wide, so the 194px box in the navigation column inherited a
    minimum wider than the column itself and ran 49px past its edge. */
-.dr-toolbar .form-search-wrap { min-width: 240px; }
+/* MEASURED: the placeholder needs 265px inside the field and the floor was
+   260, so the one line naming what the search reaches was cut mid-word. */
+.dr-toolbar .form-search-wrap { min-width: 282px; }
 .dr-navsearch .form-search-wrap, .dr-gsearch .form-search-wrap { min-width: 0; }
 /* The field shares the row's height, and nothing else. 13px was on no scale at
    all — the system has 12 / 14 / 16 — so the search box was one step off its own
