@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=23">
-<link rel="stylesheet" href="../assets/segments-v2.css?v=23">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=24">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=24">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -690,7 +690,9 @@ function drawRail() {
     const q2 = (GQ[id] || '').trim().toLowerCase();
     const hit = entries.filter(([, label]) => !q2 || label.toLowerCase().indexOf(q2) !== -1);
     if (!hit.length) return '<div class="dr-navempty">Nothing matches “' + esc(GQ[id]) + '”</div>';
-    return hit.map(([k, label, n]) => chip(cur === k, attr, k, label, n, false)).join('');
+    /* Same rule as every other group: a filter that would return nothing is
+       dimmed and inert. This renderer used to hard-code it live. */
+    return hit.map(([k, label, n]) => chip(cur === k, attr, k, label, n, cur !== k && !n)).join('');
   };
 
   const nState = k => SEGMENTS.filter(x => matchDim(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x) && stateOf(x, k)).length;
@@ -1536,8 +1538,18 @@ function syncFilterBtn() {
    it, so there is a way out that is not "press the magnifier again". */
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  /* The toolbar search is not in a group, and had no way out at all: no Escape,
+     no clear button, and the native cross is suppressed page-wide. */
+  if (e.target.id === 'lsQ') {
+    e.stopPropagation();
+    q = ''; e.target.value = ''; render();
+    return;
+  }
   const box = e.target.closest && e.target.closest('[data-gq]');
   if (!box) return;
+  /* Without this the panel's own Escape fires on the same event and closes the
+     whole dialog, which is not what clearing a search box should do. */
+  e.stopPropagation();
   const id = box.dataset.gq;
   GQ[id] = ''; searchGrp = null;
   render();

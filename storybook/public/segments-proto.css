@@ -145,3 +145,9 @@
    field the design system otherwise owns. */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+
+/* A placeholder is the only visible name these search fields have — their real
+   labels are screen-reader only — so it cannot sit at the library's default
+   grey. Measured 2.31:1 there; this is 6.8:1 on the field's own ground. */
+.form-search-wrap .form-input::placeholder,
+.form-textarea::placeholder { color: #4a5565; }
