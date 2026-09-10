@@ -985,7 +985,11 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
   border: 1px solid #ddd8f2;
   border-radius: var(--dr-radius-sm);
 }
-.dr-pickbar__n { font-size: 13px; color: var(--color-text-heading); margin-right: 4px; }
+/* The same size as the summary line it replaces — both read "N of M …" in the
+   same spot, and 13px is on no scale anyway. The COLOUR stays different and
+   deliberately: the summary's #6a7282 measures 4.44:1 on this bar's #f6f4fd,
+   under the AA floor, while the heading colour is 16.29:1. */
+.dr-pickbar__n { font-size: var(--text-xs); color: var(--color-text-heading); margin-right: 4px; }
 .dr-pickbar__n b { font-weight: var(--font-semibold); }
 /* Selection outlives filtering, so when part of it is out of view the bar says
    how much — otherwise "Archive" appears to act on fewer rows than it does. */
@@ -993,7 +997,9 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-pickbar__hint { color: var(--color-text-body-subtle); font-size: 12px; }
 .dr-pickbar .btn[aria-disabled="true"] { opacity: .55; cursor: default; }
 .dr-pickbar #pkClear { margin-left: auto; }
-.dr-clearsel { gap: 5px; }
+/* gap does nothing on a <button>, which is inline-block: the mark ended up
+   jammed against the first letter. */
+.dr-clearsel { display: inline-flex; align-items: center; gap: 6px; }
 .dr-clearsel svg { flex: none; }
 
 /* Targets that were under 24px. The chip's × and the two text resets are real

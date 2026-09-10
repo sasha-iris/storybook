@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=37">
-<link rel="stylesheet" href="../assets/segments-v2.css?v=37">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=40">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=40">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -279,8 +279,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="../assets/segments-data.js?v=37"></script>
-<script src="../assets/segments-v2-shared.js?v=37"></script>
+<script src="../assets/segments-data.js?v=40"></script>
+<script src="../assets/segments-v2-shared.js?v=40"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fState = 'all', fFolder = 'all', q = '';
@@ -1120,13 +1120,14 @@ function drawPickBar() {
   if (wrap) wrap.classList.toggle('is-picking', PICKED.size > 0);
   const shownIds = new Set(SEGMENTS.filter(x => matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x)).map(x => x.id));
   const hidden = [...PICKED].filter(id => !shownIds.has(id)).length;
-  /* Out of how many. "37 selected" leaves the reader counting rows to find out
-     whether that is nearly all of them or a handful; the denominator is the
-     number of rows on screen, which is what the header checkbox acts on and
-     what the line above the table already says. */
+  /* Out of the whole list, not out of what is on screen. Selection survives
+     filtering on purpose, so the two numbers were not comparable: picking 33
+     and then narrowing to 7 printed "33 of 7 selected". The list's own size
+     never moves, so it is the only denominator that stays true.
+     And the aside says the fact, not a sentence about it. */
   bar.innerHTML =
-    '<span class="dr-pickbar__n"><b>' + PICKED.size + '</b> of ' + shownIds.size + ' selected' +
-      (hidden ? ' <span class="dr-pickbar__off">' + hidden + ' not shown by the current filters</span>' : '') +
+    '<span class="dr-pickbar__n"><b>' + PICKED.size + '</b> of ' + SEGMENTS.length + ' selected' +
+      (hidden ? ' <span class="dr-pickbar__off">' + hidden + ' not in view</span>' : '') +
     '</span>' +
     '<button class="btn btn-xs btn-alternative" id="pkMove" aria-haspopup="menu" aria-expanded="false">' +
       svg(IC.folder, 15) + 'Move to folder' + svg('m19.5 8.25-7.5 7.5-7.5-7.5', 13) + '</button>' +
