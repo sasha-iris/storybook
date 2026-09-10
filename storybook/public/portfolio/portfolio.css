@@ -124,7 +124,12 @@ button:focus-visible {
     align-items: end;
   }
   .pf-hero .pf-measure { grid-column: 1 / span 7; }
-  .pf-hero .pf-proof { grid-column: 9 / span 4; }
+  .pf-hero .pf-proof {
+    grid-column: 9 / span 4;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
 }
 .pf-hero h1 {
   margin: 0 0 1.25rem;
@@ -144,6 +149,9 @@ button:focus-visible {
 .pf-hero p strong { color: var(--color-text-primary); font-weight: var(--font-semibold); }
 
 /* ── Proof strip ─────────────────────────── */
+/* Stacked under the headline, a rule separates the two blocks. Beside it —
+   which is where it sits from 62rem up — there is nothing above the numbers
+   for a rule to separate them from, so it goes. */
 .pf-proof {
   display: grid;
   grid-template-columns: 1fr 1fr;
