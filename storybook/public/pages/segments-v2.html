@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=34">
-<link rel="stylesheet" href="../assets/segments-v2.css?v=34">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=37">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=37">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -192,29 +192,6 @@
                 <div class="list-group dr-rail" id="lsRail" role="group" aria-label="Filter segments"></div>
                 </div>
                 </div>
-                <!-- ── Arranging what the three controls to the left found ────
-                     MEASURED: the six controls come to 863px at their own
-                     widths, 923 with gaps, in a 1056px row — they were on two
-                     lines because that is how they grew, not because they did
-                     not fit. On one line the slack between the two groups reads
-                     as the divide between them: narrowing on the left, ordering
-                     on the right. The count stays behind, with the table it
-                     counts. -->
-                <span class="dr-toolbar__div" aria-hidden="true"></span>
-                <label class="dr-sortlab" for="lsSort">Sort</label>
-                <select class="form-select dr-sortsel" id="lsSort">
-                  <option value="attention">Needs attention first</option>
-                  <option value="c">Customers</option>
-                  <option value="net">Net sales</option>
-                  <option value="ltv">Avg LTV</option>
-                  <option value="cr">Created</option>
-                  <option value="up">Updated</option>
-                  <option value="n">Name</option>
-                </select>
-                <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
-                  <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
-                  <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
-                </div>
               </div>
             </div>
 
@@ -254,6 +231,20 @@
                    a button carrying the dates, opening presets beside two months
                    of calendar with Cancel and Apply, and this is that, on the
                    library's .iris-cal. -->
+              <label class="dr-sortlab" for="lsSort">Sort</label>
+              <select class="form-select dr-sortsel" id="lsSort">
+                <option value="attention">Needs attention first</option>
+                <option value="c">Customers</option>
+                <option value="net">Net sales</option>
+                <option value="ltv">Avg LTV</option>
+                <option value="cr">Created</option>
+                <option value="up">Updated</option>
+                <option value="n">Name</option>
+              </select>
+              <div class="btn-group dr-seg" role="radiogroup" aria-label="Arrangement">
+                <button class="btn btn-sm active" role="radio" aria-checked="true" data-arr="grouped">Grouped</button>
+                <button class="btn btn-sm" role="radio" aria-checked="false" tabindex="-1" data-arr="flat">Flat</button>
+              </div>
               <!-- The explanation used to sit here, wedged between the Grouped/Flat
                    toggle and Summary/Conditions as two lines of grey text. A
                    toolbar is for controls; the sentence now appears above the
@@ -288,8 +279,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="../assets/segments-data.js?v=34"></script>
-<script src="../assets/segments-v2-shared.js?v=34"></script>
+<script src="../assets/segments-data.js?v=37"></script>
+<script src="../assets/segments-v2-shared.js?v=37"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fState = 'all', fFolder = 'all', q = '';
@@ -1129,8 +1120,12 @@ function drawPickBar() {
   if (wrap) wrap.classList.toggle('is-picking', PICKED.size > 0);
   const shownIds = new Set(SEGMENTS.filter(x => matchDim(x) && matchState(x) && matchFolder(x) && matchWin(x) && matchBy(x) && matchQ(x)).map(x => x.id));
   const hidden = [...PICKED].filter(id => !shownIds.has(id)).length;
+  /* Out of how many. "37 selected" leaves the reader counting rows to find out
+     whether that is nearly all of them or a handful; the denominator is the
+     number of rows on screen, which is what the header checkbox acts on and
+     what the line above the table already says. */
   bar.innerHTML =
-    '<span class="dr-pickbar__n"><b>' + PICKED.size + '</b> selected' +
+    '<span class="dr-pickbar__n"><b>' + PICKED.size + '</b> of ' + shownIds.size + ' selected' +
       (hidden ? ' <span class="dr-pickbar__off">' + hidden + ' not shown by the current filters</span>' : '') +
     '</span>' +
     '<button class="btn btn-xs btn-alternative" id="pkMove" aria-haspopup="menu" aria-expanded="false">' +
@@ -1143,7 +1138,13 @@ function drawPickBar() {
     /* The same control as every other reset on this page. It was .btn-link at
        14/600 against .dr-rail__reset at 12/500 — one act, two styles, on one
        screen. */
-    '<button class="dr-rail__reset" id="pkClear">Clear selection</button>';
+    /* The only control in this bar without a mark, standing in a row of three
+       that have one. The filter panel's resets stay wordless because the dialog
+       they sit in is headed Filters and names its own object; here the object
+       is the ticks in the column, and the mark for taking them off is the ✕ the
+       page already uses to dismiss. */
+    '<button class="dr-rail__reset dr-clearsel" id="pkClear">' +
+      svg('M6 18 18 6M6 6l12 12', 13) + 'Clear selection</button>';
 }
 
 /* The header box reflects three states, and "some" is not "none". */

@@ -188,17 +188,7 @@
    Until it is settled, the toolbar is set to the Data Rooms values so the two
    screens can be compared honestly — scoped to the toolbar, not a fork of .btn. */
 .dr-toolbar, .dr-headactions { gap: 12px; }
-/* The two groups in one row, and the space between them is the boundary rather
-   than a hole: narrowing on the left, ordering on the right. */
-.dr-toolbar__div { flex: 1; min-width: 12px; }
-/* Everything in this row is 36. The pieces arrived from two different rows and
-   brought three heights with them: the range trigger at 34, the sort select at
-   30, the segmented buttons at 30. MEASURED 36 / 34 / 36 / 30 / 36 across one
-   line. */
-.dr-toolbar .dr-seg .btn,
-.dr-toolbar .dr-sortsel.form-select,
-.dr-toolbar .dr-range { height: 36px; }
-.dr-toolbar .dr-sortlab { white-space: nowrap; }
+
 .dr-toolbar .btn, .dr-headactions .btn, .dr-sum .btn {
   /* 36px, not 40. The Data Rooms button is 40px, but his toolbar carries three
      controls and ours carries three SPLIT controls — six boxes in the same run —
@@ -1003,6 +993,8 @@ a.dr-name__a:hover { color: var(--dr-primary); text-decoration: underline; curso
 .dr-pickbar__hint { color: var(--color-text-body-subtle); font-size: 12px; }
 .dr-pickbar .btn[aria-disabled="true"] { opacity: .55; cursor: default; }
 .dr-pickbar #pkClear { margin-left: auto; }
+.dr-clearsel { gap: 5px; }
+.dr-clearsel svg { flex: none; }
 
 /* Targets that were under 24px. The chip's × and the two text resets are real
    controls in a toolbar, not links inside a sentence, so the inline exception
