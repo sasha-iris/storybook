@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=33">
-<link rel="stylesheet" href="../assets/segments-v2.css?v=33">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=34">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=34">
 <!--
   The segment list in the Data Rooms visual language.
 
@@ -288,8 +288,8 @@
 <div id="modalHost"></div>
 <input type="file" id="lsFile" accept=".csv,text/csv" class="seg-sr" tabindex="-1" aria-hidden="true">
 
-<script src="../assets/segments-data.js?v=33"></script>
-<script src="../assets/segments-v2-shared.js?v=33"></script>
+<script src="../assets/segments-data.js?v=34"></script>
+<script src="../assets/segments-v2-shared.js?v=34"></script>
 <script>
 /* ── page state ─────────────────────────────────────────────────────────── */
 let fState = 'all', fFolder = 'all', q = '';
@@ -1140,7 +1140,10 @@ function drawPickBar() {
     '<button class="btn btn-xs btn-alternative" id="pkCompare"' + (PICKED.size === 2 ? '' : ' aria-disabled="true"') + '>' +
       svg(IC.chart, 15) + 'Compare' + (PICKED.size === 2 ? '' : ' <span class="dr-pickbar__hint">pick 2</span>') + '</button>' +
     '<button class="btn btn-xs btn-alternative" id="pkArchive">' + svg(IC.box, 15) + 'Archive</button>' +
-    '<button class="btn-link" id="pkClear">Clear selection</button>';
+    /* The same control as every other reset on this page. It was .btn-link at
+       14/600 against .dr-rail__reset at 12/500 — one act, two styles, on one
+       screen. */
+    '<button class="dr-rail__reset" id="pkClear">Clear selection</button>';
 }
 
 /* The header box reflects three states, and "some" is not "none". */
