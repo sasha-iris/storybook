@@ -196,7 +196,7 @@
   height: 36px;
   padding: 0 12px;
   gap: 6px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   border-radius: var(--radius-md);   /* 8px, library 12px */
 }
 .dr-toolbar .btn svg, .dr-headactions .btn svg { width: 14px; height: 14px; }
@@ -304,8 +304,11 @@
    minimum wider than the column itself and ran 49px past its edge. */
 .dr-toolbar .form-search-wrap { min-width: 240px; }
 .dr-navsearch .form-search-wrap, .dr-gsearch .form-search-wrap { min-width: 0; }
-/* the field sits in the same row as the buttons and must share their height */
-.dr-toolbar .form-search-wrap .form-input { height: 36px; font-size: 13px; }
+/* The field shares the row's height, and nothing else. 13px was on no scale at
+   all — the system has 12 / 14 / 16 — so the search box was one step off its own
+   component for no reason anybody chose. The height stays 36 because the row
+   does; the type goes back to the component's --text-sm. */
+.dr-toolbar .form-search-wrap .form-input { height: 36px; font-size: var(--text-sm); }
 .form-search-wrap .form-input:focus-visible {
   outline: 2px solid var(--color-border-focus); outline-offset: 1px;
 }

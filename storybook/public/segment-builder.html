@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="./iris-tokens.css">
 <link rel="stylesheet" href="./iris-components.css">
 <link rel="stylesheet" href="./styles.css">
-<link rel="stylesheet" href="./segments-proto.css?v=24">
+<link rel="stylesheet" href="./segments-proto.css?v=28">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="./segments-v2.css?v=24">
+<link rel="stylesheet" href="./segments-v2.css?v=28">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1723,7 +1723,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="./segments-data.js?v=16"></script>
+<script src="./segments-data.js?v=27"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3839,7 +3839,13 @@ function render() {
      four dashes directly under it. The tiles follow whichever panel they are
      sitting in; the flat card keeps its own rule. */
   const mN    = CARD2 && Number.isFinite(window.__pvTotal) ? window.__pvTotal : n;
-  const mNone = CARD2 ? !Number.isFinite(mN) : noDefinition;
+  /* An empty definition has no segment to describe, so the tiles stay on
+     dashes even though the panel above can still say how many people are in
+     the window. Without this they reported the whole base's orders and revenue
+     under a card that says "Everyone in the window", which reads as a segment
+     that already has 18,593 orders in it. */
+  const mNone = CARD2 ? (!groups[0] || !groups[0].conds.length || !Number.isFinite(mN))
+                      : noDefinition;
   const mAov  = 52 + (1 - (mN == null ? 0 : mN / BASE)) * 26;
   document.getElementById('sbMini').innerHTML = (mNone || mN === 0)
     ? ['Orders', 'AOV', 'Net sales', 'Avg LTV'].map(l =>
