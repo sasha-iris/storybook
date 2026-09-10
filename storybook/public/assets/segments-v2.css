@@ -1502,11 +1502,21 @@ input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appe
 }
 /* A name too long for 56px prints its short form instead of an ellipsis. */
 .seg-nav-contracted .sidebar-contracted-item[data-short]::after { content: attr(data-short); }
+/* MEASURED 59px of chip in a 60px rail: 0 left, 1 right, so the fill ran into
+   both edges and read as a band across the column rather than a mark on one
+   item. The library insets its own contracted active item — 40px wide, margin
+   0 auto — and only the caption underneath stops that width working here, so it
+   keeps the inset and takes the width the caption needs. */
 .seg-nav-contracted .sidebar-contracted-item.active {
-  width: 100%; height: auto; margin: 0;
+  width: auto; height: auto; margin: 0 6px;
 }
+/* The item's own colour, not the brand. .sidebar-contracted-item.active is
+   #1f2a37 in the library and that is what its icon takes; painting the caption
+   #42389d put two colours inside one item, one word apart. (The brand active is
+   the EXPANDED .sidebar-item, Figma 9263:160934, a different component.) */
 .seg-nav-contracted .sidebar-contracted-item.active::after {
-  color: var(--dr-primary); font-weight: var(--font-medium);
+  /* inherit, so the word takes the same #1f2a37 as the icon above it */
+  color: inherit; font-weight: var(--font-medium);
 }
 
 /* Row actions appear on hover, the way the product's do — but they also appear
