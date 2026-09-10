@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=47">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=49">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=47">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=49">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -277,10 +277,10 @@
   /* WCAG 2.5.8: these measured 61x17 and 44x17 — pointer targets under 24px in
      both dimensions. They are inline by design, so the box grows, not the type. */
   .sb-inline {
-    min-height: 24px;
-    min-width: 0; width: auto; height: auto; padding: 1px 20px 1px 4px;
-    border: 1px solid transparent; background-color: transparent; background-position: right 2px center;
-    font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--color-text-heading);
+    min-height: 28px;
+    min-width: 0; width: auto; height: auto; padding: 2px 22px 2px 6px;
+    border: 1px solid transparent; background-color: transparent; background-position: right 3px center;
+    font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--color-text-heading);
     border-radius: 5px; cursor: pointer;
   }
   .sb-inline:hover { background-color: var(--color-bg-tertiary); }
@@ -1019,11 +1019,16 @@
 
   /* ── Channel picker ─────────────────────────────────────────────────── */
   .sb-chanwrap { position: relative; display: inline-flex; }
+  /* MEASURED at exactly 24px, which is 2.5.8's FLOOR and not a size anybody
+     chose — a control sized to the minimum needs a steady hand, and everything
+     else on this card stands at 31 to 36. 28 with the value at --text-sm: still
+     lighter than a real field, which is what these two are meant to be, and no
+     longer the smallest thing on the page to hit. */
   .sb-chanbtn {
-    display: inline-flex; align-items: center; gap: 5px;
-    min-height: 24px;                                   /* 2.5.8: measured 99x18 */
-    padding: 2px 6px; border: 0; border-radius: 6px; background: transparent;
-    font-size: var(--text-xs); font-weight: var(--font-semibold); color: var(--color-text-heading);
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 28px;
+    padding: 3px 7px; border: 0; border-radius: 6px; background: transparent;
+    font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--color-text-heading);
     cursor: pointer;
   }
   .sb-chanbtn:hover { background: var(--color-bg-tertiary); }
@@ -1731,7 +1736,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=47"></script>
+<script src="../assets/segments-data.js?v=49"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3200,6 +3205,26 @@ CHAN_GROUPS.forEach(x => x.chans.forEach(c => { CHAN_OF[c] = x.g; }));
    No counts on the options: how many customers came through each channel is not
    in this data, and a plausible-looking number is the one thing this prototype
    must not print. */
+/* How wide a word may be on the channel trigger, and how wide a word is.
+   Both measured on the page rather than assumed: the column can change with the
+   viewport, and a character count is not a width. The canvas is made once. */
+let _chanCanvas = null;
+function textWidth(t) {
+  const el = document.querySelector('.sb-chanbtn');
+  const font = el ? getComputedStyle(el).font : '12px Inter';
+  _chanCanvas = _chanCanvas || document.createElement('canvas');
+  const c = _chanCanvas.getContext('2d');
+  c.font = font || '12px Inter';
+  return c.measureText(t).width;
+}
+function chanRoom() {
+  const side = document.querySelector('.sb2__side');
+  const lab = document.querySelector('.sb2__gt');
+  if (!side) return 0;
+  /* what the row has left after the words "Orders on", the chevron and the
+     control's own padding */
+  return Math.max(0, side.clientWidth - (lab ? lab.offsetWidth : 64) - 16 - 22 - 20);
+}
 function chanTrigger(gi, sel) {
   /* Only real logos, and each seller once. A channel without one used to render
      an empty grey disc, so "Amazon + Manual Order DTC + Shopify" came out as a
@@ -3217,7 +3242,7 @@ function chanTrigger(gi, sel) {
      channels, but a real one carries more, and the cap should not be the thing
      that hides them. Each seller once — Shopify DTC and Shopify Wholesale are
      one brand and one mark. */
-  const marks = seen.slice(0, 5).map(l => `<img src="${l}" alt="" width="15" height="15">`).join('');
+  const marks = seen.slice(0, 4).map(l => `<img src="${l}" alt="" width="17" height="17">`).join('');
   /* Once a channel is chosen the MARK is the label. "Amazon Seller Partner"
      spelled out ran the trigger past the column and had to be truncated to
      "Amazon Seller Pa…", which is worse than the logo it already sits next to.
@@ -3229,14 +3254,23 @@ function chanTrigger(gi, sel) {
      fact twice and the reader can count to two. It earns its place when a
      selected channel has no mark to show (Manual Order, SPS) or when there are
      more than the three the stack holds. */
-  const shown = Math.min(seen.length, 5);
-  /* What the stack does not show, as the number it does not show. "5 channels"
-     made the reader subtract the logos in front of it to find out how many were
-     hidden; "+2" is that answer already worked out. */
+  const shown = Math.min(seen.length, 4);
+  /* Four marks, then WORDS if the words fit and a count if they do not. "+1" is
+     the shortest thing that can be said and also the least: it names nothing.
+     When the channels the stack could not show have names that fit the room the
+     line actually has, the names are worth more than the number; when they do
+     not fit, the number is the only honest thing left.
+     The room is measured, not guessed — the column's own width, less the label
+     beside it, the marks, the chevron and the paddings — because a column can
+     change with the viewport and a character count is not a width. */
+  const over = sel.slice(shown);
+  const words = over.join(', ');
+  const spare = chanRoom() - shown * 23;
   const label = !sel.length ? 'Any channel'
     : whole ? whole.g
-    : sel.length === shown ? ''
-    : '+' + (sel.length - shown);
+    : !over.length ? ''
+    : textWidth(words) <= spare ? words
+    : '+' + over.length;
   return `<button class="sb-chanbtn${sel.length ? ' is-set' : ''}" data-chanopen="${gi}"
       title="${esc(sel.length ? sel.join(', ') : 'Any channel')}"
       aria-expanded="${chanOpen === gi}" aria-controls="chanpop-${gi}">
