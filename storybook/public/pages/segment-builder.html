@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=54">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=59">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=54">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=59">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -987,7 +987,7 @@
   .sb2__ed .sb-cond__why { margin-top: 10px; }
 
   /* ── Preview funnel ─────────────────────────────────────────────────── */
-  .sb2__pv { margin-bottom: 10px; }
+  .sb2__pv { margin-bottom: 6px; }
   .sb2__pv.is-head .sb2__pvt { color: var(--color-text-heading); font-weight: var(--font-semibold); }
   /* ── The rail's ladder ─────────────────────────────────────────────────
      Everything here was 12px, and the only separation was weight and colour —
@@ -998,17 +998,18 @@
        the condition   12 / 500, primary — it is the fact
        what it costs   10 / 500, muted   — supporting, and it says "smaller"
        the total       14 / 600, heading — the answer, and the only 14 here     */
-  .sb2__pvt { font-size: var(--text-xs); font-weight: var(--font-medium);
-              color: var(--color-text-primary); display: flex; flex-direction: column; }
+  /* Supporting detail, so it sits below the answer rather than beside it. At
+     12/500 in near-black these three lines carried a heading's weight and the
+     30px figure under them had to shout over its own footnotes. */
+  .sb2__pvt { font-size: var(--text-xs); font-weight: var(--font-normal);
+              color: var(--color-text-body); display: flex; flex-direction: column; }
   .sb2__pvt span { font-size: var(--text-xs); color: var(--seg-muted); }
   /* Height measured on their live Preview — 10px, not the 5px I had. The
      rounding is kept against theirs: their bars are square, and a 3px radius on
      a 10px bar is the only thing on this rail that softens it. */
-  .sb2__pvbar { height: 10px; margin: 5px 0 4px; border-radius: 3px;
-                background: var(--color-bg-tertiary); overflow: hidden; }
-  .sb2__pvbar i { display: block; height: 100%; background: var(--btn-primary-bg, #42389d); }
-  .sb2__pv.is-head .sb2__pvbar i { background: var(--btn-primary-bg, #42389d); }
-  .sb2__pvn { display: flex; justify-content: space-between; gap: 6px;
+  /* Name on the left, cost on the right, one line each. */
+  .sb2__pv { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .sb2__pvn { flex: none;
               font-size: 10px; font-weight: var(--font-medium); letter-spacing: .01em;
               color: var(--seg-muted); }
   .sb2__pvn span { color: var(--color-text-body-subtle); }
@@ -1022,8 +1023,15 @@
   .sb2__pvempty svg { flex: none; margin-top: 1px; color: var(--color-text-disabled, #9ca3af); }
   .sb2__pvsep { margin: 12px 0 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
                 color: var(--color-text-secondary); font-weight: var(--font-semibold); }
-  .sb2__pvtot { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--color-border-default);
+  /* Centred and at the top: this is the card's headline, and the flat card sets
+     the same figure the same way. The rule moved under it, so it now separates
+     the answer from its breakdown instead of hanging above it. */
+  /* Air around the answer, so it is a headline block and not a line pressed
+     between two rules. */
+  .sb2__pvtot { text-align: center; padding: 2px 0 4px;
                 font-size: var(--text-xs); color: var(--color-text-body); }
+  .sb2__pvlist { margin-top: 12px; padding-top: 11px;
+                 border-top: 1px solid var(--color-border-default); }
   /* The answer the page exists for, at the size of an answer. MEASURED against
      the flat card, which prints the same figure at 34px: this was 14px inside a
      sentence, so the one number a reader came for was smaller than the card's
@@ -1031,14 +1039,22 @@
      weight it has; the flat card's 34/800 is on neither scale.
      "customers match" drops to its own line under it, the way the flat card
      already sets them. */
-  .sb2__pvtot__n { font-size: var(--text-3xl); font-weight: var(--font-semibold);
-                   line-height: 1.1; letter-spacing: -0.02em;
+  /* The library's own h1 pair, not a size and a weight chosen apart: --text-h1
+     is documented in the token file as "30px · weight 700", and --font-bold is
+     700. This is the payoff of the whole panel, so it takes the heaviest step
+     the system actually defines rather than the heaviest one that is left over
+     from a paragraph. #101828 on white is 17.75:1.
+     The label under it moves off the muted grey too — at 12/400 it read as a
+     footnote to the number instead of naming it. */
+  .sb2__pvtot__n { font-size: var(--text-h1); font-weight: var(--font-bold);
+                   line-height: 1.05; letter-spacing: -0.02em;
                    color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
-  .sb2__pvtot__l { margin-top: 1px; font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb2__pvtot__l { margin-top: 2px; font-size: var(--text-xs);
+                   font-weight: var(--font-medium); color: var(--color-text-body); }
   /* It was inline, so the caveat ran on from the number as one sentence:
      "2,175 customers match Conditions overlap, so these do not add up." */
-  .sb2__pvtot span { display: block; margin-top: 4px; font-size: 10px;
-                     line-height: 1.45; color: var(--seg-muted); }
+  .sb2__pvnote { display: block; margin-top: 8px; font-size: 10px;
+                 line-height: 1.45; color: var(--seg-muted); }
 
   /* ── Channel picker ─────────────────────────────────────────────────── */
   .sb-chanwrap { position: relative; display: inline-flex; }
@@ -1762,7 +1778,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=54"></script>
+<script src="../assets/segments-data.js?v=59"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3791,9 +3807,14 @@ function previewV2() {
   const body = rows.filter(r => !r.unset).map(r => {
     const def = ALL.find(a => a.k === r.c.k);
     const label = esc(condText(r.c) || def.n);
+    /* The condition and what it costs, on one line. The bar under each one was
+       measured against itself rather than against the audience — the longest
+       cost filled the track and the rest were drawn as a share of THAT — so at
+       two or three conditions they came out near-identical lengths and
+       discriminated nothing, while stacking three coloured tracks over the
+       figure the panel is for. The number carries it. */
     return `<div class="sb2__pv">
         <div class="sb2__pvt">${label}</div>
-        <div class="sb2__pvbar"><i style="width:${Math.max(2, Math.round(r.delta / top * 100))}%"></i></div>
         <div class="sb2__pvn">${any ? 'adds ' : 'costs '}${fmtN(r.delta)}</div>
       </div>`;
   }).join('');
@@ -3802,11 +3823,21 @@ function previewV2() {
      which is where the conditions are. It used to be repeated here as a caveat
      on the estimate, but the estimate already carries its caveat twice over:
      the word Illustrative in the panel's header, and the paragraph under it. */
-  return head + body + `<div class="sb2__pvtot">
+  /* The answer first, then what it is made of. The panel used to open with
+     three lines of per-condition cost and put the figure a reader came for
+     below them, so it read as footnotes with a total appended. Leading with the
+     number is how the flat card already sets it, and it is the order the
+     question is asked in. */
+  /* The caveat is about the COSTS, not about the answer: three costs that do
+     not sum to the difference between the window and the total is a thing a
+     reader will check and disbelieve, so it is worth saying — under the numbers
+     it explains, not under the headline it was dampening. */
+  return head + `<div class="sb2__pvtot">
       <div class="sb2__pvtot__n">${total == null ? '—' : fmtN(total)}</div>
       <div class="sb2__pvtot__l">customers match</div>
-      <span>Conditions overlap, so these do not add up.</span>
-    </div>`;
+    </div>` + (body ? `<div class="sb2__pvlist">${body}
+      <span class="sb2__pvnote">Conditions overlap, so these do not add up.</span>
+    </div>` : '');
 }
 
 function drawCondsV2(steps) {
@@ -3978,8 +4009,12 @@ function render() {
     : n === 0
       ? samRow('card-icon-red', SAM_WARN, 'Nobody matches yet',
                'Loosen the condition that drops the count to zero')
-      : samRow('card-icon-gray', SAM_USERS, `${fmtN(n)} customers match`,
-               'Iris lists them on the segment’s own page once it is saved');
+      /* Not the count again. It is the largest thing on the panel directly
+         above, at 30px, and this line printed it a second time at 13 — the same
+         fact twice, the smaller one darker than the bigger one's own label. The
+         card says the one thing it alone knows: where the people are. */
+      : samRow('card-icon-gray', SAM_USERS, 'Iris lists them on the segment’s own page',
+               'once this segment is saved');
 
   const nameClash = duplicates();
   /* badNum was applied to every condition, and it rejects anything that is not
