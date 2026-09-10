@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=46">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=47">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=46">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=47">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1731,7 +1731,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=46"></script>
+<script src="../assets/segments-data.js?v=47"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3206,8 +3206,12 @@ function chanTrigger(gi, sel) {
      logo, a hole, a logo — which reads as a gap, not as a channel. Manual Order
      and SPS have no mark to show; the count beside the stack says they are
      there. */
+  /* One mark per CHANNEL, not per brand. Collapsing repeats — Shopify DTC and
+     Shopify Wholesale are one logo — kept the stack at three marks while six
+     channels were chosen, and the stack is what says how many. The repeat is
+     told apart on hover: the title names every channel in order. */
   const seen = [];
-  sel.forEach(c => { const l = CHANNEL_LOGO[c]; if (l && seen.indexOf(l) === -1) seen.push(l); });
+  sel.forEach(c => { const l = CHANNEL_LOGO[c]; if (l) seen.push(l); });
   /* Five, not three. The stack is what the reader recognises at a glance, and a
      "+N" is what they cannot; this account has three distinct marks across six
      channels, but a real one carries more, and the cap should not be the thing
