@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=40">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=41">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=40">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=41">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1723,7 +1723,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=40"></script>
+<script src="../assets/segments-data.js?v=41"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3202,9 +3202,15 @@ function chanTrigger(gi, sel) {
      A whole group keeps its short name — DTC, Wholesale — because a group has no
      mark of its own; several loose channels are counted. */
   const whole = CHAN_GROUPS.find(x => x.chans.length === sel.length && x.chans.every(c => sel.indexOf(c) !== -1));
+  /* The count only when the marks do not already say it. Two channels with two
+     logos on screen printed "2 channels" beside two logos, which is the same
+     fact twice and the reader can count to two. It earns its place when a
+     selected channel has no mark to show (Manual Order, SPS) or when there are
+     more than the three the stack holds. */
+  const shown = Math.min(seen.length, 3);
   const label = !sel.length ? 'Any channel'
     : whole ? whole.g
-    : sel.length === 1 ? ''
+    : sel.length === shown ? ''
     : sel.length + ' channels';
   return `<button class="sb-chanbtn${sel.length ? ' is-set' : ''}" data-chanopen="${gi}"
       title="${esc(sel.length ? sel.join(', ') : 'Any channel')}"
