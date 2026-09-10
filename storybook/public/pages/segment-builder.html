@@ -10,12 +10,12 @@
 <link rel="stylesheet" href="../assets/iris-tokens.css">
 <link rel="stylesheet" href="../assets/iris-components.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/segments-proto.css?v=43">
+<link rel="stylesheet" href="../assets/segments-proto.css?v=45">
 <!-- The toggle chip this redesign already uses on the list (.dr-chip) lives
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=43">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=45">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -447,7 +447,11 @@
      and the brand at #42389d for its border and label. The rule between the
      columns comes off; a change of surface separates them better than a line. */
   /* The gutter is the grid's now, so the column stops paying for it twice. */
-  .sb2__main { min-width: 0; }
+  /* MEASURED 15px from the last pill to the card's edge, which is the body's
+     own padding and nothing else: the column ended flush on the floor. The
+     column carries the same 14 the body does, so whatever is last — the pill
+     rows, or the editor when one is open — has a step under it. */
+  .sb2__main { min-width: 0; padding-bottom: 14px; }
   .sb2__side {
     /* The padding was holding a tinted band that is gone. Left in place it just
        pushed this column's first line 14px below the other one's — measured. */
@@ -1723,7 +1727,7 @@
 <div class="toast-stack" id="toasts" style="position:fixed;right:20px;bottom:20px;z-index:80;display:flex;flex-direction:column;gap:8px;"></div>
 <div id="modalHost"></div>
 
-<script src="../assets/segments-data.js?v=43"></script>
+<script src="../assets/segments-data.js?v=45"></script>
 <script>
 /* Variant 2 renames a segment on its own page and stores the new name under
    `segNames`. This page is shared with v1 and does not load the v2 runtime, so
@@ -3863,8 +3867,14 @@ function render() {
      the window. Without this they reported the whole base's orders and revenue
      under a card that says "Everyone in the window", which reads as a segment
      that already has 18,593 orders in it. */
-  const mNone = CARD2 ? (!groups[0] || !groups[0].conds.length || !Number.isFinite(mN))
-                      : noDefinition;
+  /* Nothing to describe until at least one condition has a VALUE. An empty
+     definition was already handled; a definition of conditions that are all
+     still blank behaves the same way — the panel counts everyone in the window,
+     which is true of the window and not of a segment, and under a card that
+     says so the tiles were reporting the whole base's orders and revenue as if
+     they belonged to it. */
+  const mAny = CARD2 && groups[0] && groups[0].conds.some(hasValue);
+  const mNone = CARD2 ? (!mAny || !Number.isFinite(mN)) : noDefinition;
   const mAov  = 52 + (1 - (mN == null ? 0 : mN / BASE)) * 26;
   document.getElementById('sbMini').innerHTML = (mNone || mN === 0)
     ? ['Orders', 'AOV', 'Net sales', 'Avg LTV'].map(l =>
