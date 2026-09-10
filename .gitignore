@@ -7,8 +7,3 @@ node_modules/
 .env.*
 storybook/storybook-static/
 
-# The portfolio stays local until it is wanted on the live site. Ignored rather
-# than merely untracked, so a `git add -A` cannot publish it by accident —
-# which is exactly how it went live the last time it was removed.
-storybook/public/portfolio/
-storybook/public/pages/index.html

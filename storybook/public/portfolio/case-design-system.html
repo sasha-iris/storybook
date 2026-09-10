@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iris design system — Oleksandra Melnyk</title>
+<meta name="description" content="447 CSS classes audited against their documentation. Twelve component families rebuilt, accessibility fixed in the tokens.">
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Red+Hat+Display:wght@700;900&display=swap">
+<link rel="stylesheet" href="../assets/iris-tokens.css">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+<svg class="pf-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="ico-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.552"><g transform="translate(12 12) scale(0.9667) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0 0 12 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 0 1-2.031.352 5.988 5.988 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971Zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 0 1-2.031.352 5.989 5.989 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971Z"/></g></symbol>
+  <symbol id="ico-chart-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.552"><g transform="translate(12 12) scale(0.9667) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></g></symbol>
+  <symbol id="ico-clipboard-document-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.681"><g transform="translate(12 12) scale(0.8923) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"/></g></symbol>
+  <symbol id="ico-code-bracket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.422"><g transform="translate(12 12) scale(1.0545) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"/></g></symbol>
+  <symbol id="ico-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.612"><g transform="translate(12 12) scale(0.9305) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></g></symbol>
+  <symbol id="ico-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.552"><g transform="translate(12 12) scale(0.9667) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></g></symbol>
+  <symbol id="ico-no-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.552"><g transform="translate(12 12) scale(0.9667) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"/></g></symbol>
+  <symbol id="ico-swatch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.552"><g transform="translate(12 12) scale(0.9667) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"/></g></symbol>
+  <symbol id="ico-cursor-arrow-rays" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.672"><g transform="translate(12 12) scale(0.8969) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"/></g></symbol>
+  <symbol id="ico-code-bracket-square" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.422"><g transform="translate(12 12) scale(1.0545) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75 16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></g></symbol>
+  <symbol id="ico-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.552"><g transform="translate(12 12) scale(0.9667) translate(-12 -12)"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></g></symbol>
+  <symbol id="ico-cursor" viewBox="0 0 512 512" fill="none"><path d="m186.501 3.99902h139c7.125 0 14.231-.00004 21.341.04102 5.985.0342 11.952.10221 17.903.26562h.001c13.003.35475 25.943 1.11709 38.569 3.3877 12.775 2.29828 24.592 6.03144 36.118 11.89354v-.001c10.973 5.5867 21.052 12.8384 29.848 21.4571l.847.8379c8.993 8.993 16.525 19.3593 22.292 30.6933l3.565-1.8135-3.565 1.8145c5.678 11.1575 9.36 22.6024 11.674 34.9208l.219 1.195c2.129 11.837 2.932 23.95 3.316 36.132l.072 2.438c.164 5.958.232 11.919.266 17.904v.004c.048 7.107.041 14.207.041 21.337v129.344l-.007-.007v9.656c0 7.125 0 14.231-.041 21.341-.034 5.985-.102 11.952-.266 17.903v.001c-.354 13.003-1.117 25.944-3.387 38.569-2.227 12.376-5.8 23.853-11.351 35.037l-.543 1.08c-5.767 11.327-13.306 21.701-22.293 30.695-8.993 8.993-19.361 16.526-30.695 22.293-11.518 5.861-23.342 9.595-36.116 11.894-11.837 2.128-23.95 2.931-36.132 3.315l-2.438.072c-5.958.164-11.919.232-17.904.266h-.004c-7.107.048-14.207.041-21.337.041h-139c-7.125 0-14.231 0-21.341-.041-5.985-.034-11.952-.102-17.903-.266h-.001c-13.003-.355-25.944-1.117-38.57-3.387-12.7742-2.299-24.5914-6.032-36.1165-11.894h.001c-10.974-5.587-21.0534-12.837-29.8496-21.456l-.8467-.838c-8.7118-8.712-16.0531-18.713-21.7461-29.634l-.5459-1.06-.544-1.081c-5.3709-10.816-8.8904-21.919-11.12983-33.84l-.21973-1.196c-2.27061-12.625-3.03294-25.566-3.38769-38.569v-.001c-.16342-5.958-.23143-11.918-.26563-17.903-.02736-7.112-.02734-14.219-.02734-21.341v-139c0-7.125-.00005-14.231.04101-21.341.0342-5.985.10222-11.952.26563-17.903v-.001c.35475-13.003 1.11699-25.944 3.38769-38.57 2.29829-12.7743 6.03159-24.5916 11.89359-36.1166l-.001-.001c5.7665-11.3269 13.3073-21.6999 22.2939-30.6934 8.9933-8.9932 19.36-16.5261 30.6944-22.2929h.0009c11.5174-5.8615 23.3407-9.59617 36.1149-11.89455 11.837-2.12878 23.951-2.93017 36.133-3.31446l2.438-.07226c5.958-.16342 11.919-.23142 17.904-.26563l-.001-.00097c7.104-.03422 14.211-.03321 21.335-.03321z" stroke="#edecec" stroke-opacity=".2" stroke-width="8"/></symbol>
+</svg>
+
+<a class="pf-skip" href="#main">Skip to content</a>
+
+<header class="pf-masthead">
+  <div class="pf-shell pf-masthead__inner">
+    <a class="pf-wordmark" href="./">Oleksandra Melnyk</a>
+    <nav class="pf-nav" aria-label="Sections">
+      <a href="./#work">Work</a>
+      <a href="./#artifacts">Live</a>
+      <a href="./#method">Method</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<article>
+
+  <div class="pf-article">
+    <div class="pf-shell">
+      <a class="pf-back" href="./">&larr; All work</a>
+      <span class="pf-case__kicker">Design system</span>
+      <h1>A component library developers can copy from</h1>
+      <p class="pf-dek">The system existed in Figma. The version anyone could build from did not.</p>
+
+      <dl class="pf-meta">
+        <div><dt>Inherited</dt><dd>The design language and specs, in Figma. The product's, not mine.</dd></div>
+        <div><dt>Mine</dt><dd>The coded library, its docs, the audit, the token fixes</dd></div>
+        <div><dt>Consumers</dt><dd>Storybook · production CSS · a low-code environment</dd></div>
+        <div><dt>When</dt><dd>April–June 2026, maintained since</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="pf-body">
+    <div class="pf-shell">
+
+      <div class="pf-stats">
+        <div><b>447</b><span>CSS classes audited against their stories</span></div>
+        <div><b>12</b><span>families whose story was a drawing, not the component</span></div>
+        <div><b>47</b><span>components documented</span></div>
+        <div><b>249</b><span>stories, live</span></div>
+      </div>
+
+      <figure class="pf-shot">
+        <span class="pf-shot__ground"><img src="img/lib-storybook.png" alt="The Iris component library running in Storybook" loading="lazy" width="2880" height="1720"></span>
+        <figcaption>Every story carries the class list a developer copies.</figcaption>
+      </figure>
+
+      <h2>What the audit changed</h2>
+      <table class="pf-ledger">
+        <caption>Measured by computed style, not by eye</caption>
+        <tbody>
+          <tr><td>Families whose preview was not the component</td><td class="was">12</td><td class="arrow">&rarr;</td><td class="now">0</td></tr>
+          <tr><td>Token conflicts between the two CSS files</td><td class="was">6</td><td class="arrow">&rarr;</td><td class="now">0</td></tr>
+          <tr><td>Success green on white</td><td class="was">3.0:1</td><td class="arrow">&rarr;</td><td class="now">5.36:1</td></tr>
+          <tr><td>Stories given a three-tier copyable snippet</td><td class="was"></td><td class="arrow"></td><td class="now">242</td></tr>
+          <tr><td>Invented components and variants deleted</td><td class="was"></td><td class="arrow"></td><td class="now">5</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Adoption, measured</h2>
+      <div class="pf-bars">
+        <div>
+          <div class="pf-bars__top"><span>Financial advisor dashboard</span><b>80%</b></div>
+          <div class="pf-bars__track"><div class="pf-bars__fill" style="width:80%"></div></div>
+        </div>
+        <div>
+          <div class="pf-bars__top"><span>P&amp;L statement</span><b>49%</b></div>
+          <div class="pf-bars__track"><div class="pf-bars__fill" style="width:49%"></div></div>
+        </div>
+        <div>
+          <div class="pf-bars__top"><span>Segment builder</span><b>39%</b></div>
+          <div class="pf-bars__track"><div class="pf-bars__fill" style="width:39%"></div></div>
+        </div>
+        <div>
+          <div class="pf-bars__top"><span>Customer segments, variant 2</span><b>16%</b></div>
+          <div class="pf-bars__track"><div class="pf-bars__fill" style="width:16%"></div></div>
+        </div>
+      </div>
+      <p>Share of elements using a library class, measured in the page. Segments is low on purpose: it was asked for a second visual language, so it ships its own stylesheet.</p>
+
+      <h2>Calls</h2>
+      <ul class="pf-calls">
+        <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg>
+          <b>Deleted components that were never designed</b>
+          <i>Not in Figma, not in Storybook.</i></li>
+        <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg>
+          <b>Kept 33 orphaned CSS rules</b>
+          <i>A third consumer might use them, and I could not see inside it.</i></li>
+        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg>
+          <b>Fixed accessibility in the token, not the page</b>
+          <i>Page-level fixes do not travel.</i></li>
+        <li><svg class="pf-ico" aria-hidden="true"><use href="#ico-check-circle"></use></svg>
+          <b>Two CSS files kept in lockstep</b>
+          <i>One conflict was breaking form checkboxes.</i></li>
+        <li><svg class="pf-ico pf-ico--no" aria-hidden="true"><use href="#ico-no-symbol"></use></svg>
+          <b>Stopped chasing a broken Storybook feature after four attempts</b>
+          <i>Written up as a known limitation instead.</i></li>
+      </ul>
+
+      <figure class="pf-shot">
+        <span class="pf-shot__ground"><img src="img/lib-financial.png" alt="A financial table assembled from library table cells" loading="lazy" width="1800" height="840"></span>
+        <figcaption>A P&amp;L excerpt, actuals against forecast, assembled from library cells.</figcaption>
+      </figure>
+
+      <figure class="pf-shot">
+        <span class="pf-shot__ground"><img src="img/lib-cohort.png" alt="Cohort retention heatmap built from library cells" loading="lazy" width="1800" height="840"></span>
+        <figcaption>Cohort retention. The badge ramp flips its label to white at 60%.</figcaption>
+      </figure>
+
+      <h2>The same system, in React</h2>
+      <div class="pf-stats pf-stats--3">
+        <div><b>56</b><span>components rebuilt as React wrappers</span></div>
+        <div><b>150<small>KB</small></b><span>of CSS scoped so it cannot reach the host app</span></div>
+        <div><b>37</b><span>MUI components mapped to a replacement</span></div>
+      </div>
+
+      <div class="pf-tool">
+        <img class="pf-tool__mark" src="img/cursor-mark.svg" alt="" width="40" height="40">
+        <div>
+          <b>A coding agent in Cursor makes the swaps, against rules I wrote for it.</b>
+          <span>My part is the rules and the boundary. Local experiment, front end only, one component type at a time. Nothing merged upstream.</span>
+        </div>
+      </div>
+
+      <h2>Still open</h2>
+      <ul class="pf-calls">
+        <li><svg class="pf-ico pf-ico--open" aria-hidden="true"><use href="#ico-clock"></use></svg>
+          <b>The drawer is still unusable</b>
+          <i>Pages that need one use a modal.</i></li>
+        <li><svg class="pf-ico pf-ico--open" aria-hidden="true"><use href="#ico-clock"></use></svg>
+          <b>33 rules still marked orphaned rather than deleted</b>
+          <i>Needs visibility into the low-code environment.</i></li>
+      </ul>
+
+      <a class="pf-try" href="../">
+        <strong>Open the library &rarr;</strong>
+        <span>47 components, 249 stories, tokens, and a snippet on every story.</span>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="pf-next">
+    <div class="pf-shell">
+      <a class="pf-back" href="case-segments.html">Next &rarr; Customer segments: the best-looking rows were the broken ones</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer class="pf-footer">
+  <div class="pf-shell">
+    <p><a href="./">All work</a> · <a href="mailto:basyasya@gmail.com">basyasya@gmail.com</a> · <a href="https://github.com/sasha-iris">github.com/sasha-iris</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
