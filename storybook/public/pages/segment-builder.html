@@ -986,6 +986,48 @@
 
   .sb2__ed .sb-cond__why { margin-top: 10px; }
 
+  /* ── The editor inside its own row ────────────────────────────────────
+     Same tinted row as "chosen", no second box inside it: the field sits on
+     the line where the value will read once it is set. The panel's margin,
+     padding and fill are the old editor's and do not apply here. */
+  /* Two lines, always: the name where it was, then the operator and the field
+     under it. One line fits "Customer type" and not "Order value greater than
+     $ [field]" in a 300px column, and a row that is one line for some filters
+     and two for others is the ragged column the rows were built to avoid. */
+  .sb2__item.is-edit { align-items: flex-start; padding-block: 3px 10px; }
+  .sb2__item.is-edit .sb2__x { margin-top: 1px; }
+  .sb2__ed--in { flex: 1; min-width: 0; margin: 0; padding: 4px 8px 0 10px;
+                 background: none; border: 0; border-radius: 0;
+                 display: flex; align-items: center; flex-wrap: wrap; gap: 6px 6px; }
+  .sb2__ed--in > .sb2__n { flex: 0 1 auto; }
+  .sb2__ed--in .sb-cond { flex: 1 1 100%; min-width: 0; }
+  .sb2__ed--in .sb-sel--sm { min-width: 150px; }
+  .sb2__ed--in .sb-in--text { width: 130px; }
+  /* ── Proposed C ────────────────────────────────────────────────────────
+     The segment moves to the right: the columns swap, nothing inside them
+     changes size. */
+  .sb2.is-v3 { grid-template-columns: minmax(0, 1fr) 300px; }
+  .sb2.is-v3 .sb2__side { order: 2; }
+  @media (max-width: 900px) { .sb2.is-v3 { grid-template-columns: minmax(0, 1fr); } }
+  /* The menu at the pill is the library's .dropdown-menu, sized to the pill's
+     12px the way the value combobox's list already is (.sb-sel__l). */
+  .sb2__pw { position: relative; display: inline-flex; }
+  .sb2__pill.is-open { border-color: var(--btn-primary-bg, #42389d); }
+  .sb2__pop { min-width: 200px; width: max-content; max-width: 320px; margin: 0;
+              padding: 6px; border: 1px solid var(--color-border-light); overflow: visible; }
+  .sb2__pop__h { padding: 4px 10px 6px; font-size: var(--text-xs); line-height: 1.4;
+                 font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  .sb2__pop__l { list-style: none; margin: 0; padding: 0; }
+  .sb2__pop .dropdown-item { padding: 7px 10px; font-size: var(--text-xs); border-radius: 6px; }
+  .sb2__pop .dropdown-item:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+  .sb2__pop__row { display: flex; align-items: center; gap: 6px; padding: 0 4px 4px 10px; }
+  .sb2__pop__op { font-size: var(--text-xs); color: var(--color-text-body); white-space: nowrap; }
+  .sb2__pop .form-input { background-color: var(--color-bg-white); }
+  .sb2__pop .form-feedback-error { display: block; padding: 0 10px 4px; }
+  .sb2__ed--in .sb-cond__why,
+  .sb2__ed--in .sb-cond__new,
+  .sb2__ed--in .sb-cond__na { flex-basis: 100%; margin-top: 2px; }
+
   /* ── Preview funnel ─────────────────────────────────────────────────── */
   .sb2__pv { margin-bottom: 6px; }
   .sb2__pv.is-head .sb2__pvt { color: var(--color-text-heading); font-weight: var(--font-semibold); }
@@ -1768,6 +1810,8 @@
       <div class="btn-group btn-group--primary btn-group--sm" role="radiogroup" aria-label="Prototype variant">
         <button class="btn" role="radio" data-ver="1">Current</button>
         <button class="btn" role="radio" data-ver="2">Proposed</button>
+        <button class="btn" role="radio" data-ver="3">Proposed B</button>
+        <button class="btn" role="radio" data-ver="4">Proposed C</button>
       </div>
       <span class="sb-vswitch__n" id="sbVerNote"></span>
     </div>
@@ -2342,8 +2386,17 @@ let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: 
    the OLD card. Coming in on the v2 side means the v2 card unless the URL says
    otherwise; ?variant=1 still forces the current one, so the toggle at the foot
    of the page keeps working in both directions. */
-let CARD2 = (q => q.get('variant') === '2' || (q.has('v2') && !q.has('variant')))
+let CARD2 = (q => ['2', '3', '4'].includes(q.get('variant')) || (q.has('v2') && !q.has('variant')))
             (new URLSearchParams(location.search));
+/* Two more takes on Proposed, same code with one or two changes each.
+   B (variant=3): no editor under the pills; a condition opens its value in
+     its own row, where it already is.
+   C (variant=4): B, plus pressing a filter opens its value right at the pill,
+     so choosing a filter and giving it a value is one gesture; and the segment
+     being built sits in the right-hand column, where the eye ends up.
+   VB is "rows edit in place" (B and C); V3 is "values open at the pill" (C). */
+let VB = ['3', '4'].includes(new URLSearchParams(location.search).get('variant'));
+let V3 = new URLSearchParams(location.search).get('variant') === '4';
 
 /* ── v2: one level of groups, per the market scan ────────────────────────
    Every serious 2026 segment builder gives group-level nesting and stops there:
@@ -2374,6 +2427,7 @@ let chanOpen = null;          /* index of the group whose channel picker is open
 let selOpen  = null;          /* id of the value combobox whose list is open */
 let chanQ = '';               /* typed into that picker's search */
 let focused = null;           /* {gi, ci} — the condition the editor is showing */
+let pop = null;               /* Proposed C: the filter key whose pill has its value open */
 let activeGroup = 0;          /* the group a pill adds to */
 
 /* The estimate, Save, Fin and the description all read state.conds. v2 keeps
@@ -2644,6 +2698,38 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && selOpen) {
     const t = selOpen; selOpen = null; render(); document.getElementById(t)?.focus(); return;
   }
+  /* The row that opened in place closes the same way: Enter keeps what was
+     typed, Escape leaves it as it was. Either way the sentence comes back and
+     focus lands on it. */
+  /* Proposed C: the pill's menu. Arrows walk the values, Enter in the field
+     adds it, Escape closes and hands focus back to the pill. */
+  if (V3 && pop && e.target.closest && e.target.closest('.sb2__pw')) {
+    if (e.key === 'Escape') { e.preventDefault(); popClose(true); return; }
+    const o = e.target.closest('[data-popv]');
+    if (o && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      const opts = [...document.querySelectorAll('.sb2__pop [data-popv]')], i = opts.indexOf(o);
+      (e.key === 'ArrowDown' ? opts[i + 1] || opts[0] : opts[i - 1] || opts[opts.length - 1]).focus();
+      return;
+    }
+    if (e.target.id === 'popIn' && e.key === 'Enter') {
+      e.preventDefault();
+      document.querySelector('[data-popgo]')?.click();
+      return;
+    }
+  }
+  const edRow = VB && focused && e.target.closest && e.target.closest('.sb2__item.is-edit');
+  if (edRow && (e.key === 'Escape' ||
+      (e.key === 'Enter' && e.target.matches('input[data-v2]') && !badNum(e.target.value)))) {
+    e.preventDefault();
+    const { gi, ci } = focused;
+    commit(() => {
+      if (e.key === 'Enter') { const c = groups[gi].conds[ci]; c.v = e.target.value; c.draft = false; }
+      focused = null; syncFlat();
+    });
+    document.querySelector(`.sb2__pick[data-focus="${gi}:${ci}"]`)?.focus();
+    return;
+  }
   if (e.key === 'Escape' && !document.getElementById('sbTplMenu')?.hidden) {
     templateLibrary(false); document.getElementById('sbTplHead').focus();
   }
@@ -2658,8 +2744,20 @@ document.addEventListener('click', e => {
    which is the point of putting both on one page for a review. History is
    replaced rather than pushed: Back should leave the builder, not step through
    however many times someone toggled. */
-function setVariant(on) {
-  if (on === CARD2) return;
+function setVariant(ver) {
+  const on = ver !== '1';
+  if (on === CARD2 && (ver === '4') === V3 && (ver === '3' || ver === '4') === VB) return;
+  V3 = ver === '4';
+  VB = ver === '3' || ver === '4';
+  pop = null; focused = null;
+  if (on === CARD2) {
+    const u = new URL(location.href);
+    u.searchParams.set('variant', ver);
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+    syncVariantBtns();
+    render();
+    return;
+  }
   /* Going back to the flat card loses the grouping, because the flat card has
      nowhere to put it. Said out loud rather than discovered: the conditions all
      survive, their arrangement does not. */
@@ -2674,7 +2772,7 @@ function setVariant(on) {
   /* Written out either way. Deleting it used to mean "no opinion", which on a
      ?v2=1 URL now reads as the v2 default, so switching to Current and
      reloading came back Proposed. */
-  u.searchParams.set('variant', CARD2 ? '2' : '1');
+  u.searchParams.set('variant', ver);
   history.replaceState(null, '', u.pathname + u.search + u.hash);
   document.getElementById('sbAdd').hidden = CARD2;
   syncVariantBtns();
@@ -2683,12 +2781,16 @@ function setVariant(on) {
 }
 function syncVariantBtns() {
   document.querySelectorAll('[data-ver]').forEach(b => {
-    const on = (b.dataset.ver === '2') === CARD2;
+    const on = b.dataset.ver === (!CARD2 ? '1' : V3 ? '4' : VB ? '3' : '2');
     b.classList.toggle('active', on);
     b.setAttribute('aria-checked', String(on));
     b.tabIndex = on ? 0 : -1;
   });
-  document.getElementById('sbVerNote').textContent = CARD2
+  document.getElementById('sbVerNote').textContent = V3
+    ? 'Pick a filter and give it a value right there. The segment builds up on the right.'
+    : VB
+    ? 'A condition opens its value in its own row, where it already is.'
+    : CARD2
     ? 'The definition is tied to a channel, and each filter says which channel it exists on.'
     : 'One flat list, one and/or for all of it.';
 }
@@ -3564,7 +3666,23 @@ function outlineItem(g, gi, c, ci) {
   const on = focused && focused.gi === gi && focused.ci === ci;
   const unset = !hasValue(c);
   const na = availability(def, g);
-  return `<div class="sb2__item${on ? ' is-on' : ''}${na ? ' is-na' : ''}${unset ? ' is-unset' : ''}">
+  /* ── The row opens where it stands ─────────────────────────────────────
+     Proposed B and C. In Proposed the value is typed in an editor under the
+     pills, in the other column: press a row here, then look for its field
+     somewhere else on the card. That is the "picking up rocks" the product
+     owner described. Here the chosen row turns into its own field instead, in
+     the same place: the name, then the operator and the input under it. It folds back into the
+     sentence when the value is picked, on Enter or Escape, or on a click away. */
+  if (on && VB) {
+    return `<div class="sb2__item is-on is-edit${na ? ' is-na' : ''}">
+      <div class="sb2__ed sb2__ed--in">
+        <span class="sb2__n" aria-hidden="true">${esc(def.n)}</span>${scopeMark(def)}
+        ${condRow(c, ci, groupFunnel(g), { v2: true, gi: gi, ci: ci, avail: na, join: g.join, bare: true })}
+      </div>
+      <button class="sb2__x" data-x2="${gi}:${ci}" title="Remove ${esc(def.n)}" aria-label="Remove the ${esc(def.n)} condition">✕</button>
+    </div>`;
+  }
+  return `<div class="sb2__item${na ? ' is-na' : ''}${unset ? ' is-unset' : ''}">
       <button class="sb2__pick" data-focus="${gi}:${ci}">
         <span class="sb2__n">${esc(def.n)}${unset ? `<span class="sb2__q" title="No value yet" aria-hidden="true">?</span><span class="seg-sr">, no value yet</span>` : ''}</span>
         ${/* One line. No dangling operator either — "Discount code is" with
@@ -3612,7 +3730,7 @@ function outlineGroup(g, gi) {
     </div>`;
   const body = g.conds.length
     ? g.conds.map((c, ci) => outlineItem(g, gi, c, ci)).join('')
-    : `<p class="sb2__empty">Pick a filter on the right to start the definition.</p>`;
+    : `<p class="sb2__empty">Pick a filter on the ${V3 ? 'left' : 'right'} to start the definition.</p>`;
   return `<section class="sb2__g" data-group="0"
       aria-label="Conditions${gsel.length ? ', orders on ' + gsel.join(', ') : ''}">
       ${meta}<div class="sb2__gb">${body}</div></section>`;
@@ -3628,6 +3746,64 @@ function findCond(k) {
   }
   return null;
 }
+/* ── Proposed C: the value opens at the pill ──────────────────────────────
+   Pressing a filter and giving it a value is one gesture. A list of values is
+   the library's dropdown menu straight under the pill, and picking one adds the
+   condition with it; a number or a code is the operator and a small field, and
+   Enter adds it. Nothing is added until there is a value, so a filter opened by
+   mistake closes with Escape or a click away and leaves no empty row behind.
+   Opening the pill of a filter already in the segment edits that one. */
+function pillPop(it, where) {
+  const def = ALL.find(a => a.k === it.k);
+  const cur = where ? groups[where.gi].conds[where.ci].v : '';
+  const [kind, arg, unit] = def.ctl;
+  const head = `<div class="sb2__pop__h">${esc(def.n)}</div>`;
+  if (kind === 'select') {
+    return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop" role="dialog" aria-label="${esc(def.n)}">
+        ${head}<ul class="sb2__pop__l" role="listbox" aria-label="${esc(def.n)}">${arg.map(o => {
+          if (o && typeof o === 'object' && o.g) return `<li class="dropdown-label" role="presentation">${esc(o.g)}</li>`;
+          const on = cur === o;
+          return `<li role="presentation"><button type="button" class="dropdown-item${on ? ' active' : ''}" role="option"
+              aria-selected="${on}" data-popv="${esc(o)}"><span class="dropdown-item__text">${esc(o)}</span></button></li>`;
+        }).join('')}</ul>
+      </div>`;
+  }
+  const num = kind === 'num';
+  const bad = num && badNum(popDraft);
+  return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
+      ${head}
+      <div class="sb2__pop__row">
+        <label class="sb2__pop__op" for="popIn">${esc(arg)}</label>
+        <input class="form-input form-input-sm ${num ? 'sb-in--num' : 'sb-in--text'}" id="popIn" data-popin="${it.k}"
+          type="${num ? 'number' : 'text'}" ${num ? 'min="0" max="1000000" step="1" placeholder="0"' : `maxlength="40" placeholder="${esc(unit || '')}"`}
+          autocomplete="off" value="${esc(popDraft != null ? popDraft : (cur == null ? '' : cur))}"
+          ${bad ? 'aria-invalid="true" aria-describedby="popErr" style="border-color:var(--color-border-danger)"' : ''}>
+        ${num && unit ? `<span class="sb2__pop__op">${esc(unit)}</span>` : ''}
+        <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">${where ? 'Update' : 'Add'}</button>
+      </div>
+      ${bad ? '<span class="form-feedback-error" id="popErr">Enter a whole number between 0 and 1,000,000</span>' : ''}
+    </div>`;
+}
+let popDraft = null;   /* what is typed in the pill's field before it is added */
+/* Gives the pill's filter its value: edits the condition if the segment already
+   has it, adds it otherwise. */
+function popCommit(k, v) {
+  if (v === '' || v == null || badNum(v) && ALL.find(a => a.k === k).ctl[0] === 'num') return false;
+  commit(() => {
+    const w = findCond(k);
+    if (w) { const c = groups[w.gi].conds[w.ci]; c.v = v; c.draft = false; }
+    else groups[0].conds.push({ k: k, v: v, draft: false });
+    pop = null; popDraft = null; focused = null; syncFlat();
+  });
+  document.querySelector(`[data-pop="${k}"]`)?.focus();
+  return true;
+}
+function popClose(back) {
+  const k = pop; pop = null; popDraft = null;
+  render();
+  if (back && k) document.querySelector(`[data-pop="${k}"]`)?.focus();
+}
+
 function pills() {
   return Object.entries(CATALOG).map(([head, items]) => {
     const list = items.filter(it => it.k !== 'chan').map(it => {
@@ -3659,8 +3835,12 @@ function pills() {
          tick stop meaning "set". Which pill is open is on the two surfaces that
          are about it: the tinted row in the left column and the editor's own
          heading. */
-      return `<button class="dr-chip sb2__pill${used ? ' is-used' : ''}${na ? ' is-empty' : ''}"
-          ${used ? (filledUsed ? `data-focus="${where.gi}:${where.ci}"` : `data-unadd="${where.gi}:${where.ci}"`)
+      /* Proposed C: every pill that can be used opens its value in place, a
+         new one and one already in the segment alike. */
+      const open3 = V3 && pop === it.k;
+      return `${V3 ? '<span class="sb2__pw">' : ''}<button class="dr-chip sb2__pill${used ? ' is-used' : ''}${na ? ' is-empty' : ''}${open3 ? ' is-open' : ''}"
+          ${V3 ? (na && !used ? '' : `data-pop="${it.k}" aria-haspopup="dialog" aria-expanded="${open3}"`)
+          : used ? (filledUsed ? `data-focus="${where.gi}:${where.ci}"` : `data-unadd="${where.gi}:${where.ci}"`)
                  : na ? '' : `data-add2="${activeGroup}:${it.k}"`}
           aria-pressed="${!!used}"
           ${/* aria-disabled, not disabled: the reason a filter cannot be used is
@@ -3678,7 +3858,7 @@ function pills() {
             : filledUsed
               ? '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5L6 12L13.5 4"/></svg>'
               : '<svg class="sb2__q" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>'}
-        </button>`;
+        </button>${open3 ? pillPop(it, where) : ''}${V3 ? '</span>' : ''}`;
     }).join('');
     return `<div class="sb2__pg" role="group" aria-labelledby="ph-${esc(head)}">
         <div class="sb2__ph" id="ph-${esc(head)}">${esc(head)}</div>
@@ -3853,7 +4033,10 @@ function drawCondsV2(steps) {
      "ADD A FILTER". The left column is the definition and needs no title — the
      card it sits in is already called Conditions. */
   const target = '<h3 class="sb2__mt">Add a filter</h3>';
-  document.getElementById('sbMain').innerHTML = target + pills() + editor(steps);
+  /* B and C have no editor under the pills: a condition opens in its own row
+     (outlineItem), and in C a value is also given at the pill. */
+  document.getElementById('sbMain').innerHTML = target + pills() + (VB ? '' : editor(steps));
+  document.getElementById('sb2').classList.toggle('is-v3', V3);
   document.getElementById('sb2').hidden = false;
   document.getElementById('sbConds').innerHTML = '';
   document.getElementById('sbAdd').hidden = true;
@@ -4270,7 +4453,7 @@ document.addEventListener('click', e => {
 
   /* ── v2 controls ──────────────────────────────────────────────────────── */
   const ver = e.target.closest('[data-ver]');
-  if (ver) return setVariant(ver.dataset.ver === '2');
+  if (ver) return setVariant(ver.dataset.ver);
 
   const st = e.target.closest('[data-start]');
   if (st) {
@@ -4299,7 +4482,10 @@ document.addEventListener('click', e => {
     selOpen = null;
     if (t && t.dataset.v2 != null) {
       const [gi, ci] = t.dataset.v2.split(':').map(Number);
-      commit(() => { const c = groups[gi].conds[ci]; c.v = v; c.draft = false; syncFlat(); });
+      /* Picking the value finishes the condition, so the row folds back into
+         its sentence and focus returns to it. */
+      commit(() => { const c = groups[gi].conds[ci]; c.v = v; c.draft = false; if (VB) focused = null; syncFlat(); });
+      if (VB) { document.querySelector(`.sb2__pick[data-focus="${gi}:${ci}"]`)?.focus(); return; }
     } else if (t && t.dataset.v != null) {
       const i = +t.dataset.v;
       commit(() => { state.conds[i].v = v; ownIt(i); });
@@ -4378,6 +4564,33 @@ document.addEventListener('click', e => {
     document.querySelector(`[data-gadd="${gi}"]`)?.focus();
     return;
   }
+  /* Proposed C: the pill's own value. */
+  const pv = e.target.closest('[data-popv]');
+  if (pv && pop) { popCommit(pop, pv.dataset.popv); return; }
+  const pg = e.target.closest('[data-popgo]');
+  if (pg) {
+    const inp = document.getElementById('popIn');
+    if (!popCommit(pg.dataset.popgo, inp ? inp.value.trim() : '')) {
+      popDraft = inp ? inp.value : ''; render(); document.getElementById('popIn')?.focus();
+    }
+    return;
+  }
+  const pp = e.target.closest('[data-pop]');
+  if (pp) {
+    const k = pp.dataset.pop;
+    pop = pop === k ? null : k; popDraft = null; focused = null;
+    render();
+    if (pop) {
+      const box = document.querySelector('.sb2__pop');
+      /* Keep the menu inside the card: a pill near the column's right edge
+         opens its menu leftwards, the library's own --right modifier. */
+      const col = document.getElementById('sbMain').getBoundingClientRect();
+      if (box && box.getBoundingClientRect().right > col.right) box.classList.add('dropdown-menu--right');
+      (box?.querySelector('[aria-selected="true"]') || box?.querySelector('[data-popv], #popIn'))?.focus();
+    } else document.querySelector(`[data-pop="${k}"]`)?.focus();
+    return;
+  }
+  if (pop && !e.target.closest('.sb2__pw')) { pop = null; popDraft = null; render(); }
   const a2 = e.target.closest('[data-add2]');
   if (a2 && !a2.disabled) {
     const [gi, k] = a2.dataset.add2.split(':');
@@ -4606,6 +4819,9 @@ document.addEventListener('keydown', e => {
    every keystroke and the box the reader is typing in has to come back with the
    caret where they left it. */
 document.addEventListener('input', e => {
+  /* Kept, not rendered: a re-render per keystroke would rebuild the field
+     under the caret. It is read back when the menu redraws for an error. */
+  if (e.target.id === 'popIn') { popDraft = e.target.value; return; }
   const cq = e.target.closest && e.target.closest('[data-chanq]');
   if (!cq) return;
   chanQ = cq.value;
@@ -4840,7 +5056,7 @@ function syncRangeLabel() {
    pill, a row or the editor has already run and returned. */
 document.addEventListener('click', e => {
   if (!CARD2 || !focused) return;
-  const keep = '.sb2__item, .sb2__pill, .sb2__ed, .sb-sel, .sb-chanwrap, ' +
+  const keep = '.sb2__item, .sb2__pill, .sb2__pw, .sb2__ed, .sb-sel, .sb-chanwrap, ' +
                '[data-focus], [data-add2], [data-unadd], [data-x2], #modalHost, .sb-toast';
   if (e.target.closest(keep)) return;
   focused = null;
