@@ -1477,6 +1477,25 @@
   .sb-modecards { display: flex; gap: 10px; flex-wrap: wrap; }
   .sb-modecards .iris-radio-card { flex: 1; min-width: 230px; }
 
+  /* ── Proposed B: one form ───────────────────────────────────────────────
+     Description and the refresh mode sit inside the Conditions card as its
+     last two sections. Each loses its card chrome and keeps its heading at the
+     same rank as "Add a filter" and "Segment"; a hairline above each is the
+     only separation, the same rule the card header draws.
+     The two modes are the library's plain radio (.iris-control: check, label,
+     helper, gap 8) rather than bordered radio cards: inside a card, a card per
+     option is a box in a box. The markup keeps .iris-radio-card so the one
+     change handler still finds them; only the chrome is taken off. */
+  .sb-fold { border: 0; border-radius: 0; background: none; margin: 16px 0 0;
+             padding-top: 16px; border-top: 1px solid var(--color-border-light); }
+  .sb-fold .sb-card__h { padding: 0 0 10px; border: 0; }
+  .sb-fold .sb-card__b { padding: 0; }
+  .sb-fold.sb-card:last-child { margin-bottom: 0; }
+  .sb-fold .sb-modecards { gap: 12px 32px; }
+  .sb-fold .iris-radio-card { padding: 0; border: 0; border-radius: 0; background: none; gap: 8px; }
+  .sb-fold .iris-radio-card:hover,
+  .sb-fold .iris-radio-card:active { border: 0; }
+
   /* Variant-2 mode only. The container was capped at 1240px but never centred,
      so on a wide monitor the whole form sat against the left edge with a third
      of the screen empty beside it. The header is centred on the same measure so
@@ -1711,11 +1730,15 @@
               <div class="sb2__main" id="sbMain"></div>
             </div>
             <div class="sb-add" id="sbAdd"></div>
+            <!-- Proposed B folds Description and the refresh mode in here, so the
+                 whole segment is one form. startBar() moves the two cards. -->
+            <div id="sbFormSlot"></div>
 
           </div>
         </div>
 
-        <div class="sb-card">
+        <div id="sbFormHome">
+        <div class="sb-card" id="sbDescCard">
           <div class="sb-card__h"><h2 class="sb-card__t">Description</h2>
             <span class="sb-card__sub">What this segment is for, in plain language</span>
           </div>
@@ -1751,6 +1774,7 @@
               </span>
             </label>
           </div>
+        </div>
         </div>
 
       </div>
@@ -2594,6 +2618,16 @@ function startBar() {
   if (CARD2 && uniCard.parentNode !== slot) slot.appendChild(uniCard);
   if (!CARD2 && uniCard.parentNode !== home) home.appendChild(uniCard);
   document.getElementById('sbEstCard').hidden  = CARD2;
+  /* Proposed B: Description and the refresh mode become the last two sections
+     of the one card, under a rule, instead of two more cards below it. Moved,
+     not copied, so what was typed and the chosen mode survive the switch. */
+  const fSlot = document.getElementById('sbFormSlot'), fHome = document.getElementById('sbFormHome');
+  ['sbDescCard', 'sbModeCard'].forEach(id => {
+    const c = document.getElementById(id);
+    c.classList.toggle('sb-fold', V3);
+    const to = V3 ? fSlot : fHome;
+    if (c.parentNode !== to) to.appendChild(c);
+  });
 }
 /* One implementation, two doors: the inline tiles in Current and the library in
    Proposed both land here, so "a template replaces the whole definition, and
@@ -2754,6 +2788,7 @@ function setVariant(ver) {
     u.searchParams.set('variant', ver);
     history.replaceState(null, '', u.pathname + u.search + u.hash);
     syncVariantBtns();
+    startBar();
     render();
     return;
   }
