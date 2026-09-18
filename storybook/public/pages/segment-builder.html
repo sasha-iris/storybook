@@ -1482,19 +1482,28 @@
      last two sections. Each loses its card chrome and keeps its heading at the
      same rank as "Add a filter" and "Segment"; a hairline above each is the
      only separation, the same rule the card header draws.
-     The two modes are the library's plain radio (.iris-control: check, label,
-     helper, gap 8) rather than bordered radio cards: inside a card, a card per
-     option is a box in a box. The markup keeps .iris-radio-card so the one
-     change handler still finds them; only the chrome is taken off. */
+     The two modes stay the library's .iris-radio-card, exactly as the
+     Controls story ships it: border, selected border in the brand. Stripping
+     them to plain radios was tried and taken back. */
+  /* The card is the whole form now, so its title outranks the sections in it.
+     Both were 14/600, and a title the size of its own sub-headings is not a
+     title. One step up the scale; the sections stay at 14/600 and the WHO /
+     WHAT / HOW labels at 12, so there are three ranks, each a step apart. */
+  /* Every card title on the page, not only the form's: Preview and Sample are
+     cards of the same rank, and one card titled a step above its neighbours
+     would be a second hierarchy problem in place of the first. */
+  .sb-v3 .sb-card:not(.sb-fold) > .sb-card__h .sb-card__t { font-size: var(--text-base); line-height: 1.4; }
   .sb-fold { border: 0; border-radius: 0; background: none; margin: 16px 0 0;
              padding-top: 16px; border-top: 1px solid var(--color-border-light); }
   .sb-fold .sb-card__h { padding: 0 0 10px; border: 0; }
   .sb-fold .sb-card__b { padding: 0; }
   .sb-fold.sb-card:last-child { margin-bottom: 0; }
-  .sb-fold .sb-modecards { gap: 12px 32px; }
-  .sb-fold .iris-radio-card { padding: 0; border: 0; border-radius: 0; background: none; gap: 8px; }
-  .sb-fold .iris-radio-card:hover,
-  .sb-fold .iris-radio-card:active { border: 0; }
+  /* segments-proto.css rings the card on :focus-within, which fires on a mouse
+     click too, and drew a second frame outside the selected border. The ring
+     is for the keyboard, so here it appears only on :focus-visible. */
+  .sb-fold .iris-radio-card:focus-within { outline: none; }
+  .sb-fold .iris-radio-card:has(input:focus-visible) {
+    outline: 2px solid var(--color-border-focus); outline-offset: 2px; }
 
   /* Variant-2 mode only. The container was capped at 1240px but never centred,
      so on a wide monitor the whole form sat against the left edge with a third
@@ -2622,6 +2631,7 @@ function startBar() {
      of the one card, under a rule, instead of two more cards below it. Moved,
      not copied, so what was typed and the chosen mode survive the switch. */
   const fSlot = document.getElementById('sbFormSlot'), fHome = document.getElementById('sbFormHome');
+  document.getElementById('sbBody').classList.toggle('sb-v3', V3);
   ['sbDescCard', 'sbModeCard'].forEach(id => {
     const c = document.getElementById(id);
     c.classList.toggle('sb-fold', V3);
