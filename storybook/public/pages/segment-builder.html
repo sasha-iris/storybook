@@ -15,7 +15,7 @@
      here. The picker was carrying a fourth chip of my own invention with the
      same four states; this file's :root defines only --dr-* variables, so it
      cannot move a library token under this page. -->
-<link rel="stylesheet" href="../assets/segments-v2.css?v=60">
+<link rel="stylesheet" href="../assets/segments-v2.css?v=61">
 <!--
   The existing builder already has the right bones: WHO / WHAT / HOW, a starting
   universe, the all-of selector, undo/redo and a preview panel. Kept. What it does
@@ -1003,7 +1003,7 @@
   .sb2__ed--in .sb-cond { flex: 1 1 100%; min-width: 0; }
   .sb2__ed--in .sb-sel--sm { min-width: 150px; }
   .sb2__ed--in .sb-in--text { width: 130px; }
-  /* ── Proposed C ────────────────────────────────────────────────────────
+  /* ── Proposed B ────────────────────────────────────────────────────────
      The segment moves to the right: the columns swap, nothing inside them
      changes size. */
   .sb2.is-v3 { grid-template-columns: minmax(0, 1fr) 300px; }
@@ -1810,8 +1810,7 @@
       <div class="btn-group btn-group--primary btn-group--sm" role="radiogroup" aria-label="Prototype variant">
         <button class="btn" role="radio" data-ver="1">Current</button>
         <button class="btn" role="radio" data-ver="2">Proposed</button>
-        <button class="btn" role="radio" data-ver="3">Proposed B</button>
-        <button class="btn" role="radio" data-ver="4">Proposed C</button>
+        <button class="btn" role="radio" data-ver="4">Proposed B</button>
       </div>
       <span class="sb-vswitch__n" id="sbVerNote"></span>
     </div>
@@ -2388,15 +2387,15 @@ let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: 
    of the page keeps working in both directions. */
 let CARD2 = (q => ['2', '3', '4'].includes(q.get('variant')) || (q.has('v2') && !q.has('variant')))
             (new URLSearchParams(location.search));
-/* Two more takes on Proposed, same code with one or two changes each.
-   B (variant=3): no editor under the pills; a condition opens its value in
-     its own row, where it already is.
-   C (variant=4): B, plus pressing a filter opens its value right at the pill,
-     so choosing a filter and giving it a value is one gesture; and the segment
-     being built sits in the right-hand column, where the eye ends up.
-   VB is "rows edit in place" (B and C); V3 is "values open at the pill" (C). */
+/* Proposed B (variant=4): pressing a filter opens its value right at the pill,
+   so choosing a filter and giving it a value is one gesture; a condition already
+   in the segment opens in its own row; and the segment being built sits in the
+   right-hand column. There is no editor under the pills.
+   variant=3 was a take with only the in-row editing. It was dropped and its
+   links now open this one. VB = rows edit in place, V3 = values at the pill;
+   today they are always on together. */
 let VB = ['3', '4'].includes(new URLSearchParams(location.search).get('variant'));
-let V3 = new URLSearchParams(location.search).get('variant') === '4';
+let V3 = VB;
 
 /* ── v2: one level of groups, per the market scan ────────────────────────
    Every serious 2026 segment builder gives group-level nesting and stops there:
@@ -2427,7 +2426,7 @@ let chanOpen = null;          /* index of the group whose channel picker is open
 let selOpen  = null;          /* id of the value combobox whose list is open */
 let chanQ = '';               /* typed into that picker's search */
 let focused = null;           /* {gi, ci} — the condition the editor is showing */
-let pop = null;               /* Proposed C: the filter key whose pill has its value open */
+let pop = null;               /* Proposed B: the filter key whose pill has its value open */
 let activeGroup = 0;          /* the group a pill adds to */
 
 /* The estimate, Save, Fin and the description all read state.conds. v2 keeps
@@ -2701,7 +2700,7 @@ document.addEventListener('keydown', e => {
   /* The row that opened in place closes the same way: Enter keeps what was
      typed, Escape leaves it as it was. Either way the sentence comes back and
      focus lands on it. */
-  /* Proposed C: the pill's menu. Arrows walk the values, Enter in the field
+  /* Proposed B: the pill's menu. Arrows walk the values, Enter in the field
      adds it, Escape closes and hands focus back to the pill. */
   if (V3 && pop && e.target.closest && e.target.closest('.sb2__pw')) {
     if (e.key === 'Escape') { e.preventDefault(); popClose(true); return; }
@@ -2788,8 +2787,6 @@ function syncVariantBtns() {
   });
   document.getElementById('sbVerNote').textContent = V3
     ? 'Pick a filter and give it a value right there. The segment builds up on the right.'
-    : VB
-    ? 'A condition opens its value in its own row, where it already is.'
     : CARD2
     ? 'The definition is tied to a channel, and each filter says which channel it exists on.'
     : 'One flat list, one and/or for all of it.';
@@ -3667,7 +3664,7 @@ function outlineItem(g, gi, c, ci) {
   const unset = !hasValue(c);
   const na = availability(def, g);
   /* ── The row opens where it stands ─────────────────────────────────────
-     Proposed B and C. In Proposed the value is typed in an editor under the
+     Proposed B only. In Proposed the value is typed in an editor under the
      pills, in the other column: press a row here, then look for its field
      somewhere else on the card. That is the "picking up rocks" the product
      owner described. Here the chosen row turns into its own field instead, in
@@ -3746,7 +3743,7 @@ function findCond(k) {
   }
   return null;
 }
-/* ── Proposed C: the value opens at the pill ──────────────────────────────
+/* ── Proposed B: the value opens at the pill ──────────────────────────────
    Pressing a filter and giving it a value is one gesture. A list of values is
    the library's dropdown menu straight under the pill, and picking one adds the
    condition with it; a number or a code is the operator and a small field, and
@@ -3835,7 +3832,7 @@ function pills() {
          tick stop meaning "set". Which pill is open is on the two surfaces that
          are about it: the tinted row in the left column and the editor's own
          heading. */
-      /* Proposed C: every pill that can be used opens its value in place, a
+      /* Proposed B: every pill that can be used opens its value in place, a
          new one and one already in the segment alike. */
       const open3 = V3 && pop === it.k;
       return `${V3 ? '<span class="sb2__pw">' : ''}<button class="dr-chip sb2__pill${used ? ' is-used' : ''}${na ? ' is-empty' : ''}${open3 ? ' is-open' : ''}"
@@ -4033,8 +4030,8 @@ function drawCondsV2(steps) {
      "ADD A FILTER". The left column is the definition and needs no title — the
      card it sits in is already called Conditions. */
   const target = '<h3 class="sb2__mt">Add a filter</h3>';
-  /* B and C have no editor under the pills: a condition opens in its own row
-     (outlineItem), and in C a value is also given at the pill. */
+  /* Proposed B has no editor under the pills: a value is given at the pill,
+     and a condition already in the segment opens in its own row (outlineItem). */
   document.getElementById('sbMain').innerHTML = target + pills() + (VB ? '' : editor(steps));
   document.getElementById('sb2').classList.toggle('is-v3', V3);
   document.getElementById('sb2').hidden = false;
@@ -4564,7 +4561,7 @@ document.addEventListener('click', e => {
     document.querySelector(`[data-gadd="${gi}"]`)?.focus();
     return;
   }
-  /* Proposed C: the pill's own value. */
+  /* Proposed B: the pill's own value. */
   const pv = e.target.closest('[data-popv]');
   if (pv && pop) { popCommit(pop, pv.dataset.popv); return; }
   const pg = e.target.closest('[data-popgo]');

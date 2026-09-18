@@ -242,9 +242,13 @@
 .dr-app .btn-pill, .sb-app .btn-pill, .seg-app .btn-pill,
 .dr-app .dr-chip, .sb-app .dr-chip, .seg-app .dr-chip { border-radius: 999px; }
 /* A run of joined buttons rounds only its outer corners, and the library sets
-   those to --radius-lg too. */
+   those to --radius-lg too. The middle ones stay square: the 8px rule above
+   reaches them as plain .btn, and with a third and fourth variant in the
+   switcher they came out as separate rounded buttons inside the group. */
+.seg-app .btn-group .btn { border-radius: 0; }
 .seg-app .btn-group .btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
 .seg-app .btn-group .btn:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+.seg-app .btn-group .btn:only-child  { border-radius: var(--radius-md); }
 
 /* A condition that exists but was left empty is listed, and listed as dead. */
 .iris-chip.dr-chip--dead { background: var(--color-bg-danger-soft); color: var(--color-text-fg-danger); }
