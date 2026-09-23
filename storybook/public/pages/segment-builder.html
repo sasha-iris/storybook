@@ -4497,6 +4497,31 @@ document.addEventListener('click', e => {
      an empty condition: it says so, it is marked, it holds Save shut, and the
      preview does not count it. */
 
+  /* ── Current's own two buttons ────────────────────────────────────────
+     Both handlers were deleted on 2026-09-09 with the groups refactor, which
+     only ever touched the Proposed card — so Current kept rendering "+ filter"
+     and "✕" and neither did anything. Nobody caught it because every session
+     since has been spent inside Proposed. The product owner found it in his
+     own recording: "these buttons don't work".
+
+     Restored as they were, minus the suggested starting value: that helper
+     went with the same commit, and a filter arriving pre-filled is the thing
+     this variant was asked to stop doing. */
+  const a1 = e.target.closest('[data-add]');
+  if (a1 && !a1.disabled) {
+    commit(() => state.conds.push({ k: a1.dataset.add, v: '', draft: false }));
+    document.getElementById(`cond-${state.conds.length - 1}`)?.focus();
+    return;
+  }
+  const x1 = e.target.closest('[data-x]');
+  if (x1) {
+    const i = +x1.dataset.x;
+    commit(() => state.conds.splice(i, 1));
+    (document.querySelector(`[data-x="${Math.min(i, state.conds.length - 1)}"]`)
+      || document.querySelector('[data-add]:not([disabled])'))?.focus();
+    return;
+  }
+
   /* ── v2 controls ──────────────────────────────────────────────────────── */
   const ver = e.target.closest('[data-ver]');
   if (ver) return setVariant(ver.dataset.ver);
