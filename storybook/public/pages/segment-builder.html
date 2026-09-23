@@ -1028,6 +1028,15 @@
   .sb2__pop__op { font-size: var(--text-xs); color: var(--color-text-body); white-space: nowrap; }
   .sb2__pop .form-input { background-color: var(--color-bg-white); }
   .sb2__pop .form-feedback-error { display: block; padding: 0 10px 4px; }
+  /* The chips are the library's .iris-chip, light, with its dismiss button. */
+  .sb2__pop__chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 10px 6px; max-width: 260px; }
+  .sb2__pop__chips .iris-chip button { display: inline-flex; align-items: center; justify-content: center;
+                                       padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+  .sb2__pop__chips .iris-chip button:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; border-radius: 2px; }
+  .sb2__pop__foot { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+                    padding: 4px 6px 2px 10px; }
+  .sb2__pop__hint { font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb2__pop--in .sb2__pop__row + .sb2__pop__row { padding-top: 6px; }
   .sb2__ed--in .sb-cond__why,
   .sb2__ed--in .sb-cond__new,
   .sb2__ed--in .sb-cond__na { flex-basis: 100%; margin-top: 2px; }
@@ -1902,8 +1911,17 @@ const CATALOG = {
     { k:'subs',   n:'Subscriber status',  ctl:['select', ['Subscribers only']], f:.27 }
   ],
   WHAT: [
-    { k:'sku',    n:'SKU',                ctl:['num', 'Has', 'SKU(s)'], f:.36 },
-    { k:'fam',    n:'Product family',     ctl:['num', 'Has', 'product family(s)'], f:.48 }
+    /* ── Why these two carry a second control ─────────────────────────────
+       `ctl` is the product's own: it counts SKUs, "Has 3 SKU(s)", which is what
+       the live segments say today. The product owner watched it on 2026-09-23
+       and said it is wrong: a count is not a filter, you filter on the code.
+       Checked against the three products he named, RetentionX, Lifetimely and
+       Peel: none of them counts anything, all three pick values, and Lifetimely
+       puts a match mode in front of them (exact name / name contains). `ctl3`
+       is that shape, and only Proposed B uses it, so the other variants keep
+       reporting what the product itself reports. */
+    { k:'sku',    n:'SKU',                ctl:['num', 'Has', 'SKU(s)'], ctl3:['chips', 'e.g. B004'], f:.36 },
+    { k:'fam',    n:'Product family',     ctl:['num', 'Has', 'product family(s)'], ctl3:['chips', 'e.g. B'], f:.48 }
   ],
   HOW: [
     { k:'value',  n:'Order value',        ctl:['num', 'greater than $'], f:.44 },
@@ -2464,6 +2482,14 @@ let selOpen  = null;          /* id of the value combobox whose list is open */
 let chanQ = '';               /* typed into that picker's search */
 let focused = null;           /* {gi, ci} — the condition the editor is showing */
 let pop = null;               /* Proposed B: the filter key whose pill has its value open */
+let popMode = 'one';          /* match mode for a chips filter not in the segment yet */
+/* Proposed B swaps in ctl3 where a filter has one; everywhere else the
+   product's own control stands. */
+function ctlOf(def) { return (V3 && def.ctl3) ? def.ctl3 : def.ctl; }
+function isChips(def) { return ctlOf(def)[0] === 'chips'; }
+/* The chips ARE the value, joined the way the list page prints a list. */
+function chipsOf(c) { return String((c && c.v) || '').split(',').map(x => x.trim()).filter(Boolean); }
+function condMode(c) { return c && c.m === 'has' ? 'has' : 'one'; }
 let activeGroup = 0;          /* the group a pill adds to */
 
 /* The estimate, Save, Fin and the description all read state.conds. v2 keeps
@@ -2793,6 +2819,22 @@ document.addEventListener('click', e => {
    however many times someone toggled. */
 function setVariant(ver) {
   const on = ver !== '1';
+  /* ── A value that only one card can read ──────────────────────────────
+     Proposed B filters SKU and Product family by code; Current and Proposed
+     count them, on a numeric control that would show "B004" as an invalid
+     number. The values are set aside rather than carried across, and it is
+     said out loud, the same way dropping the groups was. */
+  if (V3 && ver !== '3' && ver !== '4') {
+    const hit = [];
+    groups.forEach(g => g.conds.forEach(c => {
+      const d = ALL.find(a => a.k === c.k);
+      if (d && d.ctl3 && hasValue(c) && badNum(c.v)) { hit.push(d.n); c.v = ''; c.m = undefined; }
+    }));
+    if (hit.length) {
+      syncFlat();
+      toast('Codes set aside', `${hit.join(' and ')} filter${hit.length > 1 ? '' : 's'} by count on this card, not by code. The condition stays, its value is empty.`);
+    }
+  }
   if (on === CARD2 && (ver === '4') === V3 && (ver === '3' || ver === '4') === VB) return;
   V3 = ver === '4';
   VB = ver === '3' || ver === '4';
@@ -3044,6 +3086,13 @@ const universeSize = () => {
    raising a threshold always shrinks the audience. */
 const NUM_SCALE = { value: 100, disc: 20, refamt: 25, sku: 2, fam: 1, tag: 1 };
 function keepFactor(def, v) {
+  /* A list of codes widens as it grows: matching one of three is a union of
+     three, not a third pass of the same filter. Same shape the any-of join
+     uses, so two estimates of "one of these" cannot disagree. */
+  if (isChips(def)) {
+    const n = String(v || '').split(',').filter(x => x.trim()).length;
+    return n ? 1 - Math.pow(1 - def.f, n) : def.f;
+  }
   if (def.ctl[0] !== 'num') return def.f;
   const x = Number(v);
   if (!isFinite(x) || x < 0) return def.f;
@@ -3062,7 +3111,7 @@ function estimate() {
   const filledOf = c => {
     if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
-    return !(d && d.ctl[0] === 'num' && badNum(c.v));
+    return !(d && ctlOf(d)[0] === 'num' && badNum(c.v));
   };
   if (state.join === 'any' && state.conds.length) {
     /* any-of unions rather than narrows */
@@ -3623,7 +3672,7 @@ function groupFunnel(g) {
   const filledOf = c => {
     if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
-    return !(d && d.ctl[0] === 'num' && badNum(c.v));
+    return !(d && ctlOf(d)[0] === 'num' && badNum(c.v));
   };
   const steps = [uni];
   if (g.join === 'any') {
@@ -3686,6 +3735,7 @@ function groupFunnel(g) {
    rather than as a form with the labels left in. Taken from the control, which
    already carries it: "greater than $", "Has", "is". */
 function condOp(def, c) {
+  if (isChips(def)) return condMode(c) === 'has' ? 'name contains' : 'is one of';
   const k = def.ctl[0];
   if (k === 'text') return String(def.ctl[1] || 'is').trim();
   if (k === 'num')  return String(def.ctl[1] || '').trim();
@@ -3734,7 +3784,7 @@ function outlineItem(g, gi, c, ci) {
         ${/* One line. No dangling operator either — "Discount code is" with
              nothing after it is a sentence cut off mid-word, so an unfilled
              condition is just its name. */
-          unset ? '' : `<span class="sb2__op">${esc(condOp(def, c))}</span><span class="sb2__v">${esc(String(c.v))}${def.ctl[2] && def.ctl[0] === 'num' ? ' ' + esc(def.ctl[2]) : ''}</span>`}
+          unset ? '' : `<span class="sb2__op">${esc(condOp(def, c))}</span><span class="sb2__v">${esc(String(c.v))}${ctlOf(def)[2] && ctlOf(def)[0] === 'num' ? ' ' + esc(ctlOf(def)[2]) : ''}</span>`}
       </button>
       <button class="sb2__x" data-x2="${gi}:${ci}" title="Remove ${esc(def.n)}" aria-label="Remove the ${esc(def.n)} condition">✕</button>
     </div>`;
@@ -3801,9 +3851,46 @@ function findCond(k) {
    Opening the pill of a filter already in the segment edits that one. */
 function pillPop(it, where) {
   const def = ALL.find(a => a.k === it.k);
-  const cur = where ? groups[where.gi].conds[where.ci].v : '';
-  const [kind, arg, unit] = def.ctl;
+  const c0 = where ? groups[where.gi].conds[where.ci] : null;
+  const cur = c0 ? c0.v : '';
+  const [kind, arg, unit] = ctlOf(def);
   const head = `<div class="sb2__pop__h">${esc(def.n)}</div>`;
+  /* ── A value, not a count ─────────────────────────────────────────────
+     The match mode first, the way Lifetimely puts Exact name / Name contains
+     above the field, because it decides what the field below means. Then one
+     field. In "is one of" what is typed becomes a chip and the segment
+     recalculates on every chip, so the menu stays open; in "name contains"
+     there is one string and Enter closes it.
+
+     The values are typed, not offered: Iris has no catalogue list in this
+     prototype, and a list of invented product codes would be read as the real
+     one. The typed-search-with-suggestions the product owner asked for is the
+     same control with real data behind it. */
+  if (kind === 'chips') {
+    const mode = c0 ? condMode(c0) : popMode;
+    const one = mode !== 'has';
+    const picked = one ? chipsOf(c0) : [];
+    return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
+        ${head}
+        <div class="sb2__pop__row">
+          <label class="seg-sr" for="popMode">How ${esc(def.n)} is matched</label>
+          <select class="form-select form-input-sm" id="popMode" data-popmode="${it.k}">
+            <option value="one" ${one ? 'selected' : ''}>is one of</option>
+            <option value="has" ${one ? '' : 'selected'}>name contains</option>
+          </select>
+        </div>
+        <div class="sb2__pop__row">
+          <label class="seg-sr" for="popIn">${esc(def.n)}</label>
+          <input class="form-input form-input-sm sb-in--text" id="popIn" data-popin="${it.k}" type="text"
+            maxlength="40" autocomplete="off" placeholder="${esc(arg || '')}"
+            value="${esc(one ? (popDraft || '') : (popDraft != null ? popDraft : cur))}">
+          <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">${one ? 'Add' : (where ? 'Update' : 'Apply')}</button>
+        </div>
+        ${one && picked.length ? `<div class="sb2__pop__chips">${picked.map(v =>
+          `<span class="iris-chip iris-chip--light">${esc(v)}<button type="button" data-popchipx="${esc(v)}" aria-label="Remove ${esc(v)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span>`).join('')}</div>` : ''}
+        ${one ? `<div class="sb2__pop__foot"><span class="sb2__pop__hint">${picked.length ? 'Enter adds another' : 'Type a code and press Enter'}</span><button type="button" class="btn btn-xs" data-popdone="1">Done</button></div>` : ''}
+      </div>`;
+  }
   if (kind === 'select') {
     return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop" role="dialog" aria-label="${esc(def.n)}">
         ${head}<ul class="sb2__pop__l" role="listbox" aria-label="${esc(def.n)}">${arg.map(o => {
@@ -3833,15 +3920,21 @@ function pillPop(it, where) {
 let popDraft = null;   /* what is typed in the pill's field before it is added */
 /* Gives the pill's filter its value: edits the condition if the segment already
    has it, adds it otherwise. */
-function popCommit(k, v) {
-  if (v === '' || v == null || badNum(v) && ALL.find(a => a.k === k).ctl[0] === 'num') return false;
+function popCommit(k, v, keepOpen) {
+  const def = ALL.find(a => a.k === k);
+  if (v === '' || v == null || (badNum(v) && ctlOf(def)[0] === 'num')) return false;
+  const mode = isChips(def) ? (findCond(k) ? condMode(groups[findCond(k).gi].conds[findCond(k).ci]) : popMode) : null;
   commit(() => {
     const w = findCond(k);
-    if (w) { const c = groups[w.gi].conds[w.ci]; c.v = v; c.draft = false; }
-    else groups[0].conds.push({ k: k, v: v, draft: false });
-    pop = null; popDraft = null; focused = null; syncFlat();
+    if (w) { const c = groups[w.gi].conds[w.ci]; c.v = v; c.draft = false; if (mode) c.m = mode; }
+    else groups[0].conds.push({ k: k, v: v, draft: false, m: mode || undefined });
+    /* A chips filter stays open: each chip is a value on its own, the count
+       behind the menu moves as they go in, and closing after the first one
+       would make the second chip a second trip. */
+    if (!keepOpen) { pop = null; popDraft = null; focused = null; }
+    syncFlat();
   });
-  document.querySelector(`[data-pop="${k}"]`)?.focus();
+  if (!keepOpen) document.querySelector(`[data-pop="${k}"]`)?.focus();
   return true;
 }
 function popClose(back) {
@@ -3976,7 +4069,7 @@ function previewV2() {
   const filledOf = c => {
     if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
-    return !(d && d.ctl[0] === 'num' && badNum(c.v));
+    return !(d && ctlOf(d)[0] === 'num' && badNum(c.v));
   };
   const kept = c => keepFactor(ALL.find(a => a.k === c.k), c.v);
   const size = list => {
@@ -4380,6 +4473,9 @@ function hasValue(c) { return !(c.v === '' || c.v == null); }
 function condText(c) {
   const def = ALL.find(a => a.k === c.k);
   if (!def || !hasValue(c)) return null;
+  /* A list of codes says so. "Has B004 SKU(s)" is the count sentence wearing a
+     code, which is the sentence the product owner objected to in the first place. */
+  if (isChips(def)) return `${def.n} ${condOp(def, c)} ${c.v}`;
   if (def.ctl[0] === 'text') return `${def.n} is ${c.v}`;
   /* Written in the vocabulary the LIST reads, not just the one the builder
      shows. A geography condition saved as "United States" arrived in the list
@@ -4638,10 +4734,40 @@ document.addEventListener('click', e => {
   /* Proposed B: the pill's own value. */
   const pv = e.target.closest('[data-popv]');
   if (pv && pop) { popCommit(pop, pv.dataset.popv); return; }
+  const px = e.target.closest('[data-popchipx]');
+  if (px && pop) {
+    const gone = px.dataset.popchipx;
+    const w = findCond(pop);
+    const left = chipsOf(w && groups[w.gi].conds[w.ci]).filter(v => v !== gone);
+    if (left.length) popCommit(pop, left.join(', '), true);
+    /* The last chip out is the filter out: an "is one of" with nothing in it
+       filters nobody, and leaving the empty row behind was the thing this
+       variant took out. */
+    else commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); popDraft = null; syncFlat(); });
+    document.getElementById('popIn')?.focus();
+    return;
+  }
+  const pm = e.target.closest('[data-popmode]');
+  if (pm) return;   /* the <select> is handled on change, not on click */
+  if (e.target.closest('[data-popdone]')) { popClose(true); return; }
   const pg = e.target.closest('[data-popgo]');
   if (pg) {
-    const inp = document.getElementById('popIn');
-    if (!popCommit(pg.dataset.popgo, inp ? inp.value.trim() : '')) {
+    const k = pg.dataset.popgo, inp = document.getElementById('popIn');
+    const typed = inp ? inp.value.trim() : '';
+    const def = ALL.find(a => a.k === k);
+    const w = findCond(k);
+    const chipMode = isChips(def) && (w ? condMode(groups[w.gi].conds[w.ci]) : popMode) !== 'has';
+    if (chipMode) {
+      /* A pasted list splits itself, the way RetentionX's own field does. */
+      const add = typed.split(',').map(x => x.trim()).filter(Boolean);
+      const have = chipsOf(w && groups[w.gi].conds[w.ci]);
+      const all = have.concat(add.filter(v => have.indexOf(v) === -1));
+      if (!add.length || !popCommit(k, all.join(', '), true)) { popDraft = typed; render(); }
+      else popDraft = null;
+      document.getElementById('popIn')?.focus();
+      return;
+    }
+    if (!popCommit(k, typed)) {
       popDraft = inp ? inp.value : ''; render(); document.getElementById('popIn')?.focus();
     }
     return;
@@ -4691,6 +4817,15 @@ document.addEventListener('click', e => {
   const fc = e.target.closest('[data-focus]');
   if (fc) {
     const [gi, ci] = fc.dataset.focus.split(':').map(Number);
+    /* A chips filter has one editor and it lives at the pill: opening a second
+       one inside the row would be the same control in two places. */
+    const cdef = ALL.find(a => a.k === groups[gi].conds[ci].k);
+    if (V3 && isChips(cdef)) {
+      pop = cdef.k; popDraft = null; focused = null;
+      render();
+      document.getElementById('popIn')?.focus();
+      return;
+    }
     focused = { gi: gi, ci: ci }; activeGroup = gi;
     render();
     /* The editor's control carries data-v2 in this variant; this selector
@@ -4849,6 +4984,17 @@ document.addEventListener('change', e => {
   else if (e.target.dataset.v != null) { const i = +e.target.dataset.v, v = e.target.value;
     commit(() => { state.conds[i].v = v; ownIt(i); });
     document.getElementById(`cond-${i}`)?.focus(); }
+  /* Proposed B: the match mode. It changes what the field below means, so the
+     menu is redrawn; a value already given is kept, because "B004" reads the
+     same either way. */
+  if (e.target.dataset.popmode != null) {
+    const k = e.target.dataset.popmode, m = e.target.value, w = findCond(k);
+    popMode = m; popDraft = null;
+    if (w) commit(() => { groups[w.gi].conds[w.ci].m = m; syncFlat(); });
+    else render();
+    document.getElementById('popMode')?.focus();
+    return;
+  }
   if (e.target.dataset.gjoin != null) {
     const gi = +e.target.dataset.gjoin, v = e.target.value;
     commit(() => { groups[gi].join = v; syncFlat(); });
