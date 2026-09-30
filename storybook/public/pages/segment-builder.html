@@ -1949,7 +1949,17 @@ const CATALOG = {
        "Discount amount" and "Discount percentage", which is a catalogue this
        product does not have. The channel note stays on the percentage, because
        that is the half Amazon cannot answer. */
-    { k:'disctype', n:'Discount',        ctl:['select', ['Percentage','Amount']], f:.40 },
+    /* ── Discount has a second half ───────────────────────────────────────
+       The control offers Percentage or Amount and then stops, so a definition
+       can say WHICH KIND of discount and never how big. The product owner hit it twice in
+       the recording: "discount, for example, percentage. Okay, now I need to
+       select a percentage value, right? Amount. I need to select an amount
+       value." The product's own saved segments already carry the threshold,
+       "Discount greater than 10%", and one of the templates here promises
+       "discount over 20%" while setting only the word Percentage. So in
+       Proposed B the kind picks the unit and a number follows it. */
+    { k:'disctype', n:'Discount',        ctl:['select', ['Percentage','Amount']],
+      ctl3:['pair', 'greater than', ['Percentage', 'Amount']], f:.40 },
 
     /* Listable, so it is a list. Amazon SP-API's Promotions 2025-12-01 has
        `searchPromotions`, returning promotionTitle, type and status — the names
@@ -2488,10 +2498,17 @@ let chanQ = '';               /* typed into that picker's search */
 let focused = null;           /* {gi, ci} — the condition the editor is showing */
 let pop = null;               /* Proposed B: the filter key whose pill has its value open */
 let popMode = 'one';          /* match mode for a chips filter not in the segment yet */
+let popMode2 = 'Percentage';  /* kind of discount for one not in the segment yet */
 /* Proposed B swaps in ctl3 where a filter has one; everywhere else the
    product's own control stands. */
 function ctlOf(def) { return (V3 && def.ctl3) ? def.ctl3 : def.ctl; }
 function isChips(def) { return ctlOf(def)[0] === 'chips'; }
+function isPair(def) { return ctlOf(def)[0] === 'pair'; }
+/* A pair holds a number, so everything that validates numbers validates it. */
+function isNumCtl(def) { const k = ctlOf(def)[0]; return k === 'num' || k === 'pair'; }
+/* Percentage or Amount, and the unit follows from it. */
+function pairKind(c) { return c && c.m === 'Amount' ? 'Amount' : 'Percentage'; }
+function pairText(c) { return pairKind(c) === 'Amount' ? '$' + c.v : c.v + '%'; }
 /* The chips ARE the value, joined the way the list page prints a list. */
 function chipsOf(c) { return String((c && c.v) || '').split(',').map(x => x.trim()).filter(Boolean); }
 function condMode(c) { return c && c.m === 'has' ? 'has' : 'one'; }
@@ -2692,7 +2709,16 @@ function startBar() {
 function applyTemplate(tpl) {
   const apply = () => {
     commit(() => {
-      state.conds = tpl.c.map(([k, v]) => ({ k, v }));
+      /* The templates were written against the one-step Discount, so
+         "Discount-driven first buy" carries the word Percentage where Proposed
+         B expects a number. The word is the kind; the threshold the template's
+         own description promises, "discount over 20%", is not in its data, so
+         the condition arrives with its kind set and its value waiting. */
+      state.conds = tpl.c.map(([k, v]) => {
+        const d = ALL.find(a => a.k === k);
+        if (d && isPair(d) && ctlOf(d)[2].indexOf(v) !== -1) return { k: k, v: '', m: v };
+        return { k: k, v: v };
+      });
       adoptFlat();
       if (!state.name) { state.name = tpl.n; document.getElementById('sbName').value = tpl.n; }
       /* A description written from the previous definition describes a segment
@@ -2831,36 +2857,45 @@ document.addEventListener('click', e => {
    however many times someone toggled. */
 function setVariant(ver) {
   const on = ver !== '1';
+  const wantB = ver !== '1' && ver !== '2';
+  if (on === CARD2 && wantB === V3) return;   /* already on this card */
   /* ── A value that only one card can read ──────────────────────────────
-     Proposed B filters SKU and Product family by code; Current and Proposed
-     count them, on a numeric control that would show "B004" as an invalid
-     number. The values are set aside rather than carried across, and it is
-     said out loud, the same way dropping the groups was. */
-  if (V3 && (ver === '1' || ver === '2')) {
+     Proposed B gives SKU, Product family and Discount a different control from
+     the one the other two cards draw: codes against a count, a threshold
+     against a bare Percentage/Amount. A value written in one shape is not a
+     value in the other, and carried across it came out as "Discount 20" on a
+     menu that only holds two words, or a count of 3 reading as product code 3.
+     So a filter whose control changes shape keeps its place and drops its
+     value, and the switch says which ones. The same rule both ways. */
+  if ((ver !== '1' && ver !== '2') !== V3) {
     const hit = [];
     groups.forEach(g => g.conds.forEach(c => {
       const d = ALL.find(a => a.k === c.k);
-      if (d && d.ctl3 && hasValue(c) && badNum(c.v)) { hit.push(d.n); c.v = ''; c.m = undefined; }
+      if (d && d.ctl3 && hasValue(c)) { hit.push(d.n); c.v = ''; }
     }));
     if (hit.length) {
       syncFlat();
-      toast('Codes set aside', `${hit.join(' and ')} filter${hit.length > 1 ? '' : 's'} by count on this card, not by code. The condition stays, its value is empty.`);
+      const names = hit.length > 1 ? hit.slice(0, -1).join(', ') + ' and ' + hit[hit.length - 1] : hit[0];
+      toast('Values set aside',
+        `${names} ${hit.length > 1 ? 'take' : 'takes'} a different control on this card. The condition${hit.length > 1 ? 's stay' : ' stays'}, the value is empty.`);
     }
   }
-  const wantB = ver !== '1' && ver !== '2';
-  if (on === CARD2 && wantB === V3) return;
+
   V3 = wantB;
   VB = wantB;
-  pop = null; focused = null;
+  pop = null; popDraft = null; focused = null;
+  /* Proposed and Proposed B are the same card with different controls, so
+     nothing has to be rebuilt between them: the URL, the switch and a redraw. */
   if (on === CARD2) {
-    const u = new URL(location.href);
-    u.searchParams.set('variant', ver);
-    history.replaceState(null, '', u.pathname + u.search + u.hash);
+    const u2 = new URL(location.href);
+    u2.searchParams.set('variant', ver);
+    history.replaceState(null, '', u2.pathname + u2.search + u2.hash);
     syncVariantBtns();
     startBar();
     render();
     return;
   }
+
   /* Going back to the flat card loses the grouping, because the flat card has
      nowhere to put it. Said out loud rather than discovered: the conditions all
      survive, their arrangement does not. */
@@ -3106,7 +3141,7 @@ function keepFactor(def, v) {
     const n = String(v || '').split(',').filter(x => x.trim()).length;
     return n ? 1 - Math.pow(1 - def.f, n) : def.f;
   }
-  if (def.ctl[0] !== 'num') return def.f;
+  if (!isNumCtl(def)) return def.f;
   const x = Number(v);
   if (!isFinite(x) || x < 0) return def.f;
   const scale = NUM_SCALE[def.k] || 100;
@@ -3124,7 +3159,7 @@ function estimate() {
   const filledOf = c => {
     if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
-    return !(d && ctlOf(d)[0] === 'num' && badNum(c.v));
+    return !(d && isNumCtl(d) && badNum(c.v));
   };
   if (state.join === 'any' && state.conds.length) {
     /* any-of unions rather than narrows */
@@ -3685,7 +3720,7 @@ function groupFunnel(g) {
   const filledOf = c => {
     if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
-    return !(d && ctlOf(d)[0] === 'num' && badNum(c.v));
+    return !(d && isNumCtl(d) && badNum(c.v));
   };
   const steps = [uni];
   if (g.join === 'any') {
@@ -3749,6 +3784,7 @@ function groupFunnel(g) {
    already carries it: "greater than $", "Has", "is". */
 function condOp(def, c) {
   if (isChips(def)) return condMode(c) === 'has' ? 'name contains' : 'is one of';
+  if (isPair(def)) return ctlOf(def)[1];
   const k = def.ctl[0];
   if (k === 'text') return String(def.ctl[1] || 'is').trim();
   if (k === 'num')  return String(def.ctl[1] || '').trim();
@@ -3797,7 +3833,7 @@ function outlineItem(g, gi, c, ci) {
         ${/* One line. No dangling operator either — "Discount code is" with
              nothing after it is a sentence cut off mid-word, so an unfilled
              condition is just its name. */
-          unset ? '' : `<span class="sb2__op">${esc(condOp(def, c))}</span><span class="sb2__v">${esc(String(c.v))}${ctlOf(def)[2] && ctlOf(def)[0] === 'num' ? ' ' + esc(ctlOf(def)[2]) : ''}</span>`}
+          unset ? '' : `<span class="sb2__op">${esc(condOp(def, c))}</span><span class="sb2__v">${esc(isPair(def) ? pairText(c) : String(c.v))}${ctlOf(def)[2] && ctlOf(def)[0] === 'num' ? ' ' + esc(ctlOf(def)[2]) : ''}</span>`}
       </button>
       <button class="sb2__x" data-x2="${gi}:${ci}" title="Remove ${esc(def.n)}" aria-label="Remove the ${esc(def.n)} condition">✕</button>
     </div>`;
@@ -3879,6 +3915,31 @@ function pillPop(it, where) {
      prototype, and a list of invented product codes would be read as the real
      one. The typed-search-with-suggestions the product owner asked for is the
      same control with real data behind it. */
+  if (kind === 'pair') {
+    const kinds = ctlOf(def)[2];
+    const k0 = c0 ? pairKind(c0) : popMode2;
+    const amount = k0 === 'Amount';
+    const bad2 = badNum(popDraft);
+    return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
+        ${head}
+        <div class="sb2__pop__row">
+          <label class="seg-sr" for="popMode">Kind of discount</label>
+          <select class="form-select form-input-sm" id="popMode" data-popkind="${it.k}">
+            ${kinds.map(k => `<option value="${esc(k)}" ${k === k0 ? 'selected' : ''}>${esc(k)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="sb2__pop__row">
+          <label class="sb2__pop__op" for="popIn">${esc(arg)}${amount ? ' $' : ''}</label>
+          <input class="form-input form-input-sm sb-in--num" id="popIn" data-popin="${it.k}" type="number"
+            min="0" max="1000000" step="1" placeholder="0" autocomplete="off"
+            value="${esc(popDraft != null ? popDraft : (cur == null ? '' : cur))}"
+            ${bad2 ? 'aria-invalid="true" aria-describedby="popErr" style="border-color:var(--color-border-danger)"' : ''}>
+          ${amount ? '' : '<span class="sb2__pop__op">%</span>'}
+          <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">${where ? 'Update' : 'Add'}</button>
+        </div>
+        ${bad2 ? '<span class="form-feedback-error" id="popErr">Enter a whole number between 0 and 1,000,000</span>' : ''}
+      </div>`;
+  }
   if (kind === 'chips') {
     const mode = c0 ? condMode(c0) : popMode;
     const one = mode !== 'has';
@@ -3935,8 +3996,11 @@ let popDraft = null;   /* what is typed in the pill's field before it is added *
    has it, adds it otherwise. */
 function popCommit(k, v, keepOpen) {
   const def = ALL.find(a => a.k === k);
-  if (v === '' || v == null || (badNum(v) && ctlOf(def)[0] === 'num')) return false;
-  const mode = isChips(def) ? (findCond(k) ? condMode(groups[findCond(k).gi].conds[findCond(k).ci]) : popMode) : null;
+  if (v === '' || v == null || (badNum(v) && isNumCtl(def))) return false;
+  const w0 = findCond(k);
+  const mode = isChips(def) ? (w0 ? condMode(groups[w0.gi].conds[w0.ci]) : popMode)
+             : isPair(def)  ? (w0 ? pairKind(groups[w0.gi].conds[w0.ci]) : popMode2)
+             : null;
   commit(() => {
     const w = findCond(k);
     if (w) { const c = groups[w.gi].conds[w.ci]; c.v = v; c.draft = false; if (mode) c.m = mode; }
@@ -4082,7 +4146,7 @@ function previewV2() {
   const filledOf = c => {
     if (!hasValue(c)) return false;
     const d = ALL.find(a => a.k === c.k);
-    return !(d && ctlOf(d)[0] === 'num' && badNum(c.v));
+    return !(d && isNumCtl(d) && badNum(c.v));
   };
   const kept = c => keepFactor(ALL.find(a => a.k === c.k), c.v);
   const size = list => {
@@ -4101,10 +4165,21 @@ function previewV2() {
   /* Leave one out: the segment as it would be without this condition. In an
      ALL chain that is always bigger, so the figure is what the condition costs;
      in an ANY chain it is always smaller, so the figure is what it adds. */
+  /* ── What each row reports ────────────────────────────────────────────
+     "costs 5,055" is the leave-one-out figure: the segment without this
+     condition, minus the segment with it. The product owner watched the panel on
+     2026-09-23 and said he did not like the costs wording, and that he liked
+     what was there before. Before was the funnel: how many are left after this
+     condition, and how many it dropped getting there. That comes back in
+     Proposed B; Proposed keeps the wording he reviewed earlier. */
   const rows = g.conds.map(c => {
     if (!filledOf(c)) return { c: c, unset: true };
     const without = size(live.filter(x => x !== c));
-    return { c: c, delta: Math.abs((without == null || total == null) ? 0 : without - total) };
+    const i = live.indexOf(c);
+    const left = i === -1 ? null : size(live.slice(0, i + 1));
+    const before = i <= 0 ? uni : size(live.slice(0, i));
+    return { c: c, delta: Math.abs((without == null || total == null) ? 0 : without - total),
+             left: left, fell: (left == null || before == null) ? null : before - left };
   });
   const top = Math.max(1, ...rows.filter(r => !r.unset).map(r => r.delta));
 
@@ -4147,7 +4222,10 @@ function previewV2() {
        figure the panel is for. The number carries it. */
     return `<div class="sb2__pv">
         <div class="sb2__pvt">${label}</div>
-        <div class="sb2__pvn">${any ? 'adds ' : 'costs '}${fmtN(r.delta)}</div>
+        <div class="sb2__pvn">${V3
+          ? (any ? `<b>${fmtN(r.left)}</b> in the union`
+                 : `<b>${fmtN(r.left)}</b> left${r.fell ? ` · drops ${fmtN(r.fell)}` : ''}`)
+          : `${any ? 'adds ' : 'costs '}${fmtN(r.delta)}`}</div>
       </div>`;
   }).join('');
 
@@ -4168,7 +4246,9 @@ function previewV2() {
      overlaps with no other condition, and one number does not fail to add up.
      It printed under a single line and read as a caveat invented to fill the
      space under it. */
-  const note = live.length > 1
+  /* The caveat belongs to the costs. A funnel is cumulative and does add up,
+     so in Proposed B the line has nothing to warn about and goes. */
+  const note = (!V3 && live.length > 1)
     ? '<span class="sb2__pvnote">Conditions overlap, so these do not add up.</span>' : '';
   return head + `<div class="sb2__pvtot">
       <div class="sb2__pvtot__n">${total == null ? '—' : fmtN(total)}</div>
@@ -4489,6 +4569,8 @@ function condText(c) {
   /* A list of codes says so. "Has B004 SKU(s)" is the count sentence wearing a
      code, which is the sentence the product owner objected to in the first place. */
   if (isChips(def)) return `${def.n} ${condOp(def, c)} ${c.v}`;
+  /* The vocabulary the live segments already use: "Discount greater than 10%". */
+  if (isPair(def)) return `${def.n} ${condOp(def, c)} ${pairText(c)}`;
   if (def.ctl[0] === 'text') return `${def.n} is ${c.v}`;
   /* Written in the vocabulary the LIST reads, not just the one the builder
      shows. A geography condition saved as "United States" arrived in the list
@@ -4760,8 +4842,7 @@ document.addEventListener('click', e => {
     document.getElementById('popIn')?.focus();
     return;
   }
-  const pm = e.target.closest('[data-popmode]');
-  if (pm) return;   /* the <select> is handled on change, not on click */
+  if (e.target.closest('[data-popmode], [data-popkind]')) return;   /* handled on change */
   if (e.target.closest('[data-popdone]')) { popClose(true); return; }
   const pg = e.target.closest('[data-popgo]');
   if (pg) {
@@ -4833,7 +4914,7 @@ document.addEventListener('click', e => {
     /* A chips filter has one editor and it lives at the pill: opening a second
        one inside the row would be the same control in two places. */
     const cdef = ALL.find(a => a.k === groups[gi].conds[ci].k);
-    if (V3 && isChips(cdef)) {
+    if (V3 && (isChips(cdef) || isPair(cdef))) {
       pop = cdef.k; popDraft = null; focused = null;
       render();
       document.getElementById('popIn')?.focus();
@@ -5000,6 +5081,16 @@ document.addEventListener('change', e => {
   /* Proposed B: the match mode. It changes what the field below means, so the
      menu is redrawn; a value already given is kept, because "B004" reads the
      same either way. */
+  /* Proposed B: percentage or amount. It changes the unit beside the field, so
+     the menu is redrawn; the number itself stands. */
+  if (e.target.dataset.popkind != null) {
+    const k = e.target.dataset.popkind, m = e.target.value, w = findCond(k);
+    popMode2 = m; popDraft = null;
+    if (w) commit(() => { groups[w.gi].conds[w.ci].m = m; syncFlat(); });
+    else render();
+    document.getElementById('popMode')?.focus();
+    return;
+  }
   if (e.target.dataset.popmode != null) {
     const k = e.target.dataset.popmode, m = e.target.value, w = findCond(k);
     popMode = m; popDraft = null;
