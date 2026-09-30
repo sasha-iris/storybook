@@ -1021,27 +1021,47 @@
   .sb2.is-v3 { grid-template-columns: minmax(0, 1fr) 300px; }
   .sb2.is-v3 .sb2__side { order: 2; }
   .sb2.is-v3 .sb2__main { order: 1; }
+  /* ── Narrow ───────────────────────────────────────────────────────────
+     The segment column was a fixed 300px, so as the window came in the FILTER
+     menu was the column that gave way: at 1100 it was 266px against the
+     segment's 300, and the pills rewrapped from five rows to eight while the
+     column they belong to was the narrower of the two. The segment column
+     gives way first now, down to 250, and below 1024 the two stack. */
+  /* Two columns inside the card need about 600px to stay two columns. Below
+     that the filters take the card's full width and the segment sits under
+     them, which keeps the pills at three or four rows instead of eight, and
+     the Preview stays where it is in the rail. */
+  @media (max-width: 1180px) {
+    .sb2.is-v3 { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .sb2.is-v3 .sb2__side { order: 1; margin-top: 18px; padding-top: 18px;
+                            border-top: 1px solid var(--color-border-default); }
+    .sb2.is-v3 .sb2__main { order: 0; border: 0; padding-top: 0; margin-top: 0; }
+  }
   /* "2/2" for as long as the segment exists: in this variant a condition cannot
      be created without a value, so the ratio has nothing to report. */
   .sb-v3 #sbCondN { display: none; }
-  @media (max-width: 900px) { .sb2.is-v3 { grid-template-columns: minmax(0, 1fr); } }
+
   /* The menu at the pill is the library's .dropdown-menu, sized to the pill's
      12px the way the value combobox's list already is (.sb-sel__l). */
   .sb2__pw { position: relative; display: inline-flex; }
   .sb2__pill.is-open { border-color: var(--btn-primary-bg, #42389d); }
-  .sb2__pop { min-width: 200px; width: max-content; max-width: 320px; margin: 0;
-              padding: 6px; border: 1px solid var(--color-border-light); overflow: visible; }
-  .sb2__pop__h { padding: 4px 10px 6px; font-size: var(--text-xs); line-height: 1.4;
+  /* One inset, 10px, top to bottom. It was 6 on the box, 10 on the header, 4
+     on the rows and 6 under the list, so nothing in the menu shared an edge
+     and a field sat 4px from its own border. */
+  .sb2__pop { min-width: 216px; width: max-content; max-width: 320px; margin: 0;
+              padding: 10px; border: 1px solid var(--color-border-light); overflow: visible; }
+  .sb2__pop__h { padding: 0 0 8px; font-size: var(--text-sm); line-height: 1.4;
                  font-weight: var(--font-semibold); color: var(--color-text-heading); }
   .sb2__pop__l { list-style: none; margin: 0; padding: 0; }
-  .sb2__pop .dropdown-item { padding: 7px 10px; font-size: var(--text-xs); border-radius: 6px; }
+  .sb2__pop .dropdown-item { padding: 9px 10px; font-size: var(--text-sm); border-radius: 6px; }
   .sb2__pop .dropdown-item:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
-  .sb2__pop__row { display: flex; align-items: center; gap: 6px; padding: 0 4px 4px 10px; }
+  .sb2__pop__row { display: flex; align-items: center; gap: 8px; padding: 0 0 8px; }
   .sb2__pop__op { font-size: var(--text-xs); color: var(--color-text-body); white-space: nowrap; }
   .sb2__pop .form-input { background-color: var(--color-bg-white); }
   .sb2__pop .form-feedback-error { display: block; padding: 0 10px 4px; }
   /* The chips are the library's .iris-chip, light, with its dismiss button. */
-  .sb2__pop__chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 10px 6px; max-width: 260px; }
+  .sb2__pop__chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0 2px; max-width: 100%;
+                     max-height: 96px; overflow: auto; }
   /* 12x12 passed 2.5.8 only on the spacing exception, with 2px between two
      of them. The glyph stays 12; the target is 24. */
   .sb2__pop__chips .iris-chip { padding-right: 2px; }
@@ -1055,17 +1075,19 @@
      second, both in full. Theirs truncates the product name mid-word in both
      columns, so two SKUs of the same product are the same row twice. */
   .sb2__pop--pick { width: 320px; max-width: 320px; }
+  /* On a narrow column the menu is capped to the column in script, because a
+     percentage here measures the pill it hangs from, not the column. */
   .sb2__pop__wide { width: 100%; }
   .sb2__pop__find { width: 100%; }
   .sb2__pop__find .form-input { width: 100%; }
-  .sb2__pop__sug { max-height: 320px; overflow: auto; padding: 2px 4px 0; }
+  .sb2__pop__sug { max-height: 320px; overflow: auto; padding: 2px 0 0; margin: 0 -4px; }
   /* Was CSS generated content, which no screen reader reads and which never
      told anyone how many rows a search had left. The count line below the list
      says it instead, and says it out loud. */
-  .sb2__pick__row { display: flex; align-items: flex-start; gap: 8px; width: 100%;
-                    padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+  .sb2__pick__row { display: flex; align-items: flex-start; gap: 10px; width: 100%;
+                    padding: 8px; border-radius: 6px; cursor: pointer; }
   .sb2__pick__row:hover { background: var(--color-bg-tertiary); }
-  .sb2__pick__row .iris-control__label { font-size: var(--text-xs); font-weight: var(--font-medium); }
+  .sb2__pick__row .iris-control__label { font-size: var(--text-sm); font-weight: var(--font-medium); }
   /* Two lines rather than a cut word: theirs truncates the product name in
      both of its columns, so two SKUs of one product read as the same row. */
   .sb2__pick__row .iris-control__helper { font-size: var(--text-xs); color: var(--seg-muted);
@@ -1078,10 +1100,10 @@
   .sb2__pop__seg { width: 100%; }
   .sb2__pop__seg .btn { flex: 1; }
   .sb2__pop__paste { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); padding: 0; }
-  .sb2__pop__src { margin: 4px 0 0; padding: 0 6px 2px; font-size: var(--text-xs);
+  .sb2__pop__src { margin: 8px 0 0; padding: 0; font-size: var(--text-xs);
                    line-height: 1.4; color: var(--seg-muted); }
-  .sb2__pop__foot { display: flex; align-items: center; justify-content: space-between; gap: 10px;
-                    padding: 4px 6px 2px 10px; }
+  .sb2__pop__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+                    margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-border-light); }
   .sb2__pop__hint { font-size: var(--text-xs); color: var(--seg-muted); }
   .sb2__pop--in .sb2__pop__row + .sb2__pop__row { padding-top: 6px; }
   .sb2__ed--in .sb-cond__why,
@@ -1118,8 +1140,39 @@
   .sb2__pvn { flex: none;
               font-size: 10px; font-weight: var(--font-medium); letter-spacing: .01em;
               color: var(--seg-muted); }
-  .sb-v3 .sb2__pvn { font-size: var(--text-xs); letter-spacing: 0;
-                     min-width: 118px; text-align: right; }
+  /* ── Room to read ─────────────────────────────────────────────────────
+     The definition was a stack of 38px rows of 12px text, 4px apart, inside a
+     tinted box with 10px of padding: four facts crammed into 170px while the
+     card around them had room to spare. It is the thing being built, and it
+     read as a sidebar of chips. In Proposed B it takes the product's own size,
+     14px, a 44px row, and the steps between rows and around the box go up one
+     stop each. Proposed keeps the density it was reviewed at. */
+  .sb-v3 .sb2__item { min-height: 44px; border-radius: 8px; }
+  .sb-v3 .sb2__item + .sb2__item { margin-top: 8px; }
+  .sb-v3 .sb2__pick { padding: 9px 10px; gap: 0 6px; font-size: var(--text-sm); }
+  .sb-v3 .sb2__n, .sb-v3 .sb2__op, .sb-v3 .sb2__v { font-size: var(--text-sm); line-height: 1.45; }
+  .sb-v3 .sb2__n .sb2__q { font-size: var(--text-sm); }
+  .sb-v3 .sb2__gmeta { padding: 12px 12px 10px; row-gap: 10px; }
+  .sb-v3 .sb2__gb { padding: 0 6px 6px; }
+  .sb-v3 .sb2__mthead { margin-bottom: 14px; }
+  .sb-v3 .sb2__x { width: 28px; height: 28px; }
+  /* ── The funnel rows ──────────────────────────────────────────────────
+     Name, bar, then what is left and what fell out on one line. The bar is a
+     share of the starting set, which is what makes four steps comparable. */
+  /* The base row is a flex line, name against figure. A funnel step is three
+     stacked parts, so in this variant the row is a block again. */
+  .sb-v3 .sb2__pv { display: block; margin-bottom: 14px; }
+  .sb-v3 .sb2__pvt { font-size: var(--text-xs); font-weight: var(--font-medium);
+                     color: var(--color-text-heading); display: block; }
+  .sb-v3 .sb2__pv.is-head .sb2__pvt { font-weight: var(--font-semibold); }
+  .sb2__pvbar { height: 8px; margin: 6px 0 5px; border-radius: 4px;
+                background: var(--color-bg-tertiary); overflow: hidden; }
+  .sb2__pvbar i { display: block; height: 100%; border-radius: 4px;
+                  background: var(--btn-primary-bg, #42389d); }
+  .sb2__pvf { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .sb2__pvc { font-size: var(--text-xs); color: var(--color-text-body); font-variant-numeric: tabular-nums; }
+  .sb2__pvd { font-size: var(--text-xs); color: var(--seg-muted); white-space: nowrap;
+              font-variant-numeric: tabular-nums; }
   .sb-v3 .sb2__pvnote { font-size: var(--text-xs); }
   .sb2__pvn span { color: var(--color-text-body-subtle); }
   /* It had no rule at all, so it inherited the card's body size and colour and
@@ -4406,25 +4459,53 @@ function previewV2() {
      seven unset — a normal state on the way in — the rail read as a duplicate
      of the definition. The count of unset conditions stays in the total line,
      which is where it belongs: it qualifies the answer. */
-  const body = rows.filter(r => !r.unset).map(r => {
+  /* ── The label a Preview row carries ──────────────────────────────────
+     condText writes in the LIST's vocabulary, where a geography reads
+     "Geography: In US" and already carries its own subject. Prefixing the
+     filter name to that produced "Geography is Geography: In US". The row is
+     built from the parts instead: filter, the word that joins them, value. */
+  const pvLabel = c => {
+    const def = ALL.find(a => a.k === c.k);
+    if (isChips(def) || isPair(def)) {
+      const sp = sentenceParts(def, c);
+      return `${sp.lead} ${sp.strong}${sp.tail || ''}`;
+    }
+    const v = ctlOf(def)[0] === 'num' && isFinite(Number(c.v)) ? fmtN(Number(c.v)) : String(c.v);
+    const op = condOp(def, c);
+    return op.trim().endsWith('$') ? `${def.n} ${op.replace(/\s*\$$/, '')} $${v}` : `${def.n} ${op} ${v}`;
+  };
+  /* ── The funnel, drawn ────────────────────────────────────────────────
+     Four lines of "N left · drops M" set as text were a column of numbers
+     nobody could compare: the reader has to hold 7,367 against 1,989 against
+     497 in their head. Iris's own Preview, shipped 2026-09-30, draws each step
+     as a bar against the starting set, with what is left and what fell out on
+     the same line, and that reads at a glance. Same shape here, over the total
+     this panel leads with. Orders come off the same 1.06 the tiles use, so the
+     two halves of the rail cannot disagree.
+     The bars were taken OUT once before, when they were drawn as a share of
+     the largest cost and so discriminated nothing. Against the starting set
+     they carry the shape of the funnel, which is the thing they are for. */
+  const ordersOf = x => x == null ? null : Math.round(x * 1.06);
+  const pvRow = (name, left, fell, head) => `<div class="sb2__pv${head ? ' is-head' : ''}">
+      <div class="sb2__pvt">${esc(name)}</div>
+      <div class="sb2__pvbar"><i style="width:${uni ? Math.max(1.5, Math.round((left / uni) * 1000) / 10) : 100}%"></i></div>
+      <div class="sb2__pvf">
+        <span class="sb2__pvc">${fmtN(left)} customers · ${fmtN(ordersOf(left))} orders</span>
+        ${fell == null ? '' : `<span class="sb2__pvd">−${fmtN(fell)} dropped</span>`}
+      </div>
+    </div>`;
+
+  const body = V3
+    ? pvRow('All customers, ' + rangeLabel().toLowerCase(), uni, null, true)
+      + rows.filter(r => !r.unset).map(r => pvRow(pvLabel(r.c), r.left, any ? null : r.fell)).join('')
+    : rows.filter(r => !r.unset).map(r => {
     const def = ALL.find(a => a.k === r.c.k);
-    /* A select-kind condition printed its value alone — "First-time
-       customers" — beside rows that printed filter, operator and value, so one
-       line in a stack of four was missing its subject. */
-    const raw = condText(r.c) || def.n;
-    const label = esc(ctlOf(def)[0] === 'select' ? `${def.n} is ${raw}` : raw);
-    /* The condition and what it costs, on one line. The bar under each one was
-       measured against itself rather than against the audience — the longest
-       cost filled the track and the rest were drawn as a share of THAT — so at
-       two or three conditions they came out near-identical lengths and
-       discriminated nothing, while stacking three coloured tracks over the
-       figure the panel is for. The number carries it. */
+    const label = esc(condText(r.c) || def.n);
+    /* The condition and what it costs, on one line. Proposed keeps the shape it
+       was reviewed with. */
     return `<div class="sb2__pv">
         <div class="sb2__pvt">${label}</div>
-        <div class="sb2__pvn">${V3
-          ? (any ? `<b>${fmtN(r.left)}</b> so far`
-                 : `<b>${fmtN(r.left)}</b> left${r.fell ? ` · drops ${fmtN(r.fell)}` : ''}`)
-          : `${any ? 'adds ' : 'costs '}${fmtN(r.delta)}`}</div>
+        <div class="sb2__pvn">${any ? 'adds ' : 'costs '}${fmtN(r.delta)}</div>
       </div>`;
   }).join('');
 
@@ -5129,6 +5210,9 @@ document.addEventListener('click', e => {
          that sticks out, and never past the column's own left edge. */
       if (box) {
         const col = document.getElementById('sbMain').getBoundingClientRect();
+        /* Never wider than the column it lives in, then nudged left by exactly
+           what sticks out, and never past the column's own left edge. */
+        box.style.maxWidth = Math.round(col.width - 8) + 'px';
         const r = box.getBoundingClientRect();
         const over = Math.round(r.right - col.right);
         if (over > 0) box.style.left = `-${Math.min(over + 4, Math.max(0, Math.round(r.left - col.left)))}px`;
