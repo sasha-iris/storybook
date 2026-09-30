@@ -2440,8 +2440,13 @@ let state = { conds: [], range: 90, from: '2026-06-03', to: '2026-09-01', name: 
    the OLD card. Coming in on the v2 side means the v2 card unless the URL says
    otherwise; ?variant=1 still forces the current one, so the toggle at the foot
    of the page keeps working in both directions. */
-let CARD2 = (q => ['2', '3', '4'].includes(q.get('variant')) || (q.has('v2') && !q.has('variant')))
-            (new URLSearchParams(location.search));
+/* ── What a bare link opens ───────────────────────────────────────────────
+   It used to open Current, the first card, because the variants were added one
+   by one and each hid behind its own parameter. The product owner reviewed a
+   bare link on 2026-09-26 and reported that the work had gone backwards: he was
+   looking at the oldest build of every page. A link with nothing on it now
+   opens the newest proposal; Current and Proposed keep ?variant=1 and 2. */
+let CARD2 = new URLSearchParams(location.search).get('variant') !== '1';
 /* Proposed B (variant=4): pressing a filter opens its value right at the pill,
    so choosing a filter and giving it a value is one gesture; a condition already
    in the segment opens in its own row; and the segment being built sits in the
@@ -2449,7 +2454,7 @@ let CARD2 = (q => ['2', '3', '4'].includes(q.get('variant')) || (q.has('v2') && 
    variant=3 was a take with only the in-row editing. It was dropped and its
    links now open this one. VB = rows edit in place, V3 = values at the pill;
    today they are always on together. */
-let VB = ['3', '4'].includes(new URLSearchParams(location.search).get('variant'));
+let VB = !['1', '2'].includes(new URLSearchParams(location.search).get('variant'));
 let V3 = VB;
 
 /* ── v2: one level of groups, per the market scan ────────────────────────
@@ -2668,6 +2673,13 @@ function startBar() {
     const to = V3 ? fSlot : fHome;
     if (c.parentNode !== to) to.appendChild(c);
   });
+  /* ── The refresh choice is out of Proposed B ──────────────────────────
+     Asked for twice, in the recording on 2026-09-23 and again in writing on
+     2026-09-26: "remove the how this segment stays current flow". It stays in
+     Current and Proposed, which are the record of what the page was, and the
+     segment keeps its mode — the card sets it, nothing else reads it, so the
+     default stands until the product decides otherwise. */
+  document.getElementById('sbModeCard').hidden = V3;
 }
 /* One implementation, two doors: the inline tiles in Current and the library in
    Proposed both land here, so "a template replaces the whole definition, and
@@ -2824,7 +2836,7 @@ function setVariant(ver) {
      count them, on a numeric control that would show "B004" as an invalid
      number. The values are set aside rather than carried across, and it is
      said out loud, the same way dropping the groups was. */
-  if (V3 && ver !== '3' && ver !== '4') {
+  if (V3 && (ver === '1' || ver === '2')) {
     const hit = [];
     groups.forEach(g => g.conds.forEach(c => {
       const d = ALL.find(a => a.k === c.k);
@@ -2835,9 +2847,10 @@ function setVariant(ver) {
       toast('Codes set aside', `${hit.join(' and ')} filter${hit.length > 1 ? '' : 's'} by count on this card, not by code. The condition stays, its value is empty.`);
     }
   }
-  if (on === CARD2 && (ver === '4') === V3 && (ver === '3' || ver === '4') === VB) return;
-  V3 = ver === '4';
-  VB = ver === '3' || ver === '4';
+  const wantB = ver !== '1' && ver !== '2';
+  if (on === CARD2 && wantB === V3) return;
+  V3 = wantB;
+  VB = wantB;
   pop = null; focused = null;
   if (on === CARD2) {
     const u = new URL(location.href);

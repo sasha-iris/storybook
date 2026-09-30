@@ -324,6 +324,18 @@
     .seg-scroll { overflow-x: auto; }
   }
 </style>
+<script>
+/* ── A bare link opens the current design ─────────────────────────────────
+   This is the first list page, kept for comparison: no left rail, no search,
+   no sort. The product owner opened it on 2026-09-26, found the filters he
+   liked missing and read it as the work going backwards. The rail lives in
+   segments-v2.html, which nothing here linked to. Anyone who wants this one
+   on purpose adds ?v1=1. */
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (!q.has('v1')) location.replace('./segments-v2.html' + location.hash);
+})();
+</script>
 </head>
 <body style="margin:0;font-family:'Inter',sans-serif;">
 <a class="seg-skip" href="#" id="skipLink">Skip to the segment list</a>

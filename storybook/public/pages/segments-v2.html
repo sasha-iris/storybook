@@ -1895,7 +1895,7 @@ function openMenu(btn) {
        he spent four minutes of the review inside. */
     { act: 'analyze', ic: IC.chart, t: 'Analyze segment' },
     { act: 'ask',     ic: IC.spark, t: 'Ask Fin' },
-    { href: './segment-builder.html?v2=1&id=' + s.id, ic: IC.pencil, t: 'Edit definition' },
+    { href: './segment-builder.html?variant=4&id=' + s.id, ic: IC.pencil, t: 'Edit definition' },
     { act: 'dup',     ic: IC.copy,  t: 'Duplicate' },
     { act: 'export',  ic: IC.down,  t: 'Export emails' },
     { sep: true },
@@ -1976,12 +1976,12 @@ document.getElementById('lsNew').addEventListener('click', e => {
        Fin first. */
     { act: 'desc', ic: IC.wand,   t: 'Generate with Fin', sub: 'Tell Fin what you want' },
     { act: 'tpl',  ic: IC.copy,   t: 'Start from a prebuilt segment', sub: 'Pick a definition and adjust it' },
-    { href: './segment-builder.html?v2=1', ic: IC.pencil, t: 'Manual', sub: 'Configure the segment yourself' },
+    { href: './segment-builder.html?variant=4', ic: IC.pencil, t: 'Manual', sub: 'Configure the segment yourself' },
     { sep: true },
     { act: 'dup',  ic: IC.copy,  t: 'Duplicate an existing segment' }
   ], act => {
-    if (act === 'desc') location.href = './segment-builder.html?v2=1#describe';
-    if (act === 'tpl') location.href = './segment-builder.html?v2=1#templates';
+    if (act === 'desc') location.href = './segment-builder.html?variant=4#describe';
+    if (act === 'tpl') location.href = './segment-builder.html?variant=4#templates';
     if (act === 'dup') toast('Pick a segment', 'Choose Duplicate from any row to start from it.');
   });
 });
