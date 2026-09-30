@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building a customer segment · Iris</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/iris-tokens.css">
+<link rel="stylesheet" href="../assets/iris-components.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ── A storyboard, not a product screen ───────────────────────────────
+     Everything here is the library's: .card, .card-header, .card-body,
+     .badge. What this sheet adds is the page's own measure and the frame the
+     shots sit in, which no component covers. */
+  body { margin: 0; background: var(--color-bg-secondary, #f9fafb);
+         font-family: 'Inter', sans-serif; color: var(--color-text-primary); }
+  .sbd { max-width: 960px; margin: 0 auto; padding: 48px 24px 72px; }
+  .sbd__h1 { margin: 0 0 8px; font-size: var(--text-3xl); font-weight: var(--font-bold);
+             line-height: 1.2; color: var(--color-text-heading); }
+  .sbd__lede { margin: 0 0 8px; font-size: var(--text-base); line-height: 1.6;
+               color: var(--color-text-body); max-width: 62ch; }
+  .sbd__meta { margin: 0 0 36px; font-size: var(--text-xs); color: var(--color-text-secondary); }
+  .sbd__meta a { color: var(--btn-primary-bg, #42389d); }
+  .sbd__step { margin-bottom: 28px; }
+  .sbd__t { display: flex; align-items: baseline; gap: 10px; margin: 0; }
+  .sbd__n { font-size: var(--text-xs); font-weight: var(--font-semibold);
+            letter-spacing: .04em; color: var(--color-text-secondary); }
+  /* The shot is the content of the card, so it sits flush inside it. */
+  .sbd__shot { display: block; width: 100%; height: auto; border-top: 1px solid var(--color-border-base); }
+  .sbd__note { margin: 10px 0 0; font-size: var(--text-sm); line-height: 1.6;
+               color: var(--color-text-body); }
+  .sbd__end { margin-top: 36px; font-size: var(--text-sm); line-height: 1.7;
+              color: var(--color-text-body); }
+  .sbd__end b { color: var(--color-text-heading); }
+  @media (max-width: 640px) { .sbd { padding: 28px 16px 48px; } }
+</style>
+</head>
+<body>
+<main class="sbd">
+  <h1 class="sbd__h1">Building a customer segment</h1>
+  <p class="sbd__lede">Six steps through the proposed builder, in the order a person meets
+    them. Every number on these screens is estimated from the prototype's own dataset.</p>
+  <p class="sbd__meta">Click through it yourself:
+    <a href="./segment-builder.html">the builder</a> ·
+    <a href="./segments.html">the segment list</a></p>
+
+  <section class="sbd__step">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="sbd__t"><span class="sbd__n">01</span>
+            <span class="card-header-title">Where a segment starts</span></div>
+          <div class="card-header-sub">The window of orders, and one menu of filters</div>
+        </div>
+        <span class="badge badge-gray">Empty state</span>
+      </div>
+      <img class="sbd__shot" src="../assets/storyboard/01-start.jpg" alt="The builder before anything is chosen: a filter menu on the left, an empty segment on the right, and a Preview panel.">
+    </div>
+    <p class="sbd__note">Filters are grouped as who, what and how. The segment beside them is
+      empty and says what to do about it. Nothing is prefilled, and nothing is hidden behind
+      an accordion.</p>
+  </section>
+
+  <section class="sbd__step">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="sbd__t"><span class="sbd__n">02</span>
+            <span class="card-header-title">A filter opens where it was pressed</span></div>
+          <div class="card-header-sub">Search runs over the code and the product name</div>
+        </div>
+        <span class="badge badge-gray">SKU</span>
+      </div>
+      <img class="sbd__shot" src="../assets/storyboard/02-pick.jpg" alt="Pressing the SKU filter opens a menu at the pill with a filter type, a search field and the catalogue.">
+    </div>
+    <p class="sbd__note">The value is given at the filter, not in a panel further down the page.
+      Typing narrows the catalogue and the menu says how much is left: three of eight.</p>
+  </section>
+
+  <section class="sbd__step">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="sbd__t"><span class="sbd__n">03</span>
+            <span class="card-header-title">The count moves as the list is built</span></div>
+          <div class="card-header-sub">Each tick recalculates, and the menu stays open</div>
+        </div>
+        <span class="badge badge-gray">Live estimate</span>
+      </div>
+      <img class="sbd__shot" src="../assets/storyboard/03-chosen.jpg" alt="Two SKUs ticked: the segment reads Bought any of 2 SKUs and the Preview shows 10,356 customers.">
+    </div>
+    <p class="sbd__note">Two codes chosen, and the segment already reads as a sentence:
+      <b>Bought any of 2 SKUs</b>. The Preview answers at the same moment, 10,356 customers,
+      and shows what the condition dropped.</p>
+  </section>
+
+  <section class="sbd__step">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="sbd__t"><span class="sbd__n">04</span>
+            <span class="card-header-title">A filter that needs two decisions asks for both</span></div>
+          <div class="card-header-sub">The kind of discount sets the unit of the value</div>
+        </div>
+        <span class="badge badge-gray">Discount</span>
+      </div>
+      <img class="sbd__shot" src="../assets/storyboard/04-discount.jpg" alt="The Discount filter open: a Percentage or Amount toggle and a value field with a percent sign.">
+    </div>
+    <p class="sbd__note">Percentage or amount first, then the number, with the unit beside the
+      field. A percentage over 100 is refused where it is typed.</p>
+  </section>
+
+  <section class="sbd__step">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="sbd__t"><span class="sbd__n">05</span>
+            <span class="card-header-title">The finished definition reads as language</span></div>
+          <div class="card-header-sub">And the Preview shows how it narrowed, step by step</div>
+        </div>
+        <span class="badge badge-gray">Three conditions</span>
+      </div>
+      <img class="sbd__shot" src="../assets/storyboard/05-built.jpg" alt="Three conditions in the segment and a Preview funnel from 17,541 customers down to 1,118.">
+    </div>
+    <p class="sbd__note">17,541 in the window, then each condition with what is left and what
+      fell out, down to 1,118. Orders, AOV, net sales and LTV sit under the funnel, so the
+      question "is this segment worth anything" is answered before it is saved.</p>
+  </section>
+
+  <section class="sbd__step">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="sbd__t"><span class="sbd__n">06</span>
+            <span class="card-header-title">Where it lands</span></div>
+          <div class="card-header-sub">The list says which segments need attention first</div>
+        </div>
+        <span class="badge badge-gray">Segment list</span>
+      </div>
+      <img class="sbd__shot" src="../assets/storyboard/06-list.jpg" alt="The segment list with filters on the left, a warning about segments that return every customer, and sortable columns.">
+    </div>
+    <p class="sbd__note">Search, filters and sorting on 40 segments, each row carrying its
+      definition, its size against the whole base and when it was last calculated. The
+      banner names the five segments that return every customer, which is a data problem the
+      old page hid.</p>
+  </section>
+
+  <p class="sbd__end">Both screens are clickable, not pictures:
+    <b><a href="./segment-builder.html">the builder</a></b> and
+    <b><a href="./segments.html">the list</a></b>. The earlier versions of the conditions card
+    are behind the switch at the foot of the builder, for comparison.</p>
+</main>
+</body>
+</html>
