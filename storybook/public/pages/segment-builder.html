@@ -674,10 +674,14 @@
      states rather than as a form with its labels left in, and eight of them
      scan down the column at one height. It wraps only when a value is long
      enough to need it. */
+  /* A <button> with no font rule takes the browser's 13.333px and pure black,
+     which is how a row of the definition ended up off the scale by a third of
+     a pixel step and darker than every other line on the card. */
   .sb2__pick { flex: 1; min-width: 0; display: flex; align-items: baseline;
                flex-wrap: wrap; gap: 0 4px;
-               padding: 4px 8px 4px 10px; border: 0; background: none;
-               cursor: pointer; text-align: left; font-family: inherit; }
+               padding: 4px 8px 4px 0; border: 0; background: none;
+               cursor: pointer; text-align: left; font-family: inherit;
+               font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-primary); }
   .sb2__pick:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; border-radius: 6px; }
 
   /* Three colours, one size, two weights — and the label/value separation is
@@ -747,7 +751,11 @@
      reaches its row it comes up to full strength, and on itself it turns red.
      Polaris does the same thing with clip and reveals on hover AND focus. */
   .sb2__x { flex: none; width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
-            color: var(--color-text-disabled); font-size: var(--text-xs); border-radius: 6px;
+            /* MEASURED 2.54:1 at --color-text-disabled, under the 3:1 that
+               1.4.11 asks of a control's own graphics. The glyph is the only
+               sign the control is there, so it cannot be the faintest thing
+               in the row: --color-text-secondary is 4.83:1. */
+            color: var(--color-text-secondary); font-size: var(--text-xs); border-radius: 6px;
             transition: color .12s; }
   .sb2__item:hover .sb2__x,
   .sb2__item.is-on .sb2__x,
@@ -1012,6 +1020,10 @@
      changes size. */
   .sb2.is-v3 { grid-template-columns: minmax(0, 1fr) 300px; }
   .sb2.is-v3 .sb2__side { order: 2; }
+  .sb2.is-v3 .sb2__main { order: 1; }
+  /* "2/2" for as long as the segment exists: in this variant a condition cannot
+     be created without a value, so the ratio has nothing to report. */
+  .sb-v3 #sbCondN { display: none; }
   @media (max-width: 900px) { .sb2.is-v3 { grid-template-columns: minmax(0, 1fr); } }
   /* The menu at the pill is the library's .dropdown-menu, sized to the pill's
      12px the way the value combobox's list already is (.sb-sel__l). */
@@ -1030,7 +1042,11 @@
   .sb2__pop .form-feedback-error { display: block; padding: 0 10px 4px; }
   /* The chips are the library's .iris-chip, light, with its dismiss button. */
   .sb2__pop__chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 10px 6px; max-width: 260px; }
+  /* 12x12 passed 2.5.8 only on the spacing exception, with 2px between two
+     of them. The glyph stays 12; the target is 24. */
+  .sb2__pop__chips .iris-chip { padding-right: 2px; }
   .sb2__pop__chips .iris-chip button { display: inline-flex; align-items: center; justify-content: center;
+                                       width: 24px; height: 24px; margin: -4px 0;
                                        padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
   .sb2__pop__chips .iris-chip button:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 1px; border-radius: 2px; }
   /* ── The picker ───────────────────────────────────────────────────────
@@ -1042,9 +1058,10 @@
   .sb2__pop__wide { width: 100%; }
   .sb2__pop__find { width: 100%; }
   .sb2__pop__find .form-input { width: 100%; }
-  .sb2__pop__sug { max-height: 200px; overflow: auto; padding: 2px 4px 0; }
-  .sb2__pop__sug.is-empty::after { content: 'Nothing matches'; display: block;
-                                   padding: 8px 10px; font-size: var(--text-xs); color: var(--seg-muted); }
+  .sb2__pop__sug { max-height: 320px; overflow: auto; padding: 2px 4px 0; }
+  /* Was CSS generated content, which no screen reader reads and which never
+     told anyone how many rows a search had left. The count line below the list
+     says it instead, and says it out loud. */
   .sb2__pick__row { display: flex; align-items: flex-start; gap: 8px; width: 100%;
                     padding: 6px 8px; border-radius: 6px; cursor: pointer; }
   .sb2__pick__row:hover { background: var(--color-bg-tertiary); }
@@ -1094,9 +1111,16 @@
      a 10px bar is the only thing on this rail that softens it. */
   /* Name on the left, cost on the right, one line each. */
   .sb2__pv { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  /* The figures sat wherever their words ended, so four numbers in a column
+     started at four different places, ragged by 30px. They share one column
+     now, right-aligned, which is how a funnel is read. 10px also came off the
+     scale in this variant; Proposed keeps the size it was reviewed at. */
   .sb2__pvn { flex: none;
               font-size: 10px; font-weight: var(--font-medium); letter-spacing: .01em;
               color: var(--seg-muted); }
+  .sb-v3 .sb2__pvn { font-size: var(--text-xs); letter-spacing: 0;
+                     min-width: 118px; text-align: right; }
+  .sb-v3 .sb2__pvnote { font-size: var(--text-xs); }
   .sb2__pvn span { color: var(--color-text-body-subtle); }
   /* It had no rule at all, so it inherited the card's body size and colour and
      sat in the rail at full weight — the largest thing in a panel whose job is
@@ -1132,7 +1156,9 @@
      The label under it moves off the muted grey too — at 12/400 it read as a
      footnote to the number instead of naming it. */
   .sb2__pvtot__n { font-size: var(--text-h1); font-weight: var(--font-bold);
-                   line-height: 1.05; letter-spacing: -0.02em;
+                   /* 1.05 cut 2px off the descenderless digits' own box:
+                      scrollHeight 34 against clientHeight 32, measured. */
+                   line-height: 1.15; letter-spacing: -0.02em;
                    color: var(--color-text-heading); font-variant-numeric: tabular-nums; }
   .sb2__pvtot__l { margin-top: 2px; font-size: var(--text-xs);
                    font-weight: var(--font-medium); color: var(--color-text-body); }
@@ -2530,6 +2556,7 @@ let pop = null;               /* Proposed B: the filter key whose pill has its v
 let popMode = 'one';          /* match mode for a chips filter not in the segment yet */
 let popMode2 = 'Percentage';  /* kind of discount for one not in the segment yet */
 let pasteDraft = '';          /* the pasted list, kept while the dialog is open */
+let popError = null;          /* why the last press did not take */
 /* ── Where these values come from ─────────────────────────────────────────
    The product owner asked for the typeahead he saw in Lifetimely: type "spring" and get
    Spring 24, Spring 25. That needs the catalogue, which this prototype does
@@ -2577,6 +2604,8 @@ const SKU_CATALOG = {
 const MATCH_TYPES = [['any', 'Includes any of'], ['none', 'Excludes all of'],
                      ['only', 'Only these (no others in the order)']];
 function matchKind(c) { return (c && c.t) || 'any'; }
+/* "Product familys" came of building a plural with an s. */
+function pluralOf(def) { return def.k === 'fam' ? 'product families' : 'SKUs'; }
 /* The sentence the product writes for a SKU condition, which is also the one
    the left column and the Preview read back. */
 /* ── The sentence, in their words ─────────────────────────────────────────
@@ -2799,6 +2828,17 @@ function startBar() {
      segment keeps its mode — the card sets it, nothing else reads it, so the
      default stands until the product decides otherwise. */
   document.getElementById('sbModeCard').hidden = V3;
+  /* ── Tab follows the eye ──────────────────────────────────────────────
+     The markup is side-then-main, which matches Proposed, where the segment
+     is on the left. Proposed B swaps the columns with CSS order, and the
+     keyboard kept the old sequence: the first stop on the card was "Reset
+     all" in the right-hand column, before the menu anyone starts from. The
+     node moves instead of the visual order. */
+  const sb2 = document.getElementById('sb2');
+  const side = sb2.querySelector('.sb2__side'), mainCol = document.getElementById('sbMain');
+  if (V3 && side.nextElementSibling === mainCol) sb2.appendChild(side);
+  if (!V3 && mainCol.nextElementSibling === side) sb2.insertBefore(side, mainCol);
+
 }
 /* One implementation, two doors: the inline tiles in Current and the library in
    Proposed both land here, so "a template replaces the whole definition, and
@@ -3660,7 +3700,11 @@ function chanTrigger(gi, sel) {
     : !over.length ? ''
     : textWidth(words) <= spare ? words
     : '+' + over.length;
+  /* The mark is the label by design — her call, and it holds on screen. It is
+     not a label for anyone who cannot see it, and `title` is not one either, so
+     the control carries its own name in words. */
   return `<button class="sb-chanbtn${sel.length ? ' is-set' : ''}" data-chanopen="${gi}"
+      aria-label="${esc(sel.length ? 'Orders on ' + sel.join(', ') : 'Orders on any channel')}"
       title="${esc(sel.length ? sel.join(', ') : 'Any channel')}"
       aria-expanded="${chanOpen === gi}" aria-controls="chanpop-${gi}">
       ${marks ? `<span class="sb-chan__marks">${marks}</span>` : ''}
@@ -3944,7 +3988,7 @@ function outlineItem(g, gi, c, ci) {
         ${/* One line. No dangling operator either — "Discount code is" with
              nothing after it is a sentence cut off mid-word, so an unfilled
              condition is just its name. */
-          unset ? '' : `<span class="sb2__op">${esc(condOp(def, c))}</span><span class="sb2__v">${esc(isPair(def) ? pairText(c) : String(c.v))}${ctlOf(def)[2] && ctlOf(def)[0] === 'num' ? ' ' + esc(ctlOf(def)[2]) : ''}</span>`}
+          unset ? '' : (op => `<span class="sb2__op">${esc(op.replace(/\s*\$$/, ''))}</span><span class="sb2__v">${op.trim().endsWith('$') ? '$' : ''}`)(condOp(def, c)) + `${esc(isPair(def) ? pairText(c) : String(c.v))}${ctlOf(def)[2] && ctlOf(def)[0] === 'num' ? ' ' + esc(ctlOf(def)[2]) : ''}</span>`}
       </button>
       <button class="sb2__x" data-x2="${gi}:${ci}" title="Remove ${esc(def.n)}" aria-label="Remove the ${esc(def.n)} condition">✕</button>
     </div>`;
@@ -4030,8 +4074,8 @@ function pillPop(it, where) {
     const kinds = ctlOf(def)[2];
     const k0 = c0 ? pairKind(c0) : popMode2;
     const amount = k0 === 'Amount';
-    const bad2 = badNum(popDraft);
-    return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
+    const bad2 = badNum(popDraft) || popError;
+    return `<div id="pop-${it.k}" class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
         ${head}
         <div class="sb2__pop__row">
           <div class="btn-group btn-group--primary btn-group--sm sb2__pop__seg" role="radiogroup" aria-label="Kind of discount">
@@ -4040,15 +4084,15 @@ function pillPop(it, where) {
           </div>
         </div>
         <div class="sb2__pop__row">
-          <label class="sb2__pop__op" for="popIn">${esc(arg)}${amount ? ' $' : ''}</label>
+          <label class="sb2__pop__op" for="popIn"><span class="seg-sr">${esc(def.n)} </span>${esc(arg)}${amount ? ' $' : ''}</label>
           <input class="form-input form-input-sm sb-in--num" id="popIn" data-popin="${it.k}" type="number"
-            min="0" max="1000000" step="1" placeholder="0" autocomplete="off"
+            min="0" max="${amount ? 1000000 : 100}" step="1" placeholder="0" autocomplete="off"
             value="${esc(popDraft != null ? popDraft : (cur == null ? '' : cur))}"
             ${bad2 ? 'aria-invalid="true" aria-describedby="popErr" style="border-color:var(--color-border-danger)"' : ''}>
           ${amount ? '' : '<span class="sb2__pop__op">%</span>'}
           <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">${where ? 'Update' : 'Add'}</button>
         </div>
-        ${bad2 ? '<span class="form-feedback-error" id="popErr">Enter a whole number between 0 and 1,000,000</span>' : ''}
+        ${bad2 ? `<span class="form-feedback-error" id="popErr">${esc(popError || (amount ? 'Enter a whole number between 0 and 1,000,000' : 'Enter a whole number between 0 and 100'))}</span>` : ''}
       </div>`;
   }
   if (kind === 'chips') {
@@ -4061,7 +4105,7 @@ function pillPop(it, where) {
     const picked = chipsOf(c0);
     const t = matchKind(c0);
     const list = SKU_CATALOG[it.k] || [];
-    return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--pick" role="dialog" aria-label="${esc(def.n)}">
+    return `<div id="pop-${it.k}" class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--pick" role="dialog" aria-label="${esc(def.n)}">
         ${head}
         <div class="sb2__pop__row">
           <label class="seg-sr" for="popMode">Filter type</label>
@@ -4069,15 +4113,25 @@ function pillPop(it, where) {
             ${MATCH_TYPES.map(([v, l]) => `<option value="${v}" ${t === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}
           </select>
         </div>
-        <div class="sb2__pop__row">
+        ${list.length ? `<div class="sb2__pop__row">
           <span class="form-search-wrap form-search-wrap--end sb2__pop__find">
-            <label class="seg-sr" for="popIn">Search ${esc(def.n)}s or products</label>
+            <label class="seg-sr" for="popIn">Search ${esc(pluralOf(def))} or products</label>
             <input class="form-input form-input-sm" id="popIn" data-popin="${it.k}" type="search"
-              autocomplete="off" placeholder="Search ${esc(def.n)}s or products"
+              autocomplete="off" placeholder="Search ${esc(pluralOf(def))} or products"
               value="${esc(popDraft || '')}">
             <span class="form-search-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
           </span>
-        </div>
+        </div>`
+        /* No catalogue for this filter yet: a search box over nothing is a dead
+           control, so the field takes values instead and says so. Product
+           family has a list in the product; it is not on the screen this was
+           read from, so it is not invented here. */
+        : `<div class="sb2__pop__row">
+          <label class="seg-sr" for="popIn">Add a ${esc(def.n.toLowerCase())}</label>
+          <input class="form-input form-input-sm" id="popIn" data-popin="${it.k}" type="text"
+            maxlength="40" autocomplete="off" placeholder="${esc(arg || '')}" value="${esc(popDraft || '')}">
+          <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">Add</button>
+        </div>`}
         ${list.length ? `<div class="sb2__pop__sug" role="group" aria-label="${esc(def.n)} catalogue">${
           list.map(([code, name]) => {
             const on = picked.indexOf(code) !== -1;
@@ -4091,18 +4145,18 @@ function pillPop(it, where) {
               </label>`;
           }).join('')
         }</div>
-        <p class="sb2__pop__src">${list.length} of the 123 SKUs, read from your own picker.</p>` : ''}
+        <p class="sb2__pop__src" id="popCount" role="status" aria-live="polite">${list.length} of 123 SKUs</p>` : ''}
         ${picked.length ? `<div class="sb2__pop__chips">${picked.map(v =>
           `<span class="iris-chip iris-chip--light">${esc(v)}<button type="button" data-popchipx="${esc(v)}" aria-label="Remove ${esc(v)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span>`).join('')}</div>` : ''}
         <div class="sb2__pop__foot">
           <button type="button" class="btn-link btn-link-medium sb2__pop__paste" data-poppaste="${it.k}">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h2.5A1.5 1.5 0 0 1 19 7v12a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V7a1.5 1.5 0 0 1 1.5-1.5H9"/></svg>Paste list</button>
-          <button type="button" class="btn btn-xs" data-popdone="1">Done</button>
+          <button type="button" class="btn btn-primary btn-xs" data-popdone="1">Done</button>
         </div>
       </div>`;
   }
   if (kind === 'select') {
-    return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop" role="dialog" aria-label="${esc(def.n)}">
+    return `<div id="pop-${it.k}" class="dropdown-menu dropdown-menu--absolute sb2__pop" role="dialog" aria-label="${esc(def.n)}">
         ${head}<ul class="sb2__pop__l" role="listbox" aria-label="${esc(def.n)}">${arg.map(o => {
           if (o && typeof o === 'object' && o.g) return `<li class="dropdown-label" role="presentation">${esc(o.g)}</li>`;
           const on = cur === o;
@@ -4112,8 +4166,8 @@ function pillPop(it, where) {
       </div>`;
   }
   const num = kind === 'num';
-  const bad = num && badNum(popDraft);
-  return `<div class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
+  const bad = (num && badNum(popDraft)) || popError;
+  return `<div id="pop-${it.k}" class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--in" role="dialog" aria-label="${esc(def.n)}">
       ${head}
       <div class="sb2__pop__row">
         <label class="sb2__pop__op" for="popIn">${esc(arg)}</label>
@@ -4124,7 +4178,7 @@ function pillPop(it, where) {
         ${num && unit ? `<span class="sb2__pop__op">${esc(unit)}</span>` : ''}
         <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">${where ? 'Update' : 'Add'}</button>
       </div>
-      ${bad ? '<span class="form-feedback-error" id="popErr">Enter a whole number between 0 and 1,000,000</span>' : ''}
+      ${bad ? `<span class="form-feedback-error" id="popErr">${esc(popError || 'Enter a whole number between 0 and 1,000,000')}</span>` : ''}
     </div>`;
 }
 let popDraft = null;   /* what is typed in the pill's field before it is added */
@@ -4133,6 +4187,11 @@ let popDraft = null;   /* what is typed in the pill's field before it is added *
 function popCommit(k, v, keepOpen) {
   const def = ALL.find(a => a.k === k);
   if (v === '' || v == null || (badNum(v) && isNumCtl(def))) return false;
+  /* The cap belongs to the unit, not to the field: 120 is a number and not a
+     percentage, and the input's own max only stops the spinner. */
+  const w1 = findCond(k);
+  const kind1 = isPair(def) ? (w1 ? pairKind(groups[w1.gi].conds[w1.ci]) : popMode2) : null;
+  if (kind1 === 'Percentage' && Number(v) > 100) { popError = 'A percentage cannot be over 100'; return false; }
   const w0 = findCond(k);
   const mode = isChips(def) ? (w0 ? condMode(groups[w0.gi].conds[w0.ci]) : popMode)
              : isPair(def)  ? (w0 ? pairKind(groups[w0.gi].conds[w0.ci]) : popMode2)
@@ -4151,7 +4210,7 @@ function popCommit(k, v, keepOpen) {
   return true;
 }
 function popClose(back) {
-  const k = pop; pop = null; popDraft = null;
+  const k = pop; pop = null; popDraft = null; popError = null;
   render();
   if (back && k) document.querySelector(`[data-pop="${k}"]`)?.focus();
 }
@@ -4191,7 +4250,7 @@ function pills() {
          new one and one already in the segment alike. */
       const open3 = V3 && pop === it.k;
       return `${V3 ? '<span class="sb2__pw">' : ''}<button class="dr-chip sb2__pill${used ? ' is-used' : ''}${na ? ' is-empty' : ''}${open3 ? ' is-open' : ''}"
-          ${V3 ? (na && !used ? '' : `data-pop="${it.k}" aria-haspopup="dialog" aria-expanded="${open3}"`)
+          ${V3 ? (na && !used ? '' : `data-pop="${it.k}" aria-haspopup="dialog" aria-expanded="${open3}"${open3 ? ` aria-controls="pop-${it.k}"` : ''}`)
           : used ? (filledUsed ? `data-focus="${where.gi}:${where.ci}"` : `data-unadd="${where.gi}:${where.ci}"`)
                  : na ? '' : `data-add2="${activeGroup}:${it.k}"`}
           aria-pressed="${!!used}"
@@ -4349,7 +4408,11 @@ function previewV2() {
      which is where it belongs: it qualifies the answer. */
   const body = rows.filter(r => !r.unset).map(r => {
     const def = ALL.find(a => a.k === r.c.k);
-    const label = esc(condText(r.c) || def.n);
+    /* A select-kind condition printed its value alone — "First-time
+       customers" — beside rows that printed filter, operator and value, so one
+       line in a stack of four was missing its subject. */
+    const raw = condText(r.c) || def.n;
+    const label = esc(ctlOf(def)[0] === 'select' ? `${def.n} is ${raw}` : raw);
     /* The condition and what it costs, on one line. The bar under each one was
        measured against itself rather than against the audience — the longest
        cost filled the track and the rest were drawn as a share of THAT — so at
@@ -4359,7 +4422,7 @@ function previewV2() {
     return `<div class="sb2__pv">
         <div class="sb2__pvt">${label}</div>
         <div class="sb2__pvn">${V3
-          ? (any ? `<b>${fmtN(r.left)}</b> in the union`
+          ? (any ? `<b>${fmtN(r.left)}</b> so far`
                  : `<b>${fmtN(r.left)}</b> left${r.fell ? ` · drops ${fmtN(r.fell)}` : ''}`)
           : `${any ? 'adds ' : 'costs '}${fmtN(r.delta)}`}</div>
       </div>`;
@@ -4492,7 +4555,10 @@ function render() {
   const unfilled = state.conds.some(c => {
     if (c.v === '' || c.v == null) return true;
     const d = ALL.find(a => a.k === c.k);
-    return !!(d && d.ctl[0] === 'num' && badNum(c.v));
+    /* ctl, not ctlOf, read the count control even where Proposed B draws the
+       code picker, so "BB_COC_S_1.0" counted as a bad number and a segment
+       with SKUs in it reported no definition at all. */
+    return !!(d && isNumCtl(d) && badNum(c.v));
   });
   const noDefinition = !state.conds.length || unfilled || n == null;
   const share = n == null ? 0 : n / BASE;
@@ -4622,9 +4688,16 @@ function render() {
   /* the reason for "invalid" has to be reachable, not just announced */
   nameEl.setAttribute('aria-describedby', nameClash ? 'sbWarnMsg0 sbNameHelp' : 'sbNameHelp');
   document.getElementById('sbDirty').textContent = (state.name || state.conds.length) ? 'Unsaved changes' : 'Not saved';
-  document.getElementById('sbLive').textContent = noDefinition
+  /* Written on every render, so ticking eight boxes announced the same
+     sentence eight times. It speaks only when it has something new to say —
+     and "no definition" was wrong wording for a definition whose estimate
+     simply has not resolved. */
+  const liveEl = document.getElementById('sbLive');
+  const liveMsg = noDefinition
     ? 'No estimate yet — this segment has no definition.'
+    : n == null ? 'No estimate for this definition yet.'
     : `Estimated audience ${fmtN(n)} customers.`;
+  if (liveEl.textContent !== liveMsg) liveEl.textContent = liveMsg;
 }
 
 /* Duplicate check — the reason this workspace grew six Californias and four tests.
@@ -4721,9 +4794,12 @@ function condText(c) {
   }
   if (def.ctl[0] !== 'num') return String(c.v);
   const [, prefix, suffix] = def.ctl;
-  return prefix === 'greater than $' ? `${def.n} greater than $${c.v}`
-       : prefix === 'greater than %' ? `${def.n} greater than ${c.v}%`
-       : `${prefix} ${c.v} ${suffix || ''}`.trim();
+  /* Grouped, like every other number on the page: "$ 999999" sat next to
+     "17,541" and read as a different kind of quantity. */
+  const v = isFinite(Number(c.v)) ? fmtN(Number(c.v)) : c.v;
+  return prefix === 'greater than $' ? `${def.n} greater than $${v}`
+       : prefix === 'greater than %' ? `${def.n} greater than ${v}%`
+       : `${prefix} ${v} ${suffix || ''}`.trim();
 }
 
 function describe() {
@@ -5030,7 +5106,13 @@ document.addEventListener('click', e => {
       return;
     }
     if (!popCommit(k, typed)) {
-      popDraft = inp ? inp.value : ''; render(); document.getElementById('popIn')?.focus();
+      /* An empty field took the press and did nothing: no value, no message,
+         no reason. Out-of-range already had an error; empty now uses it. */
+      popDraft = inp ? inp.value : '';
+      /* popCommit may already have said why (a percentage over 100); only the
+         empty case is this handler's to name. */
+      if (typed === '') popError = 'Enter a value first';
+      render(); document.getElementById('popIn')?.focus();
     }
     return;
   }
@@ -5085,10 +5167,12 @@ document.addEventListener('click', e => {
   const fc = e.target.closest('[data-focus]');
   if (fc) {
     const [gi, ci] = fc.dataset.focus.split(':').map(Number);
-    /* A chips filter has one editor and it lives at the pill: opening a second
-       one inside the row would be the same control in two places. */
+    /* One editor per condition. The pill's menu is it, for every filter: the
+       row used to open a second, bare editor inside itself for the filters
+       that had no picker, so the same condition had two different controls
+       depending on which half of the card you pressed. */
     const cdef = ALL.find(a => a.k === groups[gi].conds[ci].k);
-    if (V3 && (isChips(cdef) || isPair(cdef))) {
+    if (V3 && cdef) {
       pop = cdef.k; popDraft = null; focused = null;
       render();
       document.getElementById('popIn')?.focus();
@@ -5331,18 +5415,23 @@ document.addEventListener('input', e => {
      under the caret. It is read back when the menu redraws for an error. */
   if (e.target.id === 'popPaste') { pasteDraft = e.target.value; return; }
   if (e.target.id === 'popIn') {
-    popDraft = e.target.value;
+    popDraft = e.target.value; popError = null;
     /* Filtered in the DOM rather than by a re-render: rebuilding the menu on
        every keystroke would take the field out from under the caret. */
     const box = e.target.closest('.sb2__pop')?.querySelector('.sb2__pop__sug');
     if (box) {
       const q = popDraft.trim().toLowerCase();
       let seen = 0;
-      box.querySelectorAll('[data-popsugrow]').forEach(row => {
+      const all = box.querySelectorAll('[data-popsugrow]');
+      all.forEach(row => {
         const on = row.dataset.popsugrow.toLowerCase().indexOf(q) !== -1;
         row.hidden = !on; if (on) seen++;
       });
-      box.classList.toggle('is-empty', !seen);
+      const count = document.getElementById('popCount');
+      if (count) count.textContent = !q
+        ? `${all.length} of 123 SKUs`
+        : seen ? `${seen} of ${all.length} match “${popDraft.trim()}”`
+               : `Nothing matches “${popDraft.trim()}”`;
     }
     return;
   }
