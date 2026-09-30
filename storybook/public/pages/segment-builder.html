@@ -1018,37 +1018,29 @@
   /* ── Proposed B ────────────────────────────────────────────────────────
      The segment moves to the right: the columns swap, nothing inside them
      changes size. */
-  /* ── One column, filters then the segment ─────────────────────────────
-     Iris's own build puts the definition under the picker rather than beside
-     it, and it is the better order: the menu opens where the row will appear,
-     and the definition gets the card's full width instead of 300px. The two
-     columns are kept in Proposed, which is what that variant is for. */
-  .sb2.is-v3 { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .sb2.is-v3 .sb2__main { order: 1; padding-bottom: 0; }
-  .sb2.is-v3 .sb2__side { order: 2; margin-top: 22px; padding-top: 20px;
-                          border-top: 1px solid var(--color-border-light); }
-  /* The three settings of a definition on one line: the window, how the
-     conditions combine, and the channel they are counted on. */
-  .sb-v3 .sb2__gmeta { display: flex; flex-wrap: wrap; align-items: center;
-                       gap: 10px 20px; margin-bottom: 12px; padding: 10px 12px; }
-  .sb-v3 .sb2__uni { display: inline-flex; align-items: center; }
-  .sb-v3 .sb-uni--inline { margin: 0; }
-  .sb-v3 .sb-uni--inline .form-label { margin: 0 8px 0 0; }
-  .sb-v3 .sb-uni--inline .form-group { display: inline-flex; align-items: center; }
-  /* A line of text is not more readable for being 900px wide. The rows keep a
-     measure; the card around them does not need one. */
-  .sb-v3 .sb2__gb { max-width: 760px; }
-  .sb-v3 .sb2__item { max-width: 760px; }
+  /* ── Two columns: the menu, then the segment beside it ────────────────
+     Their own build stacks them, definition under the picker, and it was
+     tried here: at full width the rows stretch, the settings strip turns into
+     a wide band, and the segment stops being a column you can take in beside
+     the menu. Her call, on the built page: the two columns were tidier. */
+  .sb2.is-v3 { grid-template-columns: minmax(0, 1fr) 300px; gap: 32px; }
+  .sb2.is-v3 .sb2__side { order: 2; }
+  .sb2.is-v3 .sb2__main { order: 1; }
+  .sb-v3 .sb2__gmeta { padding: 12px 12px 10px; row-gap: 10px; }
   /* ── Narrow ───────────────────────────────────────────────────────────
      The segment column was a fixed 300px, so as the window came in the FILTER
      menu was the column that gave way: at 1100 it was 266px against the
      segment's 300, and the pills rewrapped from five rows to eight while the
      column they belong to was the narrower of the two. The segment column
      gives way first now, down to 250, and below 1024 the two stack. */
-  /* The settings wrap onto their own lines before they collide. */
-  @media (max-width: 780px) {
-    .sb-v3 .sb2__gmeta { gap: 10px 14px; }
-    .sb-v3 .sb2__uni { flex: 1 0 100%; }
+  /* Two columns inside the card need about 600px. Below that the filters take
+     the card's full width and the segment sits under them, which keeps the
+     pills at four rows instead of eight. */
+  @media (max-width: 1180px) {
+    .sb2.is-v3 { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .sb2.is-v3 .sb2__side { order: 1; margin-top: 18px; padding-top: 18px;
+                            border-top: 1px solid var(--color-border-default); }
+    .sb2.is-v3 .sb2__main { order: 0; }
   }
   /* "2/2" for as long as the segment exists: in this variant a condition cannot
      be created without a value, so the ratio has nothing to report. */
@@ -2873,7 +2865,7 @@ function startBar() {
   const slot = document.getElementById('sbUniSlot');
   const home = document.getElementById('sbUniHome');
   uniCard.classList.toggle('sb-uni--inline', CARD2);
-  if (CARD2 && !V3 && uniCard.parentNode !== slot) slot.appendChild(uniCard);
+  if (CARD2 && uniCard.parentNode !== slot) slot.appendChild(uniCard);
   if (!CARD2 && uniCard.parentNode !== home) home.appendChild(uniCard);
   document.getElementById('sbEstCard').hidden  = CARD2;
   /* Proposed B: Description and the refresh mode become the last two sections
@@ -3133,7 +3125,7 @@ function syncVariantBtns() {
     b.tabIndex = on ? 0 : -1;
   });
   document.getElementById('sbVerNote').textContent = V3
-    ? 'Pick a filter and give it a value right there. The segment builds up underneath.'
+    ? 'Pick a filter and give it a value right there. The segment builds up on the right.'
     : CARD2
     ? 'The definition is tied to a channel, and each filter says which channel it exists on.'
     : 'One flat list, one and/or for all of it.';
@@ -4087,11 +4079,6 @@ function outlineGroup(g, gi) {
      first column to its own label, so "any of" and "DTC" started 43px apart —
      two ragged left edges where the block should have one. */
   const meta = `<div class="sb2__gmeta">
-      ${/* Proposed B puts the window on the same line as the joiner and the
-           channel: three settings of one definition, read left to right. The
-           card itself is moved in here after the render, because it is
-           stateful and rebuilding it would lose a half-typed custom range. */
-        V3 ? '<span class="sb2__uni" id="sbUniHere"></span>' : ''}
       <label class="sb2__glab" for="gjoin-0">Conditions match</label>
       <select class="form-select sb-inline" id="gjoin-0" data-gjoin="0">
         ${JOINS.map(([v, l]) => `<option value="${v}" ${g.join === v ? 'selected' : ''}>${l}</option>`).join('')}
@@ -4558,16 +4545,7 @@ function drawCondsV2(steps) {
   syncFlat();
   activeGroup = 0;
   if (focused && (!groups[0] || !groups[0].conds[focused.ci])) focused = null;
-  /* The window control is stateful and lives inside the outline in this
-     variant, which is rewritten on every render: park it first, or the second
-     render deletes the node along with the HTML around it. */
-  const uniCardEl = document.getElementById('sbUniCard');
-  if (uniCardEl && document.getElementById('sbOutline').contains(uniCardEl)) {
-    document.getElementById('sbUniHome').appendChild(uniCardEl);
-  }
   document.getElementById('sbOutline').innerHTML = outlineGroup(groups[0], 0);
-  const uniHere = document.getElementById('sbUniHere');
-  if (uniHere && uniCardEl) uniHere.appendChild(uniCardEl);
   /* Their name for this column, verbatim: the product's picker is headed
      "ADD A FILTER". The left column is the definition and needs no title — the
      card it sits in is already called Conditions. */
