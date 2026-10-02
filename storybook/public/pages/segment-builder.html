@@ -1055,8 +1055,19 @@
      and a field sat 4px from its own border. */
   .sb2__pop { min-width: 216px; width: max-content; max-width: 320px; margin: 0;
               padding: 10px; border: 1px solid var(--color-border-light); overflow: visible; }
-  .sb2__pop__h { padding: 0 0 8px; font-size: var(--text-sm); line-height: 1.4;
+  .sb2__pop__h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+                 padding: 0 0 8px; font-size: var(--text-sm); line-height: 1.4;
                  font-weight: var(--font-semibold); color: var(--color-text-heading); }
+  /* Carbon's count instead of a hedge of tags: eight chips wrapped over three
+     rows said less than one number, and pushed the list out of the menu. */
+  .sb2__pop__count { font-size: var(--text-xs); font-weight: var(--font-medium);
+                     color: var(--btn-primary-bg, #42389d); white-space: nowrap; }
+  .sb2__pop__bar { display: flex; align-items: baseline; justify-content: space-between;
+                   gap: 10px; padding: 2px 0 6px; }
+  .sb2__pop__all { font-size: var(--text-xs); padding: 0; white-space: nowrap; }
+  /* A chosen row keeps the brand's soft ground as it rises to the top, so the
+     order change is visible rather than mysterious. */
+  .sb2__pick__row.is-picked { background: var(--dr-primary-soft, #f0effa); }
   .sb2__pop__l { list-style: none; margin: 0; padding: 0; }
   .sb2__pop .dropdown-item { padding: 9px 10px; font-size: var(--text-sm); border-radius: 6px; }
   .sb2__pop .dropdown-item:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
@@ -1105,7 +1116,7 @@
   .sb2__pop__seg { width: 100%; }
   .sb2__pop__seg .btn { flex: 1; }
   .sb2__pop__paste { display: inline-flex; align-items: center; gap: 5px; font-size: var(--text-xs); padding: 0; }
-  .sb2__pop__src { margin: 8px 0 0; padding: 0; font-size: var(--text-xs);
+  .sb2__pop__src { margin: 0; padding: 0; font-size: var(--text-xs);
                    line-height: 1.4; color: var(--seg-muted); }
   .sb2__pop__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px;
                     margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-border-light); }
@@ -1161,6 +1172,18 @@
   .sb-v3 .sb2__gb { padding: 0 6px 6px; }
   .sb-v3 .sb2__mthead { margin-bottom: 14px; }
   .sb-v3 .sb2__x { width: 28px; height: 28px; }
+  /* ── The last of the measured drift, in this variant only ─────────────
+     10px type in the rail and on the pills' marks, radii of 9, 10 and 5 that
+     belong to no step, and three left edges inside one 340px column. Each is
+     small; together they are why the panel reads as approximately aligned. */
+  .sb-v3 .sb-new, .sb-v3 .sb-scope__t, .sb-v3 .sb-mini dt { font-size: var(--text-xs); }
+  .sb-v3 .sb-new, .sb-v3 .sb-scope { border-radius: 999px; }
+  .sb-v3 .sb2__side { border-radius: 12px; }
+  .sb-v3 .sb-sample { padding: 12px 16px 16px; }
+  .sb-v3 .sb-mini > div { padding: 12px 16px; }
+  .sb-v3 .sb2__pvlist { padding-top: 12px; }
+  .sb-v3 .sb2__pg + .sb2__pg { margin-top: 12px; }
+  .sb-v3 .sb2__pl { gap: 8px; }
   /* ── The funnel rows ──────────────────────────────────────────────────
      Name, bar, then what is left and what fell out on one line. The bar is a
      share of the starting set, which is what makes four steps comparable. */
@@ -4154,24 +4177,52 @@ function pillPop(it, where) {
       </div>`;
   }
   if (kind === 'chips') {
-    /* ── The picker, their capability in a menu ─────────────────────────
-       Filter type, a search over code and product name, the catalogue with
-       both lines readable, what is chosen as chips, and the paste their own
-       build offers. Theirs puts this in two 800px boxes under the filter
-       list, one of them empty until something is picked; this is the same
-       thing where the filter was pressed. */
+    /* ── The picker ───────────────────────────────────────────────────────
+       Built to what the research says rather than to what their build drew.
+       Carbon's filterable multiselect: the chosen options rise to the top of
+       the menu, the field carries a count rather than a hedge of tags, and the
+       menu does not close as you pick. NN/g's rule for more than fifteen
+       options: keep them visible, do not make people scroll to find one, so
+       the search comes first. Smashing's threshold of seven for Select all and
+       Clear, applied to what the search has narrowed to rather than to all
+       123, because selecting a whole catalogue is not a thing anyone wants.
+       Amplitude's paste-and-select-all is the only mechanic with precedent for
+       thousands, and it is the Paste list button below.
+
+       At this size a menu is the right container. At twenty thousand it is
+       not: NN/g, Klaviyo's own 1,000-value ceiling and Shopify's resource
+       picker all point at a modal with facets, which is written up for the
+       build rather than drawn here. */
     const picked = chipsOf(c0);
     const t = matchKind(c0);
-    const list = SKU_CATALOG[it.k] || [];
+    const all = SKU_CATALOG[it.k] || [];
+    /* Chosen first, in the order they were chosen, then the rest. */
+    const list = all.slice().sort((a, b) => {
+      const ia = picked.indexOf(a[0]), ib = picked.indexOf(b[0]);
+      if (ia === -1 && ib === -1) return 0;
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+    const q = (popDraft || '').trim().toLowerCase();
+    const matches = q ? list.filter(([c, n]) => (c + ' ' + n).toLowerCase().indexOf(q) !== -1) : list;
+    /* Seven is the threshold the guidance gives for offering Select all on a
+       list. It is the wrong number for a SEARCH result: finding five and
+       taking all five is the whole point of having typed, so a narrowed list
+       offers it from two. */
+    const bulk = q ? matches.length >= 2 : matches.length >= 7;
+    const allPicked = matches.length && matches.every(([c]) => picked.indexOf(c) !== -1);
     return `<div id="pop-${it.k}" class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--pick" role="dialog" aria-label="${esc(def.n)}">
-        ${head}
+        <div class="sb2__pop__h">${esc(def.n)}${picked.length ? `<span class="sb2__pop__count">${picked.length} selected</span>` : ''}</div>
+        ${/* The mode decides what every row below it means, so it is read
+             first even though the search is what gets used most. */''}
         <div class="sb2__pop__row">
           <label class="seg-sr" for="popMode">Filter type</label>
           <select class="form-select form-input-sm sb2__pop__wide" id="popMode" data-popmode="${it.k}">
             ${MATCH_TYPES.map(([v, l]) => `<option value="${v}" ${t === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}
           </select>
         </div>
-        ${list.length ? `<div class="sb2__pop__row">
+        ${all.length ? `<div class="sb2__pop__row">
           <span class="form-search-wrap form-search-wrap--end sb2__pop__find">
             <label class="seg-sr" for="popIn">Search ${esc(pluralOf(def))} or products</label>
             <input class="form-input form-input-sm" id="popIn" data-popin="${it.k}" type="search"
@@ -4181,19 +4232,26 @@ function pillPop(it, where) {
           </span>
         </div>`
         /* No catalogue for this filter yet: a search box over nothing is a dead
-           control, so the field takes values instead and says so. Product
-           family has a list in the product; it is not on the screen this was
-           read from, so it is not invented here. */
+           control, so the field takes values instead and says so. */
         : `<div class="sb2__pop__row">
           <label class="seg-sr" for="popIn">Add a ${esc(def.n.toLowerCase())}</label>
           <input class="form-input form-input-sm" id="popIn" data-popin="${it.k}" type="text"
             maxlength="40" autocomplete="off" placeholder="${esc(arg || '')}" value="${esc(popDraft || '')}">
           <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">Add</button>
         </div>`}
-        ${list.length ? `<div class="sb2__pop__sug" role="group" aria-label="${esc(def.n)} catalogue">${
+        ${all.length ? `<div class="sb2__pop__bar">
+          <span class="sb2__pop__src" id="popCount" role="status" aria-live="polite">${
+            q ? `${matches.length} of ${all.length} match “${esc(popDraft.trim())}”` : `${picked.length} of ${all.length} selected`}</span>
+          ${/* Always in the markup, hidden under seven, so the search handler
+                has something to update instead of something to recreate. */''}
+          <button type="button" class="btn-link btn-link-medium sb2__pop__all" data-popall="${allPicked ? 'off' : 'on'}"${bulk ? '' : ' hidden'}>${
+            allPicked ? 'Clear these' : (q ? `Select these ${matches.length}` : `Select all ${all.length}`)}</button>
+        </div>
+        <div class="sb2__pop__sug" role="group" aria-label="${esc(def.n)} catalogue">${
           list.map(([code, name]) => {
             const on = picked.indexOf(code) !== -1;
-            return `<label class="iris-control sb2__pick__row" data-popsugrow="${esc(code)} ${esc(name)}">
+            const hit = !q || (code + ' ' + name).toLowerCase().indexOf(q) !== -1;
+            return `<label class="iris-control sb2__pick__row${on ? ' is-picked' : ''}" data-popsugrow="${esc(code)} ${esc(name)}"${hit ? '' : ' hidden'}>
                 <input type="checkbox" class="seg-sr" data-popsug="${esc(code)}"${on ? ' checked' : ''}>
                 <span class="iris-checkbox${on ? ' iris-checkbox--checked' : ''}" aria-hidden="true"></span>
                 <span class="iris-control__body">
@@ -4202,9 +4260,8 @@ function pillPop(it, where) {
                 </span>
               </label>`;
           }).join('')
-        }</div>
-        <p class="sb2__pop__src" id="popCount" role="status" aria-live="polite">${list.length} of 123 SKUs</p>` : ''}
-        ${picked.length ? `<div class="sb2__pop__chips">${picked.map(v =>
+        }</div>` : ''}
+        ${!all.length && picked.length ? `<div class="sb2__pop__chips">${picked.map(v =>
           `<span class="iris-chip iris-chip--light">${esc(v)}<button type="button" data-popchipx="${esc(v)}" aria-label="Remove ${esc(v)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span>`).join('')}</div>` : ''}
         <div class="sb2__pop__foot">
           <button type="button" class="btn-link btn-link-medium sb2__pop__paste" data-poppaste="${it.k}">
@@ -5127,6 +5184,23 @@ document.addEventListener('click', e => {
   /* Proposed B: the pill's own value. */
   const pv = e.target.closest('[data-popv]');
   if (pv && pop) { popCommit(pop, pv.dataset.popv); return; }
+  const pa = e.target.closest('[data-popall]');
+  if (pa && pop) {
+    /* Applies to what is on screen, not to the catalogue: "select all 123" is
+       an answer to a question nobody asked, while "select these 9" is the
+       whole point of having searched. */
+    const on = pa.dataset.popall === 'on';
+    const shown = [...document.querySelectorAll('.sb2__pop__sug [data-popsugrow]')]
+      .filter(r => !r.hidden).map(r => r.querySelector('[data-popsug]').dataset.popsug);
+    const w = findCond(pop);
+    const have = chipsOf(w && groups[w.gi].conds[w.ci]);
+    const next = on ? have.concat(shown.filter(v => have.indexOf(v) === -1))
+                    : have.filter(v => shown.indexOf(v) === -1);
+    if (next.length) popCommit(pop, next.join(', '), true);
+    else commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); syncFlat(); });
+    document.querySelector('[data-popall]')?.focus();
+    return;
+  }
   const px = e.target.closest('[data-popchipx]');
   if (px && pop) {
     const gone = px.dataset.popchipx;
@@ -5517,10 +5591,21 @@ document.addEventListener('input', e => {
         row.hidden = !on; if (on) seen++;
       });
       const count = document.getElementById('popCount');
+      const total = all.length;
+      const chosen = box.querySelectorAll('[data-popsug]:checked').length;
       if (count) count.textContent = !q
-        ? `${all.length} of 123 SKUs`
-        : seen ? `${seen} of ${all.length} match “${popDraft.trim()}”`
+        ? `${chosen} of ${total} selected`
+        : seen ? `${seen} of ${total} match “${popDraft.trim()}”`
                : `Nothing matches “${popDraft.trim()}”`;
+      /* The bulk control follows the search: it offers what is on screen. */
+      const bulkBtn = document.querySelector('[data-popall]');
+      if (bulkBtn) {
+        const shown = [...box.querySelectorAll('[data-popsugrow]')].filter(r => !r.hidden);
+        const every = shown.length && shown.every(r => r.querySelector('[data-popsug]').checked);
+        bulkBtn.hidden = q ? shown.length < 2 : shown.length < 7;
+        bulkBtn.dataset.popall = every ? 'off' : 'on';
+        bulkBtn.textContent = every ? 'Clear these' : (q ? `Select these ${shown.length}` : `Select all ${total}`);
+      }
     }
     return;
   }
