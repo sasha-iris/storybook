@@ -18,7 +18,7 @@ already gone wrong once:
   3. The shared stylesheets are cache-busted with `?v=N`. Change the CSS
      without changing N and the browser keeps serving the old file.
 
-Every page is published twice: to `pages/`, which the portfolio links, and to
+Every page is published twice: to `pages/` and to
 the site root, where the URLs the client already holds still point.
 """
 
@@ -98,7 +98,6 @@ def main() -> int:
     print('\nbase tags left :', bad_base or 'none')
     print('client name left:', bad_name or 'none')
     print('\nnow run:  cd storybook && npm run build-storybook')
-    print('then re-shoot the case screenshots:  python3 scripts/shoot-portfolio.py')
     return 1 if (bad_base or bad_name) else 0
 
 
