@@ -2761,7 +2761,16 @@ function popSelOf(k) {
 function savedSegments() {
   return SEGMENTS.filter(s => s.c != null && s.c > 0 && (!EDIT || s.id !== EDIT.id))
     .sort((a, b) => b.c - a.c)
-    .map(s => [s.n, `${fmtN(s.c)} customers · ${Math.round((s.c / BASE) * 100)}% of base`]);
+    .map(s => {
+      const pct = Math.round((s.c / BASE) * 100);
+      /* Five of their segments return the whole customer base, which the list
+         page already flags. Picked here without a word, one of them would read
+         as a filter that drops nobody, and the counter would look broken
+         rather than the data. */
+      return [s.n, pct >= 95
+        ? `${fmtN(s.c)} customers · every customer matches`
+        : `${fmtN(s.c)} customers · ${pct}% of base`];
+    });
 }
 function catalogueOf(k) { return k === 'seg' ? savedSegments() : (SKU_CATALOG[k] || []); }
 const SKU_CATALOG = {
@@ -3224,11 +3233,24 @@ function setVariant(ver) {
      So a filter whose control changes shape keeps its place and drops its
      value, and the switch says which ones. The same rule both ways. */
   if ((ver !== '1' && ver !== '2') !== V3) {
-    const hit = [];
-    groups.forEach(g => g.conds.forEach(c => {
-      const d = ALL.find(a => a.k === c.k);
-      if (d && d.ctl3 && hasValue(c)) { hit.push(d.n); c.v = ''; }
-    }));
+    const hit = [], gone = [];
+    groups.forEach(g => {
+      /* A filter that only this proposal has cannot sit in a card that does
+         not offer it: the row would have no pill to reopen it and no editor
+         that fits. It leaves with the card, and the switch says so. */
+      for (let i = g.conds.length - 1; i >= 0; i--) {
+        const d = ALL.find(a => a.k === g.conds[i].k);
+        if (d && d.v3only && (ver === '1' || ver === '2')) { gone.push(d.n); g.conds.splice(i, 1); }
+      }
+      g.conds.forEach(c => {
+        const d = ALL.find(a => a.k === c.k);
+        if (d && d.ctl3 && hasValue(c)) { hit.push(d.n); c.v = ''; }
+      });
+    });
+    if (gone.length) {
+      syncFlat();
+      toast('Not on this card', `${gone.join(' and ')} ${gone.length > 1 ? 'are' : 'is'} only in Proposed B and C. The condition${gone.length > 1 ? 's were' : ' was'} removed; switching back does not bring ${gone.length > 1 ? 'them' : 'it'} back.`);
+    }
     if (hit.length) {
       syncFlat();
       const names = hit.length > 1 ? hit.slice(0, -1).join(', ') + ' and ' + hit[hit.length - 1] : hit[0];
