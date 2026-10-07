@@ -1090,7 +1090,36 @@
      scrolling list 200px high: the code on the first line, the product on the
      second, both in full. Theirs truncates the product name mid-word in both
      columns, so two SKUs of the same product are the same row twice. */
-  .sb2__pop--pick { width: 320px; max-width: 320px; }
+  /* ── Two panes ────────────────────────────────────────────────────────
+     The catalogue on the left, what is chosen on the right, which is the one
+     thing their own build gets right and a one-pane menu cannot: three ticks
+     scattered down a scrolling list is not a selection anyone can read back.
+     Wider than the column it hangs from, narrower than the card. */
+  .sb2__pop--pick { width: 560px; max-width: 560px; }
+  .sb2__pop__panes { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  .sb2__pop__pane { min-width: 0; }
+  .sb2__pop__pane--sel { border-left: 1px solid var(--color-border-light); padding-left: 14px; }
+  .sb2__pop__sel { max-height: 320px; overflow: auto; }
+  .sb2__sel__row { display: flex; align-items: flex-start; gap: 8px;
+                   padding: 8px; border-radius: 6px; }
+  .sb2__sel__row:hover { background: var(--color-bg-tertiary); }
+  .sb2__sel__t { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .sb2__sel__c { font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-text-heading); }
+  .sb2__sel__n { font-size: var(--text-xs); color: var(--seg-muted);
+                 display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sb2__sel__x { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center;
+                 justify-content: center; border: 0; background: none; border-radius: 6px;
+                 color: var(--color-text-secondary); cursor: pointer; }
+  .sb2__sel__x:hover { color: var(--color-text-fg-danger); background: var(--color-bg-tertiary); }
+  .sb2__sel__x:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+  .sb2__pop__none { margin: 8px 8px 0; font-size: var(--text-xs); line-height: 1.5; color: var(--seg-muted); }
+  @media (max-width: 900px) {
+    .sb2__pop--pick { width: 340px; max-width: 340px; }
+    .sb2__pop__panes { grid-template-columns: 1fr; }
+    .sb2__pop__pane--sel { border-left: 0; padding-left: 0; margin-top: 10px;
+                           border-top: 1px solid var(--color-border-light); padding-top: 10px; }
+    .sb2__pop__sel { max-height: 150px; }
+  }
   /* On a narrow column the menu is capped to the column in script, because a
      percentage here measures the pill it hangs from, not the column. */
   .sb2__pop__wide { width: 100%; }
@@ -4208,14 +4237,12 @@ function pillPop(it, where) {
     const picked = popSelOf(it.k);
     const t = matchKind(c0);
     const all = SKU_CATALOG[it.k] || [];
-    /* Chosen first, in the order they were chosen, then the rest. */
-    const list = all.slice().sort((a, b) => {
-      const ia = picked.indexOf(a[0]), ib = picked.indexOf(b[0]);
-      if (ia === -1 && ib === -1) return 0;
-      if (ia === -1) return 1;
-      if (ib === -1) return -1;
-      return ia - ib;
-    });
+    /* ── The catalogue does not reorder itself ────────────────────────────
+       Floating the chosen to the top is Carbon's answer for a one-pane menu.
+       With a pane of its own for what is chosen, the reordering only moves
+       rows away from under the reader's hand, so the list keeps the
+       catalogue's order and the right-hand pane carries the selection. */
+    const list = all;
     const q = (popDraft || '').trim().toLowerCase();
     const matches = q ? list.filter(([c, n]) => (c + ' ' + n).toLowerCase().indexOf(q) !== -1) : list;
     /* Seven is the threshold the guidance gives for offering Select all on a
@@ -4251,7 +4278,9 @@ function pillPop(it, where) {
             maxlength="40" autocomplete="off" placeholder="${esc(arg || '')}" value="${esc(popDraft || '')}">
           <button type="button" class="btn btn-primary btn-xs sb2__pop__go" data-popgo="${it.k}">Add</button>
         </div>`}
-        ${all.length ? `<div class="sb2__pop__bar">
+        ${all.length ? `<div class="sb2__pop__panes">
+        <div class="sb2__pop__pane">
+        <div class="sb2__pop__bar">
           <span class="sb2__pop__src" id="popCount" role="status" aria-live="polite">${
             q ? `${matches.length} of ${all.length} match “${esc(popDraft.trim())}”` : `${picked.length} of ${all.length} selected`}</span>
           ${/* Always in the markup, hidden under seven, so the search handler
@@ -4272,7 +4301,33 @@ function pillPop(it, where) {
                 </span>
               </label>`;
           }).join('')
-        }</div>` : ''}
+        }</div>
+        </div>
+        ${/* ── The pane for what is chosen ─────────────────────────────────
+             Three ticks scattered down a scrolling list is not a selection
+             anyone can read back, which is what their own build gets right
+             with its Selected column. Here it is the right half of the menu:
+             what is in, in the order it was chosen, each with its own remove,
+             and a Clear that empties the pane rather than the catalogue. */''}
+        <div class="sb2__pop__pane sb2__pop__pane--sel">
+          <div class="sb2__pop__bar">
+            <span class="sb2__pop__src">Selected<span class="sb2__pop__selN"${picked.length ? '' : ' hidden'}> ${picked.length}</span></span>
+            <button type="button" class="btn-link btn-link-medium sb2__pop__all" data-popclear="${it.k}"${picked.length ? '' : ' hidden'}>Clear</button>
+          </div>
+          <div class="sb2__pop__sel" id="popSelPane">${picked.length
+            ? picked.map(code => {
+                const row = all.find(x => x[0] === code);
+                return `<div class="sb2__sel__row" data-popselrow="${esc(code)}">
+                    <span class="sb2__sel__t">
+                      <span class="sb2__sel__c">${esc(code)}</span>
+                      ${row ? `<span class="sb2__sel__n">${esc(row[1])}</span>` : ''}
+                    </span>
+                    <button type="button" class="sb2__sel__x" data-popchipx="${esc(code)}" aria-label="Remove ${esc(code)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+                  </div>`;
+              }).join('')
+            : `<p class="sb2__pop__none">Nothing chosen yet. Tick what this filter should match.</p>`}</div>
+        </div>
+        </div>` : ''}
         ${!all.length && picked.length ? `<div class="sb2__pop__chips">${picked.map(v =>
           `<span class="iris-chip iris-chip--light">${esc(v)}<button type="button" data-popchipx="${esc(v)}" aria-label="Remove ${esc(v)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span>`).join('')}</div>` : ''}
         <div class="sb2__pop__foot">
@@ -4359,8 +4414,28 @@ function popPaint() {
     bulk.dataset.popall = every ? 'off' : 'on';
     bulk.textContent = every ? 'Clear these' : (q ? `Select these ${shown.length}` : `Select all ${all}`);
   }
-  const apply = box.querySelector('[data-popapply]');
-  if (apply) apply.textContent = 'Apply';
+  /* The chosen pane is rebuilt here rather than by a render, so the catalogue
+     beside it never moves. */
+  const pane = box.querySelector('#popSelPane');
+  if (pane) {
+    const cat = SKU_CATALOG[pop] || [];
+    pane.innerHTML = sel.length
+      ? sel.map(code => {
+          const row = cat.find(x => x[0] === code);
+          return `<div class="sb2__sel__row" data-popselrow="${esc(code)}">
+              <span class="sb2__sel__t">
+                <span class="sb2__sel__c">${esc(code)}</span>
+                ${row ? `<span class="sb2__sel__n">${esc(row[1])}</span>` : ''}
+              </span>
+              <button type="button" class="sb2__sel__x" data-popchipx="${esc(code)}" aria-label="Remove ${esc(code)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+            </div>`;
+        }).join('')
+      : '<p class="sb2__pop__none">Nothing chosen yet. Tick what this filter should match.</p>';
+    const selN = box.querySelector('.sb2__pop__selN');
+    if (selN) { selN.textContent = ` ${sel.length}`; selN.hidden = !sel.length; }
+    const clr = box.querySelector('[data-popclear]');
+    if (clr) clr.hidden = !sel.length;
+  }
 }
 function popClose(back) {
   const k = pop; pop = null; popDraft = null; popError = null; popSel = null;
@@ -5244,17 +5319,31 @@ document.addEventListener('click', e => {
     pa.focus();
     return;
   }
+  const pc = e.target.closest('[data-popclear]');
+  if (pc && pop) {
+    popSel = [];
+    document.querySelectorAll('.sb2__pop__sug [data-popsug]').forEach(b => {
+      b.checked = false;
+      b.closest('.sb2__pick__row')?.classList.remove('is-picked');
+      b.parentNode.querySelector('.iris-checkbox')?.classList.remove('iris-checkbox--checked');
+    });
+    popPaint();
+    document.getElementById('popIn')?.focus();
+    return;
+  }
   const px = e.target.closest('[data-popchipx]');
   if (px && pop) {
     const gone = px.dataset.popchipx;
-    const w = findCond(pop);
-    const left = chipsOf(w && groups[w.gi].conds[w.ci]).filter(v => v !== gone);
-    if (left.length) popCommit(pop, left.join(', '), true);
-    /* The last chip out is the filter out: an "is one of" with nothing in it
-       filters nobody, and leaving the empty row behind was the thing this
-       variant took out. */
-    else commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); popDraft = null; syncFlat(); });
-    document.getElementById('popIn')?.focus();
+    popSel = popSelOf(pop).filter(v => v !== gone);
+    /* Both halves of the menu answer to the same draft: the row leaves the
+       chosen pane and its tick leaves the catalogue. */
+    const box = document.querySelector(`[data-popsug="${gone.replace(/"/g, '\\"')}"]`);
+    if (box) {
+      box.checked = false;
+      box.closest('.sb2__pick__row')?.classList.remove('is-picked');
+      box.parentNode.querySelector('.iris-checkbox')?.classList.remove('iris-checkbox--checked');
+    }
+    popPaint();
     return;
   }
   /* Their own control for this: a two-button group, not a menu. */
