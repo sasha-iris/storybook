@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./iris-tokens.css">
   <link rel="stylesheet" href="./iris-components.css">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="pnl-v2-views.css?v=10">
   <!-- pnl-* prototype layer — same approved deviation as fad-* (2026-07-08): only what the
        library has no pattern for — the dense two-line financial grid, the split detail panel,
        the variance popover and the recalc overlay. Colors reuse the library's own values
@@ -27,7 +28,7 @@
     .pnl-toolbar .btn-link:hover { color: var(--color-text-primary); }
 
     /* ── Content ── */
-    .pnl-content { padding: 20px 24px 80px; display: flex; flex-direction: column; gap: 14px; }
+    .pnl-content { padding: 20px 24px 96px; display: flex; flex-direction: column; gap: 16px; }
     .pnl-h1 { margin: 0; font-size: 24px; font-weight: 700; color: var(--color-text-heading); }
     .pnl-sub { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
     .pnl-caption { font-size: 12px; color: var(--color-text-secondary); display: inline-flex; align-items: center; gap: 6px; }
@@ -49,7 +50,7 @@
        control — a soft container with a brand-filled active segment — so the accounting
        view reads as a deliberate mode switch, not three flat outline buttons. Page-local
        so the shared library .btn-group stays as the Storybook canon defines it. */
-    #viewGroup { display: inline-flex; gap: 2px; padding: 3px; background: #f1eefb;
+    #viewGroup { display: inline-flex; gap: 2px; padding: 2px; background: #f1eefb;
       border-radius: 9px; box-shadow: inset 0 0 0 1px rgba(66,56,157,.14); }
     #viewGroup .btn { position: relative; border: none !important; background: transparent;
       /* #4b5563 (not the default secondary #6b7280) so inactive text clears WCAG AA on the
@@ -239,7 +240,7 @@
       /* Was bottom-left: sat directly over the real sidebar's user-profile name in
          every screenshot (review-ux 2026-08-18). Bottom-right is clear of production
          chrome. */
-      position: fixed; right: 16px; bottom: 16px; z-index: 60;
+      position: fixed; right: 24px; bottom: 16px; z-index: 60;
       background: #fff; border: 1px dashed #b4a9f7; border-radius: 10px; padding: 10px 12px;
       box-shadow: 0 6px 20px rgba(17,25,40,.08); display: flex; flex-direction: column; gap: 6px;
     }
@@ -429,21 +430,33 @@
       </div>
 
       <!-- Controls row -->
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div class="btn-group" role="group" aria-label="Time granularity" id="granGroup">
-          <button type="button" class="btn btn-md" data-gran="daily" aria-pressed="false">Daily</button>
-          <button type="button" class="btn btn-md" data-gran="weekly" aria-pressed="false">Weekly</button>
-          <button type="button" class="btn btn-md active" data-gran="monthly" aria-pressed="true">Monthly</button>
-          <button type="button" class="btn btn-md" data-gran="quarterly" aria-pressed="false">Quarterly</button>
+      <div id="pnlToolbar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div class="pnl-inline-select" id="calMetricWrap" hidden>
+          <label class="form-label" for="calMetric">Line</label>
+          <select class="form-select form-input-sm" id="calMetric">
+            <option value="ebitda">EBITDA</option>
+            <option value="grossProfit">Gross Profit</option>
+            <option value="netSales">Net Sales</option>
+          </select>
+        </div>
+        <div class="pnl-inline-select" id="skPeriodWrap" hidden>
+          <label class="form-label" for="skPeriod">Period</label>
+          <select class="form-select form-input-sm" id="skPeriod"></select>
+        </div>
+        <div class="btn-group btn-group--sm" role="group" aria-label="Time granularity" id="granGroup">
+          <button type="button" class="btn" data-gran="daily" aria-pressed="false">Daily</button>
+          <button type="button" class="btn" data-gran="weekly" aria-pressed="false">Weekly</button>
+          <button type="button" class="btn active" data-gran="monthly" aria-pressed="true">Monthly</button>
+          <button type="button" class="btn" data-gran="quarterly" aria-pressed="false">Quarterly</button>
         </div>
 
         <!-- Accounting-view selector. The product owner asked for a description so the reader knows exactly what they are looking at. Each option carries its own (i)
              icon INSIDE the selector — the description reveals on hover/focus, so you
              learn what a view is while choosing it, no separate icon to hunt for. -->
-        <div class="btn-group" role="group" aria-label="Accounting view" id="viewGroup">
-          <button type="button" class="btn btn-md active" data-view="operating" aria-pressed="true" aria-describedby="viewTip-operating">Operating P&amp;L<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-operating" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Operating P&amp;L — sales from commerce systems (Amazon, Shopify), order-date basis.</span></button>
-          <button type="button" class="btn btn-md" data-view="accrual" aria-pressed="false" aria-describedby="viewTip-accrual">Accrual<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-accrual" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Accrual P&amp;L — accounting records from QuickBooks, posting-date basis with recognition rules. May differ from Operating.</span></button>
-          <button type="button" class="btn btn-md" data-view="cash" aria-pressed="false" aria-describedby="viewTip-cash">Cash<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-cash" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Cash — receipts and payments on settlement date. Excludes receivables, payables, and accruals.</span></button>
+        <div class="btn-group btn-group--sm" role="group" aria-label="Accounting view" id="viewGroup">
+          <button type="button" class="btn active" data-view="operating" aria-pressed="true" aria-describedby="viewTip-operating">Operating P&amp;L<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-operating" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Operating P&amp;L — sales from commerce systems (Amazon, Shopify), order-date basis.</span></button>
+          <button type="button" class="btn" data-view="accrual" aria-pressed="false" aria-describedby="viewTip-accrual">Accrual<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-accrual" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Accrual P&amp;L — accounting records from QuickBooks, posting-date basis with recognition rules. May differ from Operating.</span></button>
+          <button type="button" class="btn" data-view="cash" aria-pressed="false" aria-describedby="viewTip-cash">Cash<svg class="pnl-view-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg><span class="tooltip-bubble tooltip-bottom" id="viewTip-cash" role="tooltip" style="width:250px;white-space:normal;text-align:left;">Cash — receipts and payments on settlement date. Excludes receivables, payables, and accruals.</span></button>
         </div>
 
         <!-- Date range — library .iris-datepicker-input trigger + .iris-cal--range calendar -->
@@ -460,7 +473,7 @@
 
         <!-- Comparison baseline (state 1, treatment A — recommended) -->
         <div data-menu-wrap style="position:relative;" id="compareWrap">
-          <button type="button" class="btn btn-light btn-md" data-menu-toggle aria-haspopup="menu" aria-expanded="false" id="compareBtn">
+          <button type="button" class="btn btn-light btn-sm" data-menu-toggle aria-haspopup="menu" aria-expanded="false" id="compareBtn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
             <span id="compareLabel">Compare to: Budget</span>
             <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
@@ -474,6 +487,14 @@
             <button type="button" class="dropdown-item" data-compare="forecast"><span class="dropdown-item__text"><b>Forecast</b><br><small style="color:var(--color-text-secondary);">The active forecast model (see Forecast control).</small></span></button>
             <button type="button" class="dropdown-item" data-compare="none"><span class="dropdown-item__text"><b>None</b><br><small style="color:var(--color-text-secondary);">Hide variance percentages.</small></span></button>
           </div>
+        </div>
+        <div style="flex:1;min-width:0;"></div>
+        <!-- Display: three readings of the same P&L. The table stays the source of
+             truth (and the accessible twin of both charts). -->
+        <div class="btn-group btn-group--primary btn-group--sm" role="group" aria-label="Display" id="displayGroup">
+          <button type="button" class="btn tooltip-wrap active" data-display="table" aria-pressed="true" aria-label="Table view"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5"/></svg><span class="tooltip-bubble tooltip-bottom" aria-hidden="true">Table</span></button>
+          <button type="button" class="btn tooltip-wrap" data-display="calendar" aria-pressed="false" aria-label="Calendar view"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"/></svg><span class="tooltip-bubble tooltip-bottom" aria-hidden="true">Calendar</span></button>
+          <button type="button" class="btn tooltip-wrap" data-display="sankey" aria-pressed="false" aria-label="Sankey view"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h3c6 0 6 6 12 6h3M3 6v0M6 6c6 0 6 12 12 12h3M3 12h2"/></svg><span class="tooltip-bubble tooltip-bottom" aria-hidden="true">Sankey: money flow</span></button>
         </div>
       </div>
 
@@ -490,11 +511,11 @@
         </button>
         <span id="filterChips" style="display:inline-flex;gap:6px;align-items:center;"></span>
         <div style="flex:1;"></div>
-        <span class="pnl-caption">Data source:</span>
-        <span class="pnl-caption"><span class="pnl-dot" style="background:#0e9f6e;"></span> Actual</span>
-        <span class="pnl-caption"><span class="pnl-dot" style="background:#3f83f8;"></span> Projected</span>
-        <span class="pnl-caption"><span class="pnl-dot" style="background:#e3a008;"></span> Blended</span>
-        <span class="pnl-caption"><span class="pnl-dot" style="background:#42389d;"></span> Overridden</span>
+        <span class="pnl-caption pnl-src-legend">Data source:</span>
+        <span class="pnl-caption pnl-src-legend"><span class="pnl-dot" style="background:#0e9f6e;"></span> Actual</span>
+        <span class="pnl-caption pnl-src-legend"><span class="pnl-dot" style="background:#3f83f8;"></span> Projected</span>
+        <span class="pnl-caption pnl-src-legend"><span class="pnl-dot" style="background:#e3a008;"></span> Blended</span>
+        <span class="pnl-caption pnl-src-legend"><span class="pnl-dot" style="background:#42389d;"></span> Overridden</span>
       </div>
 
       <!-- Table + detail panel -->
@@ -502,6 +523,8 @@
         <div class="pnl-tablewrap" id="tablewrap" aria-label="Profit and loss table">
           <div class="pnl-recalc-pill" role="status" aria-live="polite"><span class="pnl-spin" aria-hidden="true"></span> Recalculating with <span id="recalcModel">MTD run rate</span>…</div>
           <div class="pnl-grid" id="pnlTable"></div>
+          <div class="pnl-view" id="pnlCalendar" hidden></div>
+          <div class="pnl-view" id="pnlSankey" hidden></div>
         </div>
 
         <!-- Selected-line detail panel (states 2–4) -->
@@ -589,11 +612,31 @@
 
 <!-- Prototype aid: comparison treatment switcher (state 1 requires three treatments) -->
 <div class="pnl-aid">
+  <div id="aidTreatment">
   <span class="pnl-aid-label">Prototype aid · comparison treatment</span>
   <div class="btn-group btn-group--sm" role="group" aria-label="Comparison treatment" id="treatmentGroup">
     <button type="button" class="btn active" data-treatment="A" title="Page-level selector (recommended)">A · Page selector</button>
     <button type="button" class="btn" data-treatment="B" title="Column-header declaration">B · Column header</button>
     <button type="button" class="btn" data-treatment="C" title="In-cell baseline">C · In-cell</button>
+  </div>
+  </div>
+  <!-- Calendar layout: two builds of the Calendar on one URL (?variant=months|days),
+       so the comparison is a click, not two tabs. -->
+  <div id="aidCalendar" hidden>
+  <span class="pnl-aid-label">Prototype aid · calendar layout</span>
+  <div class="btn-group btn-group--primary btn-group--sm" role="group" aria-label="Calendar layout" id="calLayoutGroup">
+    <button type="button" class="btn active" aria-pressed="true" data-cal-layout="months" title="Twelve months by quarter. Values match the table">A · Months</button>
+    <button type="button" class="btn" aria-pressed="false" data-cal-layout="days" title="Month grid by day, like a trading P&amp;L calendar. Days are estimates">B · Days</button>
+  </div>
+  </div>
+  <!-- Sankey costs: grey (recommended, red is kept for the loss) or red, as in
+       the product owner's reference. ?costs=red -->
+  <div id="aidSankey" hidden>
+  <span class="pnl-aid-label">Prototype aid · sankey costs</span>
+  <div class="btn-group btn-group--primary btn-group--sm" role="group" aria-label="Sankey cost colour" id="skCostsGroup">
+    <button type="button" class="btn active" aria-pressed="true" data-sk-costs="grey" title="Red is kept for the loss, green for profit">A · Grey</button>
+    <button type="button" class="btn" aria-pressed="false" data-sk-costs="red" title="Costs in red, as in the reference image">B · Red (reference)</button>
+  </div>
   </div>
 </div>
 
@@ -2244,5 +2287,6 @@ document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer)
 renderChips();
 renderTable();
 </script>
+<script src="pnl-v2-views.js?v=13"></script>
 </body>
 </html>
