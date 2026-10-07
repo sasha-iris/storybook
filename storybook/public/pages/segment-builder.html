@@ -3490,8 +3490,32 @@ function flushPending() {
     if (v !== state.desc) commit(() => state.desc = v);
   }
 }
-function undo() { flushPending(); if (!history_.past.length) return; history_.future.push(snapshot()); restore(history_.past.pop()); syncInputs(); render(); }
-function redo() { flushPending(); if (!history_.future.length) return; history_.past.push(snapshot()); restore(history_.future.pop()); syncInputs(); render(); }
+/* ── History cannot undo the card it is on ────────────────────────────────
+   A snapshot taken in Proposed B holds things this card may not: a Saved
+   segment condition, a SKU written as codes. Undone in Current, the rows came
+   back into controls that cannot show them, the rail printed a dash beside a
+   row that visibly had a value, and the toast that said "switching back does
+   not bring it back" was made a liar. Restoring now passes the state through
+   the same rule the switch uses. */
+function fitToCard() {
+  const lists = groups.map(g => g.conds).concat([state.conds]);
+  lists.forEach(conds => {
+    for (let i = conds.length - 1; i >= 0; i--) {
+      const c = conds[i], d = ALL.find(a => a.k === c.k);
+      if (!d) { conds.splice(i, 1); continue; }
+      if (d.v3only && !V3) { conds.splice(i, 1); continue; }
+      if (d.ctl3 && hasValue(c)) {
+        const numeric = /^\d+$/.test(String(c.v));
+        /* A count belongs to the flat card's control, a list of codes to the
+           picker; whichever is on screen keeps only what it can read. */
+        if (V3 ? numeric : !numeric) c.v = '';
+      }
+    }
+  });
+  syncFlat();
+}
+function undo() { flushPending(); if (!history_.past.length) return; history_.future.push(snapshot()); restore(history_.past.pop()); fitToCard(); syncInputs(); render(); }
+function redo() { flushPending(); if (!history_.future.length) return; history_.past.push(snapshot()); restore(history_.future.pop()); fitToCard(); syncInputs(); render(); }
 function syncInputs() {
   document.getElementById('sbName').value = state.name;
   document.getElementById('sbDesc').value = state.desc;
@@ -5569,11 +5593,16 @@ document.addEventListener('click', e => {
     const sel = popSelOf(k), w = findCond(k);
     popSel = null;
     if (sel.length) popCommit(k, sel.join(', '));
-    else {
+    else if (w) {
       /* Applied with nothing ticked: the condition goes, rather than sitting
          in the segment filtering on an empty list. */
-      commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); pop = null; popDraft = null; syncFlat(); });
+      commit(() => { groups[w.gi].conds.splice(w.ci, 1); pop = null; popDraft = null; syncFlat(); });
       document.querySelector(`[data-pop="${k}"]`)?.focus();
+    } else {
+      /* Nothing was there and nothing was ticked: closing is the whole of it.
+         It used to go through commit(), which lit up Undo for a step that had
+         changed nothing. */
+      popClose(true);
     }
     return;
   }
