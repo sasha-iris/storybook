@@ -2638,6 +2638,18 @@ let popMode = 'one';          /* match mode for a chips filter not in the segmen
 let popMode2 = 'Percentage';  /* kind of discount for one not in the segment yet */
 let pasteDraft = '';          /* the pasted list, kept while the dialog is open */
 let popError = null;          /* why the last press did not take */
+/* ── A picker has a buffer ────────────────────────────────────────────────
+   Every tick used to commit: the segment recalculated, the card re-rendered,
+   and the chosen row jumped to the top of the list under the hand that was
+   still picking. A list that reorders itself while it is being read is the
+   thing that made this feel wrong. The menu now holds a draft, the segment
+   is unchanged until Apply, and nothing moves while the eye is in the list. */
+let popSel = null;            /* codes staged in the open picker, null when shut */
+function popSelOf(k) {
+  if (popSel) return popSel;
+  const w = findCond(k);
+  return chipsOf(w && groups[w.gi].conds[w.ci]);
+}
 /* ── Where these values come from ─────────────────────────────────────────
    The product owner asked for the typeahead he saw in Lifetimely: type "spring" and get
    Spring 24, Spring 25. That needs the catalogue, which this prototype does
@@ -4193,7 +4205,7 @@ function pillPop(it, where) {
        not: NN/g, Klaviyo's own 1,000-value ceiling and Shopify's resource
        picker all point at a modal with facets, which is written up for the
        build rather than drawn here. */
-    const picked = chipsOf(c0);
+    const picked = popSelOf(it.k);
     const t = matchKind(c0);
     const all = SKU_CATALOG[it.k] || [];
     /* Chosen first, in the order they were chosen, then the rest. */
@@ -4213,7 +4225,7 @@ function pillPop(it, where) {
     const bulk = q ? matches.length >= 2 : matches.length >= 7;
     const allPicked = matches.length && matches.every(([c]) => picked.indexOf(c) !== -1);
     return `<div id="pop-${it.k}" class="dropdown-menu dropdown-menu--absolute sb2__pop sb2__pop--pick" role="dialog" aria-label="${esc(def.n)}">
-        <div class="sb2__pop__h">${esc(def.n)}${picked.length ? `<span class="sb2__pop__count">${picked.length} selected</span>` : ''}</div>
+        <div class="sb2__pop__h">${esc(def.n)}<span class="sb2__pop__count"${picked.length ? '' : ' hidden'}>${picked.length} selected</span></div>
         ${/* The mode decides what every row below it means, so it is read
              first even though the search is what gets used most. */''}
         <div class="sb2__pop__row">
@@ -4266,7 +4278,7 @@ function pillPop(it, where) {
         <div class="sb2__pop__foot">
           <button type="button" class="btn-link btn-link-medium sb2__pop__paste" data-poppaste="${it.k}">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h2.5A1.5 1.5 0 0 1 19 7v12a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V7a1.5 1.5 0 0 1 1.5-1.5H9"/></svg>Paste list</button>
-          <button type="button" class="btn btn-primary btn-xs" data-popdone="1">Done</button>
+          <button type="button" class="btn btn-primary btn-xs" data-popapply="${it.k}">Apply</button>
         </div>
       </div>`;
   }
@@ -4324,8 +4336,34 @@ function popCommit(k, v, keepOpen) {
   if (!keepOpen) document.querySelector(`[data-pop="${k}"]`)?.focus();
   return true;
 }
+/* The header count, the status line and the bulk control, redrawn in place.
+   A re-render here would rebuild the list under the pointer, which is exactly
+   what the draft exists to avoid. */
+function popPaint() {
+  const box = document.querySelector('.sb2__pop');
+  if (!box || !pop) return;
+  const sel = popSelOf(pop), all = (SKU_CATALOG[pop] || []).length;
+  const q = (popDraft || '').trim();
+  const rows = [...box.querySelectorAll('[data-popsugrow]')];
+  const shown = rows.filter(r => !r.hidden);
+  const head = box.querySelector('.sb2__pop__count');
+  if (head) { head.textContent = sel.length ? `${sel.length} selected` : ''; head.hidden = !sel.length; }
+  const count = box.querySelector('#popCount');
+  if (count) count.textContent = q
+    ? (shown.length ? `${shown.length} of ${all} match \u201C${q}\u201D` : `Nothing matches \u201C${q}\u201D`)
+    : `${sel.length} of ${all} selected`;
+  const bulk = box.querySelector('[data-popall]');
+  if (bulk) {
+    const every = shown.length && shown.every(r => r.querySelector('[data-popsug]').checked);
+    bulk.hidden = q ? shown.length < 2 : shown.length < 7;
+    bulk.dataset.popall = every ? 'off' : 'on';
+    bulk.textContent = every ? 'Clear these' : (q ? `Select these ${shown.length}` : `Select all ${all}`);
+  }
+  const apply = box.querySelector('[data-popapply]');
+  if (apply) apply.textContent = 'Apply';
+}
 function popClose(back) {
-  const k = pop; pop = null; popDraft = null; popError = null;
+  const k = pop; pop = null; popDraft = null; popError = null; popSel = null;
   render();
   if (back && k) document.querySelector(`[data-pop="${k}"]`)?.focus();
 }
@@ -5188,17 +5226,22 @@ document.addEventListener('click', e => {
   if (pa && pop) {
     /* Applies to what is on screen, not to the catalogue: "select all 123" is
        an answer to a question nobody asked, while "select these 9" is the
-       whole point of having searched. */
+       whole point of having searched. Draft only, like every other tick. */
     const on = pa.dataset.popall === 'on';
-    const shown = [...document.querySelectorAll('.sb2__pop__sug [data-popsugrow]')]
-      .filter(r => !r.hidden).map(r => r.querySelector('[data-popsug]').dataset.popsug);
-    const w = findCond(pop);
-    const have = chipsOf(w && groups[w.gi].conds[w.ci]);
-    const next = on ? have.concat(shown.filter(v => have.indexOf(v) === -1))
-                    : have.filter(v => shown.indexOf(v) === -1);
-    if (next.length) popCommit(pop, next.join(', '), true);
-    else commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); syncFlat(); });
-    document.querySelector('[data-popall]')?.focus();
+    const box = document.querySelector('.sb2__pop');
+    const shown = [...box.querySelectorAll('[data-popsugrow]')].filter(r => !r.hidden);
+    const codes = shown.map(r => r.querySelector('[data-popsug]').dataset.popsug);
+    const have = popSelOf(pop);
+    popSel = on ? have.concat(codes.filter(v => have.indexOf(v) === -1))
+                : have.filter(v => codes.indexOf(v) === -1);
+    shown.forEach(r => {
+      const b = r.querySelector('[data-popsug]');
+      b.checked = on;
+      r.classList.toggle('is-picked', on);
+      r.querySelector('.iris-checkbox')?.classList.toggle('iris-checkbox--checked', on);
+    });
+    popPaint();
+    pa.focus();
     return;
   }
   const px = e.target.closest('[data-popchipx]');
@@ -5247,6 +5290,19 @@ document.addEventListener('click', e => {
     });
     return;
   }
+  const ap = e.target.closest('[data-popapply]');
+  if (ap) {
+    const k = ap.dataset.popapply, sel = popSelOf(k), w = findCond(k);
+    popSel = null;
+    if (sel.length) popCommit(k, sel.join(', '));
+    else {
+      /* Applied with nothing ticked: the condition goes, rather than sitting
+         in the segment filtering on an empty list. */
+      commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); pop = null; popDraft = null; syncFlat(); });
+      document.querySelector(`[data-pop="${k}"]`)?.focus();
+    }
+    return;
+  }
   if (e.target.closest('[data-popdone]')) { popClose(true); return; }
   const pg = e.target.closest('[data-popgo]');
   if (pg) {
@@ -5279,7 +5335,7 @@ document.addEventListener('click', e => {
   const pp = e.target.closest('[data-pop]');
   if (pp) {
     const k = pp.dataset.pop;
-    pop = pop === k ? null : k; popDraft = null; focused = null;
+    pop = pop === k ? null : k; popDraft = null; popSel = null; focused = null;
     render();
     if (pop) {
       const box = document.querySelector('.sb2__pop');
@@ -5300,7 +5356,7 @@ document.addEventListener('click', e => {
     } else document.querySelector(`[data-pop="${k}"]`)?.focus();
     return;
   }
-  if (pop && !e.target.closest('.sb2__pw')) { pop = null; popDraft = null; render(); }
+  if (pop && !e.target.closest('.sb2__pw')) { pop = null; popDraft = null; popSel = null; render(); }
   const a2 = e.target.closest('[data-add2]');
   if (a2 && !a2.disabled) {
     const [gi, k] = a2.dataset.add2.split(':');
@@ -5502,17 +5558,16 @@ document.addEventListener('change', e => {
   /* Proposed B: the match mode. It changes what the field below means, so the
      menu is redrawn; a value already given is kept, because "B004" reads the
      same either way. */
-  /* The catalogue's own checkbox. The segment recalculates on every tick, so
-     the count behind the menu moves as the list is built. */
+  /* The catalogue's own checkbox: it writes the draft, and the only things
+     that move are the two counters in this menu. The segment waits for Apply. */
   if (e.target.dataset.popsug != null && pop) {
-    const code = e.target.dataset.popsug, w = findCond(pop);
-    const have = chipsOf(w && groups[w.gi].conds[w.ci]);
-    const next = e.target.checked ? have.concat(have.indexOf(code) === -1 ? [code] : [])
-                                  : have.filter(v => v !== code);
-    if (next.length) popCommit(pop, next.join(', '), true);
-    else commit(() => { if (w) groups[w.gi].conds.splice(w.ci, 1); syncFlat(); });
-    const again = document.querySelector(`[data-popsug="${code.replace(/"/g, '\\"')}"]`);
-    if (again) again.focus();
+    const code = e.target.dataset.popsug;
+    const have = popSelOf(pop);
+    popSel = e.target.checked ? have.concat(have.indexOf(code) === -1 ? [code] : [])
+                              : have.filter(v => v !== code);
+    e.target.closest('.sb2__pick__row')?.classList.toggle('is-picked', e.target.checked);
+    e.target.parentNode.querySelector('.iris-checkbox')?.classList.toggle('iris-checkbox--checked', e.target.checked);
+    popPaint();
     return;
   }
   /* Proposed B: percentage or amount. It changes the unit beside the field, so
@@ -5584,28 +5639,12 @@ document.addEventListener('input', e => {
     const box = e.target.closest('.sb2__pop')?.querySelector('.sb2__pop__sug');
     if (box) {
       const q = popDraft.trim().toLowerCase();
-      let seen = 0;
-      const all = box.querySelectorAll('[data-popsugrow]');
-      all.forEach(row => {
-        const on = row.dataset.popsugrow.toLowerCase().indexOf(q) !== -1;
-        row.hidden = !on; if (on) seen++;
+      box.querySelectorAll('[data-popsugrow]').forEach(row => {
+        row.hidden = row.dataset.popsugrow.toLowerCase().indexOf(q) === -1;
       });
-      const count = document.getElementById('popCount');
-      const total = all.length;
-      const chosen = box.querySelectorAll('[data-popsug]:checked').length;
-      if (count) count.textContent = !q
-        ? `${chosen} of ${total} selected`
-        : seen ? `${seen} of ${total} match “${popDraft.trim()}”`
-               : `Nothing matches “${popDraft.trim()}”`;
-      /* The bulk control follows the search: it offers what is on screen. */
-      const bulkBtn = document.querySelector('[data-popall]');
-      if (bulkBtn) {
-        const shown = [...box.querySelectorAll('[data-popsugrow]')].filter(r => !r.hidden);
-        const every = shown.length && shown.every(r => r.querySelector('[data-popsug]').checked);
-        bulkBtn.hidden = q ? shown.length < 2 : shown.length < 7;
-        bulkBtn.dataset.popall = every ? 'off' : 'on';
-        bulkBtn.textContent = every ? 'Clear these' : (q ? `Select these ${shown.length}` : `Select all ${total}`);
-      }
+      /* The counters are one function, shared with the ticking, so a count
+         cannot be right after a search and wrong after a tick. */
+      popPaint();
     }
     return;
   }
