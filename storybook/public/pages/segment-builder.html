@@ -1026,6 +1026,29 @@
   .sb2.is-v3 { grid-template-columns: minmax(0, 1fr) 300px; gap: 32px; }
   .sb2.is-v3 .sb2__side { order: 2; }
   .sb2.is-v3 .sb2__main { order: 1; }
+  /* ── Proposed C ───────────────────────────────────────────────────────
+     Their arrangement: the segment on the left, headed by its own name and
+     description, the filter menu to the right of it. The column is wider than
+     B's 300 because it now carries two fields as well as the definition. */
+  .sb2.is-vc { grid-template-columns: 340px minmax(0, 1fr); }
+  .sb2.is-vc .sb2__side { order: 0; }
+  .sb2.is-vc .sb2__main { order: 1; }
+  .sb-namewrap--form { display: block; margin-bottom: 16px; }
+  .sb-namewrap--form #sbNameLab,
+  .sb-fold--name .sb-card__t { display: block; margin: 0 0 6px; font-size: var(--text-xs);
+                               font-weight: var(--font-medium); color: var(--color-text-body); }
+  /* The name is a field here, not a page title: the library's input, at the
+     size every other field on the card uses. */
+  .sb-namewrap--form .sb-nameinput { width: 100%; height: 38px; padding: 8px 12px;
+                                     font-size: var(--text-sm); font-weight: var(--font-normal);
+                                     border: 1px solid var(--color-border-default);
+                                     border-radius: 8px; background: var(--color-bg-white); }
+  .sb-fold--name { margin: 0 0 16px; padding: 0; border: 0; }
+  .sb-fold--name .sb-card__h { padding: 0; }
+  .sb-fold--name .sb-card__sub { display: none; }
+  .sb-fold--name .form-textarea { min-height: 64px; }
+  .sb-fold--name .form-helper { margin-top: 6px; }
+  @media (max-width: 1180px) { .sb2.is-vc { grid-template-columns: minmax(0, 1fr); } }
   .sb-v3 .sb2__gmeta { padding: 12px 12px 10px; row-gap: 10px; }
   /* ── Narrow ───────────────────────────────────────────────────────────
      The segment column was a fixed 300px, so as the window came in the FILTER
@@ -1741,9 +1764,11 @@
            deliberate departure from the product's automation page, where the
            name is the first card of the body and this bar carries only the
            breadcrumb and the buttons. -->
-      <label class="seg-sr" for="sbName">Segment name</label>
-      <input class="sb-nameinput" id="sbName" type="text" maxlength="120" placeholder="Name this segment" autocomplete="off" aria-describedby="sbNameHelp">
-      <p class="seg-sr" id="sbNameHelp">Used everywhere this segment appears. Two segments may not share a name.</p>
+      <span class="sb-namewrap" id="sbNameWrap">
+        <label class="seg-sr" for="sbName" id="sbNameLab">Segment name</label>
+        <input class="sb-nameinput" id="sbName" type="text" maxlength="120" placeholder="Name this segment" autocomplete="off" aria-describedby="sbNameHelp">
+        <p class="seg-sr" id="sbNameHelp">Used everywhere this segment appears. Two segments may not share a name.</p>
+      </span>
       <div class="sb-head__end">
         <button class="btn btn-sm btn-alternative" id="sbUndo" aria-label="Undo" title="Undo" disabled style="padding:0 9px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
@@ -1911,6 +1936,10 @@
                      and this empties it, so they belong together. It was in the
                      card header a gap away from Generate with Fin — the control
                      that writes a definition beside the one that destroys it. -->
+                <!-- Proposed C puts the name and the description here, which is
+                     where the product's own page has them. startBar() moves the
+                     live fields in rather than copying them. -->
+                <div id="sbNameSlot"></div>
                 <div class="sb2__mthead"><h3 class="sb2__mt">Segment</h3>
                   <span class="iris-tab__counter" id="sbCondN" hidden></span><button class="card-footer-link sb-clear" id="sbClear" hidden><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5h11"/><path d="M6.5 4.5V3.3a.8.8 0 0 1 .8-.8h1.4a.8.8 0 0 1 .8.8v1.2"/><path d="M4.3 4.5v8.2a1.3 1.3 0 0 0 1.3 1.3h4.8a1.3 1.3 0 0 0 1.3-1.3V4.5"/><path d="M6.6 7.2v3.9M9.4 7.2v3.9"/></svg>Reset all</button></div>
                 <div id="sbUniSlot"></div><div id="sbOutline"></div>
@@ -2023,6 +2052,7 @@
         <button class="btn" role="radio" data-ver="1">Current</button>
         <button class="btn" role="radio" data-ver="2">Proposed</button>
         <button class="btn" role="radio" data-ver="4">Proposed B</button>
+        <button class="btn" role="radio" data-ver="5">Proposed C</button>
       </div>
       <span class="sb-vswitch__n" id="sbVerNote"></span>
     </div>
@@ -2642,6 +2672,12 @@ let CARD2 = new URLSearchParams(location.search).get('variant') !== '1';
    today they are always on together. */
 let VB = !['1', '2'].includes(new URLSearchParams(location.search).get('variant'));
 let V3 = VB;
+/* ── Proposed C ───────────────────────────────────────────────────────────
+   B with the product's own arrangement: the name and the description are
+   fields at the top of the definition column rather than a title in the page
+   header, and that column sits on the left, which is where their build put
+   it. Everything else is B. */
+let VC = new URLSearchParams(location.search).get('variant') === '5';
 
 /* ── v2: one level of groups, per the market scan ────────────────────────
    Every serious 2026 segment builder gives group-level nesting and stops there:
@@ -2977,8 +3013,11 @@ function startBar() {
   ['sbDescCard', 'sbModeCard'].forEach(id => {
     const c = document.getElementById(id);
     c.classList.toggle('sb-fold', V3);
-    const to = V3 ? fSlot : fHome;
+    /* In C the description belongs to the name, so it rides with it. */
+    const to = (VC && id === 'sbDescCard') ? document.getElementById('sbNameSlot')
+             : V3 ? fSlot : fHome;
     if (c.parentNode !== to) to.appendChild(c);
+    c.classList.toggle('sb-fold--name', VC && id === 'sbDescCard');
   });
   /* ── The refresh choice is out of Proposed B ──────────────────────────
      Asked for twice, in the recording on 2026-09-23 and again in writing on
@@ -2987,6 +3026,21 @@ function startBar() {
      segment keeps its mode — the card sets it, nothing else reads it, so the
      default stands until the product decides otherwise. */
   document.getElementById('sbModeCard').hidden = V3;
+  /* ── Proposed C: the name is a field in the form ──────────────────────
+     In B it is the page title, borderless, on the line with Save. The live
+     product has it as the first field of the card, with the description under
+     it, and C is that arrangement. The node moves; it is a live input with a
+     duplicate-name check hanging off it, and a copy would drift. */
+  const nameWrap = document.getElementById('sbNameWrap');
+  const nameSlot = document.getElementById('sbNameSlot');
+  const nameHome = document.querySelector('.sb-title-row');
+  /* First in the slot, not appended: the description is moved in before this
+     runs, and appending put the name under its own description. */
+  if (VC && nameWrap.parentNode !== nameSlot) nameSlot.insertBefore(nameWrap, nameSlot.firstChild);
+  if (!VC && nameWrap.parentNode !== nameHome) nameHome.insertBefore(nameWrap, nameHome.firstChild);
+  nameWrap.classList.toggle('sb-namewrap--form', VC);
+  document.getElementById('sbNameLab').classList.toggle('seg-sr', !VC);
+  document.getElementById('sb2').classList.toggle('is-vc', VC);
   /* ── Tab follows the eye ──────────────────────────────────────────────
      The markup is side-then-main, which matches Proposed, where the segment
      is on the left. Proposed B swaps the columns with CSS order, and the
@@ -3159,7 +3213,8 @@ document.addEventListener('click', e => {
 function setVariant(ver) {
   const on = ver !== '1';
   const wantB = ver !== '1' && ver !== '2';
-  if (on === CARD2 && wantB === V3) return;   /* already on this card */
+  const wantC = ver === '5';
+  if (on === CARD2 && wantB === V3 && wantC === VC) return;   /* already on this card */
   /* ── A value that only one card can read ──────────────────────────────
      Proposed B gives SKU, Product family and Discount a different control from
      the one the other two cards draw: codes against a count, a threshold
@@ -3184,6 +3239,7 @@ function setVariant(ver) {
 
   V3 = wantB;
   VB = wantB;
+  VC = wantC;
   pop = null; popDraft = null; focused = null;
   /* Proposed and Proposed B are the same card with different controls, so
      nothing has to be rebuilt between them: the URL, the switch and a redraw. */
@@ -3220,12 +3276,14 @@ function setVariant(ver) {
 }
 function syncVariantBtns() {
   document.querySelectorAll('[data-ver]').forEach(b => {
-    const on = b.dataset.ver === (!CARD2 ? '1' : V3 ? '4' : VB ? '3' : '2');
+    const on = b.dataset.ver === (!CARD2 ? '1' : VC ? '5' : V3 ? '4' : '2');
     b.classList.toggle('active', on);
     b.setAttribute('aria-checked', String(on));
     b.tabIndex = on ? 0 : -1;
   });
-  document.getElementById('sbVerNote').textContent = V3
+  document.getElementById('sbVerNote').textContent = VC
+    ? 'B, with the name and the description as fields at the top of the segment, the way the product arranges them.'
+    : V3
     ? 'Pick a filter and give it a value right there. The segment builds up on the right.'
     : CARD2
     ? 'The definition is tied to a channel, and each filter says which channel it exists on.'
