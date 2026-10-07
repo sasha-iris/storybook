@@ -2068,6 +2068,16 @@ if (new URLSearchParams(location.search).get('v2') === '1') {
    built on them was filterable by nothing afterwards. */
 const CATALOG = {
   WHO: [
+    /* ── A segment can stand inside another one ───────────────────────────
+       Chronos's whole use of Lifetimely runs through this: take a Klaviyo
+       segment and look at LTV for it. Iris has forty saved segments and no way
+       to point at one, so every definition starts from nothing and the work
+       already done is unreachable. Proposed B only, because it is a proposal
+       and not something the product does today; the other two cards keep the
+       product's own list of filters. The numbers behind it are the segments'
+       own sizes, not a fraction invented for the estimate. */
+    { k:'seg',    n:'Saved segment',      ctl:['select', ['In this segment']],
+      ctl3:['chips', 'Search saved segments'], f:.25, v3only: true },
     { k:'ctype',  n:'Customer type',      ctl:['select', ['First-time customers','Returning customers']], f:.31 },
     /* US, CA and GB are the countries actually held by the segments, read one
        by one out of the product's edit screen on 2026-09-07. Postal codes are
@@ -2709,6 +2719,15 @@ function popSelOf(k) {
    filters, the right one empty until something is chosen, so one condition is
    taller than the whole segment; the discount is three stacked full-width
    controls for one number. Same capability here, inside the pill's own menu. */
+/* Only the ones that have been calculated: a segment whose size is unknown
+   cannot narrow anything, and offering it would promise a number that does not
+   exist. Biggest first, the way the list sorts. */
+function savedSegments() {
+  return SEGMENTS.filter(s => s.c != null && s.c > 0 && (!EDIT || s.id !== EDIT.id))
+    .sort((a, b) => b.c - a.c)
+    .map(s => [s.n, `${fmtN(s.c)} customers · ${Math.round((s.c / BASE) * 100)}% of base`]);
+}
+function catalogueOf(k) { return k === 'seg' ? savedSegments() : (SKU_CATALOG[k] || []); }
 const SKU_CATALOG = {
   sku: [
     ['BB_COC_S_1.0',       "She's Birdie - The Original Personal Safety Alarm"],
@@ -2725,9 +2744,18 @@ const SKU_CATALOG = {
 /* Their wording, in their order. */
 const MATCH_TYPES = [['any', 'Includes any of'], ['none', 'Excludes all of'],
                      ['only', 'Only these (no others in the order)']];
+/* "Only these, no others in the order" is about what an order contains, which
+   a membership has no equivalent of. */
+const SEG_MATCH = [['any', 'In any of'], ['none', 'In none of']];
 function matchKind(c) { return (c && c.t) || 'any'; }
+/* While the picker is open and the condition does not exist yet, the type
+   lives in popMode. It used to be read off a condition that was not there, so
+   a new "In none of" came out as "In any of" on Apply. */
+function draftKind(c) { return c ? matchKind(c) : (popMode === 'none' || popMode === 'only' ? popMode : 'any'); }
 /* "Product familys" came of building a plural with an s. */
-function pluralOf(def) { return def.k === 'fam' ? 'product families' : 'SKUs'; }
+function pluralOf(def) {
+  return def.k === 'fam' ? 'product families' : def.k === 'seg' ? 'saved segments' : 'SKUs';
+}
 /* The sentence the product writes for a SKU condition, which is also the one
    the left column and the Preview read back. */
 /* ── The sentence, in their words ─────────────────────────────────────────
@@ -2737,9 +2765,18 @@ function pluralOf(def) { return def.k === 'fam' ? 'product families' : 'SKUs'; }
 function sentenceParts(def, c) {
   if (isPair(def)) return { lead: 'With discount over', strong: pairText(c) };
   const n = chipsOf(c).length;
+  const t = matchKind(c);
+  /* A saved segment is a set of people, not something bought, so it gets its
+     own sentence rather than "Bought any of 2 saved segments". With one, the
+     segment is named; past one the count carries it. */
+  if (def.k === 'seg') {
+    const names = chipsOf(c);
+    const what = n === 1 ? names[0] : `${n} saved segments`;
+    return t === 'none' ? { lead: 'Not in', strong: what }
+         : { lead: n === 1 ? 'In' : 'In any of', strong: what };
+  }
   const unit = def.k === 'fam' ? (n === 1 ? 'product family' : 'product families')
                                : (n === 1 ? 'SKU' : 'SKUs');
-  const t = matchKind(c);
   return t === 'none' ? { lead: 'Excludes', strong: `${n} ${unit}` }
        : t === 'only' ? { lead: 'Only', strong: `${n} ${unit}`, tail: ', no others in the order' }
        : { lead: 'Bought any of', strong: `${n} ${unit}` };
@@ -3397,13 +3434,28 @@ const universeSize = () => {
    still illustrative — the rail says so — but it is at least monotonic, so
    raising a threshold always shrinks the audience. */
 const NUM_SCALE = { value: 100, disc: 20, refamt: 25, sku: 2, fam: 1, tag: 1 };
-function keepFactor(def, v) {
+/* `c` is optional and only the membership filter reads it: a condition that
+   EXCLUDES a set keeps everyone outside it, which is the complement of the
+   same share. Without it "Not in Subscription Orders" dropped nobody. */
+function keepFactor(def, v, c) {
   /* A list of codes widens as it grows: matching one of three is a union of
      three, not a third pass of the same filter. Same shape the any-of join
      uses, so two estimates of "one of these" cannot disagree. */
   if (isChips(def)) {
-    const n = String(v || '').split(',').filter(x => x.trim()).length;
-    return n ? 1 - Math.pow(1 - def.f, n) : def.f;
+    const names = String(v || '').split(',').map(x => x.trim()).filter(Boolean);
+    /* A saved segment knows its own size, so the estimate uses it rather than
+       a fraction picked for the filter: the union of the chosen segments,
+       capped at the base, and inverted when the condition excludes them. */
+    if (def.k === 'seg') {
+      if (!names.length) return def.f;
+      const out = names.reduce((a, nm) => {
+        const seg = SEGMENTS.find(x => x.n === nm);
+        return a * (1 - (seg && seg.c ? Math.min(seg.c / BASE, 1) : 0));
+      }, 1);
+      const inAny = 1 - out;
+      return matchKind(c) === 'none' ? Math.max(0.001, out) : Math.max(0.001, inAny);
+    }
+    return names.length ? 1 - Math.pow(1 - def.f, names.length) : def.f;
   }
   if (!isNumCtl(def)) return def.f;
   const x = Number(v);
@@ -3429,13 +3481,13 @@ function estimate() {
     /* any-of unions rather than narrows */
     const filled = state.conds.filter(filledOf);
     const keep = filled.length
-      ? 1 - filled.reduce((a, c) => a * (1 - keepFactor(ALL.find(x => x.k === c.k), c.v)), 1) : 1;
+      ? 1 - filled.reduce((a, c) => a * (1 - keepFactor(ALL.find(x => x.k === c.k), c.v, c)), 1) : 1;
     n = Math.round(universeSize() * keep);
     state.conds.forEach(() => steps.push(n));
   } else {
     state.conds.forEach(c => {
       const def = ALL.find(a => a.k === c.k);
-      n = Math.round(n * (filledOf(c) ? keepFactor(def, c.v) : 1));
+      n = Math.round(n * (filledOf(c) ? keepFactor(def, c.v, c) : 1));
       steps.push(n);
     });
   }
@@ -3997,7 +4049,7 @@ function groupFunnel(g) {
        that one condition contributes rather than how much it removes. */
     const filled = g.conds.filter(filledOf);
     const keep = filled.length
-      ? 1 - filled.reduce((a, c) => a * (1 - keepFactor(ALL.find(x => x.k === c.k), c.v)), 1) : 1;
+      ? 1 - filled.reduce((a, c) => a * (1 - keepFactor(ALL.find(x => x.k === c.k), c.v, c)), 1) : 1;
     const n = Math.round(uni * keep);
     g.conds.forEach(() => steps.push(n));
   } else {
@@ -4005,7 +4057,7 @@ function groupFunnel(g) {
     g.conds.forEach(c => {
       const def = ALL.find(a => a.k === c.k);
       /* "none of" removes what it matches instead of keeping it. */
-      const f = filledOf(c) ? keepFactor(def, c.v) : 1;
+      const f = filledOf(c) ? keepFactor(def, c.v, c) : 1;
       n = Math.round(n * (g.join === 'none' && filledOf(c) ? 1 - f : f));
       steps.push(n);
     });
@@ -4235,8 +4287,8 @@ function pillPop(it, where) {
        picker all point at a modal with facets, which is written up for the
        build rather than drawn here. */
     const picked = popSelOf(it.k);
-    const t = matchKind(c0);
-    const all = SKU_CATALOG[it.k] || [];
+    const t = draftKind(c0);
+    const all = catalogueOf(it.k);
     /* ── The catalogue does not reorder itself ────────────────────────────
        Floating the chosen to the top is Carbon's answer for a one-pane menu.
        With a pane of its own for what is chosen, the reordering only moves
@@ -4258,14 +4310,15 @@ function pillPop(it, where) {
         <div class="sb2__pop__row">
           <label class="seg-sr" for="popMode">Filter type</label>
           <select class="form-select form-input-sm sb2__pop__wide" id="popMode" data-popmode="${it.k}">
-            ${MATCH_TYPES.map(([v, l]) => `<option value="${v}" ${t === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}
+            ${(it.k === 'seg' ? SEG_MATCH : MATCH_TYPES).map(([v, l]) =>
+              `<option value="${v}" ${t === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}
           </select>
         </div>
         ${all.length ? `<div class="sb2__pop__row">
           <span class="form-search-wrap form-search-wrap--end sb2__pop__find">
-            <label class="seg-sr" for="popIn">Search ${esc(pluralOf(def))} or products</label>
+            <label class="seg-sr" for="popIn">Search ${esc(pluralOf(def))}${def.k === 'seg' ? '' : ' or products'}</label>
             <input class="form-input form-input-sm" id="popIn" data-popin="${it.k}" type="search"
-              autocomplete="off" placeholder="Search ${esc(pluralOf(def))} or products"
+              autocomplete="off" placeholder="Search ${esc(pluralOf(def))}${def.k === 'seg' ? '' : ' or products'}"
               value="${esc(popDraft || '')}">
             <span class="form-search-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
           </span>
@@ -4375,13 +4428,12 @@ function popCommit(k, v, keepOpen) {
   const kind1 = isPair(def) ? (w1 ? pairKind(groups[w1.gi].conds[w1.ci]) : popMode2) : null;
   if (kind1 === 'Percentage' && Number(v) > 100) { popError = 'A percentage cannot be over 100'; return false; }
   const w0 = findCond(k);
-  const mode = isChips(def) ? (w0 ? condMode(groups[w0.gi].conds[w0.ci]) : popMode)
-             : isPair(def)  ? (w0 ? pairKind(groups[w0.gi].conds[w0.ci]) : popMode2)
-             : null;
+  const kind = isChips(def) ? (w0 ? matchKind(groups[w0.gi].conds[w0.ci]) : draftKind(null)) : null;
+  const mode = isPair(def) ? (w0 ? pairKind(groups[w0.gi].conds[w0.ci]) : popMode2) : null;
   commit(() => {
     const w = findCond(k);
-    if (w) { const c = groups[w.gi].conds[w.ci]; c.v = v; c.draft = false; if (mode) c.m = mode; }
-    else groups[0].conds.push({ k: k, v: v, draft: false, m: mode || undefined });
+    if (w) { const c = groups[w.gi].conds[w.ci]; c.v = v; c.draft = false; if (mode) c.m = mode; if (kind) c.t = kind; }
+    else groups[0].conds.push({ k: k, v: v, draft: false, m: mode || undefined, t: kind || undefined });
     /* A chips filter stays open: each chip is a value on its own, the count
        behind the menu moves as they go in, and closing after the first one
        would make the second chip a second trip. */
@@ -4397,7 +4449,7 @@ function popCommit(k, v, keepOpen) {
 function popPaint() {
   const box = document.querySelector('.sb2__pop');
   if (!box || !pop) return;
-  const sel = popSelOf(pop), all = (SKU_CATALOG[pop] || []).length;
+  const sel = popSelOf(pop), all = catalogueOf(pop).length;
   const q = (popDraft || '').trim();
   const rows = [...box.querySelectorAll('[data-popsugrow]')];
   const shown = rows.filter(r => !r.hidden);
@@ -4418,7 +4470,7 @@ function popPaint() {
      beside it never moves. */
   const pane = box.querySelector('#popSelPane');
   if (pane) {
-    const cat = SKU_CATALOG[pop] || [];
+    const cat = catalogueOf(pop);
     pane.innerHTML = sel.length
       ? sel.map(code => {
           const row = cat.find(x => x[0] === code);
@@ -4445,7 +4497,7 @@ function popClose(back) {
 
 function pills() {
   return Object.entries(CATALOG).map(([head, items]) => {
-    const list = items.filter(it => it.k !== 'chan').map(it => {
+    const list = items.filter(it => it.k !== 'chan' && (!it.v3only || V3)).map(it => {
       const used = state.conds.some(c => c.k === it.k);
       const g = groups[activeGroup] || groups[0];
       const na = availability(it, g);
@@ -4571,7 +4623,7 @@ function previewV2() {
     const d = ALL.find(a => a.k === c.k);
     return !(d && isNumCtl(d) && badNum(c.v));
   };
-  const kept = c => keepFactor(ALL.find(a => a.k === c.k), c.v);
+  const kept = c => keepFactor(ALL.find(a => a.k === c.k), c.v, c);
   const size = list => {
     if (uni == null) return null;
     if (!list.length) return uni;
