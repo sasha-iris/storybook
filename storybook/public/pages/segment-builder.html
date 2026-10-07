@@ -1135,6 +1135,7 @@
                  color: var(--color-text-secondary); cursor: pointer; }
   .sb2__sel__x:hover { color: var(--color-text-fg-danger); background: var(--color-bg-tertiary); }
   .sb2__sel__x:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: -2px; }
+  .sb2__pop__err { display: block; margin: 8px 0 0; }
   .sb2__pop__none { margin: 8px 8px 0; font-size: var(--text-xs); line-height: 1.5; color: var(--seg-muted); }
   @media (max-width: 900px) {
     .sb2__pop--pick { width: 340px; max-width: 340px; }
@@ -2308,11 +2309,11 @@ function readDescription(text) {
     used.add('value');
   }
   const pctm = t.match(/(?:discount|promo|promotion)[^.]{0,20}?(\d+)\s*%|(\d+)\s*%\s*(?:discount|off)/);
-  if (pctm && !used.has('disc') && !used.has('code')) {
+  if (pctm && !used.has('disctype') && !used.has('code')) {
     const v = pctm[1] || pctm[2];
-    conds.push({ k: 'disc', v: v, draft: true });
+    conds.push({ k: 'disctype', v: v, draft: true });
     read.push({ phrase: pctm[0].trim(), as: 'Discount greater than ' + v + '%' });
-    used.add('disc');
+    used.add('disctype');
   }
   /* "the discount code SPRING24", "promo code BFCM". Read BEFORE the percentage
      so that "discount code 2024" cannot be mistaken for a percentage, and taken
@@ -2759,7 +2760,13 @@ function popSelOf(k) {
    cannot narrow anything, and offering it would promise a number that does not
    exist. Biggest first, the way the list sorts. */
 function savedSegments() {
-  return SEGMENTS.filter(s => s.c != null && s.c > 0 && (!EDIT || s.id !== EDIT.id))
+  const live = SEGMENTS.filter(s => s.c != null && s.c > 0 && (!EDIT || s.id !== EDIT.id));
+  /* Their workspace holds two segments called "California" and two called
+     "test". Keyed on the name alone, ticking one ticked both and the second
+     could not be chosen at all, so a repeated name carries its size. */
+  const dup = {};
+  live.forEach(s => { dup[s.n] = (dup[s.n] || 0) + 1; });
+  return live
     .sort((a, b) => b.c - a.c)
     .map(s => {
       const pct = Math.round((s.c / BASE) * 100);
@@ -2767,7 +2774,7 @@ function savedSegments() {
          page already flags. Picked here without a word, one of them would read
          as a filter that drops nobody, and the counter would look broken
          rather than the data. */
-      return [s.n, pct >= 95
+      return [dup[s.n] > 1 ? `${s.n} (${fmtN(s.c)})` : s.n, pct >= 95
         ? `${fmtN(s.c)} customers · every customer matches`
         : `${fmtN(s.c)} customers · ${pct}% of base`];
     });
@@ -2836,7 +2843,11 @@ function skuSentence(def, c) {
 }
 /* Proposed B swaps in ctl3 where a filter has one; everywhere else the
    product's own control stands. */
-function ctlOf(def) { return (V3 && def.ctl3) ? def.ctl3 : def.ctl; }
+/* A missing def used to take the whole card down: one bad key from a
+   generated description threw inside render(), the page froze on stale rows
+   and only a reload recovered. A filter nobody knows is a filter that does
+   nothing. */
+function ctlOf(def) { return !def ? [] : (V3 && def.ctl3) ? def.ctl3 : def.ctl; }
 function isChips(def) { return ctlOf(def)[0] === 'chips'; }
 function isPair(def) { return ctlOf(def)[0] === 'pair'; }
 /* A pair holds a number, so everything that validates numbers validates it. */
@@ -3234,17 +3245,24 @@ function setVariant(ver) {
      value, and the switch says which ones. The same rule both ways. */
   if ((ver !== '1' && ver !== '2') !== V3) {
     const hit = [], gone = [];
-    groups.forEach(g => {
+    /* Both lists, not just `groups`: Current keeps its conditions in
+       state.conds and groups is empty there, so a count typed in Current
+       walked into the code picker and came out as "Bought any of 1 SKU". */
+    const lists = groups.map(g => g.conds).concat([state.conds]);
+    lists.forEach(conds => {
       /* A filter that only this proposal has cannot sit in a card that does
          not offer it: the row would have no pill to reopen it and no editor
          that fits. It leaves with the card, and the switch says so. */
-      for (let i = g.conds.length - 1; i >= 0; i--) {
-        const d = ALL.find(a => a.k === g.conds[i].k);
-        if (d && d.v3only && (ver === '1' || ver === '2')) { gone.push(d.n); g.conds.splice(i, 1); }
+      for (let i = conds.length - 1; i >= 0; i--) {
+        const d = ALL.find(a => a.k === conds[i].k);
+        if (d && d.v3only && (ver === '1' || ver === '2')) {
+          if (gone.indexOf(d.n) === -1) gone.push(d.n);
+          conds.splice(i, 1);
+        }
       }
-      g.conds.forEach(c => {
+      conds.forEach(c => {
         const d = ALL.find(a => a.k === c.k);
-        if (d && d.ctl3 && hasValue(c)) { hit.push(d.n); c.v = ''; }
+        if (d && d.ctl3 && hasValue(c)) { if (hit.indexOf(d.n) === -1) hit.push(d.n); c.v = ''; }
       });
     });
     if (gone.length) {
@@ -3329,7 +3347,7 @@ if (EDIT) {
       /SKU/i.test(raw) ? 'sku' : /product famil/i.test(raw) ? 'fam'
     : /First-time|Returning/i.test(raw) ? 'ctype' : /Geography|postal code/i.test(raw) ? 'geo'
     : /Top \d+%/i.test(raw) ? 'pct' : /Subscriber/i.test(raw) ? 'subs'
-    : /Order value/i.test(raw) ? 'value' : /Discount/i.test(raw) ? 'disc'
+    : /Order value/i.test(raw) ? 'value' : /Discount/i.test(raw) ? 'disctype'
     : /refund/i.test(raw) ? 'refund' : /sales channel/i.test(raw) ? 'chan'
     : /tag/i.test(raw) ? 'tag' : null;
   /* The value, read out of the condition string rather than guessed. Filling in
@@ -3351,7 +3369,7 @@ if (EDIT) {
       case 'refund': return /^No refunds/i.test(raw) ? 'No refunds' : '';
       case 'sku': case 'fam': case 'tag':
                      return /^No |selected/i.test(raw) ? '' : n;
-      case 'value': case 'disc': case 'refamt': return n;
+      case 'value': case 'disctype': case 'refamt': return n;
       /* A seeded segment says only "1 country(s)" and the country is not in the
          payload, so it stays empty. One built here carries it — "Geography:
          In US" — and that has to be read back, or editing your own segment
@@ -3518,6 +3536,7 @@ const NUM_SCALE = { value: 100, disc: 20, refamt: 25, sku: 2, fam: 1, tag: 1 };
    EXCLUDES a set keeps everyone outside it, which is the complement of the
    same share. Without it "Not in Subscription Orders" dropped nobody. */
 function keepFactor(def, v, c) {
+  if (!def) return 1;
   /* A list of codes widens as it grows: matching one of three is a union of
      three, not a third pass of the same filter. Same shape the any-of join
      uses, so two estimates of "one of these" cannot disagree. */
@@ -4415,7 +4434,7 @@ function pillPop(it, where) {
         <div class="sb2__pop__pane">
         <div class="sb2__pop__bar">
           <span class="sb2__pop__src" id="popCount" role="status" aria-live="polite">${
-            q ? `${matches.length} of ${all.length} match “${esc(popDraft.trim())}”` : `${picked.length} of ${all.length} selected`}</span>
+            q ? `${matches.length} of ${all.length} match “${esc(popDraft.trim())}”` : `${Math.min(picked.length, all.length)} of ${all.length} selected`}</span>
           ${/* Always in the markup, hidden under seven, so the search handler
                 has something to update instead of something to recreate. */''}
           <button type="button" class="btn-link btn-link-medium sb2__pop__all" data-popall="${allPicked ? 'off' : 'on'}"${bulk ? '' : ' hidden'}>${
@@ -4463,6 +4482,7 @@ function pillPop(it, where) {
         </div>` : ''}
         ${!all.length && picked.length ? `<div class="sb2__pop__chips">${picked.map(v =>
           `<span class="iris-chip iris-chip--light">${esc(v)}<button type="button" data-popchipx="${esc(v)}" aria-label="Remove ${esc(v)}"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span>`).join('')}</div>` : ''}
+        ${popError ? `<p class="form-feedback-error sb2__pop__err">${esc(popError)}</p>` : ''}
         <div class="sb2__pop__foot">
           <button type="button" class="btn-link btn-link-medium sb2__pop__paste" data-poppaste="${it.k}">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h2.5A1.5 1.5 0 0 1 19 7v12a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V7a1.5 1.5 0 0 1 1.5-1.5H9"/></svg>Paste list</button>
@@ -4538,7 +4558,7 @@ function popPaint() {
   const count = box.querySelector('#popCount');
   if (count) count.textContent = q
     ? (shown.length ? `${shown.length} of ${all} match \u201C${q}\u201D` : `Nothing matches \u201C${q}\u201D`)
-    : `${sel.length} of ${all} selected`;
+    : `${Math.min(sel.length, all)} of ${all} selected`;
   const bulk = box.querySelector('[data-popall]');
   if (bulk) {
     const every = shown.length && shown.every(r => r.querySelector('[data-popsug]').checked);
@@ -4917,8 +4937,10 @@ function render() {
   /* The scope is on the picker too, not only on the row after the fact. Picking
      a condition and then being told it cannot apply is the same trap one step
      later; the logo is on the button before it is pressed. */
+  /* The pills filter v3only; this list did not, so Current offered "Saved
+     segment" and then drew it as a one-option dropdown. */
   document.getElementById('sbAdd').innerHTML = Object.entries(CATALOG).map(([g, items]) =>
-    `<div class="sb-add__g">${g}</div>` + items.map(it =>
+    `<div class="sb-add__g">${g}</div>` + items.filter(it => !it.v3only).map(it =>
       `<button class="sb-add__b${it.chan ? ' sb-add__b--scoped' : ''}" data-add="${it.k}" ${state.conds.some(c => c.k === it.k) ? 'disabled' : ''}${it.chan ? ` title="${esc('Only on ' + it.chan.join(', '))}"` : ''}>
          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
          ${it.n}${it.isNew ? '<span class="sb-new">new</span>' : ''}${scopeMark(it)}</button>`).join('')).join('');
@@ -5483,7 +5505,17 @@ document.addEventListener('click', e => {
   if (kb && pop) {
     const m = kb.dataset.popkindbtn, w = findCond(pop);
     popMode2 = m;
-    if (w) commit(() => { groups[w.gi].conds[w.ci].m = m; syncFlat(); });
+    if (w) commit(() => {
+      const c = groups[w.gi].conds[w.ci];
+      c.m = m;
+      /* 150 is an amount and not a percentage. Typing it as one is refused, so
+         carrying it across by pressing Percentage cannot be allowed either:
+         the value goes back to the field to be corrected. */
+      if (m === 'Percentage' && Number(c.v) > 100) {
+        popDraft = String(c.v); popError = 'A percentage cannot be over 100'; c.v = '';
+      }
+      syncFlat();
+    });
     else render();
     document.querySelector(`[data-popkindbtn="${m}"]`)?.focus();
     return;
@@ -5503,17 +5535,38 @@ document.addEventListener('click', e => {
            what was typed is kept as it is typed. */
         const raw = pasteDraft || '';
         const add = raw.split(/[\n,;\t]/).map(x => x.trim()).filter(Boolean);
-        const w = findCond(k);
-        const have = chipsOf(w && groups[w.gi].conds[w.ci]);
-        const all = have.concat(add.filter(v => have.indexOf(v) === -1));
-        if (all.length) popCommit(k, all.join(', '), true);
+        const cat = catalogueOf(k);
+        /* A pasted code the catalogue does not know is a typo, not a filter:
+           it used to be accepted and to move the estimate. The known ones go
+           in, the rest are named back. */
+        const known = cat.length ? add.filter(v => cat.some(([c]) => c === v)) : add;
+        const unknown = cat.length ? add.filter(v => !cat.some(([c]) => c === v)) : [];
+        /* Into the draft, not the segment: pasting is one more way of picking,
+           and picking waits for Apply like everything else in this menu. */
+        const have = popSelOf(k);
+        popSel = have.concat(known.filter(v => have.indexOf(v) === -1));
+        pasteDraft = '';
+        popError = unknown.length
+          ? `Not in the catalogue, so ${unknown.length > 1 ? 'these were' : 'this was'} left out: ${unknown.slice(0, 4).join(', ')}${unknown.length > 4 ? ` and ${unknown.length - 4} more` : ''}`
+          : null;
+        render();
+        document.getElementById('popIn')?.focus();
       }
     });
     return;
   }
   const ap = e.target.closest('[data-popapply]');
   if (ap) {
-    const k = ap.dataset.popapply, sel = popSelOf(k), w = findCond(k);
+    const k = ap.dataset.popapply;
+    /* A filter with no catalogue is typed into, and Apply is the button under
+       the hand: what is in the field goes in rather than being thrown away. */
+    const typedNow = (document.getElementById('popIn') || {}).value;
+    if (typedNow && !(SKU_CATALOG[k] || []).length && k !== 'seg') {
+      const add = typedNow.split(',').map(x => x.trim()).filter(Boolean);
+      const have = popSelOf(k);
+      popSel = have.concat(add.filter(v => have.indexOf(v) === -1));
+    }
+    const sel = popSelOf(k), w = findCond(k);
     popSel = null;
     if (sel.length) popCommit(k, sel.join(', '));
     else {
@@ -5577,7 +5630,12 @@ document.addEventListener('click', e => {
     } else document.querySelector(`[data-pop="${k}"]`)?.focus();
     return;
   }
-  if (pop && !e.target.closest('.sb2__pw')) { pop = null; popDraft = null; popSel = null; render(); }
+  /* The paste dialog belongs to the picker even though it is drawn outside it:
+     confirming it counted as a click away, so the menu closed and took the
+     staged selection with it. */
+  if (pop && !e.target.closest('.sb2__pw, #modalHost, .seg-modal-backdrop')) {
+    pop = null; popDraft = null; popSel = null; render();
+  }
   const a2 = e.target.closest('[data-add2]');
   if (a2 && !a2.disabled) {
     const [gi, k] = a2.dataset.add2.split(':');
@@ -5674,7 +5732,11 @@ document.addEventListener('click', e => {
        illustrative estimate the rail shows, carried over rather than invented a
        second time; a segment with no estimate is stored with no numbers, which
        is how the seeded ones that never ran are stored. */
-    if (V2 && !EDIT) {
+    /* Was `V2`, a parameter the list page stopped sending when its links moved
+       to ?variant=4: the toast said the segment was saved and the list came
+       back with the same forty rows. Creation persists from any variant now;
+       editing already did. */
+    if (!EDIT) {
       const est = estimate().n;
       const win = state.range === 'custom'
         ? `${fmtDate(state.from)} to ${fmtDate(state.to)}`
