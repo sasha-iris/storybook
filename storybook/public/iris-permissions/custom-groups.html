@@ -750,7 +750,7 @@ function setCatOne(g, cat, name, on) {
 }
 function catMark(g, cat, extraClass, attrs, label) {
   const st = catState(g, cat);
-  const chip = '<span>' + { all:'Full', part:'Limited', none:'None' }[st] + '</span>';
+  const chip = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'<span>Limited</span>', none:'' }[st];
   return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${chip}</button>`;
 }
 function metricRow(m) {

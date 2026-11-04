@@ -821,3 +821,9 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-person-chip--viewer { color:#374151; background:#F3F4F6; }
 .pm-person-chip--created { color:#036672; background:#D5F5F6; }
 
+/* Matrix cells: a blue tick for all, Limited in the Custom yellow for some, empty for none. */
+.pm-matrix .pm-cat--all { background:#F0F5FF; color:#42389D; }
+.pm-matrix .pm-cat--all:hover:not(:disabled) { background:#E5EDFF; color:#42389D; }
+.pm-matrix .pm-cat--part { background:#FEF9E7; color:#92660A; }
+.pm-matrix .pm-cat--part:hover:not(:disabled) { background:#FDF6B2; color:#723B13; }
+
