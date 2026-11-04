@@ -848,3 +848,10 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 @media (max-width:1279px) {
   .pm-person-head { min-height:80px; }
 }
+
+/* One member line in every view, taken from the Matrix: 13/18 medium, 12 px initials, 10 px to the name, 48 px rows. */
+.pm-person, .pm-ptable__name { letter-spacing:inherit; }
+.pm-person { gap:10px; padding:7px 8px; }
+.pm-people__list { gap:2px; }
+.pm-person__name, .pm-ptable__name { font-size:13px; line-height:18px; font-weight:500; }
+.pm-person .pm-avatar, .pm-ptable .pm-avatar { font-size:12px; }
