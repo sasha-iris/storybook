@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom groups and MCP</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/iris-tokens.css">
+  <link rel="stylesheet" href="assets/iris-components.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/panorama-match.css">
+</head>
+<!-- Page scaffolding only: flex shell = sidebar + content. -->
+<body style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+<aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;">
+    <div style="display:flex;flex-direction:column;gap:16px;padding:0 0 12px;">
+      <button type="button" class="sidebar-contracted-item" title="Overview" aria-label="Overview">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Metrics" aria-label="Metrics">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="P&amp;L" aria-label="P&amp;L">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 000 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Cash Flow" aria-label="Cash Flow">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Financial model" aria-label="Financial model">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div class="sidebar-divider" style="margin:0;"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
+      <button type="button" class="sidebar-contracted-item" title="Help" aria-label="Help">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item active" title="Settings" aria-label="Settings" aria-current="page">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </aside>
+  <main id="app" style="flex:1;min-width:0;padding:32px clamp(16px,4vw,40px);max-width:1024px;box-sizing:border-box;"></main>
+</div>
+<div id="toastHost" style="position:fixed;top:16px;right:16px;z-index:200;max-width:400px;" role="status" aria-live="polite"></div>
+<div id="modalHost"></div>
+
+<script>window.PM_RAIL_ACTIVE = "Settings";</script>
+<script src="assets/panorama-match.js"></script>
+<script>
+/* GAP: no settings-list row, section row or permission-tree pattern in Storybook.
+   Rows are composed from .form-check + .form-helper with token-based inline layout. */
+
+const CHEVRON = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
+const CHEVRON_DOWN = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>';
+const INFO = '<svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a1 1 0 0 0 0 2v3a1 1 0 0 0 1 1h1a1 1 0 1 0 0-2v-3a1 1 0 0 0-1-1H9Z" clip-rule="evenodd"/></svg>';
+const MCP_URL = 'https://api.irisfinance.co/mcp';
+
+/* Page list: 45 pages, Data Rooms and Weekly Performance off by default.
+   Section grouping and one-line hints are new. Product has names only. */
+const SECTIONS = [
+  { id: 'fin', label: 'Financials', items: [
+    { id: 'PL', name: 'P&L', hint: 'Custom expenses. Can show wages.', find: 'profit and loss statement' },
+    { id: 'CASH_FLOW', name: 'Cash Flow', hint: 'Includes the Payroll category.' },
+    { id: 'FINANCIAL_MODEL', name: 'Financial Model', hint: 'Fin Lab and the operating expense schedule.', find: 'current model' },
+    { id: 'PLAN_VS_ACTUAL', name: 'Plan vs Actual', hint: 'P&L builder and wholesale P&L.', find: 'plan against actuals' },
+    { id: 'RETAILER_PNL', name: 'Retailer P&L' },
+    { id: 'AUDIT', name: 'Audit', hint: 'Excel export. Includes Payroll / Contractors.', find: 'account audit' },
+    { id: 'DATA_ROOMS', name: 'Data Rooms', hint: 'Diligence packs with the income statement, shared by link with outside viewers.', find: 'share links', defaultOff: true },
+  ]},
+  { id: 'rep', label: 'Metrics and reports', items: [
+    { id: 'DASHBOARDS', name: 'Dashboards' },
+    { id: 'METRICS_LIBRARY', name: 'Metrics Library', find: 'profitability unit economics income marketing sku views' },
+    { id: 'COGS', name: 'COGS', hint: 'SG&A metrics too, including Payroll (% of Net Sales). Also needs Metrics Library.' },
+    { id: 'COHORTS', name: 'Cohorts' },
+    { id: 'BENCHMARKS', name: 'Benchmarks' },
+    { id: 'REPORTING_CENTER', name: 'Reporting Center' },
+    { id: 'CUSTOM_METRICS', name: 'Custom Metrics' },
+    { id: 'WEEKLY_PERFORMANCE', name: 'Weekly Performance', defaultOff: true },
+    { id: 'SCENARIOS', name: 'Scenarios', find: 'max cac marketing plan product segments units solver' },
+  ]},
+  { id: 'mkt', label: 'Marketing and customers', items: [
+    { id: 'MARKETING_ATTRIBUTION', name: 'Marketing Attribution', find: 'campaign attribution mmm ad spend cac' },
+    { id: 'CUSTOMER_SEGMENTS', name: 'Customer Segments' },
+    { id: 'EMAIL_SMS_PERFORMANCE', name: 'Email & SMS Performance' },
+  ]},
+  { id: 'ops', label: 'Operations', items: [
+    { id: 'INVENTORY_PLAN', name: 'Inventory Plan', find: 'supply plan product clustering', children: [
+      { id: 'INV_FORECAST', name: 'Forecast' }, { id: 'INV_SKU', name: 'SKU Repository', find: 'product taxonomy sku list' }, { id: 'INV_SUMMARY', name: 'Summary' } ] },
+    { id: 'OMS', name: 'Order Management System', find: 'sps', children: [ { id: 'OMS_OTIF', name: 'OTIF', hint: 'On time, in full.', find: 'delivery' } ] },
+    { id: 'SHIPPING_METRICS', name: 'Shipping Metrics' },
+    { id: 'ORDERS_IMPORT', name: 'Orders Import' },
+    { id: 'SELL_THROUGH_IMPORT', name: 'Sell-Through Import' },
+  ]},
+  { id: 'ai', label: 'AI and automation', items: [
+    { id: 'AI_AGENTS', name: 'AI Agents', find: 'fin ai sessions artifacts library' },
+    { id: 'AUTOMATION', name: 'Automation', find: 'automated alerts snapshots' },
+  ]},
+  { id: 'set', label: 'Data and setup', items: [
+    { id: 'ASSUMPTIONS', name: 'Assumptions', find: 'sales channels inputs', children: [
+      { id: 'ASSUMPTIONS_COGS', name: 'COGS' }, { id: 'ASSUMPTIONS_CATEGORIZATION', name: 'Categorization', hint: 'Includes Payroll / Contractors.' },
+      { id: 'ASSUMPTIONS_CUSTOM_MARKETING', name: 'Custom Marketing' }, { id: 'ASSUMPTIONS_INVOICE_CONFIGS', name: 'Invoice Configs' } ] },
+    { id: 'CONFIGURATION', name: 'Configuration', hint: 'Categorization and the audit log.', find: 'organization configuration' },
+    { id: 'CONNECTIONS', name: 'Connections' },
+    { id: 'DATA_PIPELINE', name: 'Data Pipeline', hint: 'Data integrity and order to cash.' },
+  ]},
+  { id: 'adm', label: 'Administration', items: [
+    { id: 'SETTINGS', name: 'Settings', find: 'organization settings mcp keys delivery channels', children: [
+      { id: 'SET_ORG', name: 'Organization Details' }, { id: 'SET_MEMBERS', name: 'Members' }, { id: 'SET_ACCOUNTING', name: 'Accounting' },
+      { id: 'SET_LOCALE', name: 'Locale' }, { id: 'SET_WORKSPACES', name: 'My Organizations' }, { id: 'SET_AI', name: 'AI Agents' } ] },
+  ]},
+];
+const ITEMS = [];
+const PARENT = {};
+SECTIONS.forEach(s => s.items.forEach(i => { ITEMS.push(i); (i.children || []).forEach(c => { PARENT[c.id] = i; ITEMS.push(c); }); }));
+const BY_ID = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+
+/* Metric names and categories come from the product's own catalog (backend seed files). Order has no names there: its count only brings the total to 221. */
+const METRICS = [['Income',24],['COGS',51],['Marketing',12],['Operating Expenses',8,'Total operating expenses, wages and salaries included.'],['Profitability',17],['SKU',7],['Quantities',16],['Cohorts',6],['Subscriptions',23],['Subscribers',33],['Cash',5],['Order',19]];
+const METRIC_NAMES = {"Income":["Average Order Value","Cash Refunds","Discount Rate","Discounts","Discounts Cost Margin","Estimated Refunds","First Order AOV","Gross Sales","Net Sales","New Customer AOV (nAOV)","New Customer Net Sales","New Customer Order Quantity","Order Count","Order Quantity","Refunds","Refunds Cost Margin","Retail Sellout Revenue (SAP)","Returning Customer AOV (rAOV)","Returning Customer Net Sales","Returning Customer Order Quantity","Shipping Revenue","Shipping Revenue Cost Margin","Wholesale Sell-Through Retail Revenue","Wholesale Sell-Through Revenue"],"COGS":["3PL Fulfillment","Amazon Fees","Amazon Freight","Amazon Logistics","Amazon Product COGS","COGS","COGS per Order","Delivered Gross Profit","Delivered Gross Profit Margin","Inbound Freight","Logistics","Logistics Cost Margin","Manual Order DTC Fees","Manual Order DTC Freight","Manual Order DTC Logistics","Manual Order DTC Product COGS","Manual Order Wholesale Fees","Manual Order Wholesale Logistics","Manual Order Wholesale Product COGS","Merchant Fees","Merchant Fees Cost Margin","New Customer COGS","New Customer COGS per Order","Payment Processor Fees","Payroll (% of Net Sales)","Product COGS","Product Cogs Cost Margin","Returning Customer COGS","Returning Customer COGS per Order","SPS Fees","SPS Logistics","SPS Product COGS","Shopify DTC Fees","Shopify DTC Freight","Shopify DTC Logistics","Shopify DTC Product COGS","Shopify Fees","Shopify Freight","Shopify Logistics","Shopify Product COGS","Shopify Wholesale Fees","Shopify Wholesale Logistics","Shopify Wholesale Product COGS","Tiktok Fees","Tiktok Freight","Tiktok Logistics","Tiktok Product COGS","Total Cogs Cost Margin","Wholesale Fees","Wholesale Product COGS","Wholesale Sell-Through COGS"],"Marketing":["Acquisition MER (aMER)","Ad Spend","CPA","CPC","CPM","CTR","Customer Acquisition Cost (CAC)","Customers Acquired","Marketing","Marketing Cost Margin","Net MER (ROAS)","Orders per Customer"],"Operating Expenses":["Indirect Marketing","Indirect Marketing % of Net Sales","Operating Expense","Operating Expenses (Opex)","Opex Cost Margin","Opex per Order","SG&A","SG&A % of Net Sales"],"Profitability":["Contribution Margin","Contribution Margin Ratio","Contribution Margin per Order","First Order Profit","First Order Profit per Customer","Landed Gross Profit","Net Margin","Net Operating Margin","Net Operating Profit","New Customer CM per Order","New Customer Contribution Margin","Operating Margin","Product Gross Profit","Returning Customer CM per Order","Returning Customer Contribution Margin","Wholesale Sell-Through Gross Margin","Wholesale Sell-Through Gross Profit"],"SKU":["SKU Average Sales Price","SKU Contribution Margin","SKU Contribution Margin Per Unit","SKU Delivered Margin","SKU Gross Margin","SKU Percentage of Net Sales","SKU Quantity Sold"],"Quantities":["First Order Subscription Rate","New Customer Order Count","New Customer Orders","New Customer Subscription Orders","New Customers","Retail Sellout Units (SAP)","Returning Customer Orders","Returning Customer Subscription Orders","Returning Customers","Returning OTP Customer Count","Subscription Reorders","Total Unique Customers","Units Sold","Units per Order","Wholesale Sell-Through SKU Count","Wholesale Sell-Through Units"],"Cohorts":["Customer Lifetime Value (LTV)","Customer Retention Rate","LTR:CAC","LTV:CAC Ratio","Lifetime Revenue (LTR)","Purchase Frequency"],"Subscriptions":["Active Subscriptions","Cancelled Subscriptions Count","New Subscriptions Count","Subscription 3PL Cost","Subscription COGS","Subscription Discounts","Subscription Freight Cost","Subscription Fulfillment Cost","Subscription Gross Sales","Subscription Gross Sales With Shipping","Subscription Items Orders","Subscription Merchant Fee Cost","Subscription Miscellaneous Cost","Subscription Net Sales","Subscription Net Sales With Shipping","Subscription Orders Count","Subscription Payment Processor Cost","Subscription Product Cost","Subscription Raw Orders Count","Subscription Refunds","Subscription Shipping","Subscription Shipping Cost","Subscription Taxes"],"Subscribers":["Active Subscribers","Cancelled Subscribers Count","Churn Rate","Gross Retention Rate","Net Retention Rate","New Subscriber AOV","New Subscriber Net Sales","New Subscriber Orders","New Subscribers Count","Returning Subscriber AOV","Returning Subscriber Net Sales","Returning Subscriber Orders","Subscriber 3PL Cost","Subscriber COGS","Subscriber Discounts","Subscriber Freight Cost","Subscriber Fulfillment Cost","Subscriber Gross Sales","Subscriber Gross Sales With Shipping","Subscriber Items Orders","Subscriber Merchant Fee Cost","Subscriber Miscellaneous Cost","Subscriber Net Sales","Subscriber Net Sales With Shipping","Subscriber Orders Count","Subscriber Payment Processor Cost","Subscriber Product Cost","Subscriber Raw Orders Count","Subscriber Refunds","Subscriber Shipping","Subscriber Shipping Cost","Subscriber Taxes","Subscribers Count"],"Cash":["Cash Flow Margin (Free Cash Yield)","Cash on Hand","Change in Cash","Credit Card Balance","Runway Months"]};
+/* Sample connection labels. */
+const CONNS = ['Quickbooks','Shopify DTC','TikTok Marketing','TikTok Shop','Trackstar','Amazon','Google Ads','Klaviyo','Meta Ads','PayPal','Plaid','Recharge','Stripe'];
+
+const PAYROLL_PAGES = ['PL','CASH_FLOW','FINANCIAL_MODEL','PLAN_VS_ACTUAL','AUDIT','COGS','CONFIGURATION','ASSUMPTIONS_CATEGORIZATION','DATA_ROOMS'];
+const OE = 'Operating Expenses';
+const TEMPLATES = [
+  { id:'viewer', name:'Viewer', desc:'Can open every page but cannot edit anything.', pages:43, readOnly:true },
+  { id:'finance', name:'Finance', desc:'Finance team: financial pages and planning. No marketing, operations, inventory or connections pages.', pages:37, deny:['MARKETING_ATTRIBUTION','CUSTOMER_SEGMENTS','OMS','SELL_THROUGH_IMPORT','CONNECTIONS','INVENTORY_PLAN'] },
+  { id:'marketing', name:'Marketing', desc:'Marketing team: attribution, customer segments, cohorts, plan vs actual, inventory, assumptions and scenarios.', pages:23, allow:['PLAN_VS_ACTUAL','INVENTORY_PLAN','MARKETING_ATTRIBUTION','CUSTOMER_SEGMENTS','COHORTS','ASSUMPTIONS','SCENARIOS','WEEKLY_PERFORMANCE','SETTINGS'] },
+  { id:'investor', name:'Investor', desc:'Read-only financial views: dashboards, P&L, cash flow, financial model, plan vs actual, cohorts and scenarios.', pages:26, readOnly:true, allow:['DASHBOARDS','METRICS_LIBRARY','COGS','PL','CASH_FLOW','FINANCIAL_MODEL','PLAN_VS_ACTUAL','CUSTOMER_SEGMENTS','COHORTS','AI_AGENTS','SCENARIOS','SETTINGS'] },
+  { id:'operations', name:'Operations', desc:'Operations team: OMS, inventory and every non-financial page. No P&L, cash flow, financial model or data rooms.', pages:40, deny:['PL','CASH_FLOW','FINANCIAL_MODEL'] },
+];
+
+const TABS = {
+  pages: { label:'Pages', noun:'pages', one:'page', search:'Search pages', on:'On', off:'Off' },
+  metrics: { label:'Metrics', noun:'metrics', one:'metric', search:'Search metrics', on:'On', off:'Off' },
+  connections: { label:'Connections', noun:'connections', one:'connection', search:'Search connections', on:'On', off:'Off' },
+  edit: { label:'Edit Rights', noun:'edit rights', one:'edit right', search:'Search edit rights', on:'Can edit', off:'Read only' },
+};
+
+const state = { forceFail:new URLSearchParams(location.search).has('fail'), keys:[], connections:null, connSync:{}, peopleView:'user', groups: [], group: null, tab:'pages', search:'', filter:'all', open:{ fin:true }, rowStatus:{}, rowError:{}, failedOnce:false, saving:0, saveMsg:'', mcpClient:'cursor', sticky:new Set(), cardMenu:null, peopleSearch:'', peopleGroup:'all', peopleSalary:'all', peoplePage:0, lastPerson:null, focusPerson:null, personId:null, personGroup:null, savedGroup:null, inPeople:false, pickerOpen:false };
+
+function restoreGroup(g, snap) { Object.keys(g).forEach(k => delete g[k]); Object.assign(g, clone(snap)); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+let groupSeq = 0;
+function makeGroup(name, description, start) {
+  const g = { id:'g' + (++groupSeq), name, description, start, pages:{}, metrics:{}, metricOff:{}, conns:{}, edit:{}, payroll:null, payrollSnapshot:null };
+  const none = start === 'nothing';
+  const t = TEMPLATES.find(x => x.id === start);
+  ITEMS.forEach(i => {
+    let on = !none && !i.defaultOff;
+    if (t && t.deny && t.deny.includes(i.id)) on = false;
+    if (t && t.allow && !PARENT[i.id]) on = t.allow.includes(i.id);
+    if (t && t.allow && PARENT[i.id]) on = true;
+    g.pages[i.id] = on;
+    if (!PARENT[i.id]) g.edit[i.id] = !none && !(t && t.readOnly);
+  });
+  METRICS.forEach(m => { g.metrics[m[0]] = !none; });
+  CONNS.forEach(c => { g.conns[c] = !none; });
+  return g;
+}
+
+/* ---------- People ---------- */
+/* Sample people: invented names, labelled on the page. Everyone starts on Full Access, which is what the group stats say. */
+const FULL = '__full_access__';
+const SAMPLE_PEOPLE = ['Alex Rivera','Amir Rahimi','Beth Collins','Bianca Stone','Carlos Mendes','Chloe Martin','Dana Whitfield','Diego Ruiz','Elif Aydin','Ella Brandt','Felix Wagner','Gabriela Montenegro-Villanueva','Hana Sato','Ian Novak','Jordan Lee','Julia Kerr','Kofi Mensah','Layla Haddad','Mateo Bellini','Nadia Petrova','Omar Farouk','Priya Nair','Quinn Murphy','Rosa Delgado','Sam Whitaker','Tara Lindholm','Uma Krishnan','Victor Hale','Wendy Cho','Xavier Dumont','Yara Nasser','Zane Porter'];
+const MEMBERS = SAMPLE_PEOPLE.slice().sort((x, y) => x.localeCompare(y)).map((name, i) => ({ id:i + 1, name, email:name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ /g, '.') + '@example.com', groupId:FULL, over:null, diff:0 }));
+MEMBERS.push({ id:MEMBERS.length + 1, name:'new.hire@example.com', email:'new.hire@example.com', pending:true, groupId:FULL, over:null, diff:0 });
+const AVATAR_PALETTE = ['#B91C1C','#C2410C','#A16207','#4D7C0F','#15803D','#0F766E','#0E7490','#1D4ED8','#4338CA','#7E22CE','#BE185D'];
+function initials(name) { const p = name.trim().split(/\s+/); return (p.length === 1 ? p[0].slice(0, 2) : p[0][0] + p[p.length - 1][0]).toUpperCase(); }
+function avatarColor(key) { let h = 0; for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0; return AVATAR_PALETTE[h % AVATAR_PALETTE.length]; }
+function avatar(m, cls) { return `<span class="pm-avatar${cls ? ' ' + cls : ''}" style="background:${avatarColor(m.email || m.name)};" aria-hidden="true">${esc(initials(m.name))}</span>`; }
+function currentPerson() { return MEMBERS.find(m => m.id === state.personId); }
+function membersOf(id) { return MEMBERS.filter(m => !m.pending && m.groupId === id); }
+const BASE = {};
+function baseOf(id) {
+  const key = id || FULL;
+  if (key === FULL) return BASE[FULL] || (BASE[FULL] = makeGroup('Full Access', '', 'everything'));
+  const t = TEMPLATES.find(x => x.id === key);
+  if (t) return BASE[key] || (BASE[key] = makeGroup(t.name, '', t.id));
+  return state.groups.find(g => g.id === key) || baseOf(FULL);
+}
+function isCustomGroup(id) { return state.groups.some(g => g.id === id); }
+function groupLabel(m) { return m.groupId === FULL ? 'Full Access' : m.groupId ? baseOf(m.groupId).name : 'Custom'; }
+function subject() { return state.group && state.group.isPerson ? 'this person' : state.group && state.group.isTemplate ? 'this template' : 'this group'; }
+function groupPhrase(name) { return /group$/i.test(name) ? name : name + ' group'; }
+/* What a person gets: their group, plus their own changes. Only the difference is stored, so edits to the group still reach them. */
+function personGroup(m) {
+  const g = clone(baseOf(m.groupId));
+  g.name = m.name;
+  g.isPerson = true;
+  if (m.over) {
+    ['pages','metrics','conns'].forEach(map => Object.assign(g[map], m.over[map]));
+    Object.entries(m.over.edit).forEach(([k, v]) => { if (v === null) delete g.edit[k]; else g.edit[k] = v; });
+    g.metricOff = Object.assign({}, g.metricOff, m.over.metricOff || {});
+    Object.keys(g.metricOff).forEach(k => { if (!g.metricOff[k].length) delete g.metricOff[k]; });
+    if ('payroll' in m.over) { g.payroll = m.over.payroll; g.payrollSnapshot = m.over.payrollSnapshot; }
+  }
+  return g;
+}
+function personDiff(g, base) {
+  const over = { pages:{}, metrics:{}, metricOff:{}, conns:{}, edit:{} };
+  let n = 0;
+  METRICS.forEach(m => {
+    const a = offOf(g, m[0]);
+    const b = offOf(base, m[0]);
+    if (a.join('|') === b.join('|')) return;
+    over.metricOff[m[0]] = a;
+    n += a.filter(x => !b.includes(x)).length + b.filter(x => !a.includes(x)).length;
+  });
+  ['pages','metrics','conns'].forEach(map => Object.keys(base[map]).forEach(k => { if (!!g[map][k] !== !!base[map][k]) { over[map][k] = !!g[map][k]; n++; } }));
+  ITEMS.forEach(i => { if (g.edit[i.id] !== base.edit[i.id]) { over.edit[i.id] = g.edit[i.id] === undefined ? null : g.edit[i.id]; n++; } });
+  const samePayroll = (g.payroll || null) === (base.payroll || null);
+  if (!samePayroll) { over.payroll = g.payroll || null; over.payrollSnapshot = g.payrollSnapshot || null; }
+  return { over:n || !samePayroll ? over : null, n };
+}
+/* Hiding salary lines belongs to the person: it stays when they change group or reset their own settings. */
+function salaryOnly(m) { return m.over && m.over.payroll === 'lines' ? { pages:{}, metrics:{}, metricOff:{}, conns:{}, edit:{}, payroll:'lines', payrollSnapshot:null } : null; }
+function syncPerson() {
+  const m = currentPerson();
+  const g = state.group;
+  if (!m || !g || g !== state.personGroup) return;
+  const d = personDiff(g, baseOf(m.groupId));
+  const n = d.n;
+  if (n !== m.diff) m.touched = true;
+  m.over = d.over;
+  m.diff = n;
+  /* As in the product: own changes on Full Access make someone Custom, with no group. */
+  if (m.groupId === FULL && n) m.groupId = null;
+  else if (m.groupId === null && !n) m.groupId = FULL;
+}
+
+/* Page rule: an ancestor DENY is absolute. Edit rule: the nearest rule wins. */
+function pageOn(g, id) { const p = PARENT[id]; return !!g.pages[id] && (!p || !!g.pages[p.id]); }
+function editOn(g, id) { return g.edit[id] !== undefined ? g.edit[id] : !!g.edit[PARENT[id].id]; }
+function counts(g) {
+  return {
+    pages: [ITEMS.filter(i => pageOn(g, i.id)).length, ITEMS.length],
+    metrics: [METRICS.reduce((n, m) => n + catOn(g, m[0]), 0), 221],
+    connections: [CONNS.filter(c => g.conns[c]).length, CONNS.length],
+    edit: [ITEMS.filter(i => editOn(g, i.id)).length, ITEMS.length],
+  };
+}
+
+function isOn(tab, key) {
+  const g = state.group;
+  if (tab === 'pages') return pageOn(g, key);
+  if (tab === 'edit') return editOn(g, key);
+  if (tab === 'metrics') return !!g.metrics[key];
+  return !!g.conns[key];
+}
+function matches(tab, key, label, parentLabel) {
+  const q = state.search.trim().toLowerCase();
+  const isPage = tab === 'pages' || tab === 'edit';
+  const item = isPage ? BY_ID[key] : null;
+  const metric = tab === 'metrics' ? METRICS.find(x => x[0] === key) : null;
+  const parent = item ? PARENT[key] : null;
+  const hint = [(item && item.hint) || '', (item && item.find) || '', (metric && metric[2]) || '', (metric && metricNames(metric[0]).join(' ')) || '', (parent && parent.hint) || '', (parent && parent.find) || ''].join(' ').toLowerCase();
+  const payrollSearch = /salar|wage|payroll/.test(q) && ((isPage && PAYROLL_PAGES.includes(key)) || (tab === 'metrics' && key === OE));
+  if (q && !(label.toLowerCase().includes(q) || (parentLabel && parentLabel.toLowerCase().includes(q)) || hint.includes(q) || payrollSearch)) return false;
+  if (state.sticky.has(tab + ':' + key)) return true;
+  if (state.filter === 'on' && !isOn(tab, key)) return false;
+  if (state.filter === 'off' && isOn(tab, key)) return false;
+  return true;
+}
+function visibleKeys(tab) {
+  if (tab === 'metrics') return METRICS.filter(m => matches(tab, m[0], m[0])).map(m => m[0]);
+  if (tab === 'connections') return CONNS.filter(c => matches(tab, c, c));
+  return ITEMS.filter(i => matches(tab, i.id, i.name, PARENT[i.id] && PARENT[i.id].name)).map(i => i.id);
+}
+
+/* ---------- Saving: writes are serialized, rows flip at once, failure names the row. ---------- */
+function setSave(msg) { state.saveMsg = msg; const el = document.getElementById('saveStatus'); if (el) el.textContent = msg; }
+function saveSummary() { return Object.keys(state.rowError).length ? (state.tab === 'edit' ? 'Some changes were not saved' : 'Not saved: see Edit Rights') : 'All changes saved'; }
+function queueSave(done) {
+  if (document.getElementById('toastUndo')) document.getElementById('toastHost').innerHTML = '';
+  state.saving++;
+  setSave('Saving…');
+  setTimeout(() => {
+    state.saving--;
+    if (done) done();
+    if (!state.saving) setSave(saveSummary());
+    updateEditor();
+  }, 550);
+}
+
+function pin(tab, key) { if (state.filter !== 'all') state.sticky.add(tab + ':' + key); }
+function togglePage(id) {
+  pin('pages', id);
+  const g = state.group;
+  g.pages[id] = !g.pages[id];
+  if (g.payrollSnapshot && id in g.payrollSnapshot.pages) g.payrollSnapshot.pages[id] = g.pages[id];
+  queueSave();
+  updateEditor();
+}
+function toggleEdit(id) {
+  pin('edit', id);
+  const g = state.group;
+  const before = editOn(g, id);
+  const snapshot = g.edit[id];
+  delete state.rowError[id];
+  const attempted = !before;
+  if (PARENT[id]) {
+    const parentVal = !!g.edit[PARENT[id].id];
+    if (!before === parentVal) delete g.edit[id]; else g.edit[id] = !before;
+  } else {
+    g.edit[id] = !before;
+  }
+  state.rowStatus[id] = 'saving';
+  queueSave(() => {
+    delete state.rowStatus[id];
+    /* One queue for every write, each re-reading the rule first, so a click always saves. A save that still fails keeps the old value and names the row. Only ?fail=1 reaches that here. */
+    if (state.forceFail && id === 'FINANCIAL_MODEL' && !g.isPerson && !state.failedOnce && editOn(g, id) === attempted) {
+      state.failedOnce = true;
+      if (snapshot === undefined) delete g.edit[id]; else g.edit[id] = snapshot;
+      state.rowError[id] = true;
+    }
+  });
+  updateEditor();
+}
+function toggleSimple(map, key) {
+  pin(map === 'metrics' ? 'metrics' : 'connections', key);
+  const g = state.group;
+  g[map][key] = !g[map][key];
+  if (map === 'metrics' && key === OE && g.payrollSnapshot) g.payrollSnapshot.metric = g[map][key];
+  queueSave();
+  updateEditor();
+}
+
+function applyKeys(tab, keys, on) {
+  const g = state.group;
+  const skipped = [];
+  const snap = g.payrollSnapshot;
+  keys.forEach(k => {
+    if (tab === 'pages') {
+      g.pages[k] = on;
+      if (snap && k in snap.pages) snap.pages[k] = on;
+    } else if (tab === 'edit') {
+      if (PARENT[k] && state.search.trim() === '' && state.filter === 'all') delete g.edit[k];
+      else g.edit[k] = on;
+    } else if (tab === 'metrics') {
+      g.metrics[k] = on;
+      if (g.metricOff) delete g.metricOff[k];
+      if (snap && k === OE) snap.metric = on;
+    } else {
+      g.conns[k] = on;
+    }
+  });
+  return skipped;
+}
+function bulk(tab, keys, on, kbd) {
+  const g = state.group;
+  if (tab === 'edit') keys.forEach(k => { if (state.rowStatus[k]) state.failedOnce = true; });
+  const triggerKey = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
+  keys.forEach(k => pin(tab, k));
+  const before = clone(g);
+  const c0 = counts(g)[tab][0];
+  const skipped = applyKeys(tab, keys, on);
+  const changed = Math.abs(counts(g)[tab][0] - c0);
+  if (tab === 'edit') keys.forEach(k => { delete state.rowError[k]; });
+  const stayed = skipped.length ? skipped.join(' and ') + ' stayed off.' : '';
+  if (!changed) {
+    if (document.getElementById('toastUndo')) { updateEditor(); return; }
+    let msg = on ? 'Everything shown is already on.' : 'Everything shown is already off.';
+    if (tab === 'edit') msg = on ? 'Everything shown can already be edited.' : 'Everything shown is already read only.';
+    const blocked = tab === 'pages' && on ? keys.find(k => PARENT[k] && !g.pages[PARENT[k].id]) : null;
+    if (blocked) msg = BY_ID[blocked].name + ' stays off because ' + PARENT[blocked].name + ' is off.';
+    if (stayed) msg = stayed;
+    if (!state.saving) setSave(saveSummary());
+    toast(msg);
+    updateEditor();
+    return;
+  }
+  queueSave();
+  updateEditor();
+  const noun = changed === 1 ? TABS[tab].one : TABS[tab].noun;
+  const msg = tab === 'edit'
+    ? 'Set ' + changed + (changed === 1 ? ' page to ' : ' pages to ') + (on ? 'can edit.' : 'read only.')
+    : (on ? 'Turned on ' : 'Turned off ') + changed + ' ' + noun + '.';
+  toast(msg + (stayed ? ' ' + stayed : ''), () => {
+    restoreGroup(g, before);
+    if (tab === 'edit') keys.forEach(k => { delete state.rowError[k]; });
+    queueSave();
+    updateEditor();
+    toast('Change undone.');
+    const f = triggerKey && document.querySelector('[data-key="' + CSS.escape(triggerKey) + '"]');
+    (f || document.getElementById('tabSearch') || document.body).focus();
+  }, kbd);
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+/* Top right, as in the live product. Drops below the pinned toolbar so it never covers tabs or bulk buttons. */
+function placeToast() {
+  const host = document.getElementById('toastHost');
+  const box = document.getElementById('toastBox');
+  const bar = document.querySelector('.pm-sticky');
+  if (!box || !bar) { host.style.top = '16px'; return; }
+  const r = bar.getBoundingClientRect();
+  host.style.top = (r.right > box.getBoundingClientRect().left && r.bottom > 0 && r.top < 24 + box.offsetHeight ? r.bottom + 8 : 16) + 'px';
+}
+window.addEventListener('scroll', placeToast, true);
+window.addEventListener('resize', placeToast);
+function toast(msg, undo, moveFocus) {
+  const host = document.getElementById('toastHost');
+  const returnKey = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
+  host.innerHTML = `<div class="toast" id="toastBox"><p class="toast-body" style="margin:0;flex:1;">${esc(msg)}</p>${undo ? '<button type="button" class="btn-link btn-link-semibold btn-sm" id="toastUndo">Undo</button>' : ''}<button type="button" class="toast-close" id="toastClose" aria-label="Dismiss">×</button></div>`;
+  document.getElementById('toastClose').onclick = () => { host.innerHTML = ''; const f = returnKey && document.querySelector('[data-key="' + CSS.escape(returnKey) + '"]'); (f || document.getElementById('tabSearch') || document.querySelector('#app h1')).focus(); };
+  if (undo) document.getElementById('toastUndo').onclick = () => { host.innerHTML = ''; undo(); };
+  const ms = undo ? 9000 : 5000;
+  const arm = () => { clearTimeout(toastTimer); toastTimer = setTimeout(() => { host.innerHTML = ''; }, ms); };
+  const box = document.getElementById('toastBox');
+  box.addEventListener('mouseenter', () => clearTimeout(toastTimer));
+  box.addEventListener('focusin', () => clearTimeout(toastTimer));
+  box.addEventListener('mouseleave', arm);
+  box.addEventListener('focusout', arm);
+  arm();
+  placeToast();
+  if (undo && moveFocus) document.getElementById('toastUndo').focus();
+}
+
+/* ---------- Modal ---------- */
+let modalReturnFocus = null;
+let modalOnClose = null;
+function openModal(id, title, body, footer, size) {
+  modalReturnFocus = document.activeElement;
+  document.getElementById('toastHost').innerHTML = '';
+  document.getElementById('modalHost').innerHTML = `<div class="modal-backdrop" id="modalBackdrop" style="align-items:flex-start;padding-top:8vh;"><div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="modal-dialog${size ? ' ' + size : ''}" id="${id}">
+    <div class="modal-header"><h2 class="modal-title" id="modalTitle">${esc(title)}</h2><button type="button" class="modal-close" id="modalClose" aria-label="Close dialog"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg></button></div>
+    <div class="modal-body">${body}</div><div class="modal-footer">${footer}</div></div></div>`;
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalBackdrop').addEventListener('mousedown', e => { if (e.target.id === 'modalBackdrop') { e.preventDefault(); if (e.detail < 2) closeModal(); } });
+  document.addEventListener('keydown', modalKeys);
+  const first = document.querySelector('#modalHost [data-autofocus]') || document.querySelector('#modalHost button, #modalHost input');
+  if (first) first.focus();
+}
+function modalKeys(e) {
+  if (e.key === 'Escape') { closeModal(); return; }
+  if (e.key !== 'Tab') return;
+  const focusable = [...document.querySelectorAll('#modalHost button:not([disabled]), #modalHost input:not([disabled]), #modalHost select:not([disabled])')];
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+  else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+}
+function closeModal() {
+  document.getElementById('modalHost').innerHTML = '';
+  document.removeEventListener('keydown', modalKeys);
+  if (modalReturnFocus && document.contains(modalReturnFocus)) modalReturnFocus.focus();
+  else { const f = document.querySelector('[data-key="payrollAction"]'); if (f) f.focus(); }
+  const after = modalOnClose;
+  modalOnClose = null;
+  if (after) after();
+}
+
+/* ---------- New group ---------- */
+const START_HINT = {
+  nothing: 'Turn on only what this group needs. New pages Iris adds will be on.',
+  everything: 'Turn off what this group should not see. Data Rooms and Weekly Performance stay off by default.',
+};
+function startHint(v) { const t = TEMPLATES.find(x => x.id === v); return t ? 'A copy of the ' + t.name + ' template. You can adjust it.' : START_HINT[v]; }
+function newGroupModal(preset) {
+  const start = preset || 'nothing';
+  const tplOptions = TEMPLATES.map(t => `<option value="${t.id}"${start === t.id ? ' selected' : ''}>${esc(t.name)}</option>`).join('');
+  const body = `
+    <div class="form-group"><label class="form-label" for="groupName">Name</label><input class="form-input" id="groupName" data-autofocus autocomplete="off" aria-describedby="nameError"><div class="form-feedback-error" id="nameError" role="alert" hidden></div></div>
+    <div class="form-group"><label class="form-label" for="groupDesc">Description (optional)</label><input class="form-input" id="groupDesc" autocomplete="off"></div>
+    <div class="form-group" style="margin-bottom:0;"><label class="form-label" for="startFrom">Start from</label>
+      <select class="form-input form-select" id="startFrom" aria-describedby="startHint">
+        <option value="nothing"${start === 'nothing' ? ' selected' : ''}>Nothing on</option>
+        <option value="everything">Everything on</option>
+        <optgroup label="Iris templates">${tplOptions}</optgroup>
+      </select>
+      <div class="form-helper" id="startHint">${esc(startHint(start))}</div>
+    </div>`;
+  const footer = '<button type="button" class="btn btn-alternative btn-md" id="groupCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="groupCreate" disabled>Create group</button>';
+  openModal('newGroupDialog', 'New group', body, footer);
+  document.getElementById('groupCancel').onclick = closeModal;
+  const nameEl = document.getElementById('groupName');
+  const createEl = document.getElementById('groupCreate');
+  const errEl = document.getElementById('nameError');
+  document.getElementById('startFrom').onchange = e => { document.getElementById('startHint').textContent = startHint(e.target.value); };
+  nameEl.addEventListener('input', () => { createEl.disabled = !nameEl.value.trim(); errEl.hidden = true; nameEl.removeAttribute('aria-invalid'); });
+  const submit = () => {
+    const name = nameEl.value.trim();
+    if (!name) return;
+    if (state.groups.some(g => g.name.toLowerCase() === name.toLowerCase()) || ['full access', 'custom', 'no group'].concat(TEMPLATES.map(x => x.name.toLowerCase())).includes(name.toLowerCase())) { errEl.textContent = 'A group with this name already exists. Enter a different name.'; errEl.hidden = false; nameEl.setAttribute('aria-invalid', 'true'); nameEl.focus(); return; }
+    const g = makeGroup(name, document.getElementById('groupDesc').value.trim(), document.getElementById('startFrom').value);
+    state.groups.push(g);
+    state.group = g;
+    resetEditorView();
+    state.saveMsg = '';
+    closeModal();
+    modalReturnFocus = null;
+    location.hash = '#group';
+    render();
+  };
+  createEl.onclick = submit;
+  nameEl.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+}
+function resetEditorView() { state.sticky.clear(); state.tab = 'pages'; state.search = ''; state.filter = 'all'; state.open = { fin:true }; state.rowError = {}; state.rowStatus = {}; }
+
+/* ---------- Payroll ---------- */
+/* No payroll rule exists, so the state is read from the page and metric rules every time. */
+function payrollState(g) {
+  if (g.payroll === 'lines') return { kind:'lines', back:[] };
+  const back = PAYROLL_PAGES.filter(id => pageOn(g, id)).map(id => BY_ID[id].name);
+  if (g.metrics[OE]) back.push(OE + ' metrics');
+  if (!back.length) return { kind: g.payroll === 'pages' ? 'hidden' : 'already', back };
+  const anyOff = PAYROLL_PAGES.some(id => !pageOn(g, id) && !BY_ID[id].defaultOff);
+  if (g.metrics[OE] && !anyOff) return { kind:'visible', back };
+  return { kind: g.payroll === 'pages' ? 'partial' : 'visible', back };
+}
+function payrollModal() {
+  const g = state.group;
+  const body = `
+    <fieldset style="border:0;padding:0;margin:0;">
+      <legend class="form-label" style="padding-bottom:6px;">How should Iris hide them?</legend>
+      <div class="form-check" style="align-items:flex-start;">
+        <input class="form-check-input" style="margin-top:3px;" type="radio" name="payrollWay" id="payroll-lines" value="lines" checked data-autofocus aria-describedby="payroll-lines-hint">
+        <div><label class="form-check-label" for="payroll-lines">Hide only the salary lines</label>
+        <div class="form-helper" style="margin:0;" id="payroll-lines-hint">Pages stay open. Wages, salaries and contract labor do not show.</div></div>
+      </div>
+      <div class="form-check" style="align-items:flex-start;">
+        <input class="form-check-input" style="margin-top:3px;" type="radio" name="payrollWay" id="payroll-pages" value="pages" aria-describedby="payroll-pages-hint">
+        <div><label class="form-check-label" for="payroll-pages">Turn off the pages that show them</label>
+        <div class="form-helper" style="margin:0;" id="payroll-pages-hint">Turns off P&amp;L, Cash Flow, Financial Model, Plan vs Actual, Audit, COGS, Configuration, Categorization, Data Rooms and Operating Expenses metrics.</div></div>
+      </div>
+    </fieldset>`;
+  const footer = '<button type="button" class="btn btn-alternative btn-md" id="payCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="payApply">Hide from ' + subject() + '</button>';
+  openModal('payroll', 'Hide salaries and payroll from ' + g.name, body, footer, 'modal-dialog-lg');
+  document.getElementById('payCancel').onclick = closeModal;
+  document.getElementById('payApply').onclick = ev => {
+    const way = document.querySelector('input[name=payrollWay]:checked').value;
+    const before = clone(g);
+    const focusAction = () => { const f = document.querySelector('[data-key="payrollAction"]'); if (f) f.focus(); };
+    const undo = () => { restoreGroup(g, before); queueSave(); updateEditor(); toast('Change undone.'); focusAction(); };
+    let msg = 'Salaries hidden from ' + subject() + '. Pages stay open.';
+    if (way === 'pages') {
+      const pagesBefore = counts(g).pages[0];
+      const metricWasOn = !!g.metrics[OE];
+      const prev = g.payrollSnapshot;
+      g.payrollSnapshot = { pages: Object.fromEntries(PAYROLL_PAGES.map(id => [id, prev ? (prev.pages[id] || g.pages[id]) : g.pages[id]])), metric: prev ? (prev.metric || g.metrics[OE]) : g.metrics[OE] };
+      PAYROLL_PAGES.forEach(id => { g.pages[id] = false; });
+      g.metrics[OE] = false;
+      const n = pagesBefore - counts(g).pages[0];
+      msg = n === 0 && !metricWasOn ? 'Those pages and metrics were already off.' : n === 0 ? 'Turned off Operating Expenses metrics.' : 'Turned off ' + n + (n === 1 ? ' page' : ' pages') + (metricWasOn ? ' and Operating Expenses metrics.' : '.');
+    }
+    if (way === 'lines' && g.payrollSnapshot) {
+      Object.entries(g.payrollSnapshot.pages).forEach(([id, v]) => { g.pages[id] = v; });
+      g.metrics[OE] = g.payrollSnapshot.metric;
+      g.payrollSnapshot = null;
+    }
+    g.payroll = way;
+    closeModal();
+    queueSave();
+    updateEditor();
+    focusAction();
+    toast(msg, undo, ev.detail === 0);
+  };
+}
+function payrollOff(kbd) {
+  const g = state.group;
+  const before = clone(g);
+  const wasLines = g.payroll === 'lines';
+  if (g.payroll === 'pages' && g.payrollSnapshot) {
+    Object.entries(g.payrollSnapshot.pages).forEach(([id, v]) => { g.pages[id] = v; });
+    g.metrics[OE] = g.payrollSnapshot.metric;
+  }
+  g.payroll = null;
+  g.payrollSnapshot = null;
+  queueSave();
+  updateEditor();
+  const changed = JSON.stringify(before.pages) !== JSON.stringify(g.pages) || before.metrics[OE] !== g.metrics[OE];
+  const msg = changed ? 'Pages and metrics are back as they were.' : wasLines ? 'Salaries are visible again.' : 'Nothing was turned off, so nothing changed.';
+  const focusAction = () => { const f = document.querySelector('[data-key="payrollAction"]'); if (f) f.focus(); };
+  focusAction();
+  toast(msg, () => { restoreGroup(g, before); queueSave(); updateEditor(); toast('Change undone.'); focusAction(); }, kbd);
+}
+/* What the person sees after hiding the lines. Sample numbers. The lines move into Other operating expenses, so the page adds up and pay cannot be worked out from the totals. */
+function salaryPreviewModal() {
+  const g = state.group;
+  const first = g.isPerson ? g.name.split(' ')[0] : 'This group';
+  const rows = [
+    ['Net sales', '$1,240,000', '$1,240,000', 1],
+    ['Gross profit', '$620,000', '$620,000', 1],
+    ['Marketing', '$186,000', '$186,000'],
+    ['Wages and salaries', '$214,000', null],
+    ['Contract labor', '$38,000', null],
+    ['Other operating expenses', '$92,000', '$344,000'],
+    ['Total operating expenses', '$530,000', '$530,000', 1],
+    ['Net income', '$90,000', '$90,000', 1],
+  ];
+  const body = `<table class="pm-preview"><thead><tr><th scope="col">Line</th><th scope="col">You see</th><th scope="col">${esc(first)} sees</th></tr></thead><tbody>${rows.map(r => `<tr class="${r[3] ? 'is-total' : ''}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${r[2] === null ? '<span class="pm-preview__off">Not shown</span>' : esc(r[2])}</td></tr>`).join('')}</tbody></table>
+    <p class="form-helper" style="margin:12px 0 0;">Sample numbers. Hidden lines move into Other operating expenses.</p>`;
+  openModal('salaryPreview', 'What ' + (g.isPerson ? g.name : 'this group') + ' sees on P&L', body, '<button type="button" class="btn btn-primary btn-md" id="previewClose" data-autofocus>Close</button>', 'modal-dialog-lg');
+  document.getElementById('previewClose').onclick = closeModal;
+}
+
+/* ---------- MCP keys ---------- */
+function keyGroupName(id) { return id === FULL ? 'Full Access' : baseOf(id).name; }
+function keyGroupOptions(selected) {
+  const opt = (v, label) => `<option value="${esc(v)}"${selected === v ? ' selected' : ''}>${esc(label)}</option>`;
+  return (selected ? '' : '<option value="" selected disabled>Choose a group</option>') + opt(FULL, 'Full Access') + `<optgroup label="Iris templates">${TEMPLATES.map(t => opt(t.id, t.name)).join('')}</optgroup>` + (state.groups.length ? `<optgroup label="Custom groups">${state.groups.map(g => opt(g.id, g.name)).join('')}</optgroup>` : '');
+}
+function keysTableHtml() {
+  const th = h => `<th scope="col" class="iris-th" style="padding:10px 16px;text-align:left;border-bottom:1px solid var(--color-border-default);">${h}</th>`;
+  const td = c => `<td style="padding:10px 16px;font-size:14px;color:#111928;border-bottom:1px solid var(--color-border-default);white-space:nowrap;">${c}</td>`;
+  const rows = state.keys.length ? state.keys.map(k => `<tr>${td(esc(k.name))}${td(`<select class="form-input form-select pm-key-group" aria-label="Permission group for ${esc(k.name)}" data-keygroup="${k.id}">${keyGroupOptions(k.groupId)}</select>`)}${td('Read')}${td(esc(k.created))}${td('Never')}${td(esc(k.expires))}${td(`<button type="button" class="btn btn-sm pm-danger" data-revoke="${k.id}">Revoke</button>`)}</tr>`).join('') : '<tr><td colspan="7" style="padding:24px 16px;text-align:center;font-size:14px;color:#374151;">No keys issued yet</td></tr>';
+  return `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;"><thead><tr>${['Name','Permission group','Scopes','Created','Last Used','Expires'].map(th).join('')}${th('<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Actions</span>')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function shortDate(d) { return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
+function createKeyModal() {
+  const help = 'Tool calls made with this key are limited to the group’s permissions.';
+  const body = `<div style="display:flex;flex-direction:column;gap:12px;">
+    <div><label class="form-label" for="keyName">Name</label><input class="form-input" id="keyName" data-autofocus maxlength="60" autocomplete="off" aria-describedby="keyNameErr"><div class="form-feedback-error pm-reserve" id="keyNameErr" role="alert"></div></div>
+    <div><label class="form-label" for="keyGroup">Permission group</label><select class="form-input form-select" id="keyGroup" aria-describedby="keyGroupHint">${keyGroupOptions('')}</select><div class="form-helper pm-reserve pm-reserve--2" id="keyGroupHint">${help}</div></div>
+    <div><label class="form-label" for="keyExpiry">Expires</label><select class="form-input form-select" id="keyExpiry"><option value="30">30 days</option><option value="60">60 days</option><option value="180">180 days</option><option value="365" selected>1 year</option></select><div class="form-helper" style="margin-top:4px;">Read only for now.</div></div>
+  </div>`;
+  openModal('createKey', 'Create key', body, '<button type="button" class="btn btn-alternative btn-md" id="keyCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="keyCreate">Create key</button>');
+  const nameEl = document.getElementById('keyName');
+  const groupEl = document.getElementById('keyGroup');
+  const hint = document.getElementById('keyGroupHint');
+  const nameErr = document.getElementById('keyNameErr');
+  document.getElementById('keyCancel').onclick = closeModal;
+  nameEl.addEventListener('input', () => { nameErr.textContent = ''; });
+  groupEl.addEventListener('change', () => {
+    const full = groupEl.value === FULL;
+    hint.textContent = full ? 'This key can read everything, salaries included.' : help;
+    hint.classList.toggle('form-feedback-error', full);
+    hint.classList.toggle('form-helper', !full);
+  });
+  const submit = () => {
+    const name = nameEl.value.trim();
+    if (!name) { nameErr.textContent = 'Enter a name for this key.'; nameEl.focus(); return; }
+    if (!groupEl.value) { hint.textContent = 'Choose a group for this key.'; hint.classList.add('form-feedback-error'); hint.classList.remove('form-helper'); groupEl.focus(); return; }
+    const now = new Date();
+    const end = new Date(now.getTime() + (+document.getElementById('keyExpiry').value) * 86400000);
+    const value = 'iris_sample_' + Array.from({ length:24 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    state.keys.push({ id:'k' + Date.now(), name, groupId:groupEl.value, created:shortDate(now), expires:shortDate(end) });
+    closeModal();
+    render(true);
+    revealKeyModal(value);
+  };
+  document.getElementById('keyCreate').onclick = submit;
+  nameEl.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+}
+function revealKeyModal(value) {
+  const body = `<p class="form-helper" style="margin:0 0 8px;">You will only see this key once. Sample key.</p><div style="display:flex;gap:8px;"><label for="keyValue" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Key</label><input class="form-input" id="keyValue" readonly value="${esc(value)}" style="flex:1;min-width:0;"><button type="button" class="btn btn-primary btn-md" id="keyCopy" data-autofocus>Copy</button></div>`;
+  openModal('keyReveal', 'Copy your key', body, '<button type="button" class="btn btn-alternative btn-md" id="keyDone">Done</button>');
+  document.getElementById('keyDone').onclick = closeModal;
+  document.getElementById('keyCopy').onclick = () => {
+    const b = document.getElementById('keyCopy');
+    const done = () => { b.textContent = 'Copied'; };
+    const fail = () => { document.getElementById('keyValue').select(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value).then(done, fail); else fail();
+  };
+  modalOnClose = () => { const f = document.getElementById('createKeyBtn'); if (f) f.focus(); };
+}
+function revokeKeyModal(id) {
+  const k = state.keys.find(x => x.id === id);
+  if (!k) return;
+  openModal('revokeKey', 'Revoke API Key', `<p style="margin:0;font-size:14px;line-height:20px;color:#374151;">${esc(k.name)}: this API key will be immediately revoked and can no longer be used. This action cannot be undone.</p>`, '<button type="button" class="btn btn-alternative btn-md" id="revokeCancel" data-autofocus>Cancel</button><button type="button" class="btn btn-md pm-danger-solid" id="revokeOk">Revoke Key</button>');
+  document.getElementById('revokeCancel').onclick = closeModal;
+  document.getElementById('revokeOk').onclick = () => {
+    state.keys = state.keys.filter(x => x.id !== id);
+    closeModal();
+    render(true);
+    const f = document.getElementById('createKeyBtn');
+    if (f) f.focus();
+    toast(k.name + ' revoked.');
+  };
+}
+
+/* ---------- Rename ---------- */
+function renameModal() {
+  const g = state.group;
+  const body = `<label class="form-label" for="renameInput">Name</label><input class="form-input" id="renameInput" data-autofocus maxlength="60" autocomplete="off" value="${esc(g.name)}" aria-describedby="renameErr"><div class="form-feedback-error pm-reserve" id="renameErr" role="alert"></div>`;
+  openModal('renameGroup', 'Rename group', body, '<button type="button" class="btn btn-alternative btn-md" id="renameCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="renameSave">Save</button>');
+  const input = document.getElementById('renameInput');
+  const err = document.getElementById('renameErr');
+  input.select();
+  document.getElementById('renameCancel').onclick = closeModal;
+  input.addEventListener('input', () => { err.textContent = ''; });
+  const save = () => {
+    const v = input.value.trim();
+    if (!v) { err.textContent = 'Enter a name for this group.'; input.focus(); return; }
+    if (state.groups.some(x => x !== g && x.name.toLowerCase() === v.toLowerCase())) { err.textContent = 'Another group already has this name.'; input.focus(); return; }
+    const old = g.name;
+    closeModal();
+    if (v === old) return;
+    g.name = v;
+    render(true);
+    const focusRename = () => { const f = document.querySelector('[data-rename]'); if (f) f.focus(); };
+    focusRename();
+    toast('Renamed to ' + v + '.', () => { g.name = old; render(true); focusRename(); toast('Change undone.'); });
+  };
+  document.getElementById('renameSave').onclick = save;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); });
+}
+
+/* ---------- Connections ---------- */
+function syncConnection(name) {
+  if (state.connSync[name]) return;
+  state.connSync[name] = true;
+  render(true);
+  setTimeout(() => {
+    delete state.connSync[name];
+    const c = (state.connections || []).find(x => x[0] === name);
+    if (c) c[3] = new Date().toISOString().slice(0, 10);
+    if (view() === 'connections') { render(true); toast(name + ' synced.'); }
+  }, 1200);
+}
+function disconnectModal(name) {
+  openModal('disconnect', 'Disconnect ' + name + '?', `<p style="margin:0;font-size:14px;line-height:20px;color:#374151;">Iris stops syncing ${esc(name)}.</p>`, '<button type="button" class="btn btn-alternative btn-md" id="discCancel" data-autofocus>Cancel</button><button type="button" class="btn btn-md pm-danger-solid" id="discOk">Disconnect</button>');
+  document.getElementById('discCancel').onclick = closeModal;
+  document.getElementById('discOk').onclick = () => {
+    const i = state.connections.findIndex(x => x[0] === name);
+    const row = state.connections[i];
+    state.connections.splice(i, 1);
+    closeModal();
+    render(true);
+    toast(name + ' disconnected.', () => { state.connections.splice(i, 0, row); render(true); toast('Change undone.'); });
+  };
+}
+
+/* ---------- Metric categories: each one holds many metrics, so one click never changes them all. ---------- */
+const ICON_MARK = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"/></svg>', none:'' };
+function metricNames(cat) { return METRIC_NAMES[cat] || []; }
+function metricTotal(cat) { return METRICS.find(m => m[0] === cat)[1]; }
+function offOf(g, cat) { return ((g.metricOff && g.metricOff[cat]) || []).slice().sort(); }
+function catOn(g, cat) { return g.metrics[cat] ? metricTotal(cat) - offOf(g, cat).length : 0; }
+function catState(g, cat) { return !g.metrics[cat] ? 'none' : offOf(g, cat).length ? 'part' : 'all'; }
+function catText(g, cat) { const on = catOn(g, cat), n = metricTotal(cat); return on === n ? 'all ' + n + ' on' : on === 0 ? 'all ' + n + ' off' : on + ' of ' + n + ' on'; }
+function setCatAll(g, cat, on) {
+  g.metrics[cat] = on;
+  if (g.metricOff) delete g.metricOff[cat];
+  if (cat === OE && g.payrollSnapshot) g.payrollSnapshot.metric = on;
+}
+function setCatOne(g, cat, name, on) {
+  const list = metricNames(cat);
+  g.metricOff = g.metricOff || {};
+  let off = g.metrics[cat] ? offOf(g, cat) : list.slice();
+  off = on ? off.filter(x => x !== name) : off.concat(off.includes(name) ? [] : [name]);
+  g.metrics[cat] = off.length < metricTotal(cat);
+  if (off.length && g.metrics[cat]) g.metricOff[cat] = off; else delete g.metricOff[cat];
+}
+function catMark(g, cat, extraClass, attrs, label) {
+  const st = catState(g, cat);
+  return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${ICON_MARK[st]}</button>`;
+}
+function metricRow(m) {
+  const g = state.group;
+  const cat = m[0];
+  const n = m[1];
+  const on = catOn(g, cat);
+  const hint = cat === OE && g.payroll === 'lines' ? 'Wage and salary lines are hidden. The total stays.' : m[2];
+  const domId = 'c-metrics:' + cat.replace(/\s/g, '-');
+  const hintHtml = hint ? `<div class="form-helper" style="margin:0;">${esc(hint)}</div>` : '';
+  return `<div class="pm-row" style="padding:6px 16px;--i:16px;"><div class="form-check" style="align-items:flex-start;margin:0;">${catMark(g, cat, 'pm-cat--box', `id="${domId}"${g.isTemplate ? ' disabled' : ''}`, cat)}<div class="pm-row__text"><div class="pm-row__line"><button type="button" class="form-check-label pm-cat__name" data-catmenu data-cat="${esc(cat)}"${g.isTemplate ? ' disabled' : ''}>${esc(cat)}</button><div class="pm-row__state"><span class="pm-row__status">${on === n ? n + ' metrics' : on + ' of ' + n + ' on'}</span></div></div>${hintHtml}</div></div></div>`;
+}
+
+/* ---------- Matrix: people against metric categories ---------- */
+function matrixHtml() {
+  clampPeoplePage();
+  const list = filteredMembers();
+  if (!list.length) return '<p class="pm-people__empty">No members found</p>';
+  const from = state.peoplePage * PEOPLE_PAGE;
+  const rows = list.slice(from, from + PEOPLE_PAGE);
+  const head = METRICS.map(c => `<th scope="col"><div class="pm-matrix__cat">${esc(c[0])}</div></th>`).join('');
+  const body = rows.map(m => {
+    const g = m.pending ? null : personGroup(m);
+    const who = `${avatar(m, 'pm-avatar--sm')}<span class="pm-matrix__name">${esc(m.name)}</span>`;
+    const cells = METRICS.map(c => m.pending ? '<td class="pm-matrix__cell"><span class="pm-matrix__na" aria-label="Not applicable">–</span></td>' : `<td class="pm-matrix__cell">${catMark(g, c[0], 'pm-cat--cell', `id="mx-${m.id}-${c[0].replace(/\W/g, '')}" data-catperson="${m.id}"`, m.name + ', ' + c[0])}</td>`).join('');
+    return `<tr><th scope="row" class="pm-matrix__first">${m.pending ? `<span class="pm-matrix__who">${who}</span>` : `<a class="pm-matrix__who" href="#permissions/${m.id}">${who}</a>`}</th>${cells}</tr>`;
+  }).join('');
+  return `<div class="pm-matrix-wrap"><table class="pm-matrix"><thead><tr><th scope="col" class="pm-matrix__first">Member</th>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function commitPerson(m, g) {
+  const d = personDiff(g, baseOf(m.groupId));
+  m.over = d.over;
+  m.diff = d.n;
+  m.touched = true;
+  if (m.groupId === FULL && d.n) m.groupId = null;
+  else if (m.groupId === null && !d.n) m.groupId = FULL;
+}
+
+/* ---------- The menu behind every category ---------- */
+function closeCatMenu(refocus) {
+  const el = document.getElementById('catMenu');
+  if (!el) return;
+  const c = state.catMenu;
+  el.remove();
+  state.catMenu = null;
+  document.querySelectorAll('.pm-cat.is-open').forEach(b => b.classList.remove('is-open'));
+  if (refocus && c) { const f = document.querySelector(c.anchor); if (f) f.focus(); }
+}
+function placeCatMenu() {
+  const c = state.catMenu;
+  const el = document.getElementById('catMenu');
+  const a = c && document.querySelector(c.anchor);
+  if (!el || !a) return;
+  a.classList.add('is-open');
+  const r = a.getBoundingClientRect();
+  const h = el.offsetHeight;
+  const w = el.offsetWidth;
+  const left = Math.max(8, Math.min(r.left, innerWidth - w - 8));
+  const below = r.bottom + 4;
+  el.style.left = left + 'px';
+  el.style.top = (below + h > innerHeight - 8 ? Math.max(8, r.top - h - 4) : below) + 'px';
+}
+function catMenuGroup() { const c = state.catMenu; return c.personId ? personGroup(MEMBERS.find(x => x.id === c.personId)) : state.group; }
+function catMenuListHtml() {
+  const c = state.catMenu;
+  const g = catMenuGroup();
+  const list = metricNames(c.cat);
+  if (!list.length) return '<p class="form-helper" style="margin:0;padding:8px 4px;">Single metrics in this category depend on the organization.</p>';
+  const q = c.q.trim().toLowerCase();
+  const shown = list.filter(n => !q || n.toLowerCase().includes(q));
+  if (!shown.length) return '<p class="form-helper" style="margin:0;padding:8px 4px;">No metrics found</p>';
+  const off = offOf(g, c.cat);
+  return shown.map((n, i) => `<label class="pm-catmenu__row"><input class="form-check-input" type="checkbox" id="cm-${i}" data-catone="${esc(n)}"${g.metrics[c.cat] && !off.includes(n) ? ' checked' : ''}><span>${esc(n)}</span></label>`).join('');
+}
+function renderCatMenu(keepFocusId) {
+  const c = state.catMenu;
+  const el = document.getElementById('catMenu');
+  if (!c || !el) return;
+  if (c.bulk) {
+    const tab = state.tab;
+    const keys = bulkKeys(c);
+    const n = keys.length;
+    const on = keys.filter(k => isOn(tab, k)).length;
+    const edit = tab === 'edit';
+    el.innerHTML = `<div class="pm-catmenu__head"><div class="pm-catmenu__title">${esc(c.title)}</div><div class="pm-catmenu__sub">${on} of ${n}${edit ? ' can edit' : ' on'}</div></div><div class="pm-catmenu__stack"><button type="button" class="btn btn-ghost btn-sm" data-bulkdo="on"${on === n ? ' disabled' : ''}>${edit ? 'Make all ' + n + ' editable' : 'Turn all ' + n + ' on'}</button><button type="button" class="btn btn-ghost btn-sm" data-bulkdo="off"${on === 0 ? ' disabled' : ''}>${edit ? 'Make all ' + n + ' read only' : 'Turn all ' + n + ' off'}</button></div>`;
+    return;
+  }
+  const g = catMenuGroup();
+  const on = catOn(g, c.cat);
+  const total = metricTotal(c.cat);
+  const list = document.getElementById('catMenuList');
+  const y = list ? list.scrollTop : 0;
+  const who = c.personId ? MEMBERS.find(x => x.id === c.personId).name : g.name;
+  el.innerHTML = `<div class="pm-catmenu__head"><div class="pm-catmenu__title">${esc(c.cat)}</div><div class="pm-catmenu__sub" id="catMenuCount">${esc(who)} · ${on} of ${total} on</div></div>
+    <div class="pm-catmenu__actions"><button type="button" class="btn btn-ghost btn-sm" data-catall="on"${on === total ? ' disabled' : ''}>Select all</button><button type="button" class="btn btn-ghost btn-sm pm-danger" data-catall="off"${on === 0 ? ' disabled' : ''}>Clear all</button></div>
+    ${metricNames(c.cat).length > 8 ? `<input class="form-input pm-catmenu__search" id="catMenuSearch" type="search" placeholder="Search metrics" aria-label="Search metrics" autocomplete="off" value="${esc(c.q)}">` : ''}
+    <div class="pm-catmenu__list" id="catMenuList">${catMenuListHtml()}</div>`;
+  const again = document.getElementById('catMenuList');
+  if (again) again.scrollTop = y;
+  const s2 = document.getElementById('catMenuSearch');
+  if (s2) s2.addEventListener('input', () => { state.catMenu.q = s2.value; document.getElementById('catMenuList').innerHTML = catMenuListHtml(); });
+  if (keepFocusId) { const f = document.getElementById(keepFocusId) || el.querySelector('[data-catall]:not([disabled])'); if (f) f.focus(); }
+}
+function openCatMenu(btn) {
+  const cat = btn.dataset.cat;
+  const personId = btn.dataset.catperson ? +btn.dataset.catperson : null;
+  const anchor = btn.id ? '[id="' + btn.id + '"]' : '[id="c-metrics:' + cat.replace(/\s/g, '-') + '"]';
+  closeCatMenu();
+  state.catMenu = { cat, personId, q:'', anchor };
+  state.catMenuAt = Date.now();
+  const el = document.createElement('div');
+  el.id = 'catMenu';
+  el.className = 'pm-catmenu';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-label', cat + ' metrics');
+  document.body.appendChild(el);
+  renderCatMenu();
+  placeCatMenu();
+  const f = el.querySelector('[data-catall]:not([disabled])');
+  if (f) f.focus({ preventScroll:true });
+}
+function itemScope(item) { return [item.id].concat((item.children || []).map(c => c.id)); }
+function bulkKeys(c) {
+  if (c.kind === 'all') return masterScope();
+  if (c.kind === 'section') return sectionScope(state.tab, SECTIONS.find(x => x.id === c.id));
+  return itemScope(BY_ID[c.id]);
+}
+function bulkMark(tab, keys, attrs, disabled, label) {
+  const st = selectionState(tab, keys);
+  const kind = st.all ? 'all' : st.some ? 'part' : 'none';
+  return `<button type="button" class="pm-cat pm-cat--${kind} pm-cat--box" ${attrs} aria-haspopup="dialog" aria-label="${esc(label)}"${disabled ? ' disabled' : ''}>${ICON_MARK[kind]}</button>`;
+}
+function openBulkMenu(btn, kind, id, title) {
+  const anchor = '[id="' + btn.id + '"]';
+  const same = state.catMenu && state.catMenu.bulk && state.catMenu.anchor === anchor;
+  closeCatMenu(same);
+  if (same) return;
+  state.catMenu = { bulk:true, kind, id, title, q:'', anchor };
+  state.catMenuAt = Date.now();
+  const el = document.createElement('div');
+  el.id = 'catMenu';
+  el.className = 'pm-catmenu pm-catmenu--small';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-label', title);
+  document.body.appendChild(el);
+  renderCatMenu();
+  placeCatMenu();
+  const f = el.querySelector('[data-bulkdo]:not([disabled])');
+  if (f) f.focus({ preventScroll:true });
+}
+function changeCat(fn, focusId, label) {
+  const c = state.catMenu;
+  state.catMenuAt = Date.now();
+  let undo = null;
+  if (c.personId) {
+    const m = MEMBERS.find(x => x.id === c.personId);
+    const before = { groupId:m.groupId, over:m.over ? clone(m.over) : null, diff:m.diff };
+    const g = personGroup(m);
+    fn(g);
+    commitPerson(m, g);
+    refreshMatrix();
+    undo = () => { Object.assign(m, before); closeCatMenu(); refreshMatrix(); toast('Change undone.'); };
+  } else {
+    const g = state.group;
+    const before = clone(g);
+    fn(g);
+    queueSave();
+    updateEditor();
+    undo = () => { restoreGroup(g, before); queueSave(); closeCatMenu(); updateEditor(); toast('Change undone.'); };
+  }
+  placeCatMenu();
+  renderCatMenu(focusId);
+  if (label) toast(label, undo);
+}
+function catMenuGone(e) {
+  const el = document.getElementById('catMenu');
+  if (!el) return;
+  if (e.type === 'scroll' && (el.contains(e.target) || Date.now() - (state.catMenuAt || 0) < 300)) return;
+  if (e.type === 'mousedown' && (el.contains(e.target) || e.target.closest('.pm-cat,.pm-master label,[data-catmenu],#toastHost'))) return;
+  closeCatMenu();
+}
+document.addEventListener('mousedown', catMenuGone);
+document.addEventListener('scroll', catMenuGone, true);
+window.addEventListener('hashchange', () => closeCatMenu());
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('catMenu')) { e.stopPropagation(); closeCatMenu(true); } }, true);
+function refreshMatrix(focusSel) {
+  const wrap = document.querySelector('.pm-matrix-wrap');
+  const x = wrap ? wrap.scrollLeft : 0;
+  document.getElementById('peopleTable').innerHTML = peopleTableHtml();
+  document.getElementById('peopleGroup').innerHTML = groupOptionsHtml();
+  const again = document.querySelector('.pm-matrix-wrap');
+  if (again) again.scrollLeft = x;
+  if (focusSel) { const f = document.querySelector(focusSel); if (f) f.focus(); }
+}
+
+/* Controls added for the fix: keys, rename, sync, disconnect, matrix, salary preview. */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-createkey],[data-revoke],[data-sync],[data-disconnect],[data-peopleview],[data-rename],[data-pay="preview"],[data-catmenu],[data-catall],[data-catone],[data-bulkdo]');
+  if (!b) return;
+  if (b.dataset.createkey !== undefined) { createKeyModal(); return; }
+  if (b.dataset.revoke) { revokeKeyModal(b.dataset.revoke); return; }
+  if (b.dataset.sync) { syncConnection(b.dataset.sync); return; }
+  if (b.dataset.disconnect) { disconnectModal(b.dataset.disconnect); return; }
+  if (b.dataset.rename !== undefined) { renameModal(); return; }
+  if (b.dataset.pay === 'preview') { salaryPreviewModal(); return; }
+  if (b.dataset.peopleview) {
+    state.peopleView = b.dataset.peopleview;
+    state.peoplePage = 0;
+    if (location.hash === '#permissions') { render(true); const f = document.querySelector('[data-peopleview="' + b.dataset.peopleview + '"]'); if (f) f.focus(); } else location.hash = '#permissions';
+    return;
+  }
+  if (b.dataset.catmenu !== undefined) {
+    const same = state.catMenu && state.catMenu.cat === b.dataset.cat && (state.catMenu.personId || 0) === (+b.dataset.catperson || 0);
+    if (same) closeCatMenu(true); else openCatMenu(b);
+    return;
+  }
+  if (b.dataset.bulkdo) {
+    const keys = bulkKeys(state.catMenu);
+    const kbd = e.detail === 0;
+    closeCatMenu(true);
+    bulk(state.tab, keys, b.dataset.bulkdo === 'on', kbd);
+    return;
+  }
+  if (b.dataset.catall) {
+    const cat = state.catMenu.cat;
+    const on = b.dataset.catall === 'on';
+    changeCat(g => setCatAll(g, cat, on), null, (on ? 'Selected all of ' : 'Cleared all of ') + cat + '.');
+    return;
+  }
+  if (b.dataset.catone) {
+    const cat = state.catMenu.cat;
+    changeCat(g => setCatOne(g, cat, b.dataset.catone, b.checked), b.id);
+    return;
+  }
+});
+document.addEventListener('change', e => {
+  const id = e.target.dataset && e.target.dataset.keygroup;
+  if (!id) return;
+  const k = state.keys.find(x => x.id === id);
+  if (!k) return;
+  k.groupId = e.target.value;
+  toast(k.name + ' now uses ' + keyGroupName(k.groupId) + '.' + (k.groupId === FULL ? ' It can read everything, salaries included.' : ''));
+});
+function shortList(list) { return list.length > 3 ? list.slice(0, 3).join(', ') + ' and ' + (list.length - 3) + ' more' : list.join(', '); }
+function payrollHtml() {
+  const g = state.group;
+  const st = payrollState(g);
+  const text = {
+    visible: 'Shown on ' + shortList(st.back) + '.',
+    hidden: 'Pages with salaries and Operating Expenses metrics are off.',
+    already: 'Pages with salaries and Operating Expenses metrics are off.',
+    partial: 'Shown on ' + shortList(st.back) + '.',
+    lines: 'Wages, salaries and contract labor do not show.' + (PAYROLL_PAGES.some(id => pageOn(g, id)) ? ' Pages stay open.' : ''),
+  }[st.kind];
+  const badge = { visible:'', hidden:'<span class="badge badge-green badge-sm">Hidden</span>', already:'<span class="badge badge-green badge-sm">Hidden</span>', partial:'<span class="badge badge-yellow badge-sm">Partly hidden</span>', lines:'<span class="badge badge-green badge-sm">Hidden</span>' }[st.kind];
+  const link = (k, pay, label) => `<button type="button" class="btn btn-ghost btn-sm" data-key="${k}" data-pay="${pay}">${label}</button>`;
+  const btn = (pay, label, cls) => `<button type="button" class="btn ${cls || 'btn-alternative'} btn-sm" data-key="payrollAction" data-pay="${pay}">${label}</button>`;
+  let actions = '';
+  if (st.kind === 'visible') actions = btn('hide', 'Hide from ' + subject(), 'btn-primary');
+  if (st.kind === 'partial') actions = link('payrollShow', 'show', 'Show again') + btn('hide', 'Hide again', 'btn-primary');
+  if (st.kind === 'hidden') actions = link('payrollOffList', 'list', 'List what is off') + btn('show', 'Show again');
+  if (st.kind === 'already') actions = link('payrollOffList', 'list', 'List what is off');
+  if (st.kind === 'lines') actions = link('payrollPreview', 'preview', 'Preview') + btn('show', 'Show again');
+  if (g.isTemplate) actions = '';
+  return `<section class="pm-salary" aria-labelledby="payrollTitle">
+    <div style="flex:1;min-width:min(220px,100%);"><h3 id="payrollTitle" class="pm-salary__title">Salaries and payroll ${badge}</h3><p class="form-helper" style="margin:0;">${esc(text)}</p></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${actions}</div>
+  </section>`;
+}
+
+/* ---------- Rows ---------- */
+function rowBadge(tab, id) {
+  const g = state.group;
+  if (tab === 'pages' && BY_ID[id] && BY_ID[id].defaultOff && !g.pages[id]) return '<span class="badge badge-gray badge-sm">Off by default</span>';
+  if (tab === 'pages' && g.payroll === 'pages' && PAYROLL_PAGES.includes(id) && !pageOn(g, id)) return '<span class="badge badge-gray badge-sm">Off</span>';
+  if (tab === 'pages' && g.payroll === 'lines' && PAYROLL_PAGES.includes(id) && pageOn(g, id)) return '<span class="badge badge-gray badge-sm">Lines hidden</span>';
+  if (tab === 'pages' && BY_ID[id] && BY_ID[id].defaultOff && !g.pages[id]) return '<span class="badge badge-gray badge-sm">Off by default</span>';
+  if (tab === 'edit' && !pageOn(g, id)) return '<span class="badge badge-gray badge-sm">Page is off</span>';
+  return '';
+}
+function itemRow(tab, item, indent) {
+  const g = state.group;
+  const id = item.id;
+  const p = PARENT[id];
+  const checked = tab === 'pages' ? pageOn(g, id) : editOn(g, id);
+  const disabled = tab === 'pages' && p && !g.pages[p.id];
+  const locked = !!g.isTemplate;
+  const key = tab + ':' + id;
+  const hintId = 'hint-' + tab + '-' + id;
+  const hint = tab === 'pages' ? (item.hint || '').replace(g.payroll === 'lines' ? ' Can show wages.' : '\0', '') : '';
+  const offId = 'off-' + tab + '-' + id;
+  const firstChild = p && p.children[0].id === id;
+  const offNote = disabled ? `<span class="pm-row__status" id="${offId}">${firstChild ? 'Off because ' + esc(p.name) + ' is off' : 'Off'}</span>` : '';
+  let status = '';
+  if (tab === 'edit') {
+    const own = g.edit[id] !== undefined;
+    const label = checked ? 'Can edit' : (p && !own ? 'Read only (inherited)' : 'Read only');
+    status = `<span class="pm-row__status">${state.rowStatus[id] ? 'Saving…' : label}</span>`;
+  }
+  const failed = tab === 'edit' && state.rowError[id];
+  const err = failed
+    ? `<span class="form-feedback-error" role="alert">Could not save. ${esc(item.name)} ${editOn(g, id) ? 'can still be edited' : 'is still read only'}.</span><button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;" data-retry="${id}">Try again</button>`
+    : '';
+  const ariaLabel = p ? ` aria-label="${esc(p.name + ': ' + item.name)}"` : '';
+  return `<div class="pm-row${failed ? ' is-failed' : ''}" style="padding:6px 16px 6px ${indent}px;--i:${indent}px;">
+    <div class="form-check" style="align-items:flex-start;margin:0;min-width:0;">
+      ${item.children && item.children.length ? bulkMark(tab, itemScope(item), `id="c-${key}" data-key="${key}" data-parentitem="${id}"`, locked, item.name + ', ' + itemScope(item).filter(k => isOn(tab, k)).length + ' of ' + itemScope(item).length + (tab === 'edit' ? ' can edit' : ' on')) : `<input class="form-check-input" style="margin-top:2px;" type="checkbox" id="c-${key}" data-key="${key}" data-tab="${tab}" data-id="${id}"${checked ? ' checked' : ''}${disabled || locked ? ' disabled' : ''}${disabled ? ` aria-describedby="${offId}"` : hint ? ` aria-describedby="${hintId}"` : ''}${ariaLabel}>`}
+      <div class="pm-row__text"><div class="pm-row__line"><label class="form-check-label${disabled ? ' is-disabled' : ''}" for="c-${key}">${esc(item.name)}</label><div class="pm-row__state">${status}${offNote}${rowBadge(tab, id)}${err}</div></div>${hint ? `<div class="form-helper" style="margin:0;" id="${hintId}">${esc(hint)}</div>` : ''}</div>
+    </div>
+  </div>`;
+}
+function contextRow(item) {
+  return `<div style="padding:6px 16px 6px 68px;font-size:14px;line-height:20px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
+}
+function sectionKeys(s) {
+  const keys = [];
+  s.items.forEach(i => { keys.push(i.id); (i.children || []).forEach(c => keys.push(c.id)); });
+  return keys;
+}
+function sectionScope(tab, s) {
+  const narrowed = state.search.trim() !== '' || state.filter !== 'all';
+  const vis = visibleKeys(tab);
+  return narrowed ? sectionKeys(s).filter(k => vis.includes(k)) : sectionKeys(s);
+}
+/* One state column for every section and tab, right after the longest name in the whole list. Counts and states form a straight line, and nothing moves between tabs. */
+const measureCtx = document.createElement('canvas').getContext('2d');
+function textWidth(t, weight) { measureCtx.font = weight + ' 14px Inter, sans-serif'; return Math.ceil(measureCtx.measureText(t).width + t.length * 0.2) + 2; }
+function listCol() {
+  let col = 0;
+  SECTIONS.forEach(s => {
+    col = Math.max(col, 40 + textWidth(s.label, 600));
+    s.items.forEach(i => {
+      col = Math.max(col, 68 + textWidth(i.name, 400));
+      (i.children || []).forEach(c => { col = Math.max(col, 96 + textWidth(c.name, 400)); });
+    });
+  });
+  METRICS.forEach(m => { col = Math.max(col, 44 + textWidth(m[0], 400)); });
+  CONNS.forEach(c => { col = Math.max(col, 44 + textWidth(c, 400)); });
+  return col;
+}
+function sectionBlock(tab, s) {
+  const q = state.search.trim() !== '' || state.filter !== 'all';
+  const all = [];
+  s.items.forEach(i => { all.push(i); (i.children || []).forEach(c => all.push(c)); });
+  const shown = all.filter(i => matches(tab, i.id, i.name, PARENT[i.id] && PARENT[i.id].name));
+  if (q && !shown.length) return '';
+  const scope = sectionScope(tab, s);
+  const onCount = scope.filter(k => isOn(tab, k)).length;
+  const expanded = q || !!state.open[s.id];
+  const key = tab + ':section:' + s.id;
+  const sumLabel = onCount + ' of ' + scope.length + (tab === 'edit' ? ' can edit' : ' on');
+  let rows = '';
+  if (expanded) {
+    s.items.forEach(i => {
+      const kids = (i.children || []).filter(c => shown.includes(c));
+      if (shown.includes(i)) rows += itemRow(tab, i, 40);
+      else if (kids.length) rows += contextRow(i);
+      if (shown.includes(i) || kids.length) (i.children || []).forEach(c => { if (!q || shown.includes(c)) rows += itemRow(tab, c, 68); });
+    });
+  }
+  return `<div style="border-top:1px solid var(--color-border-default);--col:${listCol()}px;">
+    <div class="pm-section-row" data-section-row="${s.id}">
+      <div class="pm-section-row__main">
+        ${bulkMark(tab, scope, `id="c-${key}" data-key="${key}" data-section="${s.id}"`, state.group.isTemplate || !actionable(tab, scope).length, s.label + ', ' + sumLabel)}
+        <button type="button" class="pm-section-toggle" data-key="${tab}:toggle:${s.id}" data-toggle="${s.id}" aria-expanded="${expanded}"${q ? ' disabled' : ''}>${esc(s.label)}</button>
+      </div>
+      <div class="pm-section-row__state"><span class="pm-row__status pm-section-count">${sumLabel}</span><button type="button" class="pm-section-chev" tabindex="-1" aria-hidden="true" data-toggle="${s.id}"${q ? ' disabled' : ''}>${expanded ? CHEVRON_DOWN : CHEVRON}</button></div>
+    </div>${rows}</div>`;
+}
+function flatRow(tab, key, name, meta, hint) {
+  const dataKey = tab + ':' + key;
+  const hintId = 'hint-' + dataKey.replace(/\W/g, '');
+  const domId = 'c-' + dataKey.replace(/\s/g, '-');
+  return `<div class="pm-row" style="padding:6px 16px;--i:16px;">
+    <div class="form-check" style="align-items:flex-start;margin:0;">
+      <input class="form-check-input" style="margin-top:2px;" type="checkbox" id="${domId}" data-key="${dataKey}" data-flat="${tab}" data-id="${esc(key)}"${isOn(tab, key) ? ' checked' : ''}${state.group.isTemplate ? ' disabled' : ''}${hint ? ` aria-describedby="${hintId}"` : ''}>
+      <div class="pm-row__text"><div class="pm-row__line"><label class="form-check-label" for="${domId}">${esc(name)}</label><div class="pm-row__state">${meta ? `<span class="pm-row__status">${esc(meta)}</span>` : ''}</div></div>${hint ? `<div class="form-helper" style="margin:0;" id="${hintId}">${esc(hint)}</div>` : ''}</div>
+    </div>
+  </div>`;
+}
+function salaryNote() { return ''; }
+function listHtml() {
+  const tab = state.tab;
+  const keys = visibleKeys(tab);
+  if (!keys.length) {
+    const what = state.search.trim() ? `No ${TABS[tab].noun} match “${esc(state.search.trim())}”.` : `No ${TABS[tab].noun} are ${state.filter === 'on' ? (tab === 'edit' ? 'set to Can edit' : 'on') : (tab === 'edit' ? 'set to Read only' : 'off')}.`;
+    return `<div style="padding:32px 16px;text-align:center;border-top:1px solid var(--color-border-default);"><p style="margin:0 0 8px;color:var(--color-text-secondary);font-size:var(--text-sm);overflow-wrap:anywhere;">${what}${salaryNote() ? ' ' + salaryNote() : ''}</p><button type="button" class="btn-link btn-link-semibold btn-sm" id="clearFilters">Show all ${TABS[tab].noun}</button></div>`;
+  }
+  if (tab === 'metrics') {
+    const q = METRICS.filter(m => keys.includes(m[0])).map(metricRow);
+    return `<div style="--col:${listCol()}px;">${q.join('')}</div>` + `<p class="form-helper" style="margin:0;padding:10px 16px;border-top:1px solid var(--color-border-default);">Sample data.</p>`;
+  }
+  if (tab === 'connections') {
+    return `<div style="--col:${listCol()}px;">${CONNS.filter(c => keys.includes(c)).map(c => flatRow(tab, c, c)).join('')}</div>` + `<p class="form-helper" style="margin:0;padding:10px 16px;border-top:1px solid var(--color-border-default);">Sample data.</p>`;
+  }
+  const note = salaryNote() ? `<div class="pm-note" style="margin:12px 16px;"><span>${salaryNote()}</span></div>` : '';
+  return note + SECTIONS.map(s => sectionBlock(tab, s)).join('');
+}
+/* Select all and section checkboxes tell the truth: checked only when every row under them is on, a dash when some are. A dash selects, checked clears. */
+function actionable(tab, keys) { return keys; }
+function selectionState(tab, keys) {
+  const on = keys.filter(k => isOn(tab, k)).length;
+  return { all:keys.length > 0 && on === keys.length, some:on > 0 && on < keys.length };
+}
+function masterScope() { return visibleKeys(state.tab); }
+function toolbarHtml() {
+  const tab = state.tab;
+  const narrowed = state.search.trim() !== '' || state.filter !== 'all';
+  const keys = masterScope();
+  const on = keys.filter(k => isOn(tab, k)).length;
+  const label = narrowed && keys.length ? keys.length + ' shown' : 'All ' + TABS[tab].noun;
+  const count = on + ' of ' + keys.length + (tab === 'edit' ? ' can edit' : ' on');
+  return `<div class="form-check pm-master">${bulkMark(tab, keys, 'id="bulkAll" data-key="bulkAll"', !keys.length || state.group.isTemplate, label + ', ' + count)}<label class="form-check-label" for="bulkAll">${label}</label></div><span class="pm-row__status pm-section-count">${keys.length ? count : ''}</span>`;
+}
+function tabBarHtml() {
+  const c = counts(state.group);
+  return Object.entries(TABS).map(([k, t]) => `<button type="button" role="tab" class="iris-tab${state.tab === k ? ' iris-tab--active' : ''}" aria-selected="${state.tab === k}" id="tab-${k}" aria-controls="rowsSlot" data-key="tab:${k}" data-tabkey="${k}" tabindex="${state.tab === k ? 0 : -1}">${t.label} <span class="pm-tabcount"><span aria-hidden="true" style="visibility:hidden;">(${c[k][1]}/${c[k][1]})</span><span>(${c[k][0]}/${c[k][1]})</span></span></button>`).join('');
+}
+function filterHtml() {
+  if (state.tab === 'metrics' || state.tab === 'connections') return '';
+  const t = TABS[state.tab];
+  const b = (v, l) => `<button type="button" class="btn${state.filter === v ? ' active' : ''}" data-filter="${v}" data-key="filter:${v}" aria-pressed="${state.filter === v}">${l}</button>`;
+  return `<div class="btn-group" role="group" aria-label="Show">${b('all','All')}${b('on',t.on)}${b('off',t.off)}</div>`;
+}
+
+/* ---------- Views ---------- */
+const CRUMB_GEAR = 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z';
+function breadcrumb(items) {
+  const sep = `<span class="breadcrumb-sep" aria-hidden="true">/</span>`;
+  const crumbIcon = t => { const d = t === 'Settings' ? CRUMB_GEAR : t === 'User Permissions' ? SETTINGS_ICON['User Permissions'] : ''; return d ? `<svg class="pm-crumb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>` : ''; };
+  return `<nav aria-label="Breadcrumb" style="margin-bottom:8px;"><ol class="breadcrumb" style="flex-wrap:wrap;">${items.map((it, i) => i === items.length - 1
+    ? `<li class="breadcrumb-item active" aria-current="page">${i ? sep : ''}${crumbIcon(it[0])}<span style="overflow-wrap:anywhere;">${esc(it[0])}</span></li>`
+    : `<li class="breadcrumb-item">${i ? sep : ''}<a href="${it[1]}">${crumbIcon(it[0])}${esc(it[0])}</a></li>`).join('')}</ol></nav>`;
+}
+function heading(title, sub) {
+  return `<h1 style="margin:0 0 4px;font-size:var(--text-2xl);font-weight:var(--font-bold);color:var(--color-text-heading);">${esc(title)}</h1><p style="margin:0 0 24px;font-size:var(--text-base);color:#374151;">${esc(sub)}</p>`;
+}
+const TILE = { viewer:'#9CA3AF', finance:'#2563EB', marketing:'#10B981', investor:'#6366F1', operations:'#F59E0B', custom:'#D61F69', full:'#0E9F8B' };
+const ICON_LAYERS = 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z';
+const ICON_CHECK = 'M16.59 7.58 10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z';
+const ICON_CHART = 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z';
+const ICON_LINK = 'M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z';
+const PILL_ICON = [ICON_CHART, ICON_LINK, ICON_LAYERS];
+function svg24(d) { return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${d}"/></svg>`; }
+function tile(color, icon, lg) { return `<div class="pm-tile${lg ? ' pm-tile--lg' : ''}" style="background:${color}18;color:${color};" aria-hidden="true">${svg24(icon)}</div>`; }
+function chip(label, color) { return `<span class="pm-chip" style="color:${color};background:${color}12;border-color:${color}40;">${esc(label)}</span>`; }
+/* Same as the product's AvatarGroup with max 4: the +N sits on the right. */
+function membersFoot(list) {
+  if (!list.length) return '<span class="pm-group-card__members pm-group-card__members--none">Not assigned</span>';
+  const shown = list.slice(0, 3);
+  const extra = list.length - shown.length;
+  const names = list.map(m => m.name).join(', ');
+  return `<span class="pm-group-card__people" title="${esc(names)}"><span class="pm-avatars" aria-hidden="true">${extra ? `<span class="pm-avatar pm-avatars__more">+${extra}</span>` : ''}${shown.slice().reverse().map(m => avatar(m)).join('')}</span><span class="pm-group-card__members">${list.length} ${list.length === 1 ? 'member' : 'members'}</span></span>`;
+}
+function groupCard(title, chipHtml, desc, pills, action, color, members, opts) {
+  const o = opts || {};
+  return `<section class="card pm-group-card"${o.cardId ? ` data-card="${o.cardId}"` : ''}${o.tint ? ` style="background:${color}06;border-color:${color}40;"` : ''}>
+    <div style="display:flex;align-items:flex-start;gap:12px;">${tile(color, o.icon || ICON_LAYERS)}<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;"><h3 class="pm-group-card__name">${o.cardId ? `<button type="button" class="pm-group-card__open" data-card-open="${o.cardId}">${esc(title)}</button>` : esc(title)}</h3>${chipHtml}</div>${o.menu === false ? '' : `<div class="pm-kebab-wrap"><button type="button" class="pm-kebab" data-card-menu="${o.cardId}" aria-haspopup="menu" aria-expanded="false" aria-label="${esc(title)} menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button><div class="pm-kebab-host"></div></div>`}</div>
+    <p class="pm-group-card__desc">${esc(desc)}</p>
+    ${pills.length ? `<div class="pm-pills">${pills.map((p, i) => `<span class="pm-pill">${svg24(PILL_ICON[i])}${esc(p)}</span>`).join('')}</div>` : ''}
+    <div class="pm-group-card__foot">${membersFoot(members)}<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">${action}</div></div>
+  </section>`;
+}
+function shellHead(items, compact) {
+  return `${breadcrumb(items)}<h1 tabindex="-1" style="margin:0 0 ${compact ? 16 : 4}px;font-size:20px;line-height:30px;font-weight:600;color:#111928;">User Permissions</h1>${compact ? '' : '<p style="margin:0 0 24px;font-size:14px;line-height:21px;font-weight:400;color:#374151;">Member access controls for metrics and integrations.</p>'}`;
+}
+const BACK = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>';
+function viewGroups() {
+  const grid = '';
+  const assign = (id, n) => `<button type="button" class="btn btn-alternative btn-sm" data-assign="${id}" aria-label="Assign members to ${esc(n)}">Assign</button>`;
+  const total = MEMBERS.filter(m => !m.pending).length;
+  const ids = TEMPLATES.map(t => t.id).concat(state.groups.map(g => g.id));
+  const inUse = ids.filter(id => membersOf(id).length).length;
+  const tiles = TEMPLATES.map(t => groupCard(t.name, chip('Iris template', TILE[t.id]), t.desc, ['221 metrics', '13 connections', counts(makeGroup(t.name, '', t.id)).pages[0] + ' pages'], `<button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" data-use="${t.id}" aria-label="Use template: ${esc(t.name)}">Use template</button>${assign(t.id, t.name)}`, TILE[t.id], membersOf(t.id), { cardId:t.id })).join('');
+  const customs = state.groups.map((g, i) => { const c = counts(g); return groupCard(g.name, '', g.description || 'Created by your organization.', [c.metrics[0] + ' metrics', c.connections[0] + ' connections', c.pages[0] + ' pages'], assign(g.id, g.name), TILE.custom, membersOf(g.id), { cardId:g.id }); }).join('');
+  return `${shellHead([['Settings','#settings'],['User Permissions']])}
+    <section class="card pm-shell">
+      <div class="pm-shell__bar"><a class="pm-back" href="#permissions">${BACK}Back to permissions</a><span class="pm-shell__title">Groups</span><button type="button" class="btn btn-primary btn-sm" id="newGroup" style="margin-left:auto;">New group</button></div>
+      <div style="padding:16px;">
+        <div class="pm-stats"><span>${ids.length} groups</span><span>${inUse} in use</span><span>${total - membersOf(FULL).length} of ${total} members covered</span></div>
+        <p class="form-helper" style="margin:-8px 0 12px;">Sample data.</p>
+        <div class="pm-grid" style="margin-bottom:24px;">${groupCard('Full Access', chip('Default', TILE.full), 'All metrics, connections, and pages. No restrictions applied.', ['221 metrics', '13 connections'], `<button type="button" class="btn btn-alternative btn-sm is-full" data-assign="${FULL}" aria-label="Assign members to Full Access">Assign</button>`, TILE.full, membersOf(FULL), { tint:true, icon:ICON_CHECK, menu:false })}</div>
+        <h2 style="margin:0;font-size:13px;line-height:19.5px;font-weight:700;color:#111928;">Iris templates</h2>
+        <p style="margin:0 0 12px;font-size:12px;line-height:18px;color:#374151;">Maintained by Iris and read-only. Create a group from one to customise it.</p>
+        <div class="pm-grid" style="margin-bottom:24px;">${tiles}</div>
+        <h2 style="margin:0;font-size:13px;line-height:19.5px;font-weight:700;color:#111928;">Custom groups</h2>
+        <p style="margin:0 0 12px;font-size:12px;line-height:18px;color:#374151;">Groups created by your organization.</p>
+        ${customs ? `<div class="pm-grid">${customs}</div>` : '<p style="margin:0;font-size:14px;color:#374151;">No custom groups yet. <button type="button" class="btn-link btn-link-semibold" style="padding:0;" data-new="1">Create a group</button></p>'}
+      </div>
+    </section>`;
+}
+function viewGroup() {
+  const g = state.group;
+  const tpl = !!g.isTemplate;
+  const c = tpl ? TILE[g.templateId] : TILE.custom;
+  const actions = tpl
+    ? `<button type="button" class="btn btn-primary btn-sm" data-use="${g.templateId}">Use template</button><button type="button" class="btn btn-alternative btn-sm" data-key="assignMembers" data-assign="${g.templateId}">Assign members</button>`
+    : `<button type="button" class="btn btn-ghost btn-sm" data-rename>Rename</button><button type="button" class="btn btn-alternative btn-sm" data-key="assignMembers" data-assign="${g.id}">Assign members</button>`;
+  return `${shellHead([['Settings','#settings'],['User Permissions','#permissions'],[g.name]], true)}
+    <section class="card pm-shell">
+      <div class="pm-builder-head" style="background:${c}08;">
+        <a class="pm-back" href="#groups" style="margin-left:-12px;">${BACK}Back to groups</a>
+        ${tile(c, ICON_LAYERS)}
+        <div style="flex:1 1 240px;min-width:0;">
+          <div class="pm-builder-status"><span style="color:${c};">${tpl ? 'Iris template · read-only' : 'Editing group · changes save automatically'}</span></div>
+          <div class="pm-builder-line"><h2 class="pm-builder-name">${esc(g.name)}</h2><span id="saveStatus" class="pm-save" role="status">${esc(state.saving ? 'Saving…' : Object.keys(state.rowError).length ? saveSummary() : state.saveMsg)}</span></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">${actions}</div>
+      </div>
+      <div id="payrollSlot">${payrollHtml()}</div>
+      ${editorPanel()}
+    </section>`;
+}
+function editorPanel() {
+  const t = TABS[state.tab];
+  return `<div id="tabPanel">
+        <div class="pm-sticky">
+          <div class="iris-tab-bar" role="tablist" aria-label="What ${subject()} can access" id="tabBar" style="overflow-x:auto;overflow-y:hidden;">${tabBarHtml()}</div>
+          <div style="padding:12px 16px;">
+            <div class="pm-toolbar">
+              <div class="pm-toolbar__search"><label class="form-label" for="tabSearch" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">${esc(t.search)}</label><input id="tabSearch" class="form-input" type="search" placeholder="${esc(t.search)}" value="${esc(state.search)}" autocomplete="off"></div>
+              <div id="filterSlot">${filterHtml()}</div>
+            </div>
+          </div>
+          <div class="pm-master-row" id="bulkSlot" style="--col:${listCol()}px;">${toolbarHtml()}</div>
+        </div>
+        <div id="rowsSlot" role="tabpanel" aria-labelledby="tab-${state.tab}" style="padding-bottom:8px;">${listHtml()}</div>
+      </div>`;
+}
+/* ---------- Permissions by person, as in the product's By user view ---------- */
+const ICON_SEARCH = '<svg class="pm-people__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
+const ICON_PERSON = 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z';
+const ICON_GRID = 'M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v8h8V3h-8zm6 6h-4V5h4v4zm-6 4v8h8v-8h-8zm6 6h-4v-4h4v4z';
+const ICON_HISTORY = 'M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z';
+function memberChip(m) {
+  const label = m.pending ? 'Pending invite' : m.groupId === FULL ? 'Full Access' : m.groupId ? baseOf(m.groupId).name : 'Custom';
+  const kind = m.pending ? 'pending' : m.groupId === FULL ? 'full' : 'group';
+  return `<span class="pm-person-chip pm-person-chip--${kind}" title="${esc(label)}">${esc(label)}</span>`;
+}
+/* What a person's salary state is, read from the same rules the salary card uses. */
+function memberSalary(m) { return payrollState(personGroup(m)).kind; }
+function salaryCanSee(kind) { return kind === 'visible' || kind === 'partial'; }
+function memberInGroupFilter(m, f) {
+  if (f === 'all') return true;
+  if (f === 'pending') return !!m.pending;
+  if (m.pending) return false;
+  if (f === 'custom') return m.groupId === null;
+  return m.groupId === f;
+}
+function filteredMembers() {
+  const q = state.peopleSearch.trim().toLowerCase();
+  return MEMBERS.filter(m => {
+    if (q && !m.name.toLowerCase().includes(q) && !m.email.toLowerCase().includes(q)) return false;
+    if (!memberInGroupFilter(m, state.peopleGroup)) return false;
+    if (state.peopleSalary !== 'all' && (m.pending || salaryCanSee(memberSalary(m)) !== (state.peopleSalary === 'visible'))) return false;
+    return true;
+  });
+}
+/* The side list is for moving between people: only the search narrows it, and the open person is always in it. */
+function peopleListHtml() {
+  const q = state.peopleSearch.trim().toLowerCase();
+  const list = MEMBERS.filter(m => m.id === state.personId || !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q));
+  return list.map(m => {
+    const active = m.id === state.personId;
+    return `<button type="button" class="pm-person${active ? ' is-active' : ''}" data-person="${m.id}" data-key="person:${m.id}" title="${esc(m.name)}" tabindex="${active ? 0 : -1}"${active ? ' aria-current="true"' : ''}>${avatar(m)}<span class="pm-person__name">${esc(m.name)}</span>${memberChip(m)}</button>`;
+  }).join('');
+}
+/* ---------- People table: what the page opens on ---------- */
+const PEOPLE_PAGE = 25;
+function groupOptionsHtml() {
+  const count = f => MEMBERS.filter(m => memberInGroupFilter(m, f)).length;
+  const opt = (v, label) => `<option value="${esc(v)}"${state.peopleGroup === v ? ' selected' : ''}>${esc(label)} (${count(v)})</option>`;
+  return opt('all', 'All members') + opt(FULL, 'Full Access') + `<optgroup label="Iris templates">${TEMPLATES.map(t => opt(t.id, t.name)).join('')}</optgroup>` + (state.groups.length ? `<optgroup label="Custom groups">${state.groups.map(g => opt(g.id, g.name)).join('')}</optgroup>` : '') + opt('custom', 'Custom') + opt('pending', 'Pending invite');
+}
+function salaryOptionsHtml() {
+  const kinds = MEMBERS.filter(m => !m.pending && memberInGroupFilter(m, state.peopleGroup)).map(memberSalary);
+  const see = kinds.filter(salaryCanSee).length;
+  const opt = (v, label) => `<option value="${v}"${state.peopleSalary === v ? ' selected' : ''}>${label}</option>`;
+  return opt('all', 'Any') + opt('visible', `Visible (${see})`) + opt('hidden', `Hidden (${kinds.length - see})`);
+}
+function salaryCell(kind) {
+  if (kind === 'hidden' || kind === 'already' || kind === 'lines') return '<span class="badge badge-green badge-sm">Hidden</span>';
+  if (kind === 'partial') return '<span class="badge badge-yellow badge-sm">Partly hidden</span>';
+  return '<span class="pm-ptable__plain">Visible</span>';
+}
+function clampPeoplePage() {
+  const pages = Math.max(1, Math.ceil(filteredMembers().length / PEOPLE_PAGE));
+  if (state.peoplePage >= pages) state.peoplePage = pages - 1;
+}
+function peopleTableHtml() {
+  if (state.peopleView === 'matrix') return matrixHtml();
+  clampPeoplePage();
+  const list = filteredMembers();
+  const from = state.peoplePage * PEOPLE_PAGE;
+  const rows = list.slice(from, from + PEOPLE_PAGE).map(m => `<tr class="pm-ptable__row" data-row="${m.id}">
+      <td><div class="pm-ptable__who">${avatar(m)}<div class="pm-ptable__text"><a class="pm-ptable__name" href="#permissions/${m.id}" title="${esc(m.name)}">${esc(m.name)}</a><div class="pm-ptable__email" title="${esc(m.email)}">${esc(m.email)}</div></div></div></td>
+      <td>${memberChip(m)}</td>
+      <td>${m.pending ? '<span class="pm-ptable__plain" aria-label="Not applicable">–</span>' : salaryCell(memberSalary(m))}</td>
+      <td class="pm-ptable__num">${personDiff(personGroup(m), baseOf(m.groupId)).n || '<span aria-label="None">–</span>'}</td>
+      <td class="pm-ptable__go" aria-hidden="true">${CHEVRON}</td>
+    </tr>`).join('');
+  const empty = `<tr><td colspan="5" class="pm-ptable__empty"><p class="pm-people__empty" style="padding:0 0 8px;">No members found</p><button type="button" class="btn-link btn-link-semibold btn-sm" id="clearPeople">Clear search and filters</button></td></tr>`;
+  return `<table class="pm-ptable"><thead><tr><th scope="col" class="iris-th">Member</th><th scope="col" class="iris-th">Group</th><th scope="col" class="iris-th">Salaries</th><th scope="col" class="iris-th pm-ptable__num">Own settings</th><th scope="col" class="iris-th"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Open</span></th></tr></thead><tbody>${list.length ? rows : empty}</tbody></table>`;
+}
+function peoplePagerHtml(foot) {
+  clampPeoplePage();
+  const total = filteredMembers().length;
+  const from = state.peoplePage * PEOPLE_PAGE;
+  const to = Math.min(total, from + PEOPLE_PAGE);
+  const label = total ? `${from + 1} to ${to} of ${total}` : '0 of ' + MEMBERS.length;
+  return `<span class="pm-ptools__count"${foot ? '' : ' role="status"'}>${label}</span><button type="button" class="btn btn-neutral btn-sm pm-ptools__page" data-page="prev" aria-label="Previous page"${from === 0 ? ' disabled' : ''}><span style="display:inline-flex;transform:rotate(180deg);">${CHEVRON}</span></button><button type="button" class="btn btn-neutral btn-sm pm-ptools__page" data-page="next" aria-label="Next page"${to >= total ? ' disabled' : ''}>${CHEVRON}</button>`;
+}
+function refreshPeople() {
+  const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  set('peopleSlot', peopleListHtml());
+  set('peopleTable', peopleTableHtml());
+  set('peoplePager', peoplePagerHtml());
+  set('peoplePagerFoot', peoplePagerHtml(true));
+}
+function peopleBar(back) {
+  return `<div class="pm-shell__bar">
+        ${back ? `<a class="pm-back" href="#permissions">${BACK}All members</a>` : ''}
+        <div class="pm-people__search">${ICON_SEARCH}<label for="peopleSearch" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Search members</label><input id="peopleSearch" class="form-input" type="search" placeholder="Search members…" value="${esc(state.peopleSearch)}" autocomplete="off"></div>
+        <div class="btn-group pm-people__views" role="group" aria-label="View"><button type="button" class="btn${back || state.peopleView === 'user' ? ' active' : ''}" aria-pressed="${back || state.peopleView === 'user'}" data-peopleview="user">${svg24(ICON_PERSON)}By user</button><button type="button" class="btn${!back && state.peopleView === 'matrix' ? ' active' : ''}" aria-pressed="${!back && state.peopleView === 'matrix'}" data-peopleview="matrix">${svg24(ICON_GRID)}Matrix</button></div>
+        <a class="btn btn-ghost btn-sm pm-people__manage" href="#groups">${svg24(ICON_LAYERS)}Manage Groups</a>
+      </div>`;
+}
+function viewPeopleTable() {
+  return `${shellHead([['Settings','#settings'],['User Permissions']])}
+    <section class="card pm-shell pm-people">
+      ${peopleBar(false)}
+      <div class="pm-ptools">
+        <div class="pm-ptools__field"><label for="peopleGroup">Group</label><select class="form-input form-select" id="peopleGroup">${groupOptionsHtml()}</select></div>
+        <div class="pm-ptools__field"><label for="peopleSalary">Salaries</label><select class="form-input form-select" id="peopleSalary">${salaryOptionsHtml()}</select></div>
+        <div class="pm-ptools__pager" id="peoplePager">${peoplePagerHtml()}</div>
+      </div>
+      <div id="peopleTable">${peopleTableHtml()}</div>
+      <div class="pm-ptable__foot"><p class="form-helper" style="margin:0;">Sample data.</p><div class="pm-ptools__pager" id="peoplePagerFoot">${peoplePagerHtml(true)}</div></div>
+    </section>`;
+}
+/* Says what is off and what cannot be changed, by name. The tabs carry the counts. */
+function personSummaryParts() {
+  const g = state.group;
+  const offAll = ITEMS.filter(i => !pageOn(g, i.id));
+  const off = offAll.filter(i => !i.defaultOff).sort((x, y) => (PARENT[x.id] ? 1 : 0) - (PARENT[y.id] ? 1 : 0)).map(i => (PARENT[i.id] ? PARENT[i.id].name + ': ' : '') + i.name);
+  const ro = ITEMS.filter(i => !PARENT[i.id] && pageOn(g, i.id) && !editOn(g, i.id)).map(i => i.name);
+  const mOff = METRICS.filter(m => !g.metrics[m[0]]).map(m => m[0]).concat(METRICS.filter(m => g.metrics[m[0]] && offOf(g, m[0]).length).map(m => m[0] + ' (' + offOf(g, m[0]).length + ')'));
+  const cOff = CONNS.filter(c => !g.conns[c]);
+  const build = short => {
+    const name = list => short && list.length > 1 ? list[0] + ' and ' + (list.length - 1) + ' more' : shortList(list);
+    const parts = [];
+    if (off.length) parts.push(['Pages off', name(off)]);
+    if (mOff.length) parts.push(['Metrics off', name(mOff)]);
+    if (cOff.length) parts.push(['Connections off', name(cOff)]);
+    if (ro.length) parts.push(['Read only', name(ro)]);
+    return parts;
+  };
+  const text = list => list.map(p => p[0] + ': ' + p[1]).join('  ');
+  let parts = build(false);
+  if (text(parts).length > 84) parts = build(true);
+  if (g.payroll === 'lines') parts.unshift(['Salaries', 'hidden']);
+  return parts;
+}
+const SUMMARY_NOTHING = '';
+function personSummary() {
+  const parts = personSummaryParts();
+  return parts.length ? parts.map(p => p[0] + ': ' + p[1]).join('. ') + '.' : SUMMARY_NOTHING;
+}
+function personSummaryHtml() {
+  const parts = personSummaryParts();
+  if (!parts.length) return esc(SUMMARY_NOTHING);
+  return parts.map(p => `<span class="pm-sum"><span class="pm-sum__label">${esc(p[0])}:</span> <span class="pm-sum__value">${esc(p[1])}</span></span>`).join(' ');
+}
+function personLine(m) {
+  const n = m.diff || 0;
+  const own = n + (n === 1 ? ' own setting' : ' own settings');
+  let text = 'Full access — no edits';
+  let action = '';
+  if (m.groupId && m.groupId !== FULL) {
+    const name = groupPhrase(baseOf(m.groupId).name);
+    if (n) { text = own + ' on top of the ' + name; action = '<button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;" data-key="personReset" data-reset="1" title="Discards these own settings">Reset to group</button>'; }
+    else { text = 'Follows the ' + name; if (isCustomGroup(m.groupId)) action = `<button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;" data-key="personEdit" data-edit-group="${m.groupId}">Edit group</button>`; }
+  } else if (n) {
+    text = own + (m.touched ? ' · last edited just now' : '');
+  }
+  return `<span class="pm-person-email" title="${esc(m.email)}">${esc(m.email)}</span><span class="pm-person-sep" aria-hidden="true">·</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${ICON_HISTORY}"/></svg><span class="pm-person-line__text" title="${esc(text)}">${esc(text)}</span>${action}`;
+}
+function pickerHtml(m) {
+  const full = m.groupId === FULL;
+  const label = groupLabel(m);
+  return `<div class="pm-picker"><button type="button" class="btn btn-neutral btn-sm pm-picker__btn${full ? ' pm-picker__btn--full' : ''}" id="groupPicker" data-key="groupPicker" aria-haspopup="menu" aria-expanded="false" aria-controls="pickerMenu" aria-label="Group: ${esc(label)}"${m.pending ? ' disabled' : ''}>${svg24(full ? ICON_CHECK : ICON_LAYERS)}<span class="pm-picker__label">${esc(label)}</span>${CHEVRON_DOWN}</button><div id="pickerMenu"></div></div>`;
+}
+function pickerMenuHtml(m) {
+  const TICK = '<svg class="pm-menu__tick" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.58l7.3-7.3a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>';
+  const ICON_PLUS = 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z';
+  const icon = (d, full) => `<span class="pm-menu__icon${full ? ' pm-menu__icon--full' : ''}">${svg24(d)}</span>`;
+  const item = (id, label, ic) => { const on = m.groupId === id; return `<button type="button" role="menuitemradio" aria-checked="${on}" class="pm-menu__item${on ? ' is-selected' : ''}" data-pick="${id}" title="${esc(label)}">${ic}<span class="pm-menu__label">${esc(label)}</span>${on ? TICK : ''}</button>`; };
+  const tpl = TEMPLATES.map(t => item(t.id, t.name, icon(ICON_LAYERS))).join('');
+  const custom = state.groups.map(g => item(g.id, g.name, icon(ICON_LAYERS))).join('');
+  const start = TEMPLATES.some(t => t.id === m.groupId) ? m.groupId : 'nothing';
+  const customNow = m.groupId === null ? `<button type="button" role="menuitemradio" aria-checked="true" class="pm-menu__item is-selected" data-pick="__none" title="Custom: own settings, no group">${icon(ICON_LAYERS)}<span class="pm-menu__label">Custom</span>${TICK}</button><div class="pm-menu__sep" role="separator"></div>` : '';
+  return `<div class="pm-menu" role="menu" aria-label="Choose a group" tabindex="-1">${customNow}${item(FULL, 'Full Access', icon(ICON_CHECK, true))}<div class="pm-menu__sep" role="separator"></div><div class="pm-menu__head" role="presentation">Iris templates</div>${tpl}${custom ? `<div class="pm-menu__sep" role="separator"></div><div class="pm-menu__head" role="presentation">Custom groups</div>${custom}` : ''}<div class="pm-menu__sep" role="separator"></div><button type="button" role="menuitem" class="pm-menu__item" data-create="${start}">${icon(ICON_PLUS)}<span class="pm-menu__label">New group</span></button></div>`;
+}
+/* The mouse opens the menu with no item highlighted. The keyboard starts on the current group. */
+function openPicker(kbd) {
+  const m = currentPerson();
+  const host = document.getElementById('pickerMenu');
+  const btn = document.getElementById('groupPicker');
+  if (!host || !btn || btn.disabled) return;
+  state.pickerOpen = true;
+  host.innerHTML = pickerMenuHtml(m);
+  btn.setAttribute('aria-expanded', 'true');
+  const menu = host.firstChild;
+  menu.style.maxHeight = Math.max(160, Math.min(420, window.innerHeight - btn.getBoundingClientRect().bottom - 16)) + 'px';
+  if (kbd) (menu.querySelector('.is-selected') || menu.querySelector('[role^=menuitem]')).focus();
+  else menu.focus();
+}
+function closePicker(refocus) {
+  state.pickerOpen = false;
+  const host = document.getElementById('pickerMenu');
+  const btn = document.getElementById('groupPicker');
+  if (host) host.innerHTML = '';
+  if (btn) { btn.setAttribute('aria-expanded', 'false'); if (refocus) btn.focus(); }
+}
+function reloadPerson(focusSelector) {
+  state.personGroup = personGroup(currentPerson());
+  state.group = state.personGroup;
+  state.rowError = {};
+  state.rowStatus = {};
+  state.sticky.clear();
+  queueSave();
+  updateEditor();
+  const f = focusSelector && document.querySelector(focusSelector);
+  if (f) f.focus();
+}
+function changePerson(m, change, msg, focusSelector, kbd) {
+  const before = { groupId:m.groupId, over:m.over ? clone(m.over) : null, diff:m.diff };
+  const was = salaryCanSee(memberSalary(m));
+  change();
+  const now = salaryCanSee(memberSalary(m));
+  const note = !was && now ? ' Salaries are visible again.' : was && !now ? ' Salaries are hidden.' : '';
+  reloadPerson(focusSelector);
+  toast(msg + note, () => { Object.assign(m, before); reloadPerson(focusSelector); toast('Change undone.'); }, kbd);
+}
+function pickGroup(id, kbd) {
+  const m = currentPerson();
+  closePicker(true);
+  if (id === '__none' || m.groupId === id) return;
+  const msg = id === FULL ? m.name + ' now has Full Access.' : m.name + ' is now in the ' + baseOf(id).name + ' group.';
+  changePerson(m, () => { m.groupId = id; m.over = salaryOnly(m); m.diff = 0; }, msg, '#groupPicker', kbd);
+}
+function resetPerson(kbd) {
+  const m = currentPerson();
+  const msg = m.name + ' follows the ' + baseOf(m.groupId).name + ' group again.';
+  changePerson(m, () => { m.over = salaryOnly(m); m.diff = 0; }, msg, '#groupPicker', kbd);
+}
+function selectPerson(id) {
+  if (state.personId === id) { const f = document.querySelector('[data-person="' + id + '"]'); if (f) f.focus(); return; }
+  state.focusPerson = id;
+  location.hash = '#permissions/' + id;
+}
+function personDetailHtml() {
+  const m = currentPerson();
+  return `<div class="pm-person-head">
+      ${avatar(m, 'pm-avatar--lg')}
+      <div class="pm-person-head__text">
+        <h2 class="pm-person-name" title="${esc(m.name)}">${esc(m.name)}</h2>
+        <div class="pm-person-line" id="personLine">${personLine(m)}</div>
+        <div class="pm-person-summary" id="personSummary" title="${esc(personSummary())}">${personSummaryHtml()}</div>
+      </div>
+      <div class="pm-person-head__side"><div id="pickerSlot">${pickerHtml(m)}</div><span id="saveStatus" class="pm-save" role="status">${esc(state.saving ? 'Saving…' : state.saveMsg)}</span></div>
+    </div>
+    <div id="payrollSlot">${payrollHtml()}</div>
+    ${editorPanel()}`;
+}
+function viewPermissions() {
+  if (!state.personId) return viewPeopleTable();
+  const m = currentPerson();
+  return `${shellHead([['Settings','#settings'],['User Permissions','#permissions'],[m.name]], true)}
+    <section class="card pm-shell pm-people">
+      ${peopleBar(true)}
+      <div class="pm-people__body">
+        <div class="pm-people__col"><div class="pm-people__sticky" id="peopleScroll"><nav class="pm-people__list" aria-label="Members" id="peopleSlot">${peopleListHtml()}</nav><p class="form-helper pm-people__note">Sample data.</p></div></div>
+        <div class="pm-people__detail">${personDetailHtml()}</div>
+      </div>
+    </section>`;
+}
+function enterPeople() {
+  if (!state.inPeople) { state.savedGroup = state.group; state.inPeople = true; state.personGroup = null; resetEditorView(); }
+  if (!state.personGroup) { state.personGroup = personGroup(currentPerson()); state.group = state.personGroup; state.saveMsg = ''; syncPerson(); }
+}
+function leavePeople() {
+  if (!state.inPeople) return;
+  state.inPeople = false;
+  state.pickerOpen = false;
+  state.lastPerson = state.personId;
+  if (state.group === state.personGroup) state.group = state.savedGroup;
+  state.personGroup = null;
+  resetEditorView();
+}
+/* ---------- Assign members ---------- */
+function assignRows(targetId, q) {
+  const query = q.trim().toLowerCase();
+  const list = MEMBERS.filter(m => !m.pending && (!query || m.name.toLowerCase().includes(query) || m.email.toLowerCase().includes(query)));
+  if (!list.length) return '<p class="pm-people__empty">No members found</p>';
+  return list.map(m => {
+    const done = m.groupId === targetId;
+    const n = personDiff(personGroup(m), baseOf(m.groupId)).n;
+    const hidden = !salaryCanSee(memberSalary(m)) && !salaryOnly(m);
+    const warn = !done && n ? ' · ' + n + (n === 1 ? ' own setting' : ' own settings') + (hidden ? ', salaries hidden' : '') + ': assigning removes ' + (n === 1 ? 'it' : 'them') : '';
+    return `<div class="pm-assign__row${done ? ' is-assigned' : ''}">${avatar(m, 'pm-avatar--sm')}<div class="pm-assign__who"><div class="pm-assign__name" title="${esc(m.name)}">${esc(m.name)}</div><div class="pm-assign__group" title="${esc(groupLabel(m) + warn)}">${esc(groupLabel(m) + warn)}</div></div><div class="pm-assign__action">${done ? `<span class="pm-assign__check" role="img" aria-label="Assigned">${svg24(ICON_CHECK)}</span>` : `<button type="button" class="btn btn-alternative btn-sm" data-member="${m.id}" aria-label="Assign ${esc(m.name)}">Assign</button>`}</div></div>`;
+  }).join('');
+}
+function assignModal(targetId) {
+  const name = targetId === FULL ? 'Full Access' : baseOf(targetId).name;
+  const body = `<div class="pm-people__search pm-people__search--full">${ICON_SEARCH}<label for="assignSearch" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Search members</label><input id="assignSearch" class="form-input" type="search" placeholder="Search members…" autocomplete="off" data-autofocus></div><div class="pm-assign" id="assignList">${assignRows(targetId, '')}</div>`;
+  openModal('assignDialog', 'Assign members to ' + name, body, '<button type="button" class="btn btn-primary btn-md" id="assignDone">Done</button>');
+  const searchEl = document.getElementById('assignSearch');
+  const listEl = document.getElementById('assignList');
+  searchEl.addEventListener('input', () => { listEl.innerHTML = assignRows(targetId, searchEl.value); });
+  document.getElementById('assignDone').onclick = closeModal;
+  listEl.addEventListener('click', e => {
+    const b = e.target.closest('[data-member]');
+    if (!b) return;
+    const all = [...listEl.querySelectorAll('[data-member]')];
+    const next = all[all.indexOf(b) + 1];
+    const nextId = next ? next.dataset.member : null;
+    const m = MEMBERS.find(x => x.id === +b.dataset.member);
+    m.groupId = targetId;
+    m.over = salaryOnly(m);
+    m.diff = 0;
+    listEl.innerHTML = assignRows(targetId, searchEl.value);
+    (listEl.querySelector(`[data-member="${nextId}"]`) || document.getElementById('assignDone')).focus();
+  });
+  /* Cards and stats behind the dialog show the new members once it closes, whichever way it closes. */
+  modalOnClose = () => {
+    if (view() === 'permissions' || !document.querySelector(`[data-assign="${targetId}"]`)) return;
+    render(true);
+    const f = document.querySelector(`[data-assign="${targetId}"]`);
+    if (f) f.focus();
+  };
+}
+const SETTINGS_ICON = {
+  'Organization Details':'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21',
+  'Members':'M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z',
+  'User Permissions':'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z',
+  'Accounting':'M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v7.5m2.25-6.466a9.016 9.016 0 0 0-3.461-.203c-.536.072-.974.478-1.021 1.017a4.559 4.559 0 0 0-.018.402c0 .464.336.844.775.994l2.95 1.012c.44.15.775.53.775.994 0 .136-.006.27-.018.402-.047.539-.485.945-1.021 1.017a9.077 9.077 0 0 1-3.461-.203M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z',
+  'Locale':'M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418',
+  'My Organizations':'M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z',
+  'AI Agents':'M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z',
+  'Connect AI tools':'M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z',
+  'Delivery channels':'M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5',
+};
+function viewSettings() {
+  const card = (title, desc, href) => { const inner = `<svg class="pm-settings-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="${SETTINGS_ICON[title]}"/></svg><div style="min-width:0;"><div class="pm-settings-card__label">${esc(title)}</div><div class="pm-settings-card__summary">${esc(desc)}</div></div>`; return href ? `<a class="card pm-settings-card" href="${href}">${inner}</a>` : `<div class="card pm-settings-card">${inner}</div>`; };
+  return `<h1 tabindex="-1" style="margin:0;font-size:20px;line-height:30px;font-weight:600;color:#111928;">Settings</h1><p style="margin:0 0 24px;font-size:14px;color:#374151;">Your organization’s profile, people, and preferences.</p>
+    <div style="padding:0 16px;">
+    <h2 class="pm-settings-group">Organization Settings</h2>
+    <div class="pm-grid4" style="margin-bottom:32px;">${card('Organization Details','Core business identifiers and classification details.')}${card('Members','People who can log in with access to this organization.')}${card('User Permissions','Member access controls for metrics and integrations.','#permissions')}${card('Accounting','Financial reporting preferences and revenue recognition settings.')}${card('Locale','Regional settings for time, data display, and currency.')}${card('My Organizations','All organizations you have access to, with the ability to switch between them and create new ones.')}</div>
+    <h2 class="pm-settings-group">AI Settings</h2>
+    <div class="pm-grid4" style="margin-bottom:32px;">${card('AI Agents','Configuration for Fin’s specialized agents.')}${card('Connect AI tools','Use Iris in Cursor or Claude, and manage MCP keys.','#mcp')}${card('Delivery channels','Where automations send alerts and snapshots — email and Slack.')}</div>
+    </div>`;
+}
+function viewMcp() {
+  const cursor = ['In the Cursor dashboard, open Plugins & MCPs and add an MCP server.', 'Set Type to URL, name it Iris and paste the server URL. Leave HTTP headers, Client ID and Client Secret empty.', 'Save, then sign in with your Iris account when the browser opens.', 'Ask it something, such as: What drove the change in net sales last month?'];
+  const claude = ['In Claude, open Settings, then Connectors.', 'If Iris is listed under Browse, choose it and select Connect. If not, add a custom connector and paste the server URL.', 'Sign in with your Iris account and approve read access.', 'Ask it something, such as: What drove the change in net sales last month?'];
+  const steps = state.mcpClient === 'cursor' ? cursor : claude;
+  const b = (v, l) => `<button type="button" class="btn${state.mcpClient === v ? ' active' : ''}" data-client="${v}" data-key="client:${v}" aria-pressed="${state.mcpClient === v}">${l}</button>`;
+  return `${breadcrumb([['Settings','#settings'],['Connect AI tools']])}
+    ${heading('Connect AI tools', 'Connect Cursor or Claude to your Iris data. Read only for now.')}
+    <section class="card" style="margin-bottom:24px;" aria-labelledby="connectTitle">
+      <div class="card-header"><div class="card-header-title" id="connectTitle">Connect to the Iris MCP server</div></div>
+      <div class="card-body-padded">
+        <div class="form-group"><label class="form-label" for="mcpUrl">Server URL</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;max-width:640px;"><input class="form-input" id="mcpUrl" readonly value="${MCP_URL}" style="flex:1 1 240px;width:auto;"><button type="button" class="btn btn-primary btn-md" id="copyUrl" data-key="copyUrl" style="flex-shrink:0;">Copy URL</button></div>
+          <div style="margin-top:6px;font-size:14px;line-height:20px;color:#374151;">You do not need a key. Each person signs in with their own Iris account.</div>
+        </div>
+        <div class="btn-group" role="group" aria-label="Choose your AI tool" style="margin-bottom:12px;">${b('cursor','Cursor')}${b('claude','Claude')}</div>
+        <ol style="margin:0 0 12px;padding-left:20px;font-size:var(--text-sm);color:var(--color-text-primary);line-height:1.7;">${steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+        
+      </div>
+    </section>
+    <section class="card" aria-labelledby="keysTitle">
+      <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;gap:16px;"><div><div class="card-header-title" id="keysTitle">MCP keys</div><div class="form-helper" style="margin:2px 0 0;">For scripts and tools that cannot sign in.</div></div><button type="button" class="btn btn-alternative btn-sm" style="flex-shrink:0;" id="createKeyBtn" data-createkey>Create Key</button></div>
+      <div id="keysTable">${keysTableHtml()}</div>
+    </section>`;
+}
+function viewConnections() {
+  if (!state.connections) state.connections = [['Quickbooks','quickbooks','Connected via OAuth flow','2026-10-29'],['Shopify DTC','shopify','Connected via API key','2026-10-29'],['TikTok Marketing','tiktok','Connected via OAuth flow','2026-10-29'],['TikTok Shop','tiktok','Connected via OAuth flow','2026-10-29'],['Trackstar','trackstar','Connected via API key','2026-10-29']];
+  const logo = n => { const f = LOGOS[n]; return f ? `<img src="assets/logos/${f}" alt="" style="width:28px;height:28px;object-fit:contain;">` : ''; };
+  const list = state.connections.length ? state.connections.map(n => { const busy = !!state.connSync[n[0]]; return `<section class="card pm-conn"><div class="pm-conn__name">${logo(n[1])}<span>${esc(n[0])}</span></div><div class="pm-conn__meta"><div>${esc(n[2])}</div><div>Synchronization start date: 2023-01-01</div><div>Last sync date: ${esc(n[3])}</div><div>Last sync status: ${busy ? '<span>syncing…</span>' : '<span style="color:#057A55;">succeeded</span>'}</div></div><div class="pm-conn__actions"><button type="button" class="btn btn-alternative btn-sm" data-sync="${esc(n[0])}"${busy ? ' disabled' : ''}>Run Sync Manually</button><button type="button" class="btn btn-sm pm-danger" data-disconnect="${esc(n[0])}">Disconnect</button></div></section>`; }).join('') : '<p class="pm-people__empty">No connections yet</p>';
+  return `<h1 tabindex="-1" style="margin:0;font-size:20px;line-height:30px;font-weight:600;color:#111928;">Connections</h1><p style="margin:0 0 16px;font-size:14px;line-height:21px;color:#374151;">External data sources that feed your financial model.</p>
+    <div class="pm-note" role="note">${INFO}<span><strong>Claude and Cursor</strong> read from Iris, so you connect them in <a href="#mcp" style="color:inherit;font-weight:600;text-decoration:underline;">Connect AI tools</a>.</span></div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;"><div style="flex:0 1 320px;min-width:200px;"><label for="connService" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Select Service</label><select class="form-input form-select" id="connService" disabled><option>Select Service</option></select></div><button type="button" class="btn btn-primary btn-md" disabled>Connect</button></div>
+    <div style="display:flex;flex-direction:column;gap:12px;">${list}</div>
+    <p class="form-helper" style="margin:12px 0 0;">Sample data.</p>`;
+}
+
+const LOGOS = {"shopify": "shopify.svg", "quickbooks": "quickbooks.svg", "trackstar": "trackstar.svg", "tiktok": "tiktok.svg"};
+/* ---------- Group cards: open, menu, duplicate, delete ---------- */
+function openCard(id) {
+  const t = TEMPLATES.find(x => x.id === id);
+  if (t) {
+    const g = makeGroup(t.name, t.desc, t.id);
+    g.isTemplate = true;
+    g.templateId = t.id;
+    state.group = g;
+    state.saveMsg = '';
+  } else {
+    state.group = baseOf(id);
+    state.saveMsg = '';
+  }
+  resetEditorView();
+  if (location.hash === '#group') { render(); } else location.hash = '#group';
+}
+function cardMenuHtml(id) {
+  const tpl = TEMPLATES.some(t => t.id === id);
+  const item = (cm, label, cls) => `<button type="button" role="menuitem" class="pm-menu__item${cls ? ' ' + cls : ''}" data-cm="${cm}" data-id="${id}"><span class="pm-menu__label">${label}</span></button>`;
+  return `<div class="pm-menu pm-menu--card" role="menu" aria-label="Group actions" tabindex="-1">${tpl ? item('open', 'View') + item('create', 'Use template') : item('open', 'Edit') + item('dup', 'Duplicate') + '<div class="pm-menu__sep" role="separator"></div>' + item('del', 'Delete', 'pm-menu__item--danger')}</div>`;
+}
+function openCardMenu(btn, kbd) {
+  closeCardMenu();
+  const host = btn.parentElement.querySelector('.pm-kebab-host');
+  state.cardMenu = btn.dataset.cardMenu;
+  host.innerHTML = cardMenuHtml(state.cardMenu);
+  btn.setAttribute('aria-expanded', 'true');
+  const menu = host.firstChild;
+  if (kbd) menu.querySelector('[role^=menuitem]').focus();
+  else menu.focus();
+}
+function closeCardMenu(refocus) {
+  if (!state.cardMenu) return;
+  const btn = document.querySelector(`[data-card-menu="${state.cardMenu}"]`);
+  state.cardMenu = null;
+  if (!btn) return;
+  btn.parentElement.querySelector('.pm-kebab-host').innerHTML = '';
+  btn.setAttribute('aria-expanded', 'false');
+  if (refocus) btn.focus();
+}
+function cardAction(cm, id, kbd) {
+  closeCardMenu(true);
+  if (cm === 'open') { openCard(id); return; }
+  if (cm === 'create') { newGroupModal(id); return; }
+  if (cm === 'del') { deleteGroupModal(id); return; }
+  const g = baseOf(id);
+  const copy = clone(g);
+  copy.id = 'g' + (++groupSeq);
+  let name = g.name + ' (copy)';
+  for (let n = 2; state.groups.some(x => x.name.toLowerCase() === name.toLowerCase()); n++) name = g.name + ' (copy ' + n + ')';
+  copy.name = name;
+  state.groups.push(copy);
+  render(true);
+  const focus = () => { const f = document.querySelector(`[data-card-menu="${id}"]`); if (f) f.focus(); };
+  focus();
+  toast(name + ' created.', () => {
+    state.groups.splice(state.groups.indexOf(copy), 1);
+    render(true);
+    toast('Change undone.');
+    focus();
+  }, kbd);
+}
+/* The live product deletes on the menu click and moves members to Full Access. This asks first and says so. */
+function deleteGroupModal(id) {
+  const g = baseOf(id);
+  const n = membersOf(id).length;
+  const body = `<p style="margin:0;font-size:14px;line-height:20px;color:#111928;">${n ? n + (n === 1 ? ' member moves' : ' members move') + ' to Full Access and can open everything again.' : 'No members are assigned to this group.'}</p>`;
+  openModal('deleteGroup', 'Delete ' + g.name + '?', body, '<button type="button" class="btn btn-alternative btn-md" id="delCancel" data-autofocus>Cancel</button><button type="button" class="btn btn-md pm-danger-solid" id="delConfirm">Delete group</button>');
+  document.getElementById('delCancel').onclick = closeModal;
+  document.getElementById('delConfirm').onclick = ev => {
+    const at = state.groups.indexOf(g);
+    const moved = MEMBERS.filter(m => m.groupId === id).map(m => ({ m, over:m.over, diff:m.diff }));
+    moved.forEach(x => { x.m.groupId = FULL; x.m.over = null; x.m.diff = 0; });
+    state.groups.splice(at, 1);
+    if (state.group === g) state.group = null;
+    if (state.savedGroup === g) state.savedGroup = null;
+    state.noDemo = true;
+    if (state.peopleGroup === id) state.peopleGroup = 'all';
+    closeModal();
+    render(true);
+    toast(g.name + ' deleted.' + (n ? ' ' + n + (n === 1 ? ' member moved' : ' members moved') + ' to Full Access.' : ''), () => {
+      state.groups.splice(at, 0, g);
+      moved.forEach(x => { x.m.groupId = id; x.m.over = x.over; x.m.diff = x.diff; });
+      render(true);
+      toast('Change undone.');
+    }, ev.detail === 0);
+  };
+}
+
+/* ---------- Render ---------- */
+function view() { return (location.hash || '#groups').slice(1).split('/')[0]; }
+function hashPerson() { const id = +(location.hash || '').split('/')[1]; return MEMBERS.some(m => m.id === id) ? id : null; }
+/* The side list ends at the window's edge, so its last rows can always be reached without scrolling the page. */
+function fitSideList() {
+  const sc = document.getElementById('peopleScroll');
+  if (sc) sc.style.maxHeight = Math.max(200, window.innerHeight - Math.max(0, sc.getBoundingClientRect().top) - 8) + 'px';
+}
+window.addEventListener('scroll', fitSideList, { passive:true });
+window.addEventListener('resize', fitSideList);
+/* Moves the side list only when the open person is out of view. */
+function revealActive() {
+  const sc = document.getElementById('peopleScroll');
+  const a = sc && sc.querySelector('.pm-person.is-active');
+  if (!a) return;
+  const box = sc.getBoundingClientRect();
+  const row = a.getBoundingClientRect();
+  const bottom = Math.min(box.bottom, window.innerHeight - 8);
+  if (row.top < box.top) sc.scrollTop -= box.top - row.top + 8;
+  else if (row.bottom > bottom) sc.scrollTop += row.bottom - bottom + 8;
+}
+function render(keepScroll) {
+  if (view() === 'group' && !state.group && state.noDemo) history.replaceState(null, '', '#groups');
+  const v = view();
+  const oldList = document.getElementById('peopleScroll');
+  const listTop = oldList ? oldList.scrollTop : 0;
+  state.cardMenu = null;
+  const pid = v === 'permissions' ? hashPerson() : null;
+  if (v === 'permissions' && !pid && location.hash.includes('/')) history.replaceState(null, '', '#permissions');
+  if (pid) {
+    if (state.personId !== pid) { state.personId = pid; state.personGroup = null; state.pickerOpen = false; resetEditorView(); }
+    enterPeople();
+  } else {
+    leavePeople();
+    state.personId = null;
+  }
+  if (v === 'group' && !state.group) {
+    const demo = makeGroup('Channel lead', '', 'everything');
+    state.groups.push(demo);
+    state.group = demo;
+    state.saveMsg = '';
+  }
+  const app = document.getElementById('app');
+  app.innerHTML = v === 'permissions' ? viewPermissions() : v === 'group' ? viewGroup() : v === 'mcp' ? viewMcp() : v === 'connections' ? viewConnections() : v === 'settings' ? viewSettings() : viewGroups();
+  document.title = v === 'permissions' ? (state.personId ? currentPerson().name + ' | User Permissions' : 'User Permissions') : v === 'group' ? state.group.name + ' | Groups' : v === 'mcp' ? 'Connect AI tools' : v === 'connections' ? 'Connections' : v === 'settings' ? 'Settings' : 'Groups';
+  if (!keepScroll) window.scrollTo(0, 0);
+  const newList = document.getElementById('peopleScroll');
+  if (newList) { fitSideList(); newList.scrollTop = listTop; revealActive(); }
+  const current = v === 'connections' ? 'Connections' : 'Settings';
+  document.querySelectorAll('.pm-rail__item').forEach(b => { const on = b.title === current; b.classList.toggle('is-active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+}
+function updateEditor() {
+  const v = view();
+  if ((v !== 'group' && !(v === 'permissions' && state.personId)) || !state.group) return;
+  const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
+  const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  if (v === 'permissions') {
+    syncPerson();
+    const m = currentPerson();
+    set('personLine', personLine(m));
+    const sum = document.getElementById('personSummary');
+    if (sum) { sum.innerHTML = personSummaryHtml(); sum.title = personSummary(); }
+    if (!state.pickerOpen) set('pickerSlot', pickerHtml(m));
+    set('peopleSlot', peopleListHtml());
+  }
+  set('payrollSlot', payrollHtml());
+  set('tabBar', tabBarHtml());
+  set('filterSlot', filterHtml());
+  set('bulkSlot', toolbarHtml());
+  set('rowsSlot', listHtml());
+  if (active) { const el = document.querySelector(`[data-key="${CSS.escape(active)}"]`); (el || document.getElementById('tabSearch') || document.body).focus(); }
+}
+function setRail() {
+  const rail = document.querySelector('aside');
+  const go = (title, hash) => { const b = rail.querySelector(`[title="${title}"]`); if (b) b.onclick = () => { location.hash = hash; }; };
+  const settings = rail.querySelector('[title="Settings"]');
+  if (settings && !rail.querySelector('[title="Connections"]')) {
+    const c = rail.querySelector('[title="Metrics"]').cloneNode(true);
+    c.title = 'Connections'; c.setAttribute('aria-label', 'Connections'); c.classList.remove('active');
+    rail.querySelector('[title="Metrics"]').parentNode.appendChild(c);
+  }
+  go('Connections', '#connections');
+  go('Settings', '#settings');
+}
+
+/* ---------- Events ---------- */
+/* The second click of a double-click on something that navigates must not land on the new page. */
+let navAt = 0;
+document.addEventListener('click', e => {
+  if (e.detail > 1 && Date.now() - navAt < 500) { e.preventDefault(); return; }
+  if (e.target.closest('[data-row], [data-person], [data-card], a[href^="#"]') && !e.target.closest('.pm-kebab-wrap')) navAt = Date.now();
+  if (state.pickerOpen && !e.target.closest('.pm-picker')) closePicker();
+  if (state.cardMenu && !e.target.closest('.pm-kebab-wrap')) closeCardMenu();
+  const row = e.target.closest('[data-row]');
+  if (row && !e.target.closest('a, button')) { location.hash = '#permissions/' + row.dataset.row; return; }
+  const sectionRow = e.target.closest('[data-section-row]');
+  if (sectionRow && !e.target.closest('input, button') && state.search.trim() === '' && state.filter === 'all') { state.open[sectionRow.dataset.sectionRow] = !state.open[sectionRow.dataset.sectionRow]; updateEditor(); return; }
+  const card = e.target.closest('[data-card]');
+  if (card && !e.target.closest('a, button, .pm-kebab-wrap')) { openCard(card.dataset.card); return; }
+  const t = e.target.closest('button, input, a');
+  if (!t) return;
+  if (t.dataset.cardOpen) { openCard(t.dataset.cardOpen); return; }
+  if (t.dataset.cardMenu) { if (state.cardMenu === t.dataset.cardMenu) closeCardMenu(true); else openCardMenu(t, e.detail === 0); return; }
+  if (t.dataset.cm) { cardAction(t.dataset.cm, t.dataset.id, e.detail === 0); return; }
+  if (t.dataset.page) { state.peoplePage += t.dataset.page === 'next' ? 1 : -1; refreshPeople(); window.scrollTo(0, 0); const dir = t.dataset.page; const f = document.querySelector(`#peoplePager [data-page="${dir}"]`); const other = document.querySelector(`#peoplePager [data-page="${dir === 'next' ? 'prev' : 'next'}"]`); (f && !f.disabled ? f : other && !other.disabled ? other : document.getElementById('peopleSearch')).focus(); return; }
+  if (t.id === 'clearPeople') { state.peopleSearch = ''; state.peopleGroup = 'all'; state.peopleSalary = 'all'; state.peoplePage = 0; render(true); const f = document.getElementById('peopleSearch'); if (f) f.focus(); return; }
+  if (t.id === 'groupPicker') { if (state.pickerOpen) closePicker(true); else openPicker(e.detail === 0); return; }
+  if (t.dataset.pick) { pickGroup(t.dataset.pick, e.detail === 0); return; }
+  if (t.dataset.create) { closePicker(true); newGroupModal(t.dataset.create); return; }
+  if (t.dataset.person) { selectPerson(+t.dataset.person); return; }
+  if (t.dataset.assign) { assignModal(t.dataset.assign); return; }
+  if (t.dataset.reset) { resetPerson(e.detail === 0); return; }
+  if (t.dataset.editGroup) { state.group = baseOf(t.dataset.editGroup); state.saveMsg = ''; location.hash = '#group'; return; }
+  if (t.id === 'newGroup' || t.dataset.new) return newGroupModal();
+  if (t.dataset.use) return newGroupModal(t.dataset.use);
+  if (t.dataset.tabkey) { state.tab = t.dataset.tabkey; state.search = ''; state.filter = 'all'; state.sticky.clear(); render(true); const f = document.querySelector(`[data-key="tab:${t.dataset.tabkey}"]`); if (f) f.focus(); return; }
+  if (t.dataset.filter) { state.filter = t.dataset.filter; state.sticky.clear(); updateEditor(); return; }
+  if (t.dataset.toggle) { state.open[t.dataset.toggle] = !state.open[t.dataset.toggle]; updateEditor(); return; }
+  if (t.dataset.retry) { const c = document.getElementById('c-edit:' + t.dataset.retry); if (c) c.focus(); toggleEdit(t.dataset.retry); return; }
+  if (t.id === 'clearFilters') { state.search = ''; state.filter = 'all'; const s = document.getElementById('tabSearch'); if (s) { s.value = ''; s.focus(); } updateEditor(); return; }
+  if (t.id === 'bulkAll') { openBulkMenu(t, 'all', null, t.parentElement.querySelector('label').textContent); return; }
+  if (t.dataset.pay === 'hide') { payrollModal(); return; }
+  if (t.dataset.pay === 'show') { payrollOff(e.detail === 0); return; }
+  if (t.dataset.pay === 'list') { state.tab = 'pages'; state.search = ''; state.filter = 'off'; state.sticky.clear(); render(true); const o = document.querySelector('[data-key="filter:off"]'); if (o) o.focus(); return; }
+  if (t.dataset.section) { openBulkMenu(t, 'section', t.dataset.section, SECTIONS.find(x => x.id === t.dataset.section).label); return; }
+  if (t.dataset.parentitem) { openBulkMenu(t, 'item', t.dataset.parentitem, BY_ID[t.dataset.parentitem].name); return; }
+  if (t.dataset.tab === 'pages') { togglePage(t.dataset.id); return; }
+  if (t.dataset.tab === 'edit') { toggleEdit(t.dataset.id); return; }
+  if (t.dataset.flat === 'metrics') { toggleSimple('metrics', t.dataset.id); return; }
+  if (t.dataset.flat === 'connections') { toggleSimple('conns', t.dataset.id); return; }
+  if (t.dataset.client) { state.mcpClient = t.dataset.client; render(true); const f = document.querySelector(`[data-key="client:${t.dataset.client}"]`); if (f) f.focus(); return; }
+  if (t.id === 'copyUrl') {
+    const done = () => { t.textContent = 'Copied'; toast('Server URL copied.'); setTimeout(() => { const b = document.getElementById('copyUrl'); if (b) b.textContent = 'Copy URL'; }, 2000); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(MCP_URL).then(done, () => { document.getElementById('mcpUrl').select(); toast('Press your copy shortcut to copy the URL.'); });
+    else { document.getElementById('mcpUrl').select(); toast('Press your copy shortcut to copy the URL.'); }
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'peopleSearch') {
+    state.peopleSearch = e.target.value;
+    state.peoplePage = 0;
+    refreshPeople();
+    return;
+  }
+  if (e.target.id === 'tabSearch') {
+    state.search = e.target.value;
+    const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+    set('bulkSlot', toolbarHtml());
+    set('rowsSlot', listHtml());
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'peopleGroup' || e.target.id === 'peopleSalary') {
+    state[e.target.id] = e.target.value;
+    state.peoplePage = 0;
+    if (e.target.id === 'peopleGroup') document.getElementById('peopleSalary').innerHTML = salaryOptionsHtml();
+    refreshPeople();
+  }
+});
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (state.pickerOpen || state.cardMenu) {
+    const items = [...document.querySelectorAll('.pm-menu [role^=menuitem]')];
+    const i = items.indexOf(document.activeElement);
+    if (e.key === 'Escape') { if (state.pickerOpen) closePicker(true); else closeCardMenu(true); e.preventDefault(); return; }
+    if (e.key === 'Tab') { closePicker(); closeCardMenu(); return; }
+    const to = e.key === 'ArrowDown' ? (i + 1) % items.length : e.key === 'ArrowUp' ? (i <= 0 ? items.length - 1 : i - 1) : e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 : -1;
+    if (to >= 0) { items[to].focus(); e.preventDefault(); return; }
+  } else if (t.id === 'groupPicker' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { openPicker(true); e.preventDefault(); return; }
+  if (t.dataset && t.dataset.person && ['ArrowDown','ArrowUp','Home','End'].includes(e.key)) {
+    const rows = [...document.querySelectorAll('#peopleSlot .pm-person')];
+    const at = rows.indexOf(t);
+    const to = e.key === 'ArrowDown' ? Math.min(rows.length - 1, at + 1) : e.key === 'ArrowUp' ? Math.max(0, at - 1) : e.key === 'Home' ? 0 : rows.length - 1;
+    rows[to].focus();
+    e.preventDefault();
+    return;
+  }
+  if (t.dataset && t.dataset.tabkey && ['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) {
+    const keys = Object.keys(TABS);
+    const i = keys.indexOf(t.dataset.tabkey);
+    const next = e.key === 'Home' ? keys[0] : e.key === 'End' ? keys[keys.length - 1] : keys[(i + (e.key === 'ArrowRight' ? 1 : keys.length - 1)) % keys.length];
+    state.tab = next; state.search = ''; state.filter = 'all'; state.sticky.clear(); render(true);    const f = document.querySelector(`[data-key="tab:${next}"]`); if (f) f.focus();
+    e.preventDefault();
+  }
+});
+window.addEventListener('hashchange', () => {
+  document.getElementById('toastHost').innerHTML = '';
+  if (document.querySelector('#modalHost [role=dialog]')) { modalOnClose = null; modalReturnFocus = null; closeModal(); }
+  /* Moving between people keeps the page where it is, so the row stays under the cursor. */
+  const wasPerson = !!state.personId && state.inPeople;
+  const nowPerson = view() === 'permissions' && !!hashPerson();
+  const y = window.scrollY;
+  render(wasPerson && nowPerson);  if (wasPerson && nowPerson) {
+    const body = document.querySelector('.pm-people__body');
+    const top = body ? body.getBoundingClientRect().top + window.scrollY : 0;
+    if (y > top) window.scrollTo(0, top);
+  }
+  const activeRow = document.querySelector('.pm-person.is-active');
+  if (state.focusPerson && activeRow) { state.focusPerson = null; activeRow.focus({ preventScroll:true }); return; }
+  state.focusPerson = null;
+  const back = view() === 'permissions' && !state.personId && state.lastPerson && document.querySelector(`[data-row="${state.lastPerson}"] a`);
+  state.lastPerson = null;
+  if (back) { back.focus(); return; }
+  const name = nowPerson && document.querySelector('.pm-person-name');
+  if (name) { name.setAttribute('tabindex', '-1'); name.focus({ preventScroll:true }); return; }
+  const h = document.querySelector('#app h1');
+  if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
+});
+/* A mix like a real organization's: most people on Full Access, a few in groups, some with their own changes. */
+function seedPeople() {
+  const by = n => MEMBERS.find(m => m.name === n);
+  [['Bianca Stone','finance'],['Kofi Mensah','finance'],['Priya Nair','finance'],['Carlos Mendes','marketing'],['Nadia Petrova','marketing'],['Victor Hale','investor'],['Wendy Cho','viewer']].forEach(([n, id]) => { by(n).groupId = id; });
+  const change = (n, fn) => {
+    const m = by(n);
+    const g = personGroup(m);
+    fn(g);
+    const d = personDiff(g, baseOf(m.groupId));
+    m.over = d.over;
+    m.diff = d.n;
+    if (m.groupId === FULL && d.n) m.groupId = null;
+  };
+  change('Priya Nair', g => { g.pages.AUDIT = false; setCatOne(g, 'COGS', 'Payroll (% of Net Sales)', false); });
+  change('Dana Whitfield', g => { g.pages.CONFIGURATION = false; g.pages.DATA_PIPELINE = false; g.edit.SETTINGS = false; setCatOne(g, 'Income', 'Discounts', false); setCatOne(g, 'Income', 'Cash Refunds', false); setCatAll(g, 'Cash', false); });
+  change('Elif Aydin', g => { g.pages.SCENARIOS = false; g.payroll = 'lines'; });
+}
+seedPeople();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => updateEditor());
+setRail();
+render();
+</script>
+</body>
+</html>
