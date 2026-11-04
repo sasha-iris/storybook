@@ -764,7 +764,7 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
   .pm-salary__title { flex:none; }
 }
 
-/* Permission list is dense: 14 px boxes, 13 px names, 28 px rows. Name lines stay at 40, 68 and 96. */
+/* Permission list is dense: 14 px boxes, 13 px names, 28 px rows. Name lines sit at 36, 56 and 76. */
 #rowsSlot .form-check-input, .pm-master .form-check-input, .pm-section-row .form-check-input, .pm-catmenu__row .form-check-input { flex:0 0 14px; width:14px; height:14px; }
 .pm-row .form-check { gap:14px; }
 .pm-master, .pm-section-row__main { gap:10px; }
@@ -827,3 +827,23 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-matrix .pm-cat--part { background:#FEF9E7; color:#92660A; }
 .pm-matrix .pm-cat--part:hover:not(:disabled) { background:#FDF6B2; color:#723B13; }
 
+/* Tree: larger chevron in the left margin, 6 px from box to name at every level. */
+.pm-row .form-check, .pm-master, .pm-section-row__main { gap:6px; }
+.pm-row__line { grid-template-columns:calc(var(--col, 320px) - var(--i, 0px) - 20px) minmax(0, 1fr); }
+.pm-section-chev { left:1px; width:15px; height:20px; overflow:visible; color:#374151; }
+.pm-section-chev svg { flex:none; width:20px; height:20px; pointer-events:none; }
+
+/* Person status: one line and no cut text. Script shortens the wording until it fits, and wraps only when counts do not fit. */
+.pm-person-status { display:flex; align-items:center; min-width:0; height:18px; overflow:hidden; white-space:nowrap; }
+.pm-person-status .pm-person-line { display:flex; flex:none; max-width:none; }
+.pm-person-status .pm-person-line__text { overflow:visible; text-overflow:clip; }
+.pm-person-status .pm-person-summary { display:block; flex:none; height:18px; margin:0; overflow:visible; text-overflow:clip; white-space:nowrap; -webkit-line-clamp:unset; }
+.pm-person-status.is-wrapped { display:block; height:auto; overflow:visible; font-size:12px; line-height:18px; white-space:normal; }
+.pm-person-status.is-wrapped .pm-person-line { display:inline-flex; vertical-align:top; max-width:100%; }
+.pm-person-status.is-wrapped .pm-person-summary { display:inline; height:auto; white-space:normal; }
+.pm-person-status.is-wrapped .pm-sum { display:inline-block; max-width:100%; }
+.pm-person-title { flex-wrap:wrap; row-gap:0; }
+.pm-person-title .pm-person-name, .pm-person-title .pm-person-email { min-width:0; overflow:visible; text-overflow:clip; white-space:normal; overflow-wrap:anywhere; }
+@media (max-width:1279px) {
+  .pm-person-head { min-height:80px; }
+}

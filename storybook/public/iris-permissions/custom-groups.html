@@ -274,7 +274,14 @@ function visibleKeys(tab) {
 }
 
 /* ---------- Saving: writes are serialized, rows flip at once, failure names the row. ---------- */
-function setSave(msg) { state.saveMsg = msg; const el = document.getElementById('saveStatus'); if (el) el.textContent = msg; }
+let saveFade = null;
+function setSave(msg) {
+  clearTimeout(saveFade);
+  state.saveMsg = msg;
+  const el = document.getElementById('saveStatus');
+  if (el) el.textContent = msg;
+  if (msg === 'All changes saved') saveFade = setTimeout(() => setSave(''), 1500);
+}
 function saveSummary() { return Object.keys(state.rowError).length ? (state.tab === 'edit' ? 'Some changes were not saved' : 'Not saved: see Edit Rights') : 'All changes saved'; }
 function queueSave(done) {
   if (document.getElementById('toastUndo')) document.getElementById('toastHost').innerHTML = '';
@@ -1067,7 +1074,7 @@ function itemRow(tab, item, indent) {
   </div>`;
 }
 function contextRow(item) {
-  return `<div style="padding:5px 16px 5px 68px;font-size:13px;line-height:18px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
+  return `<div style="padding:5px 16px 5px 56px;font-size:13px;line-height:18px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
 }
 function sectionKeys(s) {
   const keys = [];
@@ -1085,14 +1092,14 @@ function textWidth(t, weight) { measureCtx.font = weight + ' 13px Inter, sans-se
 function listCol() {
   let col = 0;
   SECTIONS.forEach(s => {
-    col = Math.max(col, 40 + textWidth(s.label, 600));
+    col = Math.max(col, 36 + textWidth(s.label, 600));
     s.items.forEach(i => {
-      col = Math.max(col, 68 + textWidth(i.name, 400));
-      (i.children || []).forEach(c => { col = Math.max(col, 96 + textWidth(c.name, 400)); });
+      col = Math.max(col, 56 + textWidth(i.name, 400));
+      (i.children || []).forEach(c => { col = Math.max(col, 76 + textWidth(c.name, 400)); });
     });
   });
-  METRICS.forEach(m => { col = Math.max(col, 44 + textWidth(m[0], 400)); });
-  CONNS.forEach(c => { col = Math.max(col, 44 + textWidth(c, 400)); });
+  METRICS.forEach(m => { col = Math.max(col, 36 + textWidth(m[0], 400)); });
+  CONNS.forEach(c => { col = Math.max(col, 36 + textWidth(c, 400)); });
   return col;
 }
 function sectionBlock(tab, s) {
@@ -1110,9 +1117,9 @@ function sectionBlock(tab, s) {
   if (expanded) {
     s.items.forEach(i => {
       const kids = (i.children || []).filter(c => shown.includes(c));
-      if (shown.includes(i)) rows += itemRow(tab, i, 40);
+      if (shown.includes(i)) rows += itemRow(tab, i, 36);
       else if (kids.length) rows += contextRow(i);
-      if (shown.includes(i) || kids.length) (i.children || []).forEach(c => { if (!q || shown.includes(c)) rows += itemRow(tab, c, 68); });
+      if (shown.includes(i) || kids.length) (i.children || []).forEach(c => { if (!q || shown.includes(c)) rows += itemRow(tab, c, 56); });
     });
   }
   return `<div style="border-top:1px solid var(--color-border-default);--col:${listCol()}px;">
@@ -1396,15 +1403,15 @@ function viewPeopleTable() {
     </section>`;
 }
 /* Says what is off and what cannot be changed, by name. The tabs carry the counts. */
-function personSummaryParts() {
+function personSummaryParts(level = 0) {
   const g = state.group;
   const offAll = ITEMS.filter(i => !pageOn(g, i.id));
   const off = offAll.filter(i => !i.defaultOff).sort((x, y) => (PARENT[x.id] ? 1 : 0) - (PARENT[y.id] ? 1 : 0)).map(i => (PARENT[i.id] ? PARENT[i.id].name + ': ' : '') + i.name);
   const ro = ITEMS.filter(i => !PARENT[i.id] && pageOn(g, i.id) && !editOn(g, i.id)).map(i => i.name);
   const mOff = METRICS.filter(m => !g.metrics[m[0]]).map(m => m[0]).concat(METRICS.filter(m => g.metrics[m[0]] && offOf(g, m[0]).length).map(m => m[0] + ' (' + offOf(g, m[0]).length + ')'));
   const cOff = CONNS.filter(c => !g.conns[c]);
-  const build = short => {
-    const name = list => short && list.length > 1 ? list[0] + ' and ' + (list.length - 1) + ' more' : shortList(list);
+  const build = mode => {
+    const name = list => mode === 'count' ? String(list.length) : mode === 'short' && list.length > 1 ? list[0] + ' and ' + (list.length - 1) + ' more' : shortList(list);
     const parts = [];
     if (off.length) parts.push(['Pages off', name(off)]);
     if (mOff.length) parts.push(['Metrics off', name(mOff)]);
@@ -1413,22 +1420,22 @@ function personSummaryParts() {
     return parts;
   };
   const text = list => list.map(p => p[0] + ': ' + p[1]).join('  ');
-  let parts = build(false);
-  if (text(parts).length > 60) parts = build(true);
+  let parts = build(level === 2 ? 'count' : level === 1 ? 'short' : 'full');
+  if (level === 0 && text(parts).length > 60) parts = build('short');
   if (g.payroll === 'lines') parts.unshift(['Salaries', 'hidden']);
   return parts;
 }
 const SUMMARY_NOTHING = '';
 function personSummary() {
-  const parts = personSummaryParts();
+  const parts = personSummaryParts('names');
   return parts.length ? parts.map(p => p[0] + ': ' + p[1]).join('. ') + '.' : SUMMARY_NOTHING;
 }
-function personSummaryHtml() {
-  const parts = personSummaryParts();
+function personSummaryHtml(level = 0) {
+  const parts = personSummaryParts(level);
   if (!parts.length) return esc(SUMMARY_NOTHING);
   return parts.map(p => `<span class="pm-sum"><span class="pm-sum__label">${esc(p[0])}:</span> <span class="pm-sum__value">${esc(p[1])}</span></span>`).join(' ');
 }
-function personLine(m) {
+function personLine(m, edited = true) {
   const n = m.diff || 0;
   const own = n + (n === 1 ? ' own setting' : ' own settings');
   let text = 'Full access — no edits';
@@ -1438,10 +1445,38 @@ function personLine(m) {
     if (n) { text = own + ' on top of the ' + name; action = '<button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;" data-key="personReset" data-reset="1" title="Discards these own settings">Reset to group</button>'; }
     else { text = 'Follows the ' + name; if (isCustomGroup(m.groupId)) action = `<button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;" data-key="personEdit" data-edit-group="${m.groupId}">Edit group</button>`; }
   } else if (n) {
-    text = own + (m.touched ? ' · last edited just now' : '');
+    text = own + (m.touched && edited ? ' · last edited just now' : '');
   }
   return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${ICON_HISTORY}"/></svg><span class="pm-person-line__text" title="${esc(text)}">${esc(text)}</span>${action}`;
 }
+/* Tries the fullest wording first and keeps the first one that fits on the line. */
+let statusWidth = 0;
+const statusObserver = new ResizeObserver(entries => {
+  const w = entries[0].contentRect.width;
+  if (w !== statusWidth) { statusWidth = w; fitPersonStatus(); }
+});
+function fitPersonStatus() {
+  const box = document.querySelector('.pm-person-status');
+  const m = state.personId && currentPerson();
+  if (!box || !m) return;
+  const line = document.getElementById('personLine');
+  const sum = document.getElementById('personSummary');
+  const put = (el, html) => { if (el.statusHtml !== html) { el.innerHTML = html; el.statusHtml = html; } };
+  sum.title = personSummary();
+  box.classList.remove('is-wrapped');
+  for (const [level, edited] of [[0, true], [1, true], [1, false], [2, false]]) {
+    put(line, personLine(m, edited));
+    put(sum, personSummaryHtml(level));
+    if (box.scrollWidth <= box.clientWidth) return;
+  }
+  box.classList.add('is-wrapped');
+}
+function watchPersonStatus() {
+  statusObserver.disconnect();
+  const box = document.querySelector('.pm-person-status');
+  if (box) { statusWidth = box.clientWidth; statusObserver.observe(box); fitPersonStatus(); }
+}
+if (document.fonts) document.fonts.ready.then(fitPersonStatus);
 function pickerHtml(m) {
   const full = m.groupId === FULL;
   const label = groupLabel(m);
@@ -1790,6 +1825,7 @@ function render(keepScroll) {
   if (!keepScroll) window.scrollTo(0, 0);
   const newList = document.getElementById('peopleScroll');
   if (newList) { fitSideList(); newList.scrollTop = listTop; revealActive(); }
+  watchPersonStatus();
   const current = v === 'connections' ? 'Connections' : 'Settings';
   document.querySelectorAll('.pm-rail__item').forEach(b => { const on = b.title === current; b.classList.toggle('is-active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
 }
@@ -1801,9 +1837,7 @@ function updateEditor() {
   if (v === 'permissions') {
     syncPerson();
     const m = currentPerson();
-    set('personLine', personLine(m));
-    const sum = document.getElementById('personSummary');
-    if (sum) { sum.innerHTML = personSummaryHtml(); sum.title = personSummary(); }
+    fitPersonStatus();
     if (!state.pickerOpen) set('pickerSlot', pickerHtml(m));
     set('peopleSlot', peopleListHtml());
   }
