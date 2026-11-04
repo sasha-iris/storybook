@@ -660,7 +660,7 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-matrix thead .pm-matrix__first { top:0; left:0; z-index:3; }
 .pm-matrix tbody tr:hover td, .pm-matrix tbody tr:hover th { background:#F9FAFB; }
 
-/* Category state: tint and symbol, never a one-click checkbox. Primary tint with a check is all on, the third colour is some on, with the word Limited in the Matrix and a count beside it in lists, empty is off. Contrast of marks on their tints: 8.4:1 and 8.9:1. */
+/* Category state: tint and symbol, never a one-click checkbox. Primary tint with a check is all on, the third colour is some on, with the word Limited, in the Matrix only. Lists use native checkboxes, empty is off. Contrast of marks on their tints: 8.4:1 and 8.9:1. */
 .pm-cat { display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:0; border:0; background:transparent; font-size:12px; line-height:16px; font-weight:600; font-variant-numeric:tabular-nums; cursor:pointer; transition:background-color .12s; }
 .pm-cat--all { background:#E5EDFF; color:#42389D; }
 .pm-cat--all:hover:not(:disabled) { background:#CDDBFE; }
@@ -672,9 +672,6 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-cat.is-open { box-shadow:inset 0 0 0 2px #42389D; }
 .pm-cat:disabled { cursor:not-allowed; opacity:.6; }
 .pm-cat--cell { width:100%; height:44px; }
-.pm-cat--box { flex:0 0 20px; width:20px; height:20px; margin-top:1px; border-radius:4px; }
-.pm-cat--box svg { width:14px; height:14px; }
-.pm-cat--box.pm-cat--none { box-shadow:inset 0 0 0 1px #9CA3AF; }
 .pm-cat__name { padding:0; border:0; background:transparent; color:inherit; text-align:left; cursor:pointer; }
 .pm-cat__name:hover:not(:disabled) { color:#42389D; }
 .pm-cat__name:disabled { cursor:not-allowed; }
@@ -694,7 +691,6 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-catmenu__row { display:flex; align-items:center; gap:8px; min-height:32px; padding:4px; border-radius:6px; font-size:13px; line-height:18px; color:#111928; cursor:pointer; }
 .pm-catmenu__row:hover { background:#F3F4F6; }
 
-.pm-cat--box { margin-right:-4px; }
 .pm-cat--cell { display:flex; }
 .pm-matrix__cat { margin:0 auto; }
 
@@ -739,4 +735,11 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 
 /* Limited: the product's own word for partial access. */
 .pm-cat--cell span { font-size:12px; line-height:16px; font-weight:500; letter-spacing:0; }
-.pm-cat--box.pm-cat--part { box-shadow:inset 0 0 0 1px #E3A008; }
+
+/* Tab label reads first, its count second. */
+.pm-tabcount { font-weight:400; color:#6B7280; }
+.iris-tab--active .pm-tabcount, .iris-tab:hover .pm-tabcount { color:inherit; }
+
+/* One line under the pinned header, not two stacked. */
+#rowsSlot > div:first-child { border-top:0; }
+

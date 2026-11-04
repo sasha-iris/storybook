@@ -762,7 +762,7 @@ function metricRow(m) {
   const hint = cat === OE && g.payroll === 'lines' ? 'Wage and salary lines are hidden. The total stays.' : m[2];
   const domId = 'c-metrics:' + cat.replace(/\s/g, '-');
   const hintHtml = hint ? `<div class="form-helper" style="margin:0;">${esc(hint)}</div>` : '';
-  return `<div class="pm-row" style="padding:6px 16px;--i:16px;"><div class="form-check" style="align-items:flex-start;margin:0;">${catMark(g, cat, 'pm-cat--box', `id="${domId}"${g.isTemplate ? ' disabled' : ''}`, cat)}<div class="pm-row__text"><div class="pm-row__line"><button type="button" class="form-check-label pm-cat__name" data-catmenu data-cat="${esc(cat)}"${g.isTemplate ? ' disabled' : ''}>${esc(cat)}</button><div class="pm-row__state"><span class="pm-row__status">${on === n ? n + ' metrics' : on + ' of ' + n + ' on'}</span></div></div>${hintHtml}</div></div></div>`;
+  return `<div class="pm-row" style="padding:6px 16px;--i:16px;"><div class="form-check" style="align-items:flex-start;margin:0;">${parentBox(catState(g, cat) === 'all', catState(g, cat) === 'part', `id="${domId}" data-catmenu data-cat="${esc(cat)}"`, g.isTemplate, cat + ': ' + catText(g, cat), 'margin-top:2px;')}<div class="pm-row__text"><div class="pm-row__line"><button type="button" class="form-check-label pm-cat__name" data-catmenu data-cat="${esc(cat)}"${g.isTemplate ? ' disabled' : ''}>${esc(cat)}</button><div class="pm-row__state"><span class="pm-row__status">${on === n ? n + ' metrics' : on + ' of ' + n + ' on'}</span></div></div>${hintHtml}</div></div></div>`;
 }
 
 /* ---------- Matrix: people against metric categories ---------- */
@@ -879,11 +879,14 @@ function bulkKeys(c) {
   if (c.kind === 'section') return sectionScope(state.tab, SECTIONS.find(x => x.id === c.id));
   return itemScope(BY_ID[c.id]);
 }
-function bulkMark(tab, keys, attrs, disabled, label) {
-  const st = selectionState(tab, keys);
-  const kind = st.all ? 'all' : st.some ? 'part' : 'none';
-  return `<button type="button" class="pm-cat pm-cat--${kind} pm-cat--box" ${attrs} aria-haspopup="dialog" aria-label="${esc(label)}"${disabled ? ' disabled' : ''}>${ICON_MARK[kind]}</button>`;
+function parentBox(all, some, attrs, disabled, label, style) {
+  return `<input class="form-check-input" type="checkbox" ${attrs} aria-haspopup="dialog" aria-label="${esc(label)}"${style ? ` style="${style}"` : ''}${all ? ' checked' : ''}${some ? ' data-part="1"' : ''}${disabled ? ' disabled' : ''}>`;
 }
+function bulkMark(tab, keys, attrs, disabled, label, style) {
+  const st = selectionState(tab, keys);
+  return parentBox(st.all, st.some, attrs, disabled, label, style);
+}
+new MutationObserver(() => { document.querySelectorAll('input[data-part="1"]').forEach(i => { i.indeterminate = true; }); }).observe(document.body, { childList:true, subtree:true });
 function openBulkMenu(btn, kind, id, title) {
   const anchor = '[id="' + btn.id + '"]';
   const same = state.catMenu && state.catMenu.bulk && state.catMenu.anchor === anchor;
@@ -930,7 +933,7 @@ function catMenuGone(e) {
   const el = document.getElementById('catMenu');
   if (!el) return;
   if (e.type === 'scroll' && (el.contains(e.target) || Date.now() - (state.catMenuAt || 0) < 300)) return;
-  if (e.type === 'mousedown' && (el.contains(e.target) || e.target.closest('.pm-cat,.pm-master label,[data-catmenu],#toastHost'))) return;
+  if (e.type === 'mousedown' && (el.contains(e.target) || e.target.closest('.pm-cat,.pm-master label,[data-catmenu],#bulkAll,[data-section],[data-parentitem],#toastHost'))) return;
   closeCatMenu();
 }
 document.addEventListener('mousedown', catMenuGone);
@@ -964,6 +967,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (b.dataset.catmenu !== undefined) {
+    if (b.tagName === 'INPUT') e.preventDefault();
     const same = state.catMenu && state.catMenu.cat === b.dataset.cat && (state.catMenu.personId || 0) === (+b.dataset.catperson || 0);
     if (same) closeCatMenu(true); else openCatMenu(b);
     return;
@@ -1058,7 +1062,7 @@ function itemRow(tab, item, indent) {
   const ariaLabel = p ? ` aria-label="${esc(p.name + ': ' + item.name)}"` : '';
   return `<div class="pm-row${failed ? ' is-failed' : ''}" style="padding:6px 16px 6px ${indent}px;--i:${indent}px;">
     <div class="form-check" style="align-items:flex-start;margin:0;min-width:0;">
-      ${item.children && item.children.length ? bulkMark(tab, itemScope(item), `id="c-${key}" data-key="${key}" data-parentitem="${id}"`, locked, item.name + ', ' + itemScope(item).filter(k => isOn(tab, k)).length + ' of ' + itemScope(item).length + (tab === 'edit' ? ' can edit' : ' on')) : `<input class="form-check-input" style="margin-top:2px;" type="checkbox" id="c-${key}" data-key="${key}" data-tab="${tab}" data-id="${id}"${checked ? ' checked' : ''}${disabled || locked ? ' disabled' : ''}${disabled ? ` aria-describedby="${offId}"` : hint ? ` aria-describedby="${hintId}"` : ''}${ariaLabel}>`}
+      ${item.children && item.children.length ? bulkMark(tab, itemScope(item), `id="c-${key}" data-key="${key}" data-parentitem="${id}"`, locked, item.name + ', ' + itemScope(item).filter(k => isOn(tab, k)).length + ' of ' + itemScope(item).length + (tab === 'edit' ? ' can edit' : ' on'), 'margin-top:2px;') : `<input class="form-check-input" style="margin-top:2px;" type="checkbox" id="c-${key}" data-key="${key}" data-tab="${tab}" data-id="${id}"${checked ? ' checked' : ''}${disabled || locked ? ' disabled' : ''}${disabled ? ` aria-describedby="${offId}"` : hint ? ` aria-describedby="${hintId}"` : ''}${ariaLabel}>`}
       <div class="pm-row__text"><div class="pm-row__line"><label class="form-check-label${disabled ? ' is-disabled' : ''}" for="c-${key}">${esc(item.name)}</label><div class="pm-row__state">${status}${offNote}${rowBadge(tab, id)}${err}</div></div>${hint ? `<div class="form-helper" style="margin:0;" id="${hintId}">${esc(hint)}</div>` : ''}</div>
     </div>
   </div>`;
@@ -1168,7 +1172,7 @@ function toolbarHtml() {
 }
 function tabBarHtml() {
   const c = counts(state.group);
-  return Object.entries(TABS).map(([k, t]) => `<button type="button" role="tab" class="iris-tab${state.tab === k ? ' iris-tab--active' : ''}" aria-selected="${state.tab === k}" id="tab-${k}" aria-controls="rowsSlot" data-key="tab:${k}" data-tabkey="${k}" tabindex="${state.tab === k ? 0 : -1}">${t.label} <span class="pm-tabcount"><span aria-hidden="true" style="visibility:hidden;">(${c[k][1]}/${c[k][1]})</span><span>(${c[k][0]}/${c[k][1]})</span></span></button>`).join('');
+  return Object.entries(TABS).map(([k, t]) => `<button type="button" role="tab" class="iris-tab${state.tab === k ? ' iris-tab--active' : ''}" aria-selected="${state.tab === k}" id="tab-${k}" aria-controls="rowsSlot" data-key="tab:${k}" data-tabkey="${k}" tabindex="${state.tab === k ? 0 : -1}">${t.label} <span class="pm-tabcount"><span aria-hidden="true" style="visibility:hidden;">${c[k][1]}/${c[k][1]}</span><span>${c[k][0]}/${c[k][1]}</span></span></button>`).join('');
 }
 function filterHtml() {
   if (state.tab === 'metrics' || state.tab === 'connections') return '';
@@ -1860,12 +1864,12 @@ document.addEventListener('click', e => {
   if (t.dataset.toggle) { state.open[t.dataset.toggle] = !state.open[t.dataset.toggle]; updateEditor(); return; }
   if (t.dataset.retry) { const c = document.getElementById('c-edit:' + t.dataset.retry); if (c) c.focus(); toggleEdit(t.dataset.retry); return; }
   if (t.id === 'clearFilters') { state.search = ''; state.filter = 'all'; const s = document.getElementById('tabSearch'); if (s) { s.value = ''; s.focus(); } updateEditor(); return; }
-  if (t.id === 'bulkAll') { openBulkMenu(t, 'all', null, t.parentElement.querySelector('label').textContent); return; }
+  if (t.id === 'bulkAll') { e.preventDefault(); openBulkMenu(t, 'all', null, t.parentElement.querySelector('label').textContent); return; }
   if (t.dataset.pay === 'hide') { payrollModal(); return; }
   if (t.dataset.pay === 'show') { payrollOff(e.detail === 0); return; }
   if (t.dataset.pay === 'list') { state.tab = 'pages'; state.search = ''; state.filter = 'off'; state.sticky.clear(); render(true); const o = document.querySelector('[data-key="filter:off"]'); if (o) o.focus(); return; }
-  if (t.dataset.section) { openBulkMenu(t, 'section', t.dataset.section, SECTIONS.find(x => x.id === t.dataset.section).label); return; }
-  if (t.dataset.parentitem) { openBulkMenu(t, 'item', t.dataset.parentitem, BY_ID[t.dataset.parentitem].name); return; }
+  if (t.dataset.section) { e.preventDefault(); openBulkMenu(t, 'section', t.dataset.section, SECTIONS.find(x => x.id === t.dataset.section).label); return; }
+  if (t.dataset.parentitem) { e.preventDefault(); openBulkMenu(t, 'item', t.dataset.parentitem, BY_ID[t.dataset.parentitem].name); return; }
   if (t.dataset.tab === 'pages') { togglePage(t.dataset.id); return; }
   if (t.dataset.tab === 'edit') { toggleEdit(t.dataset.id); return; }
   if (t.dataset.flat === 'metrics') { toggleSimple('metrics', t.dataset.id); return; }
