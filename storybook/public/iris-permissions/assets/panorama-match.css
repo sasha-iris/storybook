@@ -660,7 +660,7 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-matrix thead .pm-matrix__first { top:0; left:0; z-index:3; }
 .pm-matrix tbody tr:hover td, .pm-matrix tbody tr:hover th { background:#F9FAFB; }
 
-/* Category state: tint and symbol, never a one-click checkbox. Primary tint with a check is all on, the third colour with a filled square is some on, empty is off. Contrast of marks on their tints: 8.4:1 and 8.9:1. */
+/* Category state: tint and symbol, never a one-click checkbox. Primary tint with a check is all on, the third colour is some on, with the word Limited in the Matrix and a count beside it in lists, empty is off. Contrast of marks on their tints: 8.4:1 and 8.9:1. */
 .pm-cat { display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:0; border:0; background:transparent; font-size:12px; line-height:16px; font-weight:600; font-variant-numeric:tabular-nums; cursor:pointer; transition:background-color .12s; }
 .pm-cat--all { background:#E5EDFF; color:#42389D; }
 .pm-cat--all:hover:not(:disabled) { background:#CDDBFE; }
@@ -712,3 +712,31 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
   .pm-person-status .pm-person-line { display:inline-flex; vertical-align:top; max-width:100%; }
   .pm-person-status .pm-person-summary { display:inline; height:auto; white-space:normal; overflow:visible; }
 }
+
+/* One divider around the tabs: the track the selected underline runs on. Spacing separates the rest. */
+.pm-salary { border-bottom:0; }
+.pm-master-row { border-top:0; }
+
+/* Matrix: quiet tiles so exceptions stand out, every row one height, all columns fit at 1440. */
+.pm-matrix { table-layout:fixed; width:100%; min-width:1240px; }
+.pm-matrix thead th { height:52px; padding:6px 4px; font-size:12px; line-height:16px; vertical-align:middle; }
+.pm-matrix thead .pm-matrix__first { padding-left:16px; }
+.pm-matrix .pm-matrix__first { width:200px; min-width:200px; max-width:200px; }
+.pm-matrix__cat { display:flex; align-items:center; justify-content:center; width:auto; min-height:0; margin:0; text-align:center; }
+.pm-matrix tbody th, .pm-matrix tbody td { height:48px; box-sizing:border-box; }
+.pm-matrix tbody .pm-matrix__first { padding-top:0; padding-bottom:0; }
+.pm-matrix td.pm-matrix__cell { padding:0; border-right:2px solid #FFFFFF; border-bottom:2px solid #FFFFFF; }
+.pm-matrix td.pm-matrix__salary { padding:0 4px; border-right:1px solid var(--pm-divider); }
+.pm-cat--cell { display:flex; width:100%; height:46px; }
+.pm-matrix .pm-cat--all { background:#F0F5FF; }
+.pm-matrix .pm-cat--all:hover:not(:disabled) { background:#E5EDFF; }
+.pm-matrix tbody tr:hover td.pm-matrix__cell { background:#FFFFFF; }
+.pm-people--matrix #peoplePagerFoot { display:none; }
+
+
+/* Visible uses the same type and box as the Hidden badge. */
+.pm-ptable__plain { display:inline-block; padding:2px 6px; font-size:12px; line-height:18px; font-weight:400; }
+
+/* Limited: the product's own word for partial access. */
+.pm-cat--cell span { font-size:12px; line-height:16px; font-weight:500; letter-spacing:0; }
+.pm-cat--box.pm-cat--part { box-shadow:inset 0 0 0 1px #E3A008; }

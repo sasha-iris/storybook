@@ -729,7 +729,7 @@ function disconnectModal(name) {
 }
 
 /* ---------- Metric categories: each one holds many metrics, so one click never changes them all. ---------- */
-const ICON_MARK = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="5" y="5" width="10" height="10" rx="2" fill="currentColor"/></svg>', none:'' };
+const ICON_MARK = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'', none:'' };
 function metricNames(cat) { return METRIC_NAMES[cat] || []; }
 function metricTotal(cat) { return METRICS.find(m => m[0] === cat)[1]; }
 function offOf(g, cat) { return ((g.metricOff && g.metricOff[cat]) || []).slice().sort(); }
@@ -751,7 +751,8 @@ function setCatOne(g, cat, name, on) {
 }
 function catMark(g, cat, extraClass, attrs, label) {
   const st = catState(g, cat);
-  return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${ICON_MARK[st]}</button>`;
+  const count = st === 'part' && extraClass === 'pm-cat--cell' ? '<span>Limited</span>' : '';
+  return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${ICON_MARK[st]}${count}</button>`;
 }
 function metricRow(m) {
   const g = state.group;
@@ -776,9 +777,9 @@ function matrixHtml() {
     const g = m.pending ? null : personGroup(m);
     const who = `${avatar(m, 'pm-avatar--sm')}<span class="pm-matrix__name">${esc(m.name)}</span>`;
     const cells = METRICS.map(c => m.pending ? '<td class="pm-matrix__cell"><span class="pm-matrix__na" aria-label="Not applicable">–</span></td>' : `<td class="pm-matrix__cell">${catMark(g, c[0], 'pm-cat--cell', `id="mx-${m.id}-${c[0].replace(/\W/g, '')}" data-catperson="${m.id}"`, m.name + ', ' + c[0])}</td>`).join('');
-    return `<tr><th scope="row" class="pm-matrix__first">${m.pending ? `<span class="pm-matrix__who">${who}</span>` : `<a class="pm-matrix__who" href="#permissions/${m.id}">${who}</a>`}</th>${cells}</tr>`;
+    return `<tr><th scope="row" class="pm-matrix__first">${m.pending ? `<span class="pm-matrix__who">${who}</span>` : `<a class="pm-matrix__who" href="#permissions/${m.id}">${who}</a>`}</th><td class="pm-matrix__salary">${m.pending ? '<span class="pm-matrix__na" aria-label="Not applicable">–</span>' : salaryCell(memberSalary(m))}</td>${cells}</tr>`;
   }).join('');
-  return `<div class="pm-matrix-wrap"><table class="pm-matrix"><thead><tr><th scope="col" class="pm-matrix__first">Member</th>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+  return `<div class="pm-matrix-wrap"><table class="pm-matrix"><thead><tr><th scope="col" class="pm-matrix__first">Member</th><th scope="col"><div class="pm-matrix__cat">Salaries</div></th>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 function commitPerson(m, g) {
   const d = personDiff(g, baseOf(m.groupId));
@@ -1380,7 +1381,7 @@ function peopleBar(back) {
 }
 function viewPeopleTable() {
   return `${shellHead([['Settings','#settings'],['User Permissions']])}
-    <section class="card pm-shell pm-people">
+    <section class="card pm-shell pm-people${state.peopleView === 'matrix' ? ' pm-people--matrix' : ''}">
       ${peopleBar(false)}
       <div class="pm-ptools">
         <div class="pm-ptools__field"><label for="peopleGroup">Group</label><select class="form-input form-select" id="peopleGroup">${groupOptionsHtml()}</select></div>
