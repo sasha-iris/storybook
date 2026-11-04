@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal entries</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/iris-tokens.css">
+  <link rel="stylesheet" href="assets/iris-components.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/panorama-match.css">
+</head>
+<!-- Page scaffolding only: flex shell = sidebar + content. -->
+<body class="pm-journal" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+<aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;">
+    <div style="display:flex;flex-direction:column;gap:16px;padding:0 0 12px;">
+      <button type="button" class="sidebar-contracted-item" title="Overview" aria-label="Overview">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Metrics" aria-label="Metrics">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="P&amp;L" aria-label="P&amp;L">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 000 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Cash Flow" aria-label="Cash Flow">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item" title="Financial model" aria-label="Financial model">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+    <div class="sidebar-divider" style="margin:0;"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:12px 0;">
+      <button type="button" class="sidebar-contracted-item" title="Help" aria-label="Help">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="sidebar-contracted-item active" title="Settings" aria-label="Settings" aria-current="page">
+        <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </aside>
+  <main id="app" class="pm-narrow" style="flex:1;min-width:0;padding:32px 40px;max-width:1120px;box-sizing:border-box;"></main>
+</div>
+<div id="toastHost" style="position:fixed;top:16px;right:16px;z-index:200;max-width:440px;" role="status" aria-live="polite"></div>
+<div id="modalHost"></div>
+
+<script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
+<script src="assets/panorama-match.js"></script>
+<script>
+/* GAP: no review-queue or expandable journal row pattern in Storybook.
+   Composed from .card, .iris-th, .badge. Storybook has no plain td class, so cells use token-based inline padding and token-based inline layout. */
+
+const CHEVRON = '<svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
+const CHEVRON_DOWN = '<svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>';
+const MINUS = '\u2212';
+const ICON_DOWNLOAD = '<svg class="pm-ico" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>';
+
+const ACCOUNTS = ['Shopify Payments clearing','Stripe clearing','PayPal clearing','Amazon clearing','TikTok Shop clearing','Other clearing','Afterpay clearing','Shop Cash clearing','Authorize.net clearing','Bank','Sales','Refunds and returns','Fees in COGS','Fees below gross profit','Deferred revenue','Deferred COGS','COGS','COGS: Testers','COGS: Customer service','Discounts','Inventory'];
+
+const CLEARING = ACCOUNTS.filter(a => a.endsWith('clearing'));
+const ACCOUNTS_CAD = ['PayPal CAD clearing','Other CAD clearing','Bank CAD'].concat(ACCOUNTS.filter(a => !a.endsWith('clearing') && a !== 'Bank'));
+/* Rail totals, net activity and payouts, are from the Balance mock (Sep 2026, per currency, never mixed).
+   Gross, refund, fee and tax splits, accounts and orders are sample values until real entries arrive. Each split adds up to the rail's net. */
+function rail(id, name, gross, refunds, fees, tax, net, payouts, orders, start, end, cur) {
+  const c = (cur === 'CAD' ? 'PayPal CAD' : name) + ' clearing';
+  const clearing = cur === 'CAD' ? [c, 'Other CAD clearing'] : CLEARING;
+  const bank = cur === 'CAD' ? 'Bank CAD' : 'Bank';
+  return { id, name, orders, start, end, cur, clearing:c, memo: name + (cur ? ' ' + cur : '') + ', Sep 2026: charges, refunds, fees, tax and payouts', lines: [
+    { id:'net', dr:net, account:c, rec:c, bucket:'Net change from activity', choices:clearing },
+    { id:'ref', dr:refunds, account:'Refunds and returns', rec:'Refunds and returns', bucket:'Refunds' },
+    { id:'fee', dr:fees, account:'Fees in COGS', rec:'Fees in COGS', bucket:'Fees' },
+    { id:'tax', dr:tax, account:'Fees in COGS', rec:'Fees in COGS', bucket:'Tax on fees' },
+    { id:'sal', cr:gross, account:'Sales', rec:'Sales', bucket:'Charges' },
+    { id:'bnk', dr:payouts, account:bank, rec:bank, bucket:'Payouts to bank' },
+    { id:'pay', cr:payouts, account:c, rec:c, bucket:'Payouts from clearing', choices:clearing },
+  ]};
+}
+const initial = () => ({
+  entries: [
+    rail('shopify','Shopify Payments',412680.00,13940.25,10041.68,295.90,388402.17,392118.90,3214,41210.55,37493.82),
+    rail('stripe','Stripe',101240.00,2180.30,2651.13,78.12,96330.45,98120.00,812,12004.10,10214.55),
+    rail('paypal','PayPal',30410.00,620.40,859.67,25.33,28904.60,27500.00,246,3318.72,4723.32),
+    rail('amazon','Amazon',66310.00,1905.62,9900.27,291.73,54212.38,52780.12,538,9640.00,11072.26),
+    rail('tiktok','TikTok Shop',9180.00,316.80,920.86,27.14,7915.20,7600.00,84,1250.00,1565.20),
+    { id:'other', name:'Other payments', clearing:'Other clearing', orders:12, memo:'Payments from processors with no payout data, Sep 2026', lines:[
+      { id:'oth', dr:4318.60, account:'Other clearing', rec:'Other clearing', bucket:'Unmatched', choices:CLEARING },
+      { id:'sal', cr:4318.60, account:'Sales', rec:'Sales', bucket:'Charges' },
+    ]},
+    { id:'deferred', name:'Deferred revenue and COGS', orders:402, memo:'Orders unfulfilled at Sep 30', lines:[
+      { id:'rev', dr:58240.00, account:'Sales', rec:'Sales', bucket:'Revenue out of sales' },
+      { id:'def', cr:58240.00, account:'Deferred revenue', rec:'Deferred revenue', bucket:'Revenue deferred' },
+      { id:'dco', dr:12200.64, account:'Deferred COGS', rec:'Deferred COGS', bucket:'COGS deferred' },
+      { id:'cog', cr:12200.64, account:'COGS', rec:'COGS', bucket:'COGS out of expense' },
+    ]},
+    { id:'gratis', name:'Gratis and replacement', orders:7, memo:'Free orders, Sep 2026', lines:[
+      { id:'dis', dr:612.00, account:'Discounts', rec:'Discounts', bucket:'Discounts' },
+      { id:'sal', cr:612.00, account:'Sales', rec:'Sales', bucket:'Retail value' },
+    ]},
+    rail('paypal_cad','PayPal',5510.00,120.00,174.25,5.00,5210.75,5000.00,58,812.40,1023.15,'CAD'),
+  ],
+  resolved: {},
+  acct: {},
+  open: {},
+});
+let S = initial();
+
+const ISSUES = [
+  { id:'unmatched', title:'Unmatched payments', entry:'other', count:'12 payments', amount:'$4,318.60', summary:'12 payments',
+    why:'No payout data for these processors.',
+    columns:['Order','Date','Paid with','Amount'],
+    rows:[['#48213','Sep 4','Afterpay','$318.00'],['#48377','Sep 9','Shop Cash','$126.40'],['#48502','Sep 12','Authorize.net','$840.00'],['#48611','Sep 15','Afterpay','$264.50'],['#48790','Sep 21','Shop Cash','$92.10']],
+    options:[{ id:'split', label:'Split into one clearing account per processor', hint:'Afterpay $2,140.00, Shop Cash $1,338.60, Authorize.net $840.00.', rec:true },{ id:'leave', label:'Leave in Other clearing', hint:'All $4,318.60 stays in one account.' }],
+    done:{ split:'Split across 3 clearing accounts', leave:'Left in Other clearing' } },
+  { id:'cogs', title:'Missing COGS', entry:'deferred', count:'38 orders', amount:'$6,120.00', summary:'Revenue on 38 orders',
+    why:'No COGS in Shopify for these orders. Amazon has no COGS data.',
+    columns:['Order','Date','Channel','Revenue'],
+    rows:[['#49102','Sep 28','Shopify','$164.00'],['#49118','Sep 28','Amazon','$89.50'],['#49140','Sep 29','Shopify','$212.00'],['#49177','Sep 30','Amazon','$54.00']],
+    options:[{ id:'estimate', label:'Estimate COGS at 24%', hint:'Moves $1,468.80 from September COGS to deferred COGS.', rec:true },{ id:'revonly', label:'Defer the revenue only', hint:'Keeps $6,120.00 in deferred revenue with no COGS.' }],
+    done:{ estimate:'COGS estimated at 24%', revonly:'Revenue deferred, no COGS' } },
+  { id:'sku', title:'Blank SKUs', entry:'deferred', count:'9 order lines', amount:'$1,284.00', summary:'Revenue on 9 order lines',
+    why:'No COGS is deferred for these lines.',
+    columns:['Order','Date','Product title','Revenue'],
+    rows:[['#48921','Sep 24','Ashwagandha 60 ct','$148.00'],['#48955','Sep 25','Ashwagandha 60 ct','$296.00'],['#49033','Sep 27','Sleep Tea 20 ct','$96.00']],
+    options:[{ id:'map', label:'Match by product title', hint:'Matches 9 of 9 lines. Moves $312.00 from September COGS to deferred COGS.', rec:true },{ id:'leave', label:'Leave them out of deferred COGS', hint:'$1,284.00 stays deferred with no COGS.' }],
+    done:{ map:'Matched by product title', leave:'Left out of deferred COGS' } },
+  { id:'subs', title:'Subscription orders that look unfulfilled', entry:'deferred', count:'21 orders', amount:'$2,940.00', summary:'Revenue on 21 orders with tracking',
+    columns:['Order','Date','Fulfillment','Tracking','Revenue'],
+    rows:[['#48733','Sep 19','Unfulfilled','Delivered Sep 23','$140.00'],['#48810','Sep 22','Unfulfilled','Delivered Sep 26','$140.00'],['#48992','Sep 26','Unfulfilled','Shipped Sep 27','$98.00']],
+    options:[{ id:'ship', label:'Treat as shipped', hint:'Removes $2,940.00 of revenue and $712.00 of COGS from deferred.', rec:true },{ id:'keep', label:'Keep them deferred', hint:'$2,940.00 stays deferred.' }],
+    done:{ ship:'Treated as shipped', keep:'Subscription orders kept deferred' }, short:{ keep:'Kept deferred' } },
+  { id:'gratis', title:'Gratis and replacement orders', entry:'gratis', count:'7 orders', amount:'$612.00', summary:'Retail value of 7 orders',
+    columns:['Order','Date','Reason','Retail value','Cost'],
+    rows:[['#48155','Sep 3','Influencer send','$96.00','$28.00'],['#48402','Sep 10','Damaged replacement','$148.00','$36.00'],['#48688','Sep 18','Influencer send','$120.00','$34.00']],
+    options:[{ id:'reclass', label:'Move to COGS sub-categories by reason', hint:'Removes $612.00 from revenue and discounts. Moves $184.00 to Testers and Customer service.', rec:true },{ id:'leave', label:'Leave in sales and discounts', hint:'$612.00 stays in revenue and discounts.' }],
+    done:{ reclass:'Moved to COGS sub-categories', leave:'Left in sales and discounts' } },
+];
+ISSUES.sort((a, b) => num(b.amount) - num(a.amount));
+
+const ORDER_COLUMNS = ['Order','Date','Fulfillment','SKU','Gross','Fee','Tax','Net','Payout'];
+/* Net follows the rail's own identity: gross minus fees minus tax on fees. */
+function orderWithTax(id, r) {
+  const cur = entry(id).cur;
+  const tax = Math.round(num(r[5]) * 2.86) / 100;
+  return [r[0], r[1], r[2], r[3], r[4], r[5], money(tax, cur), money(Math.round((num(r[4]) - num(r[5]) - tax) * 100) / 100, cur), r[7]];
+}
+const ORDER_ROWS = {
+  shopify: [['#48102','Sep 1','Fulfilled','ASH-60','$148.00','$4.59','$143.41','po_8Kd2'],['#48733','Sep 19','Looks unfulfilled','ASH-60','$140.00','$4.36','$135.64','po_9Zm4'],['#48921','Sep 24','Unfulfilled','Blank','$148.00','$4.59','$143.41','po_A1c7'],['#49102','Sep 28','Unfulfilled','MAG-30','$164.00','$5.06','$158.94','Pending']],
+  stripe:  [['#48120','Sep 1','Fulfilled','ASH-60','$148.00','$4.00','$144.00','po_St11'],['#48260','Sep 6','Fulfilled','TEA-20','$96.00','$2.59','$93.41','po_St14'],['#48640','Sep 16','Fulfilled','ASH-60','$140.00','$3.78','$136.22','po_St19']],
+  paypal:  [['#48140','Sep 2','Fulfilled','TEA-20','$96.00','$2.78','$93.22','po_Pp03'],['#48450','Sep 11','Fulfilled','ASH-60','$148.00','$4.29','$143.71','po_Pp07'],['#48850','Sep 23','Fulfilled','ASH-60','$140.00','$4.06','$135.94','po_Pp12']],
+  amazon:  [['#48555','Sep 13','Fulfilled','AMZ-ASH-60','$148.00','$22.79','$125.21','po_Am21'],['#49118','Sep 28','Unfulfilled','AMZ-TEA-20','$89.50','$13.78','$75.72','Pending'],['#49177','Sep 30','Unfulfilled','AMZ-TEA-20','$54.00','$8.32','$45.68','Pending']],
+  tiktok:  [['#48300','Sep 7','Fulfilled','TEA-20','$96.00','$9.89','$86.11','po_Tk02'],['#48720','Sep 19','Fulfilled','ASH-60','$148.00','$15.24','$132.76','po_Tk05']],
+  paypal_cad: [['#48166','Sep 3','Fulfilled','TEA-20','CA$128.00','CA$3.71','CA$124.29','po_Ca02'],['#48511','Sep 12','Fulfilled','ASH-60','CA$196.00','CA$5.68','CA$190.32','po_Ca05'],['#48877','Sep 24','Fulfilled','ASH-60','CA$186.00','CA$5.39','CA$180.61','po_Ca09']],
+};
+const PAYOUT_ROWS = {
+  shopify: [['po_8Kd2','Sep 5',412,'$48,210.44'],['po_9Zm4','Sep 21',388,'$44,902.17'],['po_A1c7','Sep 26',401,'$46,118.30']],
+  stripe: [['po_St11','Sep 4',96,'$11,240.60'],['po_St14','Sep 11',88,'$10,318.25'],['po_St19','Sep 18',101,'$12,004.90']],
+  paypal: [['po_Pp03','Sep 8',64,'$7,800.00'],['po_Pp07','Sep 15',58,'$6,900.00'],['po_Pp12','Sep 24',71,'$8,400.00']],
+  amazon: [['po_Am21','Sep 14',172,'$17,940.12'],['po_Am24','Sep 28',181,'$18,320.00']],
+  tiktok: [['po_Tk02','Sep 8',29,'$2,600.00'],['po_Tk05','Sep 22',31,'$2,800.00']],
+  paypal_cad: [['po_Ca02','Sep 9',18,'CA$1,600.00'],['po_Ca05','Sep 17',21,'CA$1,800.00'],['po_Ca09','Sep 26',19,'CA$1,600.00']],
+};
+const ESTIMATED = { '#49102':'$39.36', '#49118':'$21.48', '#49177':'$12.96' };
+function ordersFor(id) {
+  const fit = r => r.map(v => (v === 'Looks unfulfilled' && S.resolved.subs === 'ship') ? 'Treated as shipped' : (v === 'Blank' && S.resolved.sku === 'map') ? 'ASH-60, matched' : v);
+  if (ORDER_ROWS[id]) return { columns:ORDER_COLUMNS, rows:ORDER_ROWS[id].map(r => fit(orderWithTax(id, r))) };
+  if (id === 'other' || id === 'gratis') { const i = ISSUES.find(x => x.id === (id === 'other' ? 'unmatched' : 'gratis')); return { columns:i.columns, rows:i.rows }; }
+  const rows = [['#48733','Sep 19','Looks unfulfilled','ASH-60','$140.00','$36.00'],['#48921','Sep 24','Unfulfilled','Blank','$148.00','Missing'],['#49060','Sep 27','Unfulfilled','ASH-60','$148.00','$36.00'],['#49071','Sep 27','Unfulfilled','TEA-20','$96.00','$24.00'],['#49102','Sep 28','Unfulfilled','MAG-30','$164.00','Missing'],['#49118','Sep 28','Unfulfilled','AMZ-TEA-20','$89.50','Missing'],['#49177','Sep 30','Unfulfilled','AMZ-TEA-20','$54.00','Missing']];
+  const cost = r => (r[0] === '#48921' && S.resolved.sku === 'map') ? '$36.00, matched' : (S.resolved.cogs === 'estimate' && ESTIMATED[r[0]]) ? ESTIMATED[r[0]] + ' est.' : r[5];
+  return { columns:['Order','Date','Fulfillment','SKU','Revenue','COGS'], rows:(S.resolved.subs === 'ship' ? rows.filter(r => r[2] !== 'Looks unfulfilled') : rows).map(r => { const out = fit(r); out[5] = cost(r); return out; }) };
+}
+
+function num(v) { return parseFloat(String(v).replace(/[^0-9.\-]/g, '')); }
+function minus(v) { return String(v).replace(/^-/, MINUS); }
+function money(n, cur) { return (cur === 'CAD' ? 'CA$' : '$') + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function entry(id) { return S.entries.find(e => e.id === id); }
+function totals(e) { const r = e.lines.reduce((a, l) => { a.dr += l.dr || 0; a.cr += l.cr || 0; return a; }, { dr:0, cr:0 }); r.dr = Math.round(r.dr * 100) / 100; r.cr = Math.round(r.cr * 100) / 100; return r; }
+function otherAcct() { const l = line(entry('other'), 'oth'); return l ? l.account : 'Other clearing'; }
+function doneText(i, r) { return i.id === 'unmatched' && r === 'leave' ? 'Left in ' + otherAcct() : i.done[r]; }
+function dcoName() { const a = line(entry('deferred'), 'dco').account; return a === 'Deferred COGS' ? 'deferred COGS' : a; }
+function statusOf(e) {
+  const n = issuesFor(e.id).length;
+  if (n) return { word:n + ' to decide', tone:'warn' };
+  if (e.start !== undefined) return isTied(e) ? { word:'Tied', tone:'ok' } : { word:'Not tied', tone:'warn' };
+  if (e.id === 'other') return { word:'No payout data', tone:'neutral' };
+  const t = totals(e);
+  return t.dr === t.cr ? { word:'Balanced', tone:'ok' } : { word:'Out of balance', tone:'bad' };
+}
+function statusHtml(e) {
+  const st = statusOf(e);
+  return st.tone === 'ok' ? `<span class="pm-ok">${st.word}</span>` : `<span class="badge badge-${{ bad:'red', neutral:'gray', warn:'yellow' }[st.tone]} badge-sm">${st.word}</span>`;
+}
+function openIssues() { return ISSUES.filter(i => !S.resolved[i.id]); }
+function issuesFor(id) { return openIssues().filter(i => i.entry === id); }
+function line(e, id) { return e.lines.find(l => l.id === id); }
+
+/* Each decision recomputes real lines, so the balance check stays a real check and a decision can change. */
+function recomputeDeferred() {
+  const d = entry('deferred'), r = S.resolved, ship = r.subs === 'ship';
+  const rev = 58240 - (ship ? 2940 : 0);
+  const cog = Math.round((12200.64 + (r.sku === 'map' ? 312 : 0) - (ship ? 712 : 0)) * 100) / 100;
+  line(d,'rev').dr = rev; line(d,'def').cr = rev; line(d,'dco').dr = cog; line(d,'cog').cr = cog;
+  d.lines = d.lines.filter(l => l.id !== 'est' && l.id !== 'esc');
+  const acc = line(d,'dco').account, src = line(d,'cog').account;
+  if (r.cogs === 'estimate') d.lines.push({ id:'est', dr:1468.80, account:acc, rec:acc, bucket:'Estimate deferred', choices:[acc] }, { id:'esc', cr:1468.80, account:src, rec:src, bucket:'Estimate out of COGS', choices:[src] });
+  d.orders = 402 - (ship ? 21 : 0);
+  d.lines.forEach(l => { const a = S.acct['deferred:' + l.id]; if (a) l.account = a; });
+}
+/* A decision that keeps the amounts still leaves a trace in the export. */
+function syncMemos() {
+  const r = S.resolved;
+  entry('deferred').memo = 'Orders unfulfilled at Sep 30' + (r.cogs === 'estimate' ? '. COGS estimated at 24% on 38 orders' : '') + (r.cogs === 'revonly' ? '. 38 orders, $6,120.00 deferred without COGS' : '') + (r.sku === 'map' ? '. 9 lines matched by product title' : '') + (r.sku === 'leave' ? '. 9 lines, $1,284.00 deferred without COGS' : '') + (r.subs === 'ship' ? '. 21 subscription orders treated as shipped' : '') + (r.subs === 'keep' ? '. 21 subscription orders kept deferred' : '');
+  entry('other').memo = 'Payments from processors with no payout data, Sep 2026' + (r.unmatched === 'split' ? '. Split across 3 clearing accounts' : '') + (r.unmatched === 'leave' ? '. Left in ' + otherAcct() : '');
+  entry('gratis').memo = 'Free orders, Sep 2026' + (r.gratis === 'reclass' ? '. Moved to COGS sub-categories' : '') + (r.gratis === 'leave' ? '. Left in sales and discounts' : '');
+}
+function applyIssue(issue, option) {
+  if (issue.entry === 'deferred') recomputeDeferred();
+  if (issue.id === 'unmatched') {
+    const o = entry('other');
+    const sal = line(o,'sal');
+    o.lines = option === 'split' ? [
+      { id:'a', dr:2140.00, account:'Afterpay clearing', rec:'Afterpay clearing', bucket:'Afterpay', choices:CLEARING },
+      { id:'b', dr:1338.60, account:'Shop Cash clearing', rec:'Shop Cash clearing', bucket:'Shop Cash', choices:CLEARING },
+      { id:'c', dr:840.00, account:'Authorize.net clearing', rec:'Authorize.net clearing', bucket:'Authorize.net', choices:CLEARING },
+      sal,
+    ] : [{ id:'oth', dr:4318.60, account:'Other clearing', rec:'Other clearing', bucket:'Unmatched', choices:CLEARING }, sal];
+  }
+  if (issue.id === 'gratis') {
+    entry('gratis').lines = option === 'reclass' ? [
+      { id:'t', dr:118.00, account:'COGS: Testers', rec:'COGS: Testers', bucket:'Influencer sends' },
+      { id:'c', dr:66.00, account:'COGS: Customer service', rec:'COGS: Customer service', bucket:'Replacements' },
+      { id:'i', cr:184.00, account:'COGS', rec:'COGS', bucket:'Cost out of COGS' },
+    ] : [
+      { id:'dis', dr:612.00, account:'Discounts', rec:'Discounts', bucket:'Discounts' },
+      { id:'sal', cr:612.00, account:'Sales', rec:'Sales', bucket:'Retail value' },
+    ];
+  }
+  entry(issue.entry).lines.forEach(l => { l.account = S.acct[issue.entry + ':' + l.id] || l.rec; });
+  const dropped = Object.keys(S.acct).filter(k => k.startsWith(issue.entry + ':') && !line(entry(issue.entry), k.split(':')[1]));
+  dropped.forEach(k => delete S.acct[k]);
+  syncMemos();
+  return dropped.length;
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+let toastReturn = null;
+function clearToast() {
+  const host = document.getElementById('toastHost');
+  const inside = host.contains(document.activeElement);
+  clearTimeout(toastTimer);
+  host.innerHTML = '';
+  if (inside) { const known = toastReturn && document.contains(toastReturn) ? toastReturn : null; const f = known || (document.documentElement.classList.contains('pm-pointer') ? null : document.getElementById('exportCsv')); if (f) f.focus({ preventScroll:true }); }
+}
+/* Top right, as in the live product. Stays clear of the page's Post and Export CSV row, of an open dialog and of the side panel. */
+function placeToast() {
+  const host = document.getElementById('toastHost');
+  const box = document.getElementById('toastBox');
+  const drawer = document.querySelector('.pm-drawer');
+  const dialog = document.querySelector('.modal-dialog');
+  const action = document.getElementById('exportCsv');
+  let top = 16, right = 16, max = 440;
+  if (drawer) {
+    const left = drawer.getBoundingClientRect().left;
+    right = window.innerWidth - left + 16;
+    max = Math.max(200, left - 32);
+  } else if (dialog) {
+    const d = dialog.getBoundingClientRect();
+    const room = window.innerWidth - 32 - d.right;
+    if (room >= 288) max = Math.min(440, room);
+    else top = d.bottom + 8;
+  } else if (box && action) {
+    const r = action.getBoundingClientRect();
+    if (r.right > box.getBoundingClientRect().left) top = Math.max(16, r.bottom + 8);
+  }
+  host.style.top = top + 'px';
+  host.style.right = right + 'px';
+  host.style.maxWidth = max + 'px';
+  host.classList.toggle('is-narrow', max < 360);
+}
+window.addEventListener('scroll', placeToast, true);
+window.addEventListener('resize', placeToast);
+function toast(msg, undo, view) {
+  const host = document.getElementById('toastHost');
+  host.innerHTML = `<div class="toast" id="toastBox"><p class="toast-body" style="margin:0;flex:1;">${esc(msg)}</p>${view ? '<button type="button" class="btn-link btn-sm pm-link-quiet" style="padding:0;white-space:nowrap;" id="toastView">View entry</button>' : ''}${undo ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toastUndo">Undo</button>' : ''}<button type="button" class="toast-close" id="toastClose" aria-label="Dismiss">×</button></div>`;
+  document.getElementById('toastClose').onclick = () => { overlayClosedAt = Date.now(); clearToast(); };
+  document.getElementById('toastClose').addEventListener('keydown', ev => { if (ev.key === 'Tab' && !ev.shiftKey) { ev.preventDefault(); ev.stopPropagation(); const f = toastReturn && document.contains(toastReturn) ? toastReturn : document.getElementById('exportCsv'); if (f) f.focus(); host.querySelectorAll('button').forEach(b => { b.tabIndex = -1; }); } });
+  if (undo) document.getElementById('toastUndo').onclick = () => { host.innerHTML = ''; overlayClosedAt = Date.now(); if (document.getElementById('modalBackdrop')) closeModal(); undo(); };
+  if (view) document.getElementById('toastView').onclick = () => { if (document.getElementById('modalBackdrop')) { returnFocus = null; closeModal(); } view(); };
+  const ms = undo ? 9000 : 5000;
+  const arm = () => { clearTimeout(toastTimer); toastTimer = setTimeout(clearToast, ms); };
+  const box = document.getElementById('toastBox');
+  box.addEventListener('mouseenter', () => clearTimeout(toastTimer));
+  box.addEventListener('focusin', ev => { clearTimeout(toastTimer); if (ev.relatedTarget && !box.contains(ev.relatedTarget)) toastReturn = ev.relatedTarget; });
+  box.addEventListener('mouseleave', arm);
+  box.addEventListener('focusout', arm);
+  arm();
+  placeToast();
+}
+
+/* ---------- Modal ---------- */
+let returnFocus = null;
+let overlayClosedAt = 0;
+let overlayOpenedAt = 0;
+let rowTimer = null;
+let lastClickTarget = null;
+/* The scrim and the panel reach the window edge, and the page behind does not shift. */
+function lockPage() {
+  if (document.body.style.overflow === 'hidden') return;
+  const gutter = window.innerWidth - document.documentElement.clientWidth;
+  document.documentElement.style.scrollbarGutter = 'auto';
+  document.body.style.overflow = 'hidden';
+  document.body.style.paddingRight = gutter + 'px';
+  document.querySelector('body > div').inert = true;
+}
+function unlockPage() {
+  document.documentElement.style.scrollbarGutter = '';
+  document.body.style.overflow = '';
+  document.body.style.paddingRight = '';
+  document.querySelector('body > div').inert = false;
+}
+function openModal(title, body, footer, size) {
+  returnFocus = document.activeElement;
+  overlayOpenedAt = Date.now();
+  lockPage();
+  document.getElementById('modalHost').innerHTML = `<div class="modal-backdrop" id="modalBackdrop" style="align-items:flex-start;padding-top:8vh;"><div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="modal-dialog ${size || 'modal-dialog-lg'}" style="max-height:calc(100vh - 48px);display:flex;flex-direction:column;">
+    <div class="modal-header"><h2 class="modal-title" id="modalTitle">${esc(title)}</h2><button type="button" class="modal-close" id="modalClose" aria-label="Close dialog"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg></button></div>
+    <div class="modal-body" style="overflow:auto;">${body}</div><div class="modal-footer" style="flex-wrap:wrap;">${footer}</div></div></div>`;
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('modalBackdrop').addEventListener('mousedown', e => { if (e.target.id === 'modalBackdrop') { e.preventDefault(); if (e.detail < 2) closeModal(); } });
+  document.addEventListener('keydown', modalKeys);
+  const first = document.querySelector('#modalHost [data-autofocus]') || document.querySelector('#modalHost button');
+  if (first) first.focus();
+  placeToast();
+}
+function modalKeys(e) {
+  if (e.key === 'Escape') { closeModal(); return; }
+  if (e.key !== 'Tab') return;
+  const f = [...document.querySelectorAll('#modalHost button:not([disabled]), #modalHost input:not([disabled]), #modalHost select:not([disabled]), #toastHost button')];
+  if (!f.length) return;
+  if (e.shiftKey && document.activeElement === f[0]) { f[f.length - 1].focus(); e.preventDefault(); }
+  else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { f[0].focus(); e.preventDefault(); }
+}
+function closeModal() {
+  overlayClosedAt = Date.now();
+  unlockPage();
+  document.querySelectorAll('.is-drilled').forEach(r => r.classList.remove('is-drilled'));
+  document.getElementById('modalHost').innerHTML = '';
+  placeToast();
+  document.removeEventListener('keydown', modalKeys);
+  if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
+}
+function simpleTable(caption, columns, rows, numeric) {
+  return `<table style="width:100%;border-collapse:collapse;"><caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">${esc(caption)}</caption>
+    <thead><tr>${columns.map(c => `<th scope="col" class="iris-th"${numeric && numeric.includes(c) ? ' style="text-align:right;"' : ''}>${esc(c)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td style="${TDP}${numeric && numeric.includes(columns[i]) ? 'text-align:right;font-variant-numeric:tabular-nums;' : ''}">${['Blank','Missing','Looks unfulfilled'].includes(v) ? `<span class="badge badge-yellow badge-sm">${esc(v)}</span>` : esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+function issueModal(id) {
+  const issue = ISSUES.find(i => i.id === id);
+  const pick = S.resolved[id] || issue.options[0].id;
+  const opts = issue.options.map(o => `<div class="form-check" style="align-items:flex-start;">
+    <input class="form-check-input" style="margin-top:3px;" type="radio" name="fix" id="fix-${o.id}" value="${o.id}"${o.id === pick ? ' checked data-autofocus' : ''} aria-describedby="fix-${o.id}-hint">
+    <div><label class="form-check-label" for="fix-${o.id}">${esc(issue.id === 'unmatched' && o.id === 'leave' ? 'Leave in ' + otherAcct() : o.label)} ${o.rec ? '<span class="badge badge-gray badge-sm">Recommended</span>' : ''} ${o.id === S.resolved[id] ? '<span class="form-helper" style="display:inline;margin:0;">Current</span>' : ''}<span class="form-helper" style="display:block;margin:0;" id="fix-${o.id}-hint">${esc(o.hint.replace('to deferred COGS', 'to ' + dcoName()).replace('from September COGS', 'from September ' + line(entry('deferred'), 'cog').account))}</span></label></div></div>`).join('');
+  const body = `${issue.why ? `<p style="margin:0 0 16px;font-size:13px;line-height:18px;color:var(--color-text-primary);">${esc(issue.why)}</p>` : ''}
+    <div style="overflow-x:auto;margin-bottom:8px;">${simpleTable(issue.title, issue.columns, issue.rows, ['Amount','Revenue','Retail value','Cost'])}</div>
+    <p class="form-helper" style="margin:0 0 16px;">Showing ${issue.rows.length} of ${esc(issue.count)}</p>
+    <fieldset style="border:0;padding:0;margin:0;"><legend class="form-label" style="padding-bottom:6px;">Decision</legend>${opts}</fieldset>`;
+  const footer = `<button type="button" class="btn btn-alternative btn-md" id="fixCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="fixApply">Apply</button>`;
+  openModal(issue.title, body, footer);
+  document.getElementById('fixCancel').onclick = closeModal;
+  document.getElementById('fixApply').onclick = ev => {
+    const opt = document.querySelector('input[name=fix]:checked').value;
+    if (opt === S.resolved[issue.id]) return closeModal();
+    const keyboard = ev.currentTarget.matches(':focus-visible');
+    const fromEntry = returnFocus && returnFocus.closest && returnFocus.closest('.pm-entry');
+    const before = JSON.parse(JSON.stringify(S));
+    S.resolved[issue.id] = opt;
+    const dropped = applyIssue(issue, opt);
+    returnFocus = null;
+    closeModal();
+    render();
+    const focusRow = () => { const f = fromEntry ? document.querySelector('[data-entry-toggle="' + issue.entry + '"]') : (document.querySelector('[data-issue-row="' + issue.id + '"]') || document.getElementById('toggleDecisions')); if (f) { const b = f.getBoundingClientRect(); f.focus({ preventScroll:document.documentElement.classList.contains('pm-pointer') || (b.top >= 0 && b.bottom <= window.innerHeight) }); } };
+    const changed = JSON.stringify(before.entries.find(x => x.id === issue.entry)) !== JSON.stringify(entry(issue.entry));
+    const viewEntry = () => { overlayClosedAt = Date.now(); S.open[issue.entry] = true; render(); const b = document.querySelector('[data-entry-toggle="' + issue.entry + '"]'); if (b) { b.scrollIntoView({ block:'start' }); window.scrollBy(0, -24); b.focus({ preventScroll:true }); } };
+    toast(doneText(issue, opt) + '.' + (dropped ? ' ' + dropped + (dropped === 1 ? ' account change' : ' account changes') + ' removed.' : ''), () => { const openNow = S.open, hide = S.hideDecisions; S = before; S.open = openNow; S.hideDecisions = hide; render(); toast('Change undone.'); focusRow(); }, changed ? viewEntry : null);
+    focusRow();
+    if (keyboard) { const u = document.getElementById('toastUndo'); if (u) u.focus(); }
+  };
+}
+const SCHEMA = { shopify:'shopify_data_v2', stripe:'stripe_data_v2', paypal:'paypal_data', paypal_cad:'paypal_data', amazon:'amazon_data', tiktok:'tiktok_data' };
+const CATEGORY = { refunds:'refund', fees:'fee', 'tax on fees':'tax', 'net change from activity':'charge', charges:'charge', activity:'charge', payouts:'payout', 'payouts to bank':'payout', 'payouts from clearing':'payout', 'net activity':'charge' };
+const ESTIMATE_ROWS = [['#49102','Sep 28','$164.00','$39.36'],['#49118','Sep 28','$89.50','$21.48'],['#49140','Sep 29','$212.00','$50.88'],['#49177','Sep 30','$54.00','$12.96']];
+function panelRows(id, bucket) {
+  const base = ordersFor(id);
+  const b = (bucket || '').toLowerCase();
+  const cur = entry(id).cur;
+  if (ORDER_ROWS[id]) {
+    if (b === 'payouts') return { columns:['Payout','Date','Orders','Amount'], rows:PAYOUT_ROWS[id].map(r => [r[0], r[1], r[2], '-' + r[3]]) };
+    if (b.startsWith('payouts')) return { columns:['Payout','Date','Orders','Amount'], rows:PAYOUT_ROWS[id] };
+    if (b === 'refunds') {
+      const columns = ['Order','Date','Description','Amount','Fee','Net','Payout'];
+      if (id === 'paypal_cad') return { columns, rows:[['#48166','Sep 6','Refund for charge','-CA$120.00','CA$0.00','-CA$120.00','po_Ca02']] };
+      return { columns, rows:ORDER_ROWS[id].filter(r => r[2] === 'Fulfilled').slice(0, 2).map(r => { const day = Math.min(30, num(r[1]) + 3); const payouts = PAYOUT_ROWS[id]; const later = payouts.find(p => num(p[1]) >= day) || payouts[payouts.length - 1]; return [r[0], 'Sep ' + day, 'Refund for charge', '-' + r[4], money(0, cur), '-' + r[4], later[0]]; }) };
+    }
+    if (b === 'fees') return { columns:['Order','Date','Description','Amount','Payout'], rows:base.rows.map(r => [r[0], r[1], 'Processing fee', '-' + r[5], r[8]]) };
+    if (b === 'tax on fees') return { columns:['Order','Date','Description','Amount','Payout'], rows:base.rows.map(r => [r[0], r[1], 'Tax on fee', '-' + r[6], r[8]]) };
+    return base;
+  }
+  const only = { 'afterpay':'Afterpay', 'shop cash':'Shop Cash', 'authorize.net':'Authorize.net', 'influencer sends':'Influencer send', 'replacements':'Damaged replacement' }[b];
+  if (only) return { columns:base.columns, rows:base.rows.filter(r => r[2] === only) };
+  if (b === 'cogs deferred' || b === 'cogs out of expense') return { columns:['Order','Date','SKU','Cost'], rows:base.rows.filter(r => r[5] !== 'Missing' && !(S.resolved.cogs === 'estimate' && ESTIMATED[r[0]])).map(r => [r[0], r[1], r[3], r[5]]) };
+  if (b.startsWith('estimate')) return { columns:['Order','Date','Revenue','Estimated cost'], rows:ESTIMATE_ROWS };
+  return base;
+}
+function panelFooter(id, bucket, o, amount) {
+  const b = (bucket || '').toLowerCase(), n = o.rows.length;
+  const i = o.columns.indexOf('Amount');
+  const complete = amount && i >= 0 && Math.abs(o.rows.reduce((a, r) => a + Math.abs(num(r[i])), 0) - Math.abs(num(amount))) < 0.005;
+  const show = w => complete ? 'Showing ' + n + ' ' + w + (n === 1 ? '' : 's') : n === 1 ? 'Showing first ' + w : 'Showing first ' + n + ' ' + w + 's';
+  if (b === 'refunds') return show('refund');
+  if (b === 'fees' || b === 'tax on fees') return show('row');
+  if (b.startsWith('payouts')) return show('payout');
+  if (b.startsWith('estimate')) return 'Showing ' + n + ' of 38 orders';
+  if (['afterpay','shop cash','authorize.net'].includes(b)) return show('payment');
+  if (['influencer sends','replacements','cogs deferred','cogs out of expense'].includes(b)) return show('order');
+  return 'Showing ' + n + ' of ' + entry(id).orders.toLocaleString('en-US') + (id === 'other' ? ' payments' : ' orders');
+}
+function csvValue(v) {
+  const s = String(v);
+  const m = s.match(/^(-?(?:CA)?\$[\d,.]+)(?:, matched| est\.)?$/);
+  if (m) return num(m[1]).toFixed(2);
+  const d = s.match(/^Sep (\d+)$/);
+  if (d) return '2026-09-' + d[1].padStart(2, '0');
+  return s.replace(/, matched$/, '');
+}
+function csvNote(r) { return r.some(v => /, matched$/.test(String(v))) ? 'matched' : r.some(v => / est\.$/.test(String(v))) ? 'estimated' : ''; }
+function sourceRow(e, o, row, bucket) {
+  const col = n => row[o.columns.indexOf(n)];
+  const cents = v => v ? String(Math.round(num(v) * 100)) : '';
+  const date = String(col('Date') || '').replace('Sep ', '');
+  const isPayout = o.columns[0] === 'Payout';
+  const digits = String(col('Order') || '').replace(/\D/g, '');
+  const rail = !!SCHEMA[e.id];
+  const b = (bucket || 'charge').toLowerCase();
+  const kind = { refunds:'r', fees:'f', 'tax on fees':'t' }[b] || '';
+  const seed = Number(digits || date || 1);
+  /* One raw row reads the same from every line that opens it. */
+  const base = rail ? null : ordersFor(e.id);
+  const found = base ? base.rows.find(r => r[0] === col('Order')) : null;
+  const fromBase = n => found ? found[base.columns.indexOf(n)] : undefined;
+  const orderAmount = col('Revenue') || col('Retail value') || col('Amount') || fromBase('Revenue') || fromBase('Retail value') || fromBase('Amount');
+  const orderCost = col('Cost') || col('COGS') || fromBase('Cost') || fromBase('COGS');
+  const net = col('Net');
+  const pairs = [
+    ['raw_schema', SCHEMA[e.id] || 'ent_order_to_cash'],
+    ['raw_table', rail ? 'balance_transactions' : 'orders'],
+    ['raw_pk', rail ? 'txn_' + (isPayout ? col('Payout').replace('po_', '') + 'p' : digits + kind) : col('Order')],
+    rail ? ['reporting_category', CATEGORY[b] || b] : null,
+    isPayout ? ['amount', '-' + cents(String(col('Amount')).replace(/^-/, ''))]
+      : rail ? [net ? 'amount / net' : 'amount', [cents(col('Gross') || col('Amount')), cents(net)].filter(Boolean).join(' / ')]
+      : ['amount', cents(orderAmount)],
+    !rail && /^\$[\d,.]+$/.test(orderCost || '') ? ['cost', cents(orderCost)] : null,
+    ['source', isPayout ? col('Payout') : rail ? (b === 'refunds' ? 're_' : 'ch_') + digits : (col('Paid with') || 'order')],
+    ['created', '2026-09-' + date.padStart(2, '0') + 'T' + String(8 + seed % 12).padStart(2, '0') + ':' + String(seed % 60).padStart(2, '0') + ':11Z'],
+  ].filter(Boolean);
+  return `<div class="pm-source"><div class="pm-source__head"><span>Source row</span><span style="display:inline-flex;align-items:center;gap:8px;"><span class="form-helper" style="margin:0;">Sample data</span><button type="button" class="btn btn-neutral btn-xs" id="srcCopy">Copy</button></span></div><dl>${pairs.map(p => `<dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl></div>`;
+}
+function openDrawer(id, title, amount, bucket) {
+  const e = entry(id);
+  const o = panelRows(id, bucket);
+  returnFocus = document.activeElement;
+  overlayOpenedAt = Date.now();
+  lockPage();
+  const origin = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('.pm-entry__row, .pm-lines__row') : null;
+  const fallbackRow = document.querySelector('[data-entry-toggle="' + id + '"]');
+  (origin || fallbackRow.closest('.pm-entry__row')).classList.add('is-drilled');
+  const numeric = ['Gross','Fees','Tax','Net','Amount','Fee','Revenue','Retail value','Cost','Estimated cost','COGS','Orders'];
+  const head = o.columns.map(c => `<th scope="col" class="iris-th" style="${numeric.includes(c) ? 'text-align:right;' : ''}${c === 'Payout' && o.columns[0] !== 'Payout' ? 'padding-left:24px;' : ''}">${esc(c)}</th>`).join('');
+  const body = o.rows.map((r, i) => `<tr class="pm-drawer__row" data-src="${i}">${r.map((v, n) => `<td style="${TDP}${numeric.includes(o.columns[n]) ? 'text-align:right;font-variant-numeric:tabular-nums;' : ''}${o.columns[n] === 'Payout' && n ? 'padding-left:24px;' : ''}">${n === 0 ? `<button type="button" class="pm-amount" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>` : ['Blank','Missing','Looks unfulfilled'].includes(v) ? `<span class="badge badge-yellow badge-sm">${esc(v)}</span>` : esc(minus(v))}</td>`).join('')}</tr>`).join('');
+  document.getElementById('modalHost').innerHTML = `<div class="pm-drawer-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="pm-drawer">
+    <div class="pm-drawer__head"><div class="pm-drawer__title"><h2 class="modal-title" id="modalTitle" style="margin:0;">${esc(title)}${amount ? ' ' + esc(minus(amount)) : ''}</h2><span class="pm-drawer__meta">${esc(e.name)} · ${e.cur || 'USD'} · Sep 2026</span></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><button type="button" class="btn btn-neutral btn-sm" id="ordExport">${ICON_DOWNLOAD}Export</button><button type="button" class="modal-close" id="modalClose" aria-label="Close panel"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg></button></div></div>
+    <div class="pm-drawer__body"><div class="pm-frame"><table style="width:100%;border-collapse:collapse;"><caption style="${SR}">${esc(title)} in ${esc(e.name)}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <p class="form-helper" style="margin:8px 0 16px;">${esc(panelFooter(id, bucket, o, amount))}</p><div id="sourceSlot" role="status"></div></div>
+  </aside></div>`;
+  const pick = i => { document.querySelectorAll('.pm-drawer__row').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('is-selected', on); const b = tr.querySelector('[data-src-btn]'); if (b) b.setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceRow(e, o, o.rows[i], bucket || 'charge'); };
+  document.querySelector('.pm-drawer__body').addEventListener('click', ev => { const tr = ev.target.closest('.pm-drawer__row'); if (tr) pick(+tr.dataset.src); });
+  pick(0);
+  document.getElementById('modalClose').onclick = closeModal;
+  document.getElementById('ordExport').onclick = ev => { if (ev.detail > 1) return; downloadCsv('journal-' + e.id + '-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-2026-09.csv', [o.columns.concat('Currency').concat(o.rows.some(csvNote) ? ['Note'] : [])].concat(o.rows.map(r => r.map(csvValue).concat(e.cur || 'USD').concat(o.rows.some(csvNote) ? [csvNote(r)] : [])))); toast('Exported ' + o.rows.length + (o.rows.length === 1 ? ' row.' : ' rows.')); };
+  document.getElementById('modalBackdrop').addEventListener('mousedown', ev => { if (ev.target.id === 'modalBackdrop') { ev.preventDefault(); if (ev.detail < 2) closeModal(); } });
+  document.addEventListener('keydown', modalKeys);
+  document.getElementById('modalClose').focus();
+  placeToast();
+}
+
+/* ---------- Render ---------- */
+function attentionHtml() {
+  const open = openIssues();
+  if (open.length) S.hideDecisions = false;
+  if (!open.length && S.hideDecisions) {
+    return `<section class="card pm-att" style="margin-bottom:16px;" aria-labelledby="attTitle"><div class="pm-att__head pm-att__head--left"><div class="card-header-title" role="heading" aria-level="2" id="attTitle">All ${ISSUES.length} items are decided</div><button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toggleDecisions" data-key="toggleDecisions">Show decisions</button></div></section>`;
+  }
+  const rows = ISSUES.map(i => {
+    const r = S.resolved[i.id];
+    return `<div class="pm-att__row" data-row="${i.id}"><div class="pm-att__title${r ? ' is-decided' : ''}">${esc(i.title)}</div><div class="pm-att__text">${esc(r ? (i.short && i.short[r]) || doneText(i, r) : i.summary)}</div><div class="pm-att__chip">${r ? '<span class="pm-ok">Decided</span>' : ''}</div><div class="pm-att__amount">${esc(i.amount)}</div><button type="button" class="btn ${r ? 'btn-ghost' : 'btn-alternative'} btn-sm" style="min-width:76px;" data-issue="${i.id}" data-issue-row="${i.id}" aria-label="${r ? 'Change' : 'Decide'} ${esc(i.title)}">${r ? 'Change' : 'Decide'}</button></div>`;
+  }).join('');
+  const hide = !open.length ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toggleDecisions" data-key="toggleDecisions">Hide decisions</button>' : '';
+  return `<section class="card pm-att" style="margin-bottom:16px;" aria-labelledby="attTitle"><div class="pm-att__head pm-att__head--left"><div class="card-header-title" role="heading" aria-level="2" id="attTitle">${open.length ? open.length + (open.length === 1 ? ' item' : ' items') + ' to decide' : 'All ' + ISSUES.length + ' items are decided'}</div>${hide}</div>${rows}</section>`;
+}
+const TD = 'padding:4px 8px;height:40px;box-sizing:border-box;font-size:13px;line-height:18px;color:var(--color-text-primary);';
+const TDP = 'padding:6px 8px;height:44px;box-sizing:border-box;font-size:13px;line-height:18px;color:var(--color-text-primary);border-top:1px solid var(--color-border-default);';
+const SR = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);';
+/* A rail is tied only while its clearing account ends where the processor says it ends, whichever line moved. */
+function isTied(e) { return e.start !== undefined && Math.abs(clearingEnding(e) - e.end) < 0.005; }
+function clearingEnding(e) {
+  let v = e.start;
+  S.entries.forEach(x => x.lines.forEach(l => { if (l.account === e.clearing) v += (l.dr || 0) - (l.cr || 0); }));
+  return Math.round(v * 100) / 100;
+}
+function signed(v, cur) { return (v < 0 ? MINUS : '') + money(Math.abs(v), cur); }
+function isChanged(e, l) { return l.account !== l.rec; }
+function linesHtml(e) {
+  const chips = l => {
+    const noCogs = l.id === 'def' ? (S.resolved.cogs === 'revonly' ? 6120 : 0) + (S.resolved.sku === 'leave' ? 1284 : 0) : 0;
+    return (noCogs ? `<span class="badge badge-gray badge-sm">${money(noCogs)} no COGS</span>` : '') + (isChanged(e, l) ? '<span class="badge badge-gray badge-sm">Changed</span>' : '');
+  };
+  const accountCell = l => {
+    const options = l.choices || (e.cur ? ACCOUNTS_CAD : ACCOUNTS);
+    const single = options.length === 1;
+    const changed = !single && l.account !== l.rec;
+    const reset = `<button type="button" class="pm-reset" style="visibility:${changed ? 'visible' : 'hidden'};" data-reset="${e.id}:${l.id}" title="Back to ${esc(l.rec)}" aria-label="${esc(l.bucket)}: back to ${esc(l.rec)}"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.793 2.232a.75.75 0 0 1-.025 1.06L3.622 7.25h10.003a5.375 5.375 0 0 1 0 10.75H10.75a.75.75 0 0 1 0-1.5h2.875a3.875 3.875 0 0 0 0-7.75H3.622l4.146 3.957a.75.75 0 0 1-1.036 1.085l-5.5-5.25a.75.75 0 0 1 0-1.085l5.5-5.25a.75.75 0 0 1 1.06.025Z" clip-rule="evenodd"/></svg></button>`;
+    return `<div style="display:flex;align-items:center;gap:4px;"><select class="form-input form-input-sm form-select" ${single ? 'disabled ' : ''} aria-label="${esc(e.name)}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${esc(l.bucket)}" data-entry="${e.id}" data-line="${l.id}" data-key="acct:${e.id}:${l.id}">${options.map(a => `<option value="${esc(a)}"${a === l.account ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select>${reset}${chips(l)}</div>`;
+  };
+  const amountCell = (l, v) => v === undefined ? '' : `<button type="button" class="pm-amount" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
+  const t = totals(e);
+  const balanced = t.dr === t.cr;
+  const row = l => { const gap = l.id === 'bnk' ? 'padding-top:16px;height:52px;' : ''; return `<tr class="pm-lines__row"><th scope="row" style="${TD}${gap}font-weight:var(--font-normal);text-align:left;white-space:nowrap;">${esc(l.bucket)}</th><td style="${TD}${gap}">${accountCell(l)}</td><td style="${TD}${gap}text-align:right;font-variant-numeric:tabular-nums;">${amountCell(l, l.dr)}</td><td style="${TD}${gap}text-align:right;font-variant-numeric:tabular-nums;">${amountCell(l, l.cr)}</td></tr>`; };
+  const viewOrders = extra => `<button type="button" class="btn btn-alternative btn-sm"${extra} data-orders="${e.id}" data-key="orders:${e.id}">View ${e.orders.toLocaleString('en-US')} ${e.id === 'other' ? 'payments' : 'orders'}</button>`;
+  const hasNotes = issuesFor(e.id).length || ISSUES.some(i => i.entry === e.id && S.resolved[i.id]) || !balanced || (e.clearing && S.entries.some(x => x.id !== e.id && x.lines.some(l => l.account === e.clearing)));
+  const tieRow = (parts, start) => `<tr><th scope="row" style="${TD}font-weight:var(--font-normal);text-align:left;white-space:nowrap;">Clearing balance</th><td colspan="3" style="${TD}font-variant-numeric:tabular-nums;"><div class="pm-tie">${start ? `<span class="pm-bal-inv">Starting ${money(e.start, e.cur)}</span>` : ''}${parts}${hasNotes ? '' : viewOrders(' style="margin-left:auto;"')}</div></td></tr>`;
+  const tie = e.start === undefined ? '' : isTied(e)
+    ? tieRow(`<span>Processor ${money(e.end, e.cur)}</span><span>Clearing ${money(e.end, e.cur)}</span><span class="pm-ok">Tied</span>`, true)
+    : tieRow(`<span>Processor ${money(e.end, e.cur)}</span><span>Clearing ${signed(clearingEnding(e), e.cur)}</span><span style="font-weight:600;">Off by ${money(Math.abs(clearingEnding(e) - e.end), e.cur)}</span>`, false);
+  const open = issuesFor(e.id);
+  const decided = ISSUES.filter(i => i.entry === e.id && S.resolved[i.id]);
+  const incoming = e.clearing ? S.entries.flatMap(x => x.id === e.id ? [] : x.lines.filter(l => l.account === e.clearing).map(l => ({ x, l }))) : [];
+  const linkStyle = 'padding:0;height:auto;min-height:0;';
+  const linkTo = (i, text) => `<button type="button" class="btn-link btn-link-semibold btn-xs" style="${linkStyle}" data-issue="${i.id}">${esc(text)}</button>`;
+  const links = `<div class="form-helper" style="margin:0;display:flex;flex-direction:column;gap:2px;min-width:0;">${open.length ? `<div>To decide: ${open.map(i => linkTo(i, i.title)).join(' · ')}</div>` : ''}${decided.length ? `<div>Decided: ${decided.map(i => linkTo(i, doneText(i, S.resolved[i.id]))).join(' · ')}</div>` : ''}${incoming.length ? `<div>Incoming: ${incoming.map(o => `<button type="button" class="btn-link btn-link-semibold btn-xs" style="${linkStyle}" data-entry-open="${o.x.id}">${esc(o.x.name)}, ${esc(o.l.bucket)}</button>`).join(' · ')}</div>` : ''}${balanced ? '' : '<div>Debits and credits do not match.</div>'}</div>`;
+  return `<div style="padding:0 0 16px;background:#F9FAFB;">
+    <div style="overflow-x:auto;"><table class="pm-lines" style="width:100%;min-width:688px;border-collapse:collapse;table-layout:fixed;"><caption style="${SR}">Lines of ${esc(e.name)}</caption>
+      <colgroup><col style="width:192px;"><col><col style="width:136px;"><col style="width:134px;"></colgroup>
+      <thead><tr><th scope="col" class="iris-th">Line</th><th scope="col" class="iris-th" style="padding-left:19px;">Account</th><th scope="col" class="iris-th" style="text-align:right;">Debit</th><th scope="col" class="iris-th" style="text-align:right;">Credit</th></tr></thead>
+      <tbody>${e.lines.map(row).join('')}
+      <tr class="pm-lines__total"><th scope="row" colspan="2" style="${TD}font-weight:var(--font-semibold);text-align:left;">Total</th><td style="${TD}text-align:right;font-weight:var(--font-semibold);font-variant-numeric:tabular-nums;">${money(t.dr, e.cur)}</td><td style="${TD}text-align:right;font-weight:var(--font-semibold);font-variant-numeric:tabular-nums;">${money(t.cr, e.cur)}</td></tr>${tie}</tbody></table></div>
+    ${hasNotes || !tie ? `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;min-height:40px;margin:12px 16px 0 32px;">${links}${viewOrders('')}</div>` : ''}
+  </div>`;
+}
+function netOf(e) { const l = line(e, 'net'); return l ? l.dr : undefined; }
+function payoutOf(e) { const l = line(e, 'bnk'); return l ? l.dr : undefined; }
+function entriesHtml(list) {
+  return list.map((e, n) => {
+    const t = totals(e);
+    const open = !!S.open[e.id];
+    const changed = e.lines.filter(l => isChanged(e, l)).length;
+    const incoming = e.clearing ? S.entries.reduce((c, x) => c + (x.id === e.id ? 0 : x.lines.filter(l => l.account === e.clearing).length), 0) : 0;
+    const net = netOf(e), pay = payoutOf(e);
+    const dash = '<span aria-hidden="true">–</span>';
+    return `<div class="pm-entry" style="${n ? 'border-top:1px solid var(--color-border-default);' : ''}">
+      <div class="pm-entry__row pm-egrid" style="padding:10px 16px;">
+        <div style="min-width:0;display:flex;align-items:center;gap:8px;white-space:nowrap;"><button type="button" class="btn-link btn-link-semibold btn-sm" style="display:inline-flex;align-items:center;gap:2px;padding:0;white-space:nowrap;" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${open ? CHEVRON_DOWN : CHEVRON}${esc(e.name)}</button>${e.id === 'amazon' || e.id === 'tiktok' ? '<span class="form-helper" style="margin:0;">reserve</span>' : ''}${changed ? `<span class="badge badge-gray badge-sm">${changed} changed</span>` : ''}${incoming ? `<span class="badge badge-gray badge-sm">${incoming} incoming</span>` : ''}</div>
+        <div class="pm-num pm-bal"><span style="${SR}">Starting </span>${e.start !== undefined ? money(e.start, e.cur) : dash}</div>
+        <div class="pm-num"><span style="${SR}">Activity </span>${net !== undefined ? `<button type="button" class="pm-amount" data-entry-orders="${e.id}:Activity" aria-label="${esc(e.name)}, activity, ${money(net, e.cur)}">${money(net, e.cur)}</button>` : dash}</div>
+        <div class="pm-num"><span style="${SR}">Payouts </span>${pay !== undefined ? `<button type="button" class="pm-amount" data-entry-orders="${e.id}:Payouts" aria-label="${esc(e.name)}, payouts, minus ${money(pay, e.cur)}">${MINUS}${money(pay, e.cur)}</button>` : dash}</div>
+        <div class="pm-num pm-bal"><span style="${SR}">Ending </span>${e.end !== undefined ? money(e.end, e.cur) : dash}</div>
+        <div class="pm-num"><span style="${SR}">Total debits </span>${money(t.dr, e.cur)}</div>
+        <div style="text-align:right;">${statusHtml(e)}</div>
+      </div>${open ? linesHtml(e) : ''}</div>`;
+  }).join('');
+}
+function totalsRow(cur) {
+  const all = S.entries.filter(e => e.cur === cur);
+  const rails = all.filter(e => e.start !== undefined);
+  const sum = (list, f) => Math.round(list.reduce((n, e) => n + f(e), 0) * 100) / 100;
+  const off = rails.filter(e => !isTied(e)).length;
+  const tied = !off;
+  const start = sum(rails, e => e.start), end = sum(rails, e => e.end);
+  const note = `<div class="pm-total-bal">${tied ? `Processor balance: starting ${money(start, cur)}, ending ${money(end, cur)}` : off + (off === 1 ? ' entry' : ' entries') + ' not tied'}</div>`;
+  return `<div class="pm-egrid" style="padding:11px 16px;border-top:1px solid #9CA3AF;font-weight:600;font-size:13px;line-height:18px;"><div style="padding-left:16px;">Total ${cur || 'USD'}</div><div class="pm-num pm-bal"><span style="${SR}">Starting </span>${money(start, cur)}</div><div class="pm-num"><span style="${SR}">Activity </span>${money(sum(rails, netOf), cur)}</div><div class="pm-num"><span style="${SR}">Payouts </span>${MINUS}${money(sum(rails, payoutOf), cur)}</div><div class="pm-num pm-bal"><span style="${SR}">Ending </span>${money(end, cur)}</div><div class="pm-num"><span style="${SR}">Total debits </span>${money(sum(all, e => totals(e).dr), cur)}</div><div class="pm-num">${tied ? '<span aria-hidden="true">–</span>' : '<span class="badge badge-yellow badge-sm">Not tied</span>'}</div></div>${note}`;
+}
+function currencyCard(cur, first) {
+  const list = S.entries.filter(e => e.cur === cur);
+  const label = cur || 'USD';
+  return `<section class="card" aria-label="${label} entries"${first ? '' : ' style="margin-top:16px;"'}>
+      <div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="3">${label} <span class="pm-count">${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span></div></div>
+      <div class="pm-egrid" style="padding:8px 16px;background:#F9FAFB;border-bottom:1px solid var(--color-border-default);font-size:12px;font-weight:600;color:#111928;" aria-hidden="true"><span style="padding-left:16px;">Entry</span><span class="pm-bal" style="text-align:right;">Starting</span><span style="text-align:right;">Activity</span><span style="text-align:right;">Payouts</span><span class="pm-bal" style="text-align:right;">Ending</span><span style="text-align:right;">Total debits</span><span style="text-align:right;">Status</span></div>
+      ${entriesHtml(list)}${totalsRow(cur)}
+    </section>`;
+}
+function exportChip() {
+  if (!S.exported) return '';
+  return S.exported === JSON.stringify([S.entries, S.resolved]) ? '<span class="badge badge-gray badge-sm">Exported</span>' : '<span class="badge badge-yellow badge-sm">Changed since export</span>';
+}
+function render() {
+  const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
+  document.getElementById('app').innerHTML = `
+    <nav aria-label="Breadcrumb" style="margin-bottom:8px;"><ol class="breadcrumb" style="flex-wrap:wrap;"><li class="breadcrumb-item"><span>Accounting</span></li><li class="breadcrumb-item active" aria-current="page"><span class="breadcrumb-sep" aria-hidden="true">/</span><span>Journal entries</span></li></ol></nav>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;">
+      <div><h1 style="margin:0 0 4px;font-size:20px;line-height:30px;font-weight:600;color:#111928;">Journal entries</h1><p style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:0 0 24px;font-size:14px;line-height:21px;color:#374151;">Sep 2026 <span class="badge badge-gray badge-sm">Not posted</span><span class="badge badge-gray badge-sm">Sample data</span></p></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><span class="pm-phase" id="postNote">Approve, post, reverse: Phase 3</span><button type="button" class="btn btn-alternative btn-sm" id="postBtn" style="pointer-events:auto;" aria-disabled="true" aria-describedby="postNote">Post</button><button type="button" class="btn ${openIssues().length ? 'btn-neutral' : 'btn-primary'} btn-sm" id="exportCsv" data-key="exportCsv">${ICON_DOWNLOAD}Export CSV</button></div>
+    </div>
+    ${attentionHtml()}
+    <div class="pm-sec-head"><h2 id="entTitle">Proposed entries</h2>${exportChip()}</div>
+    ${currencyCard(undefined, true)}${currencyCard('CAD', false)}`;
+  if (active) { const el = document.querySelector(`[data-key="${CSS.escape(active)}"]`); if (el) el.focus(); }
+}
+function downloadCsv(name, rows) {
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function exportCsv() {
+  const rows = [['date','account','line','debit','credit','currency','memo','entry_id','status']];
+  S.entries.forEach(e => { const status = statusOf(e).word.toLowerCase(); e.lines.forEach(l => rows.push(['2026-09-30', l.account, l.bucket, l.dr !== undefined ? l.dr.toFixed(2) : '', l.cr !== undefined ? l.cr.toFixed(2) : '', e.cur || 'USD', e.memo, '2026-09-' + e.id, status])); });
+  downloadCsv('journal-entries-2026-09.csv', rows);
+  S.exported = JSON.stringify([S.entries, S.resolved]);
+  render();
+  const open = openIssues().length;
+  const off = S.entries.filter(e => e.start !== undefined && !isTied(e)).length;
+  const notes = [];
+  if (open) notes.push(open + (open === 1 ? ' item' : ' items') + ' not decided');
+  if (off) notes.push(off + (off === 1 ? ' entry' : ' entries') + ' not tied');
+  toast('CSV exported.' + (notes.length ? ' ' + notes.join(', ') + '.' : ''));
+}
+
+/* A mouse user sees no keyboard ring, also on controls focused by script after a row click. */
+document.addEventListener('mousedown', () => document.documentElement.classList.add('pm-pointer'), true);
+document.addEventListener('keydown', () => document.documentElement.classList.remove('pm-pointer'), true);
+/* The second click of a double click must not land on what an overlay just opened over or uncovered. */
+const secondClick = e => e.detail > 1 && Date.now() - Math.max(overlayClosedAt, overlayOpenedAt) < 500;
+document.addEventListener('mousedown', e => { if (secondClick(e)) e.preventDefault(); }, true);
+document.addEventListener('click', e => { lastClickTarget = e.target; if (secondClick(e)) { e.preventDefault(); e.stopPropagation(); } }, true);
+document.addEventListener('click', e => {
+  const t = e.target.closest('button');
+  if (!t) {
+    /* A row waits for a possible second click, so a double click selects a word instead of opening anything. */
+    if (String(window.getSelection())) return;
+    if (e.detail > 1) { clearTimeout(rowTimer); return; }
+    const a = e.target.closest('.pm-att__row');
+    const r = e.target.closest('.pm-entry__row');
+    if (!a && !r) return;
+    const issueId = a ? a.dataset.row : null;
+    const entryId = r ? r.querySelector('[data-entry-toggle]').dataset.entryToggle : null;
+    clearTimeout(rowTimer);
+    rowTimer = setTimeout(() => {
+      if (String(window.getSelection())) return;
+      if (issueId) { issueModal(issueId); returnFocus = document.querySelector('[data-issue-row="' + issueId + '"]'); }
+      else { S.open[entryId] = !S.open[entryId]; render(); }
+    }, 220);
+    return;
+  }
+  clearTimeout(rowTimer);
+  if (t.dataset.issue) return issueModal(t.dataset.issue);
+  if (t.dataset.entryToggle) { if (e.detail > 1) return; S.open[t.dataset.entryToggle] = !S.open[t.dataset.entryToggle]; render(); return; }
+  if (t.dataset.entryOpen) { overlayClosedAt = Date.now(); const id = t.dataset.entryOpen; S.open[id] = true; render(); const b = document.querySelector('[data-entry-toggle="' + id + '"]'); if (b) { b.focus({ preventScroll:true }); b.scrollIntoView({ block:'center' }); } return; }
+  if (t.dataset.orders) return openDrawer(t.dataset.orders, t.dataset.orders === 'other' ? 'Payments' : 'Orders');
+  if (t.dataset.lineOrders) { const [a, b] = t.dataset.lineOrders.split(':'); const l = line(entry(a), b); return openDrawer(a, l.bucket, (['ref','fee','tax'].includes(b) ? '-' : '') + money(l.dr !== undefined ? l.dr : l.cr, entry(a).cur), l.bucket); }
+  if (t.dataset.entryOrders) { const [a, b] = t.dataset.entryOrders.split(':'); const e = entry(a); return openDrawer(a, b, (b === 'Activity' ? money(netOf(e), e.cur) : '-' + money(payoutOf(e), e.cur)), b); }
+  if (t.id === 'toggleDecisions') { if (e.detail > 1) return; S.hideDecisions = !S.hideDecisions; render(); return; }
+  if (t.dataset.reset) { const [a, b] = t.dataset.reset.split(':'); const l = line(entry(a), b); const prev = l.account, prevKey = S.acct[a + ':' + b]; l.account = l.rec; delete S.acct[a + ':' + b]; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); const focusSel = () => { const f = document.querySelector('[data-key="acct:' + a + ':' + b + '"]') || document.querySelector('[data-key="toggle:' + a + '"]'); if (f) f.focus({ preventScroll:true }); }; toast('Back to ' + l.rec + '.', () => { line(entry(a), b).account = prev; if (prevKey !== undefined) S.acct[a + ':' + b] = prevKey; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); focusSel(); }); focusSel(); if (e.detail === 0) { const u = document.getElementById('toastUndo'); if (u) u.focus(); } return; }
+  if (t.id === 'exportCsv') { if (e.detail > 1) return; return exportCsv(); }
+  if (t.id === 'srcCopy') { const text = [...document.querySelectorAll('.pm-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
+  if (t.id === 'postBtn') return;
+});
+document.addEventListener('change', e => {
+  const s = e.target;
+  if (s.dataset && s.dataset.entry) {
+    const l = line(entry(s.dataset.entry), s.dataset.line);
+    const previous = l.account;
+    const key = s.dataset.key;
+    const entryId = s.dataset.entry, lineId = s.dataset.line;
+    const remember = v => { const k = entryId + ':' + lineId; const cur = line(entry(entryId), lineId); if (!cur) return; cur.account = v; if (v === cur.rec) delete S.acct[k]; else S.acct[k] = v; if (entryId === 'deferred' && (lineId === 'dco' || lineId === 'cog')) recomputeDeferred(); syncMemos(); };
+    remember(s.value);
+    render();
+    toast(l.bucket + ' now in ' + s.value + '.', () => { remember(previous); render(); toast('Change undone.'); const f = document.querySelector('[data-key="' + key + '"]') || document.querySelector('[data-key="toggle:' + entryId + '"]'); if (f) f.focus(); });
+  }
+});
+/* This prototype is the Journal entries page only: other rail items stay inert, so nobody leaves and loses the decisions. */
+document.querySelectorAll('.pm-rail__item[title="Settings"], .pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
+render();
+</script>
+</body>
+</html>

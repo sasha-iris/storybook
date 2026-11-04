@@ -855,3 +855,122 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-people__list { gap:2px; }
 .pm-person__name, .pm-ptable__name { font-size:13px; line-height:18px; font-weight:500; }
 .pm-person .pm-avatar, .pm-ptable .pm-avatar { font-size:12px; }
+
+/* Journal entries: chevron on the card's left edge at 16, entry names, labels and lines on one line at 32. Same 22 px grey chevron as the permissions tree. */
+.pm-entry__row [data-entry-toggle] { gap:2px !important; letter-spacing:inherit; }
+.pm-entry__row [data-entry-toggle] svg { flex:none; margin-left:-8px; color:#6B7280; pointer-events:none; }
+.pm-amount, .pm-lines th { letter-spacing:inherit; }
+
+/* Journal entries, round 1. Row text is 13/18 as in the Matrix. Attention and entries share the same column lines. Open entry has one rule, above Total. */
+.pm-journal .btn-alternative[aria-disabled="true"], .pm-journal .btn-alternative[aria-disabled="true"]:hover, .pm-journal .btn-alternative[aria-disabled="true"]:active { background:transparent; border-color:rgba(0,0,0,.12); color:#6B7280; }
+.pm-journal .badge { display:inline-flex; align-items:center; height:20px; padding:0 6px; font-size:12px; line-height:20px; font-weight:500; }
+.pm-ok { font-size:12px; line-height:20px; font-weight:500; color:#1A7A45; white-space:nowrap; }
+.pm-phase { font-size:12px; line-height:18px; color:#6B7280; white-space:nowrap; }
+.pm-att__head .btn-link { height:24px; min-height:0; }
+.pm-att__head--plain { border-bottom:0; padding-bottom:2px; }
+.pm-att__row { grid-template-columns:290px minmax(0,1fr) 120px 120px 110px; gap:4px 16px; min-height:44px; padding:4px 16px; box-sizing:border-box; cursor:pointer; }
+.pm-att__row:hover { background:#F3F4F6; }
+.pm-att__row:active { background:#E5E7EB; }
+.pm-att__row > button { justify-self:end; }
+.pm-att__title { font-size:13px; line-height:18px; font-weight:500; }
+.pm-att__title.is-decided { font-weight:500; color:#374151; }
+.pm-att__amount, .pm-num { font-size:13px; line-height:18px; }
+@media (max-width:1100px) { .pm-att__row { grid-template-columns:220px minmax(0,1fr) 120px 120px 110px; } }
+@media (max-width:999px) { .pm-att__row { grid-template-columns:minmax(0,1fr) 84px; } .pm-att__text { grid-column:1 / -1; } .pm-att__row > button { justify-self:start; } }
+.pm-entry__row:active { background:#E5E7EB; }
+.pm-entry__row [data-entry-toggle] { height:24px; min-height:0; font-size:13px; line-height:18px; font-weight:600; color:#111928; }
+.pm-entry__row [data-entry-toggle]:hover, .pm-entry__row [data-entry-toggle]:active { color:#111928; text-decoration:underline; }
+.pm-lines__row:hover > * { background-color:transparent; }
+.pm-lines th:first-child, .pm-lines td:first-child { padding-left:0 !important; }
+.pm-lines .iris-th { font-size:12px; }
+.pm-lines select { font-size:13px; height:32px; }
+.pm-lines__total > * { border-top:1px solid #9CA3AF; }
+.pm-amount:hover { color:#362F78; text-decoration-style:solid; }
+.pm-drawer__row .pm-amount, .pm-drawer__row .pm-amount:hover { color:#111928; text-decoration:none; }
+.pm-lines td:last-child { white-space:nowrap; }
+.pm-journal .pm-rail__item[aria-disabled="true"]:not(.is-active):hover { background:transparent; }
+.pm-drawer__head { align-items:center; }
+.pm-drawer__title { display:flex; align-items:baseline; flex-wrap:wrap; gap:0 12px; min-width:0; }
+.pm-drawer__meta { font-size:14px; line-height:21px; color:#6B7280; }
+.pm-frame { overflow-x:auto; border:1px solid var(--pm-divider); border-radius:8px; }
+.pm-frame th:first-child, .pm-frame td:first-child { padding-left:16px !important; }
+.pm-frame th:last-child, .pm-frame td:last-child { padding-right:16px !important; }
+.pm-source { padding:12px 16px; }
+.pm-source__head .form-helper { font-weight:400; }
+.modal-body th:first-child, .modal-body td:first-child { padding-left:0 !important; }
+.modal-body th:last-child, .modal-body td:last-child { padding-right:0 !important; }
+.modal-body .form-check .form-helper { font-size:13px; line-height:18px; }
+.pm-journal .badge-gray { background:#E5E7EB; color:#374151; }
+
+/* Journal entries, round 2. One card per currency. Amount under Total debits, Debit under Total debits, Credit under Status. */
+.pm-journal #toastHost .toast { min-width:0; }
+#toastHost.is-narrow .toast { flex-wrap:wrap; }
+#toastHost.is-narrow .toast-body { flex:1 0 100%; }
+.pm-phase { color:#4B5563; }
+.pm-journal .badge-gray { background:#F3F4F6; color:#4B5563; font-weight:400; }
+.pm-journal h1 + p .badge-gray { background:#E5E7EB; }
+.pm-ok { padding-right:7px; }
+.pm-att__head--left { justify-content:flex-start; gap:8px 12px; }
+.pm-att__head--plain { padding-bottom:10px; }
+.pm-count { font-size:14px; line-height:21px; font-weight:400; color:#6B7280; }
+.pm-sec-head { display:flex; align-items:center; gap:12px; margin:16px 0 8px; }
+.pm-sec-head h2 { margin:0; font-size:16px; line-height:24px; font-weight:600; color:#111928; }
+.pm-att__row { grid-template-columns:290px minmax(0,1fr) 64px 120px 110px; }
+@media (max-width:1100px) { .pm-att__row { grid-template-columns:252px minmax(0,1fr) 64px 120px 110px; } }
+@media (max-width:999px) { .pm-att__row { grid-template-columns:minmax(0,1fr) 84px; } .pm-att__text { grid-column:1 / -1; } }
+.pm-att__row > .btn-sm { height:28px; min-height:28px; padding:0 12px; }
+.pm-att__row .btn-ghost:hover:not(:disabled) { background:#E5E7EB; }
+.pm-att__row .btn-ghost:active:not(:disabled) { background:#D1D5DB; }
+.pm-entry__row [data-entry-toggle] { font-weight:500; margin-left:-8px; border-radius:4px; }
+.pm-entry__row [data-entry-toggle] svg { margin-left:0; }
+.is-drilled, .is-drilled > * { background:var(--pm-primary-selected) !important; }
+
+/* Journal entries, round 3. Entries carry Starting and Ending as columns, as in the Balance mock. Lines run edge to edge on the same column lines. */
+.pm-egrid { display:grid; grid-template-columns:minmax(0,1fr) 110px 110px 110px 110px 120px 110px; align-items:center; gap:16px; }
+.pm-total-bal { display:none; padding:0 16px 11px 32px; margin-top:-7px; font-size:13px; line-height:18px; color:#374151; font-variant-numeric:tabular-nums; }
+.pm-total-bal.is-off { display:block; }
+@media (max-width:1279px) {
+  .pm-egrid { grid-template-columns:minmax(0,1fr) 120px 120px 120px 110px; }
+  .pm-bal { display:none; }
+  .pm-total-bal { display:block; }
+}
+.pm-ok { padding-right:0; }
+#toastHost.is-narrow .toast-body { flex:1 0 100% !important; }
+html.pm-pointer :focus-visible { outline:none !important; }
+.pm-journal .btn .pm-ico { flex:none; width:16px; height:16px; margin-right:6px; }
+.pm-journal .btn:has(.pm-ico) { display:inline-flex; align-items:center; }
+.pm-entry .btn-alternative.btn-sm, .pm-source .btn { height:28px; min-height:28px; padding:0 12px; font-size:12px; line-height:12px; }
+.pm-att__head:last-child { border-bottom:0; }
+.pm-att__head--plain .card-header-title { font-size:14px; line-height:20px; }
+.pm-count { font-size:13px; line-height:18px; }
+.pm-entry__row:hover [data-entry-toggle] svg { color:#111928; }
+.pm-lines th:first-child, .pm-lines td:first-child { padding-left:32px !important; }
+.pm-lines th:last-child, .pm-lines td:last-child { padding-right:16px !important; }
+.pm-lines__row:hover > * { background-color:#F3F4F6; }
+.pm-lines__row.is-drilled th { color:var(--pm-primary); }
+.pm-drawer-backdrop { background:rgba(0,0,0,.2); }
+
+/* Journal entries, round 4 */
+.pm-bal-inv { display:none; }
+.pm-tie { display:flex; flex-wrap:wrap; align-items:center; gap:0 16px; padding-left:11px; }
+@media (max-width:1279px) { .pm-bal-inv { display:inline; } }
+.pm-lines__row.is-drilled th { color:var(--pm-primary) !important; }
+.pm-entry__row.is-drilled [data-entry-toggle] { color:var(--pm-primary); }
+.pm-journal .btn .pm-ico { margin-right:0; }
+#toastHost.is-narrow .toast:not(:has(.btn-link)) { flex-wrap:nowrap; }
+#toastHost.is-narrow .toast:not(:has(.btn-link)) .toast-body { flex:1 1 0 !important; }
+.pm-entry__row .form-helper { color:#4B5563; }
+.pm-journal .badge-gray { font-weight:500; }
+.pm-drawer__body > .form-helper { color:#4B5563; }
+
+/* Journal entries, round 5 */
+.pm-drawer { width:min(784px,100%); }
+.pm-drawer td, .pm-drawer th { white-space:nowrap; }
+.pm-drawer__head { border-bottom:0; padding-bottom:0; }
+.pm-journal .badge-gray { background:#E5E7EB; }
+.pm-lines select { flex:0 0 320px; min-width:0; }
+@media (max-width:1279px) { .pm-lines select { flex:0 0 210px; } }
+@media (max-width:1100px) { .pm-att__row { grid-template-columns:252px minmax(0,1fr) 64px 84px 110px; } }
+@media (max-width:999px) { .pm-att__row { grid-template-columns:minmax(0,1fr) 84px; } }
+.pm-entry__row .form-helper { font-size:13px; line-height:18px; }
+.pm-num > span[aria-hidden="true"] { color:#6B7280; }
