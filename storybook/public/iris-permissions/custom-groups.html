@@ -729,7 +729,7 @@ function disconnectModal(name) {
 }
 
 /* ---------- Metric categories: each one holds many metrics, so one click never changes them all. ---------- */
-const ICON_MARK = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"/></svg>', none:'' };
+const ICON_MARK = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="5" y="5" width="10" height="10" rx="2" fill="currentColor"/></svg>', none:'' };
 function metricNames(cat) { return METRIC_NAMES[cat] || []; }
 function metricTotal(cat) { return METRICS.find(m => m[0] === cat)[1]; }
 function offOf(g, cat) { return ((g.metricOff && g.metricOff[cat]) || []).slice().sort(); }
@@ -1410,7 +1410,7 @@ function personSummaryParts() {
   };
   const text = list => list.map(p => p[0] + ': ' + p[1]).join('  ');
   let parts = build(false);
-  if (text(parts).length > 84) parts = build(true);
+  if (text(parts).length > 60) parts = build(true);
   if (g.payroll === 'lines') parts.unshift(['Salaries', 'hidden']);
   return parts;
 }
@@ -1436,7 +1436,7 @@ function personLine(m) {
   } else if (n) {
     text = own + (m.touched ? ' · last edited just now' : '');
   }
-  return `<span class="pm-person-email" title="${esc(m.email)}">${esc(m.email)}</span><span class="pm-person-sep" aria-hidden="true">·</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${ICON_HISTORY}"/></svg><span class="pm-person-line__text" title="${esc(text)}">${esc(text)}</span>${action}`;
+  return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${ICON_HISTORY}"/></svg><span class="pm-person-line__text" title="${esc(text)}">${esc(text)}</span>${action}`;
 }
 function pickerHtml(m) {
   const full = m.groupId === FULL;
@@ -1518,8 +1518,8 @@ function personDetailHtml() {
       ${avatar(m, 'pm-avatar--lg')}
       <div class="pm-person-head__text">
         <h2 class="pm-person-name" title="${esc(m.name)}">${esc(m.name)}</h2>
-        <div class="pm-person-line" id="personLine">${personLine(m)}</div>
-        <div class="pm-person-summary" id="personSummary" title="${esc(personSummary())}">${personSummaryHtml()}</div>
+        <div class="pm-person-email-line"><span class="pm-person-email" title="${esc(m.email)}">${esc(m.email)}</span></div>
+        <div class="pm-person-status"><div class="pm-person-line" id="personLine">${personLine(m)}</div><div class="pm-person-summary" id="personSummary" title="${esc(personSummary())}">${personSummaryHtml()}</div></div>
       </div>
       <div class="pm-person-head__side"><div id="pickerSlot">${pickerHtml(m)}</div><span id="saveStatus" class="pm-save" role="status">${esc(state.saving ? 'Saving…' : state.saveMsg)}</span></div>
     </div>

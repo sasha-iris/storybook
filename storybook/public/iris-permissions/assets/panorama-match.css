@@ -660,7 +660,7 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-matrix thead .pm-matrix__first { top:0; left:0; z-index:3; }
 .pm-matrix tbody tr:hover td, .pm-matrix tbody tr:hover th { background:#F9FAFB; }
 
-/* Category state: tint and symbol, never a one-click checkbox. Primary tint with a check is all on, the third colour with a half-filled circle is some on, empty is off. Contrast of marks on their tints: 8.4:1 and 8.9:1. */
+/* Category state: tint and symbol, never a one-click checkbox. Primary tint with a check is all on, the third colour with a filled square is some on, empty is off. Contrast of marks on their tints: 8.4:1 and 8.9:1. */
 .pm-cat { display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:0; border:0; background:transparent; font-size:12px; line-height:16px; font-weight:600; font-variant-numeric:tabular-nums; cursor:pointer; transition:background-color .12s; }
 .pm-cat--all { background:#E5EDFF; color:#42389D; }
 .pm-cat--all:hover:not(:disabled) { background:#CDDBFE; }
@@ -697,3 +697,18 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 .pm-cat--box { margin-right:-4px; }
 .pm-cat--cell { display:flex; }
 .pm-matrix__cat { margin:0 auto; }
+
+/* Tab labels use normal spacing. */
+.iris-tab { letter-spacing:0; }
+
+/* Person head: name, email, then status and what differs on one line. No line is reserved and left empty. */
+.pm-person-email-line { display:flex; min-width:0; height:18px; font-size:12px; line-height:18px; color:#6B7280; }
+.pm-person-status { display:flex; align-items:center; min-width:0; height:18px; }
+.pm-person-status .pm-person-line { flex:0 0 auto; max-width:60%; }
+.pm-person-status .pm-person-summary { flex:1 1 0; min-width:0; margin:0; }
+.pm-person-summary:not(:empty)::before { content:'·'; margin:0 6px; color:#9CA3AF; }
+@media (max-width:1279px) {
+  .pm-person-status { display:block; height:36px; overflow:hidden; }
+  .pm-person-status .pm-person-line { display:inline-flex; vertical-align:top; max-width:100%; }
+  .pm-person-status .pm-person-summary { display:inline; height:auto; white-space:normal; overflow:visible; }
+}
