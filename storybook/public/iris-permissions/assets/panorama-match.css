@@ -794,3 +794,30 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 
 /* Salary status matches the group labels beside it. */
 .pm-matrix__salary .badge, .pm-ptable .badge { display:inline-block; padding:0 6px; font-size:12px; font-weight:500; line-height:20px; }
+
+
+/* Matrix: the whole cell shows the level. Full uses the Full Access green, Limited the third colour, None stays white. */
+.pm-matrix td.pm-matrix__cell { border-right:2px solid #FFFFFF; border-bottom:2px solid #FFFFFF; }
+.pm-matrix .pm-cat--all { background:#E6F7EE; color:#1A7A45; }
+.pm-matrix .pm-cat--all:hover:not(:disabled) { background:#CDEFDD; }
+.pm-matrix .pm-cat--part { background:#FDF6B2; color:#723B13; }
+.pm-matrix .pm-cat--part:hover:not(:disabled) { background:#FCE96A; }
+.pm-matrix .pm-cat--none { background:#FFFFFF; color:#6B7280; }
+.pm-matrix .pm-cat--none:hover:not(:disabled) { background:#F3F4F6; }
+
+.pm-matrix .pm-cat--all:hover:not(:disabled) { color:#14603A; }
+
+/* One colour, one meaning.
+   Matrix: how much access, in one green. Darker is more. The word is always there.
+   Tags: which group. Green is Full Access only, yellow is Custom only. */
+.pm-matrix .pm-cat--all { background:#84E1BC; color:#03543F; }
+.pm-matrix .pm-cat--all:hover:not(:disabled) { background:#6FD8B0; color:#03543F; }
+.pm-matrix .pm-cat--part { background:#DEF7EC; color:#03543F; }
+.pm-matrix .pm-cat--part:hover:not(:disabled) { background:#BCF0DA; }
+.pm-person-chip--finance { color:#1E429F; background:#E1EFFE; }
+.pm-person-chip--marketing { color:#99154B; background:#FCE8F3; }
+.pm-person-chip--investor { color:#5521B5; background:#EDEBFE; }
+.pm-person-chip--operations { color:#8A2C0D; background:#FEECDC; }
+.pm-person-chip--viewer { color:#374151; background:#F3F4F6; }
+.pm-person-chip--created { color:#036672; background:#D5F5F6; }
+

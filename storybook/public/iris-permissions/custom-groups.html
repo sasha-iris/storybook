@@ -750,7 +750,7 @@ function setCatOne(g, cat, name, on) {
 }
 function catMark(g, cat, extraClass, attrs, label) {
   const st = catState(g, cat);
-  const chip = { all:'<span class="pm-person-chip pm-person-chip--full">Full</span>', part:'<span class="pm-person-chip pm-person-chip--group">Limited</span>', none:'<span class="pm-person-chip pm-person-chip--none">None</span>' }[st];
+  const chip = '<span>' + { all:'Full', part:'Limited', none:'None' }[st] + '</span>';
   return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${chip}</button>`;
 }
 function metricRow(m) {
@@ -1009,7 +1009,7 @@ function payrollHtml() {
     partial: 'Shown on ' + shortList(st.back) + '.',
     lines: 'Wages, salaries and contract labor do not show.' + (PAYROLL_PAGES.some(id => pageOn(g, id)) ? ' Pages stay open.' : ''),
   }[st.kind];
-  const badge = { visible:'', hidden:'<span class="badge badge-green badge-sm">Hidden</span>', already:'<span class="badge badge-green badge-sm">Hidden</span>', partial:'<span class="badge badge-yellow badge-sm">Partly hidden</span>', lines:'<span class="badge badge-green badge-sm">Hidden</span>' }[st.kind];
+  const badge = { visible:'', hidden:'<span class="badge badge-gray badge-sm">Hidden</span>', already:'<span class="badge badge-gray badge-sm">Hidden</span>', partial:'<span class="badge badge-gray badge-sm">Partly hidden</span>', lines:'<span class="badge badge-gray badge-sm">Hidden</span>' }[st.kind];
   const link = (k, pay, label) => `<button type="button" class="btn btn-ghost btn-sm" data-key="${k}" data-pay="${pay}">${label}</button>`;
   const btn = (pay, label, cls) => `<button type="button" class="btn ${cls || 'btn-alternative'} btn-sm" data-key="payrollAction" data-pay="${pay}">${label}</button>`;
   let actions = '';
@@ -1192,7 +1192,7 @@ function breadcrumb(items) {
 function heading(title, sub) {
   return `<h1 style="margin:0 0 4px;font-size:var(--text-2xl);font-weight:var(--font-bold);color:var(--color-text-heading);">${esc(title)}</h1><p style="margin:0 0 24px;font-size:var(--text-base);color:#374151;">${esc(sub)}</p>`;
 }
-const TILE = { viewer:'#9CA3AF', finance:'#2563EB', marketing:'#10B981', investor:'#6366F1', operations:'#F59E0B', custom:'#D61F69', full:'#0E9F8B' };
+const TILE = { viewer:'#9CA3AF', finance:'#2563EB', marketing:'#D61F69', investor:'#6366F1', operations:'#D03801', custom:'#047481', full:'#0E9F8B' };
 const ICON_LAYERS = 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z';
 const ICON_CHECK = 'M16.59 7.58 10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z';
 const ICON_CHART = 'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z';
@@ -1291,7 +1291,7 @@ const ICON_GRID = 'M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v
 const ICON_HISTORY = 'M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z';
 function memberChip(m) {
   const label = m.pending ? 'Pending invite' : m.groupId === FULL ? 'Full Access' : m.groupId ? baseOf(m.groupId).name : 'Custom';
-  const kind = m.pending ? 'pending' : m.groupId === FULL ? 'full' : 'group';
+  const kind = m.pending ? 'pending' : m.groupId === FULL ? 'full' : !m.groupId ? 'group' : TEMPLATES.some(t => t.id === m.groupId) ? m.groupId : 'created';
   return `<span class="pm-person-chip pm-person-chip--${kind}" title="${esc(label)}">${esc(label)}</span>`;
 }
 /* What a person's salary state is, read from the same rules the salary card uses. */
@@ -1336,8 +1336,8 @@ function salaryOptionsHtml() {
   return opt('all', 'Any') + opt('visible', `Visible (${see})`) + opt('hidden', `Hidden (${kinds.length - see})`);
 }
 function salaryCell(kind) {
-  if (kind === 'hidden' || kind === 'already' || kind === 'lines') return '<span class="badge badge-green badge-sm">Hidden</span>';
-  if (kind === 'partial') return '<span class="badge badge-yellow badge-sm">Partly hidden</span>';
+  if (kind === 'hidden' || kind === 'already' || kind === 'lines') return '<span class="badge badge-gray badge-sm">Hidden</span>';
+  if (kind === 'partial') return '<span class="badge badge-gray badge-sm">Partly hidden</span>';
   return '<span class="pm-ptable__plain">Visible</span>';
 }
 function clampPeoplePage() {
