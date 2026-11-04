@@ -743,3 +743,54 @@ a.pm-matrix__who:hover { color:#42389D; text-decoration:underline; }
 /* One line under the pinned header, not two stacked. */
 #rowsSlot > div:first-child { border-top:0; }
 
+/* Parent menu: one line. */
+.pm-catmenu--inline { display:flex; align-items:center; gap:2px; width:auto; padding:4px 4px 4px 12px; white-space:nowrap; }
+.pm-catmenu__label { margin-right:6px; font-size:12px; line-height:18px; color:#6B7280; }
+
+/* Less above the list: title for screen readers on inner pages, tighter head and salary row. */
+.pm-page-title--quiet { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.pm-page-title--quiet + .card, .breadcrumb + .pm-page-title--quiet + * { margin-top:12px; }
+.pm-person-head { padding:10px 16px; }
+.pm-person-title { display:flex; align-items:baseline; gap:8px; min-width:0; }
+.pm-person-title .pm-person-name { flex:0 1 auto; min-width:0; font-size:18px; line-height:24px; }
+.pm-person-title .pm-person-email { flex:0 1 auto; min-width:60px; font-size:12px; line-height:18px; color:#6B7280; }
+.pm-master-row { min-height:32px; }
+@media (min-width:1280px) {
+  .pm-person-head__side { flex-direction:row-reverse; align-items:center; gap:12px; }
+  .pm-person-head__side .pm-save { min-width:110px; text-align:right; }
+  .pm-salary { min-height:44px; padding:4px 16px; flex-wrap:nowrap; }
+  .pm-salary > div:first-child { display:flex; align-items:baseline; gap:8px; min-width:0; }
+  .pm-salary > div:first-child .form-helper { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pm-salary__title { flex:none; }
+}
+
+/* Permission list is dense: 14 px boxes, 13 px names, 28 px rows. Name lines stay at 40, 68 and 96. */
+#rowsSlot .form-check-input, .pm-master .form-check-input, .pm-section-row .form-check-input, .pm-catmenu__row .form-check-input { flex:0 0 14px; width:14px; height:14px; }
+.pm-row .form-check { gap:14px; }
+.pm-master, .pm-section-row__main { gap:10px; }
+.pm-row .form-check-label, .pm-master .form-check-label { font-size:13px; line-height:18px; }
+.pm-section-toggle { font:600 13px/18px Inter,sans-serif; }
+.pm-row__line { min-height:18px; }
+.pm-section-row { min-height:32px; }
+
+
+/* Salary row: one type, colour separates title and status. */
+.pm-salary__title { font-size:13px; line-height:18px; font-weight:400; }
+.pm-salary .form-helper { font-size:13px; line-height:18px; }
+
+/* Chevron first, as in a tree. It hangs in the panel's left margin, so checkboxes keep the shared left edge. */
+.pm-section-row { position:relative; }
+.pm-section-chev { position:absolute; left:1px; top:50%; display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; padding:0; margin:0; transform:translateY(-50%); }
+.pm-section-chev svg { width:12px; height:12px; }
+
+/* Matrix cells: the people table's labels. Full is green, Limited yellow, None grey. No tiles, no ticks. */
+.pm-person-chip--none { color:#6B7280; background:#F3F4F6; }
+.pm-matrix .pm-person-chip { display:inline-block; height:20px; padding:0 6px; font-size:12px; line-height:20px; }
+.pm-matrix .pm-cat--cell, .pm-matrix .pm-cat--all, .pm-matrix .pm-cat--part, .pm-matrix .pm-cat--none { background:transparent; }
+.pm-matrix .pm-cat--cell:hover:not(:disabled) { background:#F3F4F6; }
+.pm-matrix td.pm-matrix__cell { border-right:0; border-bottom:1px solid var(--pm-divider); }
+.pm-matrix td.pm-matrix__salary { border-right:0; }
+
+
+/* Salary status matches the group labels beside it. */
+.pm-matrix__salary .badge, .pm-ptable .badge { display:inline-block; padding:0 6px; font-size:12px; font-weight:500; line-height:20px; }

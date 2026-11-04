@@ -729,7 +729,6 @@ function disconnectModal(name) {
 }
 
 /* ---------- Metric categories: each one holds many metrics, so one click never changes them all. ---------- */
-const ICON_MARK = { all:'<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>', part:'', none:'' };
 function metricNames(cat) { return METRIC_NAMES[cat] || []; }
 function metricTotal(cat) { return METRICS.find(m => m[0] === cat)[1]; }
 function offOf(g, cat) { return ((g.metricOff && g.metricOff[cat]) || []).slice().sort(); }
@@ -751,8 +750,8 @@ function setCatOne(g, cat, name, on) {
 }
 function catMark(g, cat, extraClass, attrs, label) {
   const st = catState(g, cat);
-  const count = st === 'part' && extraClass === 'pm-cat--cell' ? '<span>Limited</span>' : '';
-  return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${ICON_MARK[st]}${count}</button>`;
+  const chip = { all:'<span class="pm-person-chip pm-person-chip--full">Full</span>', part:'<span class="pm-person-chip pm-person-chip--group">Limited</span>', none:'<span class="pm-person-chip pm-person-chip--none">None</span>' }[st];
+  return `<button type="button" class="pm-cat pm-cat--${st} ${extraClass}" data-catmenu data-cat="${esc(cat)}" aria-haspopup="dialog" aria-label="${esc(label)}: ${catText(g, cat)}" ${attrs}>${chip}</button>`;
 }
 function metricRow(m) {
   const g = state.group;
@@ -762,7 +761,7 @@ function metricRow(m) {
   const hint = cat === OE && g.payroll === 'lines' ? 'Wage and salary lines are hidden. The total stays.' : m[2];
   const domId = 'c-metrics:' + cat.replace(/\s/g, '-');
   const hintHtml = hint ? `<div class="form-helper" style="margin:0;">${esc(hint)}</div>` : '';
-  return `<div class="pm-row" style="padding:6px 16px;--i:16px;"><div class="form-check" style="align-items:flex-start;margin:0;">${parentBox(catState(g, cat) === 'all', catState(g, cat) === 'part', `id="${domId}" data-catmenu data-cat="${esc(cat)}"`, g.isTemplate, cat + ': ' + catText(g, cat), 'margin-top:2px;')}<div class="pm-row__text"><div class="pm-row__line"><button type="button" class="form-check-label pm-cat__name" data-catmenu data-cat="${esc(cat)}"${g.isTemplate ? ' disabled' : ''}>${esc(cat)}</button><div class="pm-row__state"><span class="pm-row__status">${on === n ? n + ' metrics' : on + ' of ' + n + ' on'}</span></div></div>${hintHtml}</div></div></div>`;
+  return `<div class="pm-row" style="padding:5px 16px;--i:16px;"><div class="form-check" style="align-items:flex-start;margin:0;">${parentBox(catState(g, cat) === 'all', catState(g, cat) === 'part', `id="${domId}" data-catmenu data-cat="${esc(cat)}"`, g.isTemplate, cat + ': ' + catText(g, cat), 'margin-top:2px;')}<div class="pm-row__text"><div class="pm-row__line"><button type="button" class="form-check-label pm-cat__name" data-catmenu data-cat="${esc(cat)}"${g.isTemplate ? ' disabled' : ''}>${esc(cat)}</button><div class="pm-row__state"><span class="pm-row__status">${on === n ? n + ' metrics' : on + ' of ' + n + ' on'}</span></div></div>${hintHtml}</div></div></div>`;
 }
 
 /* ---------- Matrix: people against metric categories ---------- */
@@ -836,7 +835,7 @@ function renderCatMenu(keepFocusId) {
     const n = keys.length;
     const on = keys.filter(k => isOn(tab, k)).length;
     const edit = tab === 'edit';
-    el.innerHTML = `<div class="pm-catmenu__head"><div class="pm-catmenu__title">${esc(c.title)}</div><div class="pm-catmenu__sub">${on} of ${n}${edit ? ' can edit' : ' on'}</div></div><div class="pm-catmenu__stack"><button type="button" class="btn btn-ghost btn-sm" data-bulkdo="on"${on === n ? ' disabled' : ''}>${edit ? 'Make all ' + n + ' editable' : 'Turn all ' + n + ' on'}</button><button type="button" class="btn btn-ghost btn-sm" data-bulkdo="off"${on === 0 ? ' disabled' : ''}>${edit ? 'Make all ' + n + ' read only' : 'Turn all ' + n + ' off'}</button></div>`;
+    el.innerHTML = `<span class="pm-catmenu__label">All ${n}</span><button type="button" class="btn btn-ghost btn-sm" data-bulkdo="on"${on === n ? ' disabled' : ''}>${edit ? 'Can edit' : 'On'}</button><button type="button" class="btn btn-ghost btn-sm" data-bulkdo="off"${on === 0 ? ' disabled' : ''}>${edit ? 'Read only' : 'Off'}</button>`;
     return;
   }
   const g = catMenuGroup();
@@ -896,7 +895,7 @@ function openBulkMenu(btn, kind, id, title) {
   state.catMenuAt = Date.now();
   const el = document.createElement('div');
   el.id = 'catMenu';
-  el.className = 'pm-catmenu pm-catmenu--small';
+  el.className = 'pm-catmenu pm-catmenu--inline';
   el.setAttribute('role', 'dialog');
   el.setAttribute('aria-label', title);
   document.body.appendChild(el);
@@ -1060,7 +1059,7 @@ function itemRow(tab, item, indent) {
     ? `<span class="form-feedback-error" role="alert">Could not save. ${esc(item.name)} ${editOn(g, id) ? 'can still be edited' : 'is still read only'}.</span><button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;" data-retry="${id}">Try again</button>`
     : '';
   const ariaLabel = p ? ` aria-label="${esc(p.name + ': ' + item.name)}"` : '';
-  return `<div class="pm-row${failed ? ' is-failed' : ''}" style="padding:6px 16px 6px ${indent}px;--i:${indent}px;">
+  return `<div class="pm-row${failed ? ' is-failed' : ''}" style="padding:5px 16px 5px ${indent}px;--i:${indent}px;">
     <div class="form-check" style="align-items:flex-start;margin:0;min-width:0;">
       ${item.children && item.children.length ? bulkMark(tab, itemScope(item), `id="c-${key}" data-key="${key}" data-parentitem="${id}"`, locked, item.name + ', ' + itemScope(item).filter(k => isOn(tab, k)).length + ' of ' + itemScope(item).length + (tab === 'edit' ? ' can edit' : ' on'), 'margin-top:2px;') : `<input class="form-check-input" style="margin-top:2px;" type="checkbox" id="c-${key}" data-key="${key}" data-tab="${tab}" data-id="${id}"${checked ? ' checked' : ''}${disabled || locked ? ' disabled' : ''}${disabled ? ` aria-describedby="${offId}"` : hint ? ` aria-describedby="${hintId}"` : ''}${ariaLabel}>`}
       <div class="pm-row__text"><div class="pm-row__line"><label class="form-check-label${disabled ? ' is-disabled' : ''}" for="c-${key}">${esc(item.name)}</label><div class="pm-row__state">${status}${offNote}${rowBadge(tab, id)}${err}</div></div>${hint ? `<div class="form-helper" style="margin:0;" id="${hintId}">${esc(hint)}</div>` : ''}</div>
@@ -1068,7 +1067,7 @@ function itemRow(tab, item, indent) {
   </div>`;
 }
 function contextRow(item) {
-  return `<div style="padding:6px 16px 6px 68px;font-size:14px;line-height:20px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
+  return `<div style="padding:5px 16px 5px 68px;font-size:13px;line-height:18px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
 }
 function sectionKeys(s) {
   const keys = [];
@@ -1082,7 +1081,7 @@ function sectionScope(tab, s) {
 }
 /* One state column for every section and tab, right after the longest name in the whole list. Counts and states form a straight line, and nothing moves between tabs. */
 const measureCtx = document.createElement('canvas').getContext('2d');
-function textWidth(t, weight) { measureCtx.font = weight + ' 14px Inter, sans-serif'; return Math.ceil(measureCtx.measureText(t).width + t.length * 0.2) + 2; }
+function textWidth(t, weight) { measureCtx.font = weight + ' 13px Inter, sans-serif'; return Math.ceil(measureCtx.measureText(t).width + t.length * 0.2) + 2; }
 function listCol() {
   let col = 0;
   SECTIONS.forEach(s => {
@@ -1129,7 +1128,7 @@ function flatRow(tab, key, name, meta, hint) {
   const dataKey = tab + ':' + key;
   const hintId = 'hint-' + dataKey.replace(/\W/g, '');
   const domId = 'c-' + dataKey.replace(/\s/g, '-');
-  return `<div class="pm-row" style="padding:6px 16px;--i:16px;">
+  return `<div class="pm-row" style="padding:5px 16px;--i:16px;">
     <div class="form-check" style="align-items:flex-start;margin:0;">
       <input class="form-check-input" style="margin-top:2px;" type="checkbox" id="${domId}" data-key="${dataKey}" data-flat="${tab}" data-id="${esc(key)}"${isOn(tab, key) ? ' checked' : ''}${state.group.isTemplate ? ' disabled' : ''}${hint ? ` aria-describedby="${hintId}"` : ''}>
       <div class="pm-row__text"><div class="pm-row__line"><label class="form-check-label" for="${domId}">${esc(name)}</label><div class="pm-row__state">${meta ? `<span class="pm-row__status">${esc(meta)}</span>` : ''}</div></div>${hint ? `<div class="form-helper" style="margin:0;" id="${hintId}">${esc(hint)}</div>` : ''}</div>
@@ -1220,7 +1219,7 @@ function groupCard(title, chipHtml, desc, pills, action, color, members, opts) {
   </section>`;
 }
 function shellHead(items, compact) {
-  return `${breadcrumb(items)}<h1 tabindex="-1" style="margin:0 0 ${compact ? 16 : 4}px;font-size:20px;line-height:30px;font-weight:600;color:#111928;">User Permissions</h1>${compact ? '' : '<p style="margin:0 0 24px;font-size:14px;line-height:21px;font-weight:400;color:#374151;">Member access controls for metrics and integrations.</p>'}`;
+  return `${breadcrumb(items)}<h1 tabindex="-1" ${compact ? 'class="pm-page-title--quiet"' : 'style="margin:0 0 4px;font-size:20px;line-height:30px;font-weight:600;color:#111928;"'}>User Permissions</h1>${compact ? '' : '<p style="margin:0 0 24px;font-size:14px;line-height:21px;font-weight:400;color:#374151;">Member access controls for metrics and integrations.</p>'}`;
 }
 const BACK = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>';
 function viewGroups() {
@@ -1274,7 +1273,7 @@ function editorPanel() {
   return `<div id="tabPanel">
         <div class="pm-sticky">
           <div class="iris-tab-bar" role="tablist" aria-label="What ${subject()} can access" id="tabBar" style="overflow-x:auto;overflow-y:hidden;">${tabBarHtml()}</div>
-          <div style="padding:12px 16px;">
+          <div style="padding:8px 16px;">
             <div class="pm-toolbar">
               <div class="pm-toolbar__search"><label class="form-label" for="tabSearch" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">${esc(t.search)}</label><input id="tabSearch" class="form-input" type="search" placeholder="${esc(t.search)}" value="${esc(state.search)}" autocomplete="off"></div>
               <div id="filterSlot">${filterHtml()}</div>
@@ -1522,8 +1521,7 @@ function personDetailHtml() {
   return `<div class="pm-person-head">
       ${avatar(m, 'pm-avatar--lg')}
       <div class="pm-person-head__text">
-        <h2 class="pm-person-name" title="${esc(m.name)}">${esc(m.name)}</h2>
-        <div class="pm-person-email-line"><span class="pm-person-email" title="${esc(m.email)}">${esc(m.email)}</span></div>
+        <div class="pm-person-title"><h2 class="pm-person-name" title="${esc(m.name)}">${esc(m.name)}</h2><span class="pm-person-email" title="${esc(m.email)}">${esc(m.email)}</span></div>
         <div class="pm-person-status"><div class="pm-person-line" id="personLine">${personLine(m)}</div><div class="pm-person-summary" id="personSummary" title="${esc(personSummary())}">${personSummaryHtml()}</div></div>
       </div>
       <div class="pm-person-head__side"><div id="pickerSlot">${pickerHtml(m)}</div><span id="saveStatus" class="pm-save" role="status">${esc(state.saving ? 'Saving…' : state.saveMsg)}</span></div>
