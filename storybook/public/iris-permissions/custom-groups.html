@@ -1074,7 +1074,7 @@ function itemRow(tab, item, indent) {
   </div>`;
 }
 function contextRow(item) {
-  return `<div style="padding:5px 16px 5px 56px;font-size:13px;line-height:18px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
+  return `<div style="padding:5px 16px 5px 80px;font-size:13px;line-height:18px;color:var(--color-text-secondary);">${esc(item.name)}</div>`;
 }
 function sectionKeys(s) {
   const keys = [];
@@ -1092,10 +1092,10 @@ function textWidth(t, weight) { measureCtx.font = weight + ' 13px Inter, sans-se
 function listCol() {
   let col = 0;
   SECTIONS.forEach(s => {
-    col = Math.max(col, 36 + textWidth(s.label, 600));
+    col = Math.max(col, 60 + textWidth(s.label, 600));
     s.items.forEach(i => {
-      col = Math.max(col, 56 + textWidth(i.name, 400));
-      (i.children || []).forEach(c => { col = Math.max(col, 76 + textWidth(c.name, 400)); });
+      col = Math.max(col, 80 + textWidth(i.name, 400));
+      (i.children || []).forEach(c => { col = Math.max(col, 100 + textWidth(c.name, 400)); });
     });
   });
   METRICS.forEach(m => { col = Math.max(col, 36 + textWidth(m[0], 400)); });
@@ -1117,9 +1117,9 @@ function sectionBlock(tab, s) {
   if (expanded) {
     s.items.forEach(i => {
       const kids = (i.children || []).filter(c => shown.includes(c));
-      if (shown.includes(i)) rows += itemRow(tab, i, 36);
+      if (shown.includes(i)) rows += itemRow(tab, i, 60);
       else if (kids.length) rows += contextRow(i);
-      if (shown.includes(i) || kids.length) (i.children || []).forEach(c => { if (!q || shown.includes(c)) rows += itemRow(tab, c, 56); });
+      if (shown.includes(i) || kids.length) (i.children || []).forEach(c => { if (!q || shown.includes(c)) rows += itemRow(tab, c, 80); });
     });
   }
   return `<div style="border-top:1px solid var(--color-border-default);--col:${listCol()}px;">
@@ -1174,7 +1174,7 @@ function toolbarHtml() {
   const on = keys.filter(k => isOn(tab, k)).length;
   const label = narrowed && keys.length ? keys.length + ' shown' : 'All ' + TABS[tab].noun;
   const count = on + ' of ' + keys.length + (tab === 'edit' ? ' can edit' : ' on');
-  return `<div class="form-check pm-master">${bulkMark(tab, keys, 'id="bulkAll" data-key="bulkAll"', !keys.length || state.group.isTemplate, label + ', ' + count)}<label class="form-check-label" for="bulkAll">${label}</label></div><span class="pm-row__status pm-section-count">${keys.length ? count : ''}</span>`;
+  return `<div class="form-check pm-master${tab === 'pages' || tab === 'edit' ? ' pm-master--tree' : ''}">${bulkMark(tab, keys, 'id="bulkAll" data-key="bulkAll"', !keys.length || state.group.isTemplate, label + ', ' + count)}<label class="form-check-label" for="bulkAll">${label}</label></div><span class="pm-row__status pm-section-count">${keys.length ? count : ''}</span>`;
 }
 function tabBarHtml() {
   const c = counts(state.group);
