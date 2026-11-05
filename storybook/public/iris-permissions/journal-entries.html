@@ -25,14 +25,20 @@
     .ac-actions #postNote:has(+ #postBtn) { min-width:152px; text-align:right; }
     @media (max-width:1279px) { .ac-actions #postNote { white-space:normal; line-height:16px; text-align:right; } }
     /* Name cell: a chip with no room wraps to a clipped second line instead of being cut. The padding keeps the toggle's focus ring. */
-    .ac-name--fit { flex-wrap:wrap; height:30px; box-sizing:border-box; padding:4px 0 4px 4px; margin:-4px 0 -4px -4px; row-gap:8px; overflow:hidden; }
-    /* Status cell: a rail mismatch beside the status word, one of the two when there is no room. */
+    .ac-name--fit { container-type:inline-size; flex-wrap:wrap; height:30px; box-sizing:border-box; padding:4px 0 4px 4px; margin:-4px 0 -4px -4px; row-gap:8px; overflow:hidden; }
+    /* A rail's warning keeps the line. With no room for everything, the word reserve gives way first. */
+    @container (max-width:303px) {
+      .ac-yield { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+      .ac-yield-chip { display:none; }
+    }
+    @container (max-width:375px) { .ac-yield:has(~ .ac-chip--wait) { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } }
+    /* Status cell: a rail mismatch beside the status word, the word alone when there is no room. */
     .ac-pair { display:inline-flex; align-items:center; justify-content:flex-end; gap:8px; vertical-align:middle; }
     @media (max-width:1619px) {
-      .ac-pair:not(.ac-pair--word) > :last-child, .ac-pair--word > :first-child { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); }
+      .ac-pair > :first-child { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); }
     }
     /* Open entry: account text sits under its head in both states, facts on one line, buttons at the right edge. */
-    .ac-table .ac-child--head td.ac-acct-head { padding-left:calc(var(--ac-gut) + 13px); }
+    .ac-table .ac-child--head th.ac-acct-head { padding-left:calc(var(--ac-gut) + 13px); }
     .ac-acct { display:flex; align-items:center; gap:8px; min-width:0; }
     body.ac .ac-acct .ac-select--row { flex:0 1 320px; width:auto; min-width:0; }
     .ac-acct .btn { flex:none; }
@@ -46,16 +52,26 @@
     .ac-cell-actions > div { display:flex; justify-content:flex-end; gap:8px; }
     .ac-btn-text { padding:0; height:auto; min-height:0; font:inherit; letter-spacing:inherit; }
     /* The row behind a panel stays selected inside an open entry too. */
-    .ac-table .ac-child.ac-row--sel td, .ac-table .ac-row--open.ac-row--sel td, .ac-table .ac-row--open.ac-row--sel:hover td { background:var(--ac-sel); }
+    .ac-table .ac-child.ac-row--sel td, .ac-table .ac-child.ac-row--sel th, .ac-table .ac-row--open.ac-row--sel td, .ac-table .ac-row--open.ac-row--sel th, .ac-table .ac-row--open.ac-row--sel:hover td, .ac-table .ac-row--open.ac-row--sel:hover th { background:var(--ac-sel); }
+    /* A row header keeps the corners of the cell it replaced. */
+    .ac-table .ac-row--open th:first-child { border-top-left-radius:6px; }
+    .ac-table .ac-child--last th:first-child { border-bottom-left-radius:6px; }
     /* Panels and dialogs show tables of different columns. */
     .ac-table--fit { table-layout:auto; }
     .ac-lead { margin:0 0 16px; }
+    .ac-lead--chip { margin-top:-8px; }
     .ac-showing { margin:8px 0 16px; white-space:normal; }
     .ac-panel__body > .ac-note { margin:0; }
     .ac-hint { display:block; font-weight:400; color:var(--ac-2); }
     body.ac #postConfirm:disabled { cursor:progress; }
     /* accounting.css leaves this h2 at the browser's size. */
     .ac-empty__title { font-size:14px; line-height:20px; }
+    /* A warning that leads somewhere, as on Balance. */
+    a.ac-chip { text-decoration:underline solid var(--ac-ul) 1px; text-underline-offset:3px; }
+    a.ac-chip:hover { color:var(--ac-pri); text-decoration-color:currentColor; }
+    a.ac-chip:active { color:var(--ac-pri-d); text-decoration-color:currentColor; }
+    /* The panel's column fits the chip exactly: the cell does not clip its focus ring. */
+    .ac-table--panel tbody th:has(a.ac-chip) { overflow:visible; }
   </style>
 </head>
 <!-- Page scaffolding only: flex shell = sidebar + content. -->
@@ -91,8 +107,8 @@
   </aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
 </div>
-<div id="toastHost" role="status" aria-live="polite"></div>
 <div id="modalHost"></div>
+<div id="toastHost" role="status" aria-live="polite"></div>
 
 <script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
 <script src="assets/panorama-match.js"></script>
@@ -139,7 +155,7 @@ const initial = () => ({
     rail('paypal','PayPal',30410.00,620.40,859.67,25.33,28904.60,27500.00,246,3318.72,4723.32),
     rail('amazon','Amazon',66310.00,1905.62,9900.27,291.73,54212.38,52780.12,538,9640.00,11072.26),
     rail('tiktok','TikTok Shop',9180.00,316.80,920.86,27.14,7915.20,7600.00,84,1250.00,1565.20),
-    { id:'other', name:'Other payments', clearing:'Other clearing', orders:12, memo:'Payments from processors with no payout data, Sep 2026', lines:[
+    { id:'other', name:'Other payments', clearing:'Other clearing', orders:12, memo:'Payments from rails with no payout data, Sep 2026', lines:[
       { id:'oth', dr:4318.60, account:'Other clearing', rec:'Other clearing', bucket:'Unmatched', choices:CLEARING },
       { id:'sal', cr:4318.60, account:'Sales', rec:'Sales', bucket:'Charges' },
     ]},
@@ -160,24 +176,31 @@ const initial = () => ({
   open: {},
 });
 let S = initial();
-/* A reload starts the demo over. Going to Balance and back keeps the decisions. */
+/* A reload starts the demo over. Anything else keeps the work while the query stays the same: ?fail=1 is its own demo. */
+const QUERY = (() => { const q = new URLSearchParams(location.search); q.delete('v'); return q.toString(); })();
+function takeKept() {
+  const raw = sessionStorage.getItem('pm-journal-state');
+  sessionStorage.removeItem('pm-journal-state');
+  return raw ? JSON.parse(raw) : null;
+}
+/* The ledger's answer came while the page was away. */
+function settleChecking() { Object.keys(S.posted || {}).forEach(k => { if (S.posted[k] === 'checking') S.posted[k] = 'posted'; }); }
 try {
   const nav = performance.getEntriesByType('navigation')[0];
-  const saved = sessionStorage.getItem('pm-journal-state');
-  if (saved && nav && nav.type !== 'reload' && (nav.type === 'back_forward' || /(balance|accounting-[a-z]+)\.html/.test(document.referrer))) S = JSON.parse(saved);
-  sessionStorage.removeItem('pm-journal-state');
+  const kept = takeKept();
+  if (kept && kept.search === QUERY && nav && nav.type !== 'reload') { S = kept.state; settleChecking(); }
 } catch (err) { /* private window: start over */ }
-window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-journal-state', JSON.stringify(S)); } catch (err) { /* nothing to keep */ } });
+window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-journal-state', JSON.stringify({ search:QUERY, state:S })); } catch (err) { /* nothing to keep */ } });
 
 const ISSUES = [
   { id:'unmatched', title:'Unmatched payments', entry:'other', count:'12 payments', amount:'$4,318.60', summary:'12 payments',
-    columns:['Order','Date','Paid with','Amount'],
+    columns:['Order','Date','Rail','Amount'],
     rows:[['#48213','Sep 4','Afterpay','$318.00'],['#48377','Sep 9','Shop Cash','$126.40'],['#48502','Sep 12','Authorize.net','$840.00'],['#48611','Sep 15','Afterpay','$264.50'],['#48790','Sep 21','Shop Cash','$92.10']],
-    options:[{ id:'split', label:'Split into one clearing account per processor', hint:'Afterpay $2,140.00, Shop Cash $1,338.60, Authorize.net $840.00.', rec:true },{ id:'leave', label:'Leave in Other clearing', hint:'All $4,318.60 stays in one account.' }],
+    options:[{ id:'split', label:'Split into one clearing account per rail', hint:'Afterpay $2,140.00, Shop Cash $1,338.60, Authorize.net $840.00.', rec:true },{ id:'leave', label:'Leave in Other clearing', hint:'All $4,318.60 stays in one account.' }],
     done:{ split:'Split across 3 clearing accounts', leave:'Left in Other clearing' } },
   { id:'cogs', title:'Missing COGS', entry:'deferred', count:'38 orders', amount:'$6,120.00', summary:'Revenue on 38 orders',
-    columns:['Order','Date','Channel','Revenue'],
-    rows:[['#49102','Sep 28','Shopify','$164.00'],['#49118','Sep 28','Amazon','$89.50'],['#49140','Sep 29','Shopify','$212.00'],['#49177','Sep 30','Amazon','$54.00']],
+    columns:['Order','Date','Rail','Revenue'],
+    rows:[['#49102','Sep 28','Shopify Payments','$164.00'],['#49118','Sep 28','Amazon','$89.50'],['#49140','Sep 29','Shopify Payments','$212.00'],['#49177','Sep 30','Amazon','$54.00']],
     options:[{ id:'estimate', label:'Estimate COGS at 24%', hint:'Moves $1,468.80 from September COGS to deferred COGS.', rec:true },{ id:'revonly', label:'Defer the revenue only', hint:'Keeps $6,120.00 in deferred revenue with no COGS.' }],
     done:{ estimate:'COGS estimated at 24%', revonly:'Revenue deferred, no COGS' } },
   { id:'sku', title:'Blank SKUs', entry:'deferred', count:'9 order lines', amount:'$1,284.00', summary:'Revenue on 9 order lines',
@@ -188,15 +211,17 @@ const ISSUES = [
   { id:'subs', title:'Subscription orders that look unfulfilled', entry:'deferred', count:'21 orders', amount:'$2,940.00', summary:'Revenue on 21 orders with tracking',
     columns:['Order','Date','Fulfillment','Tracking','Revenue'],
     rows:[['#48733','Sep 19','Unfulfilled','Delivered Sep 23','$140.00'],['#48810','Sep 22','Unfulfilled','Delivered Sep 26','$140.00'],['#48992','Sep 26','Unfulfilled','Shipped Sep 27','$98.00']],
-    options:[{ id:'ship', label:'Treat as shipped', hint:'Removes $2,940.00 of revenue and $712.00 of COGS from deferred.', rec:true },{ id:'keep', label:'Keep them deferred', hint:'$2,940.00 stays deferred.' }],
+    options:[{ id:'ship', label:'Treat as shipped', hint:'Removes $2,940.00 of revenue and $712.00 of COGS from deferred.', rec:true },{ id:'keep', label:'Keep them deferred', hint:'$2,940.00 stays.' }],
     done:{ ship:'Treated as shipped', keep:'Subscription orders kept deferred' }, short:{ keep:'Kept deferred' } },
   { id:'gratis', title:'Gratis and replacement orders', entry:'gratis', count:'7 orders', amount:'$612.00', summary:'Retail value of 7 orders',
     columns:['Order','Date','Reason','Retail value','Cost'],
     rows:[['#48155','Sep 3','Influencer send','$96.00','$28.00'],['#48402','Sep 10','Damaged replacement','$148.00','$36.00'],['#48688','Sep 18','Influencer send','$120.00','$34.00']],
-    options:[{ id:'reclass', label:'Move to COGS sub-categories by reason', hint:'Removes $612.00 from revenue and discounts. Moves $184.00 to Testers and Customer service.', rec:true },{ id:'leave', label:'Leave in sales and discounts', hint:'$612.00 stays in revenue and discounts.' }],
+    options:[{ id:'reclass', label:'Move to COGS sub-categories by reason', hint:'Removes $612.00 from sales and discounts. Moves $184.00 to Testers and Customer service.', rec:true },{ id:'leave', label:'Leave in sales and discounts', hint:'$612.00 stays.' }],
     done:{ reclass:'Moved to COGS sub-categories', leave:'Left in sales and discounts' } },
 ];
 ISSUES.sort((a, b) => num(b.amount) - num(a.amount));
+/* The orders behind an entry stay when an org has nothing to decide about them. */
+const ISSUE_ORDERS = Object.fromEntries(ISSUES.map(i => [i.id, { columns:i.columns, rows:i.rows }]));
 (function orgIssues() {
   const drop = { nodefer:['cogs', 'sku', 'subs'], nocogs:['sku'] }[AC.ORG] || (['clean', 'onerail', 'norails', 'noduck'].includes(AC.ORG) ? ISSUES.map(i => i.id) : []);
   drop.forEach(id => ISSUES.splice(ISSUES.findIndex(i => i.id === id), 1));
@@ -205,35 +230,29 @@ ISSUES.sort((a, b) => num(b.amount) - num(a.amount));
 
 const COUNTS = { shopify:{ refund:96, payout:12 }, stripe:{ refund:14, payout:19 }, paypal:{ refund:6, payout:8 }, amazon:{ refund:22, payout:6 }, tiktok:{ refund:4, payout:5 }, paypal_cad:{ refund:1, payout:3 } };
 const SPLIT_COUNTS = { 'afterpay':[7,'payment'], 'shop cash':[4,'payment'], 'authorize.net':[1,'payment'], 'influencer sends':[4,'order'], 'replacements':[3,'order'] };
-const ORDERS_OFF = { tiktok:47.20 };
-const ORDER_COLUMNS = ['Order','Date','Fulfillment','SKU','Gross','Fee','Tax','Net','Payout'];
-/* Net follows the rail's own identity: gross minus fees minus tax on fees. */
+const ORDERS_OFF = { tiktok:{ amount:47.20, settlement:'po_Tk05', order:'#48720' } };
+const ORDER_COLUMNS = ['Order','Date','Fulfillment','SKU','Amount','Fee','Tax','Net','Settlement'];
+/* Net follows the rail's own identity: amount minus fee minus tax on the fee. */
 function orderWithTax(id, r) {
   const cur = entry(id).cur;
-  const tax = Math.round(num(r[5]) * 2.86) / 100;
-  return [r[0], r[1], r[2], r[3], r[4], '-' + r[5], '-' + money(tax, cur), money(Math.round((num(r[4]) - num(r[5]) - tax) * 100) / 100, cur), r[7]];
+  const tax = AC.round2(r[5] * 0.0286);
+  return [r[0], r[1], r[2], r[3], money(r[4], cur), '-' + money(r[5], cur), '-' + money(tax, cur), money(AC.round2(r[4] - r[5] - tax), cur), r[6]];
 }
-const ORDER_ROWS = {
-  shopify: [['#48102','Sep 1','Fulfilled','ASH-60','$148.00','$4.59','$143.41','po_8Kd2'],['#48733','Sep 19','Looks unfulfilled','ASH-60','$140.00','$4.36','$135.64','po_9Zm4'],['#48921','Sep 24','Unfulfilled','Blank','$148.00','$4.59','$143.41','po_A1c7'],['#49102','Sep 28','Unfulfilled','MAG-30','$164.00','$5.06','$158.94','Pending']],
-  stripe:  [['#48120','Sep 1','Fulfilled','ASH-60','$148.00','$4.00','$144.00','po_St11'],['#48260','Sep 6','Fulfilled','TEA-20','$96.00','$2.59','$93.41','po_St14'],['#48640','Sep 16','Fulfilled','ASH-60','$140.00','$3.78','$136.22','po_St19']],
-  paypal:  [['#48140','Sep 2','Fulfilled','TEA-20','$96.00','$2.78','$93.22','po_Pp03'],['#48450','Sep 11','Fulfilled','ASH-60','$148.00','$4.29','$143.71','po_Pp07'],['#48850','Sep 23','Fulfilled','ASH-60','$140.00','$4.06','$135.94','po_Pp12']],
-  amazon:  [['#48555','Sep 13','Fulfilled','AMZ-ASH-60','$148.00','$22.79','$125.21','po_Am21'],['#49118','Sep 28','Unfulfilled','AMZ-TEA-20','$89.50','$13.78','$75.72','Pending'],['#49177','Sep 30','Unfulfilled','AMZ-TEA-20','$54.00','$8.32','$45.68','Pending']],
-  tiktok:  [['#48300','Sep 7','Fulfilled','TEA-20','$96.00','$9.89','$86.11','po_Tk02'],['#48720','Sep 19','Fulfilled','ASH-60','$148.00','$15.24','$132.76','po_Tk05']],
-  paypal_cad: [['#48166','Sep 3','Fulfilled','TEA-20','CA$128.00','CA$3.71','CA$124.29','po_Ca02'],['#48511','Sep 12','Fulfilled','ASH-60','CA$196.00','CA$5.68','CA$190.32','po_Ca05'],['#48877','Sep 24','Fulfilled','ASH-60','CA$186.00','CA$5.39','CA$180.61','po_Ca09']],
+/* Order, date, amount, fee and settlement are the section's own orders, as on Balance. Fulfillment and SKU are sample values for this page's columns. */
+const ORDER_FACTS = {
+  '#48102':['Fulfilled','ASH-60'], '#48342':['Fulfilled','ASH-60'], '#48733':['Looks unfulfilled','ASH-60'], '#48921':['Unfulfilled','Blank'], '#49102':['Unfulfilled','MAG-30'],
+  '#48120':['Fulfilled','ASH-60'], '#48260':['Fulfilled','TEA-20'], '#48640':['Fulfilled','ASH-60'],
+  '#48140':['Fulfilled','TEA-20'], '#48450':['Fulfilled','ASH-60'], '#48850':['Fulfilled','ASH-60'],
+  '#48555':['Fulfilled','AMZ-ASH-60'], '#49118':['Unfulfilled','AMZ-TEA-20'], '#49177':['Unfulfilled','AMZ-TEA-20'],
+  '#47912':['Fulfilled','TEA-20'], '#48300':['Fulfilled','TEA-20'], '#48720':['Fulfilled','ASH-60'],
+  '#48166':['Fulfilled','TEA-20'], '#48511':['Fulfilled','ASH-60'], '#48877':['Fulfilled','ASH-60'],
 };
-const PAYOUT_ROWS = {
-  shopify: [['po_8Kd2','Sep 5',412,'$48,210.44'],['po_9Zm4','Sep 21',388,'$44,902.17'],['po_A1c7','Sep 26',401,'$46,118.30']],
-  stripe: [['po_St11','Sep 4',96,'$11,240.60'],['po_St14','Sep 11',88,'$10,318.25'],['po_St19','Sep 18',101,'$12,004.90']],
-  paypal: [['po_Pp03','Sep 8',64,'$7,800.00'],['po_Pp07','Sep 15',58,'$6,900.00'],['po_Pp12','Sep 24',71,'$8,400.00']],
-  amazon: [['po_Am21','Sep 14',172,'$17,940.12'],['po_Am24','Sep 28',181,'$18,320.00']],
-  tiktok: [['po_Tk02','Sep 8',29,'$2,600.00'],['po_Tk05','Sep 22',31,'$2,800.00']],
-  paypal_cad: [['po_Ca02','Sep 9',18,'CA$1,600.00'],['po_Ca05','Sep 17',21,'CA$1,800.00'],['po_Ca09','Sep 26',19,'CA$1,600.00']],
-};
+const ORDER_ROWS = Object.fromEntries(Object.entries(AC.ORDERS).map(([id, list]) => [id, list.slice().sort((a, b) => num(a[1]) - num(b[1])).map(o => [o[0], o[1], ...(ORDER_FACTS[o[0]] || ['Fulfilled','']), o[2], o[3], o[4] || 'Pending'])]));
 const ESTIMATED = { '#49102':'$39.36', '#49118':'$21.48', '#49177':'$12.96' };
 function ordersFor(id) {
   const fit = r => r.map(v => (v === 'Looks unfulfilled' && S.resolved.subs === 'ship') ? 'Treated as shipped' : (v === 'Blank' && S.resolved.sku === 'map') ? 'ASH-60, matched' : v);
   if (ORDER_ROWS[id]) return { columns:ORDER_COLUMNS, rows:ORDER_ROWS[id].map(r => fit(orderWithTax(id, r))) };
-  if (id === 'other' || id === 'gratis') { const i = ISSUES.find(x => x.id === (id === 'other' ? 'unmatched' : 'gratis')); return { columns:i.columns, rows:i.rows }; }
+  if (id === 'other' || id === 'gratis') return ISSUE_ORDERS[id === 'other' ? 'unmatched' : 'gratis'];
   const rows = [['#48733','Sep 19','Looks unfulfilled','ASH-60','$140.00','$36.00'],['#48921','Sep 24','Unfulfilled','Blank','$148.00','Missing'],['#49060','Sep 27','Unfulfilled','ASH-60','$148.00','$36.00'],['#49071','Sep 27','Unfulfilled','TEA-20','$96.00','$24.00'],['#49102','Sep 28','Unfulfilled','MAG-30','$164.00','Missing'],['#49118','Sep 28','Unfulfilled','AMZ-TEA-20','$89.50','Missing'],['#49177','Sep 30','Unfulfilled','AMZ-TEA-20','$54.00','Missing']];
   const cost = r => (r[0] === '#48921' && S.resolved.sku === 'map') ? '$36.00, matched' : (S.resolved.cogs === 'estimate' && ESTIMATED[r[0]]) ? ESTIMATED[r[0]] + ' est.' : r[5];
   return { columns:['Order','Date','Fulfillment','SKU','Revenue','COGS'], rows:(S.resolved.subs === 'ship' ? rows.filter(r => r[2] !== 'Looks unfulfilled') : rows).map(r => { const out = fit(r); out[5] = cost(r); return out; }) };
@@ -250,21 +269,22 @@ function otherAcct() { const o = entry('other'); const l = o ? line(o, 'oth') : 
 const LEDGER = 'QuickBooks Online';
 const FAIL_MODE = new URLSearchParams(location.search).get('fail') || '';
 const FAIL_ONCE = FAIL_MODE === '1';
-const CLOSED = new URLSearchParams(location.search).get('closed') === '1' || AC.periodClosed(AC.MONTH);
+const URL_CLOSED = new URLSearchParams(location.search).get('closed') === '1';
+const isClosed = () => URL_CLOSED || AC.periodClosed(AC.MONTH);
 const otherMonth = () => AC.month() !== AC.MONTH;
 /* ?role=view reads everything and changes nothing. ?ledger=none and ?ledger=scope stop Post at the ledger. */
 const VIEW_ONLY = new URLSearchParams(location.search).get('role') === 'view';
 const LEDGER_STATE = new URLSearchParams(location.search).get('ledger') || '';
-const readOnly = () => !!S.posted || CLOSED || VIEW_ONLY;
+const readOnly = () => !!S.posted || isClosed() || VIEW_ONLY;
 /* The page's state, one note beside Post. */
 function pageNote() {
   if (VIEW_ONLY) return 'View only';
   if (otherMonth() || !S.entries.length) return 'No entries to post';
-  if (CLOSED) return AC.MONTH + ' is closed';
+  if (isClosed()) return AC.MONTH + ' is closed';
   if (LEDGER_STATE === 'none' && !S.ledgerFixed) return 'No ledger connected';
   if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return LEDGER + ' needs accounting access';
   const open = openIssues().length;
-  if (open) return 'Decide ' + plural(open, 'item', 'items') + ' to post';
+  if (open) return 'Decide ' + plural(open, 'item', 'items') + ' first';
   const unbalanced = outOfBalance();
   if (unbalanced) return plural(unbalanced, 'entry', 'entries') + ' out of balance';
   const left = unposted().length + S.entries.filter(e => postState(e) === 'checking').length;
@@ -304,20 +324,42 @@ function statusHtml(e) {
   if (st.tone === 'neutral') return st.word === 'Checking' ? `<span class="ac-chip ac-chip--wait" data-word>${st.word}</span>` : `<span class="ac-status ac-status--quiet" data-word>${st.word}</span>`;
   return `<span class="ac-chip ac-chip--${st.tone}" data-word>${st.word}</span>`;
 }
-/* A rail mismatch sits in Status, before the word. The full wording is in the open entry. */
+/* A posted rail that no longer ties says so before the word. The full wording is in the open entry. */
 function railFlag(e) {
-  if (e.start === undefined) return '';
-  if (['posted', 'reversed'].includes(postState(e)) && !isTied(e)) return '<span class="ac-chip ac-chip--warn">Not tied</span>';
-  if (ORDERS_OFF[e.id]) return `<span class="ac-chip ac-chip--warn" title="Orders off by ${money(ORDERS_OFF[e.id])}"><span class="ac-sr">Orders </span>Off by ${money(ORDERS_OFF[e.id])}</span>`;
-  return '';
+  return e.start !== undefined && ['posted', 'reversed'].includes(postState(e)) && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : '';
 }
 function statusCell(e) {
   const flag = railFlag(e);
-  return flag ? `<span class="ac-pair${statusOf(e).tone === 'ok' ? '' : ' ac-pair--word'}">${flag}${statusHtml(e)}</span>` : statusHtml(e);
+  return flag ? `<span class="ac-pair">${flag}${statusHtml(e)}</span>` : statusHtml(e);
+}
+/* The rail's orders against its ending balance, and the way to the settlement behind it. */
+function ordersOffChip(e, extra) {
+  const off = ORDERS_OFF[baseId(e)];
+  return off ? `<a class="ac-chip ac-chip--warn${extra ? ' ' + extra : ''}" href="${esc(AC.hrefOf('settlements'))}#${off.settlement}">Orders off by ${money(off.amount, e.cur)}</a>` : '';
 }
 function openIssues() { return ISSUES.filter(i => !S.resolved[i.id]); }
 function issuesFor(id) { return openIssues().filter(i => i.entry === id); }
 function line(e, id) { return e.lines.find(l => l.id === id); }
+/* A mapping saved on Settings is the new recommendation for a rail entry not yet posted. A hand-picked account stays. */
+const MAPPED_BUCKET = { net:'Charges', sal:'Charges', ref:'Refunds', fee:'Fees', tax:'Tax', bnk:'Payouts', pay:'Payouts' };
+function applyMapping() {
+  unposted().filter(e => !e.cur).forEach(e => {
+    const source = e.baseName || e.name;
+    e.lines.forEach(l => {
+      const row = AC.MAPPING.find(m => m.source === source && m.bucket === MAPPED_BUCKET[l.id]);
+      if (!row) return;
+      const saved = AC.mappingOf(row);
+      const account = l.dr !== undefined ? saved.debit : saved.credit;
+      if (!account) return;
+      const list = l.choices || ACCOUNTS;
+      if (!list.includes(account)) l.choices = list.concat(account);
+      const picked = l.account !== l.rec;
+      l.rec = account;
+      if (!picked) l.account = account;
+      if (l.account === account) delete S.acct[e.id + ':' + l.id];
+    });
+  });
+}
 
 /* Each decision recomputes real lines, so the balance check stays a real check and a decision can change. */
 function recomputeDeferred() {
@@ -337,7 +379,7 @@ function recomputeDeferred() {
 function syncMemos() {
   const r = S.resolved;
   if (entry('deferred')) entry('deferred').memo = 'Orders unfulfilled at Sep 30' + (r.cogs === 'estimate' ? '. COGS estimated at 24% on 38 orders' : '') + (r.cogs === 'revonly' ? '. 38 orders, $6,120.00 deferred without COGS' : '') + (r.sku === 'map' ? '. 9 lines matched by product title' : '') + (r.sku === 'leave' ? '. 9 lines, $1,284.00 deferred without COGS' : '') + (r.subs === 'ship' ? '. 21 subscription orders treated as shipped' : '') + (r.subs === 'keep' ? '. 21 subscription orders kept deferred' : '');
-  if (entry('other')) entry('other').memo = 'Payments from processors with no payout data, Sep 2026' + (r.unmatched === 'split' ? '. Split across 3 clearing accounts' : '') + (r.unmatched === 'leave' ? '. Left in ' + otherAcct() : '');
+  if (entry('other')) entry('other').memo = 'Payments from rails with no payout data, Sep 2026' + (r.unmatched === 'split' ? '. Split across 3 clearing accounts' : '') + (r.unmatched === 'leave' ? '. Left in ' + otherAcct() : '');
   if (entry('gratis')) entry('gratis').memo = 'Free orders, Sep 2026' + (r.gratis === 'reclass' ? '. Moved to COGS sub-categories' : '') + (r.gratis === 'leave' ? '. Left in sales and discounts' : '');
 }
 function applyIssue(issue, option) {
@@ -370,6 +412,8 @@ function applyIssue(issue, option) {
 }
 
 /* ---------- Toast ---------- */
+/* A held or double Enter must not press what focus just moved to. */
+function focusNext(el, options) { if (el) AC.focusAfterAction({ focus:() => el.focus(options) }); }
 let toastTimer;
 let toastReturn = null;
 function clearToast() {
@@ -377,6 +421,7 @@ function clearToast() {
   const inside = host.contains(document.activeElement);
   clearTimeout(toastTimer);
   host.innerHTML = '';
+  placeToast();
   if (inside) { const known = toastReturn && document.contains(toastReturn) ? toastReturn : null; const f = known || (document.documentElement.classList.contains('pm-pointer') ? null : document.getElementById('exportCsv')); if (f) f.focus({ preventScroll:true }); }
 }
 /* Position lives in accounting.css: under the head, or left of the side panel. Only an open dialog moves it clear. */
@@ -387,8 +432,15 @@ function placeToast() {
   if (dialog) {
     const d = dialog.getBoundingClientRect();
     const room = window.innerWidth - 32 - d.right;
-    if (room >= 288) max = Math.min(440, room);
-    else top = d.bottom + 8 + 'px';
+    if (room >= 288) { max = Math.min(440, room); dialog.style.maxHeight = 'calc(100vh - 48px)'; }
+    else {
+      /* No room beside the dialog: it gives up height, so the toast under it stays on screen. */
+      host.style.maxWidth = '';
+      const h = host.offsetHeight;
+      const fit = window.innerHeight - d.top - h - 16;
+      dialog.style.maxHeight = h && fit < window.innerHeight - 48 ? fit + 'px' : 'calc(100vh - 48px)';
+      top = dialog.getBoundingClientRect().bottom + 8 + 'px';
+    }
   }
   host.style.top = top;
   host.style.maxWidth = max ? max + 'px' : '';
@@ -400,7 +452,7 @@ function toast(msg, undo, view) {
   const host = document.getElementById('toastHost');
   host.innerHTML = `<div class="toast" id="toastBox"><p class="toast-body" style="margin:0;flex:1;">${esc(msg)}</p>${view ? '<button type="button" class="btn-link btn-sm pm-link-quiet" style="padding:0;white-space:nowrap;" id="toastView">View entry</button>' : ''}${undo ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toastUndo">Undo</button>' : ''}<button type="button" class="toast-close" id="toastClose" aria-label="Dismiss">×</button></div>`;
   document.getElementById('toastClose').onclick = () => { overlayClosedAt = Date.now(); clearToast(); };
-  document.getElementById('toastClose').addEventListener('keydown', ev => { if (ev.key === 'Tab' && !ev.shiftKey) { ev.preventDefault(); ev.stopPropagation(); const f = toastReturn && document.contains(toastReturn) ? toastReturn : document.getElementById('exportCsv'); if (f) f.focus(); host.querySelectorAll('button').forEach(b => { b.tabIndex = -1; }); } });
+  document.getElementById('toastClose').addEventListener('keydown', ev => { if (document.getElementById('modalBackdrop')) return; if (ev.key === 'Tab' && !ev.shiftKey) { ev.preventDefault(); ev.stopPropagation(); const f = toastReturn && document.contains(toastReturn) ? toastReturn : document.getElementById('exportCsv'); if (f) f.focus(); host.querySelectorAll('button').forEach(b => { b.tabIndex = -1; }); } });
   if (undo) document.getElementById('toastUndo').onclick = () => { host.innerHTML = ''; overlayClosedAt = Date.now(); if (document.getElementById('modalBackdrop')) closeModal(); undo(); };
   if (view) document.getElementById('toastView').onclick = () => { if (document.getElementById('modalBackdrop')) { returnFocus = null; closeModal(); } view(); };
   const ms = undo ? 9000 : 5000;
@@ -417,6 +469,9 @@ function toast(msg, undo, view) {
 /* ---------- Modal ---------- */
 let returnFocus = null;
 let posting = false;
+let postTick = null;
+let postGuard = null;
+let lateTimer = null;
 let overlayClosedAt = 0;
 let overlayOpenedAt = 0;
 let rowTimer = null;
@@ -454,7 +509,7 @@ function modalKeys(e) {
   if (posting) { if (e.key === 'Escape' || e.key === 'Tab') e.preventDefault(); return; }
   if (e.key === 'Escape') { closeModal(); return; }
   if (e.key !== 'Tab') return;
-  const f = [...document.querySelectorAll('#modalHost button:not([disabled]), #modalHost input:not([disabled]), #modalHost select:not([disabled]), #toastHost button')];
+  const f = [...document.querySelectorAll('#modalHost button:not([disabled]), #modalHost input:not([disabled]), #modalHost select:not([disabled]), #modalHost a[href], #toastHost button')];
   if (!f.length) return;
   if (e.shiftKey && document.activeElement === f[0]) { f[f.length - 1].focus(); e.preventDefault(); }
   else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { f[0].focus(); e.preventDefault(); }
@@ -475,7 +530,7 @@ function simpleTable(caption, columns, rows, numeric) {
   const isNum = c => numeric && numeric.includes(c);
   return `<div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">${esc(caption)}</caption>
     <thead><tr>${columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('')}</tr></thead>
-    <tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td${isNum(columns[i]) ? ' class="ac-num"' : ''}>${FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    <tbody>${rows.map(r => `<tr>${r.map((v, i) => { const inner = FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : esc(v); return i === 0 ? `<th scope="row">${inner}</th>` : `<td${isNum(columns[i]) ? ' class="ac-num"' : ''}>${inner}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 
 function issueModal(id) {
@@ -501,12 +556,12 @@ function issueModal(id) {
     returnFocus = null;
     closeModal();
     render();
-    const focusRow = () => { const f = fromEntry ? document.querySelector('[data-entry-toggle="' + issue.entry + '"]') : (document.querySelector('[data-issue-row="' + issue.id + '"]') || document.getElementById('toggleDecisions')); if (f) { const b = f.getBoundingClientRect(); f.focus({ preventScroll:document.documentElement.classList.contains('pm-pointer') || (b.top >= 0 && b.bottom <= window.innerHeight) }); } };
+    const focusRow = () => { const f = fromEntry ? document.querySelector('[data-entry-toggle="' + issue.entry + '"]') : (document.querySelector('[data-issue-row="' + issue.id + '"]') || document.getElementById('toggleDecisions')); if (f) { const b = f.getBoundingClientRect(); focusNext(f, { preventScroll:document.documentElement.classList.contains('pm-pointer') || (b.top >= 0 && b.bottom <= window.innerHeight) }); } };
     const changed = JSON.stringify(before.entries.find(x => x.id === issue.entry)) !== JSON.stringify(entry(issue.entry));
-    const viewEntry = () => { overlayClosedAt = Date.now(); S.open[issue.entry] = true; render(); const b = document.querySelector('[data-entry-toggle="' + issue.entry + '"]'); if (b) { b.scrollIntoView({ block:'start' }); window.scrollBy(0, -24); b.focus({ preventScroll:true }); } };
+    const viewEntry = () => { overlayClosedAt = Date.now(); S.open[issue.entry] = true; render(); const b = document.querySelector('[data-entry-toggle="' + issue.entry + '"]'); if (b) { b.scrollIntoView({ block:'start' }); window.scrollBy(0, -24); focusNext(b, { preventScroll:true }); } };
     toast(doneText(issue, opt) + '.' + (dropped ? ' ' + dropped + (dropped === 1 ? ' account change' : ' account changes') + ' removed.' : ''), () => { const openNow = S.open, hide = S.hideDecisions; S = before; S.open = openNow; S.hideDecisions = hide; render(); toast('Change undone.'); focusRow(); }, changed ? viewEntry : null);
     focusRow();
-    if (keyboard) { const u = document.getElementById('toastUndo'); if (u) u.focus(); }
+    if (keyboard) AC.focusAfterAction(document.getElementById('toastUndo'));
   };
 }
 const SCHEMA = { shopify:'shopify_data_v2', stripe:'stripe_data_v2', paypal:'paypal_data', paypal_cad:'paypal_data', amazon:'amazon_data', tiktok:'tiktok_data' };
@@ -517,14 +572,10 @@ function panelRows(id, bucket) {
   const b = (bucket || '').toLowerCase();
   const cur = entry(id).cur;
   if (ORDER_ROWS[id]) {
-    if (b.startsWith('payouts')) return { columns:['Payout','Date','Orders','Amount'], rows:PAYOUT_ROWS[id].map(r => [r[0], r[1], r[2], '-' + r[3]]) };
-    if (b === 'refunds') {
-      const columns = ['Order','Date','Description','Amount','Fee','Net','Payout'];
-      if (id === 'paypal_cad') return { columns, rows:[['#48166','Sep 6','Refund for charge','-CA$120.00','CA$0.00','-CA$120.00','po_Ca02']] };
-      return { columns, rows:ORDER_ROWS[id].filter(r => r[2] === 'Fulfilled').slice(0, 2).map(r => { const day = Math.min(30, num(r[1]) + 3); const payouts = PAYOUT_ROWS[id]; const later = payouts.find(p => num(p[1]) >= day) || payouts[payouts.length - 1]; return [r[0], 'Sep ' + day, 'Refund for charge', '-' + r[4], money(0, cur), '-' + r[4], later[0]]; }) };
-    }
-    if (b === 'fees') return { columns:['Order','Date','Description','Amount','Payout'], rows:base.rows.map(r => [r[0], r[1], 'Processing fee', r[5], r[8]]) };
-    if (b === 'tax on fees') return { columns:['Order','Date','Description','Amount','Payout'], rows:base.rows.map(r => [r[0], r[1], 'Tax on fee', r[6], r[8]]) };
+    if (b.startsWith('payouts')) return { columns:['Settlement','Date','Orders','Amount'], rows:AC.paidSettlements(id).map(s => [s.id, s.date, s.orders, '-' + money(s.reportedNet, cur)]) };
+    if (b === 'refunds') return { columns:['Order','Date','Description','Amount','Fee','Net','Settlement'], rows:AC.eventRows(AC.rail(id), 'refund').map(x => [x.order, x.date, x.desc, '-' + money(-x.amount, cur), money(x.fee, cur), '-' + money(-x.net, cur), x.payout]) };
+    if (b === 'fees') return { columns:['Order','Date','Description','Amount','Settlement'], rows:base.rows.map(r => [r[0], r[1], 'Processing fee', r[5], r[8]]) };
+    if (b === 'tax on fees') return { columns:['Order','Date','Description','Amount','Settlement'], rows:base.rows.map(r => [r[0], r[1], 'Tax on fee', r[6], r[8]]) };
     return base;
   }
   const only = { 'afterpay':'Afterpay', 'shop cash':'Shop Cash', 'authorize.net':'Authorize.net', 'influencer sends':'Influencer send', 'replacements':'Damaged replacement' }[b];
@@ -547,7 +598,7 @@ function panelFooter(id, bucket, o) {
   if (b === 'refunds') return show(COUNTS[id].refund, 'refund');
   if (b === 'fees') return show(e.orders, 'fee');
   if (b === 'tax on fees') return show(e.orders, 'tax row');
-  if (b.startsWith('payouts')) return show(COUNTS[id].payout, 'payout');
+  if (b.startsWith('payouts')) return show(COUNTS[id].payout, 'settlement');
   if (b.startsWith('estimate')) return show(38, 'order');
   return show(e.orders, id === 'other' ? 'payment' : 'order');
 }
@@ -564,12 +615,12 @@ function sourceRow(e, o, row, bucket) {
   const col = n => row[o.columns.indexOf(n)];
   const cents = v => v ? String(Math.round(num(v) * 100)) : '';
   const date = String(col('Date') || '').replace('Sep ', '');
-  const isPayout = o.columns[0] === 'Payout';
+  const isPayout = o.columns[0] === 'Settlement';
   const digits = String(col('Order') || '').replace(/\D/g, '');
   const rail = !!SCHEMA[e.id];
   const b = (bucket || 'charge').toLowerCase();
   const kind = { refunds:'r', fees:'f', 'tax on fees':'t' }[b] || '';
-  const rawPk = rail ? 'txn_' + (isPayout ? col('Payout').replace('po_', '') + 'p' : digits + kind) : String(col('Order'));
+  const rawPk = rail ? 'txn_' + (isPayout ? col('Settlement').replace('po_', '') + 'p' : digits + kind) : String(col('Order'));
   const seed = Number(rawPk.replace(/\D/g, '') || 3);
   /* One raw row reads the same from every line that opens it. */
   const base = rail ? null : ordersFor(e.id);
@@ -583,9 +634,9 @@ function sourceRow(e, o, row, bucket) {
     ['raw_table', rail ? 'balance_transactions' : 'orders'],
     ['raw_pk', rawPk],
     rail ? ['reporting_category', CATEGORY[b] || b] : null,
-    rail ? ['amount / net', cents(col('Gross') || col('Amount')) + ' / ' + cents(net || col('Amount'))] : ['amount', cents(orderAmount)],
+    rail ? ['amount / net', cents(col('Amount')) + ' / ' + cents(net || col('Amount'))] : ['amount', cents(orderAmount)],
     !rail && /^\$[\d,.]+$/.test(orderCost || '') ? ['cost', cents(orderCost)] : null,
-    ['source', isPayout ? col('Payout') : rail ? (b === 'refunds' ? 're_' : 'ch_') + digits : (col('Paid with') || 'order')],
+    ['source', isPayout ? col('Settlement') : rail ? (b === 'refunds' ? 're_' : 'ch_') + digits : (col('Rail') || 'order')],
     ['created', '2026-09-' + date.padStart(2, '0') + 'T' + String(8 + seed % 12).padStart(2, '0') + ':' + String(seed % 60).padStart(2, '0') + ':11Z'],
   ].filter(Boolean);
   return AC.sourceRow(pairs);
@@ -601,10 +652,16 @@ function openDrawer(id, title, amount, bucket) {
   const link = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('#app .ac-link') : null;
   if (link) link.setAttribute('aria-expanded', 'true');
   document.body.classList.add('ac-panel-open');
-  const numeric = ['Gross','Fees','Tax','Net','Amount','Fee','Revenue','Retail value','Cost','Estimated cost','COGS','Orders'];
+  const numeric = ['Fees','Tax','Net','Amount','Fee','Revenue','Retail value','Cost','Estimated cost','COGS','Orders'];
   const isNum = c => numeric.includes(c);
   const head = o.columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('');
-  const body = o.rows.map((r, i) => `<tr class="ac-row--link" data-src="${i}">${r.map((v, n) => `<td${isNum(o.columns[n]) ? ' class="ac-num"' : ''}>${n === 0 ? `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>` : FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : /^-?(CA)?\$0\.00$/.test(v) ? `<span class="ac-zero">${esc(minus(v))}</span>` : esc(minus(v))}</td>`).join('')}</tr>`).join('');
+  const srcButton = (i, v) => `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>`;
+  const settlementLink = v => /^po_/.test(v) ? `<span class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a></span>` : esc(v);
+  const listsSettlements = o.columns[0] === 'Settlement';
+  const off = o.columns === ORDER_COLUMNS && ORDERS_OFF[id];
+  const rowHead = (v, i) => listsSettlements ? settlementLink(v) : off && v === off.order ? `<div class="ac-name">${srcButton(i, v)}${ordersOffChip(e)}</div>` : srcButton(i, v);
+  const cell = (c, v, i) => listsSettlements && c === 'Date' ? srcButton(i, v) : c === 'Settlement' ? settlementLink(v) : FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : /^-?(CA)?\$0\.00$/.test(v) ? `<span class="ac-zero">${esc(minus(v))}</span>` : esc(minus(v));
+  const body = o.rows.map((r, i) => `<tr class="ac-row--link" data-src="${i}">${r.map((v, n) => n === 0 ? `<th scope="row">${rowHead(v, i)}</th>` : `<td${isNum(o.columns[n]) ? ' class="ac-num"' : ''}>${cell(o.columns[n], v, i)}</td>`).join('')}</tr>`).join('');
   const count = COUNTS[id] && panelTotal(id, bucket) !== null ? ` <span class="ac-muted">(${panelTotal(id, bucket).toLocaleString('en-US')})</span>` : '';
   document.getElementById('modalHost').innerHTML = `<div class="ac-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="ac-panel">
     <div class="ac-panel__head"><div style="min-width:0;"><div class="ac-panel__label" id="modalTitle">${esc(title)}${count}</div>${amount ? `<div class="ac-panel__value">${esc(minus(amount))}</div>` : ''}<div class="ac-note">${esc(e.name)} · ${e.cur || 'USD'} · Sep 2026</div></div><div class="ac-actions"><button type="button" class="btn btn-neutral btn-sm" id="panelExport">Export CSV</button><button type="button" class="modal-close" id="modalClose" aria-label="Close panel">${CLOSE_ICON}</button></div></div>
@@ -612,7 +669,7 @@ function openDrawer(id, title, amount, bucket) {
     <p class="ac-note">${esc(panelFooter(id, bucket, o, amount))}</p><div id="sourceSlot" role="status"></div></div>
   </aside></div>`;
   const pick = i => { document.querySelectorAll('.ac-panel [data-src]').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('ac-row--sel', on); const b = tr.querySelector('[data-src-btn]'); if (b) b.setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceRow(e, o, o.rows[i], bucket || 'charge'); };
-  document.getElementById('panelBody').addEventListener('click', ev => { const tr = ev.target.closest('[data-src]'); if (tr) pick(+tr.dataset.src); });
+  document.getElementById('panelBody').addEventListener('click', ev => { if (ev.target.closest('a')) return; const tr = ev.target.closest('[data-src]'); if (tr) pick(+tr.dataset.src); });
   pick(0);
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('panelExport').onclick = ev => { if (ev.detail > 1) return; downloadCsv('journal-' + e.id + '-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-2026-09.csv', [o.columns.concat('Currency').concat(o.rows.some(csvNote) ? ['Note'] : [])].concat(o.rows.map(r => r.map(csvValue).concat(e.cur || 'USD').concat(o.rows.some(csvNote) ? [csvNote(r)] : [])))); toast('CSV exported.'); };
@@ -635,9 +692,9 @@ function attentionHtml() {
   const rows = ISSUES.map(i => {
     const r = S.resolved[i.id];
     const button = `<button type="button" class="btn ${r ? 'btn-ghost ac-btn-flush' : 'btn-neutral'} btn-sm ac-btn-row" data-issue="${i.id}" data-issue-row="${i.id}" aria-label="${r ? 'Change' : 'Decide'} ${esc(i.title)}">${r ? 'Change' : 'Decide'}</button>`;
-    return `<tr${readOnly() ? '' : ' class="ac-row--link"'} data-row="${i.id}"><td>${esc(i.title)}</td><td colspan="4" class="ac-muted">${esc(r ? 'Decided: ' + ((i.short && i.short[r]) || doneText(i, r)) : i.summary)}</td><td class="ac-num">${esc(i.amount)}</td><td class="ac-right">${readOnly() ? '' : button}</td></tr>`;
+    return `<tr${readOnly() ? '' : ' class="ac-row--link"'} data-row="${i.id}"><th scope="row">${esc(i.title)}</th><td colspan="4" class="ac-muted">${esc(r ? 'Decided: ' + ((i.short && i.short[r]) || doneText(i, r)) : i.summary)}</td><td class="ac-num">${esc(i.amount)}</td><td class="ac-right">${readOnly() ? '' : button}</td></tr>`;
   }).join('');
-  return `<section class="ac-card" aria-labelledby="attTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="attTitle">${open.length ? open.length + (open.length === 1 ? ' item' : ' items') + (VIEW_ONLY ? ' not decided' : ' to decide') : 'All ' + ISSUES.length + ' items are decided'}</h2>${open.length ? '' : toggle('Hide decisions')}</div><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Items to decide</caption>${COLS}<tbody>${rows}</tbody></table></div></section>`;
+  return `<section class="ac-card" aria-labelledby="attTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="attTitle">${open.length ? open.length + (open.length === 1 ? ' item' : ' items') + (VIEW_ONLY ? ' not decided' : ' to decide') : 'All ' + ISSUES.length + ' items are decided'}</h2>${open.length ? '' : toggle('Hide decisions')}</div><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Items to decide</caption>${COLS}<thead class="ac-sr"><tr><th scope="col">Item</th><th scope="col" colspan="4">Detail</th><th scope="col">Amount</th><th scope="col">Action</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
 /* A rail is tied only while its clearing account ends where the processor says it ends, whichever line moved. */
 const processorEnd = e => (e.native !== undefined ? e.native : e.end);
@@ -676,21 +733,22 @@ function linesHtml(e) {
   };
   const accountCell = l => {
     const options = l.choices || (e.cur ? ACCOUNTS_CAD : ACCOUNTS);
-    const locked = (!!postState(e) && postState(e) !== 'failed') || CLOSED || VIEW_ONLY;
-    if (locked) return `<div class="ac-acct"><span class="ac-static">${esc(l.account)}</span>${isChanged(e, l) ? '<span class="ac-chip ac-chip--wait">Changed</span>' : ''}${noCogsChip(l, 'ac-only-wide')}</div>`;
-    const single = options.length === 1;
-    const changed = !single && l.account !== l.rec;
+    const locked = (!!postState(e) && postState(e) !== 'failed') || isClosed() || VIEW_ONLY;
+    /* One possible account leaves nothing to choose: plain text, as in the posted state. */
+    if (locked || options.length === 1) return `<div class="ac-acct"><span class="ac-static">${esc(l.account)}</span>${isChanged(e, l) ? '<span class="ac-chip ac-chip--wait">Changed</span>' : ''}${noCogsChip(l, 'ac-only-wide')}</div>`;
+    const changed = l.account !== l.rec;
     const reset = `<button type="button" class="btn btn-ghost btn-sm ac-btn-row" style="visibility:${changed ? 'visible' : 'hidden'};" data-reset="${e.id}:${l.id}" title="Back to ${esc(l.rec)}" aria-label="${esc(l.bucket)}: back to ${esc(l.rec)}">Reset</button>`;
-    return `<div class="ac-acct"><select class="form-input form-select ac-select ac-select--row" autocomplete="off" ${single ? 'disabled ' : ''}aria-label="${esc(e.name)}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${esc(l.bucket)}" data-entry="${e.id}" data-line="${l.id}" data-key="acct:${e.id}:${l.id}">${options.map(a => `<option value="${esc(a)}"${a === l.account ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select>${noCogsChip(l, 'ac-only-wide')}${reset}</div>`;
+    return `<div class="ac-acct"><select class="form-input form-select ac-select ac-select--row" autocomplete="off" aria-label="${esc(e.name)}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${esc(l.bucket)}" data-entry="${e.id}" data-line="${l.id}" data-key="acct:${e.id}:${l.id}">${options.map(a => `<option value="${esc(a)}"${a === l.account ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select>${noCogsChip(l, 'ac-only-wide')}${reset}</div>`;
   };
-  const amountCell = (l, v) => v === undefined ? '' : e.reversalOf || e.correctionOf ? money(v, e.cur) : `<button type="button" class="ac-link" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
+  const amountCell = (l, v, side) => v === undefined ? '' : e.reversalOf || e.correctionOf ? money(v, e.cur) : `<button type="button" class="ac-link" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${side}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
   const t = totals(e);
   const balanced = t.dr === t.cr;
-  const row = l => `<tr class="ac-child" data-line-row><td class="ac-indent"><div class="ac-name"><span>${esc(l.bucket)}</span>${noCogsChip(l, 'ac-only-narrow')}</div></td><td colspan="4">${accountCell(l)}</td><td class="ac-num">${amountCell(l, l.dr)}</td><td class="ac-num">${amountCell(l, l.cr)}</td></tr>`;
+  const hid = part => e.id + '-' + part;
+  const row = l => `<tr class="ac-child" data-line-row><th scope="row" class="ac-indent" id="${hid(l.id)}" headers="${hid('line')}"><div class="ac-name"><span>${esc(l.bucket)}</span>${noCogsChip(l, 'ac-only-narrow')}</div></th><td colspan="4" headers="${hid('acct')} ${hid(l.id)}">${accountCell(l)}</td><td class="ac-num" headers="${hid('debit')} ${hid(l.id)}">${amountCell(l, l.dr, 'debit')}</td><td class="ac-num" headers="${hid('credit')} ${hid(l.id)}">${amountCell(l, l.cr, 'credit')}</td></tr>`;
   const viewOrders = () => `<button type="button" class="btn btn-ghost btn-sm ac-btn-row" data-orders="${baseId(e)}" data-key="orders:${e.id}">View ${e.orders.toLocaleString('en-US')} ${baseId(e) === 'other' ? 'payments' : 'orders'}</button>`;
-  const actions = `${e.reversalOf ? '' : viewOrders()}${e.correctionOf && !postState(e) ? `<button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-discard="${e.id}" data-key="discard:${e.id}">Discard</button>` : ''}${postState(e) === 'posted' && !e.reversalOf && !CLOSED && !VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-btn-row" data-reverse="${e.id}" data-key="reverse:${e.id}">Reverse</button>` : ''}`;
+  const actions = `${e.reversalOf ? '' : viewOrders()}${postState(e) === 'reversed' && !S.entries.some(x => x.correctionOf === e.id) && !isClosed() && !VIEW_ONLY ? `<button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-recorrect="${e.id}" data-key="recorrect:${e.id}">Create corrected entry</button>` : ''}${e.correctionOf && !postState(e) ? `<button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-discard="${e.id}" data-key="discard:${e.id}">Discard</button>` : ''}${postState(e) === 'posted' && !e.reversalOf && !isClosed() && !VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-btn-row" data-reverse="${e.id}" data-key="reverse:${e.id}">Reverse</button>` : ''}`;
   const fact = (label, v) => `<span><span class="ac-muted">${label}</span> <span class="ac-num">${v}</span></span>`;
-  const ordersOff = ORDERS_OFF[e.id] ? `<span class="ac-chip ac-chip--warn">Orders off by ${money(ORDERS_OFF[e.id])}</span>` : '';
+  const ordersOff = ordersOffChip(e);
   const tie = e.start === undefined ? '' : `<div class="ac-facts">${postState(e) === 'failed'
     ? `${fact('Processor', money(processorEnd(e), e.cur))}<span class="ac-chip ac-chip--warn">Not posted</span>`
     : isTied(e)
@@ -712,9 +770,9 @@ function linesHtml(e) {
   const hasLast = !!(lastLeft || actions);
   const lastClass = hasLast || noteRows ? '' : ' ac-child--last';
   return `<tr class="ac-child"><td colspan="7" class="ac-indent ac-muted ac-child-note">${metaLine(e)}</td></tr>${postLine(e)}
-    <tr class="ac-child ac-child--head"><td class="ac-indent">Line</td><td colspan="4" class="ac-acct-head">Account</td><td class="ac-num">Debit</td><td class="ac-num">Credit</td></tr>
+    <tr class="ac-child ac-child--head"><th scope="col" class="ac-indent" id="${hid('line')}">Line</th><th scope="col" colspan="4" class="ac-acct-head" id="${hid('acct')}">Account</th><th scope="col" class="ac-num" id="${hid('debit')}">Debit</th><th scope="col" class="ac-num" id="${hid('credit')}">Credit</th></tr>
     ${e.lines.map(row).join('')}
-    <tr class="ac-child ac-total${lastClass}"><td class="ac-indent">Total</td><td colspan="4"></td><td class="ac-num"><span>${money(t.dr, e.cur)}</span></td><td class="ac-num"><span>${money(t.cr, e.cur)}</span></td></tr>
+    <tr class="ac-child ac-total${lastClass}"><th scope="row" class="ac-indent" id="${hid('total')}">Total</th><td colspan="4"></td><td class="ac-num" headers="${hid('debit')} ${hid('total')}"><span>${money(t.dr, e.cur)}</span></td><td class="ac-num" headers="${hid('credit')} ${hid('total')}"><span>${money(t.cr, e.cur)}</span></td></tr>
     ${noteRows}${hasLast ? `<tr class="ac-child ac-child--last"><td colspan="5" class="ac-indent">${lastLeft}</td><td colspan="2" class="ac-right ac-cell-actions"><div>${actions}</div></td></tr>` : ''}`;
 }
 function netOf(e) { const l = line(e, 'net'); return l ? l.dr : undefined; }
@@ -729,7 +787,7 @@ function entryRow(e) {
   const activity = net === undefined ? '' : e.correctionOf ? money(net, e.cur) : `<button type="button" class="ac-link" data-entry-orders="${e.id}:Activity" aria-label="${esc(e.name)}, activity, ${money(net, e.cur)}">${money(net, e.cur)}</button>`;
   const payouts = pay === undefined ? '' : e.correctionOf ? MINUS + money(pay, e.cur) : `<button type="button" class="ac-link" data-entry-orders="${e.id}:Payouts" aria-label="${esc(e.name)}, payouts, minus ${money(pay, e.cur)}">${MINUS}${money(pay, e.cur)}</button>`;
   return `<tr class="ac-row--link${open ? ' ac-row--open' : ''}" data-entry-row="${e.id}">
-      <td><div class="ac-name ac-name--fit"><button type="button" class="ac-toggle" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${CHEVRON}${esc(e.name)}</button>${e.id === 'amazon' || e.id === 'tiktok' ? '<span class="ac-muted">reserve</span>' : ''}${tag}</div></td>
+      <th scope="row"><div class="ac-name ac-name--fit"><button type="button" class="ac-toggle" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${CHEVRON}${esc(e.name)}</button>${e.id === 'amazon' || e.id === 'tiktok' ? `<span class="ac-muted${ORDERS_OFF[e.id] ? ' ac-yield' : ''}">reserve</span>` : ''}${ordersOffChip(e, e.correctionOf ? 'ac-yield-chip' : '')}${tag}</div></th>
       <td class="ac-num ac-end">${money(t.dr, e.cur)}</td>
       <td class="ac-num ac-wide">${e.start !== undefined ? signed(e.start, e.cur) : ''}</td>
       <td class="ac-num">${activity}</td>
@@ -744,14 +802,15 @@ function totalsRow(cur) {
   const off = rails.filter(e => !isTied(e)).length;
   const debits = sum(all.filter(e => !e.reversalOf && postState(e) !== 'reversed'), e => totals(e).dr);
   const cell = (v, wide) => `<td class="ac-num${wide ? ' ac-wide' : ''}"><span>${v}</span></td>`;
-  return `<tr class="ac-total"><td class="ac-indent">Total ${cur || 'USD'}</td>${cell(money(debits, cur))}${cell(money(sum(rails, e => e.start), cur), true)}${cell(money(sum(rails, netOf), cur))}${cell(MINUS + money(sum(rails, payoutOf), cur))}${cell(money(sum(rails, e => e.end), cur))}<td class="ac-right">${off ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : DASH}</td></tr>`;
+  return `<tr class="ac-total"><th scope="row" class="ac-indent">Total ${cur || 'USD'}</th>${cell(money(debits, cur))}${cell(money(sum(rails, e => e.start), cur), true)}${cell(money(sum(rails, netOf), cur))}${cell(MINUS + money(sum(rails, payoutOf), cur))}${cell(money(sum(rails, e => e.end), cur))}<td class="ac-right">${off ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : DASH}</td></tr>`;
 }
 function currencyCard(cur, first) {
   const list = S.entries.filter(e => e.cur === cur);
   const label = cur || 'USD';
   if (!list.length) return '';
+  const allOpen = list.every(e => S.open[e.id]) ? 'Close all' : 'Open all';
   return `<section class="ac-card" aria-label="${label} entries">
-      <div class="ac-card__head"><h2 class="ac-card__title"${first ? ' id="entTitle"' : ''}>${S.posted ? 'Entries' : 'Proposed entries'}</h2><span class="ac-note">${label} · ${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span>${first && S.exported ? `<div class="ac-actions" id="exportState">${exportChip()}</div>` : ''}</div>
+      <div class="ac-card__head"><h2 class="ac-card__title"${first ? ' id="entTitle"' : ''}>${S.posted ? 'Entries' : 'Proposed entries'}</h2><span class="ac-note">${label} · ${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span><div class="ac-actions">${first && S.exported ? `<span id="exportState">${exportChip()}</span>` : ''}<button type="button" class="btn btn-ghost btn-sm ac-btn-row ac-btn-flush" data-open-all="${label}" data-key="openAll:${label}" aria-label="${allOpen} ${label} entries">${allOpen}</button></div></div>
       <div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">${S.posted ? 'Entries' : 'Proposed entries'}, ${label}</caption>${COLS}
       <thead><tr><th scope="col" class="ac-indent">Entry</th><th scope="col" class="ac-num">Total debits</th><th scope="col" class="ac-num ac-wide">Starting</th><th scope="col" class="ac-num">Activity</th><th scope="col" class="ac-num">Payouts</th><th scope="col" class="ac-num">Ending</th><th scope="col" class="ac-right">Status</th></tr></thead>
       <tbody>${list.map(entryRow).join('')}${totalsRow(cur)}</tbody></table></div>
@@ -762,21 +821,26 @@ function postControl() {
   const post = off => `<button type="button" class="btn btn-primary btn-sm" id="postBtn"${off ? ' style="pointer-events:auto;" aria-disabled="true"' : ''} aria-describedby="postNote" data-key="postBtn">Post</button>`;
   if (VIEW_ONLY) return note;
   if (otherMonth() || !S.entries.length) return note + post(true);
-  if (CLOSED) return note;
+  if (isClosed()) return note;
   if (LEDGER_STATE === 'none' && !S.ledgerFixed) return `${note}<a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a>`;
   if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return `${note}<button type="button" class="btn btn-neutral btn-sm" id="reconnect" data-key="reconnect">Reconnect</button>`;
   if (openIssues().length || outOfBalance()) return note + post(true);
-  return unposted().length ? note + post(false) : note;
+  if (unposted().length) return note + post(false);
+  return AC.closeReady(AC.MONTH) ? `${note}<a class="btn btn-primary btn-sm" href="${esc(AC.hrefOf('close'))}" data-key="goClose">Close ${AC.MONTH}</a>` : note;
 }
 /* What the rest of the section reads: progress, and the exceptions a decision settles. */
 function publish() {
   const live = S.entries.filter(e => !e.reversalOf && postState(e) !== 'reversed');
   const count = st => live.filter(e => postState(e) === st).length;
-  AC.state.journal = { open:openIssues().length, total:live.length, posted:count('posted') + count('checking'), failed:count('failed'), reversed:S.entries.filter(e => postState(e) === 'reversed').length };
+  /* A reversed entry with no corrected draft still owes the ledger an entry. */
+  const uncorrected = S.entries.filter(e => postState(e) === 'reversed' && !S.entries.some(x => x.correctionOf === e.id)).length;
   const choice = S.resolved.unmatched;
+  const decision = choice ? doneText(ISSUES.find(i => i.id === 'unmatched'), choice) : '';
+  AC.state.journal = { open:openIssues().length, items:ISSUES.length, total:live.length + uncorrected, posted:count('posted'), failed:count('failed'), reversed:S.entries.filter(e => postState(e) === 'reversed').length, split:choice === 'split', unmatchedDecision:decision };
   ['ex2', 'ex3', 'ex4'].forEach(id => {
+    if (AC.state.exceptions[id] && AC.state.exceptions[id].reopened) return;
     const ex = AC.EXCEPTIONS.find(x => x.id === id);
-    if (choice && ex && (['open', 'investigating'].includes(AC.exceptionStatus(ex)) || (AC.state.exceptions[id] && AC.state.exceptions[id].by === 'journal'))) AC.state.exceptions[id] = { status:'resolved', note:doneText(ISSUES.find(i => i.id === 'unmatched'), choice), assignee:'You', by:'journal' };
+    if (choice && ex && (['open', 'investigating'].includes(AC.exceptionStatus(ex)) || (AC.state.exceptions[id] && AC.state.exceptions[id].by === 'journal'))) AC.state.exceptions[id] = { status:'resolved', note:decision, assignee:'You', by:'journal' };
     else if (!choice && AC.state.exceptions[id] && AC.state.exceptions[id].by === 'journal') delete AC.state.exceptions[id];
   });
   AC.save();
@@ -788,8 +852,9 @@ function exportChip() {
 function render() {
   const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
   publish();
-  const actions = `<button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv"${otherMonth() || !S.entries.length ? ' disabled' : ''}>Export CSV</button>${postControl()}`;
-  const body = AC.blockedCard('journal') || (otherMonth() ? `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No entries for ${esc(AC.month())}</h2></div></section>` : `<div class="ac-stack">${attentionHtml()}${currencyCard(undefined, true)}${currencyCard('CAD', false)}</div>`);
+  const blocked = AC.blockedCard('journal');
+  const actions = blocked ? '' : `<button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv"${otherMonth() || !S.entries.length ? ' disabled' : ''}>Export CSV</button>${postControl()}`;
+  const body = blocked || (otherMonth() ? `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No entries for ${esc(AC.month())}</h2></div></section>` : `<div class="ac-stack">${attentionHtml()}${currencyCard(undefined, true)}${currencyCard('CAD', false)}</div>`);
   /* Back must not pour a remembered value into a redrawn select. */
   const head = AC.pageHead({ current:'journal', actions }).replace('id="monthSelect"', 'id="monthSelect" autocomplete="off"');
   document.getElementById('app').innerHTML = `<div class="ac-page">${head}${body}</div>`;
@@ -804,25 +869,34 @@ function downloadCsv(name, rows) {
 }
 function postModal() {
   const list = unposted();
-  const row = e => `<tr><td>${esc(e.name)}${e.cur ? ' ' + e.cur : ''}</td><td><div class="ac-name">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : ''}${ORDERS_OFF[e.id] ? `<span class="ac-chip ac-chip--warn">Orders off by ${money(ORDERS_OFF[e.id])}</span>` : ''}${e.native !== undefined ? `<span class="ac-chip ac-chip--warn">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>` : ''}</div></td><td class="ac-num">${money(totals(e).dr, e.cur)}</td></tr>`;
-  const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr class="ac-total"><td>Total ${cur || 'USD'}</td><td></td><td class="ac-num"><span>${money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur)}</span></td></tr>` : ''; };
-  const body = `<p class="ac-lead">To ${LEDGER}, dated Sep 30, 2026.</p>
-    <div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">Entries to post</caption><thead><tr><th scope="col">Entry</th><th scope="col">Status</th><th scope="col" class="ac-num">Amount</th></tr></thead><tbody>${list.filter(e => !e.cur).map(row).join('')}${total(undefined)}${list.filter(e => e.cur).map(row).join('')}${total('CAD')}</tbody></table></div>`;
+  const row = e => `<tr><th scope="row">${esc(e.name)}${e.cur ? ' ' + e.cur : ''}</th><td><div class="ac-name">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : ''}${ordersOffChip(e)}${e.native !== undefined ? `<span class="ac-chip ac-chip--warn">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>` : ''}</div></td><td class="ac-num">${money(totals(e).dr, e.cur)}</td></tr>`;
+  const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr class="ac-total"><th scope="row">Total ${cur || 'USD'}</th><td></td><td class="ac-num"><span>${money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur)}</span></td></tr>` : ''; };
+  const exceptions = AC.openExceptions();
+  const warning = exceptions.length ? `<p class="ac-lead ac-lead--chip"><a class="ac-chip ac-chip--warn" href="${esc(AC.hrefOf('exceptions'))}">${plural(exceptions.length, 'exception', 'exceptions')} open, ${AC.money(AC.sum(exceptions, ex => ex.amount))}</a></p>` : '';
+  const body = `<p class="ac-lead">To ${LEDGER}, dated Sep 30, 2026.</p>${warning}<p class="ac-sr" role="status" id="postLive"></p>
+    <div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">Entries to post</caption><thead><tr><th scope="col">Entry</th><th scope="col">Status</th><th scope="col" class="ac-num">Total debits</th></tr></thead><tbody>${list.filter(e => !e.cur).map(row).join('')}${total(undefined)}${list.filter(e => e.cur).map(row).join('')}${total('CAD')}</tbody></table></div>`;
   openModal('Post ' + plural(list.length, 'entry', 'entries'), body, `<button type="button" class="btn btn-neutral btn-md" id="postCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="postConfirm">Post ${plural(list.length, 'entry', 'entries')}</button>`);
   document.getElementById('postCancel').onclick = closeModal;
   document.getElementById('postConfirm').onclick = ev => {
     if (posting || ev.detail > 1) return;
     posting = true;
     const btn = ev.currentTarget, total = list.length;
+    /* The dialog holds focus while its buttons are off, and says once what is happening. */
+    document.getElementById('postLive').textContent = 'Posting ' + plural(total, 'entry', 'entries');
+    const box = btn.closest('[role="dialog"]');
+    box.tabIndex = -1;
+    box.focus({ preventScroll:true });
+    document.querySelectorAll('#modalHost a[href]').forEach(a => a.removeAttribute('href'));
     btn.disabled = true;
     btn.style.minWidth = btn.offsetWidth + 'px';
     document.getElementById('postCancel').disabled = true;
     document.getElementById('modalClose').style.visibility = 'hidden';
     const guard = e => { e.preventDefault(); e.returnValue = ''; };
+    postGuard = guard;
     window.addEventListener('beforeunload', guard);
     let done = 0;
     btn.textContent = 'Posting 1 of ' + total;
-    const tick = setInterval(() => {
+    const tick = postTick = setInterval(() => {
       done += 1;
       if (done < total) { btn.textContent = 'Posting ' + (done + 1) + ' of ' + total; return; }
       clearInterval(tick);
@@ -837,7 +911,7 @@ function postModal() {
       const late = FAIL_MODE === 'timeout' && !S.failedOnce ? list.find(e => e.id === 'amazon') : null;
       if (late) {
         S.posted[late.id] = 'checking'; S.failedOnce = true; S.open[late.id] = true;
-        setTimeout(() => { S.posted[late.id] = 'posted'; render(); toast('Amazon was already in ' + LEDGER + '. Not posted twice.'); }, 2000);
+        lateTimer = setTimeout(() => { S.posted[late.id] = 'posted'; render(); toast('Amazon was already in ' + LEDGER + '. Not posted twice.'); }, 2000);
       }
       S.hideDecisions = true;
       returnFocus = null;
@@ -847,9 +921,14 @@ function postModal() {
       toast(all ? 'No entries posted. ' + total + ' failed.' : plural(count, 'entry', 'entries') + ' posted to ' + LEDGER + '.' + (failed ? ' 1 failed.' : ''));
       const h = document.querySelector('#app h1');
       h.setAttribute('tabindex', '-1');
-      h.focus({ preventScroll:true });
+      const retry = document.querySelector('[data-post-retry]') || (all ? document.getElementById('postBtn') : null);
+      if (retry) { retry.scrollIntoView({ block:'center' }); focusNext(retry, { preventScroll:true }); }
+      else h.focus({ preventScroll:true });
     }, 160);
   };
+}
+function correctedOf(e, base, revision) {
+  return { id:base + '_' + revision, baseId:base, name:(e.baseName || e.name) + ', corrected', baseName:e.baseName || e.name, cur:e.cur, reserve:e.reserve, orders:e.orders, correctionOf:e.id, clearing:e.clearing, memo:e.memo + '. Corrected after reversal of ' + extId(e), lines:e.lines.map(l => Object.assign({}, l)) };
 }
 function reverseModal(id) {
   const e = entry(id);
@@ -859,7 +938,7 @@ function reverseModal(id) {
     const mirror = { id:id + '_rev', name:e.name + ', reversal', cur:e.cur, orders:0, reversalOf:id, memo:'Reversal of ' + extId(e), lines:e.lines.map(l => ({ id:'r_' + l.id, dr:l.cr, cr:l.dr, account:l.account, rec:l.account, bucket:l.bucket })) };
     const base = baseId(e);
     const revision = S.entries.filter(x => baseId(x) === base && !x.reversalOf).length + 1;
-    const corrected = { id:base + '_' + revision, baseId:base, name:(e.baseName || e.name) + ', corrected', baseName:e.baseName || e.name, cur:e.cur, reserve:e.reserve, orders:e.orders, correctionOf:id, clearing:e.clearing, memo:e.memo + '. Corrected after reversal of ' + extId(e), lines:e.lines.map(l => Object.assign({}, l)) };
+    const corrected = correctedOf(e, base, revision);
     S.entries.splice(S.entries.indexOf(e) + 1, 0, mirror, corrected);
     S.posted[id] = 'reversed';
     S.posted[mirror.id] = 'posted';
@@ -867,16 +946,16 @@ function reverseModal(id) {
     returnFocus = null;
     closeModal();
     render();
-    const scrollTo = x => { const b = document.querySelector('[data-entry-toggle="' + x.id + '"]'); if (b) { b.scrollIntoView({ block:'center' }); b.focus({ preventScroll:true }); } };
+    const scrollTo = x => { const b = document.querySelector('[data-entry-toggle="' + x.id + '"]'); if (b) { b.scrollIntoView({ block:'center' }); focusNext(b, { preventScroll:true }); } };
     toast((e.baseName || e.name) + (e.cur ? ' ' + e.cur : '') + ' reversed.', null, () => { overlayClosedAt = Date.now(); S.open[mirror.id] = true; render(); scrollTo(mirror); });
-    const f = document.querySelector('[data-entry-toggle="' + corrected.id + '"]');
-    if (f) f.focus({ preventScroll:true });
+    focusNext(document.querySelector('[data-entry-toggle="' + corrected.id + '"]'), { preventScroll:true });
   };
 }
 function exportCsv() {
-  const rows = [['date','account','line','debit','credit','currency','memo','entry_id','status','check','orders_check','external_id']];
-  const ordersCheck = e => e.start === undefined || e.reversalOf || e.id === 'stripe' ? '' : ORDERS_OFF[e.id] ? 'off by ' + ORDERS_OFF[e.id].toFixed(2) : 'tied';
-  S.entries.forEach(e => { const status = postState(e) || 'not posted', check = e.reversalOf ? '' : checkOf(e).word.toLowerCase(); e.lines.forEach(l => rows.push(['2026-09-30', l.account, l.bucket, l.dr !== undefined ? l.dr.toFixed(2) : '', l.cr !== undefined ? l.cr.toFixed(2) : '', e.cur || 'USD', e.memo, '2026-09-' + e.id, status, check, ordersCheck(e), postState(e) === 'posted' || postState(e) === 'reversed' ? extId(e) : ''])); });
+  const rows = [['Date','Account','Line','Debit','Credit','Currency','Memo','Entry id','Status','Check','Orders check','External id']];
+  const ordersCheck = e => !SCHEMA[baseId(e)] || e.reversalOf || baseId(e) === 'stripe' ? '' : ORDERS_OFF[baseId(e)] ? 'Off by ' + ORDERS_OFF[baseId(e)].amount.toFixed(2) : 'Tied';
+  const capital = word => word.charAt(0).toUpperCase() + word.slice(1);
+  S.entries.forEach(e => { const status = capital(postState(e) || 'not posted'), check = e.reversalOf ? '' : checkOf(e).word; e.lines.forEach(l => rows.push(['2026-09-30', l.account, l.bucket, l.dr !== undefined ? l.dr.toFixed(2) : '', l.cr !== undefined ? l.cr.toFixed(2) : '', e.cur || 'USD', e.memo, '2026-09-' + e.id, status, check, ordersCheck(e), postState(e) === 'posted' || postState(e) === 'reversed' ? extId(e) : ''])); });
   downloadCsv('journal-entries-2026-09.csv', rows);
   S.exported = JSON.stringify([S.entries, S.resolved, S.posted]);
   render();
@@ -899,6 +978,8 @@ document.addEventListener('click', e => {
   if (e.target.closest('.ac-nav [aria-current="page"]')) { e.preventDefault(); return; }
   const t = e.target.closest('button');
   if (!t) {
+    /* A link goes where it says. */
+    if (e.target.closest('a')) { clearTimeout(rowTimer); return; }
     /* A row waits for a possible second click, so a double click selects a word instead of opening anything. */
     if (String(window.getSelection())) return;
     if (e.detail > 1) { clearTimeout(rowTimer); return; }
@@ -918,27 +999,40 @@ document.addEventListener('click', e => {
   clearTimeout(rowTimer);
   if (t.dataset.issue) return issueModal(t.dataset.issue);
   if (t.dataset.entryToggle) { if (e.detail > 1) return; S.open[t.dataset.entryToggle] = !S.open[t.dataset.entryToggle]; render(); return; }
-  if (t.dataset.entryOpen) { overlayClosedAt = Date.now(); const id = t.dataset.entryOpen; S.open[id] = true; render(); const b = document.querySelector('[data-entry-toggle="' + id + '"]'); if (b) { b.focus({ preventScroll:true }); b.scrollIntoView({ block:'center' }); } return; }
+  if (t.dataset.entryOpen) { overlayClosedAt = Date.now(); const id = t.dataset.entryOpen; S.open[id] = true; render(); const b = document.querySelector('[data-entry-toggle="' + id + '"]'); if (b) { focusNext(b, { preventScroll:true }); b.scrollIntoView({ block:'center' }); } return; }
   if (t.dataset.orders) return openDrawer(t.dataset.orders, t.dataset.orders === 'other' ? 'Payments' : 'Orders');
   if (t.dataset.lineOrders) { const [a, b] = t.dataset.lineOrders.split(':'); const l = line(entry(a), b); return openDrawer(a, l.bucket, (['ref','fee','tax','bnk','pay'].includes(b) ? '-' : '') + money(l.dr !== undefined ? l.dr : l.cr, entry(a).cur), l.bucket); }
   if (t.dataset.entryOrders) { const [a, b] = t.dataset.entryOrders.split(':'); const e = entry(a); return openDrawer(a, b, (b === 'Activity' ? money(netOf(e), e.cur) : '-' + money(payoutOf(e), e.cur)), b); }
+  if (t.dataset.openAll) { if (e.detail > 1) return; const list = S.entries.filter(x => (x.cur || 'USD') === t.dataset.openAll); const open = !list.every(x => S.open[x.id]); list.forEach(x => { S.open[x.id] = open; }); render(); return; }
   if (t.id === 'toggleDecisions') { if (e.detail > 1) return; S.hideDecisions = !S.hideDecisions; render(); return; }
-  if (t.dataset.reset) { const [a, b] = t.dataset.reset.split(':'); const l = line(entry(a), b); const prev = l.account, prevKey = S.acct[a + ':' + b]; l.account = l.rec; delete S.acct[a + ':' + b]; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); const focusSel = () => { const f = document.querySelector('[data-key="acct:' + a + ':' + b + '"]') || document.querySelector('[data-key="toggle:' + a + '"]'); if (f) f.focus({ preventScroll:true }); }; toast('Back to ' + l.rec + '.', () => { line(entry(a), b).account = prev; if (prevKey !== undefined) S.acct[a + ':' + b] = prevKey; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); focusSel(); }); focusSel(); if (e.detail === 0) { const u = document.getElementById('toastUndo'); if (u) u.focus(); } return; }
+  if (t.dataset.reset) { const [a, b] = t.dataset.reset.split(':'); const l = line(entry(a), b); const prev = l.account, prevKey = S.acct[a + ':' + b]; l.account = l.rec; delete S.acct[a + ':' + b]; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); const focusSel = () => focusNext(document.querySelector('[data-key="acct:' + a + ':' + b + '"]') || document.querySelector('[data-key="toggle:' + a + '"]'), { preventScroll:true }); toast('Back to ' + l.rec + '.', () => { line(entry(a), b).account = prev; if (prevKey !== undefined) S.acct[a + ':' + b] = prevKey; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); focusSel(); }); focusSel(); if (e.detail === 0) AC.focusAfterAction(document.getElementById('toastUndo')); return; }
   if (t.id === 'exportCsv') { if (e.detail > 1) return; return exportCsv(); }
-  if (t.id === 'reconnect') { S.ledgerFixed = true; render(); toast(LEDGER + ' reconnected.'); const b = document.getElementById('postBtn'); if (b) b.focus(); return; }
+  if (t.id === 'reconnect') { S.ledgerFixed = true; render(); toast(LEDGER + ' reconnected.'); AC.focusAfterAction(document.getElementById('postBtn')); return; }
   if (t.dataset.copySource !== undefined) { const text = [...document.querySelectorAll('.ac-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
   if (t.dataset.reverse) { if (e.detail > 1) return; return reverseModal(t.dataset.reverse); }
   if (t.dataset.postRetry !== undefined) return postModal();
   if (t.id === 'postBtn') { if (e.detail > 1) return; if (t.getAttribute('aria-disabled') === 'true') { const note = document.getElementById('postNote'); return toast(note.textContent + '.'); } return postModal(); }
 });
 document.addEventListener('click', e => {
+  const again = e.target.closest('[data-recorrect]');
+  if (again) {
+    const x = entry(again.dataset.recorrect), base = baseId(x);
+    const fresh = correctedOf(x, base, S.entries.filter(y => baseId(y) === base && !y.reversalOf).length + 1);
+    const mirror = S.entries.find(y => y.reversalOf === x.id);
+    S.entries.splice(S.entries.indexOf(mirror || x) + 1, 0, fresh);
+    S.open[fresh.id] = true;
+    render();
+    const toggle = document.querySelector('[data-entry-toggle="' + fresh.id + '"]');
+    if (toggle) { toggle.scrollIntoView({ block:'center' }); toggle.focus({ preventScroll:true }); }
+    return;
+  }
   const d = e.target.closest('[data-discard]');
   if (!d) return;
   const x = entry(d.dataset.discard), at = S.entries.indexOf(x);
   S.entries.splice(at, 1);
   delete S.open[x.id];
   render();
-  toast(x.name + ' discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Discard undone.'); });
+  toast('Corrected ' + (x.baseName || x.name) + (x.cur ? ' ' + x.cur : '') + ' entry discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Discard undone.'); });
 });
 document.addEventListener('change', e => {
   const s = e.target;
@@ -951,10 +1045,12 @@ document.addEventListener('change', e => {
     const remember = v => { const k = entryId + ':' + lineId; const cur = line(entry(entryId), lineId); if (!cur) return; cur.account = v; if (v === cur.rec) delete S.acct[k]; else S.acct[k] = v; if (entryId === 'deferred' && (lineId === 'dco' || lineId === 'cog')) recomputeDeferred(); syncMemos(); };
     remember(s.value);
     render();
-    toast(l.bucket + ' now in ' + s.value + '.', () => { remember(previous); render(); toast('Change undone.'); const f = document.querySelector('[data-key="' + key + '"]') || document.querySelector('[data-key="toggle:' + entryId + '"]'); if (f) f.focus(); });
+    toast(l.bucket + ' now in ' + s.value + '.', () => { remember(previous); render(); toast('Change undone.'); focusNext(document.querySelector('[data-key="' + key + '"]') || document.querySelector('[data-key="toggle:' + entryId + '"]')); });
   }
 });
-if (CLOSED && (!S.posted || unposted().length)) {
+/* A closed month has every entry posted. */
+function seedClosed() {
+  if (!isClosed() || (S.posted && !unposted().length)) return;
   S = initial();
   ISSUES.forEach(i => { S.resolved[i.id] = i.options[0].id; });
   if (entry('deferred')) recomputeDeferred();
@@ -962,21 +1058,51 @@ if (CLOSED && (!S.posted || unposted().length)) {
   S.posted = {};
   S.entries.forEach(e => { S.posted[e.id] = 'posted'; });
 }
+seedClosed();
+applyMapping();
 /* This prototype is the Journal entries page only: other rail items stay inert, so nobody leaves and loses the decisions. */
 document.querySelectorAll('.pm-rail__item[title="Settings"], .pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
 render();
-/* A link from another page can open one entry: journal-entries.html#entry-tiktok */
+/* A link from another page can open one entry, journal-entries.html#entry-tiktok, or one decision, #decide-unmatched. */
 function openFromHash() {
   const m = location.hash.match(/^#entry-(.+)$/);
-  if (!m || !entry(m[1]) || otherMonth()) return;
+  const decide = location.hash === '#decide-unmatched' && ISSUES.some(i => i.id === 'unmatched');
+  if (!decide && !(m && entry(m[1]))) return;
+  if (otherMonth()) AC.setMonth(AC.MONTH);
+  if (decide) {
+    /* The dialog opens once: Back and a reload do not bring it again. */
+    history.replaceState(null, '', location.pathname + location.search);
+    render();
+    if (!readOnly() && !document.getElementById('modalBackdrop')) { issueModal('unmatched'); returnFocus = document.querySelector('[data-issue-row="unmatched"]'); }
+    return;
+  }
   S.open[m[1]] = true;
   render();
   const toggle = document.querySelector(`[data-entry-toggle="${CSS.escape(m[1])}"]`);
   if (toggle) { toggle.closest('tr').scrollIntoView({ block:'center' }); toggle.focus({ preventScroll:true }); }
 }
 window.addEventListener('hashchange', openFromHash);
-/* Back from another page: the section's counts may have moved. */
-window.addEventListener('pageshow', ev => { if (ev.persisted) { try { Object.assign(AC.state, JSON.parse(sessionStorage.getItem('ac-state') || '{}')); } catch (err) { /* this page only */ } render(); } });
+/* Back from the browser's page cache: the state as it is now, no old toast or overlay, and a reload elsewhere stays a reset. */
+window.addEventListener('pageshow', ev => {
+  if (!ev.persisted) return;
+  clearTimeout(toastTimer);
+  document.getElementById('toastHost').innerHTML = '';
+  const raw = AC.stateRaw();
+  if (!raw) { location.reload(); return; }
+  clearTimeout(lateTimer);
+  if (posting) { clearInterval(postTick); window.removeEventListener('beforeunload', postGuard); posting = false; }
+  if (document.getElementById('modalBackdrop')) { returnFocus = null; closeModal(); }
+  try {
+    Object.assign(AC.state, JSON.parse(raw));
+    const kept = takeKept();
+    if (!kept) S = initial();
+    else if (kept.search === QUERY) S = kept.state;
+    settleChecking();
+  } catch (err) { /* keep what is on screen */ }
+  seedClosed();
+  applyMapping();
+  render();
+});
 openFromHash();
 </script>
 </body>

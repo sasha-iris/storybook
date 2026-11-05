@@ -18,13 +18,16 @@
     a.ac-link:hover, a.ac-link:active { text-decoration-thickness:1px; }
     .ac-link--quiet { text-decoration-color:transparent; }
     .ac-tile__note { letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; }
-    .ac-close__head { box-sizing:border-box; min-height:56px; }
+    /* A row of cards inside the stack never widens the page. */
+    .ac-stack { grid-template-columns:minmax(0,1fr); }
     .ac-close__end { display:flex; flex:none; align-items:center; gap:16px; }
-    .ac-close__state { width:92px; text-align:right; }
-    .ac-cp.ac-card--off .ac-card__head { padding-bottom:8px; }
+    .ac-close__state { width:var(--ac-state); text-align:right; }
+    /* Under 1440 a checkpoint's note drops under its title. Month close takes the same head height, so the three cards' rows share their lines. */
     @media (min-width:1280px) and (max-width:1439px) {
       .ac-cp .ac-card__head { flex-direction:column; align-items:flex-start; gap:0; }
-      .ac-cp .ac-actions { margin-left:0; }
+      .ac-close__head { padding-bottom:28px; }
+      /* A done row's long fact takes the room its chip no longer needs, so the label is never cut. */
+      .ac-close__state--done { width:auto; }
     }
   </style>
 </head>
@@ -45,13 +48,14 @@
   const esc = AC.esc;
   const hasActivity = () => AC.month() === AC.MONTH;
 
-  /* ---------- Band ---------- */
+  /* ---------- Band. Charges, Fees and tax and Refunds foot to Activity. ---------- */
   const TILES = [
-    { id:'gross', label:'Gross', of:t => t.gross, page:'events', hash:'#cat=charge' },
+    { id:'charges', label:'Charges', of:t => t.gross, page:'events', hash:'#cat=charge' },
     { id:'fees', label:'Fees and tax', of:t => -(t.fees + t.tax), page:'events', hash:'#cat=feetax' },
     { id:'refunds', label:'Refunds', of:t => -t.refunds, page:'events', hash:'#cat=refund' },
-    { id:'net', label:'Net deposited', of:t => t.payouts, page:'settlements', hash:'', key:true },
-    { id:'transit', label:'Cash in transit', of:t => t.end, page:'balance', hash:'#all', carries:true },
+    { id:'activity', label:'Activity', of:t => t.net, page:'balance', hash:'#all', key:true },
+    { id:'paid', label:'Total paid out', of:t => t.payouts, page:'settlements', hash:'' },
+    { id:'ending', label:'Ending balance', of:t => t.end, page:'balance', hash:'#all', carries:true },
   ];
   const noteSlot = '<div class="ac-note ac-tile__note" aria-hidden="true">&nbsp;</div>';
 
@@ -60,21 +64,13 @@
     const amount = cur => (hasActivity() || tile.carries ? AC.round2(tile.of(AC.totals(cur))) : 0);
     const text = AC.signed(amount(main), main);
     const value = amount(main)
-      ? `<a class="ac-link ac-link--quiet" href="${AC.hrefOf(tile.page)}${tile.hash}" aria-label="${esc(tile.label)}, ${esc(text)}" data-key="tile-${tile.id}">${esc(text)}</a>`
+      ? `<a class="ac-link" href="${AC.hrefOf(tile.page)}${tile.hash}" aria-label="${esc(tile.label)}, ${esc(text)}" data-key="tile-${tile.id}">${esc(text)}</a>`
       : `<span class="ac-zero">${esc(text)}</span>`;
     const notes = others.map(cur => `<div class="ac-note ac-tile__note${amount(cur) ? '' : ' ac-zero'}">${esc(AC.signed(amount(cur), cur))}</div>`).join('');
     return `<div class="ac-tile${tile.key ? ' ac-tile--key' : ''}"><div class="ac-tile__label">${esc(tile.label)}</div><div class="ac-tile__value">${value}</div>${notes || noteSlot}</div>`;
   }
 
-  function exceptionsTile() {
-    const open = hasActivity() ? AC.openExceptions() : [];
-    const count = open.length;
-    const link = `<a class="ac-link" href="${AC.hrefOf('exceptions')}" aria-label="Open exceptions, ${count}" data-key="tile-exceptions">${count}</a>`;
-    const value = count ? link : `<span class="ac-zero">${hasActivity() ? link : count}</span>`;
-    return `<div class="ac-tile"><div class="ac-tile__label">Open exceptions</div><div class="ac-tile__value">${value}</div><div class="ac-note ac-tile__note${count ? '' : ' ac-zero'}">${esc(AC.money(AC.sum(open, ex => ex.amount)))}</div></div>`;
-  }
-
-  const band = () => `<section class="ac-card" aria-label="${esc(AC.month())} figures"><div class="ac-band ac-band--6">${TILES.map(moneyTile).join('')}${exceptionsTile()}</div></section>`;
+  const band = () => `<section class="ac-card" aria-label="${esc(AC.month())} figures"><div class="ac-band ac-band--6">${TILES.map(moneyTile).join('')}</div></section>`;
 
   /* ---------- Month close ---------- */
   function checkRow(check) {
@@ -83,10 +79,18 @@
     const state = check.done ? `<span class="ac-status ac-status--ok">${esc(check.status)}</span>`
       : check.page ? `<span class="ac-chip ac-chip--warn">${esc(check.status)}</span>`
       : `<span class="ac-status ac-status--quiet">${esc(check.status)}</span>`;
-    const end = `<span class="ac-close__end">${fact}<span class="ac-close__state">${state}</span></span>`;
+    const end = `<span class="ac-close__end">${fact}<span class="ac-close__state${check.done ? ' ac-close__state--done' : ''}">${state}</span></span>`;
     return check.page
       ? `<div class="ac-kv__row ac-kv__row--link"><a class="ac-kv__label ac-link ac-link--quiet" href="${AC.hrefOf(check.page)}${check.hash}" data-key="check-${check.id}">${esc(check.label)}</a>${end}</div>`
       : `<div class="ac-kv__row"><span class="ac-kv__label">${esc(check.label)}</span>${end}</div>`;
+  }
+
+  function mappingRow() {
+    const open = AC.unmapped();
+    if (!open.length) return '';
+    const rail = AC.RAILS.find(r => r.name === open[0].source && !r.cur);
+    const text = AC.count(open.length) + ' not mapped';
+    return `<div class="ac-kv__row"><span class="ac-note"><a class="ac-link" href="${AC.hrefOf('settings')}${rail ? '#' + rail.id : ''}" aria-label="Account mapping, ${esc(text)}" data-key="mappingLink">${esc(text)}</a></span></div>`;
   }
 
   function monthClose() {
@@ -95,35 +99,45 @@
     const word = esc(AC.PERIOD_STATUS[status]);
     const lock = AC.lockOf(month);
     const end = status === 'closed' && lock
-      ? `<span class="ac-note">Locked ${esc(lock.at)} by ${esc(lock.by)}</span>`
-      : `<a class="btn ${AC.closeReady(month) ? 'btn-primary' : 'btn-neutral'} btn-sm" href="${AC.hrefOf('close')}" data-key="closeLink">Close ${esc(month)}</a>`;
-    return `<section class="ac-card" aria-labelledby="monthCloseTitle"><div class="ac-card__head ac-close__head"><h2 class="ac-card__title" id="monthCloseTitle">Month close</h2>${status === 'closed' ? `<span class="ac-status ac-status--quiet">${word}</span>` : `<span class="ac-chip ac-chip--wait">${word}</span>`}<div class="ac-actions">${end}</div></div><div class="ac-kv">${AC.closeChecks(month).map(checkRow).join('')}</div></section>`;
+      ? `<span class="ac-note">${esc(lock.at)} by ${esc(lock.by === 'You' ? 'you' : lock.by)}</span>`
+      : `<a class="btn ${AC.closeReady(month) ? 'btn-primary' : 'btn-neutral'} btn-sm" href="${AC.hrefOf('close')}" data-key="closeLink">Go to Close</a>`;
+    return `<section class="ac-card ac-s6" aria-labelledby="monthCloseTitle"><div class="ac-card__head ac-close__head"><h2 class="ac-card__title" id="monthCloseTitle">Month close</h2>${status === 'closed' ? `<span class="ac-status ac-status--quiet">${word}</span>` : `<span class="ac-chip ac-chip--wait">${word}</span>`}<div class="ac-actions">${end}</div></div><div class="ac-kv">${AC.closeChecks(month).map(checkRow).join('')}${mappingRow()}</div></section>`;
   }
 
   /* ---------- Checkpoints ---------- */
   const MATCH_ROWS = [['matched', 'Matched'], ['partial', 'Partially matched'], ['unmatched', 'Unmatched'], ['pending', 'Pending']];
 
-  /* USD only. Other payments are USD orders with no rail, all of them unmatched, as in the Reconciliation total. */
-  function usdMatch(rows, key, others) {
+  /* USD only. The rail rows foot to Charges. */
+  function usdMatch(rows, key) {
     if (!hasActivity()) return [0, 0];
     const usd = rows.filter(r => !r.cur);
-    const extra = others && key === 'unmatched' ? others : null;
-    return [usd.reduce((n, r) => n + r[key][0], 0) + (extra ? extra.count : 0), AC.round2(AC.sum(usd, r => r[key][1]) + (extra ? extra.amount : 0))];
+    return [usd.reduce((n, r) => n + r[key][0], 0), AC.sum(usd, r => r[key][1])];
   }
 
-  function matchRow(rows, others, key, label) {
-    const [count, amount] = usdMatch(rows, key, others);
-    const tone = !amount ? ' ac-zero' : key === 'unmatched' ? ' ac-warn' : '';
-    return `<div class="ac-kv__row"><span class="ac-kv__label">${esc(label)}${count ? ` <span class="ac-muted">(${esc(AC.count(count))})</span>` : ''}</span><span class="ac-num${tone}">${esc(AC.money(amount))}</span></div>`;
+  const valueRow = (label, count, amount, warn) => `<div class="ac-kv__row"><span class="ac-kv__label">${esc(label)}${count ? ` <span class="ac-muted">(${esc(AC.count(count))})</span>` : ''}</span><span class="ac-num${!amount ? ' ac-zero' : warn ? ' ac-warn' : ''}">${esc(AC.money(amount))}</span></div>`;
+
+  const matchRows = (rows, warnKey) => MATCH_ROWS.map(m => { const [count, amount] = usdMatch(rows, m[0]); return valueRow(m[1], count, amount, m[0] === warnKey); }).join('');
+
+  /* Amber only while something is left to do: the Unmatched payments item, the failed payout's exception. */
+  const otherOpen = () => { const j = AC.state.journal; return !!j.open && !j.unmatchedDecision && !AC.periodClosed(AC.MONTH); };
+  const failedOpen = () => AC.openBreaks().some(s => s.status === 'failed');
+
+  function otherRow() {
+    if (AC.RAILS.length < 2) return '';
+    const other = AC.OTHER_PAYMENTS, on = hasActivity();
+    return valueRow(other.channel, on ? other.count : 0, on ? other.amount : 0, otherOpen());
   }
 
-  const stepNote = step => `<div class="ac-actions"><span class="ac-note">Checkpoint ${step}</span></div>`;
+  const stepNote = step => `<span class="ac-note">Checkpoint ${step}</span>`;
 
-  const checkpointCard = (step, title, rows, others) => `<section class="ac-card ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title"><a class="ac-link ac-link--quiet" href="${AC.hrefOf('reconciliation')}#checkpoint-${step}" data-key="checkpoint-${step}">${esc(title)}</a></h2>${stepNote(step)}</div><div class="ac-kv">${MATCH_ROWS.map(m => matchRow(rows, others, m[0], m[1])).join('')}</div></section>`;
+  const checkpointCard = (step, title, rows) => `<section class="ac-card ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title"><a class="ac-link ac-link--quiet" href="${AC.hrefOf('reconciliation')}#checkpoint-${step}" data-key="checkpoint-${step}">${esc(title)}</a></h2>${stepNote(step)}</div><div class="ac-kv">${rows}</div></section>`;
 
-  const offCard = (step, title) => `<section class="ac-card ac-card--off ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title">${esc(title)}</h2>${stepNote(step)}</div><div class="ac-kv"><div class="ac-kv__row"><span class="ac-kv__label ac-note">Not available yet</span></div></div></section>`;
+  /* One line, as on Reconciliation. */
+  const offCard = (step, title) => `<section class="ac-card ac-card--off ac-s6"><div class="ac-card__head"><h2 class="ac-card__title">${esc(title)}</h2>${stepNote(step)}<div class="ac-actions"><span class="ac-note">Not available yet</span></div></div></section>`;
 
-  const checkpoints = () => `<div class="ac-grid">${checkpointCard(1, 'Order to payment', AC.checkpointOrders(), AC.RAILS.length > 1 ? AC.OTHER_PAYMENTS : null)}${checkpointCard(2, 'Payment to settlement', AC.checkpointSettlements())}${offCard(3, 'Settlement to bank')}${offCard(4, 'Clearing to GL')}</div>`;
+  const working = () => `<div class="ac-grid">${monthClose()}${checkpointCard(1, 'Order to payment', matchRows(AC.checkpointOrders()) + otherRow())}${checkpointCard(2, 'Payment to settlement', matchRows(AC.checkpointSettlements(), failedOpen() ? 'unmatched' : ''))}</div>`;
+
+  const offStrips = () => `<div class="ac-grid">${offCard(3, 'Settlement to bank')}${offCard(4, 'Clearing to GL')}</div>`;
 
   /* ---------- Page ---------- */
   const lockMonthWhenOff = () => { const select = document.getElementById('monthSelect'); if (select && !AC.RAILS.length) select.disabled = true; };
@@ -132,7 +146,7 @@
 
   AC.start({
     current:'overview',
-    render:() => `<div class="ac-stack">${band()}${monthClose()}${checkpoints()}</div>`,
+    render:() => `<div class="ac-stack">${band()}${working()}${offStrips()}</div>`,
     ready:() => { lockMonthWhenOff(); window.addEventListener('pageshow', lockMonthWhenOff); },
   });
 })();

@@ -27,6 +27,13 @@
       body.ac .ac-rail-filter { width:160px; }
       .ac-bulk-more { display:none; }
     }
+    /* The sum needs the room: at this width the count keeps its figure and its word stays for screen readers, and the segments and Clear give up 4 a side. A very long sum cuts before the page ever scrolls sideways. */
+    @media (min-width:1024px) and (max-width:1279px) {
+      .ac-sel-word { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+      body.ac .ac-seg__item, body.ac #clearSel { padding:0 8px; }
+      .ac-bar .ac-actions { flex:0 1 auto; min-width:0; }
+      #selCount { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+    }
     @media (max-width:1023px) { .ac-bar .ac-actions { flex:0 0 100%; min-height:36px; justify-content:flex-end; } #exportWhy { display:none; } }
 
     /* The whole checkbox cell selects, so a near miss never opens the panel. */
@@ -43,6 +50,12 @@
     .ac-table .ac-row--picked:has(+ .ac-row--picked) td:first-child { border-bottom-left-radius:0; }
     .ac-table .ac-row--picked:has(+ .ac-row--picked) td:last-child { border-bottom-right-radius:0; }
     .ac-table--lines tbody .ac-row--picked + .ac-row--picked td::after { background:var(--ac-sel-h); }
+    /* The row header holds the hairline and the picked band of its cells. */
+    .ac-table--lines tbody tr + tr th { position:relative; }
+    .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:0; right:0; top:0; height:1px; background:var(--ac-hair); }
+    .ac-table .ac-row--picked th { background:var(--ac-sel); }
+    .ac-table .ac-row--picked:hover th { background:var(--ac-sel-h); }
+    .ac-table--lines tbody .ac-row--picked + .ac-row--picked th::after { background:var(--ac-sel-h); }
 
     /* Kebab menu: one shadow layer, placed by script so no card or page ever clips or grows. */
     body.ac .ac-menu { position:fixed; top:0; left:0; right:auto; z-index:20; width:160px; box-shadow:var(--ac-e1); }
@@ -52,6 +65,7 @@
 
     /* Dialog: the error line has its slot before it is needed. */
     .ac-field-error--slot { min-height:20px; }
+    .ac-accept-facts { margin:0 0 12px; }
 
     /* Panel: labels on one left edge with the panel head, values on a second. */
     .ac-panel__body .ac-kv { margin:0 -8px; padding:0; }
@@ -60,7 +74,7 @@
     .ac-kv__value { min-width:0; }
     .ac-panel__body .ac-kv__row--note { align-items:flex-start; padding-top:10px; padding-bottom:10px; }
     .ac-kv__row--note .ac-kv__value { white-space:pre-wrap; overflow-wrap:anywhere; }
-    .ac-activity__title { padding-bottom:4px; }
+    .ac-history__title { padding-bottom:4px; }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -96,6 +110,9 @@
   const typeOf = ex => AC.EXCEPTION_TYPES[ex.type];
   const hasRows = () => AC.month() === AC.MONTH;
   const isLocked = () => AC.periodClosed(AC.month());
+  const isReadOnly = () => isLocked() || AC.VIEW_ONLY;
+  /* The three exceptions the Unmatched payments item on Journal entries settles. */
+  const isUnmatched = ex => !!ex.link && ex.link.page === 'journal';
 
   /* Every rail, then the others that only appear on an exception, such as Afterpay. */
   function railOptions() {
@@ -143,13 +160,15 @@
 
   /* ---------- Selection: only what is on view and can still be accepted ---------- */
   let selected = new Set();
-  const selectableIds = () => (isLocked() ? [] : visibleRows().filter(ex => isOpenLike(AC.exceptionStatus(ex))).map(ex => ex.id));
+  const selectableIds = () => (isReadOnly() ? [] : visibleRows().filter(ex => isOpenLike(AC.exceptionStatus(ex))).map(ex => ex.id));
   const pruneSelection = () => { const ok = selectableIds(); selected = new Set([...selected].filter(id => ok.includes(id))); };
 
+  const sumOf = ids => AC.money(AC.sum(ids, id => byId(id).amount));
+  const selectionHtml = () => (selected.size ? `${selected.size}<span class="ac-sel-word"> selected</span> · ${sumOf([...selected])}` : '');
   function bulkHtml() {
     if (isLocked() && hasRows()) return `<span class="ac-note">${esc(AC.month())} is closed</span>`;
-    const n = selected.size;
-    return `<span class="ac-note" id="selCount" role="status">${n ? n + ' selected' : ''}</span>${n ? bulkButtons() : ''}`;
+    if (AC.VIEW_ONLY) return hasRows() ? '<span class="ac-note">View only</span>' : '';
+    return `<span class="ac-note" id="selCount" role="status">${selectionHtml()}</span>${selected.size ? bulkButtons() : ''}`;
   }
   const bulkButtons = () => '<button type="button" class="btn btn-ghost btn-sm" id="clearSel" data-key="clearSel">Clear</button><button type="button" class="btn btn-primary btn-sm" id="acceptSel" data-key="acceptSel" aria-label="Accept selected"><span>Accept<span class="ac-bulk-more"> selected</span></span></button>';
 
@@ -166,7 +185,7 @@
     });
     const count = document.getElementById('selCount');
     if (!count) return;
-    count.textContent = selected.size ? selected.size + ' selected' : '';
+    count.innerHTML = selectionHtml();
     const buttons = document.getElementById('acceptSel');
     if (selected.size && !buttons) count.insertAdjacentHTML('afterend', bulkButtons());
     if (!selected.size && buttons) { document.getElementById('clearSel').remove(); buttons.remove(); }
@@ -182,17 +201,27 @@
     return `<span class="ac-status ac-status--plain">${word}</span>`;
   }
   function hrefOfLink(link) { return link.page === 'settlements' ? AC.hrefOf('settlements') + '#' + link.id : AC.hrefOf('journal') + '#entry-other'; }
-  function subjectHtml(ex, inTable) { return ex.link ? `<a class="ac-link" href="${esc(hrefOfLink(ex.link))}"${inTable ? ` data-key="subject-${ex.id}"` : ''}>${esc(ex.subject)}</a>` : esc(ex.subject); }
+  const orderHref = order => AC.hrefOf('events') + '#q=' + order.replace('#', '');
+  function subjectHref(ex) {
+    if (ex.link) return hrefOfLink(ex.link);
+    if (ex.subject.startsWith('#')) return orderHref(ex.subject);
+    return ex.type === 'reserve_not_released' ? AC.hrefOf('balance') + '#' + ex.rail.replace('_', '-') : '';
+  }
+  function subjectHtml(ex, inTable) {
+    const href = subjectHref(ex);
+    const text = href ? `<a class="ac-link" href="${esc(href)}"${inTable ? ` data-key="subject-${ex.id}"` : ''}>${esc(ex.subject)}</a>` : esc(ex.subject);
+    return /^(po|txn)_/.test(ex.subject) ? `<span class="ac-mono">${text}</span>` : text;
+  }
 
   function rowHtml(ex) {
     const status = AC.exceptionStatus(ex);
-    const locked = isLocked();
+    const locked = isReadOnly();
     const name = esc(typeOf(ex) + ', ' + ex.subject);
     const box = !locked && isOpenLike(status) ? `<label class="ac-check"><input type="checkbox" class="form-check-input" data-pick="${ex.id}" data-key="pick-${ex.id}" aria-label="Select ${name}"${selected.has(ex.id) ? ' checked' : ''}></label>` : '';
     const kebab = locked ? '' : `<div class="ac-menu-wrap"><button type="button" class="pm-kebab" data-kebab="${ex.id}" data-key="kebab-${ex.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for ${name}">${KEBAB_ICON}</button></div>`;
     return `<tr class="ac-row--link${selected.has(ex.id) ? ' ac-row--picked' : ''}" data-drill data-ex="${ex.id}">
       <td class="ac-ctl">${box}</td>
-      <td><button type="button" class="ac-toggle" data-open="${ex.id}" data-key="open-${ex.id}" aria-haspopup="dialog">${esc(typeOf(ex))}</button></td>
+      <th scope="row"><button type="button" class="ac-toggle" data-open="${ex.id}" data-key="open-${ex.id}" aria-haspopup="dialog">${esc(typeOf(ex))}</button></th>
       <td>${severityHtml(ex)}</td>
       <td class="ac-num">${esc(moneyOf(ex))}</td>
       <td>${esc(ex.channel)}</td>
@@ -232,14 +261,16 @@
     if (view.severity || view.rail) return card(title('No exceptions match these filters') + '<button type="button" class="btn btn-neutral btn-sm" id="clearFilters" data-key="clearFilters">Clear filters</button>');
     if (view.status === 'open') {
       const elsewhere = AC.EXCEPTIONS.length > 0;
-      return card(title('No open exceptions') + (elsewhere ? '<p class="ac-empty__text"><a class="ac-link" href="#status=all" data-key="viewAll">View resolved and accepted</a></p>' : ''));
+      const j = AC.state.journal;
+      const left = !isLocked() && (j.open > 0 || j.total - j.posted > 0);
+      return card(title('No open exceptions') + (elsewhere ? '<p class="ac-empty__text"><a class="ac-link" href="#status=all" data-key="viewAll">View resolved and accepted</a></p>' : '') + (left ? `<p class="ac-empty__text"><a class="ac-link" href="${esc(AC.hrefOf('journal'))}" data-key="goJournal">Go to Journal entries</a></p>` : ''));
     }
     if (view.status === 'all') return card(title('No exceptions for ' + AC.month()));
     return card(title('No ' + view.status + ' exceptions'));
   }
 
   function barHtml() {
-    const segments = SEGMENTS.map(s => `<button type="button" class="ac-seg__item" data-seg="${s[0]}" data-key="seg-${s[0]}" aria-pressed="${view.status === s[0]}">${esc(s[1])} ${countIn(s[0])}</button>`).join('');
+    const segments = SEGMENTS.map(s => `<button type="button" class="ac-seg__item" data-seg="${s[0]}" data-key="seg-${s[0]}" aria-pressed="${view.status === s[0]}">${esc(s[1])} <span class="ac-muted">${countIn(s[0])}</span></button>`).join('');
     const severities = `<option value="">All severities</option>${SEVERITIES.map(s => `<option value="${s}"${view.severity === s ? ' selected' : ''}>${s}</option>`).join('')}`;
     const rails = `<option value="">All rails</option>${railOptions().map(o => `<option value="${esc(o.key)}"${view.rail === o.key ? ' selected' : ''}>${esc(o.label)}</option>`).join('')}`;
     return `<div class="ac-bar">
@@ -259,7 +290,7 @@
     const rows = visibleRows();
     if (!rows.length) return;
     const lines = [['Exception', 'Type', 'Severity', 'Amount', 'Currency', 'Rail', 'Subject', 'First seen', 'Status', 'Assignee', 'Note']];
-    rows.forEach(ex => lines.push([ex.id, typeOf(ex), ex.severity, ex.amount.toFixed(2), curOf(ex) || 'USD', ex.channel, ex.subject, ex.firstSeen, AC.EXCEPTION_STATUS[AC.exceptionStatus(ex)], AC.exceptionAssignee(ex), AC.exceptionNote(ex)]));
+    rows.forEach(ex => lines.push([ex.id, typeOf(ex), ex.severity, ex.amount.toFixed(2), curOf(ex) || 'USD', ex.channel, ex.subject, AC.isoDate(ex.firstSeen), AC.EXCEPTION_STATUS[AC.exceptionStatus(ex)], AC.exceptionAssignee(ex), AC.exceptionNote(ex)]));
     AC.downloadCsv('exceptions-' + AC.month().toLowerCase().replace(' ', '-') + '.csv', lines);
     AC.toast('CSV exported.');
   }
@@ -273,11 +304,11 @@
     const active = document.activeElement;
     if (active && active !== document.body) return;
     const kebabs = [...document.querySelectorAll('[data-kebab]')];
-    const target = kebabs[Math.min(indexBefore, kebabs.length - 1)] || document.querySelector('.ac-seg__item[aria-pressed="true"]');
-    if (target) target.focus({ preventScroll:true });
+    AC.focusAfterAction(kebabs[Math.min(indexBefore, kebabs.length - 1)] || document.querySelector('.ac-seg__item[aria-pressed="true"]'));
   }
 
-  function redraw() { AC.rerender(); if (panelId) showPanel(panelId, 'panelNeutral'); }
+  /* After a change in the panel focus rests on Close, so a second Enter never presses the next status action. */
+  function redraw() { AC.rerender(); if (panelId) { showPanel(panelId); AC.focusAfterAction(document.getElementById('modalClose')); } }
 
   function applyChange(ids, nextOf, logWord, message) {
     const order = visibleRows().map(ex => ex.id);
@@ -298,26 +329,29 @@
       });
       AC.save();
       AC.rerender();
-      const back = document.querySelector(`[data-kebab="${ids[0]}"]`) || document.querySelector('.ac-seg__item[aria-pressed="true"]');
-      if (back) back.focus({ preventScroll:true });
+      AC.focusAfterAction(document.querySelector(`[data-kebab="${ids[0]}"]`) || document.querySelector('.ac-seg__item[aria-pressed="true"]'));
     } });
   }
 
   function changeStatus(act, id) {
     const change = CHANGES[act];
-    applyChange([id], ex => ({ status:change.status, note:AC.exceptionNote(ex), assignee:change.claim ? claimed(ex) : AC.exceptionAssignee(ex) }), change.log, change.toast);
+    /* A reopened exception stays reopened through Investigate, so a later visit to Journal entries does not settle it again. */
+    const reopened = act === 'reopen' || !!(AC.state.exceptions[id] || {}).reopened;
+    applyChange([id], ex => Object.assign({ status:change.status, note:AC.exceptionNote(ex), assignee:change.claim ? claimed(ex) : AC.exceptionAssignee(ex) }, reopened ? { reopened:true } : {}), change.log, change.toast);
   }
 
   function acceptDialog(ids) {
     const n = ids.length;
     const title = n === 1 ? 'Accept exception' : `Accept ${n} exceptions`;
+    const high = ids.filter(id => byId(id).severity === 'High').length;
+    const facts = sumOf(ids) + (high ? ` · ${high} High` : '');
     if (panelId) returnToPanel = panelId;
     AC.openDialog({
       title,
-      body:`<label class="ac-label" for="acceptNote">Note</label><textarea class="ac-input" id="acceptNote" rows="3" required aria-describedby="acceptNoteError"></textarea><p class="ac-field-error ac-field-error--slot" id="acceptNoteError" aria-live="polite"></p>`,
+      body:`<p class="ac-note ac-accept-facts" id="acceptFacts">${esc(facts)}</p><label class="ac-label" for="acceptNote">Note</label><textarea class="ac-input" id="acceptNote" rows="3" required aria-describedby="acceptFacts acceptNoteError"></textarea><p class="ac-field-error ac-field-error--slot" id="acceptNoteError" aria-live="polite"></p>`,
       actions:[
         { label:'Cancel', kind:'alternative', onClick:() => AC.closeDialog() },
-        { label:n === 1 ? 'Accept' : title, kind:'primary', onClick:() => submitAccept(ids) },
+        { label:title, kind:'primary', onClick:() => submitAccept(ids) },
       ],
     });
     const area = document.getElementById('acceptNote');
@@ -362,33 +396,43 @@
   function kvRow(label, value, extra = '') { return `<div class="ac-kv__row${extra}"><span class="ac-kv__label ac-muted">${esc(label)}</span><span class="ac-kv__value">${value}</span></div>`; }
 
   function panelActions(ex, status) {
-    if (isLocked()) return '';
+    if (isReadOnly()) return '';
     const button = (act, label, kind, key) => `<button type="button" class="btn ${kind} btn-sm" data-act="${act}" data-id="${ex.id}" data-key="${key}">${label}</button>`;
-    if (status === 'open') return button('investigate', 'Investigate', 'btn-neutral', 'panelNeutral') + button('accept', 'Accept with note', 'btn-primary', 'panelPrimary');
-    if (status === 'investigating') return button('resolve', 'Resolve', 'btn-neutral', 'panelNeutral') + button('accept', 'Accept with note', 'btn-primary', 'panelPrimary');
-    return button('reopen', 'Reopen', 'btn-neutral', 'panelNeutral');
+    const decide = isUnmatched(ex) && !AC.state.journal.unmatchedDecision ? `<a class="btn btn-primary btn-sm" href="${esc(AC.hrefOf('journal') + '#decide-unmatched')}" data-key="panelPrimary">Decide in Journal entries</a>` : '';
+    const primary = decide || button('accept', 'Accept with note', 'btn-primary', 'panelPrimary');
+    if (status === 'open') return button('investigate', 'Investigate', 'btn-neutral', 'panelNeutral') + primary;
+    if (status === 'investigating') return button('resolve', 'Resolve', 'btn-neutral', 'panelNeutral') + primary;
+    return button('reopen', 'Reopen', 'btn-neutral', 'panelNeutral') + decide;
+  }
+
+  /* What a settlement break needs to be judged: both nets and the order behind the gap. */
+  function breakFacts(ex) {
+    if (ex.type !== 'settlement_waterfall_break') return '';
+    const s = AC.settlement(ex.link.id);
+    const order = AC.ORDERS[s.rail].find(o => o[4] === s.id);
+    const net = v => `<span class="ac-num">${esc(AC.money(v, s.cur))}</span>`;
+    return kvRow('Reported net', net(s.reportedNet)) + kvRow('Expected net', net(s.expectedNet)) + (order ? kvRow('Order', `<a class="ac-link" href="${esc(orderHref(order[0]))}">${esc(order[0])}</a>`) : '');
   }
 
   function panelBody(ex, status) {
     const note = AC.exceptionNote(ex);
     const who = AC.exceptionAssignee(ex);
-    const assignee = isLocked() ? esc(who) : `<select class="form-input form-select ac-select ac-select--row ac-w160" id="assigneeSelect" data-id="${ex.id}" data-key="assigneeSelect" aria-label="Assignee">${ASSIGNEES.map(a => `<option${a === who ? ' selected' : ''}>${a}</option>`).join('')}</select>`;
-    const decided = (AC.state.exceptions[ex.id] || {}).by === 'journal';
-    const decide = ex.link && ex.link.page === 'journal' && !decided ? kvRow('Decision', `<a class="ac-link" href="${esc(hrefOfLink(ex.link))}">Decide in Journal entries</a>`) : '';
+    const assignee = isReadOnly() ? esc(who) : `<select class="form-input form-select ac-select ac-select--row ac-w160" id="assigneeSelect" data-id="${ex.id}" data-key="assigneeSelect" aria-label="Assignee">${ASSIGNEES.map(a => `<option${a === who ? ' selected' : ''}>${a}</option>`).join('')}</select>`;
+    const decision = isUnmatched(ex) ? AC.state.journal.unmatchedDecision : '';
     const entry = AC.state.exceptions[ex.id];
     const lines = (AC.state.exceptionLog[ex.id] || []).slice();
     if (entry && entry.by === 'journal') lines.push({ label:AC.EXCEPTION_STATUS[entry.status], by:'You', when:'just now' });
     return `<div class="ac-kv">
         ${kvRow('Severity', severityHtml(ex))}
-        ${kvRow('Rail', esc(ex.channel))}
         ${kvRow('Subject', subjectHtml(ex))}
+        ${breakFacts(ex)}
         ${kvRow('Status', statusHtml(status))}
         ${kvRow('Assignee', assignee)}
-        ${kvRow('Note', note ? esc(note) : '<span class="ac-zero">–<span class="ac-sr"> not available</span></span>', ' ac-kv__row--note')}
-        ${decide}
+        ${decision && note === decision ? '' : kvRow('Note', note ? esc(note) : '<span class="ac-zero">–<span class="ac-sr"> not available</span></span>', ' ac-kv__row--note')}
+        ${decision ? kvRow('Decision', esc(decision), ' ac-kv__row--note') : ''}
       </div>
       <div>
-        <h2 class="ac-card__title ac-activity__title">Activity</h2>
+        <h2 class="ac-card__title ac-history__title">History</h2>
         <div class="ac-kv">
           ${kvRow('First seen', esc(ex.firstSeen))}
           ${lines.map(l => kvRow(l.label, `<span class="ac-note">${esc(l.by)} · ${esc(l.when)}</span>`)).join('')}
@@ -401,7 +445,7 @@
     if (!ex) return;
     panelId = id;
     const status = AC.exceptionStatus(ex);
-    AC.openPanel({ title:typeOf(ex), amount:moneyOf(ex), meta:ex.channel + ' · First seen ' + ex.firstSeen, actions:panelActions(ex, status), body:panelBody(ex, status) });
+    AC.openPanel({ title:typeOf(ex), amount:moneyOf(ex), meta:`${ex.channel} · ${curOf(ex) || 'USD'} · ${AC.MONTH}`, actions:panelActions(ex, status), body:panelBody(ex, status) });
     markPanelRow();
     const target = focusKey && (document.querySelector(`#modalHost [data-key="${focusKey}"]`) || document.querySelector('#modalHost [data-key="panelNeutral"]'));
     if (target) target.focus();

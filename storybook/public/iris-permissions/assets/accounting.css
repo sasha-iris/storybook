@@ -132,3 +132,35 @@ body.ac .ac-w160 { width:176px; }
 body.ac .ac-input { font-family:inherit; }
 .ac-empty__title { font-size:14px; line-height:20px; font-weight:600; letter-spacing:0; color:var(--ac-ink); }
 body.ac .ac-actions .btn-ghost:hover { background:var(--ac-track); color:var(--ac-ink); }
+/* Round 1: selected segment reads without colour, empty fields have an edge, row headers look like cells, a dialog that holds focus while posting shows no ring. */
+.ac-seg__item[aria-pressed="true"] { box-shadow:0 0 0 1px #6B7280; }
+body.ac .ac-input { border-color:#858C99; }
+body.ac .ac-input:hover { border-color:#6B7280; }
+.ac-table tbody th { font-weight:400; color:var(--ac-ink); }
+.ac-table .ac-total th { height:44px; padding-bottom:12px; vertical-align:bottom; font-weight:600; }
+.ac-table .ac-row--link:hover th { background:var(--ac-sub); } .ac-table .ac-row--link:active th { background:var(--ac-page); } .ac-table .ac-row--sel th { background:var(--ac-sel); } .ac-table .ac-row--sel:hover th { background:var(--ac-sel-h); }
+.ac-table .ac-row--open th, .ac-table .ac-child th { background:var(--ac-sub); border-radius:0; } .ac-table .ac-row--open:hover th { background:var(--ac-page); }
+.ac-table .ac-child--head th { height:28px; font-size:12px; line-height:16px; font-weight:500; color:var(--ac-3); letter-spacing:0; }
+[role="dialog"]:focus { outline:none; }
+/* Round 1, visual: focus, hover and press that can be seen; quiet zero totals; one card head height. */
+@media (min-width:982px) { .ac-nav { overflow:visible; } body.ac .ac-nav__item:focus-visible { outline-offset:2px; } }
+body.ac .ac-select:focus-visible { border-color:var(--ac-ctl-h); }
+.ac-row--link:hover td, .ac-table .ac-row--link:hover th, .ac-kv__row--link:hover { background:#F3F4F6; }
+.ac-row--link:active td, .ac-table .ac-row--link:active th, .ac-kv__row--link:active { background:#E5E7EB; }
+.ac-table .ac-row--sel:hover td, .ac-table .ac-row--sel:hover th { background:var(--ac-sel-h); }
+.ac-table .ac-row--open:hover td, .ac-table .ac-row--open:hover th { background:#E5E7EB; }
+.ac-table .ac-row--open:active td, .ac-table .ac-row--open:active th { background:#D1D5DB; }
+body.ac .btn-primary:active:not([aria-disabled="true"]) { background:#2C2663; border-color:#2C2663; }
+body.ac .ac-actions .btn-ghost:active { background:#D1D5DB; }
+.ac-total .ac-num.ac-zero > span { border-top-color:transparent; }
+.ac-table .ac-total td.ac-zero { font-weight:400; }
+.ac-band--flush { grid-template-columns:1fr; }
+.ac-card__head .btn { margin-block:-6px; }
+.ac-chev { margin:0 2px 0 -8px; }
+.ac-table--panel td:nth-child(8), .ac-table--panel th:nth-child(8) { padding-left:24px; }
+
+a.ac-chip { text-decoration:underline solid var(--ac-ul) 1px; text-underline-offset:3px; }
+a.ac-chip:hover { color:var(--ac-pri); text-decoration-color:currentColor; }
+a.ac-chip:active { color:var(--ac-pri-d); text-decoration-color:currentColor; }
+.ac-table--lines tbody tr + tr th { position:relative; }
+.ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:8px; right:0; top:0; height:1px; background:var(--ac-hair); }

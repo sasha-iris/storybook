@@ -20,21 +20,22 @@
     body.ac .ac-close-action[aria-disabled="true"] { pointer-events:auto; }
     /* From 1280 the two cards sit side by side: period rows share the checklist's lines and one bottom edge. */
     @media (min-width:1280px) { .ac-close-head--periods { min-height:64px; padding-bottom:16px; box-sizing:border-box; } }
-    /* Checklist row: label, fact ending on the head note's right edge, status ending on the button's right edge. */
-    .ac-close-check { display:grid; grid-template-columns:minmax(0,1fr) auto 124px; gap:0 8px; }
+    /* Checklist row: label, amount, then the state on one left edge, so a chip is never a page width from its label. */
+    .ac-close-check { display:grid; grid-template-columns:280px 112px minmax(0,1fr); }
     .ac-close-check .ac-kv__label { overflow:visible; }
+    /* Beside Months the card is narrow: the longest label still fits and a done row keeps its whole fact. */
+    @media (min-width:1280px) and (max-width:1439px) { .ac-close-check { grid-template-columns:240px 112px minmax(0,1fr); } }
+    @media (max-width:767px) { .ac-close-check { grid-template-columns:minmax(0,1fr) 72px var(--ac-state); } .ac-close-check .ac-kv__label { overflow:hidden; } }
     /* The whole row is the link, as on Overview: no underline until the pointer is on it. */
-    .ac-close-check .ac-link:not(:hover):not(:active) { text-decoration-color:transparent; }
+    .ac-kv__row--link .ac-link:not(:hover):not(:active) { text-decoration-color:transparent; }
     .ac-close-check a.ac-link:hover, .ac-close-check a.ac-link:active { text-decoration-thickness:1px; }
-    .ac-close-state { grid-column:3; justify-self:end; }
-    .ac-close-state--wide { grid-column:2 / -1; }
+    .ac-close-state { display:flex; grid-column:3; align-items:center; gap:8px; min-width:0; }
+    .ac-close-state > * { flex:none; }
+    .ac-close-state > .ac-note { flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
     .ac-close-line { margin:0; }
     /* Two short columns: this table never needs the scroll width the long tables take under 1024. */
     .ac-table.ac-close-periods { min-width:0; }
     body.ac .ac-close-period .ac-toggle:focus-visible { border-radius:2px; }
-    /* The month card's head sits where the toast normally lands, and it holds what just changed: the toast waits under the cards. */
-    body.ac #toastHost { top:auto; bottom:16px; }
-    @media (min-width:1280px) and (min-height:490px) { body.ac #toastHost { top:410px; bottom:auto; } }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -61,41 +62,43 @@ const selected = () => periodInHash() || defaultPeriod();
 function syncMonth() { const month = periodInHash(); if (month && AC.MONTHS.includes(month)) AC.setMonth(month); }
 function writeDefaultHash() { if (!periodInHash()) history.replaceState(null, '', location.pathname + location.search + '#' + idOf(selected())); }
 
-/* ---------- Periods ---------- */
+/* ---------- Months ---------- */
 const periodStatus = month => {
   const status = AC.periodStatus(month), word = esc(AC.PERIOD_STATUS[status]);
   return status === 'closed' ? `<span class="ac-status ac-status--quiet">${word}</span>` : `<span class="ac-chip ac-chip--wait">${word}</span>`;
 };
-const periodRow = (month, current) => `<tr class="ac-row--link ac-close-period${current ? ' ac-row--sel' : ''}" data-month="${esc(month)}"><td><button type="button" class="ac-toggle" data-period="${esc(month)}" data-key="period-${idOf(month)}"${current ? ' aria-current="true"' : ''}>${esc(month)}</button></td><td class="ac-right">${periodStatus(month)}</td></tr>`;
+const periodRow = (month, current) => `<tr class="ac-row--link ac-close-period${current ? ' ac-row--sel' : ''}" data-month="${esc(month)}"><th scope="row"><button type="button" class="ac-toggle" data-period="${esc(month)}" data-key="period-${idOf(month)}"${current ? ' aria-current="true"' : ''}>${esc(month)}</button></th><td class="ac-right">${periodStatus(month)}</td></tr>`;
 const periodsCard = current => `<section class="ac-card ac-s4" aria-labelledby="periodsTitle">
-  <div class="ac-card__head ac-close-head--periods"><h2 class="ac-card__title" id="periodsTitle">Periods</h2></div>
-  <div class="ac-wrap"><table class="ac-table ac-close-periods"><caption class="ac-sr">Periods, newest first</caption><colgroup><col><col class="ac-col-state"></colgroup>
-    <thead><tr><th scope="col">Period</th><th scope="col" class="ac-right">Status</th></tr></thead>
+  <div class="ac-card__head ac-close-head--periods"><h2 class="ac-card__title" id="periodsTitle">Months</h2></div>
+  <div class="ac-wrap"><table class="ac-table ac-close-periods"><caption class="ac-sr">Months, newest first</caption><colgroup><col><col class="ac-col-state"></colgroup>
+    <thead><tr><th scope="col">Month</th><th scope="col" class="ac-right">Status</th></tr></thead>
     <tbody>${[...AC.PERIODS].sort((a, b) => idOf(b.month).localeCompare(idOf(a.month))).map(p => periodRow(p.month, p.month === current)).join('')}</tbody>
   </table></div></section>`;
 
 /* ---------- Checklist ---------- */
 const isAmount = fact => /^(CA)?\$/.test(fact);
-const factHtml = fact => (fact ? `<span class="ac-note${isAmount(fact) ? ' ac-num' : ''}">${esc(fact)}</span>` : '');
-const stateHtml = (c, wide) => {
-  const place = wide ? 'ac-close-state ac-close-state--wide' : 'ac-close-state';
-  if (c.done) return `<span class="ac-status ac-status--ok ${place}">${esc(c.status)}</span>`;
-  if (!c.page) return `<span class="ac-status ac-status--quiet ${place}">${esc(c.status)}</span>`;
-  return `<span class="ac-chip ac-chip--warn ${place}">${esc(c.status)}</span>`;
+const stateHtml = c => {
+  const state = c.done ? `<span class="ac-status ac-status--ok">${esc(c.status)}</span>`
+    : c.page ? `<span class="ac-chip ac-chip--warn">${esc(c.status)}</span>`
+    : `<span class="ac-status ac-status--quiet">${esc(c.status)}</span>`;
+  const fact = c.fact && !isAmount(c.fact) ? `<span class="ac-note">${esc(c.fact)}</span>` : '';
+  return `<span class="ac-close-state">${state}${fact}</span>`;
 };
 const checkRow = c => {
   const href = c.page ? AC.hrefOf(c.page) + c.hash : '';
+  if (c.id === 'mapping') return `<div class="ac-kv__row ac-close-check" role="listitem"><span class="ac-kv__label">${esc(c.label)}</span><span class="ac-note ac-close-state"><a class="ac-link" href="${esc(href)}" data-key="check-mapping">${esc(c.status)}</a></span></div>`;
+  const amount = isAmount(c.fact) ? `<span class="ac-note ac-num">${esc(c.fact)}</span>` : '';
   const label = href ? `<a class="ac-link" href="${esc(href)}" data-key="check-${esc(c.id)}">${esc(c.label)}</a>` : esc(c.label);
-  return `<div class="ac-kv__row ac-close-check${href ? ' ac-kv__row--link' : ''}" role="listitem" data-done="${c.done}"><span class="ac-kv__label${href || c.done ? '' : ' ac-zero'}">${label}</span>${factHtml(c.fact)}${stateHtml(c, !c.fact)}</div>`;
+  return `<div class="ac-kv__row ac-close-check${href ? ' ac-kv__row--link' : ''}" role="listitem" data-done="${c.done}"><span class="ac-kv__label${href || c.done ? '' : ' ac-zero'}">${label}</span>${amount}${stateHtml(c)}</div>`;
 };
 const mappingCheck = () => {
   const open = AC.unmapped();
   if (!open.length) return null;
   const rail = AC.RAILS.find(r => r.name === open[0].source && !r.cur);
-  return { id:'mapping', label:'Account mapping', done:false, status:AC.count(open.length) + (open.length === 1 ? ' bucket' : ' buckets') + ' not mapped', fact:'', page:'settings', hash:rail ? '#' + rail.id : '' };
+  return { id:'mapping', label:'Account mapping', done:false, status:AC.count(open.length) + ' not mapped', fact:'', page:'settings', hash:rail ? '#' + rail.id : '' };
 };
 const rowsOf = month => {
-  const mapping = AC.periodClosed(month) ? null : mappingCheck();
+  const mapping = mappingCheck();
   return AC.closeChecks(month).concat(mapping ? [mapping] : []);
 };
 
@@ -108,18 +111,19 @@ const blockerNote = month => {
 const monthActions = month => {
   if (AC.periodClosed(month)) {
     const lock = AC.lockOf(month);
-    const reopen = AC.state.closed[month] ? '<button type="button" class="btn btn-sm pm-danger ac-close-action" data-act="reopen" data-key="periodAction">Reopen period</button>' : '';
-    return `<span class="ac-chip ac-chip--wait">Locked</span><span class="ac-note">${esc(lock.at)} by ${esc(lock.by)}</span>${reopen}`;
+    const reopen = AC.state.closed[month] && !AC.VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-close-action" data-act="reopen" data-key="periodAction">Reopen ${esc(month)}</button>` : '';
+    return `<span class="ac-note">${esc(lock.at)} by ${esc(lock.by === 'You' ? 'you' : lock.by)}</span>${reopen}`;
   }
   const ready = AC.closeReady(month), note = blockerNote(month);
-  return `${note ? `<span class="ac-note" id="closeNote">${esc(note)}</span>` : ''}<button type="button" class="btn btn-primary btn-sm ac-close-action" data-act="close" data-key="periodAction"${ready ? '' : ' aria-disabled="true"'}${note ? ' aria-describedby="closeNote"' : ''}>Close ${esc(month)}</button>`;
+  const close = AC.VIEW_ONLY ? '' : `<button type="button" class="btn btn-primary btn-sm ac-close-action" data-act="close" data-key="periodAction"${ready ? '' : ' aria-disabled="true"'}${note ? ' aria-describedby="closeNote"' : ''}>Close ${esc(month)}</button>`;
+  return `${note ? `<span class="ac-note" id="closeNote">${esc(note)}</span>` : ''}${close}`;
 };
 const monthCard = month => `<section class="ac-card ac-s8" aria-labelledby="monthTitle">
   <div class="ac-card__head ac-close-head"><h2 class="ac-card__title ac-close-title" id="monthTitle">${esc(month)}</h2>${periodStatus(month)}<div class="ac-actions">${monthActions(month)}</div></div>
   <div class="ac-kv" role="list" aria-labelledby="monthTitle">${rowsOf(month).map(checkRow).join('')}</div></section>`;
 
 /* ---------- Closing and reopening ---------- */
-function focusAction() { const el = document.querySelector('[data-key="periodAction"]'); if (el) el.focus(); }
+function focusAction() { AC.focusAfterAction(document.querySelector('[data-key="periodAction"]')); }
 function setLock(month, lock) {
   if (lock) AC.state.closed[month] = lock; else delete AC.state.closed[month];
   AC.save();
@@ -127,28 +131,30 @@ function setLock(month, lock) {
 }
 function closePeriod(month) {
   AC.closeDialog();
-  setLock(month, { at:'Nov 5, 2026', by:'You' });
+  setLock(month, { at:'Oct 8, 2026', by:'You' });
   AC.toast(month + ' closed.', { undo:() => { setLock(month, null); focusAction(); } });
+  focusAction();
 }
 function reopenPeriod(month) {
   const lock = AC.state.closed[month];
   AC.closeDialog();
   setLock(month, null);
   AC.toast(month + ' reopened.', { undo:() => { setLock(month, lock); focusAction(); } });
+  focusAction();
 }
 function askClose(month) {
   const posted = AC.state.journal.posted;
   AC.openDialog({
     title:'Close ' + month,
     body:`<p class="ac-close-line">${AC.count(posted)} ${posted === 1 ? 'entry' : 'entries'} posted to ${esc(AC.LEDGER)}.</p><p class="ac-close-line">Entries can no longer change.</p>`,
-    actions:[{ label:'Cancel', kind:'alternative', autofocus:true, onClick:() => AC.closeDialog() }, { label:'Close period', kind:'primary', onClick:() => closePeriod(month) }],
+    actions:[{ label:'Cancel', kind:'alternative', autofocus:true, onClick:() => AC.closeDialog() }, { label:'Close ' + month, kind:'primary', onClick:() => closePeriod(month) }],
   });
 }
 function askReopen(month) {
   AC.openDialog({
     title:'Reopen ' + month,
     body:'<p class="ac-close-line">Entries can change again.</p>',
-    actions:[{ label:'Cancel', kind:'alternative', autofocus:true, onClick:() => AC.closeDialog() }, { label:'Reopen period', kind:'danger', onClick:() => reopenPeriod(month) }],
+    actions:[{ label:'Cancel', kind:'alternative', autofocus:true, onClick:() => AC.closeDialog() }, { label:'Reopen ' + month, kind:'danger', onClick:() => reopenPeriod(month) }],
   });
 }
 /* A blocked Close points at what blocks it. The band shows a mouse user where focus went, since a mouse shows no ring. */
@@ -156,7 +162,7 @@ function pointAtBlocker(month) {
   if (month !== AC.MONTH) {
     if (AC.periodClosed(AC.MONTH)) return;
     const period = document.querySelector(`[data-period="${CSS.escape(AC.MONTH)}"]`);
-    if (period) period.focus();
+    AC.focusAfterAction(period);
     return;
   }
   const row = document.querySelector('.ac-close-check[data-done="false"]');
@@ -164,12 +170,12 @@ function pointAtBlocker(month) {
   if (!link) return;
   row.classList.add('ac-kv__row--sel');
   link.addEventListener('blur', () => row.classList.remove('ac-kv__row--sel'), { once:true });
-  link.focus();
+  AC.focusAfterAction(link);
 }
 function exportChecklist() {
   const month = selected(), lock = AC.lockOf(month);
   const period = [month, idOf(month), AC.PERIOD_STATUS[AC.periodStatus(month)]];
-  const rows = [['Period', 'Period id', 'Period status', 'Check', 'Check id', 'Status', 'Detail', 'Currency', 'Locked', 'Locked by']]
+  const rows = [['Month', 'Month id', 'Month status', 'Check', 'Check id', 'Status', 'Detail', 'Currency', 'Closed', 'Closed by']]
     .concat(rowsOf(month).map(c => period.concat([c.label, c.id, c.status, c.fact, isAmount(c.fact) ? 'USD' : '', lock ? lock.at : '', lock ? lock.by : ''])));
   AC.downloadCsv('close-' + idOf(month) + '.csv', rows);
   AC.toast('CSV exported.');

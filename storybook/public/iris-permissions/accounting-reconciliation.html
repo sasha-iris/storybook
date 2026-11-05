@@ -34,6 +34,14 @@
     .ac-row--link:hover .ac-spark circle { stroke:var(--ac-sub); }
     .ac-row--link:active .ac-spark circle { stroke:var(--ac-page); }
     @media (prefers-reduced-motion:reduce) { .ac-spark circle { transition:none; } }
+    /* Order to payment panel: sample orders with the narrow gutter, so CA$ amounts fit. Its empty line sits on the panel's left edge. */
+    .ac-table--panel { --ac-gut:12px; }
+    .ac-table--panel td, .ac-table--panel tbody th { overflow:visible; }
+    .ac-table--orders col:nth-child(1) { width:64px; } .ac-table--orders col:nth-child(2) { width:72px; } .ac-table--orders col:nth-child(3) { width:96px; } .ac-table--orders col:nth-child(4), .ac-table--orders col:nth-child(7) { width:88px; } .ac-table--orders col:nth-child(5), .ac-table--orders col:nth-child(6) { width:80px; } .ac-table--orders col:nth-child(8) { width:96px; }
+    .ac-panel__body .ac-empty { padding:0; }
+    /* The clearing total prints Ending only, so under 1280 its label runs on over the empty Starting cell. */
+    .ac-table .ac-total--clearing th { overflow:visible; }
+    .ac-row--sel .ac-link { text-decoration-color:currentColor; }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -55,11 +63,19 @@ const isZero = n => AC.round2(n) === 0;
 const hasActivity = () => AC.month() === AC.MONTH;
 
 /* ---------- Clearing roll-forward ---------- */
-const ROLL = [['opening', 'Opening'], ['netNew', 'Net new'], ['settledOut', 'Settled out'], ['adjustments', 'Adjustments'], ['ending', 'Ending'], ['unexplained', 'Unexplained']];
+const ROLL = [['opening', 'Starting'], ['netNew', 'Activity'], ['settledOut', 'Payouts'], ['adjustments', 'Adjustments'], ['ending', 'Ending'], ['unexplained', 'Unexplained']];
 /* A month with no activity carries September's ending: no flows, no trend. */
 const rollRows = () => AC.rollForward().map(r => hasActivity() ? r : Object.assign({}, r, { opening:r.ending, netNew:0, settledOut:0, adjustments:0, unexplained:0, series:null }));
 const rollTotal = list => Object.fromEntries(ROLL.map(c => [c[0], AC.sum(list, r => r[c[0]])]));
 const railHref = r => AC.hrefOf('balance') + '#' + r.rail.replace('_', '-');
+/* Clearing Iris posts for payments with no payout data: USD, and not in an org with one rail. One row, or one per clearing account once the item is decided as split. A month with no activity carries the ending. */
+const otherClearing = () => {
+  if (AC.RAILS.length < 2) return [];
+  const o = AC.OTHER_PAYMENTS;
+  const parts = AC.state.journal.split ? o.parts.map(p => [p[0], p[2], p[0].toLowerCase().replace(/[^a-z0-9]+/g, '-')]) : [[o.channel, o.amount, 'other']];
+  return parts.map(p => ({ rail:p[2], channel:p[0], opening:hasActivity() ? 0 : p[1], netNew:hasActivity() ? p[1] : 0, settledOut:0, adjustments:0, ending:p[1], unexplained:0 }));
+};
+const clearingEnding = (list, other) => AC.round2(AC.sum(list, r => r.ending) + AC.sum(other, r => r.ending));
 
 function moneyCell(n, cur, o = {}) {
   const cls = ['ac-num'];
@@ -70,6 +86,7 @@ function moneyCell(n, cur, o = {}) {
   return `<td class="${cls.join(' ')}">${o.total ? `<span>${text}</span>` : text}</td>`;
 }
 const rollCells = (r, cur, total) => ROLL.map(c => moneyCell(r[c[0]], cur, { total, end:c[0] === 'ending', warn:c[0] === 'unexplained', fit:c[0] === 'adjustments' || c[0] === 'unexplained' })).join('');
+const clearingCells = (ending, cur) => ROLL.map(c => (c[0] === 'ending' ? moneyCell(ending, cur, { total:true, end:true }) : '<td class="ac-num"></td>')).join('');
 
 /* Six points, the first and last kept. Each rail on its own scale: a sparkline shows shape, the row prints the amounts. */
 const sparkPoints = series => Array.from({ length:6 }, (_, i) => series[Math.round(i * (series.length - 1) / 5)]);
@@ -83,14 +100,17 @@ function sparkline(r) {
   return `<svg class="ac-spark" viewBox="0 0 88 24" role="img" aria-label="${label}"><title>${label}</title><polyline points="${xy.map(p => p[0] + ',' + p[1].toFixed(2)).join(' ')}"/><circle cx="${end[0]}" cy="${end[1].toFixed(2)}" r="3"/></svg>`;
 }
 
+const rollRow = (r, cur, href) => `<tr class="ac-row--link" data-href="${esc(href)}"><th scope="row"><a class="ac-toggle" href="${esc(href)}" data-key="rail-${r.rail}">${esc(r.channel)}</a></th>${rollCells(r, cur)}<td class="ac-right">${sparkline(r)}</td></tr>`;
+
 function rollForwardCard() {
   const rows = rollRows();
   const body = AC.CURRENCIES.map(cur => {
     const list = rows.filter(r => curOf(r) === cur);
-    return list.map(r => {
-      const href = esc(railHref(r));
-      return `<tr class="ac-row--link" data-href="${href}"><td><a class="ac-toggle" href="${href}" data-key="rail-${r.rail}">${esc(r.channel)}</a></td>${rollCells(r, r.cur)}<td class="ac-right">${sparkline(r)}</td></tr>`;
-    }).join('') + `<tr class="ac-total"><td>Total ${cur}</td>${rollCells(rollTotal(list), cur, true)}<td class="ac-right"></td></tr>`;
+    const other = cur === 'USD' ? otherClearing() : [];
+    return list.map(r => rollRow(r, r.cur, railHref(r))).join('')
+      + `<tr class="ac-total"><th scope="row">Total ${cur}</th>${rollCells(rollTotal(list), cur, true)}<td class="ac-right"></td></tr>`
+      + other.map(r => rollRow(r, cur, AC.hrefOf('journal') + '#entry-other')).join('')
+      + (other.length ? `<tr class="ac-total ac-total--clearing"><th scope="row">Total clearing ${cur}</th>${clearingCells(clearingEnding(list, other), cur)}<td class="ac-right"></td></tr>` : '');
   }).join('');
   return `<section class="ac-card" id="rollforward" aria-labelledby="rollforwardTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="rollforwardTitle">Clearing roll-forward</h2></div>
     <div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Clearing roll-forward, ${esc(AC.month())}</caption>
@@ -101,44 +121,97 @@ function rollForwardCard() {
 
 /* ---------- Checkpoints ---------- */
 const PAIRS = [['matched', 'Matched'], ['partial', 'Partially matched'], ['unmatched', 'Unmatched'], ['pending', 'Pending']];
-const pairHref = (key, rail) => (key === 'matched' ? AC.hrefOf('settlements') + `#rail=${rail}&status=paid` : key === 'pending' ? AC.hrefOf('settlements') + `#rail=${rail}&status=pending` : AC.EXCEPTIONS.some(ex => ex.rail === rail) ? AC.hrefOf('exceptions') + `#rail=${rail}` : AC.hrefOf('settlements') + `#rail=${rail}`);
+const SETTLEMENT_STATUS_OF = { matched:'paid', partial:'break', unmatched:'failed', pending:'pending' };
+const pairHref = (key, rail) => AC.hrefOf('settlements') + `#rail=${rail}&status=${SETTLEMENT_STATUS_OF[key]}`;
 const CHECKPOINTS = [
   { id:'checkpoint-1', n:1, title:'Order to payment', unit:'order', rows:() => AC.checkpointOrders() },
   { id:'checkpoint-2', n:2, title:'Payment to settlement', unit:'settlement', rows:() => AC.checkpointSettlements() },
 ];
 const NONE = [0, 0];
-/* Payments from processors with no payout data: USD orders, all unmatched, decided on Journal entries. Not in an org with one rail, as that org has no such entry. */
+/* Payments from rails with no payout data: USD orders, all unmatched, decided on Journal entries. Not in an org with one rail, as that org has no such entry. */
 const otherPayments = () => (AC.RAILS.length > 1 ? [{ rail:'other', channel:AC.OTHER_PAYMENTS.channel, unit:'payment', href:AC.hrefOf('journal') + '#entry-other', matched:NONE, partial:NONE, unmatched:[AC.OTHER_PAYMENTS.count, AC.OTHER_PAYMENTS.amount], pending:NONE }] : []);
+const otherDecided = () => !!AC.state.journal.unmatchedDecision || !AC.state.journal.open;
+/* Other payments sit under the total, so the total ties to Charges. */
 const checkpointGroups = cp => AC.CURRENCIES.map(cur => {
   const list = cp.rows().filter(r => curOf(r) === cur);
-  if (cp.n === 1 && cur === 'USD') list.push(...otherPayments());
   const total = Object.fromEntries(PAIRS.map(p => [p[0], [list.reduce((n, r) => n + r[p[0]][0], 0), AC.sum(list, r => r[p[0]][1])]]));
-  return { cur, list, total };
+  return { cur, list, total, after:cp.n === 1 && cur === 'USD' ? otherPayments() : [] };
 });
 
 function pairCell(row, pair, unit, cur, total) {
   const n = row[pair[0]][0], value = row[pair[0]][1];
   if (isZero(value)) return moneyCell(0, cur, { total });
-  const warn = pair[0] === 'unmatched' ? ' ac-warn' : '';
+  const warn = pair[0] === 'unmatched' && !(row.rail === 'other' && otherDecided()) ? ' ac-warn' : '';
   const word = row.unit || unit;
   const count = `<data class="ac-muted ac-pair__n" value="${n}">${AC.count(n)}<span class="ac-sr"> ${word}${n === 1 ? '' : 's'}</span></data>`;
   const text = AC.money(value, cur);
   if (total) return `<td class="ac-num${warn}">${count}<span>${text}</span></td>`;
-  const href = row.href || pairHref(pair[0], row.rail);
-  return `<td class="ac-num${warn}">${count}<span class="ac-pair__amt"><a class="ac-link" href="${esc(href)}" data-key="${esc(unit + '-' + row.rail + '-' + pair[0])}" aria-label="${esc(`${text}, ${row.channel}, ${pair[1]}`)}">${text}</a></span></td>`;
+  const key = esc(unit + '-' + row.rail + '-' + pair[0]), name = esc(`${text}, ${row.channel}, ${pair[1]}`);
+  const amount = unit === 'order' && !row.href
+    ? `<button type="button" class="ac-link" data-orders="${esc(row.rail + ':' + pair[0])}" data-key="${key}" aria-haspopup="dialog" aria-expanded="false" aria-label="${name}">${text}</button>`
+    : `<a class="ac-link" href="${esc(row.href || pairHref(pair[0], row.rail))}" data-key="${key}" aria-label="${name}">${text}</a>`;
+  return `<td class="ac-num${warn}">${count}<span class="ac-pair__amt">${amount}</span></td>`;
 }
 
 function checkpointCard(cp) {
   const title = `<div class="ac-card__head"><h2 class="ac-card__title" id="${cp.id}-title">${cp.title}</h2><span class="ac-note">Checkpoint ${cp.n}</span></div>`;
   const open = `<section class="ac-card" id="${cp.id}" aria-labelledby="${cp.id}-title">${title}`;
   if (!hasActivity()) return `${open}<div class="ac-empty"><p class="ac-empty__title">No activity for ${esc(AC.month())}</p></div></section>`;
-  const body = checkpointGroups(cp).map(g => g.list.map(r => `<tr><td>${esc(r.channel)}</td>${PAIRS.map(p => pairCell(r, p, cp.unit, r.cur || g.cur)).join('')}</tr>`).join('')
-    + `<tr class="ac-total"><td>Total ${g.cur}</td>${PAIRS.map(p => pairCell(g.total, p, cp.unit, g.cur, true)).join('')}</tr>`).join('');
+  const line = (r, cur) => `<tr${cp.n === 1 ? ' data-drill' : ''}><th scope="row">${esc(r.channel)}</th>${PAIRS.map(p => pairCell(r, p, cp.unit, cur)).join('')}</tr>`;
+  const body = checkpointGroups(cp).map(g => g.list.map(r => line(r, r.cur || g.cur)).join('')
+    + `<tr class="ac-total"><th scope="row">Total ${g.cur}</th>${PAIRS.map(p => pairCell(g.total, p, cp.unit, g.cur, true)).join('')}</tr>`
+    + g.after.map(r => line(r, g.cur)).join('')).join('');
   return `${open}<div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">${cp.title}, ${esc(AC.month())}</caption>
       <colgroup><col><col class="ac-col-pair"><col class="ac-col-pair"><col class="ac-col-pair"><col class="ac-col-pair"></colgroup>
       <thead><tr><th scope="col">Rail</th>${PAIRS.map(p => `<th scope="col" class="ac-num">${p[1]}</th>`).join('')}</tr></thead>
       <tbody>${body}</tbody></table></div></section>`;
 }
+
+/* ---------- Order to payment: the orders behind a figure, in a panel, as on Balance ---------- */
+const SAMPLE = { matched:e => !!e.payout, pending:e => !e.payout };
+const ORDER_COLS = ['Order', 'Date', 'Transaction', 'Amount', 'Fee', 'Tax', 'Net', 'Settlement', 'Status'];
+let panelRows = [], openBtn = null;
+function pickRow(i) {
+  document.querySelectorAll('#panelBody tbody tr').forEach((tr, n) => {
+    tr.classList.toggle('ac-row--sel', n === i);
+    tr.querySelector('[data-src-btn]').setAttribute('aria-pressed', n === i);
+  });
+  const slot = document.getElementById('sourceSlot');
+  if (slot) slot.innerHTML = AC.sourceRow(AC.sourcePairs(panelRows[i]));
+}
+function orderRow(e, i, cur) {
+  const settlement = e.payout ? `<td class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements') + '#' + e.payout)}">${esc(e.payout)}</a></td>` : '<td><span class="ac-chip ac-chip--wait">Pending</span></td>';
+  return `<tr class="ac-row--link" data-src="${i}"><th scope="row"><button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="false">${esc(e.order)}</button></th><td>${esc(e.date)}</td><td class="ac-mono">${esc(e.txn)}</td>${moneyCell(e.amount, cur)}${moneyCell(e.fee, cur)}${moneyCell(e.tax, cur)}${moneyCell(e.net, cur)}${settlement}<td class="ac-right"><span class="ac-status ac-status--quiet">${esc(e.status)}</span></td></tr>`;
+}
+function openOrders(btn) {
+  const [railId, key] = btn.dataset.orders.split(':');
+  const r = AC.rail(railId), cur = curOf(r);
+  const [n, value] = AC.checkpointOrders().find(x => x.rail === railId)[key];
+  const label = PAIRS.find(p => p[0] === key)[1];
+  panelRows = SAMPLE[key] ? AC.eventRows(r, 'charge').filter(SAMPLE[key]) : [];
+  const noun = n === 1 ? 'order' : 'orders';
+  const showing = panelRows.length === n ? `Showing ${AC.count(n)} ${noun}` : `Showing ${panelRows.length} of ${AC.count(n)} ${noun}`;
+  const headCell = c => `<th scope="col"${['Amount', 'Fee', 'Tax', 'Net'].includes(c) ? ' class="ac-num"' : c === 'Status' ? ' class="ac-right"' : ''}>${c}</th>`;
+  AC.openPanel({
+    title:label,
+    count:n,
+    amount:AC.money(value, cur),
+    meta:`${r.name} · ${cur} · ${AC.MONTH}`,
+    body:panelRows.length ? `<div class="ac-wrap"><table class="ac-table ac-table--panel ac-table--orders"><caption class="ac-sr">${esc(label)} orders, ${esc(AC.railLabel(r))}</caption><colgroup>${ORDER_COLS.map(() => '<col>').join('')}</colgroup><thead><tr>${ORDER_COLS.map(headCell).join('')}</tr></thead><tbody>${panelRows.map((e, i) => orderRow(e, i, cur)).join('')}</tbody></table></div>
+      <div class="ac-name"><span class="ac-note">${esc(showing)}</span></div>
+      <div id="sourceSlot" role="status"></div>` : '<div class="ac-empty"><p class="ac-empty__title">No sample rows</p></div>',
+    onOpen:() => { if (panelRows.length) pickRow(0); },
+  });
+  openBtn = btn;
+  btn.setAttribute('aria-expanded', 'true');
+  AC.keepReturnFocus(btn);
+}
+/* The amount stays marked for as long as its panel is open. */
+new MutationObserver(() => {
+  if (!openBtn || document.getElementById('modalBackdrop')) return;
+  openBtn.setAttribute('aria-expanded', 'false');
+  openBtn = null;
+}).observe(document.getElementById('modalHost'), { childList:true });
 
 const offCard = (title, n) => `<section class="ac-card ac-card--off ac-s6"><div class="ac-card__head"><h2 class="ac-card__title">${title}</h2><span class="ac-note">Checkpoint ${n}</span><div class="ac-actions"><span class="ac-note">Not available yet</span></div></div></section>`;
 
@@ -155,10 +228,14 @@ function exportCsv() {
     const list = all.filter(r => curOf(r) === cur);
     list.forEach(r => rows.push(['Clearing roll-forward', month, r.channel, r.rail, cur].concat(rollValues(r), r.series ? sparkPoints(r.series).map(v => v.toFixed(2)).join(' ') : '', pairBlank)));
     rows.push(['Clearing roll-forward', month, 'Total ' + cur, '', cur].concat(rollValues(rollTotal(list)), '', pairBlank));
+    const other = cur === 'USD' ? otherClearing() : [];
+    other.forEach(r => rows.push(['Clearing roll-forward', month, r.channel, r.rail, cur].concat(rollValues(r), '', pairBlank)));
+    if (other.length) rows.push(['Clearing roll-forward', month, 'Total clearing ' + cur, '', cur].concat(ROLL.map(c => (c[0] === 'ending' ? clearingEnding(list, other).toFixed(2) : '')), '', pairBlank));
   });
   if (hasActivity()) CHECKPOINTS.forEach(cp => checkpointGroups(cp).forEach(g => {
     g.list.forEach(r => rows.push([cp.title, month, r.channel, r.rail, g.cur].concat(rollBlank, pairValues(r))));
     rows.push([cp.title, month, 'Total ' + g.cur, '', g.cur].concat(rollBlank, pairValues(g.total)));
+    g.after.forEach(r => rows.push([cp.title, month, r.channel, r.rail, g.cur].concat(rollBlank, pairValues(r))));
   }));
   AC.downloadCsv('reconciliation-' + (hasActivity() ? '2026-09' : '2026-10') + '.csv', rows);
   AC.toast('CSV exported.');
@@ -172,7 +249,14 @@ const scrollToHash = () => {
 };
 
 AC.rowClick('tr.ac-row--link[data-href]', row => { location.href = row.dataset.href; });
-document.addEventListener('click', e => { if (e.target.closest('#exportCsv') && e.detail < 2) exportCsv(); });
+AC.rowClick('#panelBody tbody tr', row => pickRow(+row.dataset.src));
+document.addEventListener('click', e => {
+  const t = e.target.closest('#exportCsv, [data-orders], [data-src-btn]');
+  if (!t) return;
+  if (t.dataset.srcBtn !== undefined) { pickRow(+t.dataset.srcBtn); return; }
+  if (e.detail > 1) return;
+  if (t.id === 'exportCsv') exportCsv(); else openOrders(t);
+});
 
 AC.start({
   current:'reconciliation',

@@ -23,11 +23,16 @@
     /* Facts in the panel share the left edge of its head and of the source row. */
     .ac-panel__body .ac-kv { margin:0 -16px; padding-bottom:0; }
     .ac-pager .ac-flip svg { transform:rotate(180deg); }
-    /* Payout is the one left aligned column after a right aligned number: a double gutter keeps the two apart. */
+    .ac-tile__note { letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; }
+    /* Row headers carry the same hairline as the cells beside them. */
+    .ac-table--lines tbody tr + tr th { position:relative; }
+    .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:0; right:0; top:0; height:1px; background:var(--ac-hair); }
+    .ac-table--lines tbody tr + tr th:first-child::after { left:8px; }
+    /* Settlement is the one left aligned column after a right aligned number: a double gutter keeps the two apart. */
     .ac-table th.ac-gap, .ac-table td.ac-gap { padding-left:calc(var(--ac-gut) * 2); }
     /* Transaction joins the table at 1280. Until 1440 Fee and Status keep their narrow width, so Description is not cut. */
     @media (max-width:1439px) { #evResults { --ac-small:88px; } }
-    /* Under 1280 the money columns take the room the longest CAD payout needs from Fee, Status and Payout, which have it to spare. */
+    /* Under 1280 the money columns take the room the longest CAD payout needs from Fee, Status and Settlement, which have it to spare. */
     @media (max-width:1279px) { #evResults { --ac-money:116px; --ac-small:80px; --ac-id:88px; } }
   </style>
 </head>
@@ -54,8 +59,10 @@
   const hasData = () => AC.month() === AC.MONTH;
   const CATEGORIES = [AC.CATEGORIES[0], AC.CATEGORIES[1], AC.CATEGORIES[2], AC.CATEGORIES[3], ['feetax', 'Fees and tax'], AC.CATEGORIES[4]];
   const inCategory = (e, cat) => (cat ? e.cat === cat || (cat === 'feetax' && (e.cat === 'fee' || e.cat === 'tax')) : e.cat !== 'fee' && e.cat !== 'tax');
-  const totalCount = () => AC.RAILS.reduce((n, r) => n + r.n.charge + r.n.refund + r.n.payout + (f.cat ? r.n.fee * 2 : 0), 0);
   const kindsOf = cat => (cat === 'feetax' ? ['fee', 'tax'] : [cat || 'activity']);
+  const FILTERS = ['rail', 'acct', 'cur', 'cat', 'q'];
+  const NOUNS = { charge:['charge', 'charges'], refund:['refund', 'refunds'], fee:['fee', 'fees'], tax:['tax event', 'tax events'], feetax:['fee and tax event', 'fee and tax events'], payout:['payout', 'payouts'] };
+  const NOTE_SLOT = '<div class="ac-note ac-tile__note" aria-hidden="true">&nbsp;</div>';
 
   /* ---------- Filters live in the hash ---------- */
   function readHash() {
@@ -73,7 +80,7 @@
   }
   function urlOf(s) {
     const p = new URLSearchParams();
-    ['rail', 'acct', 'cur', 'cat', 'q'].forEach(k => { if (s[k]) p.set(k, s[k]); });
+    FILTERS.forEach(k => { if (s[k]) p.set(k, s[k]); });
     if (s.page > 1) p.set('page', s.page);
     const hash = p.toString();
     return location.pathname + location.search + (hash ? '#' + hash : '');
@@ -91,17 +98,30 @@
   }
 
   /* The tile states the true total of the rails in view, never a sum of the sample rows. Currencies never add up. */
+  function tileFacts() {
+    const rails = railsInFilter();
+    const curs = AC.CURRENCIES.filter(c => rails.some(r => (r.cur || 'USD') === c));
+    const kinds = kindsOf(f.cat);
+    const railsIn = c => rails.filter(r => (r.cur || 'USD') === c);
+    return {
+      curs,
+      total:c => AC.sum(railsIn(c), r => AC.sum(kinds, k => AC.kindTotal(r, k))),
+      count:railsIn(curs[0]).reduce((n, r) => n + kinds.reduce((m, k) => m + AC.kindCount(r, k), 0), 0),
+    };
+  }
   function tileHtml() {
     const label = f.cat ? CATEGORIES.find(c => c[0] === f.cat)[1] : 'Net balance change from activity';
-    if (f.q.trim()) return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)}</div><div class="ac-tile__value">${NO_VALUE}</div></div>`;
-    const rails = railsInFilter();
-    const cur = f.cur || (rails.length && rails.every(r => (r.cur || 'USD') !== AC.CURRENCIES[0]) ? rails[0].cur : AC.CURRENCIES[0]);
-    const list = rails.filter(r => (r.cur || 'USD') === cur);
-    const kinds = kindsOf(f.cat);
-    const total = AC.sum(list, r => AC.sum(kinds, k => AC.kindTotal(r, k)));
-    const count = list.reduce((n, r) => n + kinds.reduce((m, k) => m + AC.kindCount(r, k), 0), 0);
-    const value = total === 0 ? `<span class="ac-zero">${AC.money(0, cur)}</span>` : AC.signed(total, cur);
-    return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)} <span class="ac-muted">(${AC.count(count)})</span></div><div class="ac-tile__value">${value}</div></div>`;
+    if (f.q.trim()) return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)}</div><div class="ac-tile__value">${NO_VALUE}</div>${NOTE_SLOT}</div>`;
+    const { curs, total, count } = tileFacts();
+    const shown = c => (total(c) === 0 ? `<span class="ac-zero">${AC.money(0, c)}</span>` : AC.signed(total(c), c));
+    const notes = curs.slice(1).map(c => `<div class="ac-note ac-tile__note">${shown(c)}</div>`).join('');
+    return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)}${curs.length > 1 ? ', ' + esc(curs[0]) : ''} <span class="ac-muted">(${AC.count(count)})</span></div><div class="ac-tile__value">${shown(curs[0])}</div>${notes || NOTE_SLOT}</div>`;
+  }
+  /* The foot counts what the tile counts. With no category it counts every event the rows can hold, payouts too. */
+  function sampleText() {
+    const n = f.cat ? tileFacts().count : railsInFilter().reduce((m, r) => m + r.n.charge + r.n.refund + r.n.payout, 0);
+    const noun = f.cat ? NOUNS[f.cat] : ['event', 'events'];
+    return `Sample of ${AC.count(n)} ${noun[n === 1 ? 0 : 1]}`;
   }
 
   /* ---------- Table ---------- */
@@ -110,7 +130,7 @@
     : `<td class="ac-num${extra ? ' ' + extra : ''}">${AC.signed(n, cur)}</td>`);
   const payoutLink = (id, key) => `<a class="ac-link" href="${esc(AC.hrefOf('settlements') + '#' + id)}"${key ? ` data-key="${esc(key)}"` : ''}>${esc(id)}</a>`;
   const rowHtml = e => `<tr class="ac-row--link" data-drill data-ev="${esc(e.txn)}">
-    <td><button type="button" class="ac-toggle" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button></td>
+    <th scope="row"><button type="button" class="ac-toggle" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button></th>
     <td>${esc(e.channel)}</td>
     <td class="ac-mono ac-wide">${esc(e.txn)}</td>
     <td>${esc(e.desc)}</td>
@@ -128,10 +148,10 @@
     return `<div class="ac-wrap ac-wrap--foot"><table class="ac-table ac-table--lines ac-table--sticky">
       <caption class="ac-sr">Events</caption>
       <colgroup><col class="ac-col-date"><col class="ac-col-chan"><col class="ac-col-id ac-wide"><col><col class="ac-col-money"><col class="ac-col-small"><col class="ac-col-money"><col class="ac-col-id"><col class="ac-col-small"></colgroup>
-      <thead><tr><th scope="col">Date</th><th scope="col">Rail</th><th scope="col" class="ac-wide">Transaction</th><th scope="col">Description</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-num">Fee and tax</th><th scope="col" class="ac-num">Net</th><th scope="col" class="ac-gap">Payout</th><th scope="col" class="ac-right">Status</th></tr></thead>
+      <thead><tr><th scope="col">Date</th><th scope="col">Rail</th><th scope="col" class="ac-wide">Transaction</th><th scope="col">Description</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-num">Fee and tax</th><th scope="col" class="ac-num">Net</th><th scope="col" class="ac-gap">Settlement</th><th scope="col" class="ac-right">Status</th></tr></thead>
       <tbody>${shown.map(rowHtml).join('')}</tbody>
     </table></div>
-    <div class="ac-foot"><span class="ac-note">${AC.count(start + 1)} to ${AC.count(start + shown.length)} of ${AC.count(rows.length)} · Sample of ${AC.count(totalCount())} events</span><div class="ac-pager">
+    <div class="ac-foot"><span class="ac-note"><span id="evRange">${AC.count(start + 1)} to ${AC.count(start + shown.length)} of ${AC.count(rows.length)}</span> · ${sampleText()}</span><div class="ac-pager">
       <button type="button" class="btn btn-neutral btn-sm ac-flip" id="evPrev" data-key="evPrev" aria-label="Previous page"${f.page === 1 ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
       <button type="button" class="btn btn-neutral btn-sm" id="evNext" data-key="evNext" aria-label="Next page"${f.page === pages ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
     </div></div>`;
@@ -149,10 +169,10 @@
   }
   const barHtml = () => `<div class="ac-bar">
     ${selectHtml('evRail', 'Rail', 'ac-w160', 'rail', [['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])))}
-    ${selectHtml('evAcct', 'Account', 'ac-w148', 'acct', [['', 'All accounts']].concat(ACCOUNTS.map(a => [bareAcct(a), a])))}
+    ${selectHtml('evAcct', 'Rail account', 'ac-w148', 'acct', [['', 'All accounts']].concat(ACCOUNTS.map(a => [bareAcct(a), a])))}
     ${selectHtml('evCur', 'Currency', 'ac-w140', 'cur', [['', 'All currencies']].concat(AC.CURRENCIES.map(c => [c, c])))}
     ${selectHtml('evCat', 'Category', 'ac-w160', 'cat', [['', 'All categories']].concat(CATEGORIES))}
-    <input type="search" class="ac-input ac-search" id="evSearch" data-key="evSearch" aria-label="Search" placeholder="Transaction, order or payout" autocomplete="off" spellcheck="false" value="${esc(f.q)}"${hasData() ? '' : ' disabled'}>
+    <input type="search" class="ac-input ac-search" id="evSearch" data-key="evSearch" aria-label="Search by ID" placeholder="Search by ID" autocomplete="off" spellcheck="false" value="${esc(f.q)}"${hasData() ? '' : ' disabled'}>
   </div>`;
 
   /* ---------- Export ---------- */
@@ -168,7 +188,7 @@
     else { btn.removeAttribute('aria-disabled'); btn.removeAttribute('aria-describedby'); }
   }
   function exportCsv() {
-    const head = ['Date', 'Rail', 'Account', 'Transaction', 'Order', 'Description', 'Currency', 'Amount', 'Fee', 'Tax', 'Net', 'Payout', 'Status'];
+    const head = ['Date', 'Rail', 'Rail account', 'Transaction', 'Order', 'Description', 'Currency', 'Amount', 'Fee', 'Tax', 'Net', 'Settlement', 'Status'];
     const rows = rowsInFilter().map(e => [AC.isoDate(e.date), e.channel, AC.rail(e.rail).acct, e.txn, e.order || '', e.desc, e.cur || 'USD', e.amount.toFixed(2), e.fee.toFixed(2), (e.tax || 0).toFixed(2), e.net.toFixed(2), e.payout || '', e.status]);
     const name = ['events', f.rail, f.acct, f.cur, f.cat].filter(Boolean).join('-').toLowerCase() + '-' + AC.isoDate('Sep 1').slice(0, 7) + '.csv';
     AC.downloadCsv(name, [head].concat(rows));
@@ -186,11 +206,11 @@
       factRow('Fee', moneyFact(e.fee, e.cur)),
       factRow('Tax', moneyFact(e.tax, e.cur)),
       `<div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__label">Net</span><span class="ac-num">${AC.signed(e.net, e.cur)}</span></div>`,
-      factRow('Payout', e.payout ? `<span class="ac-mono">${payoutLink(e.payout)}</span>` : NO_VALUE),
+      factRow('Settlement', e.payout ? `<span class="ac-mono">${payoutLink(e.payout)}</span>` : NO_VALUE),
       factRow('Status', `<span class="ac-status ac-status--quiet">${esc(e.status)}</span>`),
       factRow('Transaction', idFact(e.txn)),
-      e.order ? factRow('Order', idFact(e.order)) : '',
-      factRow('Account', idFact(rail.acct)),
+      e.order ? factRow('Order', `<span>${esc(e.order)}</span>`) : '',
+      factRow('Rail account', idFact(rail.acct)),
     ].join('');
     AC.openPanel({
       title:e.desc,
@@ -210,21 +230,27 @@
     if (el && !el.disabled) { if (document.activeElement !== el) el.focus({ preventScroll:true }); return; }
     const other = { evNext:'evPrev', evPrev:'evNext', evClear:'evRail' }[key];
     const alt = other && document.querySelector(`[data-key="${other}"]`);
-    if (alt && !alt.disabled) alt.focus({ preventScroll:true });
+    if (alt && !alt.disabled) AC.focusAfterAction(alt);
   }
-  function announce() {
-    const live = document.getElementById('evLive');
+  /* The live region stays through a redraw, so what is written to it is heard. */
+  const live = document.createElement('div');
+  live.className = 'ac-sr';
+  live.id = 'evLive';
+  live.setAttribute('role', 'status');
+  document.body.appendChild(live);
+  function announce(paged) {
+    const range = paged ? document.getElementById('evRange') : null;
     const n = rowsInFilter().length;
-    if (live) live.textContent = n === 1 ? '1 event' : AC.count(n) + ' events';
+    live.textContent = range ? range.textContent : n === 1 ? '1 event' : AC.count(n) + ' events';
   }
-  function update() {
+  function update(paged) {
     const host = document.getElementById('evResults');
     if (!host) return;
     host.innerHTML = resultsHtml();
     syncExport();
-    announce();
+    announce(paged);
   }
-  function go() { history.pushState(null, '', urlOf(f)); keepFocus(update); }
+  function go(paged) { history.pushState(null, '', urlOf(f)); keepFocus(() => update(paged)); }
 
   const app = document.getElementById('app');
   app.addEventListener('change', e => {
@@ -266,22 +292,23 @@
     const step = e.target.closest('#evPrev') ? -1 : e.target.closest('#evNext') ? 1 : 0;
     if (!step) return;
     f.page += step;
-    go();
+    go(true);
     if (document.documentElement.classList.contains('pm-pointer')) window.scrollTo(0, 0);
   });
   window.addEventListener('hashchange', () => {
     AC.closePanel();
+    const was = f;
     f = readHash();
     typing = false;
     keepFocus(AC.rerender);
-    announce();
+    announce(FILTERS.every(k => was[k] === f[k]) && was.page !== f.page);
   });
 
   AC.rowClick('tr[data-ev]', openEvent);
   AC.start({
     current:'events',
     head:() => ({ actions:exportHtml() }),
-    render:() => `${barHtml()}<div id="evResults">${resultsHtml()}</div><div class="ac-sr" id="evLive" role="status"></div>`,
+    render:() => `${barHtml()}<div id="evResults">${resultsHtml()}</div>`,
   });
 })();
 </script>

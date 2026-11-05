@@ -17,6 +17,16 @@
   const AC = window.AC;
   const esc = AC.esc;
 
+  /* Tab icon, from wherever this page's assets live. */
+  (function () {
+    const css = document.querySelector('link[href*="panorama-match.css"]');
+    if (!css || document.querySelector('link[rel="icon"]')) return;
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.href = css.getAttribute('href').replace('panorama-match.css', 'iris-mark-sm.svg');
+    document.head.appendChild(icon);
+  })();
+
   AC.PAGES = [
     { id:'overview', label:'Overview', href:'accounting-overview.html' },
     { id:'balance', label:'Balance', href:'balance.html' },
@@ -38,7 +48,7 @@
     const sep = AC.month() === AC.MONTH;
     const counts = { exceptions:sep ? AC.openExceptions().length : 0, journal:sep ? AC.state.journal.open : 0 };
     const words = { exceptions:'open', journal:'to decide' };
-    return `<nav class="ac-nav" aria-label="Accounting">${AC.PAGES.map(p => `<a class="ac-nav__item" href="${hrefOf(p.id)}"${p.id === current ? ' aria-current="page"' : ''}>${esc(p.label)}${counts[p.id] ? `<span class="ac-nav__count"><span class="ac-sr">, </span>${counts[p.id]}<span class="ac-sr"> ${words[p.id]}</span></span>` : ''}</a>`).join('')}</nav>`;
+    return `<nav class="ac-nav" aria-label="Accounting">${AC.PAGES.map(p => `<a class="ac-nav__item" href="${hrefOf(p.id)}"${p.id === current ? ' aria-current="page"' : ''}>${esc(p.label)}${counts[p.id] ? `<span class="ac-nav__count"><span class="ac-sr">, </span>${counts[p.id]}<span class="ac-sr"> ${words[p.id]}</span></span>` : (words[p.id] ? '<span class="ac-nav__count" style="visibility:hidden;" aria-hidden="true">0</span>' : '')}</a>`).join('')}</nav>`;
   };
 
   /* ---------- Month: one value across the section ---------- */
@@ -46,12 +56,13 @@
   AC.setMonth = m => { try { sessionStorage.setItem('ac-month', m); } catch (err) { /* this page only */ } };
   AC.monthSelect = () => `<select class="form-input form-select ac-select ac-w120" aria-label="Month" id="monthSelect" data-key="monthSelect" autocomplete="off">${AC.MONTHS.map(m => `<option${AC.month() === m ? ' selected' : ''}>${esc(m)}</option>`).join('')}</select>`;
 
-  AC.pageHead = o => `<div class="ac-top"><div class="ac-head"><h1 class="ac-head__title" tabindex="-1">Accounting</h1>${o.noMonth ? '' : AC.monthSelect()}<span class="ac-note">${esc(AC.TIMEZONE)} · Sample data</span><div class="ac-actions">${o.actions || ''}</div></div>${AC.navHtml(o.current)}</div>`;
+  AC.pageHead = o => { const here = AC.PAGES.find(p => p.id === o.current); if (here) document.title = here.label + ' · Accounting'; return `<div class="ac-top"><div class="ac-head"><h1 class="ac-head__title" tabindex="-1">Accounting${here ? `<span class="ac-sr">: ${esc(here.label)}</span>` : ''}</h1>${o.noMonth ? '' : AC.monthSelect()}<span class="ac-note">${esc(AC.TIMEZONE)} · Sample data</span><div class="ac-actions">${o.actions || ''}</div></div>${AC.navHtml(o.current)}</div>`; };
 
   /* ---------- Toast ---------- */
   let toastTimer = null, toastReturn = null;
   function placeToast() { /* Position lives in accounting.css: under the head, or left of an open panel. */ }
   AC.placeToast = placeToast;
+  AC.announce = text => { let live = document.getElementById('acLive'); if (!live) { live = document.createElement('div'); live.id = 'acLive'; live.className = 'ac-sr'; live.setAttribute('role', 'status'); document.body.appendChild(live); } live.textContent = text; };
   function clearToast() {
     const host = document.getElementById('toastHost');
     const inside = host.contains(document.activeElement);
@@ -75,6 +86,11 @@
     arm();
     placeToast();
   };
+
+  /* A held or double Enter must not press what focus just moved to. Use this when moving focus to Undo or the next action. */
+  let movedAt = 0;
+  AC.focusAfterAction = el => { if (el) { movedAt = Date.now(); el.focus(); } };
+  document.addEventListener('click', e => { if (e.detail === 0 && Date.now() - movedAt < 500 && e.isTrusted) { e.preventDefault(); e.stopPropagation(); } }, true);
 
   /* ---------- Overlays ---------- */
   let closedAt = 0, openedAt = 0, returnFocus = null, lastClick = null, locked = false, rowTimer = null;
@@ -147,7 +163,7 @@
     if (o.onExport) document.getElementById('panelExport').onclick = ev => { if (ev.detail > 1) return; o.onExport(); };
     backdropClose(host);
     if (o.onOpen) o.onOpen(document.getElementById('panelBody'));
-    document.getElementById('modalClose').focus();
+    AC.focusAfterAction(document.getElementById('modalClose'));
     placeToast();
   };
   AC.openDialog = o => {
@@ -188,7 +204,7 @@
     if (AC.ORG === 'norails' && current !== 'settings') return `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No rails connected</h2><a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a></div></section>`;
     return '';
   };
-  AC.skeletonHtml = () => `<section class="ac-card" role="status" aria-label="Loading"><div class="ac-wrap" style="padding-top:12px;"><table class="ac-table"><colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup><tbody>${Array.from({ length:8 }, () => `<tr><td><span class="ac-skel" style="--w:120px;"></span></td>${[72, 88, 88, 72].map(w => `<td class="ac-num"><span class="ac-skel" style="--w:${w}px;"></span></td>`).join('')}<td class="ac-right"><span class="ac-skel" style="--w:32px;"></span></td></tr>`).join('')}</tbody></table></div></section>`;
+  AC.skeletonHtml = () => `<section class="ac-card" role="status"><span class="ac-sr">Loading</span><div class="ac-wrap" style="padding-top:12px;"><table class="ac-table"><colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup><tbody>${Array.from({ length:8 }, () => `<tr><td><span class="ac-skel" style="--w:120px;"></span></td>${[72, 88, 88, 72].map(w => `<td class="ac-num"><span class="ac-skel" style="--w:${w}px;"></span></td>`).join('')}<td class="ac-right"><span class="ac-skel" style="--w:32px;"></span></td></tr>`).join('')}</tbody></table></div></section>`;
   AC.errorCard = () => `<section class="ac-card" role="alert"><div class="ac-empty"><h2 class="ac-empty__title">Could not load ${esc(AC.month())}</h2><button type="button" class="btn btn-neutral btn-sm" id="acRetry" data-key="acRetry">Try again</button></div></section>`;
   AC.rerender = () => {
     const app = document.getElementById('app');
@@ -229,10 +245,18 @@
       }
     });
     document.addEventListener('change', e => {
-      if (e.target.id === 'monthSelect') { AC.setMonth(e.target.value); AC.rerender(); }
+      if (e.target.id === 'monthSelect') { AC.setMonth(e.target.value); AC.rerender(); AC.announce(e.target.value); }
     });
-    window.addEventListener('pageshow', ev => { if (ev.persisted) { AC.state = Object.assign(AC.state, (() => { try { return JSON.parse(sessionStorage.getItem('ac-state') || '{}'); } catch (err) { return {}; } })()); AC.rerender(); } });
-    document.addEventListener('click', e => { if (e.target.closest('#acRetry')) { loading = 'slow'; AC.rerender(); setTimeout(() => { loading = ''; AC.rerender(); if (o.ready) o.ready(); }, 900); } });
+    /* Back from the browser's page cache: no old toast, the state as it is now, and a reload elsewhere stays a reset. */
+    window.addEventListener('pageshow', ev => {
+      if (!ev.persisted) return;
+      document.getElementById('toastHost').innerHTML = '';
+      const raw = AC.stateRaw();
+      if (!raw) { location.reload(); return; }
+      try { Object.assign(AC.state, JSON.parse(raw)); } catch (err) { /* keep what is on screen */ }
+      AC.rerender();
+    });
+    document.addEventListener('click', e => { if (e.target.closest('#acRetry')) { loading = 'slow'; AC.rerender(); setTimeout(() => { loading = ''; AC.rerender(); if (o.ready) o.ready(); const h = document.querySelector('.ac-head__title'); if (h) h.focus({ preventScroll:true }); }, 900); } });
     AC.rerender();
     if (loading === 'slow') setTimeout(() => { loading = ''; AC.rerender(); if (o.ready) o.ready(); }, 1400);
     else if (!loading && o.ready) o.ready();

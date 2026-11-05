@@ -27,6 +27,8 @@
     body.ac .ac-input--row { padding-right:8px; font-family:inherit; font-variant-numeric:tabular-nums lining-nums; }
     .ac-input--row::-webkit-calendar-picker-indicator { width:16px; height:16px; margin:0 0 0 4px; padding:0; opacity:.6; cursor:pointer; }
     .ac-input--row::-webkit-calendar-picker-indicator:hover { opacity:1; }
+    .ac-input--row:disabled::-webkit-calendar-picker-indicator { opacity:.6; cursor:not-allowed; }
+    body.ac .ac-input--row:disabled:hover { border-color:var(--ac-track); }
     .ac-input--row::-webkit-calendar-picker-indicator:focus { opacity:1; outline:2px solid var(--ac-pri); outline-offset:0; }
     html.pm-pointer .ac-input--row::-webkit-calendar-picker-indicator:focus { outline:none; }
     .ac-input--row::-webkit-datetime-edit-month-field:focus,
@@ -95,7 +97,7 @@
 
   /* Saved values, the draft over them, and what a row says about itself. */
   const clone = o => JSON.parse(JSON.stringify(o));
-  const draft = () => AC.state.mappingDraft || (AC.state.mappingDraft = {});
+  const draft = () => (AC.VIEW_ONLY ? {} : AC.state.mappingDraft || (AC.state.mappingDraft = {}));
   const saved = m => { const s = AC.mappingOf(m); return { debit:s.debit || '', credit:s.credit || '', from:s.from || '', to:s.to || '' }; };
   const shown = m => Object.assign(saved(m), draft()[AC.mappingKey(m)]);
   const hasChanges = () => AC.MAPPING.some(m => draft()[AC.mappingKey(m)]);
@@ -120,16 +122,18 @@
 
   /* ---------- Drawing ---------- */
   const fieldKey = (m, field) => railOf(m).id + '-' + m.bucket.toLowerCase() + '-' + field;
-  const selectCell = (m, field, s, label) => `<td class="ac-field"><select class="form-input form-select ac-select ac-select--row" aria-label="${esc(m.bucket)} ${label}" data-field="${field}" data-key="${fieldKey(m, field)}"><option value="">Not mapped</option>${AC.ACCOUNTS.map(a => `<option${a === s[field] ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select></td>`;
+  const statusId = m => fieldKey(m, 'status');
+  const offAttr = () => (AC.VIEW_ONLY ? ' disabled' : '');
+  const selectCell = (m, field, s, label) => `<td class="ac-field"><select class="form-input form-select ac-select ac-select--row" aria-label="${esc(m.bucket)} ${label}" data-field="${field}" data-key="${fieldKey(m, field)}"${offAttr()}><option value="">Not mapped</option>${AC.ACCOUNTS.map(a => `<option${a === s[field] ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select></td>`;
   const dateMin = (s, field) => (field === 'to' && toIso(s.from)) || EARLIEST;
   const dateMax = (s, field) => (field === 'from' && toIso(s.to)) || LATEST;
   const dateCell = (m, field, s, label, wide) => {
     const iso = toIso(s[field]), bad = flagged(m) === field;
-    return `<td class="ac-field${wide ? ' ac-wide' : ''}"><input type="date" class="ac-input ac-input--row${iso ? '' : ' ac-input--empty'}${bad ? ' is-invalid' : ''}" value="${iso}" min="${dateMin(s, field)}" max="${dateMax(s, field)}"${bad ? ' aria-invalid="true"' : ''} aria-label="${esc(m.bucket)} ${label}" data-field="${field}" data-key="${fieldKey(m, field)}"></td>`;
+    return `<td class="ac-field${wide ? ' ac-wide' : ''}"><input type="date" class="ac-input ac-input--row${iso ? '' : ' ac-input--empty'}${bad ? ' is-invalid' : ''}" value="${iso}" min="${dateMin(s, field)}" max="${dateMax(s, field)}"${bad ? ` aria-invalid="true" aria-describedby="${statusId(m)}"` : ''} aria-label="${esc(m.bucket)} ${label}" data-field="${field}" data-key="${fieldKey(m, field)}"${offAttr()}></td>`;
   };
   const rowHtml = m => {
     const s = shown(m);
-    return `<tr data-map="${esc(AC.mappingKey(m))}"><th scope="row">${esc(m.bucket)}</th>${selectCell(m, 'debit', s, 'debit account')}${selectCell(m, 'credit', s, 'credit account')}${dateCell(m, 'from', s, 'effective from')}${dateCell(m, 'to', s, 'effective to', true)}<td class="ac-right" data-status aria-live="polite">${STATUS[statusOf(m)]}</td></tr>`;
+    return `<tr data-map="${esc(AC.mappingKey(m))}"><th scope="row">${esc(m.bucket)}</th>${selectCell(m, 'debit', s, 'debit account')}${selectCell(m, 'credit', s, 'credit account')}${dateCell(m, 'from', s, 'effective from')}${dateCell(m, 'to', s, 'effective to', true)}<td class="ac-right" id="${statusId(m)}" data-status aria-live="polite">${STATUS[statusOf(m)]}</td></tr>`;
   };
   const tableCard = () => {
     const r = AC.rail(rail);
@@ -144,7 +148,7 @@
     const chip = open.length ? `<div class="ac-actions"><button type="button" class="ac-chip ac-chip--warn ac-chip-btn" id="notMappedBtn" data-key="notMappedBtn">${open.length} not mapped</button></div>` : '';
     return `<div class="ac-bar"><div class="ac-seg" role="group" aria-label="Rail">${segs}</div>${chip}</div>`;
   };
-  const ledgerCard = () => `<section class="ac-card ac-ledger"><div class="ac-card__head"><h2 class="ac-card__title">Ledger</h2></div><div class="ac-kv"><div class="ac-kv__row"><span class="ac-kv__label">Ledger</span><span>${esc(AC.LEDGER)}</span><span class="ac-status ac-status--ok">Connected</span></div><div class="ac-kv__row"><span class="ac-kv__label">Timezone</span><span>${esc(AC.TIMEZONE)}</span></div></div></section>`;
+  const ledgerCard = () => `<section class="ac-card ac-ledger"><div class="ac-card__head"><h2 class="ac-card__title">Organization</h2></div><div class="ac-kv"><div class="ac-kv__row"><span class="ac-kv__label">Ledger</span><span>${esc(AC.LEDGER)}</span><span class="ac-status ac-status--ok">Connected</span></div><div class="ac-kv__row"><span class="ac-kv__label">Timezone</span><span>${esc(AC.TIMEZONE)}</span></div></div></section>`;
 
   /* ---------- Sync in place: a date being typed is never redrawn, and its own min and max stay put, or the browser wipes the half typed parts ---------- */
   function syncRow(tr, m) {
@@ -153,7 +157,7 @@
       const invalid = bad === el.dataset.field;
       el.classList.toggle('is-invalid', invalid);
       el.classList.toggle('ac-input--empty', !el.value);
-      if (invalid) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+      if (invalid) { el.setAttribute('aria-invalid', 'true'); el.setAttribute('aria-describedby', statusId(m)); } else { el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); }
       if (el === document.activeElement) return;
       const min = dateMin(s, el.dataset.field), max = dateMax(s, el.dataset.field);
       if (el.min !== min) el.min = min;
@@ -209,9 +213,9 @@
     AC.MAPPING.forEach(m => { const k = AC.mappingKey(m), d = draft()[k], base = saved(m); if (d && FIELDS.every(f => d[f] === base[f])) delete draft()[k]; });
     AC.save();
     AC.rerender();
-    $('saveBtn').focus();
+    AC.focusAfterAction($('saveBtn'));
   }
-  function save() {
+  function save(byKey) {
     if ($('saveBtn').getAttribute('aria-disabled') === 'true') return;
     const bad = firstBad();
     if (bad) { const field = badDate(shown(bad)); selectRail(railOf(bad).id); focusField(bad, field); return; }
@@ -221,16 +225,20 @@
     AC.save();
     AC.rerender();
     AC.toast('Mapping saved.', { undo:() => restore(before) });
+    if (byKey) AC.focusAfterAction($('toastUndo'));
   }
-  function discard() {
+  function discard(byKey) {
     const before = { mapping:clone(AC.state.mapping), draft:clone(draft()) };
     AC.state.mappingDraft = {};
     AC.save();
     AC.rerender();
     $('saveBtn').focus();
     AC.toast('Changes discarded.', { undo:() => restore(before) });
+    if (byKey) AC.focusAfterAction($('toastUndo'));
   }
   function exportCsv() {
+    /* Export takes focus as a click on it does, so a date still being typed is judged now: the row and the file read the same status. */
+    $('exportBtn').focus();
     const rows = AC.MAPPING.map(m => {
       const s = shown(m), r = railOf(m);
       return [m.source, m.bucket, s.debit || 'Not mapped', s.credit || 'Not mapped', toIso(s.from), toIso(s.to), statusOf(m), r.cur || 'USD', r.id];
@@ -251,8 +259,8 @@
     if (!btn) return;
     if (btn.id === 'notMappedBtn') goToUnmapped();
     if (btn.id === 'exportBtn' && e.detail < 2) exportCsv();
-    if (btn.id === 'discardBtn') discard();
-    if (btn.id === 'saveBtn') save();
+    if (btn.id === 'discardBtn') discard(e.detail === 0);
+    if (btn.id === 'saveBtn') save(e.detail === 0);
   });
   document.addEventListener('focusout', e => {
     const el = e.target;
@@ -271,8 +279,10 @@
     noMonth:true,
     head:() => {
       if (!RAILS.length) return {};
+      const exportBtn = '<button type="button" class="btn btn-neutral btn-sm" id="exportBtn" data-key="exportBtn">Export CSV</button>';
+      if (AC.VIEW_ONLY) return { actions:exportBtn };
       const on = hasChanges();
-      return { actions:`<button type="button" class="btn btn-neutral btn-sm" id="exportBtn" data-key="exportBtn">Export CSV</button><span class="ac-slot"><span class="ac-note${on ? ' ac-slot__off' : ''}" id="saveNote">No changes</span><button type="button" class="btn btn-ghost btn-sm${on ? '' : ' ac-slot__off'}" id="discardBtn" data-key="discardBtn">Discard changes</button></span><button type="button" class="btn btn-primary btn-sm" id="saveBtn" data-key="saveBtn"${on ? '' : ' aria-disabled="true" aria-describedby="saveNote"'}>Save changes</button>` };
+      return { actions:`${exportBtn}<span class="ac-slot"><span class="ac-note${on ? ' ac-slot__off' : ''}" id="saveNote">No changes</span><button type="button" class="btn btn-ghost btn-sm${on ? '' : ' ac-slot__off'}" id="discardBtn" data-key="discardBtn">Discard changes</button></span><button type="button" class="btn btn-primary btn-sm" id="saveBtn" data-key="saveBtn"${on ? '' : ' aria-disabled="true" aria-describedby="saveNote"'}>Save changes</button>` };
     },
     render:() => (RAILS.length
       ? `${barHtml()}<div class="ac-stack">${tableCard()}${ledgerCard()}</div>`
