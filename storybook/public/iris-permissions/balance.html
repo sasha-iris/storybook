@@ -56,7 +56,7 @@
   const { esc, money, signed, round2 } = AC;
   const TABS = [['all','All'],['shopify','Shopify Payments'],['stripe','Stripe'],['paypal','PayPal'],['amazon','Amazon'],['tiktok','TikTok Shop']].filter(t => t[0] === 'all' || AC.RAILS.some(r => r.tab === t[0]));
   const KINDS = { activity:'Activity', charge:'Charges', refund:'Refunds', fee:'Fees', tax:'Tax', payout:'Payouts' };
-  const NOUNS = { activity:'events', charge:'charges', refund:'refunds', fee:'fees', tax:'tax rows', payout:'payouts' };
+  const NOUNS = { activity:'events', charge:'charges', refund:'refunds', fee:'fees', tax:'tax events', payout:'payouts' };
   const DASH = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
   const NOT_YET = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available yet</span></span>';
   const S = { tab:'all', cur:'all', rowCur:'USD' };

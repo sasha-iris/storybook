@@ -17,6 +17,7 @@
     /* Search closes the filter bar on the card's right edge, its text on the baseline of the selects. */
     body.ac .ac-input.ac-search { flex:0 1 280px; width:280px; min-width:0; margin-left:auto; padding-bottom:2px; font-family:inherit; -webkit-appearance:none; appearance:none; }
     body.ac .ac-input.ac-search:disabled::placeholder { color:var(--ac-2); }
+    body.ac .ac-search::-webkit-search-cancel-button { position:relative; top:1px; }
     /* One border grey in the row: the glass says what this field is. */
     body.ac .ac-input.ac-search:not(:focus) { border-color:var(--ac-ctl); }
     body.ac .ac-input.ac-search:not(:focus):hover { border-color:var(--ac-ctl-h); }

@@ -165,7 +165,7 @@ a.ac-chip:active { color:var(--ac-pri-d); text-decoration-color:currentColor; }
 .ac-table--lines tbody tr + tr th { position:relative; }
 .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:8px; right:0; top:0; height:1px; background:var(--ac-hair); }
 /* Round 2, visual. Month close: one layout on Overview and Close. */
-.ac-close__head ~ .ac-kv .ac-kv__row, .ac-close-check { display:grid; grid-template-columns:240px 120px minmax(0,1fr); gap:16px; justify-content:start; }
+.ac-close__head ~ .ac-kv .ac-kv__row, .ac-close-check { display:grid; grid-template-columns:224px 112px minmax(0,1fr); gap:16px; justify-content:start; }
 .ac-close-status { display:flex; align-items:center; min-width:0; }
 /* Panel facts sit next to their labels. */
 .ac-panel .ac-kv__row { justify-content:flex-start; gap:0; }
@@ -191,9 +191,15 @@ html:has(.ac-backdrop, .modal-backdrop) #app { padding-right:calc(32px + var(--a
 /* Round 2, QA: nothing cut at 1024. */
 @media (max-width:1100px) { :root { --ac-status:108px; } #rollforward { --ac-money:100px; --ac-money-l:108px; --ac-small:80px; } }
 /* A chip's second half when there is room. */
-@media (max-width:1279px) { .ac-chip__more { display:none; } }
+@media (max-width:1279px) { .ac-chip__more { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; } }
 /* Round 3, access: focus clears the sticky head, no ring round a dialog that holds focus while posting, chip ring not cut. */
 html:has(body.ac .ac-table--sticky) { scroll-padding-top:140px; }
 body.ac [role="dialog"]:focus-visible { outline:none; }
 body.ac a.ac-chip:focus-visible { outline-offset:0; }
+/* Round 4, visual: one set of rules on a foot block; roll-forward heads whole at 1024; read only values one colour; notes on the title's baseline. */
+tr.ac-total + tr.ac-total .ac-num > span { border-top-color:transparent; }
+@media (max-width:1100px) { #rollforward th.ac-num, #rollforward td.ac-num { padding-left:0; } }
+form:has(select:disabled) .ac-static { color:var(--ac-2); }
+.ac-card__head > .ac-actions:not(:has(.btn)) { align-self:baseline; }
+.ac-card__head > .ac-actions:has(.btn) > .ac-note { position:relative; top:1px; }
 

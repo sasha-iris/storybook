@@ -181,7 +181,7 @@ function pickRow(i) {
   if (slot) slot.innerHTML = AC.sourceRow(AC.sourcePairs(panelRows[i]));
 }
 function orderRow(e, i, cur) {
-  const settlement = e.payout ? `<td class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements') + '#' + e.payout)}">${esc(e.payout)}</a></td>` : '<td class="ac-mono ac-zero">–</td>';
+  const settlement = e.payout ? `<td class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements') + '#' + e.payout)}">${esc(e.payout)}</a></td>` : '<td class="ac-mono ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></td>';
   return `<tr class="ac-row--link" data-src="${i}"><th scope="row"><button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="false">${esc(e.order)}</button></th><td>${esc(e.date)}</td><td class="ac-mono">${esc(e.txn)}</td>${moneyCell(e.amount, cur)}${moneyCell(e.fee, cur)}${moneyCell(e.tax, cur)}${moneyCell(e.net, cur)}${settlement}<td class="ac-right"><span class="ac-status ac-status--quiet">${esc(e.status)}</span></td></tr>`;
 }
 function openOrders(btn) {

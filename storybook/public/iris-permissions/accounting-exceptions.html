@@ -70,7 +70,7 @@
     /* Panel: labels on one left edge with the panel head, values on a second. */
     .ac-panel__body .ac-kv { margin:0 -8px; padding:0; }
     .ac-panel__body .ac-kv__row { justify-content:flex-start; }
-    .ac-panel__body .ac-kv__label { flex:0 0 176px; }
+    
     .ac-kv__value { min-width:0; }
     .ac-panel__body .ac-kv__row--note { align-items:flex-start; padding-top:10px; padding-bottom:10px; }
     .ac-kv__row--note .ac-kv__value { white-space:pre-wrap; overflow-wrap:anywhere; }
@@ -173,7 +173,7 @@
     if (AC.VIEW_ONLY) return hasRows() ? '<span class="ac-note">View only</span>' : '';
     return `<span class="ac-note" id="selCount" role="status">${selectionHtml()}</span>${selected.size ? bulkButtons() : ''}`;
   }
-  const bulkButtons = () => '<button type="button" class="btn btn-ghost btn-sm" id="clearSel" data-key="clearSel">Clear</button><button type="button" class="btn btn-primary btn-sm" id="acceptSel" data-key="acceptSel" aria-label="Accept selected"><span>Accept<span class="ac-bulk-more"> selected</span></span></button>';
+  const bulkButtons = () => '<button type="button" class="btn btn-ghost btn-sm" id="clearSel" data-key="clearSel" aria-label="Clear selection">Clear</button><button type="button" class="btn btn-primary btn-sm" id="acceptSel" data-key="acceptSel" aria-label="Accept selected"><span>Accept<span class="ac-bulk-more"> selected</span></span></button>';
 
   /* Checkboxes change the bar without a redraw, so nothing flickers and focus stays put. */
   function syncSelection() {
@@ -428,7 +428,7 @@
     return `<div class="ac-kv">
         ${kvRow('Severity', severityHtml(ex))}
         ${kvRow('Subject', subjectHtml(ex))}
-        ${ex.type === 'payout_failed' ? kvRow('Reason', `<span class="ac-fault">Payout failed: ${esc((AC.settlement(ex.subject) || {}).failureCode || '')}</span>`) : ''}
+        ${ex.type === 'payout_failed' ? kvRow('Reason', `<span class="ac-fault">${esc((AC.settlement(ex.subject) || {}).failureCode || '')}</span>`) : ''}
         ${breakFacts(ex)}
         ${kvRow('Status', statusHtml(status))}
         ${kvRow('Assignee', assignee)}
@@ -479,7 +479,7 @@
   function changeAssignee(id, who) {
     const ex = byId(id);
     AC.state.exceptions[id] = Object.assign({}, AC.state.exceptions[id], { status:AC.exceptionStatus(ex), note:AC.exceptionNote(ex), assignee:who });
-    logLine(id, who === 'Unassigned' ? 'Unassigned' : 'Assigned to ' + who);
+    logLine(id, who === 'Unassigned' ? 'Unassigned' : 'Assigned to ' + (who === 'You' ? 'you' : who));
     AC.save();
     AC.rerender();
     showPanel(id, 'assigneeSelect');

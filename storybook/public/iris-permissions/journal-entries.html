@@ -196,7 +196,7 @@ const ISSUES = [
   { id:'unmatched', title:'Unmatched payments', entry:'other', count:'12 payments', amount:'$4,318.60', summary:'12 payments',
     columns:['Order','Date','Rail','Amount'],
     rows:[['#48213','Sep 4','Afterpay','$318.00'],['#48377','Sep 9','Shop Cash','$126.40'],['#48502','Sep 12','Authorize.net','$840.00'],['#48611','Sep 15','Afterpay','$264.50'],['#48790','Sep 21','Shop Cash','$92.10']],
-    options:[{ id:'split', label:'Split into one clearing account per rail', hint:'Afterpay $2,140.00, Shop Cash $1,338.60, Authorize.net $840.00.', rec:true },{ id:'leave', label:'Leave in Other clearing', hint:'All $4,318.60 stays in one account.' }],
+    options:[{ id:'split', label:'Split into one clearing account per rail', hint:'Afterpay $2,140.00, Shop Cash $1,338.60, Authorize.net $840.00.', rec:true },{ id:'leave', label:'Leave in Other clearing', hint:'$4,318.60 stays.' }],
     done:{ split:'Split across 3 clearing accounts', leave:'Left in Other clearing' } },
   { id:'cogs', title:'Missing COGS', entry:'deferred', count:'38 orders', amount:'$6,120.00', summary:'Revenue on 38 orders',
     columns:['Order','Date','Rail','Revenue'],
@@ -600,7 +600,7 @@ function panelFooter(id, bucket, o) {
   if (SPLIT_COUNTS[b]) return show(SPLIT_COUNTS[b][0], SPLIT_COUNTS[b][1]);
   if (b === 'refunds') return show(COUNTS[id].refund, 'refund');
   if (b === 'fees') return show(e.orders, 'fee');
-  if (b === 'tax on fees') return show(e.orders, 'tax row');
+  if (b === 'tax on fees') return show(e.orders, 'tax event');
   if (b.startsWith('payouts')) return show(COUNTS[id].payout, 'settlement');
   if (b.startsWith('estimate')) return show(38, 'order');
   return show(e.orders, id === 'other' ? 'payment' : 'order');
@@ -660,7 +660,7 @@ function openDrawer(id, title, amount, bucket) {
   const isNum = c => numeric.includes(c);
   const head = o.columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('');
   const srcButton = (i, v) => `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>`;
-  const settlementLink = v => /^po_/.test(v) ? `<span class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a></span>` : v === '–' ? '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available yet</span></span>' : esc(v);
+  const settlementLink = v => /^po_/.test(v) ? `<span class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a></span>` : v === '–' ? '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>' : esc(v);
   const listsSettlements = o.columns[0] === 'Settlement';
   const off = o.columns === ORDER_COLUMNS && ORDERS_OFF[id];
   const rowHead = (v, i) => listsSettlements ? settlementLink(v) : off && v === off.order ? `<div class="ac-name">${srcButton(i, v)}${ordersOffChip(e)}</div>` : srcButton(i, v);
@@ -813,7 +813,7 @@ function currencyCard(cur, first) {
   const list = S.entries.filter(e => e.cur === cur);
   const label = cur || 'USD';
   if (!list.length) return '';
-  const allOpen = list.every(e => S.open[e.id]) ? 'Close all' : 'Open all';
+  const allOpen = list.every(e => S.open[e.id]) ? 'Collapse all' : 'Expand all';
   return `<section class="ac-card" aria-label="${label} entries">
       <div class="ac-card__head"><h2 class="ac-card__title"${first ? ' id="entTitle"' : ''}>${S.posted ? 'Entries' : 'Proposed entries'}</h2><span class="ac-note">${label} · ${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span><div class="ac-actions">${first && S.exported ? `<span id="exportState">${exportChip()}</span>` : ''}<button type="button" class="btn btn-ghost btn-sm ac-btn-row ac-btn-flush" data-open-all="${label}" data-key="openAll:${label}" aria-label="${allOpen} ${label} entries">${allOpen}</button></div></div>
       <div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">${S.posted ? 'Entries' : 'Proposed entries'}, ${label}</caption>${COLS}
@@ -831,7 +831,7 @@ function postControl() {
   if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return `${note}<button type="button" class="btn btn-neutral btn-sm" id="reconnect" data-key="reconnect">Reconnect</button>`;
   if (openIssues().length || outOfBalance()) return note + post(true);
   if (unposted().length) return note + post(false);
-  return AC.closeReady(AC.MONTH) ? `${note}<a class="btn btn-primary btn-sm" href="${esc(AC.hrefOf('close'))}" data-key="goClose">Close ${AC.MONTH}</a>` : note;
+  return AC.closeReady(AC.MONTH) ? `${note}<a class="btn btn-primary btn-sm" href="${esc(AC.hrefOf('close'))}" data-key="goClose">Go to Close</a>` : note;
 }
 /* What the rest of the section reads: progress, and the exceptions a decision settles. */
 function publish() {
@@ -1037,7 +1037,7 @@ document.addEventListener('click', e => {
   S.entries.splice(at, 1);
   delete S.open[x.id];
   render();
-  toast('Corrected ' + (x.baseName || x.name) + (x.cur ? ' ' + x.cur : '') + ' entry discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Discard undone.'); focusNext(document.querySelector('[data-entry-toggle="' + x.id + '"]'), { preventScroll:true }); });
+  toast('Corrected ' + (x.baseName || x.name) + (x.cur ? ' ' + x.cur : '') + ' entry discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Change undone.'); focusNext(document.querySelector('[data-entry-toggle="' + x.id + '"]'), { preventScroll:true }); });
   if (!e.detail) AC.focusAfterAction(document.getElementById('toastUndo'));
 });
 document.addEventListener('change', e => {

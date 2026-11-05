@@ -202,8 +202,8 @@
     return AC.CURRENCIES.filter(c => rows.some(s => curOf(s) === c)).map(c => {
       const list = rows.filter(s => curOf(s) === c);
       const done = list.filter(s => s.reportedNet !== null), open = list.filter(s => s.reportedNet === null);
-      const paid = { cur:c, label:(open.length ? 'Paid ' : 'Total ') + c, reported:AC.sum(done, s => s.reportedNet), expected:AC.sum(done, s => s.expectedNet), diff:AC.sum(done, s => s.diff) };
-      const waiting = { cur:c, label:(done.length ? 'Not paid ' : 'Total ') + c, reported:null, expected:AC.sum(open, s => s.expectedNet), diff:null };
+      const paid = { cur:c, label:(open.length ? 'Total paid out ' : 'Total ') + c, reported:AC.sum(done, s => s.reportedNet), expected:AC.sum(done, s => s.expectedNet), diff:AC.sum(done, s => s.diff) };
+      const waiting = { cur:c, label:(done.length ? 'Not paid out ' : 'Total ') + c, reported:null, expected:AC.sum(open, s => s.expectedNet), diff:null };
       return (done.length ? [paid] : []).concat(open.length ? [waiting] : []);
     }).flat();
   }
@@ -264,7 +264,7 @@
       { label:'Tax', value:-s.tax, count:s.orders },
       { label:'Reserves', value:-s.reserves },
       { label:'Adjustments', value:s.adjustments },
-      { label:s.status === 'break' ? 'Expected net' : 'Net', value:netOf(s), kind:'net' },
+      { label:s.status === 'paid' ? 'Net' : 'Expected net', value:netOf(s), kind:'net' },
     ];
   }
   function waterfallHtml(s) {
@@ -494,7 +494,7 @@
     const next = { rail:r.rail, status:r.status, page:1 };
     next[e.target.id === 'stRail' ? 'rail' : 'status'] = e.target.value;
     go(hashOf(next), 'keep');
-    live.textContent = AC.count(inFilter(next).length) + ' settlements';
+    { const n = inFilter(next).length; live.textContent = n === 1 ? '1 settlement' : AC.count(n) + ' settlements'; }
   });
   /* Changing the month on a settlement leaves it for that month's list. This runs before the shell draws. */
   document.addEventListener('change', e => {

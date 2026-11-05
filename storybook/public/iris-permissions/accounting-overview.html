@@ -20,8 +20,9 @@
     .ac-tile__note { letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; }
     /* A row of cards inside the stack never widens the page. */
     .ac-stack { grid-template-columns:minmax(0,1fr); }
-    /* Month close needs the width: side by side with the checkpoints only from 1600. */
-    @media (max-width:1599px) { section[aria-labelledby="monthCloseTitle"] { grid-column:span 12; } .ac-cp:not(.ac-card--off) { grid-column:span 6; } }
+    /* Month close sits beside the checkpoints from 1440. */
+    @media (max-width:1439px) { section[aria-labelledby="monthCloseTitle"] { grid-column:span 12; } .ac-cp:not(.ac-card--off) { grid-column:span 6; } }
+    @media (min-width:1440px) and (max-width:1599px) { .ac-cp-cur { display:none; } }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -120,7 +121,7 @@
     return valueRow(other.channel, on ? other.count : 0, on ? other.amount : 0, otherOpen());
   }
 
-  const stepNote = (step, usd) => `<span class="ac-note">Checkpoint ${step}${usd ? ' · USD' : ''}</span>`;
+  const stepNote = (step, usd) => `<span class="ac-note">Checkpoint ${step}${usd ? '<span class="ac-cp-cur"> · USD</span>' : ''}</span>`;
 
   const checkpointCard = (step, title, rows) => `<section class="ac-card ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title"><a class="ac-link ac-link--quiet" href="${AC.hrefOf('reconciliation')}#checkpoint-${step}" data-key="checkpoint-${step}">${esc(title)}</a></h2>${stepNote(step, true)}</div><div class="ac-kv">${rows}</div></section>`;
 

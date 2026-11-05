@@ -176,7 +176,7 @@
   });
 
   /* ---------- Exceptions, types from DP-1675 in plain labels ---------- */
-  AC.EXCEPTION_TYPES = { settlement_waterfall_break:'Settlement break', order_unmatched_payment:'Unmatched payment', order_unpaid_beyond_lag:'Unpaid past lag', settlement_pending_overdue:'Pending past lag', balance_rollforward_break:'Roll-forward break', processor_balance_mismatch:'Processor mismatch', payout_unlinked_events:'Unlinked payout events', reserve_not_released:'Reserve not released', payout_failed:'Failed payout' };
+  AC.EXCEPTION_TYPES = { settlement_waterfall_break:'Settlement break', order_unmatched_payment:'Unmatched payment', order_unpaid_beyond_lag:'Unpaid past lag', settlement_pending_overdue:'Pending past lag', balance_rollforward_break:'Roll-forward break', processor_balance_mismatch:'Processor mismatch', payout_unlinked_events:'Unlinked events', reserve_not_released:'Reserve not released', payout_failed:'Failed payout' };
   AC.EXCEPTION_STATUS = { open:'Open', investigating:'Investigating', resolved:'Resolved', accepted:'Accepted' };
   AC.EXCEPTIONS = [
     { id:'ex1', type:'settlement_waterfall_break', severity:'High', amount:47.20, rail:'tiktok', channel:'TikTok Shop', subject:'po_Tk05', link:{ page:'settlements', id:'po_Tk05' }, firstSeen:'Sep 23', status:'open', assignee:'Unassigned' },
@@ -273,7 +273,7 @@
       { id:'settlements', label:LABELS[0][1], done:!breaks.length, status:breaks.length ? [plural(breaks.filter(s => s.status === 'break').length, 'break'), breaks.some(s => s.status === 'failed') ? breaks.filter(s => s.status === 'failed').length + ' failed' : ''].filter(x => !x.startsWith('0')).filter(Boolean).join(' · ') : 'Done', fact:breaks.length ? AC.money(sum(breaks, s => (s.status === 'failed' ? s.expectedNet : Math.abs(s.diff)))) : settlementFacts(), page:'settlements', hash:breaks.length === 1 ? '#status=' + breaks[0].status : '' },
       { id:'exceptions', label:LABELS[1][1], done:!open.length, status:open.length ? open.length + ' open' : 'Done', fact:open.length ? AC.money(sum(open, ex => ex.amount)) : [[AC.EXCEPTIONS.filter(ex => AC.exceptionStatus(ex) === 'resolved').length, 'resolved'], [AC.EXCEPTIONS.filter(ex => AC.exceptionStatus(ex) === 'accepted').length, 'accepted']].filter(x => x[0]).map(x => x[0] + ' ' + x[1]).join(' · '), page:'exceptions', hash:'' },
       { id:'decided', label:LABELS[2][1], done:!j.open, status:j.open ? j.open + ' to decide' : 'Done', fact:j.open || !j.items ? '' : j.items + ' of ' + j.items, page:'journal', hash:'' },
-      { id:'posted', label:LABELS[3][1], done:!left, status:left ? posted + ' of ' + j.total + ' posted' : 'Done', fact:left ? (j.failed ? j.failed + ' failed' : '') : j.total + ' of ' + j.total, page:'journal', hash:'' },
+      { id:'posted', label:LABELS[3][1], done:!left, status:left ? posted + ' of ' + j.total : 'Done', fact:left ? (j.failed ? j.failed + ' failed' : '') : j.total + ' of ' + j.total, page:'journal', hash:'' },
     ];
   };
   AC.closeReady = month => AC.closeChecks(month).every(c => c.done);
