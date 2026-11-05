@@ -61,6 +61,13 @@ const NOUNS = { activity:'events', charge:'charges', refund:'refunds', fee:'fees
 const S = { tab:'all', month:'Sep 2026', cur:'all', rowCur:'USD' };
 const readHash = () => { const h = location.hash.replace('#', ''); const cad = h === 'paypal-cad'; S.tab = cad ? 'paypal' : TABS.some(t => t[0] === h) ? h : 'all'; S.rowCur = cad ? 'CAD' : 'USD'; };
 readHash();
+try {
+  const nav = performance.getEntriesByType('navigation')[0];
+  const month = sessionStorage.getItem('pm-balance-month');
+  if (month && !(nav && nav.type === 'reload')) S.month = month;
+  sessionStorage.removeItem('pm-balance-month');
+} catch (err) { /* private window: start over */ }
+window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-balance-month', S.month); } catch (err) { /* nothing to keep */ } });
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function money(n, cur) { return (cur === 'CAD' ? 'CA$' : '$') + Number(Math.abs(n)).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
@@ -122,7 +129,7 @@ function tieoutHtml(r) {
   const dash = label => `<span class="pm-tie__item"><span class="pm-tie__label">${label}</span><span aria-hidden="true" class="pm-tie__dash">–</span><span style="${SR}">not available</span></span>`;
   const value = (label, v) => {
     const off = round2(Math.abs(v - r.end));
-    return `<span class="pm-tie__item"><span class="pm-tie__label">${label}</span><span>${money(v, cur)}</span>${off ? `<span class="badge badge-yellow badge-sm">Off by ${money(off, cur)}</span>` : '<span class="pm-ok">Tied</span>'}</span>`;
+    return `<span class="pm-tie__item"><span class="pm-tie__label">${label}</span><span>${money(v, cur)}</span>${off > 0.01 ? `<span class="badge badge-yellow badge-sm">Off by ${money(off, cur)}</span>` : '<span class="pm-ok">Tied</span>'}</span>`;
   };
   return `<div class="pm-tieouts">${value('Processor', r.end)}${r.orders ? value('Orders', r.orders.value) : dash('Orders')}${dash('Bank')}${dash('GL')}</div>`;
 }
@@ -150,7 +157,27 @@ function railHtml() {
     </section>
   </div>`;
 }
-function emptyHtml() { return `<section class="card pm-bempty"><div class="card-header-title" role="heading" aria-level="2">No activity for ${esc(S.month)}</div></section>`; }
+function emptyRowHtml(r, n) {
+  const cur = r.cur;
+  return `<div class="pm-entry" style="${n ? 'border-top:1px solid var(--color-border-default);' : ''}"><div class="pm-bgrid pm-brow">
+    <div class="pm-bname"><span class="pm-blink" style="cursor:default;">${esc(r.name)}</span>${r.reserve ? '<span class="form-helper" style="margin:0;">reserve</span>' : ''}</div>
+    <div class="pm-num"><span style="${SR}">Starting </span>${money(r.end, cur)}</div>
+    <div class="pm-num"><span aria-hidden="true">–</span></div><div class="pm-num"><span aria-hidden="true">–</span></div><div class="pm-num"><span aria-hidden="true">–</span></div>
+    <div style="text-align:right;"><span class="badge badge-gray badge-sm">No data</span></div>
+  </div></div>`;
+}
+function emptyHtml() {
+  const tabRails = S.tab === 'all' ? RAILS : [curRail()];
+  return ['USD','CAD'].filter(c => S.tab === 'all' ? (S.cur === 'all' || S.cur === c) : (tabRails[0].cur || 'USD') === c).map((c, i) => {
+    const cur = c === 'CAD' ? 'CAD' : undefined;
+    const list = tabRails.filter(r => r.cur === cur);
+    return `<section class="card" aria-label="${c}"${i ? ' style="margin-top:16px;"' : ''}>
+      <div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="2">${c} <span class="pm-count">${list.length} ${list.length === 1 ? 'rail' : 'rails'}</span></div></div>
+      <div class="pm-bgrid pm-bhead" aria-hidden="true"><span>Rail</span><span>Starting</span><span>Activity</span><span>Payouts</span><span>Ending</span><span>Processor</span></div>
+      ${list.map(emptyRowHtml).join('')}
+    </section>`;
+  }).join('');
+}
 function render() {
   const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
   document.getElementById('app').innerHTML = `
@@ -158,7 +185,7 @@ function render() {
       <div><h1 style="margin:0 0 4px;font-size:20px;line-height:30px;font-weight:600;color:#111928;">Accounting</h1><p style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:0 0 16px;font-size:14px;line-height:21px;color:#374151;"><span class="badge badge-gray badge-sm">Sample data</span></p></div>
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><button type="button" class="btn btn-neutral btn-sm" id="exportPage" data-key="exportPage"${S.month === 'Sep 2026' ? '' : ' disabled'}>${ICON_DOWNLOAD}Export CSV</button></div>
     </div>
-    <nav class="iris-tab-bar pm-section-nav" aria-label="Accounting"><a class="iris-tab iris-tab--active" aria-current="page" href="balance.html">Balance</a><a class="iris-tab" href="journal-entries.html" id="toJournal">Journal entries</a></nav>
+    <nav class="iris-tab-bar pm-section-nav" aria-label="Accounting"><a class="iris-tab iris-tab--active" aria-current="page" href="balance.html">Balance</a><a class="iris-tab" href="journal-entries.html${location.search}" id="toJournal">Journal entries</a></nav>
     ${filtersHtml()}
     ${S.month !== 'Sep 2026' ? emptyHtml() : S.tab === 'all' ? allHtml() : railHtml()}`;
   if (active) { const el = document.querySelector(`[data-key="${CSS.escape(active)}"]`); if (el) el.focus(); }
@@ -245,7 +272,7 @@ function eventRows(r, kind) {
   const taxOf = fee => round2(fee * 0.0286);
   const charge = x => { const tax = taxOf(x[3]); const d = x[0].slice(1); return row(x[1], 'txn_' + d, 'Charge', x[2], -x[3], round2(x[2] - x[3] - tax), x[4], x[4] ? 'available' : 'pending', 'charge', 'ch_' + d, -tax); };
   if (kind === 'charge') return o.map(charge);
-  if (kind === 'activity') return [charge(o[0]), eventRows(r, 'refund')[0], eventRows(r, 'fee')[0], eventRows(r, 'tax')[0]];
+  if (kind === 'activity') return [charge(o[0]), eventRows(r, 'refund')[0]];
   if (kind === 'refund') {
     if (r.id === 'paypal_cad') return [row('Sep 6', 'txn_48166r', 'Refund for charge', -120, 0, -120, 'po_Ca02', 'available', 'refund', 're_48166')];
     return o.filter(x => x[4] && !['#48733','#48921'].includes(x[0])).slice(0, 2).map(x => { const d = x[0].slice(1); const date = laterDate(x[1]); return row(date, 'txn_' + d + 'r', 'Refund for charge', -x[2], 0, -x[2], firstPayoutAfter(r.id, Number(date.replace('Sep ', ''))), 'available', 'refund', 're_' + d); });
@@ -255,7 +282,7 @@ function eventRows(r, kind) {
   return PAYOUTS[r.id].map(p => row(p[1], 'txn_' + p[0].replace('po_', '') + 'p', 'Payout', -p[2], 0, -p[2], p[0], 'paid', 'payout', p[0]));
 }
 function kindTotal(r, kind) { return { activity:r.net, charge:r.gross, refund:-r.refunds, fee:-r.fees, tax:-r.tax, payout:-r.payouts }[kind]; }
-function kindCount(r, kind) { return { activity:r.n.charge + r.n.refund + r.n.fee + r.n.fee, charge:r.n.charge, refund:r.n.refund, fee:r.n.fee, tax:r.n.fee, payout:r.n.payout }[kind]; }
+function kindCount(r, kind) { return { activity:r.n.charge + r.n.refund, charge:r.n.charge, refund:r.n.refund, fee:r.n.fee, tax:r.n.fee, payout:r.n.payout }[kind]; }
 function signedMoney(v, cur) { return (v < 0 ? MINUS : '') + money(v, cur); }
 function sourceHtml(r, ev) {
   const cents = v => String(Math.round(v * 100));
@@ -289,7 +316,7 @@ function openDrawer(id, kind, pickTxn) {
       <td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.amount, cur)}</td>
       <td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.fee, cur)}</td>${withTax ? `<td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.tax, cur)}</td>` : ''}
       <td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.net, cur)}</td>
-      <td style="${TD}padding-left:24px;">${ev.payout ? (kind === 'payout' ? esc(ev.payout) : `<button type="button" class="pm-plink" data-payout="${esc(ev.payout)}">${esc(ev.payout)}</button>`) : '–'}</td>
+      <td style="${TD}padding-left:24px;">${ev.payout ? (kind === 'payout' ? esc(ev.payout) : `<button type="button" class="pm-plink" data-payout="${esc(ev.payout)}">${esc(ev.payout)}</button>`) : 'Pending'}</td>
       <td style="${TD}">${esc(ev.status)}</td></tr>`).join('');
   const noun = n === 1 ? NOUNS[kind].replace(/s$/, '') : NOUNS[kind];
   const showing = rows.length === n ? `Showing ${n} ${noun}` : `Showing ${rows.length} of ${n.toLocaleString('en-US')} ${NOUNS[kind]}`;
@@ -347,7 +374,7 @@ function setTab(tab, cur) {
   if (location.hash !== hashFor()) history.pushState(null, '', hashFor());
   render();
 }
-window.addEventListener('popstate', () => { const had = !!document.getElementById('modalBackdrop'); if (had) { returnFocus = null; closeDrawer(); } readHash(); render(); if (had) { const b = document.querySelector('[data-key="tab:' + S.tab + '"]'); if (b) b.focus(); } });
+window.addEventListener('popstate', () => { const had = !!document.getElementById('modalBackdrop'); const wasIn = document.activeElement !== document.body; if (had) { returnFocus = null; closeDrawer(); } readHash(); render(); if (had || (wasIn && document.activeElement === document.body)) { const b = document.querySelector('[data-key="tab:' + S.tab + '"]'); if (b) b.focus(); } });
 document.addEventListener('mousedown', () => document.documentElement.classList.add('pm-pointer'), true);
 document.addEventListener('keydown', () => document.documentElement.classList.remove('pm-pointer'), true);
 const secondClick = e => e.detail > 1 && Date.now() - Math.max(overlayClosedAt, overlayOpenedAt) < 500;
@@ -361,7 +388,7 @@ document.addEventListener('click', e => {
     if (String(window.getSelection())) return;
     if (e.detail > 1) { clearTimeout(rowTimer); return; }
     const kv = e.target.closest('.pm-kv[data-kv]');
-    if (kv) { const k = kv.querySelector('[data-open]').dataset.open; clearTimeout(rowTimer); rowTimer = setTimeout(() => { if (!String(window.getSelection())) { const [id, kind] = k.split(':'); returnFocus = null; openDrawer(id, kind); } }, 220); return; }
+    if (kv) { const k = kv.querySelector('[data-open]').dataset.open; clearTimeout(rowTimer); rowTimer = setTimeout(() => { if (!String(window.getSelection())) { const [id, kind] = k.split(':'); openDrawer(id, kind); returnFocus = kv.querySelector('[data-open]'); } }, 220); return; }
     const r = e.target.closest('[data-rail-row]');
     if (!r) return;
     const tab = r.dataset.railRow, cur = r.dataset.railCur;
