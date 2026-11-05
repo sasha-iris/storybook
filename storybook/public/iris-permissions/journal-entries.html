@@ -10,9 +10,56 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
+  <link rel="stylesheet" href="assets/accounting.css">
+  <style>
+    /* Journal entries only: what the visual system has no class for, on its tokens. */
+    /* Keyboard focus stops under the pinned head, not behind it. */
+    @media (min-height:701px) { html { scroll-padding-top:116px; } }
+    /* A row button in a card head keeps the head at 44. A card with no table closes at 12. */
+    .ac-card__head .ac-btn-row { margin:-2px 0; }
+    .ac-card--closed .ac-card__head { padding-bottom:12px; }
+    .ac-head .ac-select { flex:none; }
+    /* A clear button has no box to align: its text sits on the right edge, its fill reaches the row band. */
+    body.ac .ac-btn-row.ac-btn-flush, body.ac .ac-cell-actions > div > .ac-btn-row:last-child:not(.btn-neutral) { padding:0 7px; margin-right:-8px; }
+    /* The note keeps Export CSV still while items get decided. */
+    .ac-actions #postNote:has(+ #postBtn) { min-width:152px; text-align:right; }
+    @media (max-width:1279px) { .ac-actions #postNote { white-space:normal; line-height:16px; text-align:right; } }
+    /* Name cell: a chip with no room wraps to a clipped second line instead of being cut. The padding keeps the toggle's focus ring. */
+    .ac-name--fit { flex-wrap:wrap; height:30px; box-sizing:border-box; padding:4px 0 4px 4px; margin:-4px 0 -4px -4px; row-gap:8px; overflow:hidden; }
+    /* Status cell: a rail mismatch beside the status word, one of the two when there is no room. */
+    .ac-pair { display:inline-flex; align-items:center; justify-content:flex-end; gap:8px; vertical-align:middle; }
+    @media (max-width:1619px) {
+      .ac-pair:not(.ac-pair--word) > :last-child, .ac-pair--word > :first-child { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); }
+    }
+    /* Open entry: account text sits under its head in both states, facts on one line, buttons at the right edge. */
+    .ac-table .ac-child--head td.ac-acct-head { padding-left:calc(var(--ac-gut) + 13px); }
+    .ac-acct { display:flex; align-items:center; gap:8px; min-width:0; }
+    body.ac .ac-acct .ac-select--row { flex:0 1 320px; width:auto; min-width:0; }
+    .ac-acct .btn { flex:none; }
+    .ac-facts { display:flex; align-items:center; gap:16px; }
+    @media (min-width:1280px) { .ac-only-narrow { display:none; } }
+    @media (max-width:1279px) { .ac-only-wide { display:none; } }
+    .ac-table td.ac-child-note { white-space:normal; }
+    /* Under 1280 a long amount or status word keeps the column's full width: the numbers are right aligned, the gutter stays empty anyway. */
+    @media (max-width:1279px) { .ac-table .ac-child td.ac-num, .ac-table tbody td.ac-right { padding-left:0; } }
+    .ac-table td.ac-cell-actions { overflow:visible; }
+    .ac-cell-actions > div { display:flex; justify-content:flex-end; gap:8px; }
+    .ac-btn-text { padding:0; height:auto; min-height:0; font:inherit; letter-spacing:inherit; }
+    /* The row behind a panel stays selected inside an open entry too. */
+    .ac-table .ac-child.ac-row--sel td, .ac-table .ac-row--open.ac-row--sel td, .ac-table .ac-row--open.ac-row--sel:hover td { background:var(--ac-sel); }
+    /* Panels and dialogs show tables of different columns. */
+    .ac-table--fit { table-layout:auto; }
+    .ac-lead { margin:0 0 16px; }
+    .ac-showing { margin:8px 0 16px; white-space:normal; }
+    .ac-panel__body > .ac-note { margin:0; }
+    .ac-hint { display:block; font-weight:400; color:var(--ac-2); }
+    body.ac #postConfirm:disabled { cursor:progress; }
+    /* accounting.css leaves this h2 at the browser's size. */
+    .ac-empty__title { font-size:14px; line-height:20px; }
+  </style>
 </head>
 <!-- Page scaffolding only: flex shell = sidebar + content. -->
-<body class="pm-journal" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
 <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;">
     <div style="display:flex;flex-direction:column;gap:16px;padding:0 0 12px;">
@@ -44,19 +91,18 @@
   </aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
 </div>
-<div id="toastHost" style="position:fixed;top:16px;right:16px;z-index:200;max-width:440px;" role="status" aria-live="polite"></div>
+<div id="toastHost" role="status" aria-live="polite"></div>
 <div id="modalHost"></div>
 
 <script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
 <script src="assets/panorama-match.js"></script>
+<script src="assets/accounting-data.js"></script>
+<script src="assets/accounting-shell.js"></script>
 <script>
-/* GAP: no review-queue or expandable journal row pattern in Storybook.
-   Composed from .card, .iris-th, .badge. Storybook has no plain td class, so cells use token-based inline padding and token-based inline layout. */
-
-const CHEVRON = '<svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
-const CHEVRON_DOWN = '<svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>';
-const MINUS = '\u2212';
-const ICON_DOWNLOAD = '<svg class="pm-ico" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>';
+const CHEVRON = '<svg class="ac-chev" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
+const CLOSE_ICON = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>';
+const MINUS = '−';
+const DASH = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
 
 const ACCOUNTS = ['Shopify Payments clearing','Stripe clearing','PayPal clearing','Amazon clearing','TikTok Shop clearing','Other clearing','Afterpay clearing','Shop Cash clearing','Authorize.net clearing','Bank','Sales','Refunds and returns','Fees in COGS','Fees below gross profit','Deferred revenue','Deferred COGS','COGS','COGS: Testers','COGS: Customer service','Discounts','Inventory'];
 
@@ -78,8 +124,16 @@ function rail(id, name, gross, refunds, fees, tax, net, payouts, orders, start, 
     { id:'pay', cr:payouts, account:c, rec:c, bucket:'Payouts from clearing', choices:clearing },
   ]};
 }
+const orgEntries = list => {
+  if (AC.ORG === 'onerail') return list.filter(e => e.id === 'stripe');
+  if (AC.ORG === 'norails' || AC.ORG === 'noduck') return [];
+  if (AC.ORG === 'nodefer') return list.filter(e => e.id !== 'deferred');
+  if (AC.ORG === 'nocogs') list.forEach(e => { if (e.id === 'deferred') e.lines = e.lines.filter(l => l.id !== 'dco' && l.id !== 'cog'); });
+  if (AC.SCENARIO === 'anchor') list.forEach(e => { if (e.id === 'stripe') e.native = AC.rail('stripe').native; });
+  return list;
+};
 const initial = () => ({
-  entries: [
+  entries: orgEntries([
     rail('shopify','Shopify Payments',412680.00,13940.25,10041.68,295.90,388402.17,392118.90,3214,41210.55,37493.82),
     rail('stripe','Stripe',101240.00,2180.30,2651.13,78.12,96330.45,98120.00,812,12004.10,10214.55),
     rail('paypal','PayPal',30410.00,620.40,859.67,25.33,28904.60,27500.00,246,3318.72,4723.32),
@@ -100,7 +154,7 @@ const initial = () => ({
       { id:'sal', cr:612.00, account:'Sales', rec:'Sales', bucket:'Retail value' },
     ]},
     rail('paypal_cad','PayPal',5510.00,120.00,174.25,5.00,5210.75,5000.00,58,812.40,1023.15,'CAD'),
-  ],
+  ]),
   resolved: {},
   acct: {},
   open: {},
@@ -110,7 +164,7 @@ let S = initial();
 try {
   const nav = performance.getEntriesByType('navigation')[0];
   const saved = sessionStorage.getItem('pm-journal-state');
-  if (saved && !(nav && nav.type === 'reload')) S = JSON.parse(saved);
+  if (saved && nav && nav.type !== 'reload' && (nav.type === 'back_forward' || /(balance|accounting-[a-z]+)\.html/.test(document.referrer))) S = JSON.parse(saved);
   sessionStorage.removeItem('pm-journal-state');
 } catch (err) { /* private window: start over */ }
 window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-journal-state', JSON.stringify(S)); } catch (err) { /* nothing to keep */ } });
@@ -143,6 +197,11 @@ const ISSUES = [
     done:{ reclass:'Moved to COGS sub-categories', leave:'Left in sales and discounts' } },
 ];
 ISSUES.sort((a, b) => num(b.amount) - num(a.amount));
+(function orgIssues() {
+  const drop = { nodefer:['cogs', 'sku', 'subs'], nocogs:['sku'] }[AC.ORG] || (['clean', 'onerail', 'norails', 'noduck'].includes(AC.ORG) ? ISSUES.map(i => i.id) : []);
+  drop.forEach(id => ISSUES.splice(ISSUES.findIndex(i => i.id === id), 1));
+  if (AC.ORG === 'nocogs') { const c = ISSUES.find(i => i.id === 'cogs'); c.options.forEach(o => { o.rec = o.id === 'revonly'; }); c.options.reverse(); }
+})();
 
 const COUNTS = { shopify:{ refund:96, payout:12 }, stripe:{ refund:14, payout:19 }, paypal:{ refund:6, payout:8 }, amazon:{ refund:22, payout:6 }, tiktok:{ refund:4, payout:5 }, paypal_cad:{ refund:1, payout:3 } };
 const SPLIT_COUNTS = { 'afterpay':[7,'payment'], 'shop cash':[4,'payment'], 'authorize.net':[1,'payment'], 'influencer sends':[4,'order'], 'replacements':[3,'order'] };
@@ -186,34 +245,54 @@ function money(n, cur) { return (cur === 'CAD' ? 'CA$' : '$') + Number(n).toLoca
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function entry(id) { return S.entries.find(e => e.id === id); }
 function totals(e) { const r = e.lines.reduce((a, l) => { a.dr += l.dr || 0; a.cr += l.cr || 0; return a; }, { dr:0, cr:0 }); r.dr = Math.round(r.dr * 100) / 100; r.cr = Math.round(r.cr * 100) / 100; return r; }
-function otherAcct() { const l = line(entry('other'), 'oth'); return l ? l.account : 'Other clearing'; }
+function otherAcct() { const o = entry('other'); const l = o ? line(o, 'oth') : null; return l ? l.account : 'Other clearing'; }
 /* Post follows the product owner's brief: review, validate, one button. The ledger is sample data, QuickBooks Online is the first target in Linear. ?fail=1 shows the inline posting error once. */
 const LEDGER = 'QuickBooks Online';
-const FAIL_ONCE = new URLSearchParams(location.search).get('fail') === '1';
-const CLOSED = new URLSearchParams(location.search).get('closed') === '1';
-function pageChip() {
-  if (CLOSED) return 'Closed';
-  if (!S.posted) return 'Not posted';
-  if (unposted().length) return 'Partly posted';
-  const originals = S.entries.filter(e => !e.reversalOf), back = originals.filter(e => postState(e) === 'reversed').length;
-  return !back ? 'Posted' : back === originals.length ? 'Reversed' : 'Partly reversed';
+const FAIL_MODE = new URLSearchParams(location.search).get('fail') || '';
+const FAIL_ONCE = FAIL_MODE === '1';
+const CLOSED = new URLSearchParams(location.search).get('closed') === '1' || AC.periodClosed(AC.MONTH);
+const otherMonth = () => AC.month() !== AC.MONTH;
+/* ?role=view reads everything and changes nothing. ?ledger=none and ?ledger=scope stop Post at the ledger. */
+const VIEW_ONLY = new URLSearchParams(location.search).get('role') === 'view';
+const LEDGER_STATE = new URLSearchParams(location.search).get('ledger') || '';
+const readOnly = () => !!S.posted || CLOSED || VIEW_ONLY;
+/* The page's state, one note beside Post. */
+function pageNote() {
+  if (VIEW_ONLY) return 'View only';
+  if (otherMonth() || !S.entries.length) return 'No entries to post';
+  if (CLOSED) return AC.MONTH + ' is closed';
+  if (LEDGER_STATE === 'none' && !S.ledgerFixed) return 'No ledger connected';
+  if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return LEDGER + ' needs accounting access';
+  const open = openIssues().length;
+  if (open) return 'Decide ' + plural(open, 'item', 'items') + ' to post';
+  const unbalanced = outOfBalance();
+  if (unbalanced) return plural(unbalanced, 'entry', 'entries') + ' out of balance';
+  const left = unposted().length + S.entries.filter(e => postState(e) === 'checking').length;
+  if (left) return S.posted ? plural(left, 'entry', 'entries') + ' not posted' : 'To ' + LEDGER;
+  const bases = [...new Set(S.entries.filter(e => !e.reversalOf).map(baseId))];
+  const back = bases.filter(b => !S.entries.some(x => !x.reversalOf && baseId(x) === b && postState(x) === 'posted')).length;
+  return back ? plural(back, 'entry', 'entries') + ' reversed' : 'Posted to ' + LEDGER;
 }
+function outOfBalance() { return S.entries.filter(e => { const t = totals(e); return t.dr !== t.cr; }).length; }
 function postState(e) { return S.posted ? S.posted[e.id] : undefined; }
 function unposted() { return S.entries.filter(e => !postState(e) || postState(e) === 'failed'); }
+const baseId = e => e.baseId || e.id;
 function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
-function extId(e) { return 'JE-2026-09-' + e.id.replace('_rev', '-R').replace('_', '-').toUpperCase(); }
+function extId(e) { return 'JE-2026-09-' + e.id.replace('_rev', '-R').replace(/_/g, '-').toUpperCase(); }
 function doneText(i, r) { return i.id === 'unmatched' && r === 'leave' ? 'Left in ' + otherAcct() : i.done[r]; }
-function dcoName() { const a = line(entry('deferred'), 'dco').account; return a === 'Deferred COGS' ? 'deferred COGS' : a; }
+function cogName() { const d = entry('deferred'); const l = d && line(d, 'cog'); return l ? l.account : 'COGS'; }
+function dcoName() { const d = entry('deferred'); const a = d && line(d, 'dco') ? line(d, 'dco').account : 'Deferred COGS'; return a === 'Deferred COGS' ? 'deferred COGS' : a; }
 function statusOf(e) {
   const posted = postState(e);
   if (posted === 'failed') return { word:'Failed', tone:'bad' };
+  if (posted === 'checking') return { word:'Checking', tone:'neutral' };
   if (posted === 'reversed') return { word:'Reversed', tone:'neutral' };
   if (posted === 'posted') return { word:'Posted', tone:'ok' };
   return checkOf(e);
 }
 function checkOf(e) {
   const n = issuesFor(e.id).length;
-  if (n) return { word:n + ' to decide', tone:'warn' };
+  if (n) return { word:n + (VIEW_ONLY ? ' not decided' : ' to decide'), tone:'warn' };
   if (e.start !== undefined) return isTied(e) ? { word:'Tied', tone:'ok' } : { word:'Not tied', tone:'warn' };
   if (e.id === 'other') return { word:'No payout data', tone:'neutral' };
   const t = totals(e);
@@ -221,7 +300,20 @@ function checkOf(e) {
 }
 function statusHtml(e) {
   const st = statusOf(e);
-  return st.tone === 'ok' ? `<span class="pm-ok">${st.word}</span>` : `<span class="badge badge-${{ bad:'red', neutral:'gray', warn:'yellow' }[st.tone]} badge-sm">${st.word}</span>`;
+  if (st.tone === 'ok') return `<span class="ac-status ac-status--ok" data-word>${st.word}</span>`;
+  if (st.tone === 'neutral') return st.word === 'Checking' ? `<span class="ac-chip ac-chip--wait" data-word>${st.word}</span>` : `<span class="ac-status ac-status--quiet" data-word>${st.word}</span>`;
+  return `<span class="ac-chip ac-chip--${st.tone}" data-word>${st.word}</span>`;
+}
+/* A rail mismatch sits in Status, before the word. The full wording is in the open entry. */
+function railFlag(e) {
+  if (e.start === undefined) return '';
+  if (['posted', 'reversed'].includes(postState(e)) && !isTied(e)) return '<span class="ac-chip ac-chip--warn">Not tied</span>';
+  if (ORDERS_OFF[e.id]) return `<span class="ac-chip ac-chip--warn" title="Orders off by ${money(ORDERS_OFF[e.id])}"><span class="ac-sr">Orders </span>Off by ${money(ORDERS_OFF[e.id])}</span>`;
+  return '';
+}
+function statusCell(e) {
+  const flag = railFlag(e);
+  return flag ? `<span class="ac-pair${statusOf(e).tone === 'ok' ? '' : ' ac-pair--word'}">${flag}${statusHtml(e)}</span>` : statusHtml(e);
 }
 function openIssues() { return ISSUES.filter(i => !S.resolved[i.id]); }
 function issuesFor(id) { return openIssues().filter(i => i.entry === id); }
@@ -232,9 +324,11 @@ function recomputeDeferred() {
   const d = entry('deferred'), r = S.resolved, ship = r.subs === 'ship';
   const rev = 58240 - (ship ? 2940 : 0);
   const cog = Math.round((12200.64 + (r.sku === 'map' ? 312 : 0) - (ship ? 712 : 0)) * 100) / 100;
-  line(d,'rev').dr = rev; line(d,'def').cr = rev; line(d,'dco').dr = cog; line(d,'cog').cr = cog;
+  line(d,'rev').dr = rev; line(d,'def').cr = rev;
+  const hasCogs = !!line(d,'dco');
+  if (hasCogs) { line(d,'dco').dr = cog; line(d,'cog').cr = cog; }
   d.lines = d.lines.filter(l => l.id !== 'est' && l.id !== 'esc');
-  const acc = line(d,'dco').account, src = line(d,'cog').account;
+  const acc = hasCogs ? line(d,'dco').account : 'Deferred COGS', src = hasCogs ? line(d,'cog').account : 'COGS';
   if (r.cogs === 'estimate') d.lines.push({ id:'est', dr:1468.80, account:acc, rec:acc, bucket:'Estimate deferred', choices:[acc] }, { id:'esc', cr:1468.80, account:src, rec:src, bucket:'Estimate out of COGS', choices:[src] });
   d.orders = 402 - (ship ? 21 : 0);
   d.lines.forEach(l => { const a = S.acct['deferred:' + l.id]; if (a) l.account = a; });
@@ -242,9 +336,9 @@ function recomputeDeferred() {
 /* A decision that keeps the amounts still leaves a trace in the export. */
 function syncMemos() {
   const r = S.resolved;
-  entry('deferred').memo = 'Orders unfulfilled at Sep 30' + (r.cogs === 'estimate' ? '. COGS estimated at 24% on 38 orders' : '') + (r.cogs === 'revonly' ? '. 38 orders, $6,120.00 deferred without COGS' : '') + (r.sku === 'map' ? '. 9 lines matched by product title' : '') + (r.sku === 'leave' ? '. 9 lines, $1,284.00 deferred without COGS' : '') + (r.subs === 'ship' ? '. 21 subscription orders treated as shipped' : '') + (r.subs === 'keep' ? '. 21 subscription orders kept deferred' : '');
-  entry('other').memo = 'Payments from processors with no payout data, Sep 2026' + (r.unmatched === 'split' ? '. Split across 3 clearing accounts' : '') + (r.unmatched === 'leave' ? '. Left in ' + otherAcct() : '');
-  entry('gratis').memo = 'Free orders, Sep 2026' + (r.gratis === 'reclass' ? '. Moved to COGS sub-categories' : '') + (r.gratis === 'leave' ? '. Left in sales and discounts' : '');
+  if (entry('deferred')) entry('deferred').memo = 'Orders unfulfilled at Sep 30' + (r.cogs === 'estimate' ? '. COGS estimated at 24% on 38 orders' : '') + (r.cogs === 'revonly' ? '. 38 orders, $6,120.00 deferred without COGS' : '') + (r.sku === 'map' ? '. 9 lines matched by product title' : '') + (r.sku === 'leave' ? '. 9 lines, $1,284.00 deferred without COGS' : '') + (r.subs === 'ship' ? '. 21 subscription orders treated as shipped' : '') + (r.subs === 'keep' ? '. 21 subscription orders kept deferred' : '');
+  if (entry('other')) entry('other').memo = 'Payments from processors with no payout data, Sep 2026' + (r.unmatched === 'split' ? '. Split across 3 clearing accounts' : '') + (r.unmatched === 'leave' ? '. Left in ' + otherAcct() : '');
+  if (entry('gratis')) entry('gratis').memo = 'Free orders, Sep 2026' + (r.gratis === 'reclass' ? '. Moved to COGS sub-categories' : '') + (r.gratis === 'leave' ? '. Left in sales and discounts' : '');
 }
 function applyIssue(issue, option) {
   if (issue.entry === 'deferred') recomputeDeferred();
@@ -285,31 +379,20 @@ function clearToast() {
   host.innerHTML = '';
   if (inside) { const known = toastReturn && document.contains(toastReturn) ? toastReturn : null; const f = known || (document.documentElement.classList.contains('pm-pointer') ? null : document.getElementById('exportCsv')); if (f) f.focus({ preventScroll:true }); }
 }
-/* Top right, as in the live product. Stays clear of the page's Post and Export CSV row, of an open dialog and of the side panel. */
+/* Position lives in accounting.css: under the head, or left of the side panel. Only an open dialog moves it clear. */
 function placeToast() {
   const host = document.getElementById('toastHost');
-  const box = document.getElementById('toastBox');
-  const drawer = document.querySelector('.pm-drawer');
   const dialog = document.querySelector('.modal-dialog');
-  const action = document.getElementById('exportCsv');
-  let top = 16, right = 16, max = 440;
-  if (drawer) {
-    const left = drawer.getBoundingClientRect().left;
-    right = window.innerWidth - left + 16;
-    max = Math.max(200, left - 32);
-  } else if (dialog) {
+  let top = '', max = 0;
+  if (dialog) {
     const d = dialog.getBoundingClientRect();
     const room = window.innerWidth - 32 - d.right;
     if (room >= 288) max = Math.min(440, room);
-    else top = d.bottom + 8;
-  } else if (box && action) {
-    const r = action.getBoundingClientRect();
-    if (r.right > box.getBoundingClientRect().left) top = Math.max(16, r.bottom + 8);
+    else top = d.bottom + 8 + 'px';
   }
-  host.style.top = top + 'px';
-  host.style.right = right + 'px';
-  host.style.maxWidth = max + 'px';
-  host.classList.toggle('is-narrow', max < 360);
+  host.style.top = top;
+  host.style.maxWidth = max ? max + 'px' : '';
+  host.classList.toggle('is-narrow', !!max && max < 360);
 }
 window.addEventListener('scroll', placeToast, true);
 window.addEventListener('resize', placeToast);
@@ -358,7 +441,7 @@ function openModal(title, body, footer, size) {
   overlayOpenedAt = Date.now();
   lockPage();
   document.getElementById('modalHost').innerHTML = `<div class="modal-backdrop" id="modalBackdrop" style="align-items:flex-start;padding-top:8vh;"><div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="modal-dialog ${size || 'modal-dialog-lg'}" style="max-height:calc(100vh - 48px);display:flex;flex-direction:column;">
-    <div class="modal-header"><h2 class="modal-title" id="modalTitle">${esc(title)}</h2><button type="button" class="modal-close" id="modalClose" aria-label="Close dialog"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg></button></div>
+    <div class="modal-header"><h2 class="modal-title" id="modalTitle">${esc(title)}</h2><button type="button" class="modal-close" id="modalClose" aria-label="Close dialog">${CLOSE_ICON}</button></div>
     <div class="modal-body" style="overflow:auto;">${body}</div><div class="modal-footer" style="flex-wrap:wrap;">${footer}</div></div></div>`;
   document.getElementById('modalClose').onclick = closeModal;
   document.getElementById('modalBackdrop').addEventListener('mousedown', e => { if (e.target.id === 'modalBackdrop') { e.preventDefault(); if (e.detail < 2 && !posting) closeModal(); } });
@@ -379,16 +462,20 @@ function modalKeys(e) {
 function closeModal() {
   overlayClosedAt = Date.now();
   unlockPage();
-  document.querySelectorAll('.is-drilled').forEach(r => r.classList.remove('is-drilled'));
+  document.querySelectorAll('#app .ac-row--sel').forEach(r => r.classList.remove('ac-row--sel'));
+  document.querySelectorAll('#app .ac-link[aria-expanded]').forEach(b => b.removeAttribute('aria-expanded'));
+  document.body.classList.remove('ac-panel-open');
   document.getElementById('modalHost').innerHTML = '';
   placeToast();
   document.removeEventListener('keydown', modalKeys);
   if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
 }
+const FLAGGED = ['Blank', 'Missing', 'Looks unfulfilled'];
 function simpleTable(caption, columns, rows, numeric) {
-  return `<table style="width:100%;border-collapse:collapse;"><caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">${esc(caption)}</caption>
-    <thead><tr>${columns.map(c => `<th scope="col" class="iris-th" style="${numeric && numeric.includes(c) ? 'text-align:right;' : ''}${c === 'Order' ? 'width:72px;' : c === 'Date' ? 'width:64px;' : ''}">${esc(c)}</th>`).join('')}</tr></thead>
-    <tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td style="${TDP}${numeric && numeric.includes(columns[i]) ? 'text-align:right;font-variant-numeric:tabular-nums;' : ''}">${['Blank','Missing','Looks unfulfilled'].includes(v) ? `<span class="badge badge-yellow badge-sm">${esc(v)}</span>` : esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const isNum = c => numeric && numeric.includes(c);
+  return `<div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">${esc(caption)}</caption>
+    <thead><tr>${columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td${isNum(columns[i]) ? ' class="ac-num"' : ''}>${FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 
 function issueModal(id) {
@@ -396,19 +483,18 @@ function issueModal(id) {
   const pick = S.resolved[id] || issue.options[0].id;
   const opts = issue.options.map(o => `<div class="form-check" style="align-items:flex-start;">
     <input class="form-check-input" style="margin-top:3px;" type="radio" name="fix" id="fix-${o.id}" value="${o.id}"${o.id === pick ? ' checked data-autofocus' : ''} aria-describedby="fix-${o.id}-hint">
-    <div><label class="form-check-label" for="fix-${o.id}">${esc(issue.id === 'unmatched' && o.id === 'leave' ? 'Leave in ' + otherAcct() : o.label)} ${o.rec ? '<span class="badge badge-gray badge-sm">Recommended</span>' : ''} ${o.id === S.resolved[id] ? '<span class="form-helper" style="display:inline;margin:0;">Current</span>' : ''}<span class="form-helper" style="display:block;margin:0;" id="fix-${o.id}-hint">${esc(o.hint.replace('to deferred COGS', 'to ' + dcoName()).replace('from September COGS', 'from September ' + line(entry('deferred'), 'cog').account))}</span></label></div></div>`).join('');
-  const body = `${issue.why ? `<p style="margin:0 0 16px;font-size:13px;line-height:18px;color:var(--color-text-primary);">${esc(issue.why)}</p>` : ''}
-    <div style="overflow-x:auto;margin-bottom:8px;">${simpleTable(issue.title, issue.columns, issue.rows, ['Amount','Revenue','Retail value','Cost'])}</div>
-    <p class="form-helper" style="margin:0 0 16px;">Showing ${issue.rows.length} of ${esc(issue.count)}</p>
-    <fieldset style="border:0;padding:0;margin:0;"><legend class="form-label" style="padding-bottom:6px;">Decision</legend>${opts}</fieldset>`;
-  const footer = `<button type="button" class="btn btn-alternative btn-md" id="fixCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="fixApply">Apply</button>`;
+    <div><label class="form-check-label" for="fix-${o.id}">${esc(issue.id === 'unmatched' && o.id === 'leave' ? 'Leave in ' + otherAcct() : o.label)} ${o.rec ? '<span class="ac-chip ac-chip--wait">Recommended</span>' : ''} ${o.id === S.resolved[id] ? '<span class="ac-muted">Current</span>' : ''}<span class="ac-hint" id="fix-${o.id}-hint">${esc(o.hint.replace('to deferred COGS', 'to ' + dcoName()).replace('from September COGS', 'from September ' + cogName()))}</span></label></div></div>`).join('');
+  const body = `${simpleTable(issue.title, issue.columns, issue.rows, ['Amount','Revenue','Retail value','Cost'])}
+    <p class="ac-note ac-showing">Showing ${issue.rows.length} of ${esc(issue.count)}</p>
+    <fieldset style="border:0;padding:0;margin:0;"><legend class="ac-label">Decision</legend>${opts}</fieldset>`;
+  const footer = `<button type="button" class="btn btn-neutral btn-md" id="fixCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="fixApply">Apply</button>`;
   openModal(issue.title, body, footer);
   document.getElementById('fixCancel').onclick = closeModal;
   document.getElementById('fixApply').onclick = ev => {
     const opt = document.querySelector('input[name=fix]:checked').value;
     if (opt === S.resolved[issue.id]) return closeModal();
     const keyboard = ev.currentTarget.matches(':focus-visible');
-    const fromEntry = returnFocus && returnFocus.closest && returnFocus.closest('.pm-entry');
+    const fromEntry = returnFocus && returnFocus.closest && returnFocus.closest('.ac-child');
     const before = JSON.parse(JSON.stringify(S));
     S.resolved[issue.id] = opt;
     const dropped = applyIssue(issue, opt);
@@ -502,7 +588,7 @@ function sourceRow(e, o, row, bucket) {
     ['source', isPayout ? col('Payout') : rail ? (b === 'refunds' ? 're_' : 'ch_') + digits : (col('Paid with') || 'order')],
     ['created', '2026-09-' + date.padStart(2, '0') + 'T' + String(8 + seed % 12).padStart(2, '0') + ':' + String(seed % 60).padStart(2, '0') + ':11Z'],
   ].filter(Boolean);
-  return `<div class="pm-source"><div class="pm-source__head"><span>Source row</span><span style="display:inline-flex;align-items:center;gap:8px;"><span class="form-helper" style="margin:0;">Sample data</span><button type="button" class="btn btn-neutral btn-xs" id="srcCopy">Copy</button></span></div><dl>${pairs.map(p => `<dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl></div>`;
+  return AC.sourceRow(pairs);
 }
 function openDrawer(id, title, amount, bucket) {
   const e = entry(id);
@@ -510,22 +596,26 @@ function openDrawer(id, title, amount, bucket) {
   returnFocus = document.activeElement;
   overlayOpenedAt = Date.now();
   lockPage();
-  const origin = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('.pm-entry__row, .pm-lines__row') : null;
-  const fallbackRow = document.querySelector('[data-entry-toggle="' + id + '"]');
-  (origin || fallbackRow.closest('.pm-entry__row')).classList.add('is-drilled');
+  const origin = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('[data-entry-row], [data-line-row]') : null;
+  (origin || document.querySelector('[data-entry-row="' + id + '"]')).classList.add('ac-row--sel');
+  const link = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('#app .ac-link') : null;
+  if (link) link.setAttribute('aria-expanded', 'true');
+  document.body.classList.add('ac-panel-open');
   const numeric = ['Gross','Fees','Tax','Net','Amount','Fee','Revenue','Retail value','Cost','Estimated cost','COGS','Orders'];
-  const head = o.columns.map(c => `<th scope="col" class="iris-th" style="${c === 'Order' ? 'width:72px;' : c === 'Date' ? 'width:64px;' : ''}${numeric.includes(c) ? 'text-align:right;' : ''}${c === 'Payout' && o.columns[0] !== 'Payout' ? 'padding-left:24px;' : ''}">${esc(c)}</th>`).join('');
-  const body = o.rows.map((r, i) => `<tr class="pm-drawer__row" data-src="${i}">${r.map((v, n) => `<td style="${TDP}${numeric.includes(o.columns[n]) ? 'text-align:right;font-variant-numeric:tabular-nums;' : ''}${o.columns[n] === 'Payout' && n ? 'padding-left:24px;' : ''}">${n === 0 ? `<button type="button" class="pm-amount" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>` : ['Blank','Missing','Looks unfulfilled'].includes(v) ? `<span class="badge badge-yellow badge-sm">${esc(v)}</span>` : esc(minus(v))}</td>`).join('')}</tr>`).join('');
-  document.getElementById('modalHost').innerHTML = `<div class="pm-drawer-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="pm-drawer">
-    <div class="pm-drawer__head"><div class="pm-drawer__title"><h2 class="modal-title" id="modalTitle" style="margin:0;">${esc(title)}${COUNTS[id] && panelTotal(id, bucket) !== null ? ` <span class="pm-drawer__count">(${panelTotal(id, bucket).toLocaleString('en-US')})</span>` : ''}${amount ? ' ' + esc(minus(amount)) : ''}</h2><span class="pm-drawer__meta">${esc(e.name)} · ${e.cur || 'USD'} · Sep 2026</span></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><button type="button" class="btn btn-neutral btn-sm" id="ordExport">${ICON_DOWNLOAD}Export CSV</button><button type="button" class="modal-close" id="modalClose" aria-label="Close panel"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg></button></div></div>
-    <div class="pm-drawer__body"><div class="pm-frame"><table style="width:100%;border-collapse:collapse;"><caption style="${SR}">${esc(title)} in ${esc(e.name)}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
-    <p class="form-helper" style="margin:8px 0 16px;">${esc(panelFooter(id, bucket, o, amount))}</p><div id="sourceSlot" role="status"></div></div>
+  const isNum = c => numeric.includes(c);
+  const head = o.columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('');
+  const body = o.rows.map((r, i) => `<tr class="ac-row--link" data-src="${i}">${r.map((v, n) => `<td${isNum(o.columns[n]) ? ' class="ac-num"' : ''}>${n === 0 ? `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>` : FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : /^-?(CA)?\$0\.00$/.test(v) ? `<span class="ac-zero">${esc(minus(v))}</span>` : esc(minus(v))}</td>`).join('')}</tr>`).join('');
+  const count = COUNTS[id] && panelTotal(id, bucket) !== null ? ` <span class="ac-muted">(${panelTotal(id, bucket).toLocaleString('en-US')})</span>` : '';
+  document.getElementById('modalHost').innerHTML = `<div class="ac-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="ac-panel">
+    <div class="ac-panel__head"><div style="min-width:0;"><div class="ac-panel__label" id="modalTitle">${esc(title)}${count}</div>${amount ? `<div class="ac-panel__value">${esc(minus(amount))}</div>` : ''}<div class="ac-note">${esc(e.name)} · ${e.cur || 'USD'} · Sep 2026</div></div><div class="ac-actions"><button type="button" class="btn btn-neutral btn-sm" id="panelExport">Export CSV</button><button type="button" class="modal-close" id="modalClose" aria-label="Close panel">${CLOSE_ICON}</button></div></div>
+    <div class="ac-panel__body" id="panelBody"><div class="ac-wrap"><table class="ac-table ac-table--panel ac-table--fit"><caption class="ac-sr">${esc(title)} in ${esc(e.name)}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <p class="ac-note">${esc(panelFooter(id, bucket, o, amount))}</p><div id="sourceSlot" role="status"></div></div>
   </aside></div>`;
-  const pick = i => { document.querySelectorAll('.pm-drawer__row').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('is-selected', on); const b = tr.querySelector('[data-src-btn]'); if (b) b.setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceRow(e, o, o.rows[i], bucket || 'charge'); };
-  document.querySelector('.pm-drawer__body').addEventListener('click', ev => { const tr = ev.target.closest('.pm-drawer__row'); if (tr) pick(+tr.dataset.src); });
+  const pick = i => { document.querySelectorAll('.ac-panel [data-src]').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('ac-row--sel', on); const b = tr.querySelector('[data-src-btn]'); if (b) b.setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceRow(e, o, o.rows[i], bucket || 'charge'); };
+  document.getElementById('panelBody').addEventListener('click', ev => { const tr = ev.target.closest('[data-src]'); if (tr) pick(+tr.dataset.src); });
   pick(0);
   document.getElementById('modalClose').onclick = closeModal;
-  document.getElementById('ordExport').onclick = ev => { if (ev.detail > 1) return; downloadCsv('journal-' + e.id + '-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-2026-09.csv', [o.columns.concat('Currency').concat(o.rows.some(csvNote) ? ['Note'] : [])].concat(o.rows.map(r => r.map(csvValue).concat(e.cur || 'USD').concat(o.rows.some(csvNote) ? [csvNote(r)] : [])))); toast('CSV exported.'); };
+  document.getElementById('panelExport').onclick = ev => { if (ev.detail > 1) return; downloadCsv('journal-' + e.id + '-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-2026-09.csv', [o.columns.concat('Currency').concat(o.rows.some(csvNote) ? ['Note'] : [])].concat(o.rows.map(r => r.map(csvValue).concat(e.cur || 'USD').concat(o.rows.some(csvNote) ? [csvNote(r)] : [])))); toast('CSV exported.'); };
   document.getElementById('modalBackdrop').addEventListener('mousedown', ev => { if (ev.target.id === 'modalBackdrop') { ev.preventDefault(); if (ev.detail < 2) closeModal(); } });
   document.addEventListener('keydown', modalKeys);
   document.getElementById('modalClose').focus();
@@ -533,24 +623,25 @@ function openDrawer(id, title, amount, bucket) {
 }
 
 /* ---------- Render ---------- */
+const COLS = '<colgroup><col><col class="ac-col-money-l"><col class="ac-col-money ac-wide"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup>';
 function attentionHtml() {
+  if (!ISSUES.length) return '';
   const open = openIssues();
   if (open.length) S.hideDecisions = false;
+  const toggle = label => `<div class="ac-actions"><button type="button" class="btn btn-ghost btn-sm ac-btn-row ac-btn-flush" id="toggleDecisions" data-key="toggleDecisions">${label}</button></div>`;
   if (!open.length && S.hideDecisions) {
-    return `<section class="card pm-att" style="margin-bottom:16px;" aria-labelledby="attTitle"><div class="pm-att__head pm-att__head--left"><div class="card-header-title" role="heading" aria-level="2" id="attTitle">All ${ISSUES.length} items are decided</div><button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toggleDecisions" data-key="toggleDecisions">Show decisions</button></div></section>`;
+    return `<section class="ac-card ac-card--closed" aria-labelledby="attTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="attTitle">All ${ISSUES.length} items are decided</h2>${toggle('Show decisions')}</div></section>`;
   }
   const rows = ISSUES.map(i => {
     const r = S.resolved[i.id];
-    return `<div class="pm-att__row${S.posted || CLOSED ? ' is-locked' : ''}" data-row="${i.id}"><div class="pm-att__title${r ? ' is-decided' : ''}">${esc(i.title)}</div><div class="pm-att__text">${esc(r ? (i.short && i.short[r]) || doneText(i, r) : i.summary)}</div><div class="pm-att__chip">${r ? '<span class="pm-ok">Decided</span>' : ''}</div><div class="pm-att__amount">${esc(i.amount)}</div>${S.posted || CLOSED ? '<div></div>' : `<button type="button" class="btn ${r ? 'btn-ghost' : 'btn-alternative'} btn-sm" style="min-width:76px;" data-issue="${i.id}" data-issue-row="${i.id}" aria-label="${r ? 'Change' : 'Decide'} ${esc(i.title)}">${r ? 'Change' : 'Decide'}</button>`}</div>`;
+    const button = `<button type="button" class="btn ${r ? 'btn-ghost ac-btn-flush' : 'btn-neutral'} btn-sm ac-btn-row" data-issue="${i.id}" data-issue-row="${i.id}" aria-label="${r ? 'Change' : 'Decide'} ${esc(i.title)}">${r ? 'Change' : 'Decide'}</button>`;
+    return `<tr${readOnly() ? '' : ' class="ac-row--link"'} data-row="${i.id}"><td>${esc(i.title)}</td><td colspan="4" class="ac-muted">${esc(r ? 'Decided: ' + ((i.short && i.short[r]) || doneText(i, r)) : i.summary)}</td><td class="ac-num">${esc(i.amount)}</td><td class="ac-right">${readOnly() ? '' : button}</td></tr>`;
   }).join('');
-  const hide = !open.length ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toggleDecisions" data-key="toggleDecisions">Hide decisions</button>' : '';
-  return `<section class="card pm-att" style="margin-bottom:16px;" aria-labelledby="attTitle"><div class="pm-att__head pm-att__head--left"><div class="card-header-title" role="heading" aria-level="2" id="attTitle">${open.length ? open.length + (open.length === 1 ? ' item' : ' items') + ' to decide' : 'All ' + ISSUES.length + ' items are decided'}</div>${hide}</div>${rows}</section>`;
+  return `<section class="ac-card" aria-labelledby="attTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="attTitle">${open.length ? open.length + (open.length === 1 ? ' item' : ' items') + (VIEW_ONLY ? ' not decided' : ' to decide') : 'All ' + ISSUES.length + ' items are decided'}</h2>${open.length ? '' : toggle('Hide decisions')}</div><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Items to decide</caption>${COLS}<tbody>${rows}</tbody></table></div></section>`;
 }
-const TD = 'padding:4px 8px;height:40px;box-sizing:border-box;font-size:13px;line-height:18px;color:var(--color-text-primary);';
-const TDP = 'padding:6px 8px;height:44px;box-sizing:border-box;font-size:13px;line-height:18px;color:var(--color-text-primary);border-top:1px solid var(--color-border-default);';
-const SR = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);';
 /* A rail is tied only while its clearing account ends where the processor says it ends, whichever line moved. */
-function isTied(e) { return e.start !== undefined && Math.abs(clearingEnding(e) - e.end) < 0.005; }
+const processorEnd = e => (e.native !== undefined ? e.native : e.end);
+function isTied(e) { return e.start !== undefined && Math.abs(clearingEnding(e) - processorEnd(e)) < 0.005; }
 function clearingEnding(e) {
   let v = e.start;
   S.entries.forEach(x => x.lines.forEach(l => { if (l.account === e.clearing) v += (l.dr || 0) - (l.cr || 0); }));
@@ -558,125 +649,150 @@ function clearingEnding(e) {
 }
 function signed(v, cur) { return (v < 0 ? MINUS : '') + money(Math.abs(v), cur); }
 function isChanged(e, l) { return l.account !== l.rec; }
+/* The audit facts of an entry, on its meta row. */
+function metaLine(e) {
+  const st = postState(e);
+  const parts = ['Sep 30, 2026'];
+  if (e.reversalOf) parts.push(e.memo);
+  if (st === 'posted' || st === 'reversed') {
+    if (!e.reversalOf && !e.correctionOf) parts.push('Proposed by Iris');
+    parts.push('Posted by you just now');
+    if (st === 'reversed') parts.push('Reversed by you just now');
+    parts.push(LEDGER + ' ' + extId(e));
+  }
+  const facts = parts.map(p => `<span>${esc(p)}</span>`).join(' · ');
+  return facts + (e.start !== undefined ? `<span class="ac-only-narrow"> · <span>Starting ${money(e.start, e.cur)}</span></span>` : '');
+}
 function postLine(e) {
   const st = postState(e);
-  if (!st) return '';
-  if (st === 'failed') return `<div class="pm-entry-meta pm-entry-meta--bad" role="alert">${LEDGER} is unavailable (503). Nothing was posted. <button type="button" class="btn-link btn-link-semibold btn-xs" style="padding:0;height:auto;min-height:0;" data-post-retry>Post again</button></div>`;
-  const parts = e.reversalOf ? ['Posted by you just now'] : ['Proposed by Iris', 'Posted by you just now'];
-  if (st === 'reversed') parts.push('Reversed by you just now');
-  parts.push(LEDGER + ' ' + extId(e));
-  return `<div class="pm-entry-meta">${esc(parts.join(' · '))}</div>`;
+  if (st === 'checking') return `<tr class="ac-child"><td colspan="7" class="ac-indent"><span class="ac-muted" role="status">${LEDGER} did not answer. Checking before posting again.</span></td></tr>`;
+  if (st === 'failed') return `<tr class="ac-child"><td colspan="7" class="ac-indent"><span class="ac-fault" role="alert">${LEDGER} is unavailable (503). <button type="button" class="btn-link btn-link-semibold ac-btn-text" data-post-retry>Post again</button></span></td></tr>`;
+  return '';
 }
 function linesHtml(e) {
-  const chips = l => {
+  const noCogsChip = (l, where) => {
     const noCogs = l.id === 'def' ? (S.resolved.cogs === 'revonly' ? 6120 : 0) + (S.resolved.sku === 'leave' ? 1284 : 0) : 0;
-    return (noCogs ? `<span class="badge badge-gray badge-sm">${money(noCogs)} no COGS</span>` : '') + (isChanged(e, l) ? '<span class="badge badge-gray badge-sm">Changed</span>' : '');
+    return noCogs ? `<span class="ac-chip ac-chip--wait ${where}">${money(noCogs)} no COGS</span>` : '';
   };
   const accountCell = l => {
     const options = l.choices || (e.cur ? ACCOUNTS_CAD : ACCOUNTS);
-    const locked = (!!S.posted && postState(e) !== 'failed') || CLOSED;
-    if (locked) return `<div style="display:flex;align-items:center;gap:4px;"><span class="pm-account-static">${esc(l.account)}</span>${chips(l)}</div>`;
+    const locked = (!!postState(e) && postState(e) !== 'failed') || CLOSED || VIEW_ONLY;
+    if (locked) return `<div class="ac-acct"><span class="ac-static">${esc(l.account)}</span>${isChanged(e, l) ? '<span class="ac-chip ac-chip--wait">Changed</span>' : ''}${noCogsChip(l, 'ac-only-wide')}</div>`;
     const single = options.length === 1;
     const changed = !single && l.account !== l.rec;
-    const reset = `<button type="button" class="pm-reset" style="visibility:${changed ? 'visible' : 'hidden'};" data-reset="${e.id}:${l.id}" title="Back to ${esc(l.rec)}" aria-label="${esc(l.bucket)}: back to ${esc(l.rec)}"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.793 2.232a.75.75 0 0 1-.025 1.06L3.622 7.25h10.003a5.375 5.375 0 0 1 0 10.75H10.75a.75.75 0 0 1 0-1.5h2.875a3.875 3.875 0 0 0 0-7.75H3.622l4.146 3.957a.75.75 0 0 1-1.036 1.085l-5.5-5.25a.75.75 0 0 1 0-1.085l5.5-5.25a.75.75 0 0 1 1.06.025Z" clip-rule="evenodd"/></svg></button>`;
-    return `<div style="display:flex;align-items:center;gap:4px;"><select class="form-input form-input-sm form-select" ${single ? 'disabled ' : ''} aria-label="${esc(e.name)}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${esc(l.bucket)}" data-entry="${e.id}" data-line="${l.id}" data-key="acct:${e.id}:${l.id}">${options.map(a => `<option value="${esc(a)}"${a === l.account ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select>${reset}${chips(l)}</div>`;
+    const reset = `<button type="button" class="btn btn-ghost btn-sm ac-btn-row" style="visibility:${changed ? 'visible' : 'hidden'};" data-reset="${e.id}:${l.id}" title="Back to ${esc(l.rec)}" aria-label="${esc(l.bucket)}: back to ${esc(l.rec)}">Reset</button>`;
+    return `<div class="ac-acct"><select class="form-input form-select ac-select ac-select--row" autocomplete="off" ${single ? 'disabled ' : ''}aria-label="${esc(e.name)}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${esc(l.bucket)}" data-entry="${e.id}" data-line="${l.id}" data-key="acct:${e.id}:${l.id}">${options.map(a => `<option value="${esc(a)}"${a === l.account ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select>${noCogsChip(l, 'ac-only-wide')}${reset}</div>`;
   };
-  const amountCell = (l, v) => v === undefined ? '' : e.reversalOf ? money(v, e.cur) : `<button type="button" class="pm-amount" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
+  const amountCell = (l, v) => v === undefined ? '' : e.reversalOf || e.correctionOf ? money(v, e.cur) : `<button type="button" class="ac-link" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
   const t = totals(e);
   const balanced = t.dr === t.cr;
-  const row = l => { const gap = /bnk$/.test(l.id) ? 'padding-top:16px;height:52px;' : ''; return `<tr class="pm-lines__row"><th scope="row" style="${TD}${gap}font-weight:var(--font-normal);text-align:left;white-space:nowrap;">${esc(l.bucket)}</th><td style="${TD}${gap}">${accountCell(l)}</td><td style="${TD}${gap}text-align:right;font-variant-numeric:tabular-nums;">${amountCell(l, l.dr)}</td><td style="${TD}${gap}text-align:right;font-variant-numeric:tabular-nums;">${amountCell(l, l.cr)}</td></tr>`; };
-  const viewOrders = () => `<button type="button" class="btn btn-ghost btn-sm" data-orders="${e.id}" data-key="orders:${e.id}">View ${e.orders.toLocaleString('en-US')} ${e.id === 'other' ? 'payments' : 'orders'}</button>`;
-  const actions = () => `${postState(e) === 'posted' && !e.reversalOf && !CLOSED ? `<button type="button" class="btn btn-sm pm-danger" data-reverse="${e.id}" data-key="reverse:${e.id}">Reverse</button>` : ''}${e.reversalOf ? '' : viewOrders()}`;
-  const tieRow = (parts, start) => `<tr><th scope="row" style="${TD}font-weight:var(--font-normal);text-align:left;white-space:nowrap;">Clearing balance</th><td colspan="3" style="${TD}font-variant-numeric:tabular-nums;"><div class="pm-tie">${start ? `<span class="pm-bal-inv">Starting ${money(e.start, e.cur)}</span>` : ''}${parts}<span class="pm-tie__actions">${actions()}</span></div></td></tr>`;
-  const tie = e.start === undefined ? '' : postState(e) === 'failed'
-    ? tieRow(`<span>Processor ${money(e.end, e.cur)}</span><span class="badge badge-yellow badge-sm">Not posted</span>`, true)
+  const row = l => `<tr class="ac-child" data-line-row><td class="ac-indent"><div class="ac-name"><span>${esc(l.bucket)}</span>${noCogsChip(l, 'ac-only-narrow')}</div></td><td colspan="4">${accountCell(l)}</td><td class="ac-num">${amountCell(l, l.dr)}</td><td class="ac-num">${amountCell(l, l.cr)}</td></tr>`;
+  const viewOrders = () => `<button type="button" class="btn btn-ghost btn-sm ac-btn-row" data-orders="${baseId(e)}" data-key="orders:${e.id}">View ${e.orders.toLocaleString('en-US')} ${baseId(e) === 'other' ? 'payments' : 'orders'}</button>`;
+  const actions = `${e.reversalOf ? '' : viewOrders()}${e.correctionOf && !postState(e) ? `<button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-discard="${e.id}" data-key="discard:${e.id}">Discard</button>` : ''}${postState(e) === 'posted' && !e.reversalOf && !CLOSED && !VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-btn-row" data-reverse="${e.id}" data-key="reverse:${e.id}">Reverse</button>` : ''}`;
+  const fact = (label, v) => `<span><span class="ac-muted">${label}</span> <span class="ac-num">${v}</span></span>`;
+  const ordersOff = ORDERS_OFF[e.id] ? `<span class="ac-chip ac-chip--warn">Orders off by ${money(ORDERS_OFF[e.id])}</span>` : '';
+  const tie = e.start === undefined ? '' : `<div class="ac-facts">${postState(e) === 'failed'
+    ? `${fact('Processor', money(processorEnd(e), e.cur))}<span class="ac-chip ac-chip--warn">Not posted</span>`
     : isTied(e)
-    ? tieRow(`<span>Processor ${money(e.end, e.cur)}</span><span>Clearing ${money(e.end, e.cur)}</span><span class="pm-ok">Tied</span>`, true)
-    : tieRow(`<span>Processor ${money(e.end, e.cur)}</span><span>Clearing ${signed(clearingEnding(e), e.cur)}</span><span class="badge badge-yellow badge-sm">Off by ${money(Math.abs(clearingEnding(e) - e.end), e.cur)}</span>`, false);
+    ? `${fact('Processor', money(e.end, e.cur))}${fact('Clearing', money(e.end, e.cur))}<span class="ac-status ac-status--ok">Tied</span>`
+    : `${fact('Processor', money(processorEnd(e), e.cur))}${fact('Clearing', signed(clearingEnding(e), e.cur))}<span class="ac-chip ac-chip--warn">Off by ${money(Math.abs(clearingEnding(e) - processorEnd(e)), e.cur)}</span>`}${ordersOff}</div>`;
   const open = issuesFor(e.id);
   const decided = ISSUES.filter(i => i.entry === e.id && S.resolved[i.id]);
-  const incoming = e.clearing ? S.entries.flatMap(x => x.id === e.id || x.reversalOf || postState(x) === 'reversed' ? [] : x.lines.filter(l => l.account === e.clearing).map(l => ({ x, l }))) : [];
-  const linkStyle = 'padding:0;height:auto;min-height:0;';
-  const linkTo = (i, text) => S.posted || CLOSED ? esc(text) : `<button type="button" class="btn-link btn-link-semibold btn-xs" style="${linkStyle}" data-issue="${i.id}">${esc(text)}</button>`;
-  const hasNotes = open.length || decided.length || incoming.length || !balanced;
-  const links = `<div class="form-helper" style="margin:0;display:flex;flex-direction:column;gap:2px;min-width:0;">${open.length ? `<div>To decide: ${open.map(i => linkTo(i, i.title)).join(' · ')}</div>` : ''}${decided.length ? `<div>Decided: ${decided.map(i => linkTo(i, doneText(i, S.resolved[i.id]))).join(' · ')}</div>` : ''}${incoming.length ? `<div>Incoming: ${incoming.map(o => `<button type="button" class="btn-link btn-link-semibold btn-xs" style="${linkStyle}" data-entry-open="${o.x.id}">${esc(o.x.name)}, ${esc(o.l.bucket)}</button>`).join(' · ')}</div>` : ''}${balanced ? '' : '<div>Debits and credits do not match.</div>'}</div>`;
-  return `<div style="padding:0 0 16px;background:#F9FAFB;">
-    <div class="pm-entry-meta">Sep 30, 2026 · ${esc(e.memo.split('. ')[0])}</div>${postLine(e)}
-    <div style="overflow-x:auto;"><table class="pm-lines" style="width:100%;min-width:748px;border-collapse:collapse;table-layout:fixed;"><caption style="${SR}">Lines of ${esc(e.name)}</caption>
-      <colgroup><col style="width:252px;"><col><col style="width:136px;"><col style="width:134px;"></colgroup>
-      <thead><tr><th scope="col" class="iris-th">Line</th><th scope="col" class="iris-th" style="padding-left:19px;">Account</th><th scope="col" class="iris-th" style="text-align:right;">Debit</th><th scope="col" class="iris-th" style="text-align:right;">Credit</th></tr></thead>
-      <tbody>${e.lines.map(row).join('')}
-      <tr class="pm-lines__total"><th scope="row" colspan="2" style="${TD}font-weight:var(--font-semibold);text-align:left;">Total</th><td style="${TD}text-align:right;font-weight:var(--font-semibold);font-variant-numeric:tabular-nums;">${money(t.dr, e.cur)}</td><td style="${TD}text-align:right;font-weight:var(--font-semibold);font-variant-numeric:tabular-nums;">${money(t.cr, e.cur)}</td></tr>${tie}</tbody></table></div>
-    ${hasNotes ? `<div class="pm-entry-foot">${links}</div>` : ''}${!tie && !e.reversalOf ? `<div class="pm-entry-foot pm-entry-foot--end"><span class="pm-tie__actions">${actions()}</span></div>` : ''}
-  </div>`;
+  const incoming = e.clearing ? S.entries.flatMap(x => x.id === e.id || x.reversalOf || baseId(x) === baseId(e) || postState(x) === 'reversed' ? [] : x.lines.filter(l => l.account === e.clearing).map(l => ({ x, l }))) : [];
+  const linkTo = (i, text) => readOnly() ? esc(text) : `<button type="button" class="ac-link" data-issue="${i.id}">${esc(text)}</button>`;
+  const noteLine = (label, items) => ({ html:`<span class="ac-muted">${label}:</span> ${items.join('<span class="ac-muted"> · </span>')}`, length:label.length + items.join('').replace(/<[^>]+>/g, '').length });
+  const notes = [];
+  if (open.length) notes.push(noteLine(VIEW_ONLY ? 'Not decided' : 'To decide', open.map(i => linkTo(i, i.title))));
+  if (decided.length) notes.push(noteLine('Decided', decided.map(i => linkTo(i, doneText(i, S.resolved[i.id])))));
+  if (incoming.length) notes.push(noteLine('Incoming', incoming.map(o => `<button type="button" class="ac-link" data-entry-open="${o.x.id}">${esc(o.x.name)}, ${esc(o.l.bucket)}</button>`)));
+  if (!balanced) notes.push({ html:'<span class="ac-fault">Debits and credits do not match.</span>', length:32 });
+  /* An entry with no tie note ends on its last short note, beside the buttons. */
+  const lastLeft = tie || (notes.length && notes[notes.length - 1].length <= 72 ? notes.pop().html : '');
+  const noteRows = notes.map(n => `<tr class="ac-child"><td colspan="7" class="ac-indent ac-child-note">${n.html}</td></tr>`).join('');
+  const hasLast = !!(lastLeft || actions);
+  const lastClass = hasLast || noteRows ? '' : ' ac-child--last';
+  return `<tr class="ac-child"><td colspan="7" class="ac-indent ac-muted ac-child-note">${metaLine(e)}</td></tr>${postLine(e)}
+    <tr class="ac-child ac-child--head"><td class="ac-indent">Line</td><td colspan="4" class="ac-acct-head">Account</td><td class="ac-num">Debit</td><td class="ac-num">Credit</td></tr>
+    ${e.lines.map(row).join('')}
+    <tr class="ac-child ac-total${lastClass}"><td class="ac-indent">Total</td><td colspan="4"></td><td class="ac-num"><span>${money(t.dr, e.cur)}</span></td><td class="ac-num"><span>${money(t.cr, e.cur)}</span></td></tr>
+    ${noteRows}${hasLast ? `<tr class="ac-child ac-child--last"><td colspan="5" class="ac-indent">${lastLeft}</td><td colspan="2" class="ac-right ac-cell-actions"><div>${actions}</div></td></tr>` : ''}`;
 }
 function netOf(e) { const l = line(e, 'net'); return l ? l.dr : undefined; }
 function payoutOf(e) { const l = line(e, 'bnk'); return l ? l.dr : undefined; }
-function entriesHtml(list) {
-  return list.map((e, n) => {
-    const t = totals(e);
-    const open = !!S.open[e.id];
-    const changed = e.lines.filter(l => isChanged(e, l)).length;
-    const incoming = e.clearing ? S.entries.reduce((c, x) => c + (x.id === e.id || x.reversalOf || postState(x) === 'reversed' ? 0 : x.lines.filter(l => l.account === e.clearing).length), 0) : 0;
-    const net = netOf(e), pay = payoutOf(e);
-    const dash = '<span aria-hidden="true">–</span>';
-    return `<div class="pm-entry" style="${n ? 'border-top:1px solid var(--color-border-default);' : ''}">
-      <div class="pm-entry__row pm-egrid" style="padding:10px 16px;">
-        <div style="min-width:0;display:flex;align-items:center;gap:8px;white-space:nowrap;"><button type="button" class="btn-link btn-link-semibold btn-sm" style="display:inline-flex;align-items:center;gap:2px;padding:0;white-space:nowrap;" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${open ? CHEVRON_DOWN : CHEVRON}${esc(e.name)}</button>${e.id === 'amazon' || e.id === 'tiktok' ? '<span class="form-helper" style="margin:0;">reserve</span>' : ''}${['posted', 'reversed'].includes(postState(e)) && e.start !== undefined && !isTied(e) ? '<span class="badge badge-yellow badge-sm">Not tied</span>' : ORDERS_OFF[e.id] && e.start !== undefined ? `<span class="badge badge-yellow badge-sm">Orders off by ${money(ORDERS_OFF[e.id])}</span>` : changed ? `<span class="badge badge-gray badge-sm">${changed} changed</span>` : incoming ? `<span class="badge badge-gray badge-sm">${incoming} incoming</span>` : ''}</div>
-        <div class="pm-num pm-bal"><span style="${SR}">Starting </span>${e.start !== undefined ? money(e.start, e.cur) : dash}</div>
-        <div class="pm-num"><span style="${SR}">Activity </span>${net !== undefined ? `<button type="button" class="pm-amount" data-entry-orders="${e.id}:Activity" aria-label="${esc(e.name)}, activity, ${money(net, e.cur)}">${money(net, e.cur)}</button>` : dash}</div>
-        <div class="pm-num"><span style="${SR}">Payouts </span>${pay !== undefined ? `<button type="button" class="pm-amount" data-entry-orders="${e.id}:Payouts" aria-label="${esc(e.name)}, payouts, minus ${money(pay, e.cur)}">${MINUS}${money(pay, e.cur)}</button>` : dash}</div>
-        <div class="pm-num pm-bal"><span style="${SR}">Ending </span>${e.end !== undefined ? money(e.end, e.cur) : dash}</div>
-        <div class="pm-num"><span style="${SR}">Total debits </span>${money(t.dr, e.cur)}</div>
-        <div style="text-align:right;">${statusHtml(e)}</div>
-      </div>${open ? linesHtml(e) : ''}</div>`;
-  }).join('');
+function entryRow(e) {
+  const t = totals(e);
+  const open = !!S.open[e.id];
+  const changed = e.lines.filter(l => isChanged(e, l)).length;
+  const incoming = e.clearing ? S.entries.reduce((c, x) => c + (x.id === e.id || x.reversalOf || baseId(x) === baseId(e) || postState(x) === 'reversed' ? 0 : x.lines.filter(l => l.account === e.clearing).length), 0) : 0;
+  const net = netOf(e), pay = payoutOf(e);
+  const tag = changed ? `<span class="ac-chip ac-chip--wait">${changed} changed</span>` : incoming ? `<span class="ac-chip ac-chip--wait">${incoming} incoming</span>` : '';
+  const activity = net === undefined ? '' : e.correctionOf ? money(net, e.cur) : `<button type="button" class="ac-link" data-entry-orders="${e.id}:Activity" aria-label="${esc(e.name)}, activity, ${money(net, e.cur)}">${money(net, e.cur)}</button>`;
+  const payouts = pay === undefined ? '' : e.correctionOf ? MINUS + money(pay, e.cur) : `<button type="button" class="ac-link" data-entry-orders="${e.id}:Payouts" aria-label="${esc(e.name)}, payouts, minus ${money(pay, e.cur)}">${MINUS}${money(pay, e.cur)}</button>`;
+  return `<tr class="ac-row--link${open ? ' ac-row--open' : ''}" data-entry-row="${e.id}">
+      <td><div class="ac-name ac-name--fit"><button type="button" class="ac-toggle" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${CHEVRON}${esc(e.name)}</button>${e.id === 'amazon' || e.id === 'tiktok' ? '<span class="ac-muted">reserve</span>' : ''}${tag}</div></td>
+      <td class="ac-num ac-end">${money(t.dr, e.cur)}</td>
+      <td class="ac-num ac-wide">${e.start !== undefined ? signed(e.start, e.cur) : ''}</td>
+      <td class="ac-num">${activity}</td>
+      <td class="ac-num">${payouts}</td>
+      <td class="ac-num ac-end">${e.end !== undefined ? signed(e.end, e.cur) : ''}</td>
+      <td class="ac-right">${statusCell(e)}</td></tr>${open ? linesHtml(e) : ''}`;
 }
 function totalsRow(cur) {
   const all = S.entries.filter(e => e.cur === cur);
   const rails = all.filter(e => e.start !== undefined);
   const sum = (list, f) => Math.round(list.reduce((n, e) => n + f(e), 0) * 100) / 100;
   const off = rails.filter(e => !isTied(e)).length;
-  const tied = !off;
-  const start = sum(rails, e => e.start), end = sum(rails, e => e.end);
-  const note = `<div class="pm-total-bal">${tied ? `Processor balance: starting ${money(start, cur)}, ending ${money(end, cur)}` : off + (off === 1 ? ' entry' : ' entries') + ' not tied'}</div>`;
-  return `<div class="pm-egrid" style="padding:13px 16px;border-top:1px solid #9CA3AF;font-weight:600;font-size:13px;line-height:18px;"><div style="padding-left:16px;">Total ${cur || 'USD'}</div><div class="pm-num pm-bal"><span style="${SR}">Starting </span>${money(start, cur)}</div><div class="pm-num"><span style="${SR}">Activity </span>${money(sum(rails, netOf), cur)}</div><div class="pm-num"><span style="${SR}">Payouts </span>${MINUS}${money(sum(rails, payoutOf), cur)}</div><div class="pm-num pm-bal"><span style="${SR}">Ending </span>${money(end, cur)}</div><div class="pm-num"><span style="${SR}">Total debits </span>${money(sum(all.filter(e => !e.reversalOf && postState(e) !== 'reversed'), e => totals(e).dr), cur)}</div><div class="pm-num">${tied ? '<span aria-hidden="true">–</span>' : '<span class="badge badge-yellow badge-sm">Not tied</span>'}</div></div>${note}`;
+  const debits = sum(all.filter(e => !e.reversalOf && postState(e) !== 'reversed'), e => totals(e).dr);
+  const cell = (v, wide) => `<td class="ac-num${wide ? ' ac-wide' : ''}"><span>${v}</span></td>`;
+  return `<tr class="ac-total"><td class="ac-indent">Total ${cur || 'USD'}</td>${cell(money(debits, cur))}${cell(money(sum(rails, e => e.start), cur), true)}${cell(money(sum(rails, netOf), cur))}${cell(MINUS + money(sum(rails, payoutOf), cur))}${cell(money(sum(rails, e => e.end), cur))}<td class="ac-right">${off ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : DASH}</td></tr>`;
 }
 function currencyCard(cur, first) {
   const list = S.entries.filter(e => e.cur === cur);
   const label = cur || 'USD';
-  return `<section class="card" aria-label="${label} entries"${first ? '' : ' style="margin-top:16px;"'}>
-      <div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="3">${label} <span class="pm-count">${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span></div></div>
-      <div class="pm-egrid" style="padding:8px 16px;background:#F9FAFB;border-bottom:1px solid var(--color-border-default);font-size:12px;font-weight:600;color:#111928;" aria-hidden="true"><span style="padding-left:16px;">Entry</span><span class="pm-bal" style="text-align:right;">Starting</span><span style="text-align:right;">Activity</span><span style="text-align:right;">Payouts</span><span class="pm-bal" style="text-align:right;">Ending</span><span style="text-align:right;">Total debits</span><span style="text-align:right;">Status</span></div>
-      ${entriesHtml(list)}${totalsRow(cur)}
+  if (!list.length) return '';
+  return `<section class="ac-card" aria-label="${label} entries">
+      <div class="ac-card__head"><h2 class="ac-card__title"${first ? ' id="entTitle"' : ''}>${S.posted ? 'Entries' : 'Proposed entries'}</h2><span class="ac-note">${label} · ${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span>${first && S.exported ? `<div class="ac-actions" id="exportState">${exportChip()}</div>` : ''}</div>
+      <div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">${S.posted ? 'Entries' : 'Proposed entries'}, ${label}</caption>${COLS}
+      <thead><tr><th scope="col" class="ac-indent">Entry</th><th scope="col" class="ac-num">Total debits</th><th scope="col" class="ac-num ac-wide">Starting</th><th scope="col" class="ac-num">Activity</th><th scope="col" class="ac-num">Payouts</th><th scope="col" class="ac-num">Ending</th><th scope="col" class="ac-right">Status</th></tr></thead>
+      <tbody>${list.map(entryRow).join('')}${totalsRow(cur)}</tbody></table></div>
     </section>`;
 }
 function postControl() {
-  const open = openIssues().length, left = unposted().length;
-  const off = (note) => `<span class="pm-phase" id="postNote">${note}</span><button type="button" class="btn btn-alternative btn-sm" id="postBtn" style="pointer-events:auto;" aria-disabled="true" aria-describedby="postNote" data-key="postBtn">Post</button>`;
-  if (CLOSED) return off('Sep 2026 is closed');
-  if (open) return off('Decide ' + plural(open, 'item', 'items') + ' to post');
-  const unbalanced = S.entries.filter(e => { const t = totals(e); return t.dr !== t.cr; }).length;
-  if (unbalanced) return off(plural(unbalanced, 'entry', 'entries') + ' out of balance');
-  if (!left) { const back = S.entries.filter(e => postState(e) === 'reversed').length; return `<span class="pm-phase">${back ? plural(back, 'entry', 'entries') + ' reversed' : 'Posted to ' + LEDGER}</span>`; }
-  return `<span class="pm-phase" id="postNote">${S.posted ? plural(left, 'entry', 'entries') + ' not posted' : 'To ' + LEDGER}</span><button type="button" class="btn btn-primary btn-sm" id="postBtn" aria-describedby="postNote" data-key="postBtn">Post</button>`;
+  const note = `<span class="ac-note" id="postNote">${esc(pageNote())}</span>`;
+  const post = off => `<button type="button" class="btn btn-primary btn-sm" id="postBtn"${off ? ' style="pointer-events:auto;" aria-disabled="true"' : ''} aria-describedby="postNote" data-key="postBtn">Post</button>`;
+  if (VIEW_ONLY) return note;
+  if (otherMonth() || !S.entries.length) return note + post(true);
+  if (CLOSED) return note;
+  if (LEDGER_STATE === 'none' && !S.ledgerFixed) return `${note}<a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a>`;
+  if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return `${note}<button type="button" class="btn btn-neutral btn-sm" id="reconnect" data-key="reconnect">Reconnect</button>`;
+  if (openIssues().length || outOfBalance()) return note + post(true);
+  return unposted().length ? note + post(false) : note;
 }
-function balanceHash() { try { return sessionStorage.getItem('pm-balance-hash') || ''; } catch (err) { return ''; } }
+/* What the rest of the section reads: progress, and the exceptions a decision settles. */
+function publish() {
+  const live = S.entries.filter(e => !e.reversalOf && postState(e) !== 'reversed');
+  const count = st => live.filter(e => postState(e) === st).length;
+  AC.state.journal = { open:openIssues().length, total:live.length, posted:count('posted') + count('checking'), failed:count('failed'), reversed:S.entries.filter(e => postState(e) === 'reversed').length };
+  const choice = S.resolved.unmatched;
+  ['ex2', 'ex3', 'ex4'].forEach(id => {
+    const ex = AC.EXCEPTIONS.find(x => x.id === id);
+    if (choice && ex && (['open', 'investigating'].includes(AC.exceptionStatus(ex)) || (AC.state.exceptions[id] && AC.state.exceptions[id].by === 'journal'))) AC.state.exceptions[id] = { status:'resolved', note:doneText(ISSUES.find(i => i.id === 'unmatched'), choice), assignee:'You', by:'journal' };
+    else if (!choice && AC.state.exceptions[id] && AC.state.exceptions[id].by === 'journal') delete AC.state.exceptions[id];
+  });
+  AC.save();
+}
 function exportChip() {
   if (!S.exported) return '';
-  return S.exported === JSON.stringify([S.entries, S.resolved, S.posted]) ? '<span class="badge badge-gray badge-sm">Exported</span>' : '<span class="badge badge-yellow badge-sm">Changed since export</span>';
+  return S.exported === JSON.stringify([S.entries, S.resolved, S.posted]) ? '<span class="ac-note">Exported</span>' : '<span class="ac-chip ac-chip--warn">Changed since export</span>';
 }
 function render() {
   const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
-  document.getElementById('app').innerHTML = `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;">
-      <div><h1 style="margin:0 0 4px;font-size:20px;line-height:30px;font-weight:600;color:#111928;">Accounting</h1><p style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:0 0 16px;font-size:14px;line-height:21px;color:#374151;">Sep 2026 <span class="badge badge-gray badge-sm">${pageChip()}</span><span class="badge badge-gray badge-sm">Sample data</span></p></div>
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">${postControl()}<button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv">${ICON_DOWNLOAD}Export CSV</button></div>
-    </div>
-    <nav class="iris-tab-bar pm-section-nav" aria-label="Accounting"><a class="iris-tab" href="balance.html${location.search}${balanceHash()}" id="toBalance">Balance</a><a class="iris-tab iris-tab--active" aria-current="page" href="journal-entries.html">Journal entries</a></nav>
-    ${attentionHtml()}
-    <div class="pm-sec-head"><h2 id="entTitle">${S.posted ? 'Entries' : 'Proposed entries'}</h2>${exportChip()}</div>
-    ${currencyCard(undefined, true)}${currencyCard('CAD', false)}`;
+  publish();
+  const actions = `<button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv"${otherMonth() || !S.entries.length ? ' disabled' : ''}>Export CSV</button>${postControl()}`;
+  const body = AC.blockedCard('journal') || (otherMonth() ? `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No entries for ${esc(AC.month())}</h2></div></section>` : `<div class="ac-stack">${attentionHtml()}${currencyCard(undefined, true)}${currencyCard('CAD', false)}</div>`);
+  /* Back must not pour a remembered value into a redrawn select. */
+  const head = AC.pageHead({ current:'journal', actions }).replace('id="monthSelect"', 'id="monthSelect" autocomplete="off"');
+  document.getElementById('app').innerHTML = `<div class="ac-page">${head}${body}</div>`;
   if (active) { const el = document.querySelector(`[data-key="${CSS.escape(active)}"]`); if (el) el.focus(); }
 }
 function downloadCsv(name, rows) {
@@ -688,11 +804,11 @@ function downloadCsv(name, rows) {
 }
 function postModal() {
   const list = unposted();
-  const row = e => `<tr><td style="${TD}">${esc(e.name)}${e.cur ? ' ' + e.cur : ''}</td><td style="${TD}">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? ' <span class="badge badge-yellow badge-sm">Not tied</span>' : ''}${ORDERS_OFF[e.id] ? ` <span class="badge badge-yellow badge-sm">Orders off by ${money(ORDERS_OFF[e.id])}</span>` : ''}</td><td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${money(totals(e).dr, e.cur)}</td></tr>`;
-  const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr class="pm-lines__total"><td style="${TD}font-weight:600;">Total ${cur || 'USD'}</td><td style="${TD}"></td><td style="${TD}text-align:right;font-weight:600;font-variant-numeric:tabular-nums;">${money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur)}</td></tr>` : ''; };
-  const body = `<p style="margin:0 0 16px;font-size:14px;line-height:20px;color:#374151;">To ${LEDGER}, dated Sep 30, 2026.</p>
-    <table style="width:100%;border-collapse:collapse;"><caption style="${SR}">Entries to post</caption><thead><tr><th scope="col" class="iris-th">Entry</th><th scope="col" class="iris-th">Status</th><th scope="col" class="iris-th" style="text-align:right;">Total debits</th></tr></thead><tbody>${list.filter(e => !e.cur).map(row).join('')}${total(undefined)}${list.filter(e => e.cur).map(row).join('')}${total('CAD')}</tbody></table>`;
-  openModal('Post ' + plural(list.length, 'entry', 'entries'), body, `<button type="button" class="btn btn-alternative btn-md" id="postCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="postConfirm">Post ${plural(list.length, 'entry', 'entries')}</button>`);
+  const row = e => `<tr><td>${esc(e.name)}${e.cur ? ' ' + e.cur : ''}</td><td><div class="ac-name">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : ''}${ORDERS_OFF[e.id] ? `<span class="ac-chip ac-chip--warn">Orders off by ${money(ORDERS_OFF[e.id])}</span>` : ''}${e.native !== undefined ? `<span class="ac-chip ac-chip--warn">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>` : ''}</div></td><td class="ac-num">${money(totals(e).dr, e.cur)}</td></tr>`;
+  const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr class="ac-total"><td>Total ${cur || 'USD'}</td><td></td><td class="ac-num"><span>${money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur)}</span></td></tr>` : ''; };
+  const body = `<p class="ac-lead">To ${LEDGER}, dated Sep 30, 2026.</p>
+    <div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">Entries to post</caption><thead><tr><th scope="col">Entry</th><th scope="col">Status</th><th scope="col" class="ac-num">Amount</th></tr></thead><tbody>${list.filter(e => !e.cur).map(row).join('')}${total(undefined)}${list.filter(e => e.cur).map(row).join('')}${total('CAD')}</tbody></table></div>`;
+  openModal('Post ' + plural(list.length, 'entry', 'entries'), body, `<button type="button" class="btn btn-neutral btn-md" id="postCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="postConfirm">Post ${plural(list.length, 'entry', 'entries')}</button>`);
   document.getElementById('postCancel').onclick = closeModal;
   document.getElementById('postConfirm').onclick = ev => {
     if (posting || ev.detail > 1) return;
@@ -716,12 +832,19 @@ function postModal() {
       list.forEach(e => { S.posted[e.id] = 'posted'; });
       const failed = FAIL_ONCE && !S.failedOnce ? list.find(e => e.id === 'amazon') : null;
       if (failed) { S.posted[failed.id] = 'failed'; S.failedOnce = true; S.open[failed.id] = true; }
+      const all = FAIL_MODE === 'all' && !S.failedOnce;
+      if (all) { list.forEach(e => { S.posted[e.id] = 'failed'; }); S.failedOnce = true; }
+      const late = FAIL_MODE === 'timeout' && !S.failedOnce ? list.find(e => e.id === 'amazon') : null;
+      if (late) {
+        S.posted[late.id] = 'checking'; S.failedOnce = true; S.open[late.id] = true;
+        setTimeout(() => { S.posted[late.id] = 'posted'; render(); toast('Amazon was already in ' + LEDGER + '. Not posted twice.'); }, 2000);
+      }
       S.hideDecisions = true;
       returnFocus = null;
       closeModal();
       render();
-      const count = total - (failed ? 1 : 0);
-      toast(plural(count, 'entry', 'entries') + ' posted to ' + LEDGER + '.' + (failed ? ' 1 failed.' : ''));
+      const count = total - (failed || late ? 1 : 0);
+      toast(all ? 'No entries posted. ' + total + ' failed.' : plural(count, 'entry', 'entries') + ' posted to ' + LEDGER + '.' + (failed ? ' 1 failed.' : ''));
       const h = document.querySelector('#app h1');
       h.setAttribute('tabindex', '-1');
       h.focus({ preventScroll:true });
@@ -730,26 +853,30 @@ function postModal() {
 }
 function reverseModal(id) {
   const e = entry(id);
-  openModal('Reverse ' + e.name + (e.cur ? ' ' + e.cur : '') + ' entry', `<p style="margin:0;font-size:14px;line-height:20px;color:#374151;">Posts a mirror entry of ${money(totals(e).dr, e.cur)} to ${LEDGER}, dated Sep 30, 2026.</p>`, `<button type="button" class="btn btn-alternative btn-md" id="revCancel" data-autofocus>Cancel</button><button type="button" class="btn btn-md pm-danger-solid" id="revConfirm">Reverse entry</button>`);
+  openModal('Reverse ' + e.name + (e.cur ? ' ' + e.cur : '') + ' entry', `<p style="margin:0;">Posts a mirror entry of ${money(totals(e).dr, e.cur)} to ${LEDGER}, dated Sep 30, 2026.</p>`, `<button type="button" class="btn btn-neutral btn-md" id="revCancel" data-autofocus>Cancel</button><button type="button" class="btn btn-md pm-danger-solid" id="revConfirm">Reverse entry</button>`, ' ');
   document.getElementById('revCancel').onclick = closeModal;
   document.getElementById('revConfirm').onclick = () => {
     const mirror = { id:id + '_rev', name:e.name + ', reversal', cur:e.cur, orders:0, reversalOf:id, memo:'Reversal of ' + extId(e), lines:e.lines.map(l => ({ id:'r_' + l.id, dr:l.cr, cr:l.dr, account:l.account, rec:l.account, bucket:l.bucket })) };
-    S.entries.splice(S.entries.indexOf(e) + 1, 0, mirror);
+    const base = baseId(e);
+    const revision = S.entries.filter(x => baseId(x) === base && !x.reversalOf).length + 1;
+    const corrected = { id:base + '_' + revision, baseId:base, name:(e.baseName || e.name) + ', corrected', baseName:e.baseName || e.name, cur:e.cur, reserve:e.reserve, orders:e.orders, correctionOf:id, clearing:e.clearing, memo:e.memo + '. Corrected after reversal of ' + extId(e), lines:e.lines.map(l => Object.assign({}, l)) };
+    S.entries.splice(S.entries.indexOf(e) + 1, 0, mirror, corrected);
     S.posted[id] = 'reversed';
     S.posted[mirror.id] = 'posted';
-    S.open[mirror.id] = true;
+    S.open[corrected.id] = true;
     returnFocus = null;
     closeModal();
     render();
-    const scrollToMirror = () => { const b = document.querySelector('[data-entry-toggle="' + mirror.id + '"]'); if (b) { b.scrollIntoView({ block:'center' }); b.focus({ preventScroll:true }); } };
-    toast(e.name + (e.cur ? ' ' + e.cur : '') + ' reversed.', null, () => { overlayClosedAt = Date.now(); S.open[mirror.id] = true; render(); scrollToMirror(); });
-    const f = document.querySelector('[data-entry-toggle="' + mirror.id + '"]');
+    const scrollTo = x => { const b = document.querySelector('[data-entry-toggle="' + x.id + '"]'); if (b) { b.scrollIntoView({ block:'center' }); b.focus({ preventScroll:true }); } };
+    toast((e.baseName || e.name) + (e.cur ? ' ' + e.cur : '') + ' reversed.', null, () => { overlayClosedAt = Date.now(); S.open[mirror.id] = true; render(); scrollTo(mirror); });
+    const f = document.querySelector('[data-entry-toggle="' + corrected.id + '"]');
     if (f) f.focus({ preventScroll:true });
   };
 }
 function exportCsv() {
-  const rows = [['date','account','line','debit','credit','currency','memo','entry_id','status','check','external_id']];
-  S.entries.forEach(e => { const status = postState(e) || 'draft', check = e.reversalOf ? '' : checkOf(e).word.toLowerCase(); e.lines.forEach(l => rows.push(['2026-09-30', l.account, l.bucket, l.dr !== undefined ? l.dr.toFixed(2) : '', l.cr !== undefined ? l.cr.toFixed(2) : '', e.cur || 'USD', e.memo, '2026-09-' + e.id, status, check, postState(e) === 'posted' || postState(e) === 'reversed' ? extId(e) : ''])); });
+  const rows = [['date','account','line','debit','credit','currency','memo','entry_id','status','check','orders_check','external_id']];
+  const ordersCheck = e => e.start === undefined || e.reversalOf || e.id === 'stripe' ? '' : ORDERS_OFF[e.id] ? 'off by ' + ORDERS_OFF[e.id].toFixed(2) : 'tied';
+  S.entries.forEach(e => { const status = postState(e) || 'not posted', check = e.reversalOf ? '' : checkOf(e).word.toLowerCase(); e.lines.forEach(l => rows.push(['2026-09-30', l.account, l.bucket, l.dr !== undefined ? l.dr.toFixed(2) : '', l.cr !== undefined ? l.cr.toFixed(2) : '', e.cur || 'USD', e.memo, '2026-09-' + e.id, status, check, ordersCheck(e), postState(e) === 'posted' || postState(e) === 'reversed' ? extId(e) : ''])); });
   downloadCsv('journal-entries-2026-09.csv', rows);
   S.exported = JSON.stringify([S.entries, S.resolved, S.posted]);
   render();
@@ -769,18 +896,17 @@ const secondClick = e => e.detail > 1 && Date.now() - Math.max(overlayClosedAt, 
 document.addEventListener('mousedown', e => { if (secondClick(e)) e.preventDefault(); }, true);
 document.addEventListener('click', e => { lastClickTarget = e.target; if (secondClick(e)) { e.preventDefault(); e.stopPropagation(); } }, true);
 document.addEventListener('click', e => {
-  if (e.target.closest('.pm-section-nav [aria-current="page"]')) { e.preventDefault(); return; }
-  if (e.target.closest('#toBalance')) return;
+  if (e.target.closest('.ac-nav [aria-current="page"]')) { e.preventDefault(); return; }
   const t = e.target.closest('button');
   if (!t) {
     /* A row waits for a possible second click, so a double click selects a word instead of opening anything. */
     if (String(window.getSelection())) return;
     if (e.detail > 1) { clearTimeout(rowTimer); return; }
-    const a = S.posted || CLOSED ? null : e.target.closest('.pm-att__row');
-    const r = e.target.closest('.pm-entry__row');
+    const a = readOnly() ? null : e.target.closest('[data-row]');
+    const r = e.target.closest('[data-entry-row]');
     if (!a && !r) return;
     const issueId = a ? a.dataset.row : null;
-    const entryId = r ? r.querySelector('[data-entry-toggle]').dataset.entryToggle : null;
+    const entryId = r ? r.dataset.entryRow : null;
     clearTimeout(rowTimer);
     rowTimer = setTimeout(() => {
       if (String(window.getSelection())) return;
@@ -799,13 +925,24 @@ document.addEventListener('click', e => {
   if (t.id === 'toggleDecisions') { if (e.detail > 1) return; S.hideDecisions = !S.hideDecisions; render(); return; }
   if (t.dataset.reset) { const [a, b] = t.dataset.reset.split(':'); const l = line(entry(a), b); const prev = l.account, prevKey = S.acct[a + ':' + b]; l.account = l.rec; delete S.acct[a + ':' + b]; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); const focusSel = () => { const f = document.querySelector('[data-key="acct:' + a + ':' + b + '"]') || document.querySelector('[data-key="toggle:' + a + '"]'); if (f) f.focus({ preventScroll:true }); }; toast('Back to ' + l.rec + '.', () => { line(entry(a), b).account = prev; if (prevKey !== undefined) S.acct[a + ':' + b] = prevKey; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); focusSel(); }); focusSel(); if (e.detail === 0) { const u = document.getElementById('toastUndo'); if (u) u.focus(); } return; }
   if (t.id === 'exportCsv') { if (e.detail > 1) return; return exportCsv(); }
-  if (t.id === 'srcCopy') { const text = [...document.querySelectorAll('.pm-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
+  if (t.id === 'reconnect') { S.ledgerFixed = true; render(); toast(LEDGER + ' reconnected.'); const b = document.getElementById('postBtn'); if (b) b.focus(); return; }
+  if (t.dataset.copySource !== undefined) { const text = [...document.querySelectorAll('.ac-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
   if (t.dataset.reverse) { if (e.detail > 1) return; return reverseModal(t.dataset.reverse); }
   if (t.dataset.postRetry !== undefined) return postModal();
   if (t.id === 'postBtn') { if (e.detail > 1) return; if (t.getAttribute('aria-disabled') === 'true') { const note = document.getElementById('postNote'); return toast(note.textContent + '.'); } return postModal(); }
 });
+document.addEventListener('click', e => {
+  const d = e.target.closest('[data-discard]');
+  if (!d) return;
+  const x = entry(d.dataset.discard), at = S.entries.indexOf(x);
+  S.entries.splice(at, 1);
+  delete S.open[x.id];
+  render();
+  toast(x.name + ' discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Discard undone.'); });
+});
 document.addEventListener('change', e => {
   const s = e.target;
+  if (s.id === 'monthSelect') { AC.setMonth(s.value); render(); return; }
   if (s.dataset && s.dataset.entry) {
     const l = line(entry(s.dataset.entry), s.dataset.line);
     const previous = l.account;
@@ -817,9 +954,30 @@ document.addEventListener('change', e => {
     toast(l.bucket + ' now in ' + s.value + '.', () => { remember(previous); render(); toast('Change undone.'); const f = document.querySelector('[data-key="' + key + '"]') || document.querySelector('[data-key="toggle:' + entryId + '"]'); if (f) f.focus(); });
   }
 });
+if (CLOSED && (!S.posted || unposted().length)) {
+  S = initial();
+  ISSUES.forEach(i => { S.resolved[i.id] = i.options[0].id; });
+  if (entry('deferred')) recomputeDeferred();
+  ISSUES.forEach(i => applyIssue(i, i.options[0].id));
+  S.posted = {};
+  S.entries.forEach(e => { S.posted[e.id] = 'posted'; });
+}
 /* This prototype is the Journal entries page only: other rail items stay inert, so nobody leaves and loses the decisions. */
 document.querySelectorAll('.pm-rail__item[title="Settings"], .pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
 render();
+/* A link from another page can open one entry: journal-entries.html#entry-tiktok */
+function openFromHash() {
+  const m = location.hash.match(/^#entry-(.+)$/);
+  if (!m || !entry(m[1]) || otherMonth()) return;
+  S.open[m[1]] = true;
+  render();
+  const toggle = document.querySelector(`[data-entry-toggle="${CSS.escape(m[1])}"]`);
+  if (toggle) { toggle.closest('tr').scrollIntoView({ block:'center' }); toggle.focus({ preventScroll:true }); }
+}
+window.addEventListener('hashchange', openFromHash);
+/* Back from another page: the section's counts may have moved. */
+window.addEventListener('pageshow', ev => { if (ev.persisted) { try { Object.assign(AC.state, JSON.parse(sessionStorage.getItem('ac-state') || '{}')); } catch (err) { /* this page only */ } render(); } });
+openFromHash();
 </script>
 </body>
 </html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settlements</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/iris-tokens.css">
+  <link rel="stylesheet" href="assets/iris-components.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/panorama-match.css">
+  <link rel="stylesheet" href="assets/accounting.css">
+  <style>
+    /* List: focus clears the pinned head and the pinned table head. No line above a total. */
+    html:has(body.ac .ac-table--sticky) { scroll-padding-top:140px; }
+    .ac-table--lines tbody tr.ac-total td::after { content:none; }
+    .ac-pager .ac-flip svg { transform:rotate(180deg); }
+
+    /* Crumb */
+    .ac-crumb .ac-mono { color:var(--ac-ink); }
+    .ac-crumb a:active { color:var(--ac-pri-d); }
+    .ac-crumb .ac-chip--wait { background:var(--ac-track); }
+
+    /* Waterfall: a hairline carries the running level from one step to the next, straight through the rows with nothing in them. Net closes the amount column with the sum rule, in the total row's height, so its number stays level with its bar. */
+    .ac-card__head--facts { display:block; }
+    .ac-wf { padding-bottom:8px; }
+    .ac-wf__bar { z-index:1; }
+    .ac-wf__link { position:absolute; width:1px; background:var(--ac-ctl); }
+    .ac-wf__row--zero .ac-wf__label { color:var(--ac-2); }
+    .ac-wf__row--net { height:44px; }
+    .ac-wf__row--net .ac-num { align-self:end; padding-bottom:12px; }
+    .ac-wf__row--net .ac-num > span { display:inline-block; min-width:var(--ac-sum); padding-top:8px; border-top:1px solid var(--ac-ink); }
+
+    /* The side stack ends on the waterfall's bottom edge. */
+    @media (min-width:1280px) { .ac-stack--fill { grid-template-rows:auto 1fr; align-content:stretch; } }
+    .ac-kv__lead { display:flex; align-items:baseline; gap:8px; min-width:0; }
+    .ac-kv__lead .ac-link { font-weight:400; }
+    .ac-kv__row--total .ac-warn { font-weight:600; }
+    .ac-kv__row--total .ac-kv__bare { border-top:0; }
+
+    /* Facts in the panel share the left edge of its head and of the source row, as on Events. */
+    .ac-panel__body .ac-kv { margin:0 -16px; padding-bottom:0; }
+
+    .ac-card__head + .ac-empty { padding-top:0; }
+  </style>
+</head>
+<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+  <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
+  <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
+</div>
+<div id="toastHost" role="status" aria-live="polite"></div>
+<div id="modalHost"></div>
+
+<script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
+<script src="assets/panorama-match.js"></script>
+<script src="assets/accounting-data.js"></script>
+<script src="assets/accounting-shell.js"></script>
+<script>
+(function () {
+  const esc = AC.esc;
+  const PAGE_SIZE = 25;
+  const NONE = '<span aria-hidden="true">–</span><span class="ac-sr">not available</span>';
+  const YEAR = AC.MONTH.split(' ')[1];
+  const dateOf = d => new Date(d + ', ' + YEAR);
+  const isoOf = d => { const x = dateOf(d); return [x.getFullYear(), String(x.getMonth() + 1).padStart(2, '0'), String(x.getDate()).padStart(2, '0')].join('-'); };
+  const curOf = s => s.cur || 'USD';
+  const railOrder = id => AC.RAILS.findIndex(r => r.id === id);
+  const rangeOf = s => (s.from === s.to ? s.from : s.from + ' to ' + s.to);
+  const hasData = () => AC.month() === AC.MONTH;
+  const SORTED = AC.SETTLEMENTS.slice().sort((a, b) => dateOf(b.date) - dateOf(a.date) || railOrder(a.rail) - railOrder(b.rail) || a.id.localeCompare(b.id));
+
+  /* ---------- Route: no hash or filters is the list, an id is that settlement ---------- */
+  function parseHash(hash) {
+    let raw = '';
+    try { raw = decodeURIComponent(hash.slice(1)); } catch (err) { raw = hash.slice(1); }
+    if (raw && !raw.includes('=')) return { view:'detail', id:raw };
+    const p = new URLSearchParams(raw);
+    const rail = p.get('rail') || '', status = p.get('status') || '';
+    return {
+      view:'list',
+      rail:AC.rail(rail) ? rail : '',
+      status:Object.keys(AC.SETTLEMENT_STATUS).includes(status) ? status : '',
+      page:Math.max(1, parseInt(p.get('page'), 10) || 1),
+    };
+  }
+  const route = () => parseHash(location.hash);
+  function hashOf(f) {
+    const p = new URLSearchParams();
+    if (f.rail) p.set('rail', f.rail);
+    if (f.status) p.set('status', f.status);
+    if (f.page > 1) p.set('page', f.page);
+    const h = p.toString();
+    return h ? '#' + h : '';
+  }
+  const urlOf = hash => location.pathname + location.search + hash;
+
+  /* ---------- Coming back: filters and page are in the hash, scroll is kept per view ---------- */
+  const NAV_KEY = 'ac-settlements-nav';
+  const nav = (() => {
+    const blank = { scrolls:{}, from:null };
+    try {
+      if (AC.reloaded) { sessionStorage.removeItem(NAV_KEY); return blank; }
+      return Object.assign(blank, JSON.parse(sessionStorage.getItem(NAV_KEY) || '{}'));
+    } catch (err) { return blank; }
+  })();
+  const saveNav = () => { try { sessionStorage.setItem(NAV_KEY, JSON.stringify(nav)); } catch (err) { /* this page only */ } };
+  const listHash = id => (nav.from && nav.from.id === id ? nav.from.hash : '');
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  let here = location.hash, topAfterRender = false;
+  const live = document.createElement('div');
+  live.className = 'ac-sr';
+  live.setAttribute('role', 'status');
+  document.body.appendChild(live);
+
+  /* A settlement belongs to its month, so opening one brings the month select along. */
+  const followMonth = r => { if (r.view === 'detail' && AC.settlement(r.id) && !hasData()) AC.setMonth(AC.MONTH); };
+  followMonth(route());
+
+  function show(mode) {
+    const from = parseHash(here), to = route(), fromHash = here;
+    nav.scrolls[fromHash] = window.scrollY;
+    here = location.hash;
+    if (from.view === 'list' && to.view === 'detail') nav.from = { hash:fromHash, id:to.id };
+    followMonth(to);
+    const seen = !!(history.state && history.state.seen);
+    if (!seen) history.replaceState({ seen:true }, '');
+    saveNav();
+    AC.closePanel();
+    AC.rerender();
+    if (mode === 'top') window.scrollTo(0, 0);
+    if (mode === 'restore') window.scrollTo(0, to.view === 'list' || seen ? nav.scrolls[here] || 0 : 0);
+    if (from.view === to.view) return;
+    const target = to.view === 'detail' ? document.getElementById('stCrumbId') : from.id && document.querySelector(`[data-settlement="${CSS.escape(from.id)}"]`);
+    if (target) target.focus({ preventScroll:true });
+  }
+  function go(hash, mode) {
+    nav.scrolls[here] = window.scrollY;
+    history.pushState(null, '', urlOf(hash));
+    show(mode);
+  }
+
+  /* ---------- List ---------- */
+  const inFilter = f => (hasData() ? SORTED.filter(s => (!f.rail || s.rail === f.rail) && (!f.status || s.status === f.status)) : []);
+  const moneyCell = (n, cur, extra) => (n === 0
+    ? `<td class="ac-num ac-zero${extra ? ' ' + extra : ''}">${AC.money(0, cur)}</td>`
+    : `<td class="ac-num${extra ? ' ' + extra : ''}">${AC.signed(n, cur)}</td>`);
+  const noneCell = () => `<td class="ac-num ac-zero"><div>${NONE}</div></td>`;
+  function statusHtml(s) {
+    const word = AC.SETTLEMENT_STATUS[s.status];
+    if (s.status === 'paid') return `<span class="ac-status ac-status--ok">${word}</span>`;
+    return `<span class="ac-chip ac-chip--${{ pending:'wait', break:'warn', failed:'bad' }[s.status]}">${word}</span>`;
+  }
+  function diffClass(n) { return n === 0 ? 'ac-zero' : 'ac-warn'; }
+  const rowHtml = s => {
+    const reported = s.reportedNet !== null;
+    return `<tr class="ac-row--link" data-row="${esc(s.id)}">
+      <td>${esc(s.channel)}</td>
+      <td class="ac-mono"><a class="ac-link" href="#${esc(s.id)}" data-settlement="${esc(s.id)}">${esc(s.id)}</a></td>
+      <td>${esc(rangeOf(s))}</td>
+      ${reported ? `<td class="ac-num ac-end">${AC.money(s.reportedNet, s.cur)}</td>` : noneCell()}
+      <td class="ac-num">${AC.money(s.expectedNet, s.cur)}</td>
+      ${reported ? `<td class="ac-num ${diffClass(s.diff)}">${AC.signed(s.diff, s.cur)}</td>` : noneCell()}
+      <td class="ac-right">${statusHtml(s)}</td>
+    </tr>`;
+  };
+  /* One row per currency in the filter, over all filtered rows. Currencies never add up. */
+  function totalsOf(rows) {
+    return AC.CURRENCIES.filter(c => rows.some(s => curOf(s) === c)).map(c => {
+      const list = rows.filter(s => curOf(s) === c);
+      const done = list.filter(s => s.reportedNet !== null);
+      return { cur:c, reported:done.length ? AC.sum(done, s => s.reportedNet) : null, expected:AC.sum(list, s => s.expectedNet), diff:done.length ? AC.sum(done, s => s.diff) : null };
+    });
+  }
+  const totalHtml = t => `<tr class="ac-total">
+      <td colspan="3">Total ${esc(t.cur)}</td>
+      ${t.reported === null ? noneCell() : `<td class="ac-num"><span>${AC.money(t.reported, t.cur)}</span></td>`}
+      <td class="ac-num"><span>${AC.money(t.expected, t.cur)}</span></td>
+      ${t.diff === null ? noneCell() : `<td class="ac-num ${diffClass(t.diff)}"><span>${AC.signed(t.diff, t.cur)}</span></td>`}
+      <td></td>
+    </tr>`;
+  function selectHtml(id, label, value, options) {
+    return `<select class="form-input form-select ac-select ac-w160" id="${id}" data-key="${id}" aria-label="${label}"${hasData() ? '' : ' disabled'}>${options.map(o => `<option value="${esc(o[0])}"${value === o[0] ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
+  }
+  const barHtml = f => `<div class="ac-bar">
+      ${selectHtml('stRail', 'Rail', f.rail, [['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])))}
+      ${selectHtml('stStatus', 'Status', f.status, [['', 'All statuses']].concat(Object.keys(AC.SETTLEMENT_STATUS).map(k => [k, AC.SETTLEMENT_STATUS[k]])))}
+    </div>`;
+  const emptyCard = inner => `<section class="ac-card"><div class="ac-empty">${inner}</div></section>`;
+  function listHtml(f) {
+    if (!hasData()) return barHtml(f) + emptyCard(`<p class="ac-empty__title">No settlements for ${esc(AC.month())}</p>`);
+    const rows = inFilter(f);
+    if (!rows.length) return barHtml(f) + emptyCard('<p class="ac-empty__title">No settlements match these filters</p><button type="button" class="btn btn-neutral btn-sm" id="stClear">Clear filters</button>');
+    const pages = Math.ceil(rows.length / PAGE_SIZE);
+    const page = Math.min(f.page, pages);
+    const start = (page - 1) * PAGE_SIZE;
+    const shown = rows.slice(start, start + PAGE_SIZE);
+    return `${barHtml(f)}<section class="ac-card" aria-label="Settlements">
+      <div class="ac-wrap ac-wrap--foot"><table class="ac-table ac-table--lines ac-table--sticky">
+        <caption class="ac-sr">Settlements</caption>
+        <colgroup><col class="ac-col-chan"><col class="ac-col-id"><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-status"></colgroup>
+        <thead><tr><th scope="col">Rail</th><th scope="col">Settlement</th><th scope="col">Dates</th><th scope="col" class="ac-num">Reported net</th><th scope="col" class="ac-num">Expected net</th><th scope="col" class="ac-num">Diff</th><th scope="col" class="ac-right">Status</th></tr></thead>
+        <tbody>${shown.map(rowHtml).join('')}${totalsOf(rows).map(totalHtml).join('')}</tbody>
+      </table></div>
+      <div class="ac-foot"><span class="ac-note">${AC.count(start + 1)} to ${AC.count(start + shown.length)} of ${AC.count(rows.length)}</span><div class="ac-pager">
+        <button type="button" class="btn btn-neutral btn-sm ac-flip" id="stPrev" data-key="stPrev" aria-label="Previous page"${page === 1 ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
+        <button type="button" class="btn btn-neutral btn-sm" id="stNext" data-key="stNext" aria-label="Next page"${page === pages ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
+      </div></div>
+    </section>`;
+  }
+
+  /* ---------- Rows behind one settlement. A pending settlement holds the rail's events that no payout has taken yet. ---------- */
+  function eventsOf(s) {
+    if (s.status !== 'pending') return AC.eventsOf(s.id);
+    return AC.allEvents().filter(e => e.rail === s.rail && !e.payout && e.cat !== 'fee' && e.cat !== 'tax' && dateOf(e.date) >= dateOf(s.from) && dateOf(e.date) <= dateOf(s.to));
+  }
+  const ordersOf = s => eventsOf(s).filter(e => e.cat === 'charge');
+  const offBy = (s, e) => s.status === 'break' && ordersOf(s)[0].txn === e.txn;
+  const netOf = s => (s.reportedNet === null ? s.expectedNet : s.reportedNet);
+
+  /* ---------- Waterfall ---------- */
+  function stepsOf(s) {
+    return [
+      { label:'Gross', value:s.gross, count:s.orders, kind:'gross' },
+      { label:'Refunds', value:-s.refunds },
+      { label:'Chargebacks', value:-s.chargebacks },
+      { label:'Fees', value:-s.fees, count:s.orders },
+      { label:'Tax', value:-s.tax, count:s.orders },
+      { label:'Reserves', value:-s.reserves },
+      { label:'Adjustments', value:s.adjustments },
+      { label:'Net', value:netOf(s), kind:'net' },
+    ];
+  }
+  function waterfallHtml(s) {
+    const steps = stepsOf(s);
+    const pct = n => (n / s.gross * 100).toFixed(4) + '%';
+    let level = 0;
+    return `<div class="ac-wf" role="table" aria-label="Waterfall from gross to net">${steps.map((step, i) => {
+      const total = !!step.kind, zero = step.value === 0;
+      const start = total ? 0 : Math.min(level, level + step.value);
+      const size = Math.abs(step.value);
+      level = step.kind === 'net' ? level : AC.round2(level + step.value);
+      const barClass = step.kind === 'gross' ? ' ac-wf__bar--total' : step.kind === 'net' ? ' ac-wf__bar--net' : step.value > 0 ? ' ac-wf__bar--up' : '';
+      const bar = zero ? '' : `<div class="ac-wf__bar${barClass}" style="left:${pct(start)};width:${pct(size)};"></div>`;
+      /* The running level, to the top of the next bar: 10 below this track, then 10 down to a 32 row's track, or 16 to Net's. */
+      const reach = 10 + (i === steps.length - 2 ? 16 : 10);
+      const link = step.kind === 'net' ? '' : `<i class="ac-wf__link" style="left:min(calc(${pct(level)} - .5px),calc(100% - 1px));top:${zero ? 0 : 10}px;height:${(zero ? 12 : 2) + reach + 2}px;"></i>`;
+      const count = step.count ? ` <span class="ac-muted">(${AC.count(step.count)})</span>` : '';
+      const amount = zero ? AC.money(0, s.cur) : AC.signed(step.value, s.cur);
+      return `<div class="ac-wf__row${total ? ' ac-wf__row--total' : ''}${step.kind === 'net' ? ' ac-wf__row--net' : ''}${zero ? ' ac-wf__row--zero' : ''}" role="row">
+        <div class="ac-wf__label" role="rowheader">${step.label}${count}</div>
+        <div class="ac-wf__track" aria-hidden="true">${link}${bar}</div>
+        <div class="ac-num${zero ? ' ac-zero' : ''}" role="cell">${step.kind === 'net' ? `<span>${amount}</span>` : amount}</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+  function factsOf(s) {
+    const word = { paid:'Paid', break:'Paid', pending:'Expected', failed:'Failed' }[s.status];
+    return [word + ' ' + s.date, AC.count(s.orders) + (s.orders === 1 ? ' order' : ' orders')];
+  }
+
+  /* ---------- Net card ---------- */
+  const exceptionOf = s => AC.EXCEPTIONS.find(ex => ex.link && ex.link.id === s.id && ex.type === 'settlement_waterfall_break');
+  function netCardHtml(s) {
+    const reported = s.reportedNet !== null;
+    const value = n => (n === null ? `<span class="ac-num ac-zero">${NONE}</span>` : `<span class="ac-num">${AC.money(n, s.cur)}</span>`);
+    const ex = s.status === 'break' ? exceptionOf(s) : null;
+    const diff = !reported ? `<span class="ac-num ac-zero ac-kv__bare">${NONE}</span>` : `<span class="ac-num ${diffClass(s.diff)}">${AC.signed(s.diff, s.cur)}</span>`;
+    return `<section class="ac-card" aria-labelledby="stNetTitle">
+      <div class="ac-card__head"><h2 class="ac-card__title" id="stNetTitle">Net</h2></div>
+      <div class="ac-kv">
+        <div class="ac-kv__row"><span class="ac-kv__label">Reported net</span>${value(s.reportedNet)}</div>
+        <div class="ac-kv__row"><span class="ac-kv__label">Expected net</span>${value(s.expectedNet)}</div>
+        <div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__lead"><span class="ac-kv__label${s.status === 'break' ? ' ac-warn' : ''}">Diff</span>${ex ? `<a class="ac-link" href="${esc(AC.hrefOf('exceptions') + '#' + ex.id)}">View exception</a>` : ''}</span>${diff}</div>
+        ${s.status === 'failed' ? `<div class="ac-kv__row"><span class="ac-fault">Payout failed: ${esc(s.failureCode)}</span></div>` : ''}
+      </div>
+    </section>`;
+  }
+
+  /* ---------- Events and matched orders, on one set of columns ---------- */
+  const COLS = '<colgroup><col class="ac-col-date"><col class="ac-col-id"><col><col class="ac-col-money-l"><col class="ac-col-small"><col class="ac-col-small"><col class="ac-col-money-l"></colgroup>';
+  const noRows = '<div class="ac-empty"><p class="ac-empty__text">No sample rows for this settlement</p></div>';
+  const eventRow = (e, i) => `<tr class="ac-row--link" data-drill data-ev="${i}">
+      <td><button type="button" class="ac-toggle" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button></td>
+      <td class="ac-mono">${esc(e.txn)}</td>
+      <td>${esc(e.desc)}</td>
+      ${moneyCell(e.amount, e.cur)}
+      ${moneyCell(e.fee, e.cur)}
+      ${moneyCell(e.tax, e.cur)}
+      ${moneyCell(e.net, e.cur, 'ac-end')}
+    </tr>`;
+  function eventsCardHtml(s) {
+    const events = eventsOf(s);
+    const body = !events.length ? noRows : `<div class="ac-wrap ac-wrap--foot"><table class="ac-table">
+        <caption class="ac-sr">Events</caption>${COLS}
+        <thead><tr><th scope="col">Date</th><th scope="col">Transaction</th><th scope="col">Description</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-num">Fee</th><th scope="col" class="ac-num">Tax</th><th scope="col" class="ac-num">Net</th></tr></thead>
+        <tbody>${events.map(eventRow).join('')}</tbody>
+      </table></div>
+      <div class="ac-foot"><span class="ac-note">Showing ${AC.count(events.length)} of ${AC.count(AC.settlementEventTotal(s))} events</span></div>`;
+    return `<section class="ac-card" aria-labelledby="stEventsTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="stEventsTitle">Events</h2></div>${body}</section>`;
+  }
+  function amountMatchHtml(s, e) {
+    return offBy(s, e)
+      ? `<span class="ac-chip ac-chip--warn">Off by ${AC.money(s.diff, s.cur)}</span>`
+      : '<span class="ac-status ac-status--ok">Matched</span>';
+  }
+  const cashMatchHtml = s => (s.status === 'pending' ? '<span class="ac-chip ac-chip--wait">Pending</span>' : '<span class="ac-status ac-status--ok">Paid</span>');
+  function ordersCardHtml(s) {
+    const orders = ordersOf(s);
+    const body = !orders.length ? noRows : `<div class="ac-wrap ac-wrap--foot"><table class="ac-table">
+        <caption class="ac-sr">Matched orders</caption>${COLS}
+        <thead><tr><th scope="col">Order</th><th scope="col" colspan="2">Date</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-right" colspan="2">Amount match</th><th scope="col" class="ac-right">Cash match</th></tr></thead>
+        <tbody>${orders.map(e => `<tr>
+          <td>${esc(e.order)}</td>
+          <td colspan="2">${esc(e.date)}</td>
+          ${moneyCell(e.amount, e.cur)}
+          <td class="ac-right" colspan="2">${amountMatchHtml(s, e)}</td>
+          <td class="ac-right">${cashMatchHtml(s)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+      <div class="ac-foot"><span class="ac-note">Showing ${AC.count(orders.length)} of ${AC.count(s.orders)} orders</span></div>`;
+    return `<section class="ac-card" aria-labelledby="stOrdersTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="stOrdersTitle">Matched orders</h2></div>${body}</section>`;
+  }
+
+  /* ---------- Detail ---------- */
+  const crumbLink = id => `<a href="${esc(AC.hrefOf('settlements') + listHash(id))}" data-route="${esc(listHash(id))}">Settlements</a>`;
+  function detailHtml(id) {
+    const s = AC.settlement(id);
+    if (!s) return `<nav class="ac-crumb" aria-label="Breadcrumb">${crumbLink(id)}<span aria-hidden="true">/</span><span class="ac-mono" id="stCrumbId" tabindex="-1" aria-current="page">${esc(id)}</span></nav>${emptyCard(`<p class="ac-empty__title">No settlement ${esc(id)}</p>`)}`;
+    return `<nav class="ac-crumb" aria-label="Breadcrumb">${crumbLink(id)}<span aria-hidden="true">/</span><span class="ac-mono" id="stCrumbId" tabindex="-1" aria-current="page">${esc(id)}</span>${statusHtml(s)}</nav>
+      <div class="ac-stack">
+        <div class="ac-grid">
+          <section class="ac-card ac-s8" aria-labelledby="stWfTitle">
+            <div class="ac-card__head ac-card__head--facts">
+              <h2 class="ac-card__title" id="stWfTitle">${esc(s.channel)} · ${esc(rangeOf(s))}</h2>
+              <div class="ac-note">${factsOf(s).map(esc).join(' · ')}</div>
+            </div>
+            ${waterfallHtml(s)}
+          </section>
+          <div class="ac-s4 ac-stack ac-stack--fill">
+            ${netCardHtml(s)}
+            <section class="ac-card ac-card--off" aria-labelledby="stBankTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="stBankTitle">Bank match</h2><span class="ac-note">Not available yet</span></div></section>
+          </div>
+        </div>
+        ${eventsCardHtml(s)}
+        ${ordersCardHtml(s)}
+      </div>`;
+  }
+
+  /* ---------- Head ---------- */
+  function headActions() {
+    const r = route();
+    if (r.view === 'detail') {
+      const s = AC.settlement(r.id);
+      if (!s) return '';
+      return `<button type="button" class="btn btn-neutral btn-sm" id="stExport" data-key="stExport">Export CSV</button><a class="btn btn-neutral btn-sm" href="${esc(AC.hrefOf('journal') + '#entry-' + s.rail)}">View journal entry</a>`;
+    }
+    const off = !inFilter(r).length;
+    return `${off ? '<span class="ac-note" id="stExportWhy">Nothing to export</span>' : ''}<button type="button" class="btn btn-neutral btn-sm" id="stExport" data-key="stExport"${off ? ' aria-disabled="true" aria-describedby="stExportWhy"' : ''}>Export CSV</button>`;
+  }
+
+  /* ---------- CSV: what the screen shows, all pages of it, plus currency and ids ---------- */
+  const plain = n => (n === null || n === undefined ? '' : Number(n).toFixed(2));
+  function exportList(f) {
+    const rows = inFilter(f);
+    const head = ['Rail', 'Settlement', 'From', 'To', 'Currency', 'Reported net', 'Expected net', 'Diff', 'Status'];
+    const body = rows.map(s => [s.channel, s.id, isoOf(s.from), isoOf(s.to), curOf(s), plain(s.reportedNet), plain(s.expectedNet), s.reportedNet === null ? '' : plain(s.diff), AC.SETTLEMENT_STATUS[s.status]]);
+    const totals = totalsOf(rows).map(t => ['Total ' + t.cur, '', '', '', t.cur, plain(t.reported), plain(t.expected), plain(t.diff), '']);
+    const name = ['settlements', f.rail, f.status].filter(Boolean).join('-') + '-' + isoOf('Sep 1').slice(0, 7) + '.csv';
+    AC.downloadCsv(name, [head].concat(body, totals));
+    AC.toast('CSV exported.');
+  }
+  function exportDetail(s) {
+    const head = ['Section', 'Settlement', 'Rail', 'Currency', 'Item', 'Value', 'Count', 'Date', 'Transaction', 'Order', 'Description', 'Amount', 'Fee', 'Tax', 'Net', 'Amount match', 'Cash match'];
+    const line = o => [o.section, s.id, s.channel, curOf(s), o.item || '', o.value || '', o.count || '', o.date || '', o.txn || '', o.order || '', o.desc || '', plain(o.amount), plain(o.fee), plain(o.tax), plain(o.net), o.am || '', o.cm || ''];
+    const rows = [
+      line({ section:'Settlement', item:'Status', value:AC.SETTLEMENT_STATUS[s.status] }),
+      line({ section:'Settlement', item:'From', date:isoOf(s.from) }),
+      line({ section:'Settlement', item:'To', date:isoOf(s.to) }),
+      line({ section:'Settlement', item:factsOf(s)[0].split(' ')[0], date:isoOf(s.date) }),
+      line({ section:'Settlement', item:'Orders', count:s.orders }),
+    ];
+    stepsOf(s).forEach(step => rows.push(line({ section:'Waterfall', item:step.label, count:step.count, amount:step.value === 0 ? 0 : step.value })));
+    rows.push(line({ section:'Net', item:'Reported net', amount:s.reportedNet }));
+    rows.push(line({ section:'Net', item:'Expected net', amount:s.expectedNet }));
+    rows.push(line({ section:'Net', item:'Diff', amount:s.reportedNet === null ? null : s.diff }));
+    if (s.status === 'failed') rows.push(line({ section:'Net', item:'Payout failed', value:s.failureCode }));
+    eventsOf(s).forEach(e => rows.push(line({ section:'Events', date:isoOf(e.date), txn:e.txn, order:e.order, desc:e.desc, amount:e.amount, fee:e.fee, tax:e.tax, net:e.net })));
+    ordersOf(s).forEach(e => rows.push(line({ section:'Matched orders', date:isoOf(e.date), order:e.order, amount:e.amount, am:offBy(s, e) ? 'Off by ' + AC.money(s.diff, s.cur) : 'Matched', cm:s.status === 'pending' ? 'Pending' : 'Paid' })));
+    AC.downloadCsv('settlement-' + s.id + '.csv', [head].concat(rows));
+    AC.toast('CSV exported.');
+  }
+
+  /* ---------- Panel: the event and its source row, the same as on Events ---------- */
+  const factRow = (label, value) => `<div class="ac-kv__row"><span class="ac-kv__label">${label}</span>${value}</div>`;
+  const moneyFact = (n, cur) => (n === 0 ? `<span class="ac-num ac-zero">${AC.money(0, cur)}</span>` : `<span class="ac-num">${AC.signed(n, cur)}</span>`);
+  const idFact = v => `<span class="ac-mono">${esc(v)}</span>`;
+  function openEvent(row) {
+    const s = AC.settlement(route().id);
+    const e = eventsOf(s)[Number(row.dataset.ev)];
+    const rail = AC.rail(e.rail);
+    const facts = [
+      factRow('Fee', moneyFact(e.fee, e.cur)),
+      factRow('Tax', moneyFact(e.tax, e.cur)),
+      `<div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__label">Net</span><span class="ac-num">${AC.signed(e.net, e.cur)}</span></div>`,
+      factRow('Payout', idFact(s.id)),
+      factRow('Status', `<span class="ac-status ac-status--quiet">${esc(e.status)}</span>`),
+      factRow('Transaction', idFact(e.txn)),
+      e.order ? factRow('Order', idFact(e.order)) : '',
+      factRow('Account', idFact(rail.acct)),
+    ].join('');
+    AC.openPanel({
+      title:e.desc,
+      amount:AC.signed(e.amount, e.cur),
+      meta:[rail.name, curOf(e), e.date].join(' · '),
+      body:`<div class="ac-kv">${facts}</div>${AC.sourceRow(AC.sourcePairs(e))}`,
+    });
+    AC.keepReturnFocus(row.querySelector('[data-open]'));
+  }
+
+  /* ---------- Controls ---------- */
+  const plainClick = e => !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0;
+  document.addEventListener('click', e => {
+    const r = route();
+    const routeLink = e.target.closest('a[data-route]');
+    if (routeLink && plainClick(e)) { e.preventDefault(); go(routeLink.dataset.route, 'restore'); return; }
+    /* The current nav item leads back to the list from a settlement. */
+    if (r.view === 'detail' && e.target.closest('.ac-nav [aria-current="page"]')) { e.preventDefault(); go(listHash(r.id), 'restore'); return; }
+    const exp = e.target.closest('#stExport');
+    if (exp) {
+      if (e.detail > 1 || exp.getAttribute('aria-disabled') === 'true') return;
+      if (r.view === 'detail') exportDetail(AC.settlement(r.id)); else exportList(r);
+      return;
+    }
+    if (e.target.closest('#stClear')) {
+      go('', 'keep');
+      const rail = document.getElementById('stRail');
+      if (rail) rail.focus({ preventScroll:true });
+      live.textContent = AC.count(inFilter(route()).length) + ' settlements';
+      return;
+    }
+    const open = e.target.closest('[data-open]');
+    if (open) { openEvent(open.closest('tr')); return; }
+    const step = e.target.closest('#stPrev') ? -1 : e.target.closest('#stNext') ? 1 : 0;
+    if (!step || r.view !== 'list') return;
+    const pages = Math.max(1, Math.ceil(inFilter(r).length / PAGE_SIZE));
+    const mouse = document.documentElement.classList.contains('pm-pointer');
+    go(hashOf({ rail:r.rail, status:r.status, page:Math.min(Math.min(r.page, pages) + step, pages) }), mouse ? 'top' : 'keep');
+    const foot = document.querySelector('.ac-foot .ac-note');
+    if (foot) live.textContent = foot.textContent;
+    const stay = document.getElementById(step > 0 ? 'stNext' : 'stPrev');
+    if (stay && stay.disabled) { const other = document.getElementById(step > 0 ? 'stPrev' : 'stNext'); if (other && !other.disabled) other.focus({ preventScroll:true }); }
+  });
+  document.addEventListener('change', e => {
+    if (e.target.id !== 'stRail' && e.target.id !== 'stStatus') return;
+    const r = route();
+    const next = { rail:r.rail, status:r.status, page:1 };
+    next[e.target.id === 'stRail' ? 'rail' : 'status'] = e.target.value;
+    go(hashOf(next), 'keep');
+    live.textContent = AC.count(inFilter(next).length) + ' settlements';
+  });
+  /* Changing the month on a settlement leaves it for that month's list. This runs before the shell draws. */
+  document.addEventListener('change', e => {
+    const r = route();
+    if (e.target.id !== 'monthSelect' || r.view !== 'detail') return;
+    nav.scrolls[here] = window.scrollY;
+    history.pushState({ seen:true }, '', urlOf(listHash(r.id)));
+    here = location.hash;
+    saveNav();
+    topAfterRender = true;
+  }, true);
+  window.addEventListener('hashchange', () => show('restore'));
+  window.addEventListener('pagehide', () => { nav.scrolls[here] = window.scrollY; saveNav(); });
+
+  AC.rowClick('tr[data-row]', row => go('#' + row.dataset.row, 'restore'));
+  AC.rowClick('tr[data-ev]', openEvent);
+
+  AC.start({
+    current:'settlements',
+    head:() => ({ actions:headActions() }),
+    render:() => { const r = route(); return r.view === 'detail' ? detailHtml(r.id) : listHtml(r); },
+    after:() => {
+      const r = route();
+      document.title = r.view === 'detail' ? r.id + ' · Settlements' : 'Settlements';
+      if (topAfterRender) { topAfterRender = false; window.scrollTo(0, 0); }
+    },
+    ready:() => {
+      if (!(history.state && history.state.seen)) history.replaceState({ seen:true }, '');
+      let back = false;
+      try { const entry = performance.getEntriesByType('navigation')[0]; back = !!entry && entry.type === 'back_forward'; } catch (err) { back = false; }
+      if (back && nav.scrolls[here]) window.scrollTo(0, nav.scrolls[here]);
+    },
+  });
+})();
+</script>
+</body>
+</html>

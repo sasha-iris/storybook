@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/iris-tokens.css">
+  <link rel="stylesheet" href="assets/iris-components.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/panorama-match.css">
+  <link rel="stylesheet" href="assets/accounting.css">
+  <style>
+    /* Selects keep their width and only the search gives way. The text may run up to the chevron, so the longest rail name fits. */
+    body.ac .ac-bar .ac-select { flex:none; padding-right:24px; }
+    /* Search closes the filter bar on the card's right edge, its text on the baseline of the selects. */
+    body.ac .ac-input.ac-search { flex:0 1 280px; width:280px; min-width:0; margin-left:auto; padding-bottom:2px; font-family:inherit; -webkit-appearance:none; appearance:none; }
+    body.ac .ac-input.ac-search:disabled::placeholder { color:var(--ac-2); }
+    body.ac .ac-search:placeholder-shown::-webkit-search-cancel-button { display:none; }
+    body.ac .ac-search::-webkit-search-cancel-button { -webkit-appearance:none; appearance:none; width:16px; height:16px; cursor:pointer; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E") center / 16px no-repeat; }
+    body.ac .ac-search::-webkit-search-cancel-button:hover { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23111928'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E"); }
+    /* Facts in the panel share the left edge of its head and of the source row. */
+    .ac-panel__body .ac-kv { margin:0 -16px; padding-bottom:0; }
+    .ac-pager .ac-flip svg { transform:rotate(180deg); }
+    /* Payout is the one left aligned column after a right aligned number: a double gutter keeps the two apart. */
+    .ac-table th.ac-gap, .ac-table td.ac-gap { padding-left:calc(var(--ac-gut) * 2); }
+    /* Transaction joins the table at 1280. Until 1440 Fee and Status keep their narrow width, so Description is not cut. */
+    @media (max-width:1439px) { #evResults { --ac-small:88px; } }
+    /* Under 1280 the money columns take the room the longest CAD payout needs from Fee, Status and Payout, which have it to spare. */
+    @media (max-width:1279px) { #evResults { --ac-money:116px; --ac-small:80px; --ac-id:88px; } }
+  </style>
+</head>
+<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+  <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
+  <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
+</div>
+<div id="toastHost" role="status" aria-live="polite"></div>
+<div id="modalHost"></div>
+
+<script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
+<script src="assets/panorama-match.js"></script>
+<script src="assets/accounting-data.js"></script>
+<script src="assets/accounting-shell.js"></script>
+<script>
+(function () {
+  const esc = AC.esc;
+  const PAGE_SIZE = 25;
+  const ALL = AC.allEvents();
+  const bareAcct = s => String(s).replace('…', '');
+  const ACCOUNTS = [...new Set(AC.RAILS.map(r => r.acct))];
+  const NO_VALUE = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
+  const hasData = () => AC.month() === AC.MONTH;
+  const CATEGORIES = [AC.CATEGORIES[0], AC.CATEGORIES[1], AC.CATEGORIES[2], AC.CATEGORIES[3], ['feetax', 'Fees and tax'], AC.CATEGORIES[4]];
+  const inCategory = (e, cat) => (cat ? e.cat === cat || (cat === 'feetax' && (e.cat === 'fee' || e.cat === 'tax')) : e.cat !== 'fee' && e.cat !== 'tax');
+  const totalCount = () => AC.RAILS.reduce((n, r) => n + r.n.charge + r.n.refund + r.n.payout + (f.cat ? r.n.fee * 2 : 0), 0);
+  const kindsOf = cat => (cat === 'feetax' ? ['fee', 'tax'] : [cat || 'activity']);
+
+  /* ---------- Filters live in the hash ---------- */
+  function readHash() {
+    const p = new URLSearchParams(location.hash.slice(1));
+    const acct = bareAcct(p.get('acct') || '');
+    const rail = p.get('rail') || '', cur = p.get('cur') || '', cat = p.get('cat') || '';
+    return {
+      rail:AC.rail(rail) ? rail : '',
+      acct:ACCOUNTS.some(a => bareAcct(a) === acct) ? acct : '',
+      cur:AC.CURRENCIES.includes(cur) ? cur : '',
+      cat:CATEGORIES.some(c => c[0] === cat) ? cat : '',
+      q:p.get('q') || '',
+      page:Math.max(1, parseInt(p.get('page'), 10) || 1),
+    };
+  }
+  function urlOf(s) {
+    const p = new URLSearchParams();
+    ['rail', 'acct', 'cur', 'cat', 'q'].forEach(k => { if (s[k]) p.set(k, s[k]); });
+    if (s.page > 1) p.set('page', s.page);
+    const hash = p.toString();
+    return location.pathname + location.search + (hash ? '#' + hash : '');
+  }
+  let f = readHash();
+  let typing = false;
+
+  /* ---------- What the filters select ---------- */
+  const railsInFilter = () => AC.RAILS.filter(r => (!f.rail || r.id === f.rail) && (!f.acct || bareAcct(r.acct) === f.acct) && (!f.cur || (r.cur || 'USD') === f.cur));
+  function rowsInFilter() {
+    if (!hasData()) return [];
+    const rails = new Set(railsInFilter().map(r => r.id));
+    const q = f.q.trim().toLowerCase();
+    return ALL.filter(e => rails.has(e.rail) && inCategory(e, f.cat) && (!q || [e.txn, e.order, e.payout].some(v => v && v.toLowerCase().includes(q))));
+  }
+
+  /* The tile states the true total of the rails in view, never a sum of the sample rows. Currencies never add up. */
+  function tileHtml() {
+    const label = f.cat ? CATEGORIES.find(c => c[0] === f.cat)[1] : 'Net balance change from activity';
+    if (f.q.trim()) return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)}</div><div class="ac-tile__value">${NO_VALUE}</div></div>`;
+    const rails = railsInFilter();
+    const cur = f.cur || (rails.length && rails.every(r => (r.cur || 'USD') !== AC.CURRENCIES[0]) ? rails[0].cur : AC.CURRENCIES[0]);
+    const list = rails.filter(r => (r.cur || 'USD') === cur);
+    const kinds = kindsOf(f.cat);
+    const total = AC.sum(list, r => AC.sum(kinds, k => AC.kindTotal(r, k)));
+    const count = list.reduce((n, r) => n + kinds.reduce((m, k) => m + AC.kindCount(r, k), 0), 0);
+    const value = total === 0 ? `<span class="ac-zero">${AC.money(0, cur)}</span>` : AC.signed(total, cur);
+    return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)} <span class="ac-muted">(${AC.count(count)})</span></div><div class="ac-tile__value">${value}</div></div>`;
+  }
+
+  /* ---------- Table ---------- */
+  const moneyCell = (n, cur, extra) => (n === 0
+    ? `<td class="ac-num ac-zero${extra ? ' ' + extra : ''}">${AC.money(0, cur)}</td>`
+    : `<td class="ac-num${extra ? ' ' + extra : ''}">${AC.signed(n, cur)}</td>`);
+  const payoutLink = (id, key) => `<a class="ac-link" href="${esc(AC.hrefOf('settlements') + '#' + id)}"${key ? ` data-key="${esc(key)}"` : ''}>${esc(id)}</a>`;
+  const rowHtml = e => `<tr class="ac-row--link" data-drill data-ev="${esc(e.txn)}">
+    <td><button type="button" class="ac-toggle" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button></td>
+    <td>${esc(e.channel)}</td>
+    <td class="ac-mono ac-wide">${esc(e.txn)}</td>
+    <td>${esc(e.desc)}</td>
+    ${moneyCell(e.amount, e.cur)}
+    ${moneyCell(AC.round2(e.fee + (e.tax || 0)), e.cur)}
+    ${moneyCell(e.net, e.cur, 'ac-end')}
+    <td class="ac-mono ac-gap">${e.payout ? payoutLink(e.payout, 'po:' + e.txn) : NO_VALUE}</td>
+    <td class="ac-right"><span class="ac-status ac-status--quiet">${esc(e.status)}</span></td>
+  </tr>`;
+  function tableHtml(rows) {
+    const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+    if (f.page > pages) f.page = pages;
+    const start = (f.page - 1) * PAGE_SIZE;
+    const shown = rows.slice(start, start + PAGE_SIZE);
+    return `<div class="ac-wrap ac-wrap--foot"><table class="ac-table ac-table--lines ac-table--sticky">
+      <caption class="ac-sr">Events</caption>
+      <colgroup><col class="ac-col-date"><col class="ac-col-chan"><col class="ac-col-id ac-wide"><col><col class="ac-col-money"><col class="ac-col-small"><col class="ac-col-money"><col class="ac-col-id"><col class="ac-col-small"></colgroup>
+      <thead><tr><th scope="col">Date</th><th scope="col">Rail</th><th scope="col" class="ac-wide">Transaction</th><th scope="col">Description</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-num">Fee and tax</th><th scope="col" class="ac-num">Net</th><th scope="col" class="ac-gap">Payout</th><th scope="col" class="ac-right">Status</th></tr></thead>
+      <tbody>${shown.map(rowHtml).join('')}</tbody>
+    </table></div>
+    <div class="ac-foot"><span class="ac-note">${AC.count(start + 1)} to ${AC.count(start + shown.length)} of ${AC.count(rows.length)} · Sample of ${AC.count(totalCount())} events</span><div class="ac-pager">
+      <button type="button" class="btn btn-neutral btn-sm ac-flip" id="evPrev" data-key="evPrev" aria-label="Previous page"${f.page === 1 ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
+      <button type="button" class="btn btn-neutral btn-sm" id="evNext" data-key="evNext" aria-label="Next page"${f.page === pages ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
+    </div></div>`;
+  }
+  function resultsHtml() {
+    if (!hasData()) return `<section class="ac-card"><div class="ac-empty"><p class="ac-empty__title">No events for ${esc(AC.month())}</p></div></section>`;
+    const rows = rowsInFilter();
+    if (!rows.length) return `<section class="ac-card"><div class="ac-empty"><p class="ac-empty__title">No events match these filters</p><button type="button" class="btn btn-neutral btn-sm" id="evClear" data-key="evClear">Clear filters</button></div></section>`;
+    return `<section class="ac-card" aria-label="Events"><div class="ac-band ac-band--flush">${tileHtml()}</div>${tableHtml(rows)}</section>`;
+  }
+
+  /* ---------- Filter bar ---------- */
+  function selectHtml(id, label, width, key, options) {
+    return `<select class="form-input form-select ac-select ${width}" id="${id}" data-key="${id}" aria-label="${label}"${hasData() ? '' : ' disabled'}>${options.map(o => `<option value="${esc(o[0])}"${f[key] === o[0] ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
+  }
+  const barHtml = () => `<div class="ac-bar">
+    ${selectHtml('evRail', 'Rail', 'ac-w160', 'rail', [['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])))}
+    ${selectHtml('evAcct', 'Account', 'ac-w148', 'acct', [['', 'All accounts']].concat(ACCOUNTS.map(a => [bareAcct(a), a])))}
+    ${selectHtml('evCur', 'Currency', 'ac-w140', 'cur', [['', 'All currencies']].concat(AC.CURRENCIES.map(c => [c, c])))}
+    ${selectHtml('evCat', 'Category', 'ac-w160', 'cat', [['', 'All categories']].concat(CATEGORIES))}
+    <input type="search" class="ac-input ac-search" id="evSearch" data-key="evSearch" aria-label="Search" placeholder="Transaction, order or payout" autocomplete="off" spellcheck="false" value="${esc(f.q)}"${hasData() ? '' : ' disabled'}>
+  </div>`;
+
+  /* ---------- Export ---------- */
+  function exportHtml() {
+    const off = !rowsInFilter().length;
+    return `<span class="ac-note" id="evExportWhy"${off ? '' : ' hidden'}>Nothing to export</span><button type="button" class="btn btn-neutral btn-sm" id="evExport" data-key="evExport"${off ? ' aria-disabled="true" aria-describedby="evExportWhy"' : ''}>Export CSV</button>`;
+  }
+  function syncExport() {
+    const off = !rowsInFilter().length;
+    const btn = document.getElementById('evExport');
+    document.getElementById('evExportWhy').hidden = !off;
+    if (off) { btn.setAttribute('aria-disabled', 'true'); btn.setAttribute('aria-describedby', 'evExportWhy'); }
+    else { btn.removeAttribute('aria-disabled'); btn.removeAttribute('aria-describedby'); }
+  }
+  function exportCsv() {
+    const head = ['Date', 'Rail', 'Account', 'Transaction', 'Order', 'Description', 'Currency', 'Amount', 'Fee', 'Tax', 'Net', 'Payout', 'Status'];
+    const rows = rowsInFilter().map(e => [AC.isoDate(e.date), e.channel, AC.rail(e.rail).acct, e.txn, e.order || '', e.desc, e.cur || 'USD', e.amount.toFixed(2), e.fee.toFixed(2), (e.tax || 0).toFixed(2), e.net.toFixed(2), e.payout || '', e.status]);
+    const name = ['events', f.rail, f.acct, f.cur, f.cat].filter(Boolean).join('-').toLowerCase() + '-' + AC.isoDate('Sep 1').slice(0, 7) + '.csv';
+    AC.downloadCsv(name, [head].concat(rows));
+    AC.toast('CSV exported.');
+  }
+
+  /* ---------- Panel ---------- */
+  const factRow = (label, value) => `<div class="ac-kv__row"><span class="ac-kv__label">${label}</span>${value}</div>`;
+  const moneyFact = (n, cur) => (n === 0 ? `<span class="ac-num ac-zero">${AC.money(0, cur)}</span>` : `<span class="ac-num">${AC.signed(n, cur)}</span>`);
+  const idFact = v => `<span class="ac-mono">${esc(v)}</span>`;
+  function openEvent(row) {
+    const e = ALL.find(x => x.txn === row.dataset.ev);
+    const rail = AC.rail(e.rail);
+    const facts = [
+      factRow('Fee', moneyFact(e.fee, e.cur)),
+      factRow('Tax', moneyFact(e.tax, e.cur)),
+      `<div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__label">Net</span><span class="ac-num">${AC.signed(e.net, e.cur)}</span></div>`,
+      factRow('Payout', e.payout ? `<span class="ac-mono">${payoutLink(e.payout)}</span>` : NO_VALUE),
+      factRow('Status', `<span class="ac-status ac-status--quiet">${esc(e.status)}</span>`),
+      factRow('Transaction', idFact(e.txn)),
+      e.order ? factRow('Order', idFact(e.order)) : '',
+      factRow('Account', idFact(rail.acct)),
+    ].join('');
+    AC.openPanel({
+      title:e.desc,
+      amount:AC.signed(e.amount, e.cur),
+      meta:[rail.name, e.cur || 'USD', e.date].join(' · '),
+      body:`<div class="ac-kv">${facts}</div>${AC.sourceRow(AC.sourcePairs(e))}`,
+    });
+    AC.keepReturnFocus(row.querySelector('[data-open]'));
+  }
+
+  /* ---------- Drawing after a change ---------- */
+  function keepFocus(draw) {
+    const key = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : '';
+    draw();
+    if (!key) return;
+    const el = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+    if (el && !el.disabled) { if (document.activeElement !== el) el.focus({ preventScroll:true }); return; }
+    const other = { evNext:'evPrev', evPrev:'evNext', evClear:'evRail' }[key];
+    const alt = other && document.querySelector(`[data-key="${other}"]`);
+    if (alt && !alt.disabled) alt.focus({ preventScroll:true });
+  }
+  function announce() {
+    const live = document.getElementById('evLive');
+    const n = rowsInFilter().length;
+    if (live) live.textContent = n === 1 ? '1 event' : AC.count(n) + ' events';
+  }
+  function update() {
+    const host = document.getElementById('evResults');
+    if (!host) return;
+    host.innerHTML = resultsHtml();
+    syncExport();
+    announce();
+  }
+  function go() { history.pushState(null, '', urlOf(f)); keepFocus(update); }
+
+  const app = document.getElementById('app');
+  app.addEventListener('change', e => {
+    const key = { evRail:'rail', evAcct:'acct', evCur:'cur', evCat:'cat' }[e.target.id];
+    if (!key) return;
+    f[key] = e.target.value;
+    f.page = 1;
+    go();
+  });
+  app.addEventListener('input', e => {
+    if (e.target.id !== 'evSearch') return;
+    f.q = e.target.value;
+    f.page = 1;
+    /* One history entry per search, not one per letter. */
+    history[typing ? 'replaceState' : 'pushState'](null, '', urlOf(f));
+    typing = !!f.q;
+    update();
+  });
+  app.addEventListener('focusout', e => { if (e.target.id === 'evSearch') typing = false; });
+  app.addEventListener('keydown', e => {
+    if (e.target.id !== 'evSearch' || e.key !== 'Escape' || !e.target.value) return;
+    e.preventDefault();
+    e.target.value = '';
+    e.target.dispatchEvent(new Event('input', { bubbles:true }));
+  });
+  app.addEventListener('click', e => {
+    const open = e.target.closest('[data-open]');
+    if (open) { openEvent(open.closest('tr')); return; }
+    const exp = e.target.closest('#evExport');
+    if (exp) { if (e.detail <= 1 && exp.getAttribute('aria-disabled') !== 'true') exportCsv(); return; }
+    if (e.target.closest('#evClear')) {
+      f = { rail:'', acct:'', cur:'', cat:'', q:'', page:1 };
+      history.pushState(null, '', urlOf(f));
+      AC.rerender();
+      announce();
+      document.getElementById('evRail').focus({ preventScroll:true });
+      return;
+    }
+    const step = e.target.closest('#evPrev') ? -1 : e.target.closest('#evNext') ? 1 : 0;
+    if (!step) return;
+    f.page += step;
+    go();
+    if (document.documentElement.classList.contains('pm-pointer')) window.scrollTo(0, 0);
+  });
+  window.addEventListener('hashchange', () => {
+    AC.closePanel();
+    f = readHash();
+    typing = false;
+    keepFocus(AC.rerender);
+    announce();
+  });
+
+  AC.rowClick('tr[data-ev]', openEvent);
+  AC.start({
+    current:'events',
+    head:() => ({ actions:exportHtml() }),
+    render:() => `${barHtml()}<div id="evResults">${resultsHtml()}</div><div class="ac-sr" id="evLive" role="status"></div>`,
+  });
+})();
+</script>
+</body>
+</html>

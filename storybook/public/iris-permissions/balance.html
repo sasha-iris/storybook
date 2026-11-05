@@ -10,404 +10,310 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
+  <link rel="stylesheet" href="assets/accounting.css">
+  <style>
+    /* Balance only. */
+    a.ac-link:hover, a.ac-link:active { text-decoration-thickness:1px; }
+    .ac-row--sel .ac-link { text-decoration-color:currentColor; }
+    .ac-row--link:active .ac-zero { color:var(--ac-2); }
+    /* A chip that wraps in the tie-out strip leaves the other cells on the first line. */
+    .ac-tie { align-items:start; }
+    /* Under 1024 a table scrolls inside its wrap: this keeps the hidden text in there with it. */
+    .ac-wrap { position:relative; }
+    /* The events table scrolls inside the panel, so its Source row stays in view. CA$ amounts need the narrow gutter. */
+    .ac-panel__body .ac-wrap { max-height:max(200px, calc(100vh - 372px)); overflow-y:auto; }
+    .ac-table--panel { --ac-gut:12px; }
+    .ac-table--panel td { overflow:visible; }
+    .ac-table--panel thead th { position:sticky; top:0; z-index:2; }
+    /* Charges and Activity carry Tax as a ninth column. */
+    .ac-table--tax col:nth-child(1) { width:56px; } .ac-table--tax col:nth-child(2) { width:88px; } .ac-table--tax col:nth-child(5), .ac-table--tax col:nth-child(6), .ac-table--tax col:nth-child(9) { width:80px; } .ac-table--tax col:nth-child(7) { width:96px; } .ac-table--tax col:nth-child(8) { width:76px; }
+    /* Payouts lead with the payout id and hold five figure amounts. */
+    .ac-table--payouts col:nth-child(1) { width:72px; } .ac-table--payouts col:nth-child(2) { width:64px; } .ac-table--payouts col:nth-child(3) { width:112px; } .ac-table--payouts col:nth-child(4) { width:auto; } .ac-table--payouts col:nth-child(5), .ac-table--payouts col:nth-child(7) { width:112px; } .ac-table--payouts col:nth-child(6) { width:72px; }
+  </style>
 </head>
-<body class="pm-journal" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
   <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
 </div>
-<div id="toastHost" style="position:fixed;top:16px;right:16px;z-index:200;max-width:440px;" role="status" aria-live="polite"></div>
+<div id="toastHost" role="status" aria-live="polite"></div>
 <div id="modalHost"></div>
 
 <script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
 <script src="assets/panorama-match.js"></script>
+<script src="assets/accounting-data.js"></script>
+<script src="assets/accounting-shell.js"></script>
 <script>
-/* Balance, All tab and per processor tab, with the events drawer and source row.
-   Rail totals come from the Balance mock (Sep 2026, per currency, never mixed). Splits, counts, ids and rows are sample values, the same as on Journal entries. */
-const MINUS = '−';
-const CHEVRON = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
-const ICON_DOWNLOAD = '<svg class="pm-ico" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>';
+/* Balance: the All tab, one tab per rail, and the events panel with its Source row. Routes: #all #shopify #stripe #paypal #paypal-cad #amazon #tiktok. */
+(function () {
+  const { esc, money, signed, round2 } = AC;
+  const TABS = [['all','All'],['shopify','Shopify Payments'],['stripe','Stripe'],['paypal','PayPal'],['amazon','Amazon'],['tiktok','TikTok Shop']].filter(t => t[0] === 'all' || AC.RAILS.some(r => r.tab === t[0]));
+  const KINDS = { activity:'Activity', charge:'Charges', refund:'Refunds', fee:'Fees', tax:'Tax', payout:'Payouts' };
+  const NOUNS = { activity:'events', charge:'charges', refund:'refunds', fee:'fees', tax:'tax rows', payout:'payouts' };
+  const DASH = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
+  const S = { tab:'all', cur:'all', rowCur:'USD' };
 
-const RAILS = [
-  { id:'shopify', tab:'shopify', name:'Shopify Payments', acct:'shop_9021…', start:41210.55, end:37493.82, gross:412680.00, refunds:13940.25, fees:10041.68, tax:295.90, net:388402.17, payouts:392118.90, n:{ charge:3214, refund:96, dispute:0, fee:3214, payout:12 }, orders:{ value:37493.82 } },
-  { id:'stripe', tab:'stripe', name:'Stripe', acct:'acct_1Qx7…', start:12004.10, end:10214.55, gross:101240.00, refunds:2180.30, fees:2651.13, tax:78.12, net:96330.45, payouts:98120.00, n:{ charge:812, refund:14, dispute:0, fee:812, payout:19 }, orders:null },
-  { id:'paypal', tab:'paypal', name:'PayPal', acct:'pp_4410…', start:3318.72, end:4723.32, gross:30410.00, refunds:620.40, fees:859.67, tax:25.33, net:28904.60, payouts:27500.00, n:{ charge:246, refund:6, dispute:0, fee:246, payout:8 }, orders:{ value:4723.32 } },
-  { id:'amazon', tab:'amazon', name:'Amazon', reserve:true, acct:'A2EU8Z…', start:9640.00, end:11072.26, gross:66310.00, refunds:1905.62, fees:9900.27, tax:291.73, net:54212.38, payouts:52780.12, n:{ charge:538, refund:22, dispute:0, fee:538, payout:6 }, orders:{ value:11072.26 } },
-  { id:'tiktok', tab:'tiktok', name:'TikTok Shop', reserve:true, acct:'tts_7731…', start:1250.00, end:1565.20, gross:9180.00, refunds:316.80, fees:920.86, tax:27.14, net:7915.20, payouts:7600.00, n:{ charge:84, refund:4, dispute:0, fee:84, payout:5 }, orders:{ value:1612.40 } },
-  { id:'paypal_cad', tab:'paypal', name:'PayPal', cur:'CAD', acct:'pp_4410…', start:812.40, end:1023.15, gross:5510.00, refunds:120.00, fees:174.25, tax:5.00, net:5210.75, payouts:5000.00, n:{ charge:58, refund:1, dispute:0, fee:58, payout:3 }, orders:{ value:1023.15 } },
-];
-const TABS = [['all','All'],['shopify','Shopify Payments'],['stripe','Stripe'],['paypal','PayPal'],['amazon','Amazon'],['tiktok','TikTok Shop']];
-const SCHEMA = { shopify:'shopify_data_v2', stripe:'stripe_data_v2', paypal:'paypal_data', paypal_cad:'paypal_data', amazon:'amazon_data', tiktok:'tiktok_data' };
-/* order, date, gross, fee, payout: the same orders as the Journal entries panels */
-const ORDERS = {
-  shopify: [['#48102','Sep 1',148.00,4.59,'po_8Kd2'],['#48733','Sep 19',140.00,4.36,'po_9Zm4'],['#48921','Sep 24',148.00,4.59,'po_A1c7'],['#49102','Sep 28',164.00,5.06,null]],
-  stripe: [['#48120','Sep 1',148.00,4.00,'po_St11'],['#48260','Sep 6',96.00,2.59,'po_St14'],['#48640','Sep 16',140.00,3.78,'po_St19']],
-  paypal: [['#48140','Sep 2',96.00,2.78,'po_Pp03'],['#48450','Sep 11',148.00,4.29,'po_Pp07'],['#48850','Sep 23',140.00,4.06,'po_Pp12']],
-  amazon: [['#48555','Sep 13',148.00,22.79,'po_Am21'],['#49118','Sep 28',89.50,13.78,null],['#49177','Sep 30',54.00,8.32,null]],
-  tiktok: [['#48300','Sep 7',96.00,9.89,'po_Tk02'],['#48720','Sep 19',148.00,15.24,'po_Tk05']],
-  paypal_cad: [['#48166','Sep 3',128.00,3.71,'po_Ca02'],['#48511','Sep 12',196.00,5.68,'po_Ca05'],['#48877','Sep 24',186.00,5.39,'po_Ca09']],
-};
-const PAYOUTS = {
-  shopify: [['po_8Kd2','Sep 5',48210.44],['po_9Zm4','Sep 21',44902.17],['po_A1c7','Sep 26',46118.30]],
-  stripe: [['po_St11','Sep 4',11240.60],['po_St14','Sep 11',10318.25],['po_St19','Sep 18',12004.90]],
-  paypal: [['po_Pp03','Sep 8',7800.00],['po_Pp07','Sep 15',6900.00],['po_Pp12','Sep 24',8400.00]],
-  amazon: [['po_Am21','Sep 14',17940.12],['po_Am24','Sep 28',18320.00]],
-  tiktok: [['po_Tk02','Sep 8',2600.00],['po_Tk05','Sep 22',2800.00]],
-  paypal_cad: [['po_Ca02','Sep 9',1600.00],['po_Ca05','Sep 17',1800.00],['po_Ca09','Sep 26',1600.00]],
-};
-const KINDS = { activity:'Activity', charge:'Charges', refund:'Refunds', fee:'Fees', tax:'Tax', payout:'Payouts' };
-const NOUNS = { activity:'events', charge:'charges', refund:'refunds', fee:'fees', tax:'tax rows', payout:'payouts' };
+  /* Coming back inside the section keeps the tab and the currency. */
+  const SECTION_REFERRER = /(journal-entries|accounting-[a-z]+)\.html/;
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const view = JSON.parse(sessionStorage.getItem('pm-balance-view') || 'null');
+    if (view && nav && nav.type !== 'reload' && (nav.type === 'back_forward' || SECTION_REFERRER.test(document.referrer))) {
+      if (AC.CURRENCIES.includes(view.cur)) S.cur = view.cur;
+      if (!location.hash && view.hash) history.replaceState(null, '', view.hash);
+    }
+  } catch (err) { /* private window: start over */ }
+  window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-balance-view', JSON.stringify({ hash:location.hash, cur:S.cur })); } catch (err) { /* nothing to keep */ } });
 
-const S = { tab:'all', month:'Sep 2026', cur:'all', rowCur:'USD' };
-const readHash = () => { const h = location.hash.replace('#', ''); const cad = h === 'paypal-cad'; S.tab = cad ? 'paypal' : TABS.some(t => t[0] === h) ? h : 'all'; S.rowCur = cad ? 'CAD' : 'USD'; };
-readHash();
-try {
-  const nav = performance.getEntriesByType('navigation')[0];
-  const month = sessionStorage.getItem('pm-balance-month');
-  if (month && !(nav && nav.type === 'reload')) S.month = month;
-  sessionStorage.removeItem('pm-balance-month');
-} catch (err) { /* private window: start over */ }
-window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-balance-month', S.month); } catch (err) { /* nothing to keep */ } });
+  function readHash() {
+    const h = location.hash.slice(1);
+    const cad = h === 'paypal-cad' && !!AC.rail('paypal_cad');
+    S.tab = cad ? 'paypal' : TABS.some(t => t[0] === h) ? h : 'all';
+    S.rowCur = cad ? 'CAD' : 'USD';
+  }
+  readHash();
+  const hashFor = (tab, rowCur) => '#' + (tab === 'paypal' && rowCur === 'CAD' ? 'paypal-cad' : tab);
+  const isSep = () => AC.month() === AC.MONTH;
+  const curRail = () => { const list = AC.RAILS.filter(r => r.tab === S.tab); return list.find(r => (r.cur || 'USD') === S.rowCur) || list[0]; };
+  const curOf = r => r.cur || 'USD';
+  const ordersOff = r => (r.ordersEnding === null ? 0 : round2(Math.abs(r.ordersEnding - r.end)));
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function money(n, cur) { return (cur === 'CAD' ? 'CA$' : '$') + Number(Math.abs(n)).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
-function neg(n, cur) { return MINUS + money(n, cur); }
-function round2(n) { return Math.round(n * 100) / 100; }
-function rail(id) { return RAILS.find(r => r.id === id); }
-function curRail() { const list = RAILS.filter(r => r.tab === S.tab); return list.find(r => (r.cur || 'USD') === S.rowCur) || list[0]; }
-const SR = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);';
-const TD = 'padding:6px 8px;height:44px;box-sizing:border-box;font-size:13px;line-height:18px;color:var(--color-text-primary);border-top:1px solid var(--color-border-default);';
+  /* ---------- Filter bar ---------- */
+  function barHtml() {
+    const isAll = S.tab === 'all', r = isAll ? null : curRail();
+    const curs = isAll ? AC.CURRENCIES : AC.RAILS.filter(x => x.tab === S.tab).map(curOf);
+    const picked = isAll ? S.cur : curOf(r);
+    return `<div class="ac-bar">
+      <div class="ac-seg" role="group" aria-label="Rail">${TABS.map(t => `<button type="button" class="ac-seg__item" aria-pressed="${S.tab === t[0]}" data-tab="${t[0]}" data-key="tab:${t[0]}">${esc(t[1])}</button>`).join('')}</div>
+      <div class="ac-actions">
+        <select class="form-input form-select ac-select ac-w148" aria-label="Account" data-key="acctSelect"${isAll ? ' disabled title="Pick a rail to see its account"' : ''}><option>${isAll ? 'All accounts' : esc(r.acct)}</option></select>
+        <select class="form-input form-select ac-select ac-w140" aria-label="Currency" id="curSelect" data-key="curSelect">${isAll ? '<option value="all">All currencies</option>' : ''}${curs.map(c => `<option value="${c}"${picked === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
+      </div>
+    </div>`;
+  }
 
-/* ---------- Page ---------- */
-function filtersHtml() {
-  const isAll = S.tab === 'all';
-  const r = isAll ? null : curRail();
-  const curs = isAll ? ['USD','CAD'] : RAILS.filter(x => x.tab === S.tab).map(x => x.cur || 'USD');
-  const acct = isAll ? '<option>All accounts</option>' : `<option>${esc(r.acct)}</option>`;
-  const curOptions = (isAll ? '<option value="all">All currencies</option>' : '') + curs.map(c => `<option value="${c}"${(isAll ? S.cur : S.rowCur) === c ? ' selected' : ''}>${c}</option>`).join('');
-  const singleCur = !isAll && curs.length === 1;
-  return `<div class="pm-bfilters">
-    <div class="btn-group" role="group" aria-label="Processor">${TABS.map(t => `<button type="button" class="btn${S.tab === t[0] ? ' active' : ''}" aria-pressed="${S.tab === t[0]}" data-tab="${t[0]}" data-key="tab:${t[0]}">${esc(t[1])}</button>`).join('')}</div>
-    <div class="pm-bfilters__right">
-      <select class="form-input form-select" aria-label="Account" disabled>${acct}</select>
-      <select class="form-input form-select" aria-label="Currency" id="curSelect" data-key="curSelect"${singleCur ? ' disabled' : ''}>${curOptions}</select>
-      <select class="form-input form-select" aria-label="Month" id="monthSelect" data-key="monthSelect">${['Sep 2026','Oct 2026'].map(m => `<option${S.month === m ? ' selected' : ''}>${m}</option>`).join('')}</select>
-      <span class="pm-btz">America/Chicago</span>
-    </div>
-  </div>`;
-}
-function statusHtml(tied) { return tied ? '<span class="pm-ok">Tied</span>' : '<span class="badge badge-yellow badge-sm">Not tied</span>'; }
-function allHtml() {
-  const cards = ['USD','CAD'].filter(c => S.cur === 'all' || S.cur === c).map((c, i) => {
-    const cur = c === 'CAD' ? 'CAD' : undefined;
-    const list = RAILS.filter(r => r.cur === cur);
-    const sum = f => round2(list.reduce((n, r) => n + f(r), 0));
-    const rows = list.map((r, n) => `<div class="pm-entry" style="${n ? 'border-top:1px solid var(--color-border-default);' : ''}"><div class="pm-entry__row pm-bgrid pm-brow" data-rail-row="${r.tab}" data-rail-cur="${c}">
-        <div class="pm-bname"><button type="button" class="pm-blink" data-tab="${r.tab}" data-cur="${c}">${esc(r.name)}</button>${r.reserve ? '<span class="form-helper" style="margin:0;">reserve</span>' : ''}${r.orders && round2(Math.abs(r.orders.value - r.end)) ? `<span class="badge badge-yellow badge-sm">Orders off by ${money(r.orders.value - r.end, cur)}</span>` : ''}</div>
-        <div class="pm-num"><span style="${SR}">Starting </span>${money(r.start, cur)}</div>
-        <div class="pm-num"><span style="${SR}">Activity </span><button type="button" class="pm-amount" data-open="${r.id}:activity" aria-label="${esc(r.name)}${r.cur ? ' ' + r.cur : ''}, activity, ${money(r.net, cur)}">${money(r.net, cur)}</button></div>
-        <div class="pm-num"><span style="${SR}">Payouts </span><button type="button" class="pm-amount" data-open="${r.id}:payout" aria-label="${esc(r.name)}${r.cur ? ' ' + r.cur : ''}, payouts, minus ${money(r.payouts, cur)}">${neg(r.payouts, cur)}</button></div>
-        <div class="pm-num"><span style="${SR}">Ending </span>${money(r.end, cur)}</div>
-        <div style="text-align:right;">${statusHtml(true)}</div>
-      </div></div>`).join('');
-    return `<section class="card" aria-label="${c}"${i ? ' style="margin-top:16px;"' : ''}>
-      <div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="2">${c} <span class="pm-count">${list.length} ${list.length === 1 ? 'rail' : 'rails'}</span></div></div>
-      <div class="pm-bgrid pm-bhead" aria-hidden="true"><span>Rail</span><span>Starting</span><span>Activity</span><span>Payouts</span><span>Ending</span><span>Processor</span></div>
-      ${rows}
-      <div class="pm-bgrid pm-btotal"><div>Total ${c}</div><div class="pm-num"><span style="${SR}">Starting </span>${money(sum(r => r.start), cur)}</div><div class="pm-num"><span style="${SR}">Activity </span>${money(sum(r => r.net), cur)}</div><div class="pm-num"><span style="${SR}">Payouts </span>${neg(sum(r => r.payouts), cur)}</div><div class="pm-num"><span style="${SR}">Ending </span>${money(sum(r => r.end), cur)}</div><div class="pm-num"><span aria-hidden="true">–</span></div></div>
-    </section>`;
-  });
-  return cards.join('');
-}
-function kv(label, value, opts = {}) {
-  return `<div class="pm-kv${opts.total ? ' pm-kv--total' : ''}${opts.sub ? ' pm-kv--sub' : ''}"${opts.kind ? ` data-kv="${opts.kind}"` : ''}><div class="pm-kv__label">${label}</div><div class="pm-kv__value">${value}</div></div>`;
-}
-function amountLink(r, kind, text) { return `<button type="button" class="pm-amount" data-open="${r.id}:${kind}" aria-label="${esc(r.name)}${r.cur ? ' ' + r.cur : ''}, ${esc(KINDS[kind])}, ${text.replace(MINUS, 'minus ')}">${text}</button>`; }
-function count(n) { return ` <span class="pm-kv__count">(${n.toLocaleString('en-US')})</span>`; }
-function tieoutHtml(r) {
-  const cur = r.cur;
-  const dash = label => `<span class="pm-tie__item"><span class="pm-tie__label">${label}</span><span aria-hidden="true" class="pm-tie__dash">–</span><span style="${SR}">not available</span></span>`;
-  const value = (label, v) => {
+  /* ---------- Amounts ---------- */
+  function amount(r, kind, text, slot) {
+    return `<button type="button" class="ac-link" data-open="${r.id}:${kind}" data-key="${r.id}:${kind}${slot ? ':' + slot : ''}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(AC.railLabel(r))}, ${esc(KINDS[kind])}, ${esc(text.replace(AC.MINUS, 'minus '))}">${esc(text)}</button>`;
+  }
+  const processorHtml = tied => (tied ? '<span class="ac-status ac-status--ok">Tied</span>' : '<span class="ac-chip ac-chip--warn">Not tied</span>');
+  const reserveHtml = r => (r.reserve ? '<span class="ac-muted">reserve</span>' : '');
+
+  /* ---------- All tab, and a month with no data ---------- */
+  const COLUMNS = '<colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup><thead><tr><th scope="col">Rail</th><th scope="col" class="ac-num">Starting</th><th scope="col" class="ac-num">Activity</th><th scope="col" class="ac-num">Payouts</th><th scope="col" class="ac-num">Ending</th><th scope="col" class="ac-right">Processor</th></tr></thead>';
+  function railRow(r) {
+    const off = ordersOff(r);
+    return `<tr class="ac-row--link" data-rail-row="${r.tab}" data-rail-cur="${curOf(r)}" data-drill>
+      <td><div class="ac-name"><button type="button" class="ac-toggle" data-tab="${r.tab}" data-cur="${curOf(r)}">${esc(r.name)}</button>${reserveHtml(r)}${off ? `<span class="ac-chip ac-chip--warn">Orders off by ${money(off, r.cur)}</span>` : ''}</div></td>
+      <td class="ac-num">${signed(r.start, r.cur)}</td>
+      <td class="ac-num">${amount(r, 'activity', signed(r.net, r.cur))}</td>
+      <td class="ac-num">${amount(r, 'payout', signed(-r.payouts, r.cur))}</td>
+      <td class="ac-num ac-end">${signed(r.end, r.cur)}</td>
+      <td class="ac-right">${processorHtml(r.native === undefined)}</td></tr>`;
+  }
+  function totalRow(c) {
+    const t = AC.totals(c);
+    return `<tr class="ac-total"><td>Total ${c}</td>${[t.start, t.net, -t.payouts, t.end].map(v => `<td class="ac-num"><span>${signed(v, c)}</span></td>`).join('')}<td class="ac-right">${AC.railsIn(c).some(r => r.native !== undefined) ? processorHtml(false) : DASH}</td></tr>`;
+  }
+  function noDataRow(r) {
+    return `<tr><td><div class="ac-name"><span>${esc(r.name)}</span>${reserveHtml(r)}</div></td><td class="ac-num">${signed(r.end, r.cur)}</td><td class="ac-num">${DASH}</td><td class="ac-num">${DASH}</td><td class="ac-num">${DASH}</td><td class="ac-right"><span class="ac-status ac-status--quiet">No data</span></td></tr>`;
+  }
+  function cardsHtml(rails, rowHtml, withTotal) {
+    const picked = AC.CURRENCIES.filter(c => (S.tab !== 'all' || S.cur === 'all' || S.cur === c) && rails.some(r => curOf(r) === c));
+    return `<div class="ac-stack">${picked.map(c => {
+      const list = rails.filter(r => curOf(r) === c);
+      return `<section class="ac-card" aria-label="${c}"><div class="ac-card__head"><h2 class="ac-card__title">${c}</h2><span class="ac-note">${list.length} ${list.length === 1 ? 'rail' : 'rails'}</span></div><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Balance by rail, ${c}</caption>${COLUMNS}<tbody>${list.map(rowHtml).join('')}${withTotal ? totalRow(c) : ''}</tbody></table></div></section>`;
+    }).join('')}</div>`;
+  }
+
+  /* ---------- Rail tab ---------- */
+  const tile = (label, value, key) => `<div class="ac-tile${key ? ' ac-tile--key' : ''}"><div class="ac-tile__label">${label}</div><div class="ac-tile__value">${value}</div></div>`;
+  const tieCell = (label, inner) => `<div class="ac-tie__cell"><span class="ac-tie__label">${label}</span>${inner}</div>`;
+  function tieValue(v, r) {
     const off = round2(Math.abs(v - r.end));
-    return `<span class="pm-tie__item"><span class="pm-tie__label">${label}</span><span>${money(v, cur)}</span>${off > 0.01 ? `<span class="badge badge-yellow badge-sm">Off by ${money(off, cur)}</span>` : '<span class="pm-ok">Tied</span>'}</span>`;
-  };
-  return `<div class="pm-tieouts">${value('Processor', r.end)}${r.orders ? value('Orders', r.orders.value) : dash('Orders')}${dash('Bank')}${dash('GL')}</div>`;
-}
-function railHtml() {
-  const r = curRail(), cur = r.cur;
-  return `<div class="pm-bal-grid">
-    <section class="card" aria-labelledby="sumTitle"><div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="2" id="sumTitle">Summary</div></div>
-      ${kv('Starting balance <span class="pm-kv__count">Sep 1</span>', money(r.start, cur))}
-      ${kv('Net balance change from activity', amountLink(r, 'activity', money(r.net, cur)), { kind:'activity' })}
-      ${kv('Total payouts' + count(r.n.payout), amountLink(r, 'payout', neg(r.payouts, cur)), { kind:'payout' })}
-      ${kv('Ending balance <span class="pm-kv__count">Sep 30</span>', money(r.end, cur), { total:true })}
-      ${tieoutHtml(r)}
-    </section>
-    <section class="card" aria-labelledby="actTitle"><div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="2" id="actTitle">Balance change from activity</div></div>
-      ${kv('Charges' + count(r.n.charge), amountLink(r, 'charge', money(r.gross, cur)), { kind:'charge' })}
-      ${kv('Refunds' + count(r.n.refund), amountLink(r, 'refund', neg(r.refunds, cur)), { kind:'refund' })}
-      ${kv('Disputes' + count(r.n.dispute), money(0, cur))}
-      ${kv('Fees' + count(r.n.fee), amountLink(r, 'fee', neg(r.fees, cur)), { kind:'fee' })}
-      ${kv('Tax', amountLink(r, 'tax', neg(r.tax, cur)), { sub:true, kind:'tax' })}
-      ${kv('Net balance change from activity', money(r.net, cur), { total:true })}
-    </section>
-    <section class="card" aria-labelledby="payTitle"><div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="2" id="payTitle">Payouts</div></div>
-      ${kv('Payouts' + count(r.n.payout), amountLink(r, 'payout', money(r.payouts, cur)), { kind:'payout' })}
-      ${kv('Total paid out', money(r.payouts, cur), { total:true })}
-    </section>
-  </div>`;
-}
-function emptyRowHtml(r, n) {
-  const cur = r.cur;
-  return `<div class="pm-entry" style="${n ? 'border-top:1px solid var(--color-border-default);' : ''}"><div class="pm-bgrid pm-brow">
-    <div class="pm-bname"><span class="pm-blink" style="cursor:default;">${esc(r.name)}</span>${r.reserve ? '<span class="form-helper" style="margin:0;">reserve</span>' : ''}</div>
-    <div class="pm-num"><span style="${SR}">Starting </span>${money(r.end, cur)}</div>
-    <div class="pm-num"><span aria-hidden="true">–</span></div><div class="pm-num"><span aria-hidden="true">–</span></div><div class="pm-num"><span aria-hidden="true">–</span></div>
-    <div style="text-align:right;"><span class="badge badge-gray badge-sm">No data</span></div>
-  </div></div>`;
-}
-function emptyHtml() {
-  const tabRails = S.tab === 'all' ? RAILS : [curRail()];
-  return ['USD','CAD'].filter(c => S.tab === 'all' ? (S.cur === 'all' || S.cur === c) : (tabRails[0].cur || 'USD') === c).map((c, i) => {
-    const cur = c === 'CAD' ? 'CAD' : undefined;
-    const list = tabRails.filter(r => r.cur === cur);
-    return `<section class="card" aria-label="${c}"${i ? ' style="margin-top:16px;"' : ''}>
-      <div class="pm-att__head pm-att__head--plain"><div class="card-header-title" role="heading" aria-level="2">${c} <span class="pm-count">${list.length} ${list.length === 1 ? 'rail' : 'rails'}</span></div></div>
-      <div class="pm-bgrid pm-bhead" aria-hidden="true"><span>Rail</span><span>Starting</span><span>Activity</span><span>Payouts</span><span>Ending</span><span>Processor</span></div>
-      ${list.map(emptyRowHtml).join('')}
-    </section>`;
-  }).join('');
-}
-function render() {
-  const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
-  document.getElementById('app').innerHTML = `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;">
-      <div><h1 style="margin:0 0 4px;font-size:20px;line-height:30px;font-weight:600;color:#111928;">Accounting</h1><p style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:0 0 16px;font-size:14px;line-height:21px;color:#374151;"><span class="badge badge-gray badge-sm">Sample data</span></p></div>
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><button type="button" class="btn btn-neutral btn-sm" id="exportPage" data-key="exportPage"${S.month === 'Sep 2026' ? '' : ' disabled'}>${ICON_DOWNLOAD}Export CSV</button></div>
-    </div>
-    <nav class="iris-tab-bar pm-section-nav" aria-label="Accounting"><a class="iris-tab iris-tab--active" aria-current="page" href="balance.html">Balance</a><a class="iris-tab" href="journal-entries.html${location.search}" id="toJournal">Journal entries</a></nav>
-    ${filtersHtml()}
-    ${S.month !== 'Sep 2026' ? emptyHtml() : S.tab === 'all' ? allHtml() : railHtml()}`;
-  if (active) { const el = document.querySelector(`[data-key="${CSS.escape(active)}"]`); if (el) el.focus(); }
-}
+    return `<span class="ac-num">${money(v, r.cur)}</span>${off > 0.01 ? `<span class="ac-chip ac-chip--warn">Off by ${money(off, r.cur)}</span>` : '<span class="ac-status ac-status--ok">Tied</span>'}`;
+  }
+  const kvCount = n => ` <span class="ac-muted">(${AC.count(n)})</span>`;
+  const kvLink = (r, kind, label, text) => `<div class="ac-kv__row ac-kv__row--link${kind === 'tax' ? ' ac-kv__row--indent' : ''}" data-drill><div class="ac-kv__label">${label}</div><div class="ac-num">${amount(r, kind, text)}</div></div>`;
+  const kvTotal = (label, text) => `<div class="ac-kv__row ac-kv__row--total"><div class="ac-kv__label">${label}</div><div class="ac-num">${text}</div></div>`;
+  function railHtml() {
+    const r = curRail(), cur = r.cur;
+    return `<div class="ac-stack">
+      <section class="ac-card" aria-label="Summary">
+        <div class="ac-band">
+          ${tile('Starting balance Sep 1', signed(r.start, cur))}
+          ${tile('Net balance change from activity', amount(r, 'activity', signed(r.net, cur), 'tile'))}
+          ${tile(`Total payouts (${AC.count(r.n.payout)})`, amount(r, 'payout', signed(-r.payouts, cur), 'tile'))}
+          ${tile('Ending balance Sep 30', signed(r.end, cur), true)}
+        </div>
+        <div class="ac-tie">
+          ${tieCell('Processor', tieValue(r.native !== undefined ? r.native : r.end, r))}
+          ${tieCell('Orders', r.ordersEnding !== null ? tieValue(r.ordersEnding, r) : DASH)}
+          ${tieCell('Bank', DASH)}
+          ${tieCell('GL', DASH)}
+        </div>
+      </section>
+      <div class="ac-grid">
+        <section class="ac-card ac-s6" aria-labelledby="activityTitle">
+          <div class="ac-card__head"><h2 class="ac-card__title" id="activityTitle">Balance change from activity</h2></div>
+          <div class="ac-kv">
+            ${kvLink(r, 'charge', 'Charges' + kvCount(r.n.charge), signed(r.gross, cur))}
+            ${kvLink(r, 'refund', 'Refunds' + kvCount(r.n.refund), signed(-r.refunds, cur))}
+            <div class="ac-kv__row"><div class="ac-kv__label">Disputes${kvCount(r.n.dispute)}</div><div class="ac-num ac-zero">${money(0, cur)}</div></div>
+            ${kvLink(r, 'fee', 'Fees' + kvCount(r.n.fee), signed(-r.fees, cur))}
+            ${kvLink(r, 'tax', 'Tax', signed(-r.tax, cur))}
+            ${kvTotal('Net balance change from activity', signed(r.net, cur))}
+          </div>
+        </section>
+        <section class="ac-card ac-s6" aria-labelledby="payoutsTitle">
+          <div class="ac-card__head"><h2 class="ac-card__title" id="payoutsTitle">Payouts</h2></div>
+          <div class="ac-kv">
+            ${kvLink(r, 'payout', 'Payouts' + kvCount(r.n.payout), money(r.payouts, cur))}
+            ${kvTotal('Total paid out', money(r.payouts, cur))}
+          </div>
+        </section>
+      </div>
+    </div>`;
+  }
 
-/* ---------- Toast ---------- */
-let toastTimer, overlayClosedAt = 0, overlayOpenedAt = 0, returnFocus = null, lastClickTarget = null, rowTimer = null;
-function placeToast() {
-  const host = document.getElementById('toastHost');
-  const box = document.getElementById('toastBox');
-  const drawer = document.querySelector('.pm-drawer');
-  const action = document.getElementById('exportPage');
-  let top = 16, right = 16, max = 440;
-  if (drawer) {
-    const left = drawer.getBoundingClientRect().left;
-    right = window.innerWidth - left + 16;
-    max = Math.max(200, left - 32);
-  } else if (box && action) {
-    const r = action.getBoundingClientRect();
-    if (r.right > box.getBoundingClientRect().left) top = Math.max(16, r.bottom + 8);
+  /* ---------- Events panel ---------- */
+  let panelRows = [], panelRail = null, openKey = null;
+  function pickRow(i) {
+    document.querySelectorAll('#panelBody tbody tr').forEach((tr, n) => {
+      tr.classList.toggle('ac-row--sel', n === i);
+      tr.querySelector('[data-src-btn]').setAttribute('aria-pressed', n === i);
+    });
+    document.getElementById('sourceSlot').innerHTML = AC.sourceRow(AC.sourcePairs(panelRows[i]));
   }
-  host.style.top = top + 'px';
-  host.style.right = right + 'px';
-  host.style.maxWidth = max + 'px';
-  host.classList.toggle('is-narrow', max < 360);
-}
-window.addEventListener('scroll', placeToast, true);
-window.addEventListener('resize', placeToast);
-function toast(msg) {
-  const host = document.getElementById('toastHost');
-  host.innerHTML = `<div class="toast" id="toastBox"><p class="toast-body" style="margin:0;flex:1;">${esc(msg)}</p><button type="button" class="toast-close" id="toastClose" aria-label="Dismiss">×</button></div>`;
-  const clear = () => { const inside = host.contains(document.activeElement); clearTimeout(toastTimer); host.innerHTML = ''; if (inside) { const f = document.getElementById('ordExport') || document.getElementById('exportPage'); if (f) f.focus({ preventScroll:true }); } };
-  document.getElementById('toastClose').onclick = () => { overlayClosedAt = Date.now(); clear(); };
-  clearTimeout(toastTimer);
-  const arm = () => { clearTimeout(toastTimer); toastTimer = setTimeout(clear, 5000); };
-  const box = document.getElementById('toastBox');
-  box.addEventListener('mouseenter', () => clearTimeout(toastTimer));
-  box.addEventListener('mouseleave', arm);
-  box.addEventListener('focusin', () => clearTimeout(toastTimer));
-  box.addEventListener('focusout', arm);
-  arm();
-  placeToast();
-}
+  function openEvents(id, kind, payoutId) {
+    const r = AC.rail(id), cur = r.cur, rows = AC.eventRows(r, kind), n = AC.kindCount(r, kind);
+    const isPayouts = kind === 'payout', withTax = kind === 'charge' || kind === 'activity';
+    const cols = ['Date','Transaction','Description','Amount','Fee'].concat(withTax ? ['Tax'] : []).concat(['Net','Payout','Status']);
+    const shown = isPayouts ? ['Payout'].concat(cols.filter(c => c !== 'Payout')) : cols;
+    const headCell = c => `<th scope="col"${['Amount','Fee','Tax','Net'].includes(c) ? ' class="ac-num"' : c === 'Status' ? ' class="ac-right"' : ''}>${c}</th>`;
+    const cell = (c, ev, i) => {
+      if (c === 'Date') return `<td><button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="false">${esc(ev.date)}</button></td>`;
+      if (c === 'Transaction') return `<td>${esc(ev.txn)}</td>`;
+      if (c === 'Description') return `<td>${esc(ev.desc)}</td>`;
+      if (c === 'Status') return `<td class="ac-right"><span class="ac-status ac-status--quiet">${esc(ev.status)}</span></td>`;
+      if (c === 'Payout') {
+        if (!ev.payout) return '<td><span class="ac-chip ac-chip--wait">Pending</span></td>';
+        return `<td>${isPayouts ? `<a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(ev.payout)}">${esc(ev.payout)}</a>` : `<button type="button" class="ac-link" data-payout="${esc(ev.payout)}">${esc(ev.payout)}</button>`}</td>`;
+      }
+      const v = ev[c.toLowerCase()];
+      return `<td class="ac-num${round2(v) ? '' : ' ac-zero'}">${signed(v, cur)}</td>`;
+    };
+    const noun = n === 1 ? NOUNS[kind].replace(/s$/, '') : NOUNS[kind];
+    const showing = rows.length === n ? `Showing ${AC.count(n)} ${noun}` : `Showing ${rows.length} of ${AC.count(n)} ${NOUNS[kind]}`;
+    const inEvents = `${AC.hrefOf('events')}#rail=${r.id}${kind === 'activity' ? '' : '&cat=' + kind}`;
+    panelRows = rows;
+    panelRail = r;
+    AC.openPanel({
+      title:KINDS[kind],
+      count:kind === 'activity' || kind === 'tax' ? null : n,
+      amount:signed(AC.kindTotal(r, kind), cur),
+      meta:`${r.name} · ${curOf(r)} · ${AC.MONTH}`,
+      body:`<div class="ac-wrap"><table class="ac-table ac-table--panel${isPayouts ? ' ac-table--payouts ac-table--lines' : withTax ? ' ac-table--tax' : ''}"><caption class="ac-sr">${esc(KINDS[kind])} in ${esc(AC.railLabel(r))}</caption><colgroup>${shown.map(() => '<col>').join('')}</colgroup><thead><tr>${shown.map(headCell).join('')}</tr></thead><tbody>${rows.map((ev, i) => `<tr class="ac-row--link" data-src="${i}">${shown.map(c => cell(c, ev, i)).join('')}</tr>`).join('')}</tbody></table></div>
+        <div class="ac-name"><span class="ac-note">${esc(showing)}</span>${isPayouts ? '' : `<a class="ac-link" href="${esc(inEvents)}">View in Events</a>`}</div>
+        <div id="sourceSlot" role="status"></div>`,
+      onExport:() => {
+        AC.downloadCsv(`balance-${r.id}-${kind}-2026-09.csv`, [cols.concat('Currency')].concat(rows.map(x => [AC.isoDate(x.date), x.txn, x.desc, x.amount.toFixed(2), x.fee.toFixed(2)].concat(withTax ? [x.tax.toFixed(2)] : []).concat([x.net.toFixed(2), x.payout || '', x.status, curOf(r)]))));
+        AC.toast('CSV exported.');
+      },
+      onOpen:body => {
+        const start = payoutId ? Math.max(0, rows.findIndex(x => x.payout === payoutId)) : 0;
+        pickRow(start);
+        body.querySelector(`[data-src="${start}"]`).scrollIntoView({ block:'nearest' });
+      },
+    });
+  }
+  function openFrom(btn) {
+    const [id, kind] = btn.dataset.open.split(':');
+    openEvents(id, kind);
+    openKey = btn.dataset.key;
+    btn.setAttribute('aria-expanded', 'true');
+    AC.keepReturnFocus(btn);
+  }
+  /* The amount stays marked for as long as its panel is open. */
+  new MutationObserver(() => {
+    if (!openKey || document.getElementById('modalBackdrop')) return;
+    const el = document.querySelector(`[data-key="${openKey}"]`);
+    if (el) el.setAttribute('aria-expanded', 'false');
+    openKey = null;
+  }).observe(document.getElementById('modalHost'), { childList:true });
 
-/* ---------- Drawer ---------- */
-function lockPage() {
-  if (document.body.style.overflow === 'hidden') return;
-  const gutter = window.innerWidth - document.documentElement.clientWidth;
-  document.documentElement.style.scrollbarGutter = 'auto';
-  document.body.style.overflow = 'hidden';
-  document.body.style.paddingRight = gutter + 'px';
-  document.querySelector('body > div').inert = true;
-}
-function unlockPage() {
-  document.documentElement.style.scrollbarGutter = '';
-  document.body.style.overflow = '';
-  document.body.style.paddingRight = '';
-  document.querySelector('body > div').inert = false;
-}
-function closeDrawer() {
-  overlayClosedAt = Date.now();
-  unlockPage();
-  document.querySelectorAll('.is-drilled').forEach(x => x.classList.remove('is-drilled'));
-  document.getElementById('modalHost').innerHTML = '';
-  placeToast();
-  document.removeEventListener('keydown', drawerKeys);
-  if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
-}
-function drawerKeys(e) {
-  if (e.key === 'Escape') { closeDrawer(); return; }
-  if (e.key !== 'Tab') return;
-  const f = [...document.querySelectorAll('#modalHost button:not([disabled]), #toastHost button')];
-  if (!f.length) return;
-  if (e.shiftKey && document.activeElement === f[0]) { f[f.length - 1].focus(); e.preventDefault(); }
-  else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { f[0].focus(); e.preventDefault(); }
-}
-function laterDate(d) { return 'Sep ' + Math.min(30, Number(d.replace('Sep ', '')) + 3); }
-function firstPayoutAfter(id, day) { const list = PAYOUTS[id]; return (list.find(p => Number(p[1].replace('Sep ', '')) >= day) || list[list.length - 1])[0]; }
-/* A row: date, transaction, description, amount, fee, net, payout, status, plus the raw fields the source row reads. */
-function eventRows(r, kind) {
-  const cur = r.cur;
-  const o = ORDERS[r.id];
-  const row = (date, txn, desc, amount, fee, net, payout, status, cat, source, tax) => ({ date, txn, desc, amount, fee, tax:tax || 0, net, payout, status, cat, source });
-  const taxOf = fee => round2(fee * 0.0286);
-  const charge = x => { const tax = taxOf(x[3]); const d = x[0].slice(1); return row(x[1], 'txn_' + d, 'Charge', x[2], -x[3], round2(x[2] - x[3] - tax), x[4], x[4] ? 'available' : 'pending', 'charge', 'ch_' + d, -tax); };
-  if (kind === 'charge') return o.map(charge);
-  if (kind === 'activity') return [charge(o[0]), eventRows(r, 'refund')[0]];
-  if (kind === 'refund') {
-    if (r.id === 'paypal_cad') return [row('Sep 6', 'txn_48166r', 'Refund for charge', -120, 0, -120, 'po_Ca02', 'available', 'refund', 're_48166')];
-    return o.filter(x => x[4] && !['#48733','#48921'].includes(x[0])).slice(0, 2).map(x => { const d = x[0].slice(1); const date = laterDate(x[1]); return row(date, 'txn_' + d + 'r', 'Refund for charge', -x[2], 0, -x[2], firstPayoutAfter(r.id, Number(date.replace('Sep ', ''))), 'available', 'refund', 're_' + d); });
+  /* ---------- Export ---------- */
+  function exportPage() {
+    const sep = isSep(), file = sep ? '2026-09' : '2026-10';
+    const ordersWord = r => (r.ordersEnding === null ? '' : ordersOff(r) ? 'Off by ' + ordersOff(r).toFixed(2) : 'Tied');
+    if (S.tab === 'all') {
+      const rows = [['Rail','Currency','Starting','Activity','Payouts','Ending','Processor','Orders']];
+      AC.CURRENCIES.filter(c => S.cur === 'all' || S.cur === c).forEach(c => {
+        const t = AC.totals(c);
+        AC.railsIn(c).forEach(r => rows.push(sep ? [r.name, c, r.start.toFixed(2), r.net.toFixed(2), (-r.payouts).toFixed(2), r.end.toFixed(2), r.native === undefined ? 'Tied' : 'Not tied', ordersWord(r)] : [r.name, c, r.end.toFixed(2), '0.00', '0.00', r.end.toFixed(2), 'No data', '']));
+        rows.push(sep ? ['Total ' + c, c, t.start.toFixed(2), t.net.toFixed(2), (-t.payouts).toFixed(2), t.end.toFixed(2), '', ''] : ['Total ' + c, c, t.end.toFixed(2), '0.00', '0.00', t.end.toFixed(2), '', '']);
+      });
+      AC.downloadCsv('balance-all-' + file + '.csv', rows);
+    } else {
+      const r = curRail(), c = curOf(r);
+      const native = r.native !== undefined ? r.native : r.end;
+      const head = ['Section','Line','Count','Amount','Currency','Check'];
+      AC.downloadCsv('balance-' + r.id + '-' + file + '.csv', !sep ? [head, ['Summary','Starting balance','',r.end.toFixed(2),c,''],['Summary','Net balance change from activity','','0.00',c,''],['Summary','Total payouts',0,'0.00',c,''],['Summary','Ending balance','',r.end.toFixed(2),c,'No data']] : [head,
+        ['Summary','Starting balance','',r.start.toFixed(2),c,''],['Summary','Net balance change from activity','',r.net.toFixed(2),c,''],['Summary','Total payouts',r.n.payout,(-r.payouts).toFixed(2),c,''],['Summary','Ending balance','',r.end.toFixed(2),c,''],
+        ['Tie-outs','Processor','',native.toFixed(2),c,r.native === undefined ? 'Tied' : 'Off by ' + round2(Math.abs(native - r.end)).toFixed(2)],['Tie-outs','Orders','',r.ordersEnding !== null ? r.ordersEnding.toFixed(2) : '',c,r.ordersEnding !== null ? ordersWord(r) : 'Not available yet'],['Tie-outs','Bank','','',c,'Not available yet'],['Tie-outs','GL','','',c,'Not available yet'],
+        ['Activity','Charges',r.n.charge,r.gross.toFixed(2),c,''],['Activity','Refunds',r.n.refund,(-r.refunds).toFixed(2),c,''],['Activity','Disputes',r.n.dispute,'0.00',c,''],['Activity','Fees',r.n.fee,(-r.fees).toFixed(2),c,''],['Activity','Tax','',(-r.tax).toFixed(2),c,''],['Activity','Net balance change from activity','',r.net.toFixed(2),c,''],
+        ['Payouts','Payouts',r.n.payout,r.payouts.toFixed(2),c,''],['Payouts','Total paid out','',r.payouts.toFixed(2),c,'']]);
+    }
+    AC.toast('CSV exported.');
   }
-  if (kind === 'fee') return o.map(x => { const d = x[0].slice(1); return row(x[1], 'txn_' + d + 'f', 'Processing fee', -x[3], 0, -x[3], x[4], x[4] ? 'available' : 'pending', 'fee', 'ch_' + d); });
-  if (kind === 'tax') return o.map(x => { const d = x[0].slice(1); const t = taxOf(x[3]); return row(x[1], 'txn_' + d + 't', 'Tax on fee', -t, 0, -t, x[4], x[4] ? 'available' : 'pending', 'tax', 'ch_' + d); });
-  return PAYOUTS[r.id].map(p => row(p[1], 'txn_' + p[0].replace('po_', '') + 'p', 'Payout', -p[2], 0, -p[2], p[0], 'paid', 'payout', p[0]));
-}
-function kindTotal(r, kind) { return { activity:r.net, charge:r.gross, refund:-r.refunds, fee:-r.fees, tax:-r.tax, payout:-r.payouts }[kind]; }
-function kindCount(r, kind) { return { activity:r.n.charge + r.n.refund, charge:r.n.charge, refund:r.n.refund, fee:r.n.fee, tax:r.n.fee, payout:r.n.payout }[kind]; }
-function signedMoney(v, cur) { return (v < 0 ? MINUS : '') + money(v, cur); }
-function sourceHtml(r, ev) {
-  const cents = v => String(Math.round(v * 100));
-  const pairs = [
-    ['raw_schema', SCHEMA[r.id]], ['raw_table', 'balance_transactions'], ['raw_pk', ev.txn], ['reporting_category', ev.cat],
-    ['amount / net', cents(ev.amount) + ' / ' + cents(ev.net)], ['source', ev.source],
-    ['created', '2026-09-' + ev.date.replace('Sep ', '').padStart(2, '0') + 'T' + String(8 + Number(ev.txn.replace(/\D/g, '') || 3) % 12).padStart(2, '0') + ':' + String(Number(ev.txn.replace(/\D/g, '') || 3) % 60).padStart(2, '0') + ':11Z'],
-  ];
-  return `<div class="pm-source"><div class="pm-source__head"><span>Source row</span><span style="display:inline-flex;align-items:center;gap:8px;"><span class="form-helper" style="margin:0;">Sample data</span><button type="button" class="btn btn-neutral btn-xs" id="srcCopy">Copy</button></span></div><dl>${pairs.map(p => `<dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl></div>`;
-}
-function openDrawer(id, kind, pickTxn) {
-  const r = rail(id), cur = r.cur;
-  const rows = eventRows(r, kind);
-  const total = kindTotal(r, kind);
-  const n = kindCount(r, kind);
-  overlayOpenedAt = Date.now();
-  if (!document.getElementById('modalBackdrop')) {
-    returnFocus = document.activeElement;
-    lockPage();
-    const origin = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('.pm-kv, .pm-brow') : null;
-    if (origin) origin.classList.add('is-drilled');
-    document.addEventListener('keydown', drawerKeys);
+
+  /* ---------- Events ---------- */
+  function setTab(tab, cur) {
+    const rowCur = cur || (tab === S.tab ? S.rowCur : S.tab === 'all' && S.cur !== 'all' ? S.cur : 'USD');
+    const hash = hashFor(tab, rowCur);
+    if (hash !== (location.hash || '#all')) location.hash = hash;
   }
-  const num = ['Amount','Fee','Tax','Net'];
-  const withTax = kind === 'charge' || kind === 'activity';
-  const cols = ['Date','Transaction','Description','Amount','Fee'].concat(withTax ? ['Tax'] : []).concat(['Net','Payout','Status']);
-  const head = cols.map(c => `<th scope="col" class="iris-th" style="${num.includes(c) ? 'text-align:right;' : ''}${c === 'Payout' ? 'padding-left:24px;' : ''}">${c}</th>`).join('');
-  const body = rows.map((ev, i) => `<tr class="pm-drawer__row" data-src="${i}">
-      <td style="${TD}"><button type="button" class="pm-amount" data-src-btn="${i}">${esc(ev.date)}</button></td>
-      <td style="${TD}">${esc(ev.txn)}</td><td style="${TD}">${esc(ev.desc)}</td>
-      <td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.amount, cur)}</td>
-      <td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.fee, cur)}</td>${withTax ? `<td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.tax, cur)}</td>` : ''}
-      <td style="${TD}text-align:right;font-variant-numeric:tabular-nums;">${signedMoney(ev.net, cur)}</td>
-      <td style="${TD}padding-left:24px;">${ev.payout ? (kind === 'payout' ? esc(ev.payout) : `<button type="button" class="pm-plink" data-payout="${esc(ev.payout)}">${esc(ev.payout)}</button>`) : 'Pending'}</td>
-      <td style="${TD}">${esc(ev.status)}</td></tr>`).join('');
-  const noun = n === 1 ? NOUNS[kind].replace(/s$/, '') : NOUNS[kind];
-  const showing = rows.length === n ? `Showing ${n} ${noun}` : `Showing ${rows.length} of ${n.toLocaleString('en-US')} ${NOUNS[kind]}`;
-  const countText = kind === 'activity' || kind === 'tax' ? '' : ` <span class="pm-drawer__count">(${n.toLocaleString('en-US')})</span>`;
-  document.getElementById('modalHost').innerHTML = `<div class="pm-drawer-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="pm-drawer">
-    <div class="pm-drawer__head"><div class="pm-drawer__title"><h2 class="modal-title" id="modalTitle" style="margin:0;">${esc(KINDS[kind])}${countText} ${signedMoney(total, cur)}</h2><span class="pm-drawer__meta">${esc(r.name)} · ${cur || 'USD'} · Sep 2026</span></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><button type="button" class="btn btn-neutral btn-sm" id="ordExport">${ICON_DOWNLOAD}Export CSV</button><button type="button" class="modal-close" id="modalClose" aria-label="Close panel"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg></button></div></div>
-    <div class="pm-drawer__body"><div class="pm-frame"><table style="width:100%;border-collapse:collapse;"><caption style="${SR}">${esc(KINDS[kind])} in ${esc(r.name)}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
-    <p class="form-helper" style="margin:8px 0 16px;">${esc(showing)}</p><div id="sourceSlot" role="status"></div></div>
-  </aside></div>`;
-  const pick = i => { document.querySelectorAll('.pm-drawer__row').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('is-selected', on); tr.querySelector('[data-src-btn]').setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceHtml(r, rows[i]); };
-  document.querySelector('.pm-drawer__body').addEventListener('click', ev => {
-    if (ev.target.closest('#srcCopy')) { const text = [...document.querySelectorAll('.pm-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
-    const p = ev.target.closest('[data-payout]');
-    if (p) { openDrawer(id, 'payout', p.dataset.payout); return; }
-    const tr = ev.target.closest('.pm-drawer__row'); if (tr) pick(+tr.dataset.src);
+  window.addEventListener('hashchange', () => {
+    const hadPanel = !!document.getElementById('modalBackdrop');
+    const hadFocus = document.activeElement !== document.body;
+    if (hadPanel) { openKey = null; AC.keepReturnFocus(null); AC.closePanel(); }
+    readHash();
+    AC.rerender();
+    if (hadPanel || (hadFocus && document.activeElement === document.body)) { const b = document.querySelector(`[data-key="tab:${S.tab}"]`); if (b) b.focus(); }
   });
-  const start = pickTxn ? Math.max(0, rows.findIndex(x => x.payout === pickTxn)) : 0;
-  pick(start);
-  document.getElementById('modalClose').onclick = closeDrawer;
-  document.getElementById('ordExport').onclick = ev => { if (ev.detail > 1) return; downloadCsv('balance-' + r.id + '-' + kind + '-2026-09.csv', [cols.concat('Currency')].concat(rows.map(x => [isoDate(x.date), x.txn, x.desc, x.amount.toFixed(2), x.fee.toFixed(2)].concat(withTax ? [x.tax.toFixed(2)] : []).concat([x.net.toFixed(2), x.payout || '', x.status, cur || 'USD'])))); toast('CSV exported.'); };
-  document.getElementById('modalBackdrop').addEventListener('mousedown', ev => { if (ev.target.id === 'modalBackdrop') { ev.preventDefault(); if (ev.detail < 2) closeDrawer(); } });
-  document.getElementById('modalClose').focus();
-  placeToast();
-}
-function isoDate(d) { return '2026-09-' + d.replace('Sep ', '').padStart(2, '0'); }
-function downloadCsv(name, rows) {
-  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
-  a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
-}
-function exportPage() {
-  if (S.tab === 'all') {
-    const rows = [['Rail','Currency','Starting','Activity','Payouts','Ending','Processor']];
-    RAILS.filter(r => S.cur === 'all' || (r.cur || 'USD') === S.cur).forEach(r => rows.push([r.name, r.cur || 'USD', r.start.toFixed(2), r.net.toFixed(2), (-r.payouts).toFixed(2), r.end.toFixed(2), 'Tied']));
-    ['USD','CAD'].filter(c => S.cur === 'all' || S.cur === c).forEach(c => { const list = RAILS.filter(r => (r.cur || 'USD') === c); const sum = f => round2(list.reduce((n, r) => n + f(r), 0)).toFixed(2); rows.push(['Total ' + c, c, sum(r => r.start), sum(r => r.net), sum(r => -r.payouts), sum(r => r.end), '']); });
-    downloadCsv('balance-all-2026-09.csv', rows);
-  } else {
-    const r = curRail(), c = r.cur || 'USD';
-    downloadCsv('balance-' + r.id + '-2026-09.csv', [['Section','Line','Count','Amount','Currency'],
-      ['Summary','Starting balance','',r.start.toFixed(2),c],['Summary','Net balance change from activity','',r.net.toFixed(2),c],['Summary','Total payouts',r.n.payout,(-r.payouts).toFixed(2),c],['Summary','Ending balance','',r.end.toFixed(2),c],
-      ['Activity','Charges',r.n.charge,r.gross.toFixed(2),c],['Activity','Refunds',r.n.refund,(-r.refunds).toFixed(2),c],['Activity','Disputes',r.n.dispute,'0.00',c],['Activity','Fees',r.n.fee,(-r.fees).toFixed(2),c],['Activity','Tax','',(-r.tax).toFixed(2),c],['Activity','Net balance change from activity','',r.net.toFixed(2),c],
-      ['Payouts','Payouts',r.n.payout,r.payouts.toFixed(2),c],['Payouts','Total paid out','',r.payouts.toFixed(2),c]]);
-  }
-  toast('CSV exported.');
-}
+  document.addEventListener('click', e => {
+    const t = e.target.closest('button');
+    if (!t) return;
+    if (t.dataset.tab) { if (e.detail < 2) setTab(t.dataset.tab, t.dataset.cur); return; }
+    if (t.dataset.open) { openFrom(t); return; }
+    if (t.dataset.payout) { openEvents(panelRail.id, 'payout', t.dataset.payout); return; }
+    if (t.dataset.srcBtn !== undefined) { pickRow(+t.dataset.srcBtn); return; }
+    if (t.id === 'exportPage' && e.detail < 2) exportPage();
+  });
+  document.addEventListener('change', e => {
+    if (e.target.id !== 'curSelect') return;
+    if (S.tab === 'all') S.cur = e.target.value;
+    else { S.rowCur = e.target.value; history.replaceState(null, '', hashFor(S.tab, S.rowCur)); }
+    AC.rerender();
+  });
+  AC.rowClick('[data-rail-row]', row => setTab(row.dataset.railRow, row.dataset.railCur));
+  AC.rowClick('.ac-kv__row--link', row => openFrom(row.querySelector('[data-open]')));
+  AC.rowClick('#panelBody tbody tr', row => pickRow(+row.dataset.src));
 
-/* ---------- Events ---------- */
-function hashFor() { return '#' + (S.tab === 'paypal' && S.rowCur === 'CAD' ? 'paypal-cad' : S.tab); }
-function setTab(tab, cur) {
-  const keep = tab === S.tab ? S.rowCur : S.tab === 'all' && S.cur !== 'all' ? S.cur : 'USD';
-  S.tab = tab;
-  S.rowCur = cur || keep;
-  if (location.hash !== hashFor()) history.pushState(null, '', hashFor());
-  render();
-}
-window.addEventListener('popstate', () => { const had = !!document.getElementById('modalBackdrop'); const wasIn = document.activeElement !== document.body; if (had) { returnFocus = null; closeDrawer(); } readHash(); render(); if (had || (wasIn && document.activeElement === document.body)) { const b = document.querySelector('[data-key="tab:' + S.tab + '"]'); if (b) b.focus(); } });
-document.addEventListener('mousedown', () => document.documentElement.classList.add('pm-pointer'), true);
-document.addEventListener('keydown', () => document.documentElement.classList.remove('pm-pointer'), true);
-const secondClick = e => e.detail > 1 && Date.now() - Math.max(overlayClosedAt, overlayOpenedAt) < 500;
-document.addEventListener('mousedown', e => { if (secondClick(e)) e.preventDefault(); }, true);
-document.addEventListener('click', e => { lastClickTarget = e.target; if (secondClick(e)) { e.preventDefault(); e.stopPropagation(); } }, true);
-document.addEventListener('click', e => {
-  if (e.target.closest('.pm-section-nav [aria-current="page"]')) { e.preventDefault(); return; }
-  if (e.target.closest('#toJournal')) { try { sessionStorage.setItem('pm-balance-hash', location.hash); } catch (err) { /* nothing to keep */ } return; }
-  const t = e.target.closest('button');
-  if (!t) {
-    if (String(window.getSelection())) return;
-    if (e.detail > 1) { clearTimeout(rowTimer); return; }
-    const kv = e.target.closest('.pm-kv[data-kv]');
-    if (kv) { const k = kv.querySelector('[data-open]').dataset.open; clearTimeout(rowTimer); rowTimer = setTimeout(() => { if (!String(window.getSelection())) { const [id, kind] = k.split(':'); openDrawer(id, kind); returnFocus = kv.querySelector('[data-open]'); } }, 220); return; }
-    const r = e.target.closest('[data-rail-row]');
-    if (!r) return;
-    const tab = r.dataset.railRow, cur = r.dataset.railCur;
-    clearTimeout(rowTimer);
-    rowTimer = setTimeout(() => { if (!String(window.getSelection())) setTab(tab, cur); }, 220);
-    return;
-  }
-  clearTimeout(rowTimer);
-  if (t.dataset.tab) { if (e.detail > 1) return; setTab(t.dataset.tab, t.dataset.cur); if (t.classList.contains('pm-blink')) { const b = document.querySelector('[data-key="tab:' + t.dataset.tab + '"]'); if (b) b.focus(); } return; }
-  if (t.dataset.open) { const [id, kind] = t.dataset.open.split(':'); openDrawer(id, kind); return; }
-  if (t.id === 'exportPage') { if (e.detail > 1) return; exportPage(); }
-});
-document.addEventListener('change', e => {
-  if (e.target.id === 'curSelect') { if (S.tab === 'all') S.cur = e.target.value; else { S.rowCur = e.target.value; history.replaceState(null, '', hashFor()); } render(); }
-  if (e.target.id === 'monthSelect') { S.month = e.target.value; render(); }
-});
-/* This prototype is the Accounting section only: other rail items stay inert. */
-document.querySelectorAll('.pm-rail__item[title="Settings"], .pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
-render();
+  AC.start({
+    current:'balance',
+    head:() => ({ actions:'<button type="button" class="btn btn-neutral btn-sm" id="exportPage" data-key="exportPage">Export CSV</button>' }),
+    render:() => barHtml() + (!isSep() ? cardsHtml(S.tab === 'all' ? AC.RAILS : [curRail()], noDataRow, false) : S.tab === 'all' ? cardsHtml(AC.RAILS, railRow, true) : railHtml()),
+    after:() => {
+      const el = openKey && document.getElementById('modalBackdrop') && document.querySelector(`[data-key="${openKey}"]`);
+      if (!el) return;
+      el.setAttribute('aria-expanded', 'true');
+      AC.keepReturnFocus(el);
+      const row = el.closest('[data-drill]');
+      if (row) row.classList.add(row.matches('.ac-kv__row') ? 'ac-kv__row--sel' : 'ac-row--sel');
+    },
+  });
+})();
 </script>
 </body>
 </html>

@@ -1030,7 +1030,7 @@ html.pm-pointer :focus-visible { outline:none !important; }
   .pm-bgrid > :last-child { grid-column:auto; }
 }
 .pm-btotal { min-height:44px; box-sizing:border-box; padding:13px 16px; }
-.pm-bal-grid { grid-template-columns:minmax(0,750px); justify-content:start; }
+.pm-bal-grid { grid-template-columns:minmax(0,734px); justify-content:start; }
 .pm-bfilters select[aria-label="Account"], .pm-bfilters #curSelect { width:138px; }
 .pm-bempty { padding:16px; text-align:left; }
 .pm-bempty .card-header-title { font-size:14px; line-height:20px; }
@@ -1058,7 +1058,20 @@ html.pm-pointer :focus-visible { outline:none !important; }
   .pm-bgrid > :nth-child(2) { display:none; }
 }
 .pm-journal .btn-primary:disabled { opacity:.8; cursor:progress; }
-.pm-drawer { width:min(832px,100%); }
 .pm-egrid:not(.pm-entry__row):not([aria-hidden]) { min-height:47px; box-sizing:border-box; }
-@media (max-width:1279px) { .pm-bgrid { grid-template-columns:minmax(0,1fr) 100px 100px 100px 100px 72px; } }
-@media (max-width:1100px) { .pm-bgrid { grid-template-columns:minmax(0,1fr) 100px 100px 100px 72px; } .pm-tie { min-height:48px; } }
+@media (max-width:1279px) {
+  .pm-bgrid { grid-template-columns:minmax(0,1fr) 110px 110px 110px 110px 110px; }
+  .pm-egrid { grid-template-columns:minmax(0,1fr) 110px 110px 110px 110px; }
+  .pm-lines tr:has(.pm-tie) > th { vertical-align:top; padding-top:5px; }
+  .pm-tie__actions { flex:0 0 100%; justify-content:flex-end; margin-top:4px; }
+  .pm-bal-grid { grid-template-columns:minmax(0,1fr); }
+}
+@media (max-width:1100px) {
+  .pm-bgrid { grid-template-columns:minmax(0,1fr) 110px 110px 110px 110px; }
+  .pm-tie { min-height:48px; }
+}
+.pm-drawer td, .pm-drawer th { padding-left:6px !important; padding-right:6px !important; }
+.pm-drawer tr > :nth-last-child(2) { padding-left:16px !important; }
+.pm-tie__actions { margin-right:-13px; }
+.pm-journal h1 + p { min-height:21px; }
+.pm-journal .btn-alternative:disabled { opacity:.5; cursor:not-allowed; }

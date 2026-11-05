@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overview</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/iris-tokens.css">
+  <link rel="stylesheet" href="assets/iris-components.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/panorama-match.css">
+  <link rel="stylesheet" href="assets/accounting.css">
+  <style>
+    /* Overview only. */
+    .ac-nav { position:relative; }
+    a.btn:hover, a.btn:active { text-decoration:none; }
+    a.ac-link:hover, a.ac-link:active { text-decoration-thickness:1px; }
+    .ac-link--quiet { text-decoration-color:transparent; }
+    .ac-tile__note { letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; }
+    .ac-close__head { box-sizing:border-box; min-height:56px; }
+    .ac-close__end { display:flex; flex:none; align-items:center; gap:16px; }
+    .ac-close__state { width:92px; text-align:right; }
+    .ac-cp.ac-card--off .ac-card__head { padding-bottom:8px; }
+    @media (min-width:1280px) and (max-width:1439px) {
+      .ac-cp .ac-card__head { flex-direction:column; align-items:flex-start; gap:0; }
+      .ac-cp .ac-actions { margin-left:0; }
+    }
+  </style>
+</head>
+<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<div style="display:flex;min-height:100vh;">
+  <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
+  <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
+</div>
+<div id="toastHost" role="status" aria-live="polite"></div>
+<div id="modalHost"></div>
+
+<script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
+<script src="assets/panorama-match.js"></script>
+<script src="assets/accounting-data.js"></script>
+<script src="assets/accounting-shell.js"></script>
+<script>
+(function () {
+  const esc = AC.esc;
+  const hasActivity = () => AC.month() === AC.MONTH;
+
+  /* ---------- Band ---------- */
+  const TILES = [
+    { id:'gross', label:'Gross', of:t => t.gross, page:'events', hash:'#cat=charge' },
+    { id:'fees', label:'Fees and tax', of:t => -(t.fees + t.tax), page:'events', hash:'#cat=feetax' },
+    { id:'refunds', label:'Refunds', of:t => -t.refunds, page:'events', hash:'#cat=refund' },
+    { id:'net', label:'Net deposited', of:t => t.payouts, page:'settlements', hash:'', key:true },
+    { id:'transit', label:'Cash in transit', of:t => t.end, page:'balance', hash:'#all', carries:true },
+  ];
+  const noteSlot = '<div class="ac-note ac-tile__note" aria-hidden="true">&nbsp;</div>';
+
+  function moneyTile(tile) {
+    const [main, ...others] = AC.CURRENCIES;
+    const amount = cur => (hasActivity() || tile.carries ? AC.round2(tile.of(AC.totals(cur))) : 0);
+    const text = AC.signed(amount(main), main);
+    const value = amount(main)
+      ? `<a class="ac-link ac-link--quiet" href="${AC.hrefOf(tile.page)}${tile.hash}" aria-label="${esc(tile.label)}, ${esc(text)}" data-key="tile-${tile.id}">${esc(text)}</a>`
+      : `<span class="ac-zero">${esc(text)}</span>`;
+    const notes = others.map(cur => `<div class="ac-note ac-tile__note${amount(cur) ? '' : ' ac-zero'}">${esc(AC.signed(amount(cur), cur))}</div>`).join('');
+    return `<div class="ac-tile${tile.key ? ' ac-tile--key' : ''}"><div class="ac-tile__label">${esc(tile.label)}</div><div class="ac-tile__value">${value}</div>${notes || noteSlot}</div>`;
+  }
+
+  function exceptionsTile() {
+    const open = hasActivity() ? AC.openExceptions() : [];
+    const count = open.length;
+    const link = `<a class="ac-link" href="${AC.hrefOf('exceptions')}" aria-label="Open exceptions, ${count}" data-key="tile-exceptions">${count}</a>`;
+    const value = count ? link : `<span class="ac-zero">${hasActivity() ? link : count}</span>`;
+    return `<div class="ac-tile"><div class="ac-tile__label">Open exceptions</div><div class="ac-tile__value">${value}</div><div class="ac-note ac-tile__note${count ? '' : ' ac-zero'}">${esc(AC.money(AC.sum(open, ex => ex.amount)))}</div></div>`;
+  }
+
+  const band = () => `<section class="ac-card" aria-label="${esc(AC.month())} figures"><div class="ac-band ac-band--6">${TILES.map(moneyTile).join('')}${exceptionsTile()}</div></section>`;
+
+  /* ---------- Month close ---------- */
+  function checkRow(check) {
+    const money = /^\$/.test(check.fact);
+    const fact = check.fact ? `<span class="ac-note${money ? ' ac-num' : ''}">${esc(check.fact)}</span>` : '';
+    const state = check.done ? `<span class="ac-status ac-status--ok">${esc(check.status)}</span>`
+      : check.page ? `<span class="ac-chip ac-chip--warn">${esc(check.status)}</span>`
+      : `<span class="ac-status ac-status--quiet">${esc(check.status)}</span>`;
+    const end = `<span class="ac-close__end">${fact}<span class="ac-close__state">${state}</span></span>`;
+    return check.page
+      ? `<div class="ac-kv__row ac-kv__row--link"><a class="ac-kv__label ac-link ac-link--quiet" href="${AC.hrefOf(check.page)}${check.hash}" data-key="check-${check.id}">${esc(check.label)}</a>${end}</div>`
+      : `<div class="ac-kv__row"><span class="ac-kv__label">${esc(check.label)}</span>${end}</div>`;
+  }
+
+  function monthClose() {
+    const month = AC.month();
+    const status = AC.periodStatus(month);
+    const word = esc(AC.PERIOD_STATUS[status]);
+    const lock = AC.lockOf(month);
+    const end = status === 'closed' && lock
+      ? `<span class="ac-note">Locked ${esc(lock.at)} by ${esc(lock.by)}</span>`
+      : `<a class="btn ${AC.closeReady(month) ? 'btn-primary' : 'btn-neutral'} btn-sm" href="${AC.hrefOf('close')}" data-key="closeLink">Close ${esc(month)}</a>`;
+    return `<section class="ac-card" aria-labelledby="monthCloseTitle"><div class="ac-card__head ac-close__head"><h2 class="ac-card__title" id="monthCloseTitle">Month close</h2>${status === 'closed' ? `<span class="ac-status ac-status--quiet">${word}</span>` : `<span class="ac-chip ac-chip--wait">${word}</span>`}<div class="ac-actions">${end}</div></div><div class="ac-kv">${AC.closeChecks(month).map(checkRow).join('')}</div></section>`;
+  }
+
+  /* ---------- Checkpoints ---------- */
+  const MATCH_ROWS = [['matched', 'Matched'], ['partial', 'Partially matched'], ['unmatched', 'Unmatched'], ['pending', 'Pending']];
+
+  /* USD only. Other payments are USD orders with no rail, all of them unmatched, as in the Reconciliation total. */
+  function usdMatch(rows, key, others) {
+    if (!hasActivity()) return [0, 0];
+    const usd = rows.filter(r => !r.cur);
+    const extra = others && key === 'unmatched' ? others : null;
+    return [usd.reduce((n, r) => n + r[key][0], 0) + (extra ? extra.count : 0), AC.round2(AC.sum(usd, r => r[key][1]) + (extra ? extra.amount : 0))];
+  }
+
+  function matchRow(rows, others, key, label) {
+    const [count, amount] = usdMatch(rows, key, others);
+    const tone = !amount ? ' ac-zero' : key === 'unmatched' ? ' ac-warn' : '';
+    return `<div class="ac-kv__row"><span class="ac-kv__label">${esc(label)}${count ? ` <span class="ac-muted">(${esc(AC.count(count))})</span>` : ''}</span><span class="ac-num${tone}">${esc(AC.money(amount))}</span></div>`;
+  }
+
+  const stepNote = step => `<div class="ac-actions"><span class="ac-note">Checkpoint ${step}</span></div>`;
+
+  const checkpointCard = (step, title, rows, others) => `<section class="ac-card ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title"><a class="ac-link ac-link--quiet" href="${AC.hrefOf('reconciliation')}#checkpoint-${step}" data-key="checkpoint-${step}">${esc(title)}</a></h2>${stepNote(step)}</div><div class="ac-kv">${MATCH_ROWS.map(m => matchRow(rows, others, m[0], m[1])).join('')}</div></section>`;
+
+  const offCard = (step, title) => `<section class="ac-card ac-card--off ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title">${esc(title)}</h2>${stepNote(step)}</div><div class="ac-kv"><div class="ac-kv__row"><span class="ac-kv__label ac-note">Not available yet</span></div></div></section>`;
+
+  const checkpoints = () => `<div class="ac-grid">${checkpointCard(1, 'Order to payment', AC.checkpointOrders(), AC.RAILS.length > 1 ? AC.OTHER_PAYMENTS : null)}${checkpointCard(2, 'Payment to settlement', AC.checkpointSettlements())}${offCard(3, 'Settlement to bank')}${offCard(4, 'Clearing to GL')}</div>`;
+
+  /* ---------- Page ---------- */
+  const lockMonthWhenOff = () => { const select = document.getElementById('monthSelect'); if (select && !AC.RAILS.length) select.disabled = true; };
+
+  AC.rowClick('.ac-kv__row--link', row => row.querySelector('a').click());
+
+  AC.start({
+    current:'overview',
+    render:() => `<div class="ac-stack">${band()}${monthClose()}${checkpoints()}</div>`,
+    ready:() => { lockMonthWhenOff(); window.addEventListener('pageshow', lockMonthWhenOff); },
+  });
+})();
+</script>
+</body>
+</html>
