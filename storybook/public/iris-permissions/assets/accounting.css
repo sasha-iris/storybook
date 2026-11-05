@@ -190,4 +190,6 @@ div.ac-sr { position:fixed; top:0; left:0; }
 col.ac-col-state.ac-wide { width:104px; }
 /* Classic scrollbars: the page keeps its width behind an overlay. */
 html:has(.ac-backdrop, .modal-backdrop) #app { padding-right:calc(32px + var(--ac-gutter, 0px)) !important; }
+/* Round 2, QA: nothing cut at 1024. */
+@media (max-width:1100px) { :root { --ac-status:108px; } #rollforward { --ac-money:100px; --ac-money-l:108px; --ac-small:80px; } }
 

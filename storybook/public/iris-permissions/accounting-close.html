@@ -131,6 +131,7 @@ function setLock(month, lock) {
 }
 function closePeriod(month) {
   AC.closeDialog();
+  if (!AC.closeReady(month)) { AC.rerender(); pointAtBlocker(month); return; }
   setLock(month, { at:'Oct 8, 2026', by:'You' });
   AC.toast(month + ' closed.', { undo:() => { setLock(month, null); focusAction(); } });
   focusAction();

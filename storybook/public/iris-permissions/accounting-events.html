@@ -94,7 +94,7 @@
     if (!hasData()) return [];
     const rails = new Set(railsInFilter().map(r => r.id));
     const q = f.q.trim().toLowerCase();
-    return ALL.filter(e => rails.has(e.rail) && inCategory(e, f.cat) && (!q || [e.txn, e.order, e.payout].some(v => v && v.toLowerCase().includes(q))));
+    return ALL.filter(e => rails.has(e.rail) && (inCategory(e, f.cat) || (q && !f.cat)) && (!q || [e.txn, e.order, e.payout].some(v => v && v.toLowerCase().includes(q))));
   }
 
   /* The tile states the true total of the rails in view, never a sum of the sample rows. Currencies never add up. */

@@ -177,7 +177,7 @@ const initial = () => ({
 });
 let S = initial();
 /* A reload starts the demo over. Anything else keeps the work while the query stays the same: ?fail=1 is its own demo. */
-const QUERY = (() => { const q = new URLSearchParams(location.search); q.delete('v'); return q.toString(); })();
+const QUERY = (() => { const q = new URLSearchParams(location.search); q.delete('v'); q.delete('r'); return q.toString(); })();
 function takeKept() {
   const raw = sessionStorage.getItem('pm-journal-state');
   sessionStorage.removeItem('pm-journal-state');
@@ -247,7 +247,7 @@ const ORDER_FACTS = {
   '#47912':['Fulfilled','TEA-20'], '#48300':['Fulfilled','TEA-20'], '#48720':['Fulfilled','ASH-60'],
   '#48166':['Fulfilled','TEA-20'], '#48511':['Fulfilled','ASH-60'], '#48877':['Fulfilled','ASH-60'],
 };
-const ORDER_ROWS = Object.fromEntries(Object.entries(AC.ORDERS).map(([id, list]) => [id, list.slice().sort((a, b) => num(a[1]) - num(b[1])).map(o => [o[0], o[1], ...(ORDER_FACTS[o[0]] || ['Fulfilled','']), o[2], o[3], o[4] || 'Pending'])]));
+const ORDER_ROWS = Object.fromEntries(Object.entries(AC.ORDERS).map(([id, list]) => [id, list.slice().sort((a, b) => num(a[1]) - num(b[1])).map(o => [o[0], o[1], ...(ORDER_FACTS[o[0]] || ['Fulfilled','']), o[2], o[3], o[4] || '–'])]));
 const ESTIMATED = { '#49102':'$39.36', '#49118':'$21.48', '#49177':'$12.96' };
 function ordersFor(id) {
   const fit = r => r.map(v => (v === 'Looks unfulfilled' && S.resolved.subs === 'ship') ? 'Treated as shipped' : (v === 'Blank' && S.resolved.sku === 'map') ? 'ASH-60, matched' : v);
@@ -269,8 +269,7 @@ function otherAcct() { const o = entry('other'); const l = o ? line(o, 'oth') : 
 const LEDGER = 'QuickBooks Online';
 const FAIL_MODE = new URLSearchParams(location.search).get('fail') || '';
 const FAIL_ONCE = FAIL_MODE === '1';
-const URL_CLOSED = new URLSearchParams(location.search).get('closed') === '1';
-const isClosed = () => URL_CLOSED || AC.periodClosed(AC.MONTH);
+const isClosed = () => AC.periodClosed(AC.MONTH);
 const otherMonth = () => AC.month() !== AC.MONTH;
 /* ?role=view reads everything and changes nothing. ?ledger=none and ?ledger=scope stop Post at the ledger. */
 const VIEW_ONLY = new URLSearchParams(location.search).get('role') === 'view';
@@ -602,6 +601,7 @@ function panelFooter(id, bucket, o) {
 }
 function csvValue(v) {
   const s = String(v);
+  if (s === '–') return '';
   const m = s.match(/^(-?(?:CA)?\$[\d,.]+)(?:, matched| est\.)?$/);
   if (m) return num(m[1]).toFixed(2);
   const d = s.match(/^Sep (\d+)$/);
@@ -654,7 +654,7 @@ function openDrawer(id, title, amount, bucket) {
   const isNum = c => numeric.includes(c);
   const head = o.columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('');
   const srcButton = (i, v) => `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>`;
-  const settlementLink = v => /^po_/.test(v) ? `<span class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a></span>` : esc(v);
+  const settlementLink = v => /^po_/.test(v) ? `<span class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a></span>` : v === '–' ? '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available yet</span></span>' : esc(v);
   const listsSettlements = o.columns[0] === 'Settlement';
   const off = o.columns === ORDER_COLUMNS && ORDERS_OFF[id];
   const rowHead = (v, i) => listsSettlements ? settlementLink(v) : off && v === off.order ? `<div class="ac-name">${srcButton(i, v)}${ordersOffChip(e)}</div>` : srcButton(i, v);

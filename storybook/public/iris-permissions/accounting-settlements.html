@@ -429,6 +429,7 @@
   const idFact = v => `<span class="ac-mono">${esc(v)}</span>`;
   function openEvent(row) {
     const s = AC.settlement(route().id);
+    if (!s) return;
     const e = eventsOf(s)[Number(row.dataset.ev)];
     const rail = AC.rail(e.rail);
     const facts = [

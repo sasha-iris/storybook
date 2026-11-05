@@ -216,7 +216,7 @@
   AC.totals = c => { const list = AC.railsIn(c); return { gross:sum(list, r => r.gross), refunds:sum(list, r => r.refunds), fees:sum(list, r => r.fees), tax:sum(list, r => r.tax), net:sum(list, r => r.net), payouts:sum(list, r => r.payouts), start:sum(list, r => r.start), end:sum(list, r => r.end) }; };
 
   /* ---------- State shared across pages. A reload starts the whole demo over. ---------- */
-  const KEY = 'ac-state' + AC.ORG;
+  const KEY = 'ac-state' + AC.ORG + (params.get('closed') === '1' ? '-closed' : '');
   AC.VIEW_ONLY = params.get('role') === 'view';
   const JOURNAL_SEED = { onerail:[0, 1], norails:[0, 0], noduck:[0, 0], nodefer:[2, 8], nocogs:[4, 9], clean:[0, 9] }[AC.ORG] || [5, 9];
   const blank = () => ({ exceptions:{}, closed:{}, journal:{ open:JOURNAL_SEED[0], items:JOURNAL_SEED[0], total:JOURNAL_SEED[1], posted:0, failed:0, reversed:0 }, mapping:{} });
@@ -231,13 +231,17 @@
   AC.exceptionNote = ex => (AC.state.exceptions[ex.id] && AC.state.exceptions[ex.id].note) || ex.note || '';
   AC.exceptionAssignee = ex => (AC.state.exceptions[ex.id] && AC.state.exceptions[ex.id].assignee) || ex.assignee;
   AC.openExceptions = () => AC.EXCEPTIONS.filter(ex => ['open', 'investigating'].includes(AC.exceptionStatus(ex)));
-  /* ?closed=1: a month that closed had nothing open. */
-  if (params.get('closed') === '1') {
+  /* ?closed=1: a month that closed had nothing open. Seeded once, so Reopen lasts. */
+  const hadState = (() => { try { return sessionStorage.getItem(KEY) !== null; } catch (err) { return false; } })();
+  if (params.get('closed') === '1' && !hadState) {
     AC.state.closed[AC.MONTH] = AC.state.closed[AC.MONTH] || { at:'Oct 8, 2026', by:'You' };
     AC.openExceptions().forEach(ex => { AC.state.exceptions[ex.id] = { status:'accepted', note:ex.note || '', assignee:'You' }; });
     AC.state.journal = Object.assign({}, AC.state.journal, { open:0, posted:AC.state.journal.total, failed:0 });
+    AC.save();
   }
   AC.stateRaw = () => { try { return sessionStorage.getItem(KEY); } catch (err) { return null; } };
+  /* Always on disk, so Back from the page cache can tell a reload elsewhere from a first visit. */
+  if (AC.stateRaw() === null) AC.save();
   AC.periodClosed = month => !!AC.state.closed[month] || (AC.PERIODS.find(p => p.month === month) || {}).status === 'closed';
   AC.periodStatus = month => (AC.state.closed[month] ? 'closed' : (AC.PERIODS.find(p => p.month === month) || {}).status || 'open');
   AC.lockOf = month => AC.state.closed[month] || AC.PERIODS.find(p => p.month === month && p.status === 'closed') && { at:AC.PERIODS.find(p => p.month === month).lockedAt, by:AC.PERIODS.find(p => p.month === month).lockedBy } || null;

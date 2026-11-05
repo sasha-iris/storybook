@@ -252,6 +252,7 @@
     window.addEventListener('pageshow', ev => {
       if (!ev.persisted) return;
       document.getElementById('toastHost').innerHTML = '';
+      if (document.querySelector('#modalHost .modal-dialog')) closeOverlay();
       const raw = AC.stateRaw();
       if (!raw) { location.reload(); return; }
       try { Object.assign(AC.state, JSON.parse(raw)); } catch (err) { /* keep what is on screen */ }
