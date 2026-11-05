@@ -22,12 +22,6 @@
     .ac-stack { grid-template-columns:minmax(0,1fr); }
     /* Month close needs the width: side by side with the checkpoints only from 1600. */
     @media (max-width:1599px) { section[aria-labelledby="monthCloseTitle"] { grid-column:span 12; } .ac-cp:not(.ac-card--off) { grid-column:span 6; } }
-    /* Under 1440 a checkpoint's note drops under its title. Month close takes the same head height, so the three cards' rows share their lines. */
-    @media (min-width:1280px) and (max-width:1439px) {
-      .ac-cp .ac-card__head { flex-direction:column; align-items:flex-start; gap:0; }
-      .ac-close__head { padding-bottom:28px; }
-      /* A done row's long fact takes the room its chip no longer needs, so the label is never cut. */
-    }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -73,13 +67,11 @@
 
   /* ---------- Month close ---------- */
   function checkRow(check) {
-    const money = /^\$/.test(check.fact);
-    const amount = money ? `<span class="ac-note ac-num">${esc(check.fact)}</span>` : '';
-    const fact = check.fact && !money ? `<span class="ac-note">${esc(check.fact)}</span>` : '';
+    const fact = check.fact ? `<span class="ac-note">${esc(check.fact)}</span>` : '';
     const state = check.done ? `<span class="ac-status ac-status--ok">${esc(check.status)}</span>`
       : check.page ? `<span class="ac-chip ac-chip--warn">${esc(check.status)}</span>`
       : `<span class="ac-status ac-status--quiet">${esc(check.status)}</span>`;
-    const end = `${amount}<span class="ac-close-state">${state}${fact}</span>`;
+    const end = `<span class="ac-close-status">${state}</span>${fact}`;
     return check.page
       ? `<div class="ac-kv__row ac-kv__row--link"><a class="ac-kv__label ac-link ac-link--quiet" href="${AC.hrefOf(check.page)}${check.hash}" data-key="check-${check.id}">${esc(check.label)}</a>${end}</div>`
       : `<div class="ac-kv__row"><span class="ac-kv__label">${esc(check.label)}</span>${end}</div>`;
@@ -90,7 +82,7 @@
     if (!open.length) return '';
     const rail = AC.RAILS.find(r => r.name === open[0].source && !r.cur);
     const text = AC.count(open.length) + ' not mapped';
-    return `<div class="ac-kv__row"><span class="ac-kv__label">Account mapping</span><span class="ac-note ac-close-state"><a class="ac-link" href="${AC.hrefOf('settings')}${rail ? '#' + rail.id : ''}" data-key="mappingLink">${esc(text)}</a></span></div>`;
+    return `<div class="ac-kv__row"><span class="ac-kv__label">Account mapping</span><span class="ac-note ac-close-status"><a class="ac-link" href="${AC.hrefOf('settings')}${rail ? '#' + rail.id : ''}" data-key="mappingLink">${esc(text)}</a></span></div>`;
   }
 
   function monthClose() {
@@ -128,9 +120,9 @@
     return valueRow(other.channel, on ? other.count : 0, on ? other.amount : 0, otherOpen());
   }
 
-  const stepNote = step => `<span class="ac-note">Checkpoint ${step}</span>`;
+  const stepNote = (step, usd) => `<span class="ac-note">Checkpoint ${step}${usd ? ' · USD' : ''}</span>`;
 
-  const checkpointCard = (step, title, rows) => `<section class="ac-card ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title"><a class="ac-link ac-link--quiet" href="${AC.hrefOf('reconciliation')}#checkpoint-${step}" data-key="checkpoint-${step}">${esc(title)}</a></h2>${stepNote(step)}</div><div class="ac-kv">${rows}</div></section>`;
+  const checkpointCard = (step, title, rows) => `<section class="ac-card ac-s3 ac-cp"><div class="ac-card__head"><h2 class="ac-card__title"><a class="ac-link ac-link--quiet" href="${AC.hrefOf('reconciliation')}#checkpoint-${step}" data-key="checkpoint-${step}">${esc(title)}</a></h2>${stepNote(step, true)}</div><div class="ac-kv">${rows}</div></section>`;
 
   /* One line, as on Reconciliation. */
   const offCard = (step, title) => `<section class="ac-card ac-card--off ac-s6"><div class="ac-card__head"><h2 class="ac-card__title">${esc(title)}</h2>${stepNote(step)}<div class="ac-actions"><span class="ac-note">Not available yet</span></div></div></section>`;

@@ -107,7 +107,7 @@
   const processorHtml = tied => (tied ? '<span class="ac-status ac-status--ok">Tied</span>' : '<span class="ac-chip ac-chip--warn">Not tied</span>');
   const reserveHtml = r => (r.reserve ? '<span class="ac-muted">reserve</span>' : '');
   /* The orders difference is the break in this settlement. */
-  const breakChip = text => `<a class="ac-chip ac-chip--warn" href="${esc(AC.hrefOf('settlements') + '#po_Tk05')}">${text}</a>`;
+  const breakChip = text => { const cleared = AC.breakCleared('po_Tk05'); return `<a class="ac-chip ${cleared ? 'ac-chip--wait' : 'ac-chip--warn'}" href="${esc(AC.hrefOf('settlements') + '#po_Tk05')}">${text}${cleared ? `<span class="ac-chip__more">&nbsp;· ${AC.EXCEPTION_STATUS[AC.exceptionStatus(AC.exceptionOf('po_Tk05'))]}</span>` : ''}</a>`; };
 
   /* ---------- All tab, and a month with no data ---------- */
   const COLUMNS = '<colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup><thead><tr><th scope="col">Rail</th><th scope="col" class="ac-num">Starting</th><th scope="col" class="ac-num">Activity</th><th scope="col" class="ac-num">Payouts</th><th scope="col" class="ac-num">Ending</th><th scope="col" class="ac-right">Processor</th></tr></thead>';

@@ -123,7 +123,7 @@
   /* Back to where the list was, or, for a settlement opened from another page, to the list page that holds it. */
   const listHash = id => {
     if (nav.from && nav.from.id === id) return nav.from.hash;
-    const i = SORTED.findIndex(s => s.id === id);
+    const i = ordered().findIndex(s => s.id === id);
     return i < PAGE_SIZE ? '' : hashOf({ page:Math.floor(i / PAGE_SIZE) + 1 });
   };
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -164,12 +164,14 @@
   }
 
   /* ---------- List ---------- */
-  const inFilter = f => (hasData() ? SORTED.filter(s => (!f.rail || s.rail === f.rail) && (!f.status || s.status === f.status)) : []);
+  /* What still blocks the close comes first, so the first click from Overview lands on it. */
+  const ordered = () => { const open = AC.openBreaks(); return open.concat(SORTED.filter(s => !open.includes(s))); };
+  const inFilter = f => (hasData() ? ordered().filter(s => (!f.rail || s.rail === f.rail) && (!f.status || s.status === f.status)) : []);
   const moneyCell = (n, cur, extra) => (n === 0
     ? `<td class="ac-num ac-zero${extra ? ' ' + extra : ''}">${AC.money(0, cur)}</td>`
     : `<td class="ac-num${extra ? ' ' + extra : ''}">${AC.signed(n, cur)}</td>`);
   const noneCell = () => `<td class="ac-num ac-zero"><div>${NONE}</div></td>`;
-  const exceptionOf = s => AC.EXCEPTIONS.find(ex => ex.link && ex.link.id === s.id && (ex.type === 'settlement_waterfall_break' || ex.type === 'payout_failed'));
+  const exceptionOf = s => AC.exceptionOf(s.id);
   /* Accepted or Resolved, once the settlement's exception has left the open list. */
   function clearedWord(s) {
     const ex = exceptionOf(s);
@@ -182,7 +184,7 @@
     const cleared = clearedWord(s);
     return `<span class="ac-chip ac-chip--${{ pending:'wait', break:'warn', failed:'bad' }[s.status]}">${word}</span>${cleared ? `<span class="ac-note">${cleared}</span>` : ''}`;
   }
-  function diffClass(n) { return n === 0 ? 'ac-zero' : 'ac-warn'; }
+  function diffClass(n) { return n === 0 ? 'ac-zero' : AC.breakCleared('po_Tk05') ? '' : 'ac-warn'; }
   const rowHtml = s => {
     const reported = s.reportedNet !== null;
     return `<tr class="ac-row--link" data-row="${esc(s.id)}">
@@ -199,12 +201,14 @@
   function totalsOf(rows) {
     return AC.CURRENCIES.filter(c => rows.some(s => curOf(s) === c)).map(c => {
       const list = rows.filter(s => curOf(s) === c);
-      const done = list.filter(s => s.reportedNet !== null);
-      return { cur:c, reported:done.length ? AC.sum(done, s => s.reportedNet) : null, expected:AC.sum(done.length ? done : list, s => s.expectedNet), diff:done.length ? AC.sum(done, s => s.diff) : null };
-    });
+      const done = list.filter(s => s.reportedNet !== null), open = list.filter(s => s.reportedNet === null);
+      const paid = { cur:c, label:(open.length ? 'Paid ' : 'Total ') + c, reported:AC.sum(done, s => s.reportedNet), expected:AC.sum(done, s => s.expectedNet), diff:AC.sum(done, s => s.diff) };
+      const waiting = { cur:c, label:(done.length ? 'Not paid ' : 'Total ') + c, reported:null, expected:AC.sum(open, s => s.expectedNet), diff:null };
+      return (done.length ? [paid] : []).concat(open.length ? [waiting] : []);
+    }).flat();
   }
   const totalHtml = t => `<tr class="ac-total">
-      <th scope="row" colspan="3">Total ${esc(t.cur)}</th>
+      <th scope="row" colspan="3">${esc(t.label)}</th>
       ${t.reported === null ? noneCell() : `<td class="ac-num"><span>${AC.money(t.reported, t.cur)}</span></td>`}
       <td class="ac-num"><span>${AC.money(t.expected, t.cur)}</span></td>
       ${t.diff === null ? noneCell() : `<td class="ac-num ${diffClass(t.diff)}"><span>${AC.signed(t.diff, t.cur)}</span></td>`}
@@ -336,7 +340,7 @@
       ? `<span class="ac-chip ac-chip--warn">Off by ${AC.money(s.diff, s.cur)}</span>`
       : '<span class="ac-status ac-status--ok">Matched</span>';
   }
-  const cashMatchHtml = s => (s.status === 'pending' ? '<span class="ac-chip ac-chip--wait">Pending</span>' : '<span class="ac-status ac-status--ok">Paid</span>');
+  const cashMatchHtml = s => (s.status === 'failed' ? '<span class="ac-chip ac-chip--bad">Failed</span>' : s.status === 'pending' ? '<span class="ac-chip ac-chip--wait">Pending</span>' : '<span class="ac-status ac-status--ok">Paid</span>');
   function ordersCardHtml(s) {
     const orders = ordersOf(s);
     const body = !orders.length ? noRows : `<div class="ac-wrap ac-wrap--foot"><table class="ac-table">
@@ -397,7 +401,7 @@
     const rows = inFilter(f);
     const head = ['Rail', 'Settlement', 'From', 'To', 'Currency', 'Reported net', 'Expected net', 'Difference', 'Status'];
     const body = rows.map(s => [s.channel, s.id, isoOf(s.from), isoOf(s.to), curOf(s), plain(s.reportedNet), plain(s.expectedNet), s.reportedNet === null ? '' : plain(s.diff), AC.SETTLEMENT_STATUS[s.status]]);
-    const totals = totalsOf(rows).map(t => ['Total ' + t.cur, '', '', '', t.cur, plain(t.reported), plain(t.expected), plain(t.diff), '']);
+    const totals = totalsOf(rows).map(t => [t.label, '', '', '', t.cur, plain(t.reported), plain(t.expected), plain(t.diff), '']);
     const name = ['settlements', f.rail, f.status].filter(Boolean).join('-') + '-' + isoOf('Sep 1').slice(0, 7) + '.csv';
     AC.downloadCsv(name, [head].concat(body, totals));
     AC.toast('CSV exported.');
@@ -418,7 +422,7 @@
     rows.push(line({ section:'Net', item:'Difference', amount:s.reportedNet === null ? null : s.diff }));
     if (s.status === 'failed') rows.push(line({ section:'Net', item:'Payout failed', value:s.failureCode }));
     eventsOf(s).forEach(e => rows.push(line({ section:'Events', date:isoOf(e.date), txn:e.txn, order:e.order, desc:e.desc, amount:e.amount, fee:e.fee, tax:e.tax, net:e.net })));
-    ordersOf(s).forEach(e => rows.push(line({ section:'Orders', date:isoOf(e.date), order:e.order, amount:e.amount, am:offBy(s, e) ? 'Off by ' + AC.money(s.diff, s.cur) : 'Matched', cm:s.status === 'pending' ? 'Pending' : 'Paid' })));
+    ordersOf(s).forEach(e => rows.push(line({ section:'Orders', date:isoOf(e.date), order:e.order, amount:e.amount, am:offBy(s, e) ? 'Off by ' + AC.money(s.diff, s.cur) : 'Matched', cm:s.status === 'failed' ? 'Failed' : s.status === 'pending' ? 'Pending' : 'Paid' })));
     AC.downloadCsv('settlement-' + s.id + '.csv', [head].concat(rows));
     AC.toast('CSV exported.');
   }

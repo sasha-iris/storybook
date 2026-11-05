@@ -65,7 +65,7 @@ const hasActivity = () => AC.month() === AC.MONTH;
 /* ---------- Clearing roll-forward ---------- */
 const ROLL = [['opening', 'Starting'], ['netNew', 'Activity'], ['settledOut', 'Payouts'], ['adjustments', 'Adjustments'], ['ending', 'Ending'], ['unexplained', 'Unexplained']];
 /* A month with no activity carries September's ending: no flows, no trend. */
-const rollRows = () => AC.rollForward().map(r => hasActivity() ? r : Object.assign({}, r, { opening:r.ending, netNew:0, settledOut:0, adjustments:0, unexplained:0, series:null }));
+const rollRows = () => AC.rollForward().map(r => hasActivity() ? r : Object.assign({}, r, { opening:r.ending, netNew:0, settledOut:0, adjustments:0, unexplained:null, series:null }));
 const rollTotal = list => Object.fromEntries(ROLL.map(c => [c[0], AC.sum(list, r => r[c[0]])]));
 const railHref = r => AC.hrefOf('balance') + '#' + r.rail.replace('_', '-');
 /* Clearing Iris posts for payments with no payout data: USD, and not in an org with one rail. One row, or one per clearing account once the item is decided as split. A month with no activity carries the ending. */
@@ -78,6 +78,7 @@ const otherClearing = () => {
 const clearingEnding = (list, other) => AC.round2(AC.sum(list, r => r.ending) + AC.sum(other, r => r.ending));
 
 function moneyCell(n, cur, o = {}) {
+  if (n === null || (o.fit && o.warn !== undefined && !hasActivity() && isZero(n))) return `<td class="ac-num ac-zero ac-num--fit">${o.total ? '<span>' : ''}<span aria-hidden="true">–</span><span class="ac-sr">not available yet</span>${o.total ? '</span>' : ''}</td>`;
   const cls = ['ac-num'];
   if (isZero(n)) cls.push('ac-zero'); else if (o.warn) cls.push('ac-warn');
   if (o.end) cls.push('ac-end');
@@ -85,7 +86,7 @@ function moneyCell(n, cur, o = {}) {
   const text = AC.signed(n, cur);
   return `<td class="${cls.join(' ')}">${o.total ? `<span>${text}</span>` : text}</td>`;
 }
-const rollCells = (r, cur, total) => ROLL.map(c => moneyCell(r[c[0]], cur, { total, end:c[0] === 'ending', warn:c[0] === 'unexplained', fit:c[0] === 'adjustments' || c[0] === 'unexplained' })).join('');
+const rollCells = (r, cur, total) => ROLL.map(c => moneyCell(r[c[0]], cur, { total, end:c[0] === 'ending', warn:c[0] === 'unexplained' && !AC.breakCleared('po_Tk05'), fit:c[0] === 'adjustments' || c[0] === 'unexplained' })).join('');
 const clearingCells = (ending, cur) => ROLL.map(c => (c[0] === 'ending' ? moneyCell(ending, cur, { total:true, end:true }) : '<td class="ac-num"></td>')).join('');
 
 /* Six points, the first and last kept. Each rail on its own scale: a sparkline shows shape, the row prints the amounts. */
@@ -141,7 +142,7 @@ const checkpointGroups = cp => AC.CURRENCIES.map(cur => {
 function pairCell(row, pair, unit, cur, total) {
   const n = row[pair[0]][0], value = row[pair[0]][1];
   if (isZero(value)) return moneyCell(0, cur, { total });
-  const warn = pair[0] === 'unmatched' && !(row.rail === 'other' && otherDecided()) ? ' ac-warn' : '';
+  const warn = pair[0] === 'unmatched' && !(row.rail === 'other' && otherDecided()) && !(row.rail === 'stripe' && AC.breakCleared('po_St90')) ? ' ac-warn' : '';
   const word = row.unit || unit;
   const count = `<data class="ac-muted ac-pair__n" value="${n}">${AC.count(n)}<span class="ac-sr"> ${word}${n === 1 ? '' : 's'}</span></data>`;
   const text = AC.money(value, cur);
@@ -168,7 +169,7 @@ function checkpointCard(cp) {
 }
 
 /* ---------- Order to payment: the orders behind a figure, in a panel, as on Balance ---------- */
-const SAMPLE = { matched:e => !!e.payout, pending:e => !e.payout };
+const SAMPLE = { matched:e => !!e.payout && e.order !== '#48720', partial:e => e.order === '#48720', pending:e => !e.payout };
 const ORDER_COLS = ['Order', 'Date', 'Transaction', 'Amount', 'Fee', 'Tax', 'Net', 'Settlement', 'Status'];
 let panelRows = [], openBtn = null;
 function pickRow(i) {

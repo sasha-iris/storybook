@@ -58,7 +58,7 @@
   AC.setMonth = m => { try { sessionStorage.setItem('ac-month', m); } catch (err) { /* this page only */ } };
   AC.monthSelect = () => `<select class="form-input form-select ac-select ac-w120" aria-label="Month" id="monthSelect" data-key="monthSelect" autocomplete="off">${AC.MONTHS.map(m => `<option${AC.month() === m ? ' selected' : ''}>${esc(m)}</option>`).join('')}</select>`;
 
-  AC.pageHead = o => { const here = AC.PAGES.find(p => p.id === o.current); if (here) document.title = here.label + ' · Accounting'; return `<div class="ac-top"><div class="ac-head"><h1 class="ac-head__title" tabindex="-1">Accounting${here ? `<span class="ac-sr">: ${esc(here.label)}</span>` : ''}</h1>${o.noMonth ? '' : AC.monthSelect()}<span class="ac-note">${esc(AC.TIMEZONE)} · Sample data</span><div class="ac-actions">${o.actions || ''}</div></div>${AC.navHtml(o.current)}</div>`; };
+  AC.pageHead = o => { const here = AC.PAGES.find(p => p.id === o.current); if (here) document.title = here.label + ' · Accounting'; return `<div class="ac-top"><div class="ac-head"><h1 class="ac-head__title" tabindex="-1" data-key="pageTitle">Accounting${here ? `<span class="ac-sr">: ${esc(here.label)}</span>` : ''}</h1>${o.noMonth ? '' : AC.monthSelect()}<span class="ac-note">${esc(AC.TIMEZONE)} · Sample data</span><div class="ac-actions">${o.actions || ''}</div></div>${AC.navHtml(o.current)}</div>`; };
 
   /* ---------- Toast ---------- */
   let toastTimer = null, toastReturn = null;
@@ -76,7 +76,8 @@
     const host = document.getElementById('toastHost');
     host.innerHTML = `<div class="toast" id="toastBox"><p class="toast-body" style="margin:0;flex:1;">${esc(msg)}</p>${o.view ? '<button type="button" class="btn-link btn-sm pm-link-quiet" style="padding:0;white-space:nowrap;" id="toastView">View</button>' : ''}${o.undo ? '<button type="button" class="btn-link btn-link-semibold btn-sm" style="padding:0;" id="toastUndo">Undo</button>' : ''}<button type="button" class="toast-close" id="toastClose" aria-label="Dismiss">×</button></div>`;
     document.getElementById('toastClose').onclick = () => { closedAt = Date.now(); clearToast(); };
-    if (o.undo) document.getElementById('toastUndo').onclick = () => { closedAt = Date.now(); host.innerHTML = ''; closeOverlay(); o.undo(); };
+    document.getElementById('toastClose').addEventListener('keydown', ev => { if (document.getElementById('modalBackdrop')) return; if (ev.key === 'Tab' && !ev.shiftKey && toastReturn && document.contains(toastReturn)) { ev.preventDefault(); toastReturn.focus(); } });
+    if (o.undo) document.getElementById('toastUndo').onclick = () => { closedAt = Date.now(); host.innerHTML = ''; closeOverlay(); o.undo(); AC.announce('Change undone.'); };
     if (o.view) document.getElementById('toastView').onclick = () => { closedAt = Date.now(); closeOverlay(); o.view(); };
     const ms = o.undo ? 9000 : 5000;
     const arm = () => { clearTimeout(toastTimer); toastTimer = setTimeout(clearToast, ms); };
@@ -90,9 +91,12 @@
   };
 
   /* A held or double Enter must not press what focus just moved to. Use this when moving focus to Undo or the next action. */
-  let movedAt = 0;
-  AC.focusAfterAction = el => { if (el) { movedAt = Date.now(); el.focus(); } };
-  document.addEventListener('click', e => { if (e.detail === 0 && Date.now() - movedAt < 500 && e.isTrusted) { e.preventDefault(); e.stopPropagation(); } }, true);
+  let movedAt = 0, movedTo = null;
+  AC.focusAfterAction = el => { if (el) { movedAt = Date.now(); el.focus(); movedTo = document.activeElement; } };
+  document.addEventListener('click', e => { if (e.detail === 0 && e.isTrusted && e.target === movedTo && Date.now() - movedAt < 500) { e.preventDefault(); e.stopPropagation(); } }, true);
+  document.addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const field = e.target.matches('textarea, input:not([type="checkbox"]):not([type="radio"])'); if (e.repeat ? !field : field && e.target === movedTo && Date.now() - movedAt < 500) e.preventDefault(); }, true);
+  /* A table that scrolls inside itself brings the focused control into view. */
+  document.addEventListener('focusin', e => { const w = e.target.closest && e.target.closest('.ac-wrap'); if (!w) return; const r = e.target.getBoundingClientRect(), b = w.getBoundingClientRect(); if (r.left < b.left + 4) w.scrollLeft -= b.left + 4 - r.left; else if (r.right > b.right - 4) w.scrollLeft += r.right - b.right + 4; });
 
   /* ---------- Overlays ---------- */
   let closedAt = 0, openedAt = 0, returnFocus = null, lastClick = null, locked = false, rowTimer = null;
@@ -178,7 +182,7 @@
     host.querySelectorAll('[data-action]').forEach(b => { b.onclick = ev => { if (ev.detail > 1) return; o.actions[+b.dataset.action].onClick(ev); }; });
     backdropClose(host);
     const first = host.querySelector('[data-autofocus]') || host.querySelector('#modalClose');
-    if (first) first.focus();
+    if (first) AC.focusAfterAction(first);
     placeToast();
   };
   AC.sourceRow = pairs => `<div class="ac-source"><div class="ac-source__head"><span>Source row</span><span class="ac-actions"><span class="ac-note">Sample data</span><button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-copy-source>Copy</button></span></div><dl>${pairs.map(p => `<dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl></div>`;

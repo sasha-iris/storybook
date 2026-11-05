@@ -30,7 +30,7 @@
     { id:'stripe', tab:'stripe', name:'Stripe', prefix:'St', schema:'stripe_data_v2', acct:'acct_1Qx7…', start:12004.10, end:10214.55, gross:101240.00, refunds:2180.30, fees:2651.13, tax:78.12, net:96330.45, payouts:98120.00, n:{ charge:812, refund:14, dispute:0, fee:812, payout:19 }, ordersEnding:null },
     { id:'paypal', tab:'paypal', name:'PayPal', prefix:'Pp', schema:'paypal_data', acct:'pp_4410…', start:3318.72, end:4723.32, gross:30410.00, refunds:620.40, fees:859.67, tax:25.33, net:28904.60, payouts:27500.00, n:{ charge:246, refund:6, dispute:0, fee:246, payout:8 }, ordersEnding:4723.32 },
     { id:'amazon', tab:'amazon', name:'Amazon', reserve:true, prefix:'Am', schema:'amazon_data', acct:'A2EU8Z…', start:9640.00, end:11072.26, gross:66310.00, refunds:1905.62, fees:9900.27, tax:291.73, net:54212.38, payouts:52780.12, n:{ charge:538, refund:22, dispute:0, fee:538, payout:6 }, ordersEnding:11072.26, lagDays:30 },
-    { id:'tiktok', tab:'tiktok', name:'TikTok Shop', reserve:true, prefix:'Tk', schema:'tiktok_data', acct:'tts_7731…', start:1250.00, end:1565.20, gross:9180.00, refunds:316.80, fees:920.86, tax:27.14, net:7915.20, payouts:7600.00, n:{ charge:84, refund:4, dispute:0, fee:84, payout:5 }, ordersEnding:1612.40, lagDays:21 },
+    { id:'tiktok', tab:'tiktok', name:'TikTok Shop', reserve:true, prefix:'Tk', schema:'tiktok_data', acct:'tts_7731…', start:1250.00, end:1565.20, gross:9180.00, refunds:316.80, fees:920.86, tax:27.14, net:7915.20, payouts:7600.00, n:{ charge:84, refund:4, dispute:0, fee:84, payout:5 }, ordersEnding:1518.00, lagDays:21 },
     { id:'paypal_cad', tab:'paypal', name:'PayPal', cur:'CAD', prefix:'Ca', schema:'paypal_data', acct:'pp_4410…', start:812.40, end:1023.15, gross:5510.00, refunds:120.00, fees:174.25, tax:5.00, net:5210.75, payouts:5000.00, n:{ charge:58, refund:1, dispute:0, fee:58, payout:3 }, ordersEnding:1023.15 },
   ];
   /* Org variants, query only, for showing how the section behaves. ?org=onerail ?org=norails ?org=noduck */
@@ -49,11 +49,11 @@
   /* Order, date, gross, fee, payout: the same orders as the Journal entries panels. */
   AC.ORDERS = {
     shopify: [['#48102','Sep 1',148.00,4.59,'po_8Kd2'],['#48733','Sep 19',140.00,4.36,'po_9Zm4'],['#48921','Sep 24',148.00,4.59,'po_A1c7'],['#49102','Sep 28',164.00,5.06,null],['#48342','Sep 9',264.00,8.18,null]],
-    stripe: [['#48120','Sep 1',148.00,4.00,'po_St11'],['#48260','Sep 6',96.00,2.59,'po_St14'],['#48640','Sep 16',140.00,3.78,'po_St19']],
-    paypal: [['#48140','Sep 2',96.00,2.78,'po_Pp03'],['#48450','Sep 11',148.00,4.29,'po_Pp07'],['#48850','Sep 23',140.00,4.06,'po_Pp12']],
+    stripe: [['#48120','Sep 1',148.00,4.00,'po_St11'],['#48260','Sep 6',96.00,2.59,'po_St14'],['#48640','Sep 16',140.00,3.78,'po_St19'],['#48995','Sep 28',148.00,4.00,'po_St90'],['#49131','Sep 29',112.00,3.02,null]],
+    paypal: [['#48140','Sep 2',96.00,2.78,'po_Pp03'],['#48450','Sep 11',148.00,4.29,'po_Pp07'],['#48850','Sep 23',140.00,4.06,'po_Pp12'],['#49146','Sep 29',88.00,2.55,null]],
     amazon: [['#48555','Sep 13',148.00,22.79,'po_Am21'],['#49118','Sep 28',89.50,13.78,null],['#49177','Sep 30',54.00,8.32,null]],
     tiktok: [['#47912','Sep 1',96.00,9.89,null],['#48300','Sep 7',96.00,9.89,'po_Tk02'],['#48720','Sep 19',148.00,15.24,'po_Tk05']],
-    paypal_cad: [['#48166','Sep 3',128.00,3.71,'po_Ca02'],['#48511','Sep 12',196.00,5.68,'po_Ca05'],['#48877','Sep 24',186.00,5.39,'po_Ca09']],
+    paypal_cad: [['#48166','Sep 3',128.00,3.71,'po_Ca02'],['#48511','Sep 12',196.00,5.68,'po_Ca05'],['#48877','Sep 24',186.00,5.39,'po_Ca09'],['#49163','Sep 29',96.00,2.78,null]],
   };
   /* Payout id, date, amount, orders: the same payouts as Balance and Journal entries show first. */
   const KNOWN_PAYOUTS = {
@@ -94,8 +94,9 @@
       rows.forEach((p, i) => {
         const isBreak = p.id === 'po_Tk05';
         const expected = isBreak ? round2(p.amount + 47.20) : p.amount;
-        const gross = round2(expected / (1 - rr - rf - rt));
-        const refunds = round2(gross * rr), tax = round2(gross * rt);
+        const cadRefund = r.id === 'paypal_cad' ? (p.id === 'po_Ca02' ? r.refunds : 0) : null;
+        const gross = cadRefund === null ? round2(expected / (1 - rr - rf - rt)) : round2((expected + cadRefund) / (1 - rf - rt));
+        const refunds = cadRefund === null ? round2(gross * rr) : cadRefund, tax = round2(gross * rt);
         const fees = round2(gross - refunds - tax - expected);
         const prev = i ? Number(rows[i - 1].date.replace('Sep ', '')) : 0;
         const day = Number(p.date.replace('Sep ', ''));
@@ -108,9 +109,11 @@
         });
       });
       /* What sits in the processor at month end is the next payout. */
-      const pendingGross = round2(r.end / (1 - rr - rf - rt));
-      const pendingRefunds = round2(pendingGross * rr), pendingTax = round2(pendingGross * rt);
-      out.push({ id:'po_' + r.prefix + 'P1', rail:r.id, channel:AC.railLabel(r), cur:r.cur, date:'Oct 2', from:rows[rows.length - 1].date, to:'Sep 30', status:'pending', orders:Math.max(1, Math.round(r.n.charge * r.end / r.net)), gross:pendingGross, refunds:pendingRefunds, chargebacks:0, fees:round2(pendingGross - pendingRefunds - pendingTax - r.end), tax:pendingTax, reserves:0, adjustments:0, reportedNet:null, expectedNet:r.end, diff:0 });
+      const pendingNet = round2(r.end - (r.id === 'stripe' ? 1238.97 : 0));
+      const pendingRr = r.id === 'paypal_cad' ? 0 : rr;
+      const pendingGross = round2(pendingNet / (1 - pendingRr - rf - rt));
+      const pendingRefunds = round2(pendingGross * pendingRr), pendingTax = round2(pendingGross * rt);
+      out.push({ id:'po_' + r.prefix + 'P1', rail:r.id, channel:AC.railLabel(r), cur:r.cur, date:'Oct 2', from:rows[rows.length - 1].date, to:'Sep 30', status:'pending', orders:Math.max(1, Math.round(r.n.charge * r.end / r.net)), gross:pendingGross, refunds:pendingRefunds, chargebacks:0, fees:round2(pendingGross - pendingRefunds - pendingTax - pendingNet), tax:pendingTax, reserves:0, adjustments:0, reportedNet:null, expectedNet:pendingNet, diff:0 });
     });
     /* One failed payout: sample of the third data status. Not counted in the rail's paid total. */
     if (AC.rail('stripe')) out.push({ id:'po_St90', rail:'stripe', channel:'Stripe', date:'Sep 29', from:'Sep 28', to:'Sep 28', status:'failed', failureCode:'account_closed', orders:9, gross:1302.11, refunds:28.04, chargebacks:0, fees:34.10, tax:1.00, reserves:0, adjustments:0, reportedNet:null, expectedNet:1238.97, diff:0 });
@@ -185,7 +188,7 @@
     { id:'ex6', type:'payout_unlinked_events', severity:'Low', amount:18.40, rail:'paypal', channel:'PayPal', subject:'po_Pp07', link:{ page:'settlements', id:'po_Pp07' }, firstSeen:'Sep 16', status:'investigating', assignee:'You' },
     { id:'ex7', type:'reserve_not_released', severity:'Medium', amount:1250.00, rail:'amazon', channel:'Amazon', subject:'Reserve of Aug 2026', firstSeen:'Sep 1', status:'open', assignee:'Unassigned' },
     { id:'ex8', type:'order_unpaid_beyond_lag', severity:'Low', amount:96.00, rail:'tiktok', channel:'TikTok Shop', subject:'#47912', firstSeen:'Sep 22', status:'accepted', assignee:'You', note:'Paid in October.' },
-    { id:'ex9', type:'settlement_pending_overdue', severity:'Low', amount:412.30, rail:'amazon', channel:'Amazon', subject:'po_Am19', firstSeen:'Sep 2', status:'resolved', assignee:'You' },
+    { id:'ex9', type:'settlement_pending_overdue', severity:'Low', amount:(AC.settlement('po_Am40') || {}).reportedNet || 0, rail:'amazon', channel:'Amazon', subject:'po_Am40', link:{ page:'settlements', id:'po_Am40' }, firstSeen:'Sep 2', status:'resolved', assignee:'You' },
   ];
 
   if (AC.SCENARIO === 'anchor') AC.EXCEPTIONS.unshift({ id:'ex10', type:'processor_balance_mismatch', severity:'High', amount:4242.81, rail:'stripe', channel:'Stripe', subject:'Ending balance', firstSeen:'Sep 30', status:'open', assignee:'Unassigned' });
@@ -250,7 +253,14 @@
   const exceptionCleared = id => { const ex = AC.EXCEPTIONS.find(x => x.id === id); return !['open', 'investigating'].includes(AC.exceptionStatus(ex)); };
   AC.openBreaks = () => AC.SETTLEMENTS.filter(s => (s.status === 'break' || s.status === 'failed') && !AC.EXCEPTIONS.some(ex => ex.link && ex.link.id === s.id && exceptionCleared(ex.id)));
   const plural = (n, word) => n + ' ' + word + (n === 1 ? '' : 's');
-  const settlementFacts = () => { const by = st => AC.SETTLEMENTS.filter(s => s.status === st).length; return [[by('paid'), 'paid'], [by('break'), 'break'], [by('pending'), 'pending'], [by('failed'), 'failed']].filter(x => x[0]).map(x => x[0] + ' ' + x[1]).join(' · '); };
+  AC.exceptionOf = id => AC.EXCEPTIONS.find(ex => ex.link && ex.link.id === id);
+  AC.breakCleared = id => { const ex = AC.exceptionOf(id); return !!ex && exceptionCleared(ex.id); };
+  const settlementFacts = () => {
+    const by = st => AC.SETTLEMENTS.filter(s => s.status === st).length;
+    const hard = AC.SETTLEMENTS.filter(s => s.status === 'break' || s.status === 'failed');
+    const word = st => hard.filter(s => AC.exceptionOf(s.id) && AC.exceptionStatus(AC.exceptionOf(s.id)) === st).length;
+    return [[by('paid'), 'paid'], [by('pending'), 'pending'], [word('accepted'), 'accepted'], [word('resolved'), 'resolved']].filter(x => x[0]).map(x => x[0] + ' ' + x[1]).join(' · ');
+  };
   AC.closeChecks = month => {
     const LABELS = [['settlements', 'Settlements reconciled'], ['exceptions', 'Exceptions resolved or accepted'], ['decided', 'Items decided'], ['posted', 'Entries posted']];
     if (month !== AC.MONTH) {
@@ -271,7 +281,8 @@
   /* ---------- Mapping with this session's changes ---------- */
   AC.mappingKey = m => m.source + ':' + m.bucket;
   AC.mappingOf = m => Object.assign({}, m, AC.state.mapping[AC.mappingKey(m)] || {});
-  AC.unmapped = () => AC.MAPPING.map(AC.mappingOf).filter(m => !m.debit || !m.credit);
+  AC.NET_BUCKETS = ['Refunds', 'Disputes', 'Fees', 'Tax'];
+  AC.unmapped = () => AC.MAPPING.map(AC.mappingOf).filter(m => !m.debit || (!m.credit && !AC.NET_BUCKETS.includes(m.bucket)));
 
   /* ---------- Rows behind one settlement ---------- */
   AC.eventsOf = id => AC.allEvents().filter(e => e.payout === id && e.cat !== 'fee' && e.cat !== 'tax');

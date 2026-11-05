@@ -17,6 +17,10 @@
     /* Search closes the filter bar on the card's right edge, its text on the baseline of the selects. */
     body.ac .ac-input.ac-search { flex:0 1 280px; width:280px; min-width:0; margin-left:auto; padding-bottom:2px; font-family:inherit; -webkit-appearance:none; appearance:none; }
     body.ac .ac-input.ac-search:disabled::placeholder { color:var(--ac-2); }
+    /* One border grey in the row: the glass says what this field is. */
+    body.ac .ac-input.ac-search:not(:focus) { border-color:var(--ac-ctl); }
+    body.ac .ac-input.ac-search:not(:focus):hover { border-color:var(--ac-ctl-h); }
+    body.ac .ac-input.ac-search { padding-left:32px; background:#FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%234B5563'%3E%3Cpath fill-rule='evenodd' d='M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.45 4.39l3.08 3.08a.75.75 0 1 1-1.06 1.06l-3.08-3.08A7 7 0 0 1 2 9Z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat 12px 50% / 16px 16px; }
     body.ac .ac-search:placeholder-shown::-webkit-search-cancel-button { display:none; }
     body.ac .ac-search::-webkit-search-cancel-button { -webkit-appearance:none; appearance:none; width:16px; height:16px; cursor:pointer; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E") center / 16px no-repeat; }
     body.ac .ac-search::-webkit-search-cancel-button:hover { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23111928'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E"); }
@@ -119,7 +123,7 @@
   }
   /* The foot counts what the tile counts. With no category it counts every event the rows can hold, payouts too. */
   function sampleText() {
-    const n = f.cat ? tileFacts().count : railsInFilter().reduce((m, r) => m + r.n.charge + r.n.refund + r.n.payout, 0);
+    const n = railsInFilter().reduce((m, r) => m + (f.cat ? kindsOf(f.cat).reduce((k, kind) => k + AC.kindCount(r, kind), 0) : r.n.charge + r.n.refund + r.n.payout), 0);
     const noun = f.cat ? NOUNS[f.cat] : ['event', 'events'];
     return `Sample of ${AC.count(n)} ${noun[n === 1 ? 0 : 1]}`;
   }

@@ -334,13 +334,16 @@ function statusCell(e) {
 /* The rail's orders against its ending balance, and the way to the settlement behind it. */
 function ordersOffChip(e, extra) {
   const off = ORDERS_OFF[baseId(e)];
-  return off ? `<a class="ac-chip ac-chip--warn${extra ? ' ' + extra : ''}" href="${esc(AC.hrefOf('settlements'))}#${off.settlement}">Orders off by ${money(off.amount, e.cur)}</a>` : '';
+  if (!off) return '';
+  const cleared = AC.breakCleared(off.settlement);
+  return `<a class="ac-chip ${cleared ? 'ac-chip--wait' : 'ac-chip--warn'}${extra ? ' ' + extra : ''}" href="${esc(AC.hrefOf('settlements'))}#${off.settlement}">Orders off by ${money(off.amount, e.cur)}${cleared ? `<span class="ac-chip__more">&nbsp;· ${AC.EXCEPTION_STATUS[AC.exceptionStatus(AC.exceptionOf(off.settlement))]}</span>` : ''}</a>`;
 }
 function openIssues() { return ISSUES.filter(i => !S.resolved[i.id]); }
 function issuesFor(id) { return openIssues().filter(i => i.entry === id); }
 function line(e, id) { return e.lines.find(l => l.id === id); }
 /* A mapping saved on Settings is the new recommendation for a rail entry not yet posted. A hand-picked account stays. */
 const MAPPED_BUCKET = { net:'Charges', sal:'Charges', ref:'Refunds', fee:'Fees', tax:'Tax', bnk:'Payouts', pay:'Payouts' };
+const ENTRY_DAY = new Date('Sep 30, 2026');
 function applyMapping() {
   unposted().filter(e => !e.cur).forEach(e => {
     const source = e.baseName || e.name;
@@ -348,8 +351,11 @@ function applyMapping() {
       const row = AC.MAPPING.find(m => m.source === source && m.bucket === MAPPED_BUCKET[l.id]);
       if (!row) return;
       const saved = AC.mappingOf(row);
-      const account = l.dr !== undefined ? saved.debit : saved.credit;
-      if (!account) return;
+      const inForce = new Date(saved.from) <= ENTRY_DAY && (!saved.to || new Date(saved.to) >= ENTRY_DAY);
+      const use = inForce ? saved : row;
+      const account = l.dr !== undefined ? use.debit : use.credit;
+      if (!account) { l.unmapped = true; return; }
+      delete l.unmapped;
       const list = l.choices || ACCOUNTS;
       if (!list.includes(account)) l.choices = list.concat(account);
       const picked = l.account !== l.rec;
@@ -499,7 +505,7 @@ function openModal(title, body, footer, size) {
   document.getElementById('modalBackdrop').addEventListener('mousedown', e => { if (e.target.id === 'modalBackdrop') { e.preventDefault(); if (e.detail < 2 && !posting) closeModal(); } });
   document.addEventListener('keydown', modalKeys);
   const first = document.querySelector('#modalHost [data-autofocus]') || document.querySelector('#modalHost button');
-  if (first) first.focus();
+  if (first) AC.focusAfterAction(first);
   placeToast();
 }
 function modalKeys(e) {
@@ -726,6 +732,7 @@ function postLine(e) {
 }
 function linesHtml(e) {
   const noCogsChip = (l, where) => {
+    if (l.unmapped) return '<span class="ac-chip ac-chip--warn">Not mapped</span>';
     const noCogs = l.id === 'def' ? (S.resolved.cogs === 'revonly' ? 6120 : 0) + (S.resolved.sku === 'leave' ? 1284 : 0) : 0;
     return noCogs ? `<span class="ac-chip ac-chip--wait ${where}">${money(noCogs)} no COGS</span>` : '';
   };
@@ -867,7 +874,7 @@ function downloadCsv(name, rows) {
 }
 function postModal() {
   const list = unposted();
-  const row = e => `<tr><th scope="row">${esc(e.name)}${e.cur ? ' ' + e.cur : ''}</th><td><div class="ac-name">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : ''}${ordersOffChip(e)}${e.native !== undefined ? `<span class="ac-chip ac-chip--warn">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>` : ''}</div></td><td class="ac-num">${money(totals(e).dr, e.cur)}</td></tr>`;
+  const row = e => `<tr><th scope="row"><div class="ac-name">${esc(e.name)}${e.cur ? ' ' + e.cur : ''}${ordersOffChip(e)}${e.lines.filter(l => l.unmapped).map(l => `<span class="ac-chip ac-chip--warn">${esc(l.bucket)} not mapped</span>`).join('')}</div></th><td><div class="ac-name">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : ''}${e.native !== undefined ? `<span class="ac-chip ac-chip--warn">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>` : ''}</div></td><td class="ac-num">${money(totals(e).dr, e.cur)}</td></tr>`;
   const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr class="ac-total"><th scope="row">Total ${cur || 'USD'}</th><td></td><td class="ac-num"><span>${money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur)}</span></td></tr>` : ''; };
   const exceptions = AC.openExceptions();
   const warning = exceptions.length ? `<p class="ac-lead ac-lead--chip"><a class="ac-chip ac-chip--warn" href="${esc(AC.hrefOf('exceptions'))}">${plural(exceptions.length, 'exception', 'exceptions')} open, ${AC.money(AC.sum(exceptions, ex => ex.amount))}</a></p>` : '';
@@ -1021,7 +1028,7 @@ document.addEventListener('click', e => {
     S.open[fresh.id] = true;
     render();
     const toggle = document.querySelector('[data-entry-toggle="' + fresh.id + '"]');
-    if (toggle) { toggle.scrollIntoView({ block:'center' }); toggle.focus({ preventScroll:true }); }
+    if (toggle) { toggle.scrollIntoView({ block:'center' }); focusNext(toggle, { preventScroll:true }); }
     return;
   }
   const d = e.target.closest('[data-discard]');
@@ -1030,7 +1037,8 @@ document.addEventListener('click', e => {
   S.entries.splice(at, 1);
   delete S.open[x.id];
   render();
-  toast('Corrected ' + (x.baseName || x.name) + (x.cur ? ' ' + x.cur : '') + ' entry discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Discard undone.'); });
+  toast('Corrected ' + (x.baseName || x.name) + (x.cur ? ' ' + x.cur : '') + ' entry discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Discard undone.'); focusNext(document.querySelector('[data-entry-toggle="' + x.id + '"]'), { preventScroll:true }); });
+  if (!e.detail) AC.focusAfterAction(document.getElementById('toastUndo'));
 });
 document.addEventListener('change', e => {
   const s = e.target;

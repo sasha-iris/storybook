@@ -75,6 +75,9 @@
     .ac-panel__body .ac-kv__row--note { align-items:flex-start; padding-top:10px; padding-bottom:10px; }
     .ac-kv__row--note .ac-kv__value { white-space:pre-wrap; overflow-wrap:anywhere; }
     .ac-history__title { padding-bottom:4px; font-size:14px; line-height:20px; letter-spacing:0; }
+    /* Facts only: the table behind stays readable. */
+    .ac-panel { width:min(560px,100%); }
+    body.ac.ac-panel-open #toastHost { right:calc(min(560px,100vw) + 16px); }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -362,7 +365,7 @@
       document.getElementById('acceptNoteError').textContent = '';
     });
     area.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submitAccept(ids); } });
-    area.focus();
+    AC.focusAfterAction(area);
   }
   function submitAccept(ids) {
     const area = document.getElementById('acceptNote');
@@ -425,6 +428,7 @@
     return `<div class="ac-kv">
         ${kvRow('Severity', severityHtml(ex))}
         ${kvRow('Subject', subjectHtml(ex))}
+        ${ex.type === 'payout_failed' ? kvRow('Reason', `<span class="ac-fault">Payout failed: ${esc((AC.settlement(ex.subject) || {}).failureCode || '')}</span>`) : ''}
         ${breakFacts(ex)}
         ${kvRow('Status', statusHtml(status))}
         ${kvRow('Assignee', assignee)}

@@ -21,10 +21,8 @@
     /* From 1280 the two cards sit side by side: period rows share the checklist's lines and one bottom edge. */
     @media (min-width:1280px) { .ac-close-head--periods { min-height:52px; padding-bottom:16px; box-sizing:border-box; } }
     /* Checklist row: label, amount, then the state on one left edge, so a chip is never a page width from its label. */
-    .ac-close-check { display:grid; grid-template-columns:280px 112px minmax(0,1fr); }
     .ac-close-check .ac-kv__label { overflow:visible; }
     /* Beside Months the card is narrow: the longest label still fits and a done row keeps its whole fact. */
-    @media (min-width:1280px) and (max-width:1439px) { .ac-close-check { grid-template-columns:240px 112px minmax(0,1fr); } }
     @media (max-width:767px) { .ac-close-check { grid-template-columns:minmax(0,1fr) 72px var(--ac-state); } .ac-close-check .ac-kv__label { overflow:hidden; } }
     /* The whole row is the link, as on Overview: no underline until the pointer is on it. */
     .ac-kv__row--link .ac-link:not(:hover):not(:active) { text-decoration-color:transparent; }
@@ -81,15 +79,14 @@ const stateHtml = c => {
   const state = c.done ? `<span class="ac-status ac-status--ok">${esc(c.status)}</span>`
     : c.page ? `<span class="ac-chip ac-chip--warn">${esc(c.status)}</span>`
     : `<span class="ac-status ac-status--quiet">${esc(c.status)}</span>`;
-  const fact = c.fact && !isAmount(c.fact) ? `<span class="ac-note">${esc(c.fact)}</span>` : '';
-  return `<span class="ac-close-state">${state}${fact}</span>`;
+  const fact = c.fact ? `<span class="ac-note">${esc(c.fact)}</span>` : '';
+  return `<span class="ac-close-status">${state}</span>${fact}`;
 };
 const checkRow = c => {
   const href = c.page ? AC.hrefOf(c.page) + c.hash : '';
-  if (c.id === 'mapping') return `<div class="ac-kv__row ac-close-check" role="listitem"><span class="ac-kv__label">${esc(c.label)}</span><span class="ac-note ac-close-state"><a class="ac-link" href="${esc(href)}" data-key="check-mapping">${esc(c.status)}</a></span></div>`;
-  const amount = isAmount(c.fact) ? `<span class="ac-note ac-num">${esc(c.fact)}</span>` : '';
+  if (c.id === 'mapping') return `<div class="ac-kv__row ac-close-check" role="listitem"><span class="ac-kv__label">${esc(c.label)}</span><span class="ac-note ac-close-status"><a class="ac-link" href="${esc(href)}" data-key="check-mapping">${esc(c.status)}</a></span></div>`;
   const label = href ? `<a class="ac-link" href="${esc(href)}" data-key="check-${esc(c.id)}">${esc(c.label)}</a>` : esc(c.label);
-  return `<div class="ac-kv__row ac-close-check${href ? ' ac-kv__row--link' : ''}" role="listitem" data-done="${c.done}"><span class="ac-kv__label${href || c.done ? '' : ' ac-zero'}">${label}</span>${amount}${stateHtml(c)}</div>`;
+  return `<div class="ac-kv__row ac-close-check${href ? ' ac-kv__row--link' : ''}" role="listitem" data-done="${c.done}"><span class="ac-kv__label${href || c.done ? '' : ' ac-zero'}">${label}</span>${stateHtml(c)}</div>`;
 };
 const mappingCheck = () => {
   const open = AC.unmapped();
@@ -123,7 +120,7 @@ const monthCard = month => `<section class="ac-card ac-s8" aria-labelledby="mont
   <div class="ac-kv" role="list" aria-labelledby="monthTitle">${rowsOf(month).map(checkRow).join('')}</div></section>`;
 
 /* ---------- Closing and reopening ---------- */
-function focusAction() { AC.focusAfterAction(document.querySelector('[data-key="periodAction"]')); }
+function focusAction() { const a = document.querySelector('[data-key="periodAction"]'), undo = document.getElementById('toastUndo'); if (a) a.focus(); if (undo && !document.documentElement.classList.contains('pm-pointer')) AC.focusAfterAction(undo); else if (a) AC.focusAfterAction(a); }
 function setLock(month, lock) {
   if (lock) AC.state.closed[month] = lock; else delete AC.state.closed[month];
   AC.save();
@@ -147,7 +144,7 @@ function askClose(month) {
   const posted = AC.state.journal.posted;
   AC.openDialog({
     title:'Close ' + month,
-    body:`<p class="ac-close-line">${AC.count(posted)} ${posted === 1 ? 'entry' : 'entries'} posted to ${esc(AC.LEDGER)}.</p><p class="ac-close-line">Entries can no longer change.</p>`,
+    body:`<p class="ac-close-line">${AC.count(posted)} ${posted === 1 ? 'entry' : 'entries'} posted to ${esc(AC.LEDGER)}.</p><p class="ac-close-line">Entries become read only.</p>`,
     actions:[{ label:'Cancel', kind:'alternative', autofocus:true, onClick:() => AC.closeDialog() }, { label:'Close ' + month, kind:'primary', onClick:() => closePeriod(month) }],
   });
 }

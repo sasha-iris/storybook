@@ -135,7 +135,7 @@
   };
   const rowHtml = m => {
     const s = shown(m);
-    return `<tr data-map="${esc(AC.mappingKey(m))}"><th scope="row">${esc(m.bucket)}</th>${selectCell(m, 'debit', s, 'debit account')}${selectCell(m, 'credit', s, 'credit account')}${dateCell(m, 'from', s, 'effective from')}${dateCell(m, 'to', s, 'effective to', true)}<td class="ac-right" id="${statusId(m)}" data-status aria-live="polite">${STATUS[statusOf(m)]}</td></tr>`;
+    return `<tr data-map="${esc(AC.mappingKey(m))}"><th scope="row">${esc(m.bucket)}</th>${selectCell(m, 'debit', s, 'debit account')}${AC.NET_BUCKETS.includes(m.bucket) ? `<td class="ac-field"><span class="ac-static">${esc((AC.mappingOf(AC.MAPPING.find(x => x.source === m.source && x.bucket === 'Charges')) || {}).debit || '')}</span></td>` : selectCell(m, 'credit', s, 'credit account')}${dateCell(m, 'from', s, 'effective from')}${dateCell(m, 'to', s, 'effective to', true)}<td class="ac-right" id="${statusId(m)}" data-status aria-live="polite">${STATUS[statusOf(m)]}</td></tr>`;
   };
   const tableCard = () => {
     const r = AC.rail(rail);
