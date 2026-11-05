@@ -134,8 +134,8 @@ body.ac .ac-input { font-family:inherit; }
 body.ac .ac-actions .btn-ghost:hover { background:var(--ac-track); color:var(--ac-ink); }
 /* Round 1: selected segment reads without colour, empty fields have an edge, row headers look like cells, a dialog that holds focus while posting shows no ring. */
 .ac-seg__item[aria-pressed="true"] { box-shadow:0 0 0 1px #6B7280; }
-body.ac .ac-input { border-color:#858C99; }
-body.ac .ac-input:hover { border-color:#6B7280; }
+body.ac .ac-input:where(:not([type="date"])) { border-color:#858C99; }
+body.ac .ac-input:where(:not([type="date"])):hover { border-color:#6B7280; }
 .ac-table tbody th { font-weight:400; color:var(--ac-ink); }
 .ac-table .ac-total th { height:44px; padding-bottom:12px; vertical-align:bottom; font-weight:600; }
 .ac-table .ac-row--link:hover th { background:var(--ac-sub); } .ac-table .ac-row--link:active th { background:var(--ac-page); } .ac-table .ac-row--sel th { background:var(--ac-sel); } .ac-table .ac-row--sel:hover th { background:var(--ac-sel-h); }
@@ -148,8 +148,8 @@ body.ac .ac-select:focus-visible { border-color:var(--ac-ctl-h); }
 .ac-row--link:hover td, .ac-table .ac-row--link:hover th, .ac-kv__row--link:hover { background:#F3F4F6; }
 .ac-row--link:active td, .ac-table .ac-row--link:active th, .ac-kv__row--link:active { background:#E5E7EB; }
 .ac-table .ac-row--sel:hover td, .ac-table .ac-row--sel:hover th { background:var(--ac-sel-h); }
-.ac-table .ac-row--open:hover td, .ac-table .ac-row--open:hover th { background:#E5E7EB; }
-.ac-table .ac-row--open:active td, .ac-table .ac-row--open:active th { background:#D1D5DB; }
+.ac-table .ac-row--open:hover td, .ac-table .ac-row--open:hover th { background:#F3F4F6; }
+.ac-table .ac-row--open:active td, .ac-table .ac-row--open:active th { background:#E5E7EB; }
 body.ac .btn-primary:active:not([aria-disabled="true"]) { background:#2C2663; border-color:#2C2663; }
 body.ac .ac-actions .btn-ghost:active { background:#D1D5DB; }
 .ac-total .ac-num.ac-zero > span { border-top-color:transparent; }
@@ -159,8 +159,35 @@ body.ac .ac-actions .btn-ghost:active { background:#D1D5DB; }
 .ac-chev { margin:0 2px 0 -8px; }
 .ac-table--panel td:nth-child(8), .ac-table--panel th:nth-child(8) { padding-left:24px; }
 
-a.ac-chip { text-decoration:underline solid var(--ac-ul) 1px; text-underline-offset:3px; }
+a.ac-chip { text-decoration:underline solid currentColor 1px; text-underline-offset:3px; }
 a.ac-chip:hover { color:var(--ac-pri); text-decoration-color:currentColor; }
 a.ac-chip:active { color:var(--ac-pri-d); text-decoration-color:currentColor; }
 .ac-table--lines tbody tr + tr th { position:relative; }
 .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:8px; right:0; top:0; height:1px; background:var(--ac-hair); }
+/* Round 2, visual. Month close: one layout on Overview and Close. */
+.ac-close__head ~ .ac-kv .ac-kv__row { display:grid; grid-template-columns:280px 112px minmax(0,1fr); gap:16px; justify-content:start; }
+.ac-close__head ~ .ac-kv .ac-kv__row > .ac-num { grid-column:2; }
+.ac-close__head ~ .ac-kv .ac-close-state { display:flex; grid-column:3; align-items:center; gap:8px; min-width:0; }
+@media (min-width:1280px) and (max-width:1439px) { .ac-close__head ~ .ac-kv .ac-kv__row { grid-template-columns:240px 112px minmax(0,1fr); } }
+/* Panel facts sit next to their labels. */
+.ac-panel .ac-kv__row { justify-content:flex-start; gap:0; }
+.ac-panel .ac-kv__label { flex:0 0 192px; }
+.ac-panel .ac-kv__row > .ac-num { min-width:104px; }
+/* Title and note share a baseline. */
+.ac-head { align-items:baseline; }
+.ac-head > .ac-actions { align-self:center; }
+.ac-head__title { margin-top:2px; }
+.ac-card__head { align-items:baseline; }
+.ac-card__head > .ac-actions { align-self:center; }
+.ac-source__head .ac-note { font-weight:400; }
+/* Ids on the row's baseline, close glyph on the panel's edge, live region out of flow. */
+.ac-table td.ac-mono { padding-top:2px; }
+.ac-crumb .ac-mono { position:relative; top:1px; }
+.ac-panel__head .ac-actions { min-height:36px; }
+body.ac .modal-close { margin-right:-11px; }
+div.ac-sr { position:fixed; top:0; left:0; }
+.ac-table--panel:not(.ac-table--orders) col:last-child { width:88px; }
+col.ac-col-state.ac-wide { width:104px; }
+/* Classic scrollbars: the page keeps its width behind an overlay. */
+html:has(.ac-backdrop, .modal-backdrop) #app { padding-right:calc(32px + var(--ac-gutter, 0px)) !important; }
+

@@ -29,7 +29,7 @@
     }
     /* The sum needs the room: at this width the count keeps its figure and its word stays for screen readers, and the segments and Clear give up 4 a side. A very long sum cuts before the page ever scrolls sideways. */
     @media (min-width:1024px) and (max-width:1279px) {
-      .ac-sel-word { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+      .ac-sel-amt { display:none; }
       body.ac .ac-seg__item, body.ac #clearSel { padding:0 8px; }
       .ac-bar .ac-actions { flex:0 1 auto; min-width:0; }
       #selCount { min-width:0; overflow:hidden; text-overflow:ellipsis; }
@@ -74,7 +74,7 @@
     .ac-kv__value { min-width:0; }
     .ac-panel__body .ac-kv__row--note { align-items:flex-start; padding-top:10px; padding-bottom:10px; }
     .ac-kv__row--note .ac-kv__value { white-space:pre-wrap; overflow-wrap:anywhere; }
-    .ac-history__title { padding-bottom:4px; }
+    .ac-history__title { padding-bottom:4px; font-size:14px; line-height:20px; letter-spacing:0; }
   </style>
 </head>
 <body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
@@ -164,7 +164,7 @@
   const pruneSelection = () => { const ok = selectableIds(); selected = new Set([...selected].filter(id => ok.includes(id))); };
 
   const sumOf = ids => AC.money(AC.sum(ids, id => byId(id).amount));
-  const selectionHtml = () => (selected.size ? `${selected.size}<span class="ac-sel-word"> selected</span> · ${sumOf([...selected])}` : '');
+  const selectionHtml = () => (selected.size ? `${selected.size}<span class="ac-sel-word"> selected</span><span class="ac-sel-amt"> · ${sumOf([...selected])}</span>` : '');
   function bulkHtml() {
     if (isLocked() && hasRows()) return `<span class="ac-note">${esc(AC.month())} is closed</span>`;
     if (AC.VIEW_ONLY) return hasRows() ? '<span class="ac-note">View only</span>' : '';

@@ -58,7 +58,9 @@
     /* Ledger values sit on the table's Debit account line, Connected on its Status line. */
     .ac-ledger .ac-kv__row { justify-content:flex-start; gap:0; }
     .ac-ledger .ac-kv__label { flex:0 0 calc(var(--ac-comp) + var(--ac-gut) - 8px); }
-    .ac-ledger .ac-status { margin-left:auto; }
+    .ac-ledger .ac-status { margin-left:8px; }
+    /* A head over a control starts where the control's text starts. */
+    .ac-table thead th:nth-child(2), .ac-table thead th:nth-child(3), .ac-table thead th:nth-child(4), .ac-table thead th:nth-child(5) { padding-left:calc(var(--ac-gut) + 13px); }
 
     /* The empty title is an h2: the library's h2 size would win over the system's 14/20. */
     body.ac .ac-empty__title { font-size:14px; line-height:20px; letter-spacing:0; }

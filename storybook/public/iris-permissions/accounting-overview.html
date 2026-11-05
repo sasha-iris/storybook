@@ -20,14 +20,13 @@
     .ac-tile__note { letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; }
     /* A row of cards inside the stack never widens the page. */
     .ac-stack { grid-template-columns:minmax(0,1fr); }
-    .ac-close__end { display:flex; flex:none; align-items:center; gap:16px; }
-    .ac-close__state { width:var(--ac-state); text-align:right; }
+    /* Month close needs the width: side by side with the checkpoints only from 1600. */
+    @media (max-width:1599px) { section[aria-labelledby="monthCloseTitle"] { grid-column:span 12; } .ac-cp:not(.ac-card--off) { grid-column:span 6; } }
     /* Under 1440 a checkpoint's note drops under its title. Month close takes the same head height, so the three cards' rows share their lines. */
     @media (min-width:1280px) and (max-width:1439px) {
       .ac-cp .ac-card__head { flex-direction:column; align-items:flex-start; gap:0; }
       .ac-close__head { padding-bottom:28px; }
       /* A done row's long fact takes the room its chip no longer needs, so the label is never cut. */
-      .ac-close__state--done { width:auto; }
     }
   </style>
 </head>
@@ -75,11 +74,12 @@
   /* ---------- Month close ---------- */
   function checkRow(check) {
     const money = /^\$/.test(check.fact);
-    const fact = check.fact ? `<span class="ac-note${money ? ' ac-num' : ''}">${esc(check.fact)}</span>` : '';
+    const amount = money ? `<span class="ac-note ac-num">${esc(check.fact)}</span>` : '';
+    const fact = check.fact && !money ? `<span class="ac-note">${esc(check.fact)}</span>` : '';
     const state = check.done ? `<span class="ac-status ac-status--ok">${esc(check.status)}</span>`
       : check.page ? `<span class="ac-chip ac-chip--warn">${esc(check.status)}</span>`
       : `<span class="ac-status ac-status--quiet">${esc(check.status)}</span>`;
-    const end = `<span class="ac-close__end">${fact}<span class="ac-close__state${check.done ? ' ac-close__state--done' : ''}">${state}</span></span>`;
+    const end = `${amount}<span class="ac-close-state">${state}${fact}</span>`;
     return check.page
       ? `<div class="ac-kv__row ac-kv__row--link"><a class="ac-kv__label ac-link ac-link--quiet" href="${AC.hrefOf(check.page)}${check.hash}" data-key="check-${check.id}">${esc(check.label)}</a>${end}</div>`
       : `<div class="ac-kv__row"><span class="ac-kv__label">${esc(check.label)}</span>${end}</div>`;
@@ -90,7 +90,7 @@
     if (!open.length) return '';
     const rail = AC.RAILS.find(r => r.name === open[0].source && !r.cur);
     const text = AC.count(open.length) + ' not mapped';
-    return `<div class="ac-kv__row"><span class="ac-note"><a class="ac-link" href="${AC.hrefOf('settings')}${rail ? '#' + rail.id : ''}" aria-label="Account mapping, ${esc(text)}" data-key="mappingLink">${esc(text)}</a></span></div>`;
+    return `<div class="ac-kv__row"><span class="ac-kv__label">Account mapping</span><span class="ac-note ac-close-state"><a class="ac-link" href="${AC.hrefOf('settings')}${rail ? '#' + rail.id : ''}" data-key="mappingLink">${esc(text)}</a></span></div>`;
   }
 
   function monthClose() {
@@ -100,7 +100,7 @@
     const lock = AC.lockOf(month);
     const end = status === 'closed' && lock
       ? `<span class="ac-note">${esc(lock.at)} by ${esc(lock.by === 'You' ? 'you' : lock.by)}</span>`
-      : `<a class="btn ${AC.closeReady(month) ? 'btn-primary' : 'btn-neutral'} btn-sm" href="${AC.hrefOf('close')}" data-key="closeLink">Go to Close</a>`;
+      : `<a class="btn ${AC.closeReady(month) ? 'btn-primary' : 'btn-neutral'} btn-sm ac-btn-row" href="${AC.hrefOf('close')}" data-key="closeLink">Go to Close</a>`;
     return `<section class="ac-card ac-s6" aria-labelledby="monthCloseTitle"><div class="ac-card__head ac-close__head"><h2 class="ac-card__title" id="monthCloseTitle">Month close</h2>${status === 'closed' ? `<span class="ac-status ac-status--quiet">${word}</span>` : `<span class="ac-chip ac-chip--wait">${word}</span>`}<div class="ac-actions">${end}</div></div><div class="ac-kv">${AC.closeChecks(month).map(checkRow).join('')}${mappingRow()}</div></section>`;
   }
 

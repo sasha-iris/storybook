@@ -13,13 +13,13 @@
   <link rel="stylesheet" href="assets/accounting.css">
   <style>
     /* The month card's head holds a 36 px control in every state, so its rows never move. */
-    .ac-close-head { min-height:56px; box-sizing:border-box; }
+    .ac-close-head { min-height:0; box-sizing:border-box; }
     .ac-close-title { min-width:76px; }
     .ac-close-action { min-width:124px; }
     /* A blocked Close still takes the click: it moves focus to what blocks it. */
     body.ac .ac-close-action[aria-disabled="true"] { pointer-events:auto; }
     /* From 1280 the two cards sit side by side: period rows share the checklist's lines and one bottom edge. */
-    @media (min-width:1280px) { .ac-close-head--periods { min-height:64px; padding-bottom:16px; box-sizing:border-box; } }
+    @media (min-width:1280px) { .ac-close-head--periods { min-height:52px; padding-bottom:16px; box-sizing:border-box; } }
     /* Checklist row: label, amount, then the state on one left edge, so a chip is never a page width from its label. */
     .ac-close-check { display:grid; grid-template-columns:280px 112px minmax(0,1fr); }
     .ac-close-check .ac-kv__label { overflow:visible; }
@@ -111,11 +111,11 @@ const blockerNote = month => {
 const monthActions = month => {
   if (AC.periodClosed(month)) {
     const lock = AC.lockOf(month);
-    const reopen = AC.state.closed[month] && !AC.VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-close-action" data-act="reopen" data-key="periodAction">Reopen ${esc(month)}</button>` : '';
+    const reopen = AC.state.closed[month] && !AC.VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-btn-row ac-close-action" data-act="reopen" data-key="periodAction">Reopen ${esc(month)}</button>` : '';
     return `<span class="ac-note">${esc(lock.at)} by ${esc(lock.by === 'You' ? 'you' : lock.by)}</span>${reopen}`;
   }
   const ready = AC.closeReady(month), note = blockerNote(month);
-  const close = AC.VIEW_ONLY ? '' : `<button type="button" class="btn btn-primary btn-sm ac-close-action" data-act="close" data-key="periodAction"${ready ? '' : ' aria-disabled="true"'}${note ? ' aria-describedby="closeNote"' : ''}>Close ${esc(month)}</button>`;
+  const close = AC.VIEW_ONLY ? '' : `<button type="button" class="btn btn-primary btn-sm ac-btn-row ac-close-action" data-act="close" data-key="periodAction"${ready ? '' : ' aria-disabled="true"'}${note ? ' aria-describedby="closeNote"' : ''}>Close ${esc(month)}</button>`;
   return `${note ? `<span class="ac-note" id="closeNote">${esc(note)}</span>` : ''}${close}`;
 };
 const monthCard = month => `<section class="ac-card ac-s8" aria-labelledby="monthTitle">

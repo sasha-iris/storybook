@@ -17,6 +17,8 @@
   const AC = window.AC;
   const esc = AC.esc;
 
+  /* With classic scrollbars a stable gutter is not in clientWidth, only in the root's own box. */
+  AC.measureGutter = () => document.documentElement.style.setProperty('--ac-gutter', Math.max(0, window.innerWidth - document.documentElement.offsetWidth) + 'px');
   /* Tab icon, from wherever this page's assets live. */
   (function () {
     const css = document.querySelector('link[href*="panorama-match.css"]');
@@ -97,10 +99,9 @@
   function lockPage() {
     if (locked) return;
     locked = true;
-    const gutter = window.innerWidth - document.documentElement.clientWidth;
+    AC.measureGutter();
     document.documentElement.style.scrollbarGutter = 'auto';
     document.body.style.overflow = 'hidden';
-    document.body.style.paddingRight = gutter + 'px';
     document.querySelector('body > div').inert = true;
   }
   function unlockPage() {

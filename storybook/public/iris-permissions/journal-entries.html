@@ -59,7 +59,7 @@
     /* Panels and dialogs show tables of different columns. */
     .ac-table--fit { table-layout:auto; }
     .ac-lead { margin:0 0 16px; }
-    .ac-lead--chip { margin-top:-8px; }
+    .ac-lead--chip { display:flex; margin-top:-8px; }
     .ac-showing { margin:8px 0 16px; white-space:normal; }
     .ac-panel__body > .ac-note { margin:0; }
     .ac-hint { display:block; font-weight:400; color:var(--ac-2); }
@@ -479,16 +479,14 @@ let lastClickTarget = null;
 /* The scrim and the panel reach the window edge, and the page behind does not shift. */
 function lockPage() {
   if (document.body.style.overflow === 'hidden') return;
-  const gutter = window.innerWidth - document.documentElement.clientWidth;
+  AC.measureGutter();
   document.documentElement.style.scrollbarGutter = 'auto';
   document.body.style.overflow = 'hidden';
-  document.body.style.paddingRight = gutter + 'px';
   document.querySelector('body > div').inert = true;
 }
 function unlockPage() {
   document.documentElement.style.scrollbarGutter = '';
   document.body.style.overflow = '';
-  document.body.style.paddingRight = '';
   document.querySelector('body > div').inert = false;
 }
 function openModal(title, body, footer, size) {
