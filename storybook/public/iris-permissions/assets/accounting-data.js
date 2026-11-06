@@ -116,7 +116,7 @@
       out.push({ id:'po_' + r.prefix + 'P1', rail:r.id, channel:AC.railLabel(r), cur:r.cur, date:'Oct 2', from:rows[rows.length - 1].date, to:'Sep 30', status:'pending', orders:Math.max(1, Math.round(r.n.charge * r.end / r.net)), gross:pendingGross, refunds:pendingRefunds, chargebacks:0, fees:round2(pendingGross - pendingRefunds - pendingTax - pendingNet), tax:pendingTax, reserves:0, adjustments:0, reportedNet:null, expectedNet:pendingNet, diff:0 });
     });
     /* One failed payout: sample of the third data status. Not counted in the rail's paid total. */
-    if (AC.rail('stripe')) out.push({ id:'po_St90', rail:'stripe', channel:'Stripe', date:'Sep 29', from:'Sep 28', to:'Sep 28', status:'failed', failureCode:'account_closed', orders:9, gross:1302.11, refunds:28.04, chargebacks:0, fees:34.10, tax:1.00, reserves:0, adjustments:0, reportedNet:null, expectedNet:1238.97, diff:0 });
+    if (AC.rail('stripe')) out.push({ id:'po_St90', rail:'stripe', channel:'Stripe', date:'Sep 29', from:'Sep 28', to:'Sep 28', status:'failed', failureCode:'account_closed', failureText:'Bank account closed', orders:9, gross:1302.11, refunds:28.04, chargebacks:0, fees:34.10, tax:1.00, reserves:0, adjustments:0, reportedNet:null, expectedNet:1238.97, diff:0 });
     return out;
   }
   AC.SETTLEMENTS = buildSettlements();
@@ -262,7 +262,7 @@
     return [[by('paid'), 'paid'], [by('pending'), 'pending'], [word('accepted'), 'accepted'], [word('resolved'), 'resolved']].filter(x => x[0]).map(x => x[0] + ' ' + x[1]).join(' · ');
   };
   AC.closeChecks = month => {
-    const LABELS = [['settlements', 'Settlements reconciled'], ['exceptions', 'Exceptions resolved or accepted'], ['decided', 'Items decided'], ['posted', 'Entries posted']];
+    const LABELS = [['settlements', 'Settlements reconciled'], ['exceptions', 'Exceptions cleared or accepted'], ['posted', 'Journals posted']];
     if (month !== AC.MONTH) {
       const closed = AC.periodClosed(month);
       return LABELS.map(l => ({ id:l[0], label:l[1], done:closed, status:closed ? 'Done' : 'No data', fact:'', page:null, hash:'' }));
@@ -271,11 +271,12 @@
     const posted = j.posted, left = j.total - posted;
     return [
       { id:'settlements', label:LABELS[0][1], done:!breaks.length, status:breaks.length ? [plural(breaks.filter(s => s.status === 'break').length, 'break'), breaks.some(s => s.status === 'failed') ? breaks.filter(s => s.status === 'failed').length + ' failed' : ''].filter(x => !x.startsWith('0')).filter(Boolean).join(' · ') : 'Done', fact:breaks.length ? AC.money(sum(breaks, s => (s.status === 'failed' ? s.expectedNet : Math.abs(s.diff)))) : settlementFacts(), page:'settlements', hash:breaks.length === 1 ? '#status=' + breaks[0].status : '' },
-      { id:'exceptions', label:LABELS[1][1], done:!open.length, status:open.length ? open.length + ' open' : 'Done', fact:open.length ? AC.money(sum(open, ex => ex.amount)) : [[AC.EXCEPTIONS.filter(ex => AC.exceptionStatus(ex) === 'resolved').length, 'resolved'], [AC.EXCEPTIONS.filter(ex => AC.exceptionStatus(ex) === 'accepted').length, 'accepted']].filter(x => x[0]).map(x => x[0] + ' ' + x[1]).join(' · '), page:'exceptions', hash:'' },
-      { id:'decided', label:LABELS[2][1], done:!j.open, status:j.open ? j.open + ' to decide' : 'Done', fact:j.open || !j.items ? '' : j.items + ' of ' + j.items, page:'journal', hash:'' },
-      { id:'posted', label:LABELS[3][1], done:!left, status:left ? posted + ' of ' + j.total : 'Done', fact:left ? (j.failed ? j.failed + ' failed' : '') : j.total + ' of ' + j.total, page:'journal', hash:'' },
+      { id:'exceptions', label:LABELS[1][1], done:!open.length, status:open.length ? [open.length - toDecide(open) ? (open.length - toDecide(open)) + ' open' : '', toDecide(open) ? toDecide(open) + ' to decide' : ''].filter(Boolean).join(' · ') : 'Done', fact:open.length ? AC.money(sum(open, ex => ex.amount)) : [[AC.EXCEPTIONS.filter(ex => AC.exceptionStatus(ex) === 'resolved').length, 'resolved'], [AC.EXCEPTIONS.filter(ex => AC.exceptionStatus(ex) === 'accepted').length, 'accepted']].filter(x => x[0]).map(x => x[0] + ' ' + x[1]).join(' · '), page:'exceptions', hash:'' },
+      { id:'posted', label:LABELS[2][1], done:!left, status:left ? posted + ' of ' + j.total : 'Done', fact:left ? (j.failed ? j.failed + ' failed' : '') : j.total + ' of ' + j.total, page:'journal', hash:'' },
     ];
   };
+  /* Unmatched payments wait for their decision on Journal entries. */
+  const toDecide = list => (AC.state.journal.unmatchedDecision ? 0 : list.filter(ex => ex.type === 'order_unmatched_payment').length);
   AC.closeReady = month => AC.closeChecks(month).every(c => c.done);
 
   /* ---------- Mapping with this session's changes ---------- */

@@ -10,65 +10,9 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
-  <link rel="stylesheet" href="assets/accounting.css">
-  <style>
-    /* Column widths from the system's list. Component takes small under 1280, so the select keeps its longest account. A date needs 148 at every width. */
-    :root { --ac-comp:var(--ac-chan); }
-    @media (max-width:1279px) { :root { --ac-comp:var(--ac-small); } }
-    .ac-col-comp { width:var(--ac-comp); }
-    .ac-col-eff { width:148px; }
-
-    /* Form cells: the keyboard ring is not clipped by the cell, and the control centres in a 40 px row. */
-    .ac-table td.ac-field:not(.ac-wide) { overflow:visible; }
-    @media (min-width:1280px) { .ac-table td.ac-field.ac-wide { overflow:visible; } }
-    body.ac .ac-field .ac-select--row, body.ac .ac-field .ac-input--row { display:block; }
-
-    /* Date input: same box as the row select, calendar icon on the select chevron's line. */
-    body.ac .ac-input--row { padding-right:8px; font-family:inherit; font-variant-numeric:tabular-nums lining-nums; }
-    .ac-input--row::-webkit-calendar-picker-indicator { width:16px; height:16px; margin:0 0 0 4px; padding:0; opacity:.6; cursor:pointer; }
-    .ac-input--row::-webkit-calendar-picker-indicator:hover { opacity:1; }
-    .ac-input--row:disabled::-webkit-calendar-picker-indicator { opacity:.6; cursor:not-allowed; }
-    body.ac .ac-input--row:disabled:hover { border-color:var(--ac-track); }
-    .ac-input--row::-webkit-calendar-picker-indicator:focus { opacity:1; outline:2px solid var(--ac-pri); outline-offset:0; }
-    html.pm-pointer .ac-input--row::-webkit-calendar-picker-indicator:focus { outline:none; }
-    .ac-input--row::-webkit-datetime-edit-month-field:focus,
-    .ac-input--row::-webkit-datetime-edit-day-field:focus,
-    .ac-input--row::-webkit-datetime-edit-year-field:focus { background:var(--ac-sel); color:var(--ac-ink); }
-    .ac-input--empty::-webkit-datetime-edit { color:var(--ac-3); }
-
-    /* One slot beside Save: the reason it is off, or Discard. Export CSV never moves. */
-    .ac-slot { display:inline-grid; align-items:center; justify-items:end; }
-    .ac-slot > * { grid-area:1 / 1; }
-    .ac-slot__off { visibility:hidden; }
-
-    /* The library turns pointer events off on a disabled button, which would hide the system's not-allowed cursor. */
-    body.ac #saveBtn[aria-disabled="true"] { pointer-events:auto; }
-
-    /* Ghost on the page background: the system's hover fill is the page colour, so it takes the next two steps. */
-    .ac-head .btn-ghost:hover:not(:disabled) { background:var(--ac-track); }
-    .ac-head .btn-ghost:active:not(:disabled) { background:var(--ac-ctl); }
-
-    /* A warn chip that is a button. Fill and pressed values are the segment's. */
-    .ac-chip-btn { position:relative; isolation:isolate; border:0; font-family:inherit; cursor:pointer; }
-    .ac-chip-btn::before { content:''; position:absolute; inset:0; z-index:-1; border-radius:4px; transition:background-color .12s; }
-    .ac-chip-btn::after { content:''; position:absolute; inset:-8px 0; }
-    .ac-chip-btn:hover::before { background:rgba(17,25,40,.06); }
-    .ac-chip-btn:active::before { background:rgba(17,25,40,.1); }
-
-    /* Ledger values sit on the table's Debit account line, Connected on its Status line. */
-    .ac-ledger .ac-kv__row { justify-content:flex-start; gap:0; }
-    .ac-ledger .ac-kv__label { flex:0 0 calc(var(--ac-comp) + var(--ac-gut) - 8px); }
-    .ac-ledger .ac-status { margin-left:8px; }
-    /* A head over a control starts where the control's text starts. */
-    .ac-table thead th:nth-child(2), .ac-table thead th:nth-child(3), .ac-table thead th:nth-child(4), .ac-table thead th:nth-child(5) { padding-left:calc(var(--ac-gut) + 13px); }
-
-    /* The empty title is an h2: the library's h2 size would win over the system's 14/20. */
-    body.ac .ac-empty__title { font-size:14px; line-height:20px; letter-spacing:0; }
-
-    @media (prefers-reduced-motion:reduce) { .ac-chip-btn::before { transition:none; } }
-  </style>
+  <link rel="stylesheet" href="assets/accounting-layout.css">
 </head>
-<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac ds" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
   <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
@@ -76,7 +20,7 @@
 <div id="toastHost" role="status" aria-live="polite"></div>
 <div id="modalHost"></div>
 
-<script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Accounting";</script>
+<script>window.PM_RAIL_EXTRA = "Accounting"; window.PM_RAIL_ACTIVE = "Settings";</script>
 <script src="assets/panorama-match.js"></script>
 <script src="assets/accounting-data.js"></script>
 <script src="assets/accounting-shell.js"></script>
@@ -92,7 +36,7 @@
   let rail = railFromHash();
   let lastUnmapped = '';
 
-  /* Dates live as the data writes them, "Jan 1, 2026". The input speaks ISO. */
+  /* Dates live as the data writes them, "Jan 1, 2026". The calendar speaks ISO. */
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const toIso = s => { const x = /^([A-Z][a-z]{2}) (\d{1,2}), (\d{4})$/.exec(s || ''); return x ? x[3] + '-' + String(MONTHS.indexOf(x[1]) + 1).padStart(2, '0') + '-' + x[2].padStart(2, '0') : ''; };
   const fromIso = s => { const x = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return x ? MONTHS[Number(x[2]) - 1] + ' ' + Number(x[3]) + ', ' + x[1] : ''; };
@@ -103,124 +47,116 @@
   const saved = m => { const s = AC.mappingOf(m); return { debit:s.debit || '', credit:s.credit || '', from:s.from || '', to:s.to || '' }; };
   const shown = m => Object.assign(saved(m), draft()[AC.mappingKey(m)]);
   const hasChanges = () => AC.MAPPING.some(m => draft()[AC.mappingKey(m)]);
-  const EARLIEST = '1900-01-01', LATEST = '9999-12-31';
-  const badDate = s => (toIso(s.from) < EARLIEST ? 'from' : s.to && toIso(s.to) < toIso(s.from) ? 'to' : '');
-  const firstBad = () => AC.MAPPING.find(m => draft()[AC.mappingKey(m)] && badDate(shown(m)));
-  /* A date is judged once the field is left, or as soon as the other field makes it wrong. Never while its own year is half typed. */
-  const typing = (m, field) => document.activeElement.dataset.key === fieldKey(m, field);
-  const flagged = m => { const f = badDate(shown(m)); return f && !typing(m, f) ? f : ''; };
+  const needsCredit = m => !AC.NET_BUCKETS.includes(m.bucket);
   const statusOf = m => {
-    if (flagged(m)) return 'Check dates';
-    if (draft()[AC.mappingKey(m)]) return 'Changed';
-    const s = saved(m);
-    return s.debit && s.credit ? 'Mapped' : 'Not mapped';
+    const s = shown(m), complete = s.debit && (s.credit || !needsCredit(m));
+    if (!complete) return 'Not mapped';
+    return draft()[AC.mappingKey(m)] ? 'Changed' : 'Mapped';
   };
   const STATUS = {
-    Mapped:'<span class="ac-status ac-status--ok">Mapped</span>',
-    Changed:'<span class="ac-status ac-status--quiet">Changed</span>',
-    'Not mapped':'<span class="ac-chip ac-chip--warn">Not mapped</span>',
-    'Check dates':'<span class="ac-chip ac-chip--warn">Check dates</span>',
+    Mapped:'<span class="ac-muted">Mapped</span>',
+    Changed:'<span class="badge badge-gray badge-sm">Changed</span>',
+    'Not mapped':'<span class="badge badge-yellow badge-sm">Not mapped</span>',
   };
 
   /* ---------- Drawing ---------- */
-  const fieldKey = (m, field) => railOf(m).id + '-' + m.bucket.toLowerCase() + '-' + field;
-  const statusId = m => fieldKey(m, 'status');
-  const offAttr = () => (AC.VIEW_ONLY ? ' disabled' : '');
-  const selectCell = (m, field, s, label) => `<td class="ac-field"><select class="form-input form-select ac-select ac-select--row" aria-label="${esc(m.bucket)} ${label}" data-field="${field}" data-key="${fieldKey(m, field)}"${offAttr()}><option value="">Not mapped</option>${AC.ACCOUNTS.map(a => `<option${a === s[field] ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select></td>`;
-  const dateMin = (s, field) => (field === 'to' && toIso(s.from)) || EARLIEST;
-  const dateMax = (s, field) => (field === 'from' && toIso(s.to)) || LATEST;
-  const dateCell = (m, field, s, label, wide) => {
-    const iso = toIso(s[field]), bad = flagged(m) === field;
-    return `<td class="ac-field${wide ? ' ac-wide' : ''}"><input type="date" class="ac-input ac-input--row${iso ? '' : ' ac-input--empty'}${bad ? ' is-invalid' : ''}" value="${iso}" min="${dateMin(s, field)}" max="${dateMax(s, field)}"${bad ? ` aria-invalid="true" aria-describedby="${statusId(m)}"` : ''} aria-label="${esc(m.bucket)} ${label}" data-field="${field}" data-key="${fieldKey(m, field)}"${offAttr()}></td>`;
+  const keyOf = m => AC.mappingKey(m);
+  const accountCell = (m, field, s, label) => {
+    if (AC.VIEW_ONLY) return AC.td(s[field] ? esc(s[field]) : '<span class="ac-muted">Not mapped</span>', {});
+    return AC.td(AC.filterMenu({ name:keyOf(m) + '|' + field, label:m.bucket + ' ' + label, value:s[field], quiet:true, options:[['', 'Not mapped']].concat(AC.ACCOUNTS.map(a => [a, a])) }), {});
+  };
+  const dateCell = (m, field, s, label, cls) => {
+    if (AC.VIEW_ONLY) return AC.td(s[field] ? esc(s[field]) : AC.none, { cls });
+    return AC.td(`<div class="ac-menu-wrap"><button type="button" class="ac-cell-btn" data-date="${esc(keyOf(m))}|${field}" data-key="date:${esc(keyOf(m))}|${field}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(m.bucket + ' ' + label + ', ' + (s[field] || 'not set'))}">${s[field] ? esc(s[field]) : AC.none}</button></div>`, { cls });
   };
   const rowHtml = m => {
     const s = shown(m);
-    return `<tr data-map="${esc(AC.mappingKey(m))}"><th scope="row">${esc(m.bucket)}</th>${selectCell(m, 'debit', s, 'debit account')}${AC.NET_BUCKETS.includes(m.bucket) ? `<td class="ac-field"><span class="ac-static">${esc((AC.mappingOf(AC.MAPPING.find(x => x.source === m.source && x.bucket === 'Charges')) || {}).debit || '')}</span></td>` : selectCell(m, 'credit', s, 'credit account')}${dateCell(m, 'from', s, 'effective from')}${dateCell(m, 'to', s, 'effective to', true)}<td class="ac-right" id="${statusId(m)}" data-status aria-live="polite">${STATUS[statusOf(m)]}</td></tr>`;
+    const creditCell = needsCredit(m) ? accountCell(m, 'credit', s, 'credit account') : AC.td(`<span class="ac-fixed-acct" title="Follows the Charges debit account">${esc((AC.mappingOf(AC.MAPPING.find(x => x.source === m.source && x.bucket === 'Charges')) || {}).debit || '')}</span>`, {});
+    return `<tr data-map="${esc(keyOf(m))}">${AC.td(esc(m.bucket), { head:true })}${accountCell(m, 'debit', s, 'debit account')}${creditCell}${dateCell(m, 'from', s, 'effective from')}${dateCell(m, 'to', s, 'effective to', 'ac-wide')}${AC.td(STATUS[statusOf(m)], {})}</tr>`;
+  };
+  const railButton = r => {
+    const n = AC.unmapped().filter(m => m.source === r.name).length;
+    return `<button type="button" class="btn${r.id === rail ? ' active' : ''}" aria-pressed="${r.id === rail}" data-rail="${r.id}" data-key="seg-${r.id}">${esc(r.name)}${n ? `<span class="btn-group-stat-count">${n}<span class="ac-sr"> not mapped</span></span>` : ''}</button>`;
   };
   const tableCard = () => {
-    const r = AC.rail(rail);
-    return `<section class="ac-card"><form autocomplete="off"><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">${esc(r.name)} account mapping</caption><colgroup><col class="ac-col-comp"><col><col><col class="ac-col-eff"><col class="ac-col-eff ac-wide"><col class="ac-col-status"></colgroup><thead><tr><th scope="col">Component</th><th scope="col">Debit account</th><th scope="col">Credit account</th><th scope="col">Effective from</th><th scope="col" class="ac-wide">Effective to</th><th scope="col" class="ac-right">Status</th></tr></thead><tbody>${rowsOf(r).map(rowHtml).join('')}</tbody></table></div></form></section>`;
+    const r = AC.rail(rail), on = hasChanges();
+    const footer = AC.VIEW_ONLY ? '' : `<div class="card-footer ac-close-foot"><span></span><span class="ac-toolbar">${on ? '<button type="button" class="btn btn-neutral btn-sm" id="discardBtn" data-key="discardBtn">Discard changes</button>' : ''}<button type="button" class="btn ${on ? 'btn-primary' : 'btn-neutral'} btn-sm" id="saveBtn" data-key="saveBtn"${on ? '' : ' disabled'}>Save changes</button></span></div>`;
+    return `<section class="card" aria-label="Account mapping">${AC.cardBar(`<div class="btn-group" role="group" aria-label="Rail">${RAILS.map(railButton).join('')}</div>`)}<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin ac-dst--map"><caption class="ac-sr">${esc(r.name)} account mapping</caption><colgroup><col style="width:160px"><col><col><col style="width:136px"><col class="ac-wide" style="width:136px"><col style="width:128px"></colgroup><thead><tr>${AC.th('Component')}${AC.th('Debit account')}${AC.th('Credit account')}${AC.th('Effective from')}${AC.th('Effective to', { cls:'ac-wide' })}${AC.th('Status')}</tr></thead><tbody>${rowsOf(r).map(rowHtml).join('')}</tbody></table></div>${footer}</section>`;
   };
-  const barHtml = () => {
-    const open = AC.unmapped();
-    const segs = RAILS.map(r => {
-      const n = open.filter(m => m.source === r.name).length;
-      return `<button type="button" class="ac-seg__item" aria-pressed="${r.id === rail}" data-rail="${r.id}" data-key="seg-${r.id}">${esc(r.name)}${n ? ` <span class="ac-muted">${n}</span><span class="ac-sr"> not mapped</span>` : ''}</button>`;
-    }).join('');
-    const chip = open.length ? `<div class="ac-actions"><button type="button" class="ac-chip ac-chip--warn ac-chip-btn" id="notMappedBtn" data-key="notMappedBtn">${open.length} not mapped</button></div>` : '';
-    return `<div class="ac-bar"><div class="ac-seg" role="group" aria-label="Rail">${segs}</div>${chip}</div>`;
-  };
-  const ledgerCard = () => `<section class="ac-card ac-ledger"><div class="ac-card__head"><h2 class="ac-card__title">Organization</h2></div><div class="ac-kv"><div class="ac-kv__row"><span class="ac-kv__label">Ledger</span><span>${esc(AC.LEDGER)}</span><span class="ac-status ac-status--ok">Connected</span></div><div class="ac-kv__row"><span class="ac-kv__label">Timezone</span><span>${esc(AC.TIMEZONE)}</span></div></div></section>`;
+  const ledgerCard = () => `<section class="card" aria-labelledby="orgTitle">${AC.cardTitle('orgTitle', 'Organization')}<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin ac-dst--kv"><caption class="ac-sr">Organization</caption><colgroup><col style="width:160px"><col></colgroup><tbody><tr>${AC.td('Ledger', { head:true })}${AC.td(`<span class="ac-name"><span>${esc(AC.LEDGER)}</span><span class="badge badge-green badge-sm">Connected</span></span>`, {})}</tr><tr>${AC.td('Timezone', { head:true })}${AC.td(esc(AC.TIMEZONE), {})}</tr></tbody></table></div></section>`;
 
-  /* ---------- Sync in place: a date being typed is never redrawn, and its own min and max stay put, or the browser wipes the half typed parts ---------- */
-  function syncRow(tr, m) {
-    const s = shown(m), bad = flagged(m);
-    tr.querySelectorAll('input[data-field]').forEach(el => {
-      const invalid = bad === el.dataset.field;
-      el.classList.toggle('is-invalid', invalid);
-      el.classList.toggle('ac-input--empty', !el.value);
-      if (invalid) { el.setAttribute('aria-invalid', 'true'); el.setAttribute('aria-describedby', statusId(m)); } else { el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); }
-      if (el === document.activeElement) return;
-      const min = dateMin(s, el.dataset.field), max = dateMax(s, el.dataset.field);
-      if (el.min !== min) el.min = min;
-      if (el.max !== max) el.max = max;
-    });
-    tr.querySelector('[data-status]').innerHTML = STATUS[statusOf(m)];
-  }
-  function syncHead() {
-    const save = $('saveBtn');
-    if (!save) return;
-    const on = hasChanges();
-    if (on) { save.removeAttribute('aria-disabled'); save.removeAttribute('aria-describedby'); }
-    else { save.setAttribute('aria-disabled', 'true'); save.setAttribute('aria-describedby', 'saveNote'); }
-    $('saveNote').classList.toggle('ac-slot__off', on);
-    $('discardBtn').classList.toggle('ac-slot__off', !on);
-  }
-  const mappingOfRow = tr => AC.MAPPING.find(m => AC.mappingKey(m) === tr.dataset.map);
-
-  /* ---------- Actions ---------- */
-  function edit(el) {
-    const tr = el.closest('tr'), m = mappingOfRow(tr), k = AC.mappingKey(m);
-    const value = el.tagName === 'SELECT' ? el.value : fromIso(el.value);
-    const next = Object.assign(shown(m), { [el.dataset.field]:value }), base = saved(m);
+  /* ---------- Editing ---------- */
+  function edit(m, field, value) {
+    const k = keyOf(m);
+    const next = Object.assign(shown(m), { [field]:value }), base = saved(m);
     if (FIELDS.every(f => next[f] === base[f])) delete draft()[k]; else draft()[k] = next;
     AC.save();
-    syncRow(tr, m);
-    syncHead();
+    AC.rerender();
   }
+  const mappingOfKey = k => AC.MAPPING.find(m => keyOf(m) === k);
+  AC.onMenuPick = (name, value) => {
+    const [k, field] = name.split('|');
+    edit(mappingOfKey(k), field, value);
+    const b = document.querySelector(`[data-key="${CSS.escape('menu:' + name)}"]`);
+    if (b) b.focus();
+  };
+
+  /* ---------- Calendar from the library, one at a time ---------- */
+  let cal = null;
+  const DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const pad = n => String(n).padStart(2, '0');
+  const NAV = dir => `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"${dir < 0 ? ' style="transform:rotate(180deg)"' : ''}><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>`;
+  function calHtml() {
+    const s = shown(cal.m), iso = toIso(s[cal.field]);
+    const min = cal.field === 'to' ? toIso(s.from) : '', max = cal.field === 'from' ? toIso(s.to) : '';
+    const lead = new Date(cal.y, cal.mo, 1).getDay(), days = new Date(cal.y, cal.mo + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < lead; i += 1) cells.push('<span></span>');
+    for (let d = 1; d <= days; d += 1) {
+      const id = `${cal.y}-${pad(cal.mo + 1)}-${pad(d)}`, off = (min && id < min) || (max && id > max);
+      cells.push(`<button type="button" class="iris-cal__day${id === iso ? ' iris-cal__day--range-selected' : ''}${off ? ' iris-cal__day--disabled' : ''}" data-day="${id}"${off ? ' disabled' : ''}${id === iso ? ' aria-current="date"' : ''}>${d}</button>`);
+    }
+    const clear = cal.field === 'to' && s.to ? '<div class="iris-cal__footer"><button type="button" class="btn btn-neutral btn-sm" data-day="">Clear</button></div>' : '';
+    return `<div class="iris-cal ac-cal" role="dialog" aria-label="Choose a date"><div class="iris-cal__header"><button type="button" class="iris-cal__nav" data-cal-nav="-1" aria-label="Previous month">${NAV(-1)}</button><div class="iris-cal__title">${MONTHS[cal.mo]} ${cal.y}</div><button type="button" class="iris-cal__nav" data-cal-nav="1" aria-label="Next month">${NAV(1)}</button></div><div class="iris-cal__grid">${DOW.map(d => `<span class="iris-cal__day-header">${d}</span>`).join('')}${cells.join('')}</div>${clear}</div>`;
+  }
+  function closeCal(refocus) {
+    if (!cal) return;
+    const btn = cal.btn;
+    document.querySelectorAll('.ac-cal').forEach(el => el.remove());
+    cal = null;
+    if (btn && btn.isConnected) { btn.setAttribute('aria-expanded', 'false'); if (refocus) btn.focus(); }
+  }
+  function drawCal() {
+    document.querySelectorAll('.ac-cal').forEach(el => el.remove());
+    cal.btn.insertAdjacentHTML('afterend', calHtml());
+  }
+  function openCal(btn) {
+    const [k, field] = btn.dataset.date.split('|');
+    closeCal();
+    const m = mappingOfKey(k), s = shown(m), base = toIso(s[field]) || toIso(s.from) || '2026-09-01';
+    cal = { m, field, btn, y:Number(base.slice(0, 4)), mo:Number(base.slice(5, 7)) - 1 };
+    btn.setAttribute('aria-expanded', 'true');
+    drawCal();
+  }
+
+  /* ---------- Actions ---------- */
   function selectRail(id) {
     if (id === rail) return;
     rail = id;
     location.hash = id;
     AC.rerender();
   }
-  function focusField(m, field) {
-    let el = document.querySelector(`[data-key="${fieldKey(m, field)}"]`);
-    if (el && getComputedStyle(el).visibility === 'hidden') el = document.querySelector(`[data-key="${fieldKey(m, 'from')}"]`);
-    if (el) el.focus();
-  }
-  function goToUnmapped() {
-    const open = AC.unmapped();
-    if (!open.length) return;
-    const m = open[(open.findIndex(x => AC.mappingKey(x) === lastUnmapped) + 1) % open.length];
-    lastUnmapped = AC.mappingKey(m);
-    const s = shown(m);
-    selectRail(railOf(m).id);
-    focusField(m, !s.debit || s.credit ? 'debit' : 'credit');
-  }
   /* Undo: the saved mapping and draft as they were. An edit made since the toast appeared stays. */
   function restore(snapshot) {
     AC.state.mapping = snapshot.mapping;
     AC.state.mappingDraft = Object.assign(snapshot.draft, draft());
-    AC.MAPPING.forEach(m => { const k = AC.mappingKey(m), d = draft()[k], base = saved(m); if (d && FIELDS.every(f => d[f] === base[f])) delete draft()[k]; });
+    AC.MAPPING.forEach(m => { const k = keyOf(m), d = draft()[k], base = saved(m); if (d && FIELDS.every(f => d[f] === base[f])) delete draft()[k]; });
     AC.save();
     AC.rerender();
     AC.focusAfterAction($('saveBtn'));
   }
   function save(byKey) {
-    if ($('saveBtn').getAttribute('aria-disabled') === 'true') return;
-    const bad = firstBad();
-    if (bad) { const field = badDate(shown(bad)); selectRail(railOf(bad).id); focusField(bad, field); return; }
+    if ($('saveBtn').disabled) return;
     const before = { mapping:clone(AC.state.mapping), draft:clone(draft()) };
     Object.keys(draft()).forEach(k => { AC.state.mapping[k] = draft()[k]; });
     AC.state.mappingDraft = {};
@@ -234,61 +170,40 @@
     AC.state.mappingDraft = {};
     AC.save();
     AC.rerender();
-    $('saveBtn').focus();
     AC.toast('Changes discarded.', { undo:() => restore(before) });
     if (byKey) AC.focusAfterAction($('toastUndo'));
   }
-  function exportCsv() {
-    /* Export takes focus as a click on it does, so a date still being typed is judged now: the row and the file read the same status. */
-    $('exportBtn').focus();
-    const rows = AC.MAPPING.map(m => {
-      const s = shown(m), r = railOf(m);
-      return [m.source, m.bucket, s.debit || 'Not mapped', s.credit || 'Not mapped', toIso(s.from), toIso(s.to), statusOf(m), r.cur || 'USD', r.id];
-    });
-    AC.downloadCsv('accounting-mapping.csv', [['Rail', 'Component', 'Debit account', 'Credit account', 'Effective from', 'Effective to', 'Status', 'Currency', 'Rail id']].concat(rows));
-    AC.toast('CSV exported.');
-  }
 
-  /* ---------- Events. The form's autocomplete="off" keeps Back from pouring remembered values into redrawn controls. ---------- */
-  document.addEventListener('submit', e => e.preventDefault());
-  const onField = e => { if (e.target.matches && e.target.matches('[data-field]')) edit(e.target); };
-  document.addEventListener('input', onField);
-  document.addEventListener('change', onField);
+  /* ---------- Events ---------- */
   document.addEventListener('click', e => {
+    const nav = e.target.closest('[data-cal-nav]');
+    if (nav) { const d = new Date(cal.y, cal.mo + Number(nav.dataset.calNav), 1); cal.y = d.getFullYear(); cal.mo = d.getMonth(); drawCal(); return; }
+    const day = e.target.closest('[data-day]');
+    if (day) { const { m, field } = cal, key = cal.btn.dataset.key; closeCal(); edit(m, field, fromIso(day.dataset.day)); const b = document.querySelector(`[data-key="${CSS.escape(key)}"]`); if (b) b.focus(); return; }
+    const dateBtn = e.target.closest('[data-date]');
+    if (dateBtn) { if (cal && cal.btn === dateBtn) closeCal(true); else openCal(dateBtn); return; }
+    if (cal && !e.target.closest('.ac-cal')) closeCal();
     const seg = e.target.closest('[data-rail]');
     if (seg) { selectRail(seg.dataset.rail); return; }
     const btn = e.target.closest('button');
     if (!btn) return;
-    if (btn.id === 'notMappedBtn') goToUnmapped();
-    if (btn.id === 'exportBtn' && e.detail < 2) exportCsv();
     if (btn.id === 'discardBtn') discard(e.detail === 0);
     if (btn.id === 'saveBtn') save(e.detail === 0);
   });
-  document.addEventListener('focusout', e => {
-    const el = e.target;
-    if (!el.isConnected || !el.matches('input[data-field]')) return;
-    if (el.validity.badInput) el.value = '';
-    const tr = el.closest('tr');
-    syncRow(tr, mappingOfRow(tr));
-  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && cal) closeCal(true); });
   window.addEventListener('hashchange', () => {
     const id = railFromHash();
     if (id !== rail) { rail = id; AC.rerender(); }
   });
 
+  const crumbs = () => `<div class="ac-crumbs">${AC.crumb(AC.hrefOf('settings'), undefined, 'Settings', 'Account mapping')}</div>`;
   AC.start({
     current:'settings',
     noMonth:true,
-    head:() => {
-      if (!RAILS.length) return {};
-      const exportBtn = '<button type="button" class="btn btn-neutral btn-sm" id="exportBtn" data-key="exportBtn">Export CSV</button>';
-      if (AC.VIEW_ONLY) return { actions:exportBtn };
-      const on = hasChanges();
-      return { actions:`${exportBtn}<span class="ac-slot"><span class="ac-note${on ? ' ac-slot__off' : ''}" id="saveNote">No changes</span><button type="button" class="btn btn-ghost btn-sm${on ? '' : ' ac-slot__off'}" id="discardBtn" data-key="discardBtn">Discard changes</button></span><button type="button" class="btn btn-primary btn-sm" id="saveBtn" data-key="saveBtn"${on ? '' : ' aria-disabled="true" aria-describedby="saveNote"'}>Save changes</button>` };
-    },
+    head:() => ({ standalone:true }),
     render:() => (RAILS.length
-      ? `${barHtml()}<div class="ac-stack">${tableCard()}${ledgerCard()}</div>`
-      : `<div class="ac-stack"><section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No rails connected</h2><a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a></div></section>${ledgerCard()}</div>`),
+      ? `${crumbs()}<div class="ac-stack">${tableCard()}${ledgerCard()}</div>`
+      : `${crumbs()}<div class="ac-stack"><section class="card"><div class="ac-empty"><span class="ac-muted">No rails connected</span><a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a></div></section>${ledgerCard()}</div>`),
   });
 })();
 </script>

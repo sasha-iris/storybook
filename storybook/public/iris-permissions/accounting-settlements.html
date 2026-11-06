@@ -10,56 +10,13 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
-  <link rel="stylesheet" href="assets/accounting.css">
+  <link rel="stylesheet" href="assets/accounting-layout.css">
   <style>
-    /* List: focus clears the pinned head and the pinned table head. No line above a total. */
-    html:has(body.ac .ac-table--sticky) { scroll-padding-top:140px; }
-    /* Row headers carry the same hairline as the cells beside them. */
-    .ac-table--lines tbody tr + tr th { position:relative; }
-    .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:0; right:0; top:0; height:1px; background:var(--ac-hair); }
-    .ac-table--lines tbody tr + tr th:first-child::after { left:8px; }
-    .ac-table--lines tbody tr.ac-total td::after, .ac-table--lines tbody tr.ac-total th::after { content:none; }
-    .ac-pager .ac-flip svg { transform:rotate(180deg); }
-
-    /* Crumb */
-    .ac-crumb .ac-mono { color:var(--ac-ink); }
-    .ac-crumb a:active { color:var(--ac-pri-d); }
-    .ac-crumb .ac-chip--wait { background:var(--ac-track); }
-    .ac-crumb-row { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:36px; margin-bottom:16px; }
-    .ac-crumb-row .ac-crumb { min-width:0; margin-bottom:0; }
-    .ac-crumb-row > .ac-link { flex:none; }
-    @media (max-width:1023px) { .ac-crumb-row { flex-wrap:wrap; } }
-
-    /* Status cell: the chip, then what became of its exception. The list column holds both from the start, so nothing moves when it appears. */
-    .ac-table .ac-chip + .ac-note { margin-left:8px; }
-    @media (max-width:1279px) { .ac-table--sticky { --ac-status:140px; } }
-
-    /* Waterfall: a hairline carries the running level from one step to the next, straight through the rows with nothing in them. Net closes the amount column with the sum rule, in the total row's height, so its number stays level with its bar. */
-    .ac-card__head--facts { display:block; }
-    .ac-wf { padding-bottom:8px; }
-    .ac-wf__bar { z-index:1; }
-    .ac-wf__link { position:absolute; width:1px; background:var(--ac-ctl); }
-    .ac-wf__row--zero .ac-wf__label { color:var(--ac-2); }
-    .ac-wf__row--net { height:44px; }
-    .ac-wf__row--net .ac-num { align-self:end; padding-bottom:12px; }
-    .ac-wf__row--net .ac-num > span { display:inline-block; min-width:var(--ac-sum); padding-top:8px; border-top:1px solid var(--ac-ink); }
-
-    /* The side stack ends on the waterfall's bottom edge: Net takes the slack, Bank match keeps its one line. */
-    @media (min-width:1280px) { .ac-stack--fill { grid-template-rows:1fr auto; align-content:stretch; } }
-    /* Until 1500 the side stack takes one more track, so the rows in Net hold their exception link on one line. */
-    @media (min-width:1280px) and (max-width:1499px) { .ac-grid > .ac-s8 { grid-column:span 7; } .ac-grid > .ac-s4 { grid-column:span 5; } }
-    .ac-kv__lead { display:flex; align-items:baseline; gap:8px; min-width:0; }
-    .ac-kv__lead .ac-link { font-weight:400; }
-    .ac-kv__row--total .ac-warn { font-weight:600; }
-    .ac-kv__row--total .ac-kv__bare { border-top:0; }
-
-    /* Facts in the panel share the left edge of its head and of the source row, as on Events. */
-    .ac-panel__body .ac-kv { margin:0 -16px; padding-bottom:0; }
-
-    .ac-card__head + .ac-empty { padding-top:0; }
+    .st-c0 { width:17%; } .st-c1 { width:12%; } .st-c2 { width:14%; } .st-c3 { width:176px; }
+    @media (max-width:1279px) { .st-c0 { width:152px; } .st-c1 { width:104px; } .st-c2 { width:112px; } .st-c3 { width:104px; } }
   </style>
 </head>
-<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac ds" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
   <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
@@ -75,7 +32,6 @@
 (function () {
   const esc = AC.esc;
   const PAGE_SIZE = 25;
-  const NONE = '<span aria-hidden="true">–</span><span class="ac-sr">not available</span>';
   const YEAR = AC.MONTH.split(' ')[1];
   const dateOf = d => new Date(d + ', ' + YEAR);
   const isoOf = d => { const x = dateOf(d); return [x.getFullYear(), String(x.getMonth() + 1).padStart(2, '0'), String(x.getDate()).padStart(2, '0')].join('-'); };
@@ -167,10 +123,7 @@
   /* What still blocks the close comes first, so the first click from Overview lands on it. */
   const ordered = () => { const open = AC.openBreaks(); return open.concat(SORTED.filter(s => !open.includes(s))); };
   const inFilter = f => (hasData() ? ordered().filter(s => (!f.rail || s.rail === f.rail) && (!f.status || s.status === f.status)) : []);
-  const moneyCell = (n, cur, extra) => (n === 0
-    ? `<td class="ac-num ac-zero${extra ? ' ' + extra : ''}">${AC.money(0, cur)}</td>`
-    : `<td class="ac-num${extra ? ' ' + extra : ''}">${AC.signed(n, cur)}</td>`);
-  const noneCell = () => `<td class="ac-num ac-zero"><div>${NONE}</div></td>`;
+  const hasFigures = () => AC.MONTHS.includes(AC.month());
   const exceptionOf = s => AC.exceptionOf(s.id);
   /* Accepted or Resolved, once the settlement's exception has left the open list. */
   function clearedWord(s) {
@@ -180,21 +133,21 @@
   }
   function statusHtml(s) {
     const word = AC.SETTLEMENT_STATUS[s.status];
-    if (s.status === 'paid') return `<span class="ac-status ac-status--ok">${word}</span>`;
+    if (s.status === 'paid') return `<span class="ac-muted">${word}</span>`;
     const cleared = clearedWord(s);
-    return `<span class="ac-chip ac-chip--${{ pending:'wait', break:'warn', failed:'bad' }[s.status]}">${word}</span>${cleared ? `<span class="ac-note">${cleared}</span>` : ''}`;
+    return `<span class="badge ${{ pending:'badge-gray', break:'badge-yellow', failed:'badge-red' }[s.status]} badge-sm">${word}</span>${cleared ? `<span class="ac-muted ac-wide-only">${cleared}</span>` : ''}`;
   }
-  function diffClass(n) { return n === 0 ? 'ac-zero' : AC.breakCleared('po_Tk05') ? '' : 'ac-warn'; }
+  const diffHtml = (n, cur) => { if (!n) return AC.amt(0, cur); return AC.breakCleared('po_Tk05') ? esc(AC.signed(n, cur)) : `<span class="badge badge-yellow badge-sm">${esc(AC.signed(n, cur))}</span>`; };
   const rowHtml = s => {
     const reported = s.reportedNet !== null;
-    return `<tr class="ac-row--link" data-row="${esc(s.id)}">
-      <th scope="row">${esc(s.channel)}</th>
-      <th scope="row" class="ac-mono"><a class="ac-link" href="#${esc(s.id)}" data-settlement="${esc(s.id)}">${esc(s.id)}</a></th>
-      <td>${esc(rangeOf(s))}</td>
-      ${reported ? `<td class="ac-num ac-end">${AC.money(s.reportedNet, s.cur)}</td>` : noneCell()}
-      <td class="ac-num">${AC.money(s.expectedNet, s.cur)}</td>
-      ${reported ? `<td class="ac-num ${diffClass(s.diff)}">${AC.signed(s.diff, s.cur)}</td>` : noneCell()}
-      <td class="ac-right">${statusHtml(s)}</td>
+    return `<tr class="ac-row" data-row="${esc(s.id)}">
+      ${AC.td(esc(s.channel), { head:true })}
+      ${AC.td(`<a class="btn-link btn-link-semibold btn-sm" href="#${esc(s.id)}" data-settlement="${esc(s.id)}">${esc(s.id)}</a>`, {})}
+      ${AC.td(esc(rangeOf(s)), {})}
+      ${AC.td(reported ? esc(AC.money(s.reportedNet, s.cur)) : AC.none, { num:true })}
+      ${AC.td(esc(AC.money(s.expectedNet, s.cur)), { num:true })}
+      ${AC.td(reported ? diffHtml(s.diff, s.cur) : AC.none, { num:true })}
+      ${AC.td(`<span class="ac-name">${statusHtml(s)}</span>`, {})}
     </tr>`;
   };
   /* One row per currency in the filter, over all filtered rows. Currencies never add up. */
@@ -207,41 +160,33 @@
       return (done.length ? [paid] : []).concat(open.length ? [waiting] : []);
     }).flat();
   }
-  const totalHtml = t => `<tr class="ac-total">
-      <th scope="row" colspan="3">${esc(t.label)}</th>
-      ${t.reported === null ? noneCell() : `<td class="ac-num"><span>${AC.money(t.reported, t.cur)}</span></td>`}
-      <td class="ac-num"><span>${AC.money(t.expected, t.cur)}</span></td>
-      ${t.diff === null ? noneCell() : `<td class="ac-num ${diffClass(t.diff)}"><span>${AC.signed(t.diff, t.cur)}</span></td>`}
-      <td></td>
+  const totalHtml = t => `<tr>
+      ${AC.td(esc(t.label + ', ' + AC.month()), { head:true, row:'total', span:3 })}
+      ${AC.td(t.reported === null ? AC.none : esc(AC.money(t.reported, t.cur)), { num:true, row:'total' })}
+      ${AC.td(esc(AC.money(t.expected, t.cur)), { num:true, row:'total' })}
+      ${AC.td(t.diff === null ? AC.none : AC.amt(t.diff, t.cur), { num:true, row:'total' })}
+      ${AC.td('', { row:'total' })}
     </tr>`;
-  function selectHtml(id, label, value, options) {
-    return `<select class="form-input form-select ac-select ac-w160" id="${id}" data-key="${id}" aria-label="${label}"${hasData() ? '' : ' disabled'}>${options.map(o => `<option value="${esc(o[0])}"${value === o[0] ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
-  }
-  const barHtml = f => `<div class="ac-bar">
-      ${selectHtml('stRail', 'Rail', f.rail, [['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])))}
-      ${selectHtml('stStatus', 'Status', f.status, [['', 'All statuses']].concat(Object.keys(AC.SETTLEMENT_STATUS).map(k => [k, AC.SETTLEMENT_STATUS[k]])))}
-    </div>`;
-  const emptyCard = inner => `<section class="ac-card"><div class="ac-empty">${inner}</div></section>`;
+  const filters = f => AC.filterMenu({ name:'rail', label:'Rail', value:f.rail, options:[['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])) }) + AC.filterMenu({ name:'status', label:'Status', value:f.status, options:[['', 'All statuses']].concat(Object.keys(AC.SETTLEMENT_STATUS).map(k => [k, AC.SETTLEMENT_STATUS[k]])) });
+  const exportBtn = off => `<button type="button" class="btn btn-neutral btn-sm" id="stExport" data-key="stExport"${off ? ' disabled' : ''}>Export CSV</button>`;
+  const emptyCard = (bar, inner) => `<section class="card" aria-label="Settlements">${bar}<div class="ac-empty">${inner}</div></section>`;
   function listHtml(f) {
-    if (!hasData()) return barHtml(f) + emptyCard(`<p class="ac-empty__title">No settlements for ${esc(AC.month())}</p>`);
+    if (!hasData()) return `<div class="ac-stack">${emptyCard('', `<span class="ac-muted">${hasFigures() ? 'No settlements for ' : 'No sample figures for '}${esc(AC.month())}</span>`)}</div>`;
     const rows = inFilter(f);
-    if (!rows.length) return barHtml(f) + emptyCard('<p class="ac-empty__title">No settlements match these filters</p><button type="button" class="btn btn-neutral btn-sm" id="stClear">Clear filters</button>');
-    const pages = Math.ceil(rows.length / PAGE_SIZE);
-    const page = Math.min(f.page, pages);
-    const start = (page - 1) * PAGE_SIZE;
+    const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE)), page = Math.min(f.page, pages), start = (page - 1) * PAGE_SIZE;
+    const pager = rows.length ? AC.pager({ start:start + 1, end:Math.min(start + PAGE_SIZE, rows.length), total:rows.length, page, pages }) : '';
+    const bar = AC.cardBar(filters(f), pager + exportBtn(!rows.length));
+    if (!rows.length) return `<div class="ac-stack">${emptyCard(bar, '<span class="ac-muted">No settlements match these filters</span><button type="button" class="btn btn-neutral btn-sm" id="stClear">Clear filters</button>')}</div>`;
     const shown = rows.slice(start, start + PAGE_SIZE);
-    return `${barHtml(f)}<section class="ac-card" aria-label="Settlements">
-      <div class="ac-wrap ac-wrap--foot"><table class="ac-table ac-table--lines ac-table--sticky">
+    return `<div class="ac-stack"><section class="card" aria-label="Settlements">${bar}
+      <div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin">
         <caption class="ac-sr">Settlements</caption>
-        <colgroup><col class="ac-col-chan"><col class="ac-col-id"><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-status"></colgroup>
-        <thead><tr><th scope="col">Rail</th><th scope="col">Settlement</th><th scope="col">Dates</th><th scope="col" class="ac-num">Reported net</th><th scope="col" class="ac-num">Expected net</th><th scope="col" class="ac-num">Difference</th><th scope="col" class="ac-right">Status</th></tr></thead>
+        <colgroup><col class="st-c0"><col class="st-c1"><col><col class="st-c2"><col class="st-c2"><col class="st-c2"><col class="st-c3"></colgroup>
+        <thead><tr>${AC.th('Rail')}${AC.th('Settlement')}${AC.th('Dates')}${AC.th('Reported net', { right:true })}${AC.th('Expected net', { right:true })}${AC.th('Difference', { right:true })}${AC.th('Status')}</tr></thead>
         <tbody>${shown.map(rowHtml).join('')}${totalsOf(rows).map(totalHtml).join('')}</tbody>
       </table></div>
-      <div class="ac-foot"><span class="ac-note">${AC.count(start + 1)} to ${AC.count(start + shown.length)} of ${AC.count(rows.length)}</span><div class="ac-pager">
-        <button type="button" class="btn btn-neutral btn-sm ac-flip" id="stPrev" data-key="stPrev" aria-label="Previous page"${page === 1 ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
-        <button type="button" class="btn btn-neutral btn-sm" id="stNext" data-key="stNext" aria-label="Next page"${page === pages ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
-      </div></div>
-    </section>`;
+      ${AC.foot('', pager)}
+    </section></div>`;
   }
 
   /* ---------- Rows behind one settlement. A pending settlement holds the rail's events that no payout has taken yet. ---------- */
@@ -267,28 +212,13 @@
       { label:s.status === 'paid' ? 'Net' : 'Expected net', value:netOf(s), kind:'net' },
     ];
   }
+  /* Charges down to net, one line per component, as the settlement reports it. */
   function waterfallHtml(s) {
-    const steps = stepsOf(s);
-    const pct = n => (n / s.gross * 100).toFixed(4) + '%';
-    let level = 0;
-    return `<div class="ac-wf" role="table" aria-label="Waterfall from charges to net">${steps.map((step, i) => {
-      const total = !!step.kind, zero = step.value === 0;
-      const start = total ? 0 : Math.min(level, level + step.value);
-      const size = Math.abs(step.value);
-      level = step.kind === 'net' ? level : AC.round2(level + step.value);
-      const barClass = step.kind === 'gross' ? ' ac-wf__bar--total' : step.kind === 'net' ? ' ac-wf__bar--net' : step.value > 0 ? ' ac-wf__bar--up' : '';
-      const bar = zero ? '' : `<div class="ac-wf__bar${barClass}" style="left:${pct(start)};width:${pct(size)};"></div>`;
-      /* The running level, to the top of the next bar: 10 below this track, then 10 down to a 32 row's track, or 16 to Net's. */
-      const reach = 10 + (i === steps.length - 2 ? 16 : 10);
-      const link = step.kind === 'net' ? '' : `<i class="ac-wf__link" style="left:min(calc(${pct(level)} - .5px),calc(100% - 1px));top:${zero ? 0 : 10}px;height:${(zero ? 12 : 2) + reach + 2}px;"></i>`;
+    return `<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin ac-dst--kv"><caption class="ac-sr">Charges to net</caption><colgroup><col><col style="width:160px"></colgroup><tbody>${stepsOf(s).map(step => {
+      const zero = step.value === 0, row = step.kind === 'net' ? 'total' : 'default';
       const count = step.count ? ` <span class="ac-muted">(${AC.count(step.count)})</span>` : '';
-      const amount = zero ? AC.money(0, s.cur) : AC.signed(step.value, s.cur);
-      return `<div class="ac-wf__row${total ? ' ac-wf__row--total' : ''}${step.kind === 'net' ? ' ac-wf__row--net' : ''}${zero ? ' ac-wf__row--zero' : ''}" role="row">
-        <div class="ac-wf__label" role="rowheader">${step.label}${count}</div>
-        <div class="ac-wf__track" aria-hidden="true">${link}${bar}</div>
-        <div class="ac-num${zero ? ' ac-zero' : ''}" role="cell">${step.kind === 'net' ? `<span>${amount}</span>` : amount}</div>
-      </div>`;
-    }).join('')}</div>`;
+      return `<tr>${AC.td(`<span>${zero ? `<span class="ac-zero">${step.label}</span>` : step.label}${count}</span>`, { head:true, row })}${AC.td(zero ? AC.amt(0, s.cur) : esc(AC.signed(step.value, s.cur)), { num:true, row })}</tr>`;
+    }).join('')}</tbody></table></div>`;
   }
   function factsOf(s) {
     const word = { paid:'Paid', break:'Paid', pending:'Expected', failed:'Failed' }[s.status];
@@ -298,101 +228,75 @@
   /* ---------- Net card ---------- */
   function netCardHtml(s) {
     const reported = s.reportedNet !== null;
-    const value = n => (n === null ? `<span class="ac-num ac-zero">${NONE}</span>` : `<span class="ac-num">${AC.money(n, s.cur)}</span>`);
     const ex = exceptionOf(s), cleared = clearedWord(s);
-    const exLink = ex ? `<a class="ac-link" href="${esc(AC.hrefOf('exceptions') + '#' + ex.id)}">${cleared ? cleared + ' · ' : ''}View exception</a>` : '';
-    const diff = !reported ? `<span class="ac-num ac-zero ac-kv__bare">${NONE}</span>` : `<span class="ac-num ${diffClass(s.diff)}">${AC.signed(s.diff, s.cur)}</span>`;
-    return `<section class="ac-card" aria-labelledby="stNetTitle">
-      <div class="ac-card__head"><h2 class="ac-card__title" id="stNetTitle">Net</h2></div>
-      <div class="ac-kv">
-        <div class="ac-kv__row"><span class="ac-kv__label">Reported net</span>${value(s.reportedNet)}</div>
-        <div class="ac-kv__row"><span class="ac-kv__label">Expected net</span>${value(s.expectedNet)}</div>
-        <div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__lead"><span class="ac-kv__label${s.status === 'break' ? ' ac-warn' : ''}">Difference</span>${s.status === 'break' ? exLink : ''}</span>${diff}</div>
-        ${s.status === 'failed' ? `<div class="ac-kv__row"><span class="ac-kv__lead"><span class="ac-fault">Payout failed: ${esc(s.failureCode)}</span>${exLink}</span></div>` : ''}
-      </div>
+    const exLink = ex ? `<a class="btn-link btn-link-semibold btn-sm" href="${esc(AC.hrefOf('exceptions') + '#' + ex.id)}">${cleared ? cleared + ' · ' : ''}View exception</a>` : '';
+    const row = (label, value, o = {}) => `<tr>${AC.td(label, { head:true, row:o.row })}${AC.td(value, { num:true, row:o.row })}</tr>`;
+    return `<section class="card" aria-labelledby="stNetTitle">
+      ${AC.cardTitle('stNetTitle', 'Net')}
+      <div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin ac-dst--kv"><caption class="ac-sr">Net</caption><colgroup><col><col style="width:128px"></colgroup><tbody>
+        ${row('Reported net', reported ? esc(AC.money(s.reportedNet, s.cur)) : AC.none)}
+        ${row('Expected net', esc(AC.money(s.expectedNet, s.cur)))}
+        ${row('Difference', reported ? diffHtml(s.diff, s.cur) : AC.none, { row:'total' })}
+        ${s.status === 'failed' ? `<tr>${AC.td(`<span class="ac-fault">Payout failed: ${esc(s.failureText)}</span>`, { span:2, cls:'ac-wrap-cell' })}</tr>` : ''}
+        ${(s.status === 'break' || s.status === 'failed') && exLink ? `<tr>${AC.td(exLink, { span:2 })}</tr>` : ''}
+        ${row('Bank match', '<span class="ac-muted">Not available yet</span>')}
+      </tbody></table></div>
     </section>`;
   }
 
   /* ---------- Events and orders, on one set of columns ---------- */
-  const COLS = '<colgroup><col class="ac-col-date"><col class="ac-col-id"><col><col class="ac-col-money-l"><col class="ac-col-small"><col class="ac-col-small"><col class="ac-col-money-l"></colgroup>';
-  const noRows = '<div class="ac-empty"><p class="ac-empty__text">No sample rows for this settlement</p></div>';
-  const eventRow = (e, i) => `<tr class="ac-row--link" data-drill data-ev="${i}">
-      <th scope="row"><button type="button" class="ac-toggle" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button></th>
-      <td class="ac-mono">${esc(e.txn)}</td>
-      <td>${esc(e.desc)}</td>
-      ${moneyCell(e.amount, e.cur)}
-      ${moneyCell(e.fee, e.cur)}
-      ${moneyCell(e.tax, e.cur)}
-      ${moneyCell(e.net, e.cur, 'ac-end')}
+  const COLS = '<colgroup><col style="width:96px"><col style="width:144px"><col><col class="ac-col-money"><col class="ac-col-small"><col class="ac-col-small"><col class="ac-col-money"></colgroup>';
+  const noRows = '<div class="ac-empty"><span class="ac-muted">No sample rows for this settlement</span></div>';
+  const eventRow = (e, i) => `<tr class="ac-row" data-drill data-ev="${i}">
+      ${AC.td(`<button type="button" class="ac-rowlink" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button>`, { head:true })}
+      ${AC.td(esc(e.txn), {})}
+      ${AC.td(esc(e.desc), {})}
+      ${AC.td(AC.amt(e.amount, e.cur), { num:true })}
+      ${AC.td(AC.amt(e.fee, e.cur), { num:true })}
+      ${AC.td(AC.amt(e.tax, e.cur), { num:true })}
+      ${AC.td(AC.amt(e.net, e.cur), { num:true })}
     </tr>`;
+  const showingHtml = (n, total, noun) => AC.foot(`Showing ${AC.count(n)} of ${AC.count(total)} ${noun}`);
   function eventsCardHtml(s) {
     const events = eventsOf(s);
-    const body = !events.length ? noRows : `<div class="ac-wrap ac-wrap--foot"><table class="ac-table">
+    const body = !events.length ? noRows : `<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin">
         <caption class="ac-sr">Events</caption>${COLS}
-        <thead><tr><th scope="col">Date</th><th scope="col">Transaction</th><th scope="col">Description</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-num">Fee</th><th scope="col" class="ac-num">Tax</th><th scope="col" class="ac-num">Net</th></tr></thead>
+        <thead><tr>${AC.th('Date')}${AC.th('Transaction')}${AC.th('Description')}${AC.th('Amount', { right:true })}${AC.th('Fee', { right:true })}${AC.th('Tax', { right:true })}${AC.th('Net', { right:true })}</tr></thead>
         <tbody>${events.map(eventRow).join('')}</tbody>
-      </table></div>
-      <div class="ac-foot"><span class="ac-note">Showing ${AC.count(events.length)} of ${AC.count(AC.settlementEventTotal(s))} events</span></div>`;
-    return `<section class="ac-card" aria-labelledby="stEventsTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="stEventsTitle">Events</h2></div>${body}</section>`;
+      </table></div>${showingHtml(events.length, AC.settlementEventTotal(s), 'events')}`;
+    return `<section class="card" aria-labelledby="stEventsTitle">${AC.cardTitle('stEventsTitle', 'Events')}${body}</section>`;
   }
   function amountMatchHtml(s, e) {
-    return offBy(s, e)
-      ? `<span class="ac-chip ac-chip--warn">Off by ${AC.money(s.diff, s.cur)}</span>`
-      : '<span class="ac-status ac-status--ok">Matched</span>';
+    return offBy(s, e) ? `<span class="badge badge-yellow badge-sm">Off by ${AC.money(s.diff, s.cur)}</span>` : '<span class="ac-muted">Matched</span>';
   }
-  const cashMatchHtml = s => (s.status === 'failed' ? '<span class="ac-chip ac-chip--bad">Failed</span>' : s.status === 'pending' ? '<span class="ac-chip ac-chip--wait">Pending</span>' : '<span class="ac-status ac-status--ok">Paid</span>');
+  const cashMatchHtml = s => (s.status === 'failed' ? '<span class="badge badge-red badge-sm">Failed</span>' : s.status === 'pending' ? '<span class="badge badge-gray badge-sm">Pending</span>' : '<span class="ac-muted">Paid</span>');
   function ordersCardHtml(s) {
     const orders = ordersOf(s);
-    const body = !orders.length ? noRows : `<div class="ac-wrap ac-wrap--foot"><table class="ac-table">
-        <caption class="ac-sr">Orders</caption>${COLS}
-        <thead><tr><th scope="col">Order</th><th scope="col" colspan="2">Date</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-right" colspan="2">Amount match</th><th scope="col" class="ac-right">Cash match</th></tr></thead>
-        <tbody>${orders.map(e => `<tr>
-          <th scope="row">${esc(e.order)}</th>
-          <td colspan="2">${esc(e.date)}</td>
-          ${moneyCell(e.amount, e.cur)}
-          <td class="ac-right" colspan="2">${amountMatchHtml(s, e)}</td>
-          <td class="ac-right">${cashMatchHtml(s)}</td>
-        </tr>`).join('')}</tbody>
-      </table></div>
-      <div class="ac-foot"><span class="ac-note">Showing ${AC.count(orders.length)} of ${AC.count(s.orders)} orders</span></div>`;
-    return `<section class="ac-card" aria-labelledby="stOrdersTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="stOrdersTitle">Orders</h2></div>${body}</section>`;
+    const body = !orders.length ? noRows : `<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin">
+        <caption class="ac-sr">Orders</caption><colgroup><col style="width:96px"><col><col class="ac-col-money"><col style="width:176px"><col style="width:128px"></colgroup>
+        <thead><tr>${AC.th('Order')}${AC.th('Date')}${AC.th('Amount', { right:true })}${AC.th('Amount match')}${AC.th('Cash match')}</tr></thead>
+        <tbody>${orders.map(e => `<tr>${AC.td(esc(e.order), { head:true })}${AC.td(esc(e.date), {})}${AC.td(AC.amt(e.amount, e.cur), { num:true })}${AC.td(amountMatchHtml(s, e), {})}${AC.td(cashMatchHtml(s), {})}</tr>`).join('')}</tbody>
+      </table></div>${showingHtml(orders.length, s.orders, 'orders')}`;
+    return `<section class="card" aria-labelledby="stOrdersTitle">${AC.cardTitle('stOrdersTitle', 'Orders')}${body}</section>`;
   }
 
   /* ---------- Detail ---------- */
-  const crumbLink = id => `<a href="${esc(AC.hrefOf('settlements') + listHash(id))}" data-route="${esc(listHash(id))}">Settlements</a>`;
   function detailHtml(id) {
     const s = AC.settlement(id);
-    const crumb = `<nav class="ac-crumb" aria-label="Breadcrumb">${crumbLink(id)}<span aria-hidden="true">/</span><span class="ac-mono" id="stCrumbId" tabindex="-1" aria-current="page">${esc(id)}</span>${s ? statusHtml(s) : ''}</nav>`;
-    if (!s) return `${crumb}${emptyCard(`<p class="ac-empty__title">No settlement <span class="ac-mono">${esc(id)}</span></p>`)}`;
-    return `<div class="ac-crumb-row">${crumb}<a class="ac-link" href="${esc(AC.hrefOf('journal') + '#entry-' + s.rail)}">View journal entry</a></div>
+    const crumb = AC.crumb(AC.hrefOf('settlements') + listHash(id), listHash(id), 'Settlements', id, 'stCrumbId');
+    if (!s) return `<div class="ac-crumbs">${crumb}</div><div class="ac-stack"><section class="card"><div class="ac-empty"><span class="ac-muted">No settlement ${esc(id)}</span></div></section></div>`;
+    return `<div class="ac-crumbs">${crumb}<span class="ac-name">${statusHtml(s)}</span><div class="ac-actions"><a class="btn-link btn-link-semibold btn-sm" href="${esc(AC.hrefOf('journal') + '#entry-' + s.rail)}">View journal entry</a>${exportBtn(false)}</div></div>
       <div class="ac-stack">
-        <div class="ac-grid">
-          <section class="ac-card ac-s8" aria-labelledby="stWfTitle">
-            <div class="ac-card__head ac-card__head--facts">
-              <h2 class="ac-card__title" id="stWfTitle">${esc(s.channel)} · ${esc(rangeOf(s))}</h2>
-              <div class="ac-note">${factsOf(s).map(esc).join(' · ')}</div>
-            </div>
+        <div class="ac-rail">
+          <section class="card" aria-labelledby="stWfTitle">
+            ${AC.cardTitle('stWfTitle', `${esc(s.channel)} · ${esc(rangeOf(s))}`, factsOf(s).map(esc).join(' · '))}
             ${waterfallHtml(s)}
           </section>
-          <div class="ac-s4 ac-stack ac-stack--fill">
-            ${netCardHtml(s)}
-            <section class="ac-card ac-card--off" aria-labelledby="stBankTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="stBankTitle">Bank match</h2><div class="ac-actions"><span class="ac-note">Not available yet</span></div></div></section>
-          </div>
+          ${netCardHtml(s)}
         </div>
         ${eventsCardHtml(s)}
         ${ordersCardHtml(s)}
       </div>`;
-  }
-
-  /* ---------- Head ---------- */
-  function headActions() {
-    const r = route();
-    if (r.view === 'detail') {
-      if (!AC.settlement(r.id)) return '';
-      return '<button type="button" class="btn btn-neutral btn-sm" id="stExport" data-key="stExport">Export CSV</button>';
-    }
-    const off = !inFilter(r).length;
-    return `${off ? '<span class="ac-note" id="stExportWhy">Nothing to export</span>' : ''}<button type="button" class="btn btn-neutral btn-sm" id="stExport" data-key="stExport"${off ? ' aria-disabled="true" aria-describedby="stExportWhy"' : ''}>Export CSV</button>`;
   }
 
   /* ---------- CSV: what the screen shows, all pages of it, plus currency and ids ---------- */
@@ -420,7 +324,7 @@
     rows.push(line({ section:'Net', item:'Reported net', amount:s.reportedNet }));
     rows.push(line({ section:'Net', item:'Expected net', amount:s.expectedNet }));
     rows.push(line({ section:'Net', item:'Difference', amount:s.reportedNet === null ? null : s.diff }));
-    if (s.status === 'failed') rows.push(line({ section:'Net', item:'Payout failed', value:s.failureCode }));
+    if (s.status === 'failed') rows.push(line({ section:'Net', item:'Payout failed', value:s.failureText }));
     eventsOf(s).forEach(e => rows.push(line({ section:'Events', date:isoOf(e.date), txn:e.txn, order:e.order, desc:e.desc, amount:e.amount, fee:e.fee, tax:e.tax, net:e.net })));
     ordersOf(s).forEach(e => rows.push(line({ section:'Orders', date:isoOf(e.date), order:e.order, amount:e.amount, am:offBy(s, e) ? 'Off by ' + AC.money(s.diff, s.cur) : 'Matched', cm:s.status === 'failed' ? 'Failed' : s.status === 'pending' ? 'Pending' : 'Paid' })));
     AC.downloadCsv('settlement-' + s.id + '.csv', [head].concat(rows));
@@ -428,29 +332,25 @@
   }
 
   /* ---------- Panel: the event and its source row, the same as on Events ---------- */
-  const factRow = (label, value) => `<div class="ac-kv__row"><span class="ac-kv__label">${label}</span>${value}</div>`;
-  const moneyFact = (n, cur) => (n === 0 ? `<span class="ac-num ac-zero">${AC.money(0, cur)}</span>` : `<span class="ac-num">${AC.signed(n, cur)}</span>`);
-  const idFact = v => `<span class="ac-mono">${esc(v)}</span>`;
   function openEvent(row) {
     const s = AC.settlement(route().id);
     if (!s) return;
     const e = eventsOf(s)[Number(row.dataset.ev)];
     const rail = AC.rail(e.rail);
-    const facts = [
-      factRow('Fee', moneyFact(e.fee, e.cur)),
-      factRow('Tax', moneyFact(e.tax, e.cur)),
-      `<div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__label">Net</span><span class="ac-num">${AC.signed(e.net, e.cur)}</span></div>`,
-      factRow('Settlement', idFact(s.id)),
-      factRow('Status', `<span class="ac-status ac-status--quiet">${esc(e.status)}</span>`),
-      factRow('Transaction', idFact(e.txn)),
-      e.order ? factRow('Order', `<span>${esc(e.order)}</span>`) : '',
-      factRow('Rail account', idFact(rail.acct)),
-    ].join('');
     AC.openPanel({
       title:e.desc,
       amount:AC.signed(e.amount, e.cur),
       meta:[rail.name, curOf(e), e.date].join(' · '),
-      body:`<div class="ac-kv">${facts}</div>${AC.sourceRow(AC.sourcePairs(e))}`,
+      body:`${AC.kv([
+        ['Fee', AC.amt(e.fee, e.cur)],
+        ['Tax', AC.amt(e.tax, e.cur)],
+        ['Net', esc(AC.signed(e.net, e.cur))],
+        ['Settlement', esc(s.id)],
+        ['Status', esc(e.status)],
+        ['Transaction', esc(e.txn)],
+        e.order ? ['Order', esc(e.order)] : null,
+        ['Rail account', esc(rail.acct)],
+      ], { only:true, caption:'Event' })}${AC.sourceRow(AC.sourcePairs(e))}`,
     });
     AC.keepReturnFocus(row.querySelector('[data-open]'));
   }
@@ -465,47 +365,48 @@
     if (r.view === 'detail' && e.target.closest('.ac-nav [aria-current="page"]')) { e.preventDefault(); go(listHash(r.id), 'restore'); return; }
     const exp = e.target.closest('#stExport');
     if (exp) {
-      if (e.detail > 1 || exp.getAttribute('aria-disabled') === 'true') return;
+      if (e.detail > 1 || exp.disabled) return;
       if (r.view === 'detail') exportDetail(AC.settlement(r.id)); else exportList(r);
       return;
     }
     if (e.target.closest('#stClear')) {
       go('', 'keep');
-      const rail = document.getElementById('stRail');
+      const rail = document.querySelector('[data-key="menu:rail"]');
       if (rail) rail.focus({ preventScroll:true });
       live.textContent = AC.count(inFilter(route()).length) + ' settlements';
       return;
     }
     const open = e.target.closest('[data-open]');
     if (open) { openEvent(open.closest('tr')); return; }
-    const step = e.target.closest('#stPrev') ? -1 : e.target.closest('#stNext') ? 1 : 0;
-    if (!step || r.view !== 'list') return;
-    const pages = Math.max(1, Math.ceil(inFilter(r).length / PAGE_SIZE));
+    const pageBtn = e.target.closest('[data-page]');
+    if (!pageBtn || r.view !== 'list') return;
     const mouse = document.documentElement.classList.contains('pm-pointer');
-    go(hashOf({ rail:r.rail, status:r.status, page:Math.min(Math.min(r.page, pages) + step, pages) }), mouse ? 'top' : 'keep');
-    const foot = document.querySelector('.ac-foot .ac-note');
+    go(hashOf({ rail:r.rail, status:r.status, page:Number(pageBtn.dataset.page) }), mouse ? 'top' : 'keep');
+    const foot = document.querySelector('[data-showing]');
     if (foot) live.textContent = foot.textContent;
-    const stay = document.getElementById(step > 0 ? 'stNext' : 'stPrev');
-    if (stay && stay.disabled) { const other = document.getElementById(step > 0 ? 'stPrev' : 'stNext'); if (other && !other.disabled) { if (mouse) other.focus({ preventScroll:true }); else AC.focusAfterAction(other); } }
+    const stay = document.querySelector(`[data-key="${CSS.escape(pageBtn.dataset.key)}"]`);
+    if (stay && !stay.disabled) { if (mouse) stay.focus({ preventScroll:true }); else AC.focusAfterAction(stay); }
   });
-  document.addEventListener('change', e => {
-    if (e.target.id !== 'stRail' && e.target.id !== 'stStatus') return;
+  AC.onMenuPick = (name, value) => {
     const r = route();
     const next = { rail:r.rail, status:r.status, page:1 };
-    next[e.target.id === 'stRail' ? 'rail' : 'status'] = e.target.value;
+    next[name] = value;
     go(hashOf(next), 'keep');
-    { const n = inFilter(next).length; live.textContent = n === 1 ? '1 settlement' : AC.count(n) + ' settlements'; }
-  });
+    const n = inFilter(next).length;
+    live.textContent = n === 1 ? '1 settlement' : AC.count(n) + ' settlements';
+    const b = document.querySelector(`[data-key="menu:${name}"]`);
+    if (b) b.focus();
+  };
   /* Changing the month on a settlement leaves it for that month's list. This runs before the shell draws. */
-  document.addEventListener('change', e => {
+  AC.beforeMonth = () => {
     const r = route();
-    if (e.target.id !== 'monthSelect' || r.view !== 'detail') return;
+    if (r.view !== 'detail') return;
     nav.scrolls[here] = window.scrollY;
     history.pushState({ seen:true }, '', urlOf(listHash(r.id)));
     here = location.hash;
     saveNav();
     topAfterRender = true;
-  }, true);
+  };
   window.addEventListener('hashchange', () => show('restore'));
   window.addEventListener('pagehide', () => { nav.scrolls[here] = window.scrollY; saveNav(); });
 
@@ -514,7 +415,6 @@
 
   AC.start({
     current:'settlements',
-    head:() => ({ actions:headActions() }),
     render:() => { const r = route(); return r.view === 'detail' ? detailHtml(r.id) : listHtml(r); },
     after:() => {
       const r = route();

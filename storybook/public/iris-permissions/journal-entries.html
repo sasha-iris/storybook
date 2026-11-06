@@ -10,72 +10,10 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
-  <link rel="stylesheet" href="assets/accounting.css">
-  <style>
-    /* Journal entries only: what the visual system has no class for, on its tokens. */
-    /* Keyboard focus stops under the pinned head, not behind it. */
-    @media (min-height:701px) { html { scroll-padding-top:116px; } }
-    /* A row button in a card head keeps the head at 44. A card with no table closes at 12. */
-    .ac-card__head .ac-btn-row { margin:-2px 0; }
-    .ac-card--closed .ac-card__head { padding-bottom:12px; }
-    .ac-head .ac-select { flex:none; }
-    /* A clear button has no box to align: its text sits on the right edge, its fill reaches the row band. */
-    body.ac .ac-btn-row.ac-btn-flush, body.ac .ac-cell-actions > div > .ac-btn-row:last-child:not(.btn-neutral) { padding:0 7px; margin-right:-8px; }
-    /* The note keeps Export CSV still while items get decided. */
-    .ac-actions #postNote:has(+ #postBtn) { min-width:152px; text-align:right; }
-    @media (max-width:1279px) { .ac-actions #postNote { white-space:normal; line-height:16px; text-align:right; } }
-    /* Name cell: a chip with no room wraps to a clipped second line instead of being cut. The padding keeps the toggle's focus ring. */
-    .ac-name--fit { container-type:inline-size; flex-wrap:wrap; height:30px; box-sizing:border-box; padding:4px 0 4px 4px; margin:-4px 0 -4px -4px; row-gap:8px; overflow:hidden; }
-    /* A rail's warning keeps the line. With no room for everything, the word reserve gives way first. */
-    @container (max-width:303px) {
-      .ac-yield { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
-      .ac-yield-chip { display:none; }
-    }
-    @container (max-width:375px) { .ac-yield:has(~ .ac-chip--wait) { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } }
-    /* Status cell: a rail mismatch beside the status word, the word alone when there is no room. */
-    .ac-pair { display:inline-flex; align-items:center; justify-content:flex-end; gap:8px; vertical-align:middle; }
-    @media (max-width:1619px) {
-      .ac-pair > :first-child { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); }
-    }
-    /* Open entry: account text sits under its head in both states, facts on one line, buttons at the right edge. */
-    .ac-table .ac-child--head th.ac-acct-head { padding-left:calc(var(--ac-gut) + 13px); }
-    .ac-acct { display:flex; align-items:center; gap:8px; min-width:0; }
-    body.ac .ac-acct .ac-select--row { flex:0 1 320px; width:auto; min-width:0; }
-    .ac-acct .btn { flex:none; }
-    .ac-facts { display:flex; align-items:center; gap:16px; }
-    @media (min-width:1280px) { .ac-only-narrow { display:none; } }
-    @media (max-width:1279px) { .ac-only-wide { display:none; } }
-    .ac-table td.ac-child-note { white-space:normal; }
-    /* Under 1280 a long amount or status word keeps the column's full width: the numbers are right aligned, the gutter stays empty anyway. */
-    @media (max-width:1279px) { .ac-table .ac-child td.ac-num, .ac-table tbody td.ac-right { padding-left:0; } }
-    .ac-table td.ac-cell-actions { overflow:visible; }
-    .ac-cell-actions > div { display:flex; justify-content:flex-end; gap:8px; }
-    .ac-btn-text { padding:0; height:auto; min-height:0; font:inherit; letter-spacing:inherit; }
-    /* The row behind a panel stays selected inside an open entry too. */
-    .ac-table .ac-child.ac-row--sel td, .ac-table .ac-child.ac-row--sel th, .ac-table .ac-row--open.ac-row--sel td, .ac-table .ac-row--open.ac-row--sel th, .ac-table .ac-row--open.ac-row--sel:hover td, .ac-table .ac-row--open.ac-row--sel:hover th { background:var(--ac-sel); }
-    /* A row header keeps the corners of the cell it replaced. */
-    .ac-table .ac-row--open th:first-child { border-top-left-radius:6px; }
-    .ac-table .ac-child--last th:first-child { border-bottom-left-radius:6px; }
-    /* Panels and dialogs show tables of different columns. */
-    .ac-table--fit { table-layout:auto; }
-    .ac-lead { margin:0 0 16px; }
-    .ac-lead--chip { display:flex; margin-top:-8px; }
-    .ac-showing { margin:8px 0 16px; white-space:normal; }
-    .ac-panel__body > .ac-note { margin:0; }
-    .ac-hint { display:block; font-weight:400; color:var(--ac-2); }
-    body.ac #postConfirm:disabled { cursor:progress; }
-    /* accounting.css leaves this h2 at the browser's size. */
-    .ac-empty__title { font-size:14px; line-height:20px; }
-    /* A warning that leads somewhere, as on Balance. */
-    a.ac-chip { text-decoration:underline solid var(--ac-ul) 1px; text-underline-offset:3px; }
-    a.ac-chip:hover { color:var(--ac-pri); text-decoration-color:currentColor; }
-    a.ac-chip:active { color:var(--ac-pri-d); text-decoration-color:currentColor; }
-    /* The panel's column fits the chip exactly: the cell does not clip its focus ring. */
-    .ac-table--panel tbody th:has(a.ac-chip) { overflow:visible; }
-  </style>
+  <link rel="stylesheet" href="assets/accounting-layout.css">
 </head>
 <!-- Page scaffolding only: flex shell = sidebar + content. -->
-<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac ds" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
 <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;">
     <div style="display:flex;flex-direction:column;gap:16px;padding:0 0 12px;">
@@ -118,9 +56,9 @@
 const CHEVRON = '<svg class="ac-chev" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
 const CLOSE_ICON = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>';
 const MINUS = '−';
-const DASH = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
+const DASH = AC.none;
 
-const ACCOUNTS = ['Shopify Payments clearing','Stripe clearing','PayPal clearing','Amazon clearing','TikTok Shop clearing','Other clearing','Afterpay clearing','Shop Cash clearing','Authorize.net clearing','Bank','Sales','Refunds and returns','Fees in COGS','Fees below gross profit','Deferred revenue','Deferred COGS','COGS','COGS: Testers','COGS: Customer service','Discounts','Inventory'];
+const ACCOUNTS = ['Deferred fees','Shopify Payments clearing','Stripe clearing','PayPal clearing','Amazon clearing','TikTok Shop clearing','Other clearing','Afterpay clearing','Shop Cash clearing','Authorize.net clearing','Bank','Sales','Refunds and returns','Fees in COGS','Fees below gross profit','Deferred revenue','Deferred COGS','COGS','COGS: Testers','COGS: Customer service','Discounts','Inventory'];
 
 const CLEARING = ACCOUNTS.filter(a => a.endsWith('clearing'));
 const ACCOUNTS_CAD = ['PayPal CAD clearing','Other CAD clearing','Bank CAD'].concat(ACCOUNTS.filter(a => !a.endsWith('clearing') && a !== 'Bank'));
@@ -275,19 +213,17 @@ const otherMonth = () => AC.month() !== AC.MONTH;
 const VIEW_ONLY = new URLSearchParams(location.search).get('role') === 'view';
 const LEDGER_STATE = new URLSearchParams(location.search).get('ledger') || '';
 const readOnly = () => !!S.posted || isClosed() || VIEW_ONLY;
-/* The page's state, one note beside Post. */
+/* The page's state beside Post: only what the rest of the page does not already say. */
 function pageNote() {
   if (VIEW_ONLY) return 'View only';
-  if (otherMonth() || !S.entries.length) return 'No entries to post';
   if (isClosed()) return AC.MONTH + ' is closed';
   if (LEDGER_STATE === 'none' && !S.ledgerFixed) return 'No ledger connected';
   if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return LEDGER + ' needs accounting access';
-  const open = openIssues().length;
-  if (open) return 'Decide ' + plural(open, 'item', 'items') + ' first';
+  if (openIssues().length) return '';
   const unbalanced = outOfBalance();
   if (unbalanced) return plural(unbalanced, 'entry', 'entries') + ' out of balance';
   const left = unposted().length + S.entries.filter(e => postState(e) === 'checking').length;
-  if (left) return S.posted ? plural(left, 'entry', 'entries') + ' not posted' : 'To ' + LEDGER;
+  if (left) return S.posted ? plural(left, 'entry', 'entries') + ' not posted' : '';
   const bases = [...new Set(S.entries.filter(e => !e.reversalOf).map(baseId))];
   const back = bases.filter(b => !S.entries.some(x => !x.reversalOf && baseId(x) === b && postState(x) === 'posted')).length;
   return back ? plural(back, 'entry', 'entries') + ' reversed' : 'Posted to ' + LEDGER;
@@ -295,19 +231,24 @@ function pageNote() {
 function outOfBalance() { return S.entries.filter(e => { const t = totals(e); return t.dr !== t.cr; }).length; }
 function postState(e) { return S.posted ? S.posted[e.id] : undefined; }
 function unposted() { return S.entries.filter(e => !postState(e) || postState(e) === 'failed'); }
+const isApproved = e => !!(S.approved && S.approved[e.id]);
+const toApprove = () => unposted().filter(e => !isApproved(e));
+const unapprove = id => { if (S.approved) delete S.approved[id]; };
 const baseId = e => e.baseId || e.id;
 function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
 function extId(e) { return 'JE-2026-09-' + e.id.replace('_rev', '-R').replace(/_/g, '-').toUpperCase(); }
 function doneText(i, r) { return i.id === 'unmatched' && r === 'leave' ? 'Left in ' + otherAcct() : i.done[r]; }
 function cogName() { const d = entry('deferred'); const l = d && line(d, 'cog'); return l ? l.account : 'COGS'; }
 function dcoName() { const d = entry('deferred'); const a = d && line(d, 'dco') ? line(d, 'dco').account : 'Deferred COGS'; return a === 'Deferred COGS' ? 'deferred COGS' : a; }
+/* Status is the entry's life only: Proposed, Approved, Posted. What it ties to has its own column. */
 function statusOf(e) {
   const posted = postState(e);
-  if (posted === 'failed') return { word:'Failed', tone:'bad' };
-  if (posted === 'checking') return { word:'Checking', tone:'neutral' };
-  if (posted === 'reversed') return { word:'Reversed', tone:'neutral' };
-  if (posted === 'posted') return { word:'Posted', tone:'ok' };
-  return checkOf(e);
+  if (posted === 'failed') return { word:'Failed', badge:'badge-red' };
+  if (posted === 'checking') return { word:'Checking', badge:'badge-gray' };
+  if (posted === 'reversed') return { word:'Reversed', badge:'badge-gray' };
+  if (posted === 'posted') return { word:'Posted', badge:'badge-green' };
+  if (isApproved(e)) return { word:'Approved', badge:'badge-indigo' };
+  return { word:'Proposed', badge:'badge-gray' };
 }
 function checkOf(e) {
   const n = issuesFor(e.id).length;
@@ -319,24 +260,25 @@ function checkOf(e) {
 }
 function statusHtml(e) {
   const st = statusOf(e);
-  if (st.tone === 'ok') return `<span class="ac-status ac-status--ok" data-word>${st.word}</span>`;
-  if (st.tone === 'neutral') return st.word === 'Checking' ? `<span class="ac-chip ac-chip--wait" data-word>${st.word}</span>` : `<span class="ac-status ac-status--quiet" data-word>${st.word}</span>`;
-  return `<span class="ac-chip ac-chip--${st.tone}" data-word>${st.word}</span>`;
+  return `<span class="badge ${st.badge} badge-sm" data-word>${st.word}</span>`;
 }
-/* A posted rail that no longer ties says so before the word. The full wording is in the open entry. */
-function railFlag(e) {
-  return e.start !== undefined && ['posted', 'reversed'].includes(postState(e)) && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : '';
-}
-function statusCell(e) {
-  const flag = railFlag(e);
-  return flag ? `<span class="ac-pair">${flag}${statusHtml(e)}</span>` : statusHtml(e);
+/* Tie-out, worded as on Balance: the rail against its processor, the entry against itself. */
+function tieHtml(e) {
+  if (e.start !== undefined) {
+    if (e.native !== undefined) return `<span class="badge badge-yellow badge-sm">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>`;
+    if (!isTied(e)) return `<span class="badge badge-yellow badge-sm">Off by ${money(Math.abs(clearingEnding(e) - processorEnd(e)), e.cur)}</span>`;
+    return ordersOffChip(e) || '<span class="ac-muted">Tied</span>';
+  }
+  if (e.id === 'other') return '<span class="ac-muted">No payout data</span>';
+  const t = totals(e);
+  return t.dr === t.cr ? '<span class="ac-muted">Balanced</span>' : '<span class="badge badge-red badge-sm">Out of balance</span>';
 }
 /* The rail's orders against its ending balance, and the way to the settlement behind it. */
 function ordersOffChip(e, extra) {
   const off = ORDERS_OFF[baseId(e)];
   if (!off) return '';
   const cleared = AC.breakCleared(off.settlement);
-  return `<a class="ac-chip ${cleared ? 'ac-chip--wait' : 'ac-chip--warn'}${extra ? ' ' + extra : ''}" href="${esc(AC.hrefOf('settlements'))}#${off.settlement}">Orders off by ${money(off.amount, e.cur)}${cleared ? `<span class="ac-chip__more">&nbsp;· ${AC.EXCEPTION_STATUS[AC.exceptionStatus(AC.exceptionOf(off.settlement))]}</span>` : ''}</a>`;
+  return `<a class="badge ${cleared ? 'badge-gray badge-sm' : 'badge-yellow badge-sm'}${extra ? ' ' + extra : ''}" href="${esc(AC.hrefOf('settlements'))}#${off.settlement}">${cleared ? 'Off' : '<span class="ac-only-wide">Orders off</span><span class="ac-only-narrow">Off</span>'} by ${money(off.amount, e.cur)}${cleared ? ` · ${AC.EXCEPTION_STATUS[AC.exceptionStatus(AC.exceptionOf(off.settlement))]}` : ''}</a>`;
 }
 function openIssues() { return ISSUES.filter(i => !S.resolved[i.id]); }
 function issuesFor(id) { return openIssues().filter(i => i.entry === id); }
@@ -366,6 +308,18 @@ function applyMapping() {
   });
 }
 
+/* Fees on the deferred revenue, at the month's own fee rate (fees over charges, USD). */
+function deferredFees(rev) { const t = AC.totals('USD'); return Math.round(rev * (t.fees / t.gross) * 100) / 100; }
+/* Gratis orders: each sample order carries a COGS sub-category tag; moving one moves its cost. */
+const GRATIS_TAGS = [['COGS: Testers', 'Testers'], ['COGS: Customer service', 'Customer service']];
+const gratisDefault = row => (/replacement/i.test(row[2]) ? 'COGS: Customer service' : 'COGS: Testers');
+const gratisTag = row => (S.gratisTags && S.gratisTags[row[0]]) || gratisDefault(row);
+function gratisSplit() {
+  const issue = ISSUE_ORDERS.gratis;
+  let t = 118, c = 66;
+  (issue ? issue.rows : []).forEach(row => { const cost = num(row[4]); if (gratisTag(row) === gratisDefault(row)) return; if (gratisTag(row) === 'COGS: Customer service') { t -= cost; c += cost; } else { c -= cost; t += cost; } });
+  return { t:Math.round(t * 100) / 100, c:Math.round(c * 100) / 100 };
+}
 /* Each decision recomputes real lines, so the balance check stays a real check and a decision can change. */
 function recomputeDeferred() {
   const d = entry('deferred'), r = S.resolved, ship = r.subs === 'ship';
@@ -377,6 +331,8 @@ function recomputeDeferred() {
   d.lines = d.lines.filter(l => l.id !== 'est' && l.id !== 'esc');
   const acc = hasCogs ? line(d,'dco').account : 'Deferred COGS', src = hasCogs ? line(d,'cog').account : 'COGS';
   if (r.cogs === 'estimate') d.lines.push({ id:'est', dr:1468.80, account:acc, rec:acc, bucket:'Estimate deferred', choices:[acc] }, { id:'esc', cr:1468.80, account:src, rec:src, bucket:'Estimate out of COGS', choices:[src] });
+  d.lines = d.lines.filter(l => l.id !== 'dfe' && l.id !== 'dfc');
+  if (S.deferFees) { const fee = deferredFees(rev); d.lines.push({ id:'dfe', dr:fee, account:'Deferred fees', rec:'Deferred fees', bucket:'Fees deferred' }, { id:'dfc', cr:fee, account:'Fees in COGS', rec:'Fees in COGS', bucket:'Fees out of expense' }); }
   d.orders = 402 - (ship ? 21 : 0);
   d.lines.forEach(l => { const a = S.acct['deferred:' + l.id]; if (a) l.account = a; });
 }
@@ -400,9 +356,10 @@ function applyIssue(issue, option) {
     ] : [{ id:'oth', dr:4318.60, account:'Other clearing', rec:'Other clearing', bucket:'Unmatched', choices:CLEARING }, sal];
   }
   if (issue.id === 'gratis') {
+    const g = gratisSplit();
     entry('gratis').lines = option === 'reclass' ? [
-      { id:'t', dr:118.00, account:'COGS: Testers', rec:'COGS: Testers', bucket:'Influencer sends' },
-      { id:'c', dr:66.00, account:'COGS: Customer service', rec:'COGS: Customer service', bucket:'Replacements' },
+      { id:'t', dr:g.t, account:'COGS: Testers', rec:'COGS: Testers', bucket:'Influencer sends' },
+      { id:'c', dr:g.c, account:'COGS: Customer service', rec:'COGS: Customer service', bucket:'Replacements' },
       { id:'i', cr:184.00, account:'COGS', rec:'COGS', bucket:'Cost out of COGS' },
     ] : [
       { id:'dis', dr:612.00, account:'Discounts', rec:'Discounts', bucket:'Discounts' },
@@ -413,6 +370,7 @@ function applyIssue(issue, option) {
   const dropped = Object.keys(S.acct).filter(k => k.startsWith(issue.entry + ':') && !line(entry(issue.entry), k.split(':')[1]));
   dropped.forEach(k => delete S.acct[k]);
   syncMemos();
+  unapprove(issue.entry);
   return dropped.length;
 }
 
@@ -521,7 +479,7 @@ function closeModal() {
   overlayClosedAt = Date.now();
   unlockPage();
   document.querySelectorAll('#app .ac-row--sel').forEach(r => r.classList.remove('ac-row--sel'));
-  document.querySelectorAll('#app .ac-link[aria-expanded]').forEach(b => b.removeAttribute('aria-expanded'));
+  document.querySelectorAll('#app .btn-link[aria-expanded]').forEach(b => b.removeAttribute('aria-expanded'));
   document.body.classList.remove('ac-panel-open');
   document.getElementById('modalHost').innerHTML = '';
   placeToast();
@@ -531,42 +489,76 @@ function closeModal() {
 const FLAGGED = ['Blank', 'Missing', 'Looks unfulfilled'];
 function simpleTable(caption, columns, rows, numeric) {
   const isNum = c => numeric && numeric.includes(c);
-  return `<div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">${esc(caption)}</caption>
-    <thead><tr>${columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('')}</tr></thead>
-    <tbody>${rows.map(r => `<tr>${r.map((v, i) => { const inner = FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : esc(v); return i === 0 ? `<th scope="row">${inner}</th>` : `<td${isNum(columns[i]) ? ' class="ac-num"' : ''}>${inner}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+  return `<div class="ac-wrap-scroll ac-boxed"><table class="ac-dst ac-dst--fin ac-dst--auto"><caption class="ac-sr">${esc(caption)}</caption>
+    <thead><tr>${columns.map(c => AC.th(esc(c), { right:isNum(c) })).join('')}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map((v, i) => AC.td(FLAGGED.includes(v) ? `<span class="badge badge-yellow badge-sm">${esc(v)}</span>` : esc(v), { head:i === 0, num:isNum(columns[i]) })).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 
-function issueModal(id) {
-  const issue = ISSUES.find(i => i.id === id);
-  const pick = S.resolved[id] || issue.options[0].id;
-  const opts = issue.options.map(o => `<div class="form-check" style="align-items:flex-start;">
-    <input class="form-check-input" style="margin-top:3px;" type="radio" name="fix" id="fix-${o.id}" value="${o.id}"${o.id === pick ? ' checked data-autofocus' : ''} aria-describedby="fix-${o.id}-hint">
-    <div><label class="form-check-label" for="fix-${o.id}">${esc(issue.id === 'unmatched' && o.id === 'leave' ? 'Leave in ' + otherAcct() : o.label)} ${o.rec ? '<span class="ac-chip ac-chip--wait">Recommended</span>' : ''} ${o.id === S.resolved[id] ? '<span class="ac-muted">Current</span>' : ''}<span class="ac-hint" id="fix-${o.id}-hint">${esc(o.hint.replace('to deferred COGS', 'to ' + dcoName()).replace('from September COGS', 'from September ' + cogName()))}</span></label></div></div>`).join('');
-  const body = `${simpleTable(issue.title, issue.columns, issue.rows, ['Amount','Revenue','Retail value','Cost'])}
-    <p class="ac-note ac-showing">Showing ${issue.rows.length} of ${esc(issue.count)}</p>
-    <fieldset style="border:0;padding:0;margin:0;"><legend class="ac-label">Decision</legend>${opts}</fieldset>`;
-  const footer = `<button type="button" class="btn btn-neutral btn-md" id="fixCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="fixApply">Apply</button>`;
-  openModal(issue.title, body, footer);
-  document.getElementById('fixCancel').onclick = closeModal;
-  document.getElementById('fixApply').onclick = ev => {
-    const opt = document.querySelector('input[name=fix]:checked').value;
-    if (opt === S.resolved[issue.id]) return closeModal();
-    const keyboard = ev.currentTarget.matches(':focus-visible');
-    const fromEntry = returnFocus && returnFocus.closest && returnFocus.closest('.ac-child');
-    const before = JSON.parse(JSON.stringify(S));
-    S.resolved[issue.id] = opt;
-    const dropped = applyIssue(issue, opt);
-    returnFocus = null;
-    closeModal();
-    render();
-    const focusRow = () => { const f = fromEntry ? document.querySelector('[data-entry-toggle="' + issue.entry + '"]') : (document.querySelector('[data-issue-row="' + issue.id + '"]') || document.getElementById('toggleDecisions')); if (f) { const b = f.getBoundingClientRect(); focusNext(f, { preventScroll:document.documentElement.classList.contains('pm-pointer') || (b.top >= 0 && b.bottom <= window.innerHeight) }); } };
-    const changed = JSON.stringify(before.entries.find(x => x.id === issue.entry)) !== JSON.stringify(entry(issue.entry));
-    const viewEntry = () => { overlayClosedAt = Date.now(); S.open[issue.entry] = true; render(); const b = document.querySelector('[data-entry-toggle="' + issue.entry + '"]'); if (b) { b.scrollIntoView({ block:'start' }); window.scrollBy(0, -24); focusNext(b, { preventScroll:true }); } };
-    toast(doneText(issue, opt) + '.' + (dropped ? ' ' + dropped + (dropped === 1 ? ' account change' : ' account changes') + ' removed.' : ''), () => { const openNow = S.open, hide = S.hideDecisions; S = before; S.open = openNow; S.hideDecisions = hide; render(); toast('Change undone.'); focusRow(); }, changed ? viewEntry : null);
-    focusRow();
-    if (keyboard) AC.focusAfterAction(document.getElementById('toastUndo'));
-  };
+/* A decision opens in place, under its own row: one at a time, nothing hidden in a dialog. */
+let openIssue = null;
+function issueOptions(issue) {
+  const pick = S.resolved[issue.id] || issue.options[0].id;
+  return issue.options.map(o => `<label class="iris-radio-card${o.id === pick ? ' iris-radio-card--selected' : ''}" data-fix-card>
+    <input class="ac-sr" type="radio" name="fix" id="fix-${o.id}" value="${o.id}"${o.id === pick ? ' checked' : ''} aria-describedby="fix-${o.id}-hint">
+    <span class="iris-control__check"><span class="iris-radio${o.id === pick ? ' iris-radio--checked' : ''}" aria-hidden="true"></span></span>
+    <span class="iris-control__body"><span class="iris-control__label">${esc(issue.id === 'unmatched' && o.id === 'leave' ? 'Leave in ' + otherAcct() : o.label)} ${o.rec ? '<span class="badge badge-gray badge-sm">Recommended</span>' : ''} ${o.id === S.resolved[issue.id] ? '<span class="ac-muted">Current</span>' : ''}</span><span class="iris-control__helper" id="fix-${o.id}-hint">${esc(o.hint.replace('to deferred COGS', 'to ' + dcoName()).replace('from September COGS', 'from September ' + cogName()))}</span></span>
+  </label>`).join('');
 }
+function gratisTable(issue) {
+  const isNum = c => ['Retail value', 'Cost'].includes(c);
+  return `<div class="ac-wrap-scroll ac-boxed"><table class="ac-dst ac-dst--fin ac-dst--auto ac-dst--tags"><caption class="ac-sr">${esc(issue.title)}</caption>
+    <thead><tr>${issue.columns.map(c => AC.th(esc(c), { right:isNum(c) })).join('')}${AC.th('COGS sub-category')}</tr></thead>
+    <tbody>${issue.rows.map(row => `<tr>${row.map((v, i) => AC.td(esc(v), { head:i === 0, num:isNum(issue.columns[i]) })).join('')}${AC.td(AC.filterMenu({ name:'gtag|' + row[0], label:'COGS sub-category for ' + row[0], value:gratisTag(row), quiet:true, options:GRATIS_TAGS }), { cls:'ac-open-cell' })}</tr>`).join('')}</tbody></table></div>`;
+}
+function issueBody(issue) {
+  return `<div class="ac-issue-body" id="issue-${issue.id}" role="region" aria-label="${esc(issue.title)}">
+    <div class="ac-issue-body__grid">
+      <div>${issue.id === 'gratis' ? gratisTable(issue) : simpleTable(issue.title, issue.columns, issue.rows, ['Amount','Revenue','Retail value','Cost'])}<p class="ac-muted ac-line" style="margin-top:8px;">Showing ${issue.rows.length} of ${esc(issue.count)}</p></div>
+      <fieldset class="ac-fix-group"><legend class="form-label">Decision</legend>${issueOptions(issue)}
+        <div class="ac-toolbar ac-issue-body__actions"><button type="button" class="btn btn-neutral btn-sm" id="fixCancel" data-key="fixCancel">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="fixApply" data-key="fixApply">Apply</button></div>
+      </fieldset>
+    </div>
+  </div>`;
+}
+function issueModal(id) {
+  if (readOnly()) return;
+  openIssue = openIssue === id ? null : id;
+  S.hideDecisions = false;
+  render();
+  const head = document.querySelector(`[data-issue-row="${id}"]`);
+  if (!head) return;
+  const box = head.closest('.ac-issue-item').getBoundingClientRect();
+  if (box.top < 0 || box.bottom > window.innerHeight) head.closest('.ac-issue-item').scrollIntoView({ block:'nearest' });
+  const radio = openIssue && document.querySelector('input[name=fix]:checked');
+  focusNext(radio || head, { preventScroll:true });
+}
+document.addEventListener('change', e => {
+  if (e.target.name !== 'fix') return;
+  document.querySelectorAll('[data-fix-card]').forEach(card => { const on = card.querySelector('input').checked; card.classList.toggle('iris-radio-card--selected', on); card.querySelector('.iris-radio').classList.toggle('iris-radio--checked', on); });
+});
+function closeIssue(id) {
+  openIssue = null;
+  render();
+  focusNext(document.querySelector(`[data-issue-row="${id}"]`), { preventScroll:true });
+}
+function applyDecision(ev) {
+  const issue = ISSUES.find(i => i.id === openIssue);
+  const opt = document.querySelector('input[name=fix]:checked').value;
+  if (opt === S.resolved[issue.id]) return closeIssue(issue.id);
+  const keyboard = document.getElementById('fixApply').matches(':focus-visible');
+  const before = JSON.parse(JSON.stringify(S));
+  S.resolved[issue.id] = opt;
+  const dropped = applyIssue(issue, opt);
+  openIssue = null;
+  render();
+  const focusRow = () => { const f = document.querySelector('[data-issue-row="' + issue.id + '"]') || document.getElementById('toggleDecisions'); if (f) focusNext(f, { preventScroll:true }); };
+  const changed = JSON.stringify(before.entries.find(x => x.id === issue.entry)) !== JSON.stringify(entry(issue.entry));
+  const viewEntry = () => { overlayClosedAt = Date.now(); S.open[issue.entry] = true; render(); const b = document.querySelector('[data-entry-toggle="' + issue.entry + '"]'); if (b) { b.scrollIntoView({ block:'start' }); window.scrollBy(0, -24); focusNext(b, { preventScroll:true }); } };
+  toast(doneText(issue, opt) + '.' + (dropped ? ' ' + dropped + (dropped === 1 ? ' account change' : ' account changes') + ' removed.' : ''), () => { const openNow = S.open, hide = S.hideDecisions; S = before; S.open = openNow; S.hideDecisions = hide; render(); toast('Change undone.'); focusRow(); }, changed ? viewEntry : null);
+  focusRow();
+  if (keyboard) AC.focusAfterAction(document.getElementById('toastUndo'));
+}
+let drawerExport = null;
 const SCHEMA = { shopify:'shopify_data_v2', stripe:'stripe_data_v2', paypal:'paypal_data', paypal_cad:'paypal_data', amazon:'amazon_data', tiktok:'tiktok_data' };
 const CATEGORY = { refunds:'refund', fees:'fee', 'tax on fees':'tax', 'net balance change from activity':'charge', charges:'charge', activity:'charge', payouts:'payout', 'payouts to bank':'payout', 'payouts from clearing':'payout', 'net activity':'charge' };
 const ESTIMATE_ROWS = [['#49102','Sep 28','$164.00','$39.36'],['#49118','Sep 28','$89.50','$21.48'],['#49140','Sep 29','$212.00','$50.88'],['#49177','Sep 30','$54.00','$12.96']];
@@ -653,30 +645,30 @@ function openDrawer(id, title, amount, bucket) {
   lockPage();
   const origin = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('[data-entry-row], [data-line-row]') : null;
   (origin || document.querySelector('[data-entry-row="' + id + '"]')).classList.add('ac-row--sel');
-  const link = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('#app .ac-link') : null;
+  const link = lastClickTarget && lastClickTarget.closest ? lastClickTarget.closest('#app .btn-link') : null;
   if (link) link.setAttribute('aria-expanded', 'true');
   document.body.classList.add('ac-panel-open');
   const numeric = ['Fees','Tax','Net','Amount','Fee','Revenue','Retail value','Cost','Estimated cost','COGS','Orders'];
   const isNum = c => numeric.includes(c);
-  const head = o.columns.map(c => `<th scope="col"${isNum(c) ? ' class="ac-num"' : ''}>${esc(c)}</th>`).join('');
-  const srcButton = (i, v) => `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>`;
-  const settlementLink = v => /^po_/.test(v) ? `<span class="ac-mono"><a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a></span>` : v === '–' ? '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>' : esc(v);
+  const head = o.columns.map(c => AC.th(esc(c), { right:isNum(c) })).join('');
+  const srcButton = (i, v) => `<button type="button" class="ac-rowlink" data-src-btn="${i}" aria-pressed="${i === 0}">${esc(v)}</button>`;
+  const settlementLink = v => /^po_/.test(v) ? `<a class="ac-rec" href="${esc(AC.hrefOf('settlements'))}#${esc(v)}">${esc(v)}</a>` : v === '–' ? DASH : esc(v);
   const listsSettlements = o.columns[0] === 'Settlement';
   const off = o.columns === ORDER_COLUMNS && ORDERS_OFF[id];
   const rowHead = (v, i) => listsSettlements ? settlementLink(v) : off && v === off.order ? `<div class="ac-name">${srcButton(i, v)}${ordersOffChip(e)}</div>` : srcButton(i, v);
-  const cell = (c, v, i) => listsSettlements && c === 'Date' ? srcButton(i, v) : c === 'Settlement' ? settlementLink(v) : FLAGGED.includes(v) ? `<span class="ac-chip ac-chip--warn">${esc(v)}</span>` : /^-?(CA)?\$0\.00$/.test(v) ? `<span class="ac-zero">${esc(minus(v))}</span>` : esc(minus(v));
-  const body = o.rows.map((r, i) => `<tr class="ac-row--link" data-src="${i}">${r.map((v, n) => n === 0 ? `<th scope="row">${rowHead(v, i)}</th>` : `<td${isNum(o.columns[n]) ? ' class="ac-num"' : ''}>${cell(o.columns[n], v, i)}</td>`).join('')}</tr>`).join('');
+  const cell = (c, v, i) => listsSettlements && c === 'Date' ? srcButton(i, v) : c === 'Settlement' ? settlementLink(v) : FLAGGED.includes(v) ? `<span class="badge badge-yellow badge-sm">${esc(v)}</span>` : /^-?(CA)?\$0\.00$/.test(v) ? `<span class="ac-zero">${esc(minus(v))}</span>` : esc(minus(v));
+  const body = o.rows.map((r, i) => `<tr class="ac-row" data-src="${i}">${r.map((v, n) => AC.td(n === 0 ? rowHead(v, i) : cell(o.columns[n], v, i), { head:n === 0, num:isNum(o.columns[n]) })).join('')}</tr>`).join('');
   const count = COUNTS[id] && panelTotal(id, bucket) !== null ? ` <span class="ac-muted">(${panelTotal(id, bucket).toLocaleString('en-US')})</span>` : '';
-  document.getElementById('modalHost').innerHTML = `<div class="ac-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="ac-panel">
-    <div class="ac-panel__head"><div style="min-width:0;"><div class="ac-panel__label" id="modalTitle">${esc(title)}${count}</div>${amount ? `<div class="ac-panel__value">${esc(minus(amount))}</div>` : ''}<div class="ac-note">${esc(e.name)} · ${e.cur || 'USD'} · Sep 2026</div></div><div class="ac-actions"><button type="button" class="btn btn-neutral btn-sm" id="panelExport">Export CSV</button><button type="button" class="modal-close" id="modalClose" aria-label="Close panel">${CLOSE_ICON}</button></div></div>
-    <div class="ac-panel__body" id="panelBody"><div class="ac-wrap"><table class="ac-table ac-table--panel ac-table--fit"><caption class="ac-sr">${esc(title)} in ${esc(e.name)}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
-    <p class="ac-note">${esc(panelFooter(id, bucket, o, amount))}</p><div id="sourceSlot" role="status"></div></div>
+  document.getElementById('modalHost').innerHTML = `<div class="pm-drawer-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="pm-drawer">
+    <div class="pm-drawer__head"><div class="pm-drawer__title"><h2 class="modal-title" id="modalTitle" style="margin:0;">${esc(title)}${count}${amount ? ' ' + esc(minus(amount)) : ''}</h2><span class="pm-drawer__meta">${esc(e.name)} · ${e.cur || 'USD'} · Sep 2026</span></div><div class="ac-actions">${AC.actionMenu({ name:'ordersExport', label:'Export', options:AC.EXPORTS, end:true })}<button type="button" class="modal-close" id="modalClose" aria-label="Close panel">${CLOSE_ICON}</button></div></div>
+    <div class="pm-drawer__body" id="panelBody"><div class="ac-wrap-scroll ac-panel-table"><table class="ac-dst ac-dst--fin"><caption class="ac-sr">${esc(title)} in ${esc(e.name)}</caption><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <p class="ac-muted ac-line">${esc(panelFooter(id, bucket, o, amount))}</p><div id="sourceSlot" role="status"></div></div>
   </aside></div>`;
-  const pick = i => { document.querySelectorAll('.ac-panel [data-src]').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('ac-row--sel', on); const b = tr.querySelector('[data-src-btn]'); if (b) b.setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceRow(e, o, o.rows[i], bucket || 'charge'); };
+  const pick = i => { document.querySelectorAll('.pm-drawer [data-src]').forEach(tr => { const on = tr.dataset.src === String(i); tr.classList.toggle('ac-row--sel', on); const b = tr.querySelector('[data-src-btn]'); if (b) b.setAttribute('aria-pressed', on); }); document.getElementById('sourceSlot').innerHTML = sourceRow(e, o, o.rows[i], bucket || 'charge'); };
   document.getElementById('panelBody').addEventListener('click', ev => { if (ev.target.closest('a')) return; const tr = ev.target.closest('[data-src]'); if (tr) pick(+tr.dataset.src); });
   pick(0);
   document.getElementById('modalClose').onclick = closeModal;
-  document.getElementById('panelExport').onclick = ev => { if (ev.detail > 1) return; downloadCsv('journal-' + e.id + '-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-2026-09.csv', [o.columns.concat('Currency').concat(o.rows.some(csvNote) ? ['Note'] : [])].concat(o.rows.map(r => r.map(csvValue).concat(e.cur || 'USD').concat(o.rows.some(csvNote) ? [csvNote(r)] : [])))); toast('CSV exported.'); };
+  drawerExport = fmt => AC.exportAs(fmt, 'journal-' + e.id + '-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-2026-09', title + ', ' + e.name, (e.cur || 'USD') + ' · Sep 2026', [o.columns.concat('Currency').concat(o.rows.some(csvNote) ? ['Note'] : [])].concat(o.rows.map(r => r.map(csvValue).concat(e.cur || 'USD').concat(o.rows.some(csvNote) ? [csvNote(r)] : []))));
   document.getElementById('modalBackdrop').addEventListener('mousedown', ev => { if (ev.target.id === 'modalBackdrop') { ev.preventDefault(); if (ev.detail < 2) closeModal(); } });
   document.addEventListener('keydown', modalKeys);
   document.getElementById('modalClose').focus();
@@ -684,21 +676,28 @@ function openDrawer(id, title, amount, bucket) {
 }
 
 /* ---------- Render ---------- */
-const COLS = '<colgroup><col><col class="ac-col-money-l"><col class="ac-col-money ac-wide"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup>';
+const COLS = '<colgroup><col><col class="ac-wide ac-col-jdate"><col class="ac-col-dc"><col class="ac-col-dc"><col class="ac-col-jst"><col class="ac-col-jtie"></colgroup>';
 function attentionHtml() {
   if (!ISSUES.length) return '';
   const open = openIssues();
   if (open.length) S.hideDecisions = false;
-  const toggle = label => `<div class="ac-actions"><button type="button" class="btn btn-ghost btn-sm ac-btn-row ac-btn-flush" id="toggleDecisions" data-key="toggleDecisions">${label}</button></div>`;
-  if (!open.length && S.hideDecisions) {
-    return `<section class="ac-card ac-card--closed" aria-labelledby="attTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="attTitle">All ${ISSUES.length} items are decided</h2>${toggle('Show decisions')}</div></section>`;
-  }
+  const toggle = label => `<button type="button" class="btn-link btn-link-medium btn-sm" id="toggleDecisions" data-key="toggleDecisions">${label}</button>`;
+  if (!open.length && S.hideDecisions) return `<section class="card" aria-labelledby="attTitle">${AC.cardTitle('attTitle', `All ${ISSUES.length} items are decided`, '', toggle('Show decisions'))}</section>`;
   const rows = ISSUES.map(i => {
-    const r = S.resolved[i.id];
-    const button = `<button type="button" class="btn ${r ? 'btn-ghost ac-btn-flush' : 'btn-neutral'} btn-sm ac-btn-row" data-issue="${i.id}" data-issue-row="${i.id}" aria-label="${r ? 'Change' : 'Decide'} ${esc(i.title)}">${r ? 'Change' : 'Decide'}</button>`;
-    return `<tr${readOnly() ? '' : ' class="ac-row--link"'} data-row="${i.id}"><th scope="row">${esc(i.title)}</th><td colspan="4" class="ac-muted">${esc(r ? 'Decided: ' + ((i.short && i.short[r]) || doneText(i, r)) : i.summary)}</td><td class="ac-num">${esc(i.amount)}</td><td class="ac-right">${readOnly() ? '' : button}</td></tr>`;
+    const r = S.resolved[i.id], isOpen = openIssue === i.id && !readOnly();
+    const state = r ? '<span class="ac-muted">Decided</span>' : `<span class="badge badge-yellow badge-sm">${VIEW_ONLY ? 'Not decided' : 'To decide'}</span>`;
+    const detail = `<span class="ac-issue__detail">${esc(r ? (i.short && i.short[r]) || doneText(i, r) : i.summary)}</span>`;
+    /* The detail is the title's caption, under it, as in the library's cell with caption. */
+    const inner = `<span class="ac-issue__title">${readOnly() ? '' : CHEVRON}<span class="ac-issue__text"><span class="ac-issue__name">${esc(i.title)}</span>${detail}</span></span><span class="ac-issue__amount">${esc(i.amount)}</span><span class="ac-issue__state">${state}</span>`;
+    const head = readOnly() ? `<div class="ac-issue">${inner}</div>` : `<button type="button" class="ac-issue ac-issue--link" data-issue="${i.id}" data-issue-row="${i.id}" data-key="issue:${i.id}" aria-expanded="${isOpen}" aria-controls="issue-${i.id}">${inner}</button>`;
+    return `<div class="list-group-item ac-issue-item${isOpen ? ' is-open' : ''}" role="listitem">${head}${isOpen ? issueBody(i) : ''}</div>`;
   }).join('');
-  return `<section class="ac-card" aria-labelledby="attTitle"><div class="ac-card__head"><h2 class="ac-card__title" id="attTitle">${open.length ? open.length + (open.length === 1 ? ' item' : ' items') + (VIEW_ONLY ? ' not decided' : ' to decide') : 'All ' + ISSUES.length + ' items are decided'}</h2>${open.length ? '' : toggle('Hide decisions')}</div><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Items to decide</caption>${COLS}<thead class="ac-sr"><tr><th scope="col">Item</th><th scope="col" colspan="4">Detail</th><th scope="col">Amount</th><th scope="col">Action</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  const done = ISSUES.length - open.length, pct = Math.round(done / ISSUES.length * 100);
+  const WARN = '<svg class="ac-priority__icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>';
+  const OK = '<svg class="ac-priority__icon ac-priority__icon--ok" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.7-9.3a1 1 0 0 0-1.4-1.4L9 10.6 7.7 9.3a1 1 0 0 0-1.4 1.4l2 2a1 1 0 0 0 1.4 0l4-4Z" clip-rule="evenodd"/></svg>';
+  const title = open.length ? open.length + (open.length === 1 ? ' item' : ' items') + (VIEW_ONLY ? ' not decided' : ' to decide before posting') : 'All ' + ISSUES.length + ' items are decided';
+  const progress = `<span class="ac-muted">${done} of ${ISSUES.length} decided</span><div class="progress ac-priority__bar" role="progressbar" aria-valuemin="0" aria-valuemax="${ISSUES.length}" aria-valuenow="${done}" aria-label="Decided"><div class="progress-bar progress-bar-primary" style="width:${pct}%;"></div></div>`;
+  return `<section class="card${open.length ? ' ac-priority' : ''}" aria-labelledby="attTitle"><div class="card-header ac-priority__head"><div class="ac-name">${open.length ? WARN : OK}<h2 class="card-header-title" id="attTitle" style="margin:0;">${esc(title)}</h2></div><div class="card-header-controls">${open.length ? progress : toggle('Hide decisions')}</div></div><div class="list-group list-group--flush ac-list-top" role="list" aria-labelledby="attTitle">${rows}</div></section>`;
 }
 /* A rail is tied only while its clearing account ends where the processor says it ends, whichever line moved. */
 const processorEnd = e => (e.native !== undefined ? e.native : e.end);
@@ -715,123 +714,126 @@ function metaLine(e) {
   const st = postState(e);
   const parts = ['Sep 30, 2026'];
   if (e.reversalOf) parts.push(e.memo);
+  if (!e.reversalOf && !e.correctionOf) parts.push('Proposed by Iris');
+  if (isApproved(e)) parts.push('Approved by you just now');
   if (st === 'posted' || st === 'reversed') {
-    if (!e.reversalOf && !e.correctionOf) parts.push('Proposed by Iris');
     parts.push('Posted by you just now');
     if (st === 'reversed') parts.push('Reversed by you just now');
     parts.push(LEDGER + ' ' + extId(e));
   }
-  const facts = parts.map(p => `<span>${esc(p)}</span>`).join(' · ');
-  return facts + (e.start !== undefined ? `<span class="ac-only-narrow"> · <span>Starting ${money(e.start, e.cur)}</span></span>` : '');
+  if (e.start !== undefined) parts.push('Starting ' + money(e.start, e.cur));
+  return parts.map(p => esc(p)).join(' · ');
 }
+const childRow = (html, o = {}) => `<tr data-child>${AC.td(html, { span:6, cls:'ac-indent ac-wrap-cell', row:o.row })}</tr>`;
+const lineGrid = (a, b) => `<div class="ac-linegrid"><span>${a}</span>${b}</div>`;
 function postLine(e) {
   const st = postState(e);
-  if (st === 'checking') return `<tr class="ac-child"><td colspan="7" class="ac-indent"><span class="ac-muted" role="status">${LEDGER} did not answer. Checking before posting again.</span></td></tr>`;
-  if (st === 'failed') return `<tr class="ac-child"><td colspan="7" class="ac-indent"><span class="ac-fault" role="alert">${LEDGER} is unavailable (503). <button type="button" class="btn-link btn-link-semibold ac-btn-text" data-post-retry>Post again</button></span></td></tr>`;
+  if (st === 'checking') return childRow(`<span class="ac-muted" role="status">${LEDGER} did not answer. Checking before posting again.</span>`);
+  if (st === 'failed') return childRow(`<span class="ac-name"><span class="ac-fault" role="alert">${LEDGER} is unavailable (503).</span><button type="button" class="btn-link btn-link-semibold btn-sm" data-post-retry>Post again</button></span>`);
   return '';
 }
 function linesHtml(e) {
-  const noCogsChip = (l, where) => {
-    if (l.unmapped) return '<span class="ac-chip ac-chip--warn">Not mapped</span>';
+  const noCogsChip = l => {
+    if (l.unmapped) return '<span class="badge badge-yellow badge-sm">Not mapped</span>';
     const noCogs = l.id === 'def' ? (S.resolved.cogs === 'revonly' ? 6120 : 0) + (S.resolved.sku === 'leave' ? 1284 : 0) : 0;
-    return noCogs ? `<span class="ac-chip ac-chip--wait ${where}">${money(noCogs)} no COGS</span>` : '';
+    return noCogs ? `<span class="badge badge-gray badge-sm">${money(noCogs)} no COGS</span>` : '';
   };
   const accountCell = l => {
     const options = l.choices || (e.cur ? ACCOUNTS_CAD : ACCOUNTS);
     const locked = (!!postState(e) && postState(e) !== 'failed') || isClosed() || VIEW_ONLY;
     /* One possible account leaves nothing to choose: plain text, as in the posted state. */
-    if (locked || options.length === 1) return `<div class="ac-acct"><span class="ac-static">${esc(l.account)}</span>${isChanged(e, l) ? '<span class="ac-chip ac-chip--wait">Changed</span>' : ''}${noCogsChip(l, 'ac-only-wide')}</div>`;
+    if (locked || options.length === 1) return `<div class="ac-name"><span>${esc(l.account)}</span>${isChanged(e, l) ? '<span class="badge badge-gray badge-sm">Changed</span>' : ''}${noCogsChip(l)}</div>`;
     const changed = l.account !== l.rec;
-    const reset = `<button type="button" class="btn btn-ghost btn-sm ac-btn-row" style="visibility:${changed ? 'visible' : 'hidden'};" data-reset="${e.id}:${l.id}" title="Back to ${esc(l.rec)}" aria-label="${esc(l.bucket)}: back to ${esc(l.rec)}">Reset</button>`;
-    return `<div class="ac-acct"><select class="form-input form-select ac-select ac-select--row" autocomplete="off" aria-label="${esc(e.name)}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${esc(l.bucket)}" data-entry="${e.id}" data-line="${l.id}" data-key="acct:${e.id}:${l.id}">${options.map(a => `<option value="${esc(a)}"${a === l.account ? ' selected' : ''}>${esc(a)}</option>`).join('')}</select>${noCogsChip(l, 'ac-only-wide')}${reset}</div>`;
+    const reset = `<button type="button" class="btn-link btn-link-medium btn-sm" style="visibility:${changed ? 'visible' : 'hidden'};" data-reset="${e.id}:${l.id}" title="Back to ${esc(l.rec)}" aria-label="${esc(l.bucket)}: back to ${esc(l.rec)}">Reset</button>`;
+    return `<div class="ac-acct">${AC.filterMenu({ name:e.id + '|' + l.id, label:`${e.name}${e.cur ? ' ' + e.cur : ''}: ${l.dr !== undefined ? 'debit' : 'credit'} account for ${l.bucket}, ${l.account}`, value:l.account, quiet:true, options:options.map(a => [a, a]) })}${noCogsChip(l)}${reset}</div>`;
   };
-  const amountCell = (l, v, side) => v === undefined ? '' : e.reversalOf || e.correctionOf ? money(v, e.cur) : `<button type="button" class="ac-link" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${side}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
+  const amountCell = (l, v, side) => v === undefined ? '' : e.reversalOf || e.correctionOf ? money(v, e.cur) : `<button type="button" class="ac-amt" data-line-orders="${e.id}:${l.id}" aria-label="${esc(e.name)}, ${esc(l.bucket)}, ${side}, ${money(v, e.cur)}">${money(v, e.cur)}</button>`;
   const t = totals(e);
   const balanced = t.dr === t.cr;
-  const hid = part => e.id + '-' + part;
-  const row = l => `<tr class="ac-child" data-line-row><th scope="row" class="ac-indent" id="${hid(l.id)}" headers="${hid('line')}"><div class="ac-name"><span>${esc(l.bucket)}</span>${noCogsChip(l, 'ac-only-narrow')}</div></th><td colspan="4" headers="${hid('acct')} ${hid(l.id)}">${accountCell(l)}</td><td class="ac-num" headers="${hid('debit')} ${hid(l.id)}">${amountCell(l, l.dr, 'debit')}</td><td class="ac-num" headers="${hid('credit')} ${hid(l.id)}">${amountCell(l, l.cr, 'credit')}</td></tr>`;
-  const viewOrders = () => `<button type="button" class="btn btn-ghost btn-sm ac-btn-row" data-orders="${baseId(e)}" data-key="orders:${e.id}">View ${e.orders.toLocaleString('en-US')} ${baseId(e) === 'other' ? 'payments' : 'orders'}</button>`;
-  const actions = `${e.reversalOf ? '' : viewOrders()}${postState(e) === 'reversed' && !S.entries.some(x => x.correctionOf === e.id) && !isClosed() && !VIEW_ONLY ? `<button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-recorrect="${e.id}" data-key="recorrect:${e.id}">Create corrected entry</button>` : ''}${e.correctionOf && !postState(e) ? `<button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-discard="${e.id}" data-key="discard:${e.id}">Discard</button>` : ''}${postState(e) === 'posted' && !e.reversalOf && !isClosed() && !VIEW_ONLY ? `<button type="button" class="btn btn-sm pm-danger ac-btn-row" data-reverse="${e.id}" data-key="reverse:${e.id}">Reverse</button>` : ''}`;
-  const fact = (label, v) => `<span><span class="ac-muted">${label}</span> <span class="ac-num">${v}</span></span>`;
+  const row = l => `<tr data-child data-line-row>${AC.td(lineGrid(esc(l.bucket), accountCell(l)), { head:true, span:2, cls:'ac-indent ac-open-cell' })}${AC.td(amountCell(l, l.dr, 'debit'), { num:true })}${AC.td(amountCell(l, l.cr, 'credit'), { num:true })}${AC.td('', { span:2 })}</tr>`;
+  const viewOrders = () => `<button type="button" class="btn-link btn-link-semibold btn-sm" data-orders="${baseId(e)}" data-key="orders:${e.id}">View ${e.orders.toLocaleString('en-US')} ${baseId(e) === 'other' ? 'payments' : 'orders'}</button>`;
+  const actions = `<a class="btn-link btn-link-semibold btn-sm" href="#je/${esc(e.id)}" data-key="open:${e.id}">Open entry</a>${e.reversalOf ? '' : viewOrders()}${postState(e) === 'reversed' && !S.entries.some(x => x.correctionOf === e.id) && !isClosed() && !VIEW_ONLY ? `<button type="button" class="btn-link btn-link-semibold btn-sm" data-recorrect="${e.id}" data-key="recorrect:${e.id}">Create corrected entry</button>` : ''}${e.correctionOf && !postState(e) ? `<button type="button" class="btn-link btn-link-semibold btn-sm" data-discard="${e.id}" data-key="discard:${e.id}">Discard</button>` : ''}${postState(e) === 'posted' && !e.reversalOf && !isClosed() && !VIEW_ONLY ? `<button type="button" class="btn-link btn-link-semibold btn-sm ac-link-danger" data-reverse="${e.id}" data-key="reverse:${e.id}">Reverse</button>` : ''}`;
+  const fact = (label, v) => `<span><span class="ac-muted">${label}</span> ${v}</span>`;
   const ordersOff = ordersOffChip(e);
-  const tie = e.start === undefined ? '' : `<div class="ac-facts">${postState(e) === 'failed'
-    ? `${fact('Processor', money(processorEnd(e), e.cur))}<span class="ac-chip ac-chip--warn">Not posted</span>`
+  const locked = (!!postState(e) && postState(e) !== 'failed') || isClosed() || VIEW_ONLY;
+  const deferFees = e.id === 'deferred' ? `<label class="form-check ac-defer-fees"><input type="checkbox" class="form-check-input" data-defer-fees data-key="deferFees"${S.deferFees ? ' checked' : ''}${locked ? ' disabled' : ''}><span class="form-check-label">Defer fees with revenue</span></label>` : '';
+  const tie = e.start === undefined ? deferFees : `<span class="ac-toolbar">${postState(e) === 'failed'
+    ? `${fact('Processor', money(processorEnd(e), e.cur))}<span class="badge badge-yellow badge-sm">Not posted</span>`
     : isTied(e)
-    ? `${fact('Processor', money(e.end, e.cur))}${fact('Clearing', money(e.end, e.cur))}<span class="ac-status ac-status--ok">Tied</span>`
-    : `${fact('Processor', money(processorEnd(e), e.cur))}${fact('Clearing', signed(clearingEnding(e), e.cur))}<span class="ac-chip ac-chip--warn">Off by ${money(Math.abs(clearingEnding(e) - processorEnd(e)), e.cur)}</span>`}${ordersOff}</div>`;
+    ? `${fact('Processor', money(e.end, e.cur))}${fact('Clearing', money(e.end, e.cur))}<span class="ac-muted">Tied</span>`
+    : `${fact('Processor', money(processorEnd(e), e.cur))}${fact('Clearing', signed(clearingEnding(e), e.cur))}<span class="badge badge-yellow badge-sm">Off by ${money(Math.abs(clearingEnding(e) - processorEnd(e)), e.cur)}</span>`}${ordersOff}</span>`;
   const open = issuesFor(e.id);
   const decided = ISSUES.filter(i => i.entry === e.id && S.resolved[i.id]);
   const incoming = e.clearing ? S.entries.flatMap(x => x.id === e.id || x.reversalOf || baseId(x) === baseId(e) || postState(x) === 'reversed' ? [] : x.lines.filter(l => l.account === e.clearing).map(l => ({ x, l }))) : [];
-  const linkTo = (i, text) => readOnly() ? esc(text) : `<button type="button" class="ac-link" data-issue="${i.id}">${esc(text)}</button>`;
-  const noteLine = (label, items) => ({ html:`<span class="ac-muted">${label}:</span> ${items.join('<span class="ac-muted"> · </span>')}`, length:label.length + items.join('').replace(/<[^>]+>/g, '').length });
+  const linkTo = (i, text) => readOnly() ? esc(text) : `<button type="button" class="btn-link btn-link-semibold btn-sm" data-issue="${i.id}">${esc(text)}</button>`;
+  const noteLine = (label, items) => `<span class="ac-note-line"><span class="ac-muted">${label}</span> ${items.join('<span class="ac-muted"> · </span>')}</span>`;
   const notes = [];
   if (open.length) notes.push(noteLine(VIEW_ONLY ? 'Not decided' : 'To decide', open.map(i => linkTo(i, i.title))));
   if (decided.length) notes.push(noteLine('Decided', decided.map(i => linkTo(i, doneText(i, S.resolved[i.id])))));
-  if (incoming.length) notes.push(noteLine('Incoming', incoming.map(o => `<button type="button" class="ac-link" data-entry-open="${o.x.id}">${esc(o.x.name)}, ${esc(o.l.bucket)}</button>`)));
-  if (!balanced) notes.push({ html:'<span class="ac-fault">Debits and credits do not match.</span>', length:32 });
-  /* An entry with no tie note ends on its last short note, beside the buttons. */
-  const lastLeft = tie || (notes.length && notes[notes.length - 1].length <= 72 ? notes.pop().html : '');
-  const noteRows = notes.map(n => `<tr class="ac-child"><td colspan="7" class="ac-indent ac-child-note">${n.html}</td></tr>`).join('');
-  const hasLast = !!(lastLeft || actions);
-  const lastClass = hasLast || noteRows ? '' : ' ac-child--last';
-  return `<tr class="ac-child"><td colspan="7" class="ac-indent ac-muted ac-child-note">${metaLine(e)}</td></tr>${postLine(e)}
-    <tr class="ac-child ac-child--head"><th scope="col" class="ac-indent" id="${hid('line')}">Line</th><th scope="col" colspan="4" class="ac-acct-head" id="${hid('acct')}">Account</th><th scope="col" class="ac-num" id="${hid('debit')}">Debit</th><th scope="col" class="ac-num" id="${hid('credit')}">Credit</th></tr>
+  if (incoming.length) notes.push(noteLine('Incoming', incoming.map(o => `<button type="button" class="btn-link btn-link-semibold btn-sm" data-entry-open="${o.x.id}">${esc(o.x.name)}, ${esc(o.l.bucket)}</button>`)));
+  if (!balanced) notes.push('<span class="ac-fault">Debits and credits do not match.</span>');
+  const noteRows = notes.map(n => childRow(n)).join('');
+  const last = tie || actions ? `<tr data-child>${AC.td(tie, { span:3, cls:'ac-indent ac-open-cell' })}${AC.td(`<div class="ac-toolbar">${actions}</div>`, { span:3, right:true, cls:'ac-open-cell' })}</tr>` : '';
+  const sub = (text, o = {}) => AC.th(text, o);
+  return `${childRow(`<span class="ac-muted">${metaLine(e)}</span>`)}${postLine(e)}
+    <tr data-child>${sub(lineGrid('Line', '<span>Account</span>'), { cls:'ac-indent', span:2 })}${sub('Debit', { right:true })}${sub('Credit', { right:true })}${sub('', { span:2 })}</tr>
     ${e.lines.map(row).join('')}
-    <tr class="ac-child ac-total${lastClass}"><th scope="row" class="ac-indent" id="${hid('total')}">Total</th><td colspan="4"></td><td class="ac-num" headers="${hid('debit')} ${hid('total')}"><span>${money(t.dr, e.cur)}</span></td><td class="ac-num" headers="${hid('credit')} ${hid('total')}"><span>${money(t.cr, e.cur)}</span></td></tr>
-    ${noteRows}${hasLast ? `<tr class="ac-child ac-child--last"><td colspan="5" class="ac-indent">${lastLeft}</td><td colspan="2" class="ac-right ac-cell-actions"><div>${actions}</div></td></tr>` : ''}`;
+    <tr data-child>${AC.td('Total', { head:true, span:2, cls:'ac-indent', row:'total' })}${AC.td(money(t.dr, e.cur), { num:true, row:'total' })}${AC.td(money(t.cr, e.cur), { num:true, row:'total' })}${AC.td('', { span:2, row:'total' })}</tr>
+    ${noteRows}${last}`;
 }
 function netOf(e) { const l = line(e, 'net'); return l ? l.dr : undefined; }
 function payoutOf(e) { const l = line(e, 'bnk'); return l ? l.dr : undefined; }
 function entryRow(e) {
   const t = totals(e);
-  const open = !!S.open[e.id];
+  const open = !!S.open[e.id], row = open ? 'open' : 'default';
   const changed = e.lines.filter(l => isChanged(e, l)).length;
   const incoming = e.clearing ? S.entries.reduce((c, x) => c + (x.id === e.id || x.reversalOf || baseId(x) === baseId(e) || postState(x) === 'reversed' ? 0 : x.lines.filter(l => l.account === e.clearing).length), 0) : 0;
-  const net = netOf(e), pay = payoutOf(e);
-  const tag = changed ? `<span class="ac-chip ac-chip--wait">${changed} changed</span>` : incoming ? `<span class="ac-chip ac-chip--wait">${incoming} incoming</span>` : '';
-  const activity = net === undefined ? '' : e.correctionOf ? money(net, e.cur) : `<button type="button" class="ac-link" data-entry-orders="${e.id}:Activity" aria-label="${esc(e.name)}, activity, ${money(net, e.cur)}">${money(net, e.cur)}</button>`;
-  const payouts = pay === undefined ? '' : e.correctionOf ? MINUS + money(pay, e.cur) : `<button type="button" class="ac-link" data-entry-orders="${e.id}:Payouts" aria-label="${esc(e.name)}, payouts, minus ${money(pay, e.cur)}">${MINUS}${money(pay, e.cur)}</button>`;
-  return `<tr class="ac-row--link${open ? ' ac-row--open' : ''}" data-entry-row="${e.id}">
-      <th scope="row"><div class="ac-name ac-name--fit"><button type="button" class="ac-toggle" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${CHEVRON}${esc(e.name)}</button>${e.id === 'amazon' || e.id === 'tiktok' ? `<span class="ac-muted${ORDERS_OFF[e.id] ? ' ac-yield' : ''}">reserve</span>` : ''}${ordersOffChip(e, e.correctionOf ? 'ac-yield-chip' : '')}${tag}</div></th>
-      <td class="ac-num ac-end">${money(t.dr, e.cur)}</td>
-      <td class="ac-num ac-wide">${e.start !== undefined ? signed(e.start, e.cur) : ''}</td>
-      <td class="ac-num">${activity}</td>
-      <td class="ac-num">${payouts}</td>
-      <td class="ac-num ac-end">${e.end !== undefined ? signed(e.end, e.cur) : ''}</td>
-      <td class="ac-right">${statusCell(e)}</td></tr>${open ? linesHtml(e) : ''}`;
+  const n = issuesFor(e.id).length;
+  const decide = n ? `<span class="badge badge-yellow badge-sm">${n}${VIEW_ONLY ? ' not decided' : ' to decide'}</span>` : '';
+  const tag = changed ? `<span class="badge badge-gray badge-sm">${changed} changed</span>` : incoming ? `<span class="badge badge-gray badge-sm ac-wide-only">${incoming} incoming</span>` : '';
+  return `<tr class="ac-row${open ? ' ac-row--open' : ''}" data-entry-row="${e.id}">
+      ${AC.td(`<div class="ac-name"><button type="button" class="ac-rowlink ac-entry-toggle" data-entry-toggle="${e.id}" data-key="toggle:${e.id}" aria-expanded="${open}"${e.cur ? ` aria-label="${esc(e.name)} ${e.cur}"` : ''}>${CHEVRON}${esc(e.name)}</button>${decide}${tag}</div>`, { head:true, row })}
+      ${AC.td('Sep 30, 2026', { cls:'ac-wide', row })}
+      ${AC.td(money(t.dr, e.cur), { num:true, row })}
+      ${AC.td(money(t.cr, e.cur), { num:true, row })}
+      ${AC.td(statusHtml(e), { row })}
+      ${AC.td(tieHtml(e), { row })}</tr>${open ? linesHtml(e) : ''}`;
 }
 function totalsRow(cur) {
-  const all = S.entries.filter(e => e.cur === cur);
-  const rails = all.filter(e => e.start !== undefined);
-  const sum = (list, f) => Math.round(list.reduce((n, e) => n + f(e), 0) * 100) / 100;
-  const off = rails.filter(e => !isTied(e)).length;
-  const debits = sum(all.filter(e => !e.reversalOf && postState(e) !== 'reversed'), e => totals(e).dr);
-  const cell = (v, wide) => `<td class="ac-num${wide ? ' ac-wide' : ''}"><span>${v}</span></td>`;
-  return `<tr class="ac-total"><th scope="row" class="ac-indent">Total ${cur || 'USD'}</th>${cell(money(debits, cur))}${cell(money(sum(rails, e => e.start), cur), true)}${cell(money(sum(rails, netOf), cur))}${cell(MINUS + money(sum(rails, payoutOf), cur))}${cell(money(sum(rails, e => e.end), cur))}<td class="ac-right">${off ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : DASH}</td></tr>`;
+  const live = S.entries.filter(e => e.cur === cur && !e.reversalOf && postState(e) !== 'reversed');
+  const sum = f => Math.round(live.reduce((n, e) => n + f(e), 0) * 100) / 100;
+  const off = S.entries.filter(e => e.cur === cur && e.start !== undefined && !isTied(e)).length;
+  return `<tr>${AC.td(`Total ${cur || 'USD'}`, { head:true, row:'total' })}${AC.td('', { row:'total', cls:'ac-wide' })}${AC.td(money(sum(e => totals(e).dr), cur), { num:true, row:'total' })}${AC.td(money(sum(e => totals(e).cr), cur), { num:true, row:'total' })}${AC.td('', { row:'total' })}${AC.td(off ? `<span class="badge badge-yellow badge-sm">${off} not tied</span>` : '', { row:'total' })}</tr>`;
 }
-function currencyCard(cur, first) {
-  const list = S.entries.filter(e => e.cur === cur);
-  const label = cur || 'USD';
+/* One card for every entry, so its buttons act on what it lists. Each currency is its own group with its own total. */
+function entriesCard() {
+  const list = S.entries;
   if (!list.length) return '';
+  const groups = [undefined, 'CAD'].filter(cur => list.some(e => e.cur === cur));
   const allOpen = list.every(e => S.open[e.id]) ? 'Collapse all' : 'Expand all';
-  return `<section class="ac-card" aria-label="${label} entries">
-      <div class="ac-card__head"><h2 class="ac-card__title"${first ? ' id="entTitle"' : ''}>${S.posted ? 'Entries' : 'Proposed entries'}</h2><span class="ac-note">${label} · ${list.length} ${list.length === 1 ? 'entry' : 'entries'}</span><div class="ac-actions">${first && S.exported ? `<span id="exportState">${exportChip()}</span>` : ''}<button type="button" class="btn btn-ghost btn-sm ac-btn-row ac-btn-flush" data-open-all="${label}" data-key="openAll:${label}" aria-label="${allOpen} ${label} entries">${allOpen}</button></div></div>
-      <div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">${S.posted ? 'Entries' : 'Proposed entries'}, ${label}</caption>${COLS}
-      <thead><tr><th scope="col" class="ac-indent">Entry</th><th scope="col" class="ac-num">Total debits</th><th scope="col" class="ac-num ac-wide">Starting</th><th scope="col" class="ac-num">Activity</th><th scope="col" class="ac-num">Payouts</th><th scope="col" class="ac-num">Ending</th><th scope="col" class="ac-right">Status</th></tr></thead>
-      <tbody>${list.map(entryRow).join('')}${totalsRow(cur)}</tbody></table></div>
+  const controls = `${S.exported ? `<span id="exportState">${exportChip()}</span>` : ''}<button type="button" class="btn-link btn-link-medium btn-sm" data-open-all="all" data-key="openAll" aria-label="${allOpen} entries">${allOpen}</button><button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv">Export CSV</button>${postControl()}`;
+  const title = S.posted ? 'Entries' : 'Proposed entries';
+  const body = groups.map(cur => `<tr>${AC.td(cur || 'USD', { row:'group', span:6 })}</tr>${list.filter(e => e.cur === cur).map(entryRow).join('')}${totalsRow(cur)}`).join('');
+  return `<section class="card" aria-labelledby="entTitle">
+      ${AC.cardTitle('entTitle', title, plural(list.length, 'entry', 'entries'), controls)}
+      <div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin ac-dst--je ac-keep"><caption class="ac-sr">${title}</caption>${COLS}
+      <thead><tr>${AC.th('Entry')}${AC.th('Date', { cls:'ac-wide' })}${AC.th('Debits', { right:true })}${AC.th('Credits', { right:true })}${AC.th('Status')}${AC.th('Tie-out')}</tr></thead>
+      <tbody>${body}</tbody></table></div>
     </section>`;
 }
 function postControl() {
-  const note = `<span class="ac-note" id="postNote">${esc(pageNote())}</span>`;
-  const post = off => `<button type="button" class="btn btn-primary btn-sm" id="postBtn"${off ? ' style="pointer-events:auto;" aria-disabled="true"' : ''} aria-describedby="postNote" data-key="postBtn">Post</button>`;
+  const words = pageNote();
+  const note = !words ? '' : words === 'Posted to ' + LEDGER ? `<span class="badge badge-green badge-sm" id="postNote">${esc(words)}</span>` : `<span class="ac-muted" id="postNote">${esc(words)}</span>`;
+  const post = off => `<button type="button" class="btn ${off ? 'btn-neutral' : 'btn-primary'} btn-sm" id="postBtn" data-key="postBtn"${off ? ' disabled' : ''}>Post</button>`;
   if (VIEW_ONLY) return note;
-  if (otherMonth() || !S.entries.length) return note + post(true);
   if (isClosed()) return note;
   if (LEDGER_STATE === 'none' && !S.ledgerFixed) return `${note}<a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a>`;
   if (LEDGER_STATE === 'scope' && !S.ledgerFixed) return `${note}<button type="button" class="btn btn-neutral btn-sm" id="reconnect" data-key="reconnect">Reconnect</button>`;
   if (openIssues().length || outOfBalance()) return note + post(true);
+  const pending = toApprove().length;
+  if (pending) return `${note}<button type="button" class="btn btn-primary btn-sm" id="approveBtn" data-key="approveBtn">Approve ${plural(pending, 'entry', 'entries')}</button>${post(true)}`;
   if (unposted().length) return note + post(false);
-  return AC.closeReady(AC.MONTH) ? `${note}<a class="btn btn-primary btn-sm" href="${esc(AC.hrefOf('close'))}" data-key="goClose">Go to Close</a>` : note;
+  return AC.closeReady(AC.MONTH) ? `${note}<a class="btn btn-primary btn-sm" href="${esc(AC.hrefOf('overview'))}" data-key="goClose">Go to Overview</a>` : note;
 }
 /* What the rest of the section reads: progress, and the exceptions a decision settles. */
 function publish() {
@@ -852,16 +854,42 @@ function publish() {
 }
 function exportChip() {
   if (!S.exported) return '';
-  return S.exported === JSON.stringify([S.entries, S.resolved, S.posted]) ? '<span class="ac-note">Exported</span>' : '<span class="ac-chip ac-chip--warn">Changed since export</span>';
+  return S.exported === JSON.stringify([S.entries, S.resolved, S.posted]) ? '<span class="ac-muted">Exported</span>' : '<span class="badge badge-yellow badge-sm">Changed since export</span>';
+}
+function detailId() { const m = location.hash.match(/^#je\/(.+)$/); return m && entry(m[1]) ? m[1] : ''; }
+function timelineHtml(e) {
+  const st = postState(e);
+  const step = (done, label, who) => `<div class="list-group-item ac-tl${done ? ' is-done' : ''}"><span class="ac-tl__dot" aria-hidden="true"></span><span class="ac-tl__label">${esc(label)}</span><span class="ac-muted">${esc(who)}</span></div>`;
+  const steps = [];
+  if (e.reversalOf) steps.push(step(true, 'Reversal of ' + extId(entry(e.reversalOf) || e), 'You · just now'));
+  else if (e.correctionOf) steps.push(step(true, 'Corrected entry, drafted after a reversal', 'You · just now'));
+  else steps.push(step(true, 'Proposed', 'Iris · Sep 30, 2026'));
+  if (!e.reversalOf) steps.push(step(isApproved(e) || st === 'posted' || st === 'reversed', 'Approved', isApproved(e) ? 'You · just now' : 'Not yet'));
+  steps.push(step(st === 'posted' || st === 'reversed', st === 'failed' ? 'Post failed: ' + LEDGER + ' is unavailable (503)' : 'Posted to ' + LEDGER, st === 'posted' || st === 'reversed' ? extId(e) + ' · just now' : 'Not yet'));
+  if (st === 'reversed') steps.push(step(true, 'Reversed', 'You · just now'));
+  return `<div class="list-group list-group--flush ac-list-top" role="list">${steps.join('')}</div>`;
+}
+function detailHtml(id) {
+  const e = entry(id), t = totals(e);
+  const lines = e.lines.map(l => `<tr>${AC.td(esc(l.bucket), { head:true, cls:'ac-wrap-cell' })}${AC.td(esc(l.account), { cls:'ac-wrap-cell' })}${AC.td(l.dr !== undefined ? money(l.dr, e.cur) : '', { num:true })}${AC.td(l.cr !== undefined ? money(l.cr, e.cur) : '', { num:true })}</tr>`).join('');
+  const total = `<tr>${AC.td('Total', { head:true, row:'total' })}${AC.td('', { row:'total' })}${AC.td(money(t.dr, e.cur), { num:true, row:'total' })}${AC.td(money(t.cr, e.cur), { num:true, row:'total' })}</tr>`;
+  return `<div class="ac-crumbs">${AC.crumb('journal-entries.html' + location.search, undefined, 'Journal entries', e.name + (e.cur ? ' ' + e.cur : ''))}<span class="ac-name">${statusHtml(e)}</span></div>
+    <div class="ac-stack">
+      <div class="ac-rail2">
+        <section class="card" aria-labelledby="jeLines">${AC.cardTitle('jeLines', esc(e.name), `${e.cur || 'USD'} · Sep 30, 2026${postState(e) === 'posted' || postState(e) === 'reversed' ? ' · ' + LEDGER + ' ' + extId(e) : ''}`)}
+          <div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin"><caption class="ac-sr">Lines</caption><colgroup><col><col><col style="width:140px"><col style="width:140px"></colgroup><thead><tr>${AC.th('Line')}${AC.th('Account')}${AC.th('Debit', { right:true })}${AC.th('Credit', { right:true })}</tr></thead><tbody>${lines}${total}</tbody></table></div>
+          ${AC.foot(esc(e.memo || ''))}
+        </section>
+        <section class="card" aria-labelledby="jeTimeline">${AC.cardTitle('jeTimeline', 'Status', '')}${timelineHtml(e)}</section>
+      </div>
+    </div>`;
 }
 function render() {
   const active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
   publish();
   const blocked = AC.blockedCard('journal');
-  const actions = blocked ? '' : `<button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv"${otherMonth() || !S.entries.length ? ' disabled' : ''}>Export CSV</button>${postControl()}`;
-  const body = blocked || (otherMonth() ? `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No entries for ${esc(AC.month())}</h2></div></section>` : `<div class="ac-stack">${attentionHtml()}${currencyCard(undefined, true)}${currencyCard('CAD', false)}</div>`);
-  /* Back must not pour a remembered value into a redrawn select. */
-  const head = AC.pageHead({ current:'journal', actions }).replace('id="monthSelect"', 'id="monthSelect" autocomplete="off"');
+  const body = blocked || (detailId() && !otherMonth() ? detailHtml(detailId()) : otherMonth() ? `<div class="ac-stack"><section class="card"><div class="ac-empty"><span class="ac-muted">${AC.MONTHS.includes(AC.month()) ? 'No entries for ' : 'No sample figures for '}${esc(AC.month())}</span></div></section></div>` : `<div class="ac-stack">${attentionHtml()}${entriesCard()}</div>`);
+  const head = AC.pageHead({ current:'journal' });
   document.getElementById('app').innerHTML = `<div class="ac-page">${head}${body}</div>`;
   if (active) { const el = document.querySelector(`[data-key="${CSS.escape(active)}"]`); if (el) el.focus(); }
 }
@@ -873,13 +901,13 @@ function downloadCsv(name, rows) {
   document.body.appendChild(a); a.click(); a.remove();
 }
 function postModal() {
-  const list = unposted();
-  const row = e => `<tr><th scope="row"><div class="ac-name">${esc(e.name)}${e.cur ? ' ' + e.cur : ''}${ordersOffChip(e)}${e.lines.filter(l => l.unmapped).map(l => `<span class="ac-chip ac-chip--warn">${esc(l.bucket)} not mapped</span>`).join('')}</div></th><td><div class="ac-name">${statusHtml(e)}${postState(e) === 'failed' && e.start !== undefined && !isTied(e) ? '<span class="ac-chip ac-chip--warn">Not tied</span>' : ''}${e.native !== undefined ? `<span class="ac-chip ac-chip--warn">Processor off by ${money(Math.abs(e.native - e.end), e.cur)}</span>` : ''}</div></td><td class="ac-num">${money(totals(e).dr, e.cur)}</td></tr>`;
-  const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr class="ac-total"><th scope="row">Total ${cur || 'USD'}</th><td></td><td class="ac-num"><span>${money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur)}</span></td></tr>` : ''; };
+  const list = unposted().filter(isApproved);
+  const row = e => `<tr>${AC.td(`<div class="ac-name">${esc(e.name)}${e.cur ? ' ' + e.cur : ''}${e.lines.filter(l => l.unmapped).map(l => `<span class="badge badge-yellow badge-sm">${esc(l.bucket)} not mapped</span>`).join('')}</div>`, { head:true })}${AC.td(statusHtml(e), {})}${AC.td(tieHtml(e), {})}${AC.td(money(totals(e).dr, e.cur), { num:true })}</tr>`;
+  const total = cur => { const part = list.filter(e => e.cur === cur); return part.length ? `<tr>${AC.td(`Total ${cur || 'USD'}`, { head:true, row:'total' })}${AC.td('', { row:'total', span:2 })}${AC.td(money(Math.round(part.reduce((n, e) => n + totals(e).dr, 0) * 100) / 100, cur), { num:true, row:'total' })}</tr>` : ''; };
   const exceptions = AC.openExceptions();
-  const warning = exceptions.length ? `<p class="ac-lead ac-lead--chip"><a class="ac-chip ac-chip--warn" href="${esc(AC.hrefOf('exceptions'))}">${plural(exceptions.length, 'exception', 'exceptions')} open, ${AC.money(AC.sum(exceptions, ex => ex.amount))}</a></p>` : '';
-  const body = `<p class="ac-lead">To ${LEDGER}, dated Sep 30, 2026.</p>${warning}<p class="ac-sr" role="status" id="postLive"></p>
-    <div class="ac-wrap"><table class="ac-table ac-table--fit"><caption class="ac-sr">Entries to post</caption><thead><tr><th scope="col">Entry</th><th scope="col">Status</th><th scope="col" class="ac-num">Total debits</th></tr></thead><tbody>${list.filter(e => !e.cur).map(row).join('')}${total(undefined)}${list.filter(e => e.cur).map(row).join('')}${total('CAD')}</tbody></table></div>`;
+  const warning = exceptions.length ? `<p class="ac-line" style="margin-bottom:12px;"><a class="badge badge-yellow badge-sm" href="${esc(AC.hrefOf('exceptions'))}">${plural(exceptions.length, 'exception', 'exceptions')} open, ${AC.money(AC.sum(exceptions, ex => ex.amount))}</a></p>` : '';
+  const body = `<p class="ac-line" style="margin-bottom:12px;">To ${LEDGER}, dated Sep 30, 2026.</p>${warning}<p class="ac-sr" role="status" id="postLive"></p>
+    <div class="ac-wrap-scroll ac-boxed"><table class="ac-dst ac-dst--fin ac-dst--auto"><caption class="ac-sr">Entries to post</caption><thead><tr>${AC.th('Entry')}${AC.th('Status')}${AC.th('Tie-out')}${AC.th('Debits', { right:true })}</tr></thead><tbody>${list.filter(e => !e.cur).map(row).join('')}${total(undefined)}${list.filter(e => e.cur).map(row).join('')}${total('CAD')}</tbody></table></div>`;
   openModal('Post ' + plural(list.length, 'entry', 'entries'), body, `<button type="button" class="btn btn-neutral btn-md" id="postCancel">Cancel</button><button type="button" class="btn btn-primary btn-md" id="postConfirm">Post ${plural(list.length, 'entry', 'entries')}</button>`);
   document.getElementById('postCancel').onclick = closeModal;
   document.getElementById('postConfirm').onclick = ev => {
@@ -948,6 +976,7 @@ function reverseModal(id) {
     S.posted[id] = 'reversed';
     S.posted[mirror.id] = 'posted';
     S.open[corrected.id] = true;
+    applyMapping();
     returnFocus = null;
     closeModal();
     render();
@@ -1002,21 +1031,34 @@ document.addEventListener('click', e => {
     return;
   }
   clearTimeout(rowTimer);
+  if (t.id === 'fixApply') return applyDecision(e);
+  if (t.id === 'fixCancel') return closeIssue(openIssue);
   if (t.dataset.issue) return issueModal(t.dataset.issue);
   if (t.dataset.entryToggle) { if (e.detail > 1) return; S.open[t.dataset.entryToggle] = !S.open[t.dataset.entryToggle]; render(); return; }
   if (t.dataset.entryOpen) { overlayClosedAt = Date.now(); const id = t.dataset.entryOpen; S.open[id] = true; render(); const b = document.querySelector('[data-entry-toggle="' + id + '"]'); if (b) { focusNext(b, { preventScroll:true }); b.scrollIntoView({ block:'center' }); } return; }
+  if (t.dataset.menuBtn !== undefined || t.dataset.menuPick !== undefined || t.dataset.month !== undefined) return;
   if (t.dataset.orders) return openDrawer(t.dataset.orders, t.dataset.orders === 'other' ? 'Payments' : 'Orders');
   if (t.dataset.lineOrders) { const [a, b] = t.dataset.lineOrders.split(':'); const l = line(entry(a), b); return openDrawer(a, l.bucket, (['ref','fee','tax','bnk','pay'].includes(b) ? '-' : '') + money(l.dr !== undefined ? l.dr : l.cr, entry(a).cur), l.bucket); }
   if (t.dataset.entryOrders) { const [a, b] = t.dataset.entryOrders.split(':'); const e = entry(a); return openDrawer(a, b, (b === 'Activity' ? money(netOf(e), e.cur) : '-' + money(payoutOf(e), e.cur)), b); }
-  if (t.dataset.openAll) { if (e.detail > 1) return; const list = S.entries.filter(x => (x.cur || 'USD') === t.dataset.openAll); const open = !list.every(x => S.open[x.id]); list.forEach(x => { S.open[x.id] = open; }); render(); return; }
+  if (t.dataset.openAll) { if (e.detail > 1) return; const list = S.entries; const open = !list.every(x => S.open[x.id]); list.forEach(x => { S.open[x.id] = open; }); render(); return; }
   if (t.id === 'toggleDecisions') { if (e.detail > 1) return; S.hideDecisions = !S.hideDecisions; render(); return; }
-  if (t.dataset.reset) { const [a, b] = t.dataset.reset.split(':'); const l = line(entry(a), b); const prev = l.account, prevKey = S.acct[a + ':' + b]; l.account = l.rec; delete S.acct[a + ':' + b]; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); const focusSel = () => focusNext(document.querySelector('[data-key="acct:' + a + ':' + b + '"]') || document.querySelector('[data-key="toggle:' + a + '"]'), { preventScroll:true }); toast('Back to ' + l.rec + '.', () => { line(entry(a), b).account = prev; if (prevKey !== undefined) S.acct[a + ':' + b] = prevKey; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); focusSel(); }); focusSel(); if (e.detail === 0) AC.focusAfterAction(document.getElementById('toastUndo')); return; }
+  if (t.dataset.reset) { const [a, b] = t.dataset.reset.split(':'); const l = line(entry(a), b); const prev = l.account, prevKey = S.acct[a + ':' + b]; l.account = l.rec; delete S.acct[a + ':' + b]; unapprove(a); if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); const focusSel = () => focusNext(document.querySelector(`[data-key="${CSS.escape('menu:' + a + '|' + b)}"]`) || document.querySelector('[data-key="toggle:' + a + '"]'), { preventScroll:true }); toast('Back to ' + l.rec + '.', () => { line(entry(a), b).account = prev; if (prevKey !== undefined) S.acct[a + ':' + b] = prevKey; if (a === 'deferred' && (b === 'dco' || b === 'cog')) recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); focusSel(); }); focusSel(); if (e.detail === 0) AC.focusAfterAction(document.getElementById('toastUndo')); return; }
   if (t.id === 'exportCsv') { if (e.detail > 1) return; return exportCsv(); }
   if (t.id === 'reconnect') { S.ledgerFixed = true; render(); toast(LEDGER + ' reconnected.'); AC.focusAfterAction(document.getElementById('postBtn')); return; }
-  if (t.dataset.copySource !== undefined) { const text = [...document.querySelectorAll('.ac-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
+  if (t.dataset.copySource !== undefined) { const text = [...document.querySelectorAll('.pm-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n'); if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Source row copied.'), () => toast('Could not copy.')); else toast('Could not copy.'); return; }
   if (t.dataset.reverse) { if (e.detail > 1) return; return reverseModal(t.dataset.reverse); }
   if (t.dataset.postRetry !== undefined) return postModal();
-  if (t.id === 'postBtn') { if (e.detail > 1) return; if (t.getAttribute('aria-disabled') === 'true') { const note = document.getElementById('postNote'); return toast(note.textContent + '.'); } return postModal(); }
+  if (t.id === 'postBtn') { if (e.detail > 1 || t.disabled) return; return postModal(); }
+  if (t.id === 'approveBtn') {
+    if (e.detail > 1) return;
+    const list = toApprove(), before = Object.assign({}, S.approved);
+    S.approved = Object.assign({}, S.approved);
+    list.forEach(x => { S.approved[x.id] = true; });
+    render();
+    focusNext(document.getElementById('postBtn'), { preventScroll:true });
+    toast(plural(list.length, 'entry', 'entries') + ' approved.', () => { S.approved = before; render(); toast('Change undone.'); focusNext(document.getElementById('approveBtn'), { preventScroll:true }); });
+    return;
+  }
 });
 document.addEventListener('click', e => {
   const again = e.target.closest('[data-recorrect]');
@@ -1026,6 +1068,7 @@ document.addEventListener('click', e => {
     const mirror = S.entries.find(y => y.reversalOf === x.id);
     S.entries.splice(S.entries.indexOf(mirror || x) + 1, 0, fresh);
     S.open[fresh.id] = true;
+    applyMapping();
     render();
     const toggle = document.querySelector('[data-entry-toggle="' + fresh.id + '"]');
     if (toggle) { toggle.scrollIntoView({ block:'center' }); focusNext(toggle, { preventScroll:true }); }
@@ -1040,34 +1083,54 @@ document.addEventListener('click', e => {
   toast('Corrected ' + (x.baseName || x.name) + (x.cur ? ' ' + x.cur : '') + ' entry discarded.', () => { S.entries.splice(at, 0, x); S.open[x.id] = true; render(); toast('Change undone.'); focusNext(document.querySelector('[data-entry-toggle="' + x.id + '"]'), { preventScroll:true }); });
   if (!e.detail) AC.focusAfterAction(document.getElementById('toastUndo'));
 });
-document.addEventListener('change', e => {
-  const s = e.target;
-  if (s.id === 'monthSelect') { AC.setMonth(s.value); render(); return; }
-  if (s.dataset && s.dataset.entry) {
-    const l = line(entry(s.dataset.entry), s.dataset.line);
-    const previous = l.account;
-    const key = s.dataset.key;
-    const entryId = s.dataset.entry, lineId = s.dataset.line;
-    const remember = v => { const k = entryId + ':' + lineId; const cur = line(entry(entryId), lineId); if (!cur) return; cur.account = v; if (v === cur.rec) delete S.acct[k]; else S.acct[k] = v; if (entryId === 'deferred' && (lineId === 'dco' || lineId === 'cog')) recomputeDeferred(); syncMemos(); };
-    remember(s.value);
+AC.onMenuPick = (name, value) => {
+  if (name === 'ordersExport') { if (drawerExport) drawerExport(value); return; }
+  if (name.startsWith('gtag|')) {
+    const order = name.slice(5);
+    S.gratisTags = Object.assign({}, S.gratisTags, { [order]:value });
+    if (S.resolved.gratis === 'reclass') applyIssue(ISSUES.find(i => i.id === 'gratis'), 'reclass');
     render();
-    toast(l.bucket + ' now in ' + s.value + '.', () => { remember(previous); render(); toast('Change undone.'); focusNext(document.querySelector('[data-key="' + key + '"]') || document.querySelector('[data-key="toggle:' + entryId + '"]')); });
+    const b = document.querySelector(`[data-key="${CSS.escape('menu:' + name)}"]`);
+    if (b) b.focus();
+    return;
   }
+  const [entryId, lineId] = name.split('|');
+  const l = line(entry(entryId), lineId);
+  if (!l || value === l.account) return;
+  const previous = l.account, key = 'menu:' + name;
+  const remember = v => { const k = entryId + ':' + lineId; const cur = line(entry(entryId), lineId); if (!cur) return; unapprove(entryId); cur.account = v; if (v === cur.rec) delete S.acct[k]; else S.acct[k] = v; if (entryId === 'deferred' && (lineId === 'dco' || lineId === 'cog')) recomputeDeferred(); syncMemos(); };
+  remember(value);
+  render();
+  const focusIt = () => focusNext(document.querySelector(`[data-key="${CSS.escape(key)}"]`) || document.querySelector('[data-key="toggle:' + entryId + '"]'), { preventScroll:true });
+  focusIt();
+  toast(l.bucket + ' now in ' + value + '.', () => { remember(previous); render(); toast('Change undone.'); focusIt(); });
+};
+AC.rerender = () => render();
+document.addEventListener('change', ev => {
+  if (!ev.target.matches || !ev.target.matches('[data-defer-fees]')) return;
+  const before = !!S.deferFees;
+  S.deferFees = ev.target.checked;
+  recomputeDeferred(); syncMemos(); unapprove('deferred');
+  render();
+  toast(S.deferFees ? 'Fees deferred with revenue.' : 'Fees no longer deferred.', () => { S.deferFees = before; recomputeDeferred(); syncMemos(); render(); toast('Change undone.'); });
 });
 /* A closed month has every entry posted. */
 function seedClosed() {
-  if (!isClosed() || (S.posted && !unposted().length)) return;
+  const carried = !S.posted && AC.state.journal.total > 0 && AC.state.journal.posted === AC.state.journal.total;
+  if ((!isClosed() && !carried) || (S.posted && !unposted().length)) return;
   S = initial();
   ISSUES.forEach(i => { S.resolved[i.id] = i.options[0].id; });
   if (entry('deferred')) recomputeDeferred();
   ISSUES.forEach(i => applyIssue(i, i.options[0].id));
   S.posted = {};
-  S.entries.forEach(e => { S.posted[e.id] = 'posted'; });
+  S.approved = {};
+  S.entries.forEach(e => { S.posted[e.id] = 'posted'; S.approved[e.id] = true; });
 }
 seedClosed();
 applyMapping();
-/* This prototype is the Journal entries page only: other rail items stay inert, so nobody leaves and loses the decisions. */
-document.querySelectorAll('.pm-rail__item[title="Settings"], .pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
+document.querySelectorAll('.pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
+document.querySelectorAll('.pm-rail__item[title="Settings"]').forEach(b => { b.onclick = () => { location.href = AC.hrefOf('settings'); }; });
+document.querySelectorAll('.pm-rail__item[title="Accounting"]').forEach(b => { b.onclick = () => { location.href = AC.hrefOf('overview'); }; });
 render();
 /* A link from another page can open one entry, journal-entries.html#entry-tiktok, or one decision, #decide-unmatched. */
 function openFromHash() {
@@ -1079,7 +1142,7 @@ function openFromHash() {
     /* The dialog opens once: Back and a reload do not bring it again. */
     history.replaceState(null, '', location.pathname + location.search);
     render();
-    if (!readOnly() && !document.getElementById('modalBackdrop')) { issueModal('unmatched'); returnFocus = document.querySelector('[data-issue-row="unmatched"]'); }
+    if (!readOnly() && !document.getElementById('modalBackdrop')) { openIssue = null; issueModal('unmatched'); }
     return;
   }
   S.open[m[1]] = true;
@@ -1087,7 +1150,8 @@ function openFromHash() {
   const toggle = document.querySelector(`[data-entry-toggle="${CSS.escape(m[1])}"]`);
   if (toggle) { toggle.closest('tr').scrollIntoView({ block:'center' }); toggle.focus({ preventScroll:true }); }
 }
-window.addEventListener('hashchange', openFromHash);
+let wasDetail = !!detailId();
+window.addEventListener('hashchange', () => { const now = !!detailId(); if (now || wasDetail) { wasDetail = now; if (document.getElementById('modalBackdrop')) closeModal(); render(); window.scrollTo(0, 0); return; } openFromHash(); });
 /* Back from the browser's page cache: the state as it is now, no old toast or overlay, and a reload elsewhere stays a reset. */
 window.addEventListener('pageshow', ev => {
   if (!ev.persisted) return;

@@ -10,35 +10,9 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
-  <link rel="stylesheet" href="assets/accounting.css">
-  <style>
-    /* Balance only. */
-    a.ac-link:hover, a.ac-link:active { text-decoration-thickness:1px; }
-    .ac-row--sel .ac-link { text-decoration-color:currentColor; }
-    .ac-row--link:active .ac-zero { color:var(--ac-2); }
-    /* A chip that leads somewhere has the states of an amount link. */
-    a.ac-chip { text-decoration:underline solid var(--ac-ul) 1px; text-underline-offset:3px; }
-    a.ac-chip:hover { color:var(--ac-pri); text-decoration-color:currentColor; }
-    a.ac-chip:active { color:var(--ac-pri-d); text-decoration-color:currentColor; }
-    /* A chip that wraps in the tie-out strip leaves the other cells on the first line. */
-    .ac-tie { align-items:start; }
-    /* Under 1024 a table scrolls inside its wrap: this keeps the hidden text in there with it. */
-    .ac-wrap { position:relative; }
-    /* The events table scrolls inside the panel, so its Source row stays in view. CA$ amounts need the narrow gutter. */
-    .ac-panel__body .ac-wrap { max-height:max(200px, calc(100vh - 372px)); overflow-y:auto; }
-    .ac-table--panel { --ac-gut:12px; }
-    .ac-table--panel td, .ac-table--panel tbody th { overflow:visible; }
-    .ac-table--panel thead th { position:sticky; top:0; z-index:2; }
-    /* A row header carries the same hairline as the cells beside it. */
-    .ac-table--lines tbody tr + tr th { position:relative; }
-    .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:8px; right:0; top:0; height:1px; background:var(--ac-hair); }
-    /* Charges and Activity carry Tax as a ninth column. */
-    .ac-table--tax col:nth-child(1) { width:56px; } .ac-table--tax col:nth-child(2) { width:88px; } .ac-table--tax col:nth-child(5), .ac-table--tax col:nth-child(6), .ac-table--tax col:nth-child(9) { width:80px; } .ac-table--tax col:nth-child(7) { width:96px; } .ac-table--tax col:nth-child(8) { width:76px; }
-    /* Payouts lead with the payout id and hold five figure amounts. */
-    .ac-table--payouts col:nth-child(1) { width:72px; } .ac-table--payouts col:nth-child(2) { width:64px; } .ac-table--payouts col:nth-child(3) { width:112px; } .ac-table--payouts col:nth-child(4) { width:auto; } .ac-table--payouts col:nth-child(5), .ac-table--payouts col:nth-child(7) { width:112px; } .ac-table--payouts col:nth-child(6) { width:72px; }
-  </style>
+  <link rel="stylesheet" href="assets/accounting-layout.css">
 </head>
-<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac ds" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
   <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
@@ -57,8 +31,6 @@
   const TABS = [['all','All'],['shopify','Shopify Payments'],['stripe','Stripe'],['paypal','PayPal'],['amazon','Amazon'],['tiktok','TikTok Shop']].filter(t => t[0] === 'all' || AC.RAILS.some(r => r.tab === t[0]));
   const KINDS = { activity:'Activity', charge:'Charges', refund:'Refunds', fee:'Fees', tax:'Tax', payout:'Payouts' };
   const NOUNS = { activity:'events', charge:'charges', refund:'refunds', fee:'fees', tax:'tax events', payout:'payouts' };
-  const DASH = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
-  const NOT_YET = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available yet</span></span>';
   const S = { tab:'all', cur:'all', rowCur:'USD' };
 
   /* Coming back inside the section keeps the tab and the currency. */
@@ -73,195 +45,253 @@
   } catch (err) { /* private window: start over */ }
   window.addEventListener('pagehide', () => { try { sessionStorage.setItem('pm-balance-view', JSON.stringify({ hash:location.hash, cur:S.cur })); } catch (err) { /* nothing to keep */ } });
 
+  const DRILL_KINDS = ['activity', 'charge', 'refund', 'fee', 'tax', 'payout'];
+  /* Variant: the breakdown opens as a page (Stripe) or in a drawer (the product owner's mock). */
+  let DETAILS = (() => { const q = new URLSearchParams(location.search).get('details'); if (q === 'page' || q === 'drawer') return q; try { return sessionStorage.getItem('ac-details') || 'page'; } catch (err) { return 'page'; } })();
+  const detailsSwitch = () => `<div class="btn-group" role="group" aria-label="Details open in">${[['page', 'Page'], ['drawer', 'Drawer']].map(o => `<button type="button" class="btn${DETAILS === o[0] ? ' active' : ''}" aria-pressed="${DETAILS === o[0]}" data-details="${o[0]}" data-key="details:${o[0]}">${o[1]}</button>`).join('')}</div>`;
   function readHash() {
-    const h = location.hash.slice(1);
+    const [h, kind] = location.hash.slice(1).split('/');
     const cad = h === 'paypal-cad' && !!AC.rail('paypal_cad');
     S.tab = cad ? 'paypal' : TABS.some(t => t[0] === h) ? h : 'all';
     S.rowCur = cad ? 'CAD' : 'USD';
+    S.drill = S.tab !== 'all' && DRILL_KINDS.includes(kind) ? kind : '';
   }
   readHash();
   const hashFor = (tab, rowCur) => '#' + (tab === 'paypal' && rowCur === 'CAD' ? 'paypal-cad' : tab);
+  const railHash = r => hashFor(r.tab, r.cur || 'USD');
   const isSep = () => AC.month() === AC.MONTH;
+  const MONTH_DAYS = { Jul:31, Aug:31, Sep:30, Oct:31 };
+  const firstDay = () => AC.month().split(' ')[0] + ' 1';
+  const lastDay = () => { const m = AC.month().split(' ')[0]; return m + ' ' + (MONTH_DAYS[m] || 30); };
   const curRail = () => { const list = AC.RAILS.filter(r => r.tab === S.tab); return list.find(r => (r.cur || 'USD') === S.rowCur) || list[0]; };
   const curOf = r => r.cur || 'USD';
   const ordersOff = r => (r.ordersEnding === null ? 0 : round2(Math.abs(r.ordersEnding - r.end)));
 
-  /* ---------- Filter bar ---------- */
+  /* ---------- Toolbar: rails, currency, export ---------- */
+  const hasData = () => AC.MONTHS.includes(AC.month());
   function barHtml() {
     const isAll = S.tab === 'all', r = isAll ? null : curRail();
     const curs = isAll ? AC.CURRENCIES : AC.RAILS.filter(x => x.tab === S.tab).map(curOf);
     const picked = isAll ? S.cur : curOf(r);
-    return `<div class="ac-bar">
-      <div class="ac-seg" role="group" aria-label="Rail">${TABS.map(t => `<button type="button" class="ac-seg__item" aria-pressed="${S.tab === t[0]}" data-tab="${t[0]}" data-key="tab:${t[0]}">${esc(t[1])}</button>`).join('')}</div>
+    const options = (isAll ? [['all', 'All currencies']] : []).concat(curs.map(c => [c, c]));
+    return `<div class="ac-toolbar">
+      <div class="btn-group" role="group" aria-label="Rail">${TABS.map(t => `<button type="button" class="btn${S.tab === t[0] ? ' active' : ''}" aria-pressed="${S.tab === t[0]}" data-tab="${t[0]}" data-key="tab:${t[0]}">${esc(t[1])}</button>`).join('')}</div>
       <div class="ac-actions">
-        <select class="form-input form-select ac-select ac-w148" aria-label="Rail account" data-key="acctSelect"${isAll ? ' disabled' : ''}><option>${isAll ? 'All accounts' : esc(r.acct)}</option></select>
-        <select class="form-input form-select ac-select ac-w140" aria-label="Currency" id="curSelect" data-key="curSelect">${isAll ? '<option value="all">All currencies</option>' : ''}${curs.map(c => `<option value="${c}"${picked === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
+        ${AC.filterMenu({ name:'acct', label:'Rail account', value:isAll ? 'all' : r.acct, options:isAll ? [['all', 'All accounts']].concat(AC.RAILS.map(x => [x.acct, x.acct])) : [[r.acct, r.acct]], end:true, always:true })}
+        ${AC.filterMenu({ name:'currency', label:'Currency', value:picked, options, end:true, always:true })}
+        <span class="ac-muted ac-tz">${esc(AC.TIMEZONE)}</span>
+        <button type="button" class="btn btn-neutral btn-sm" id="exportPage" data-key="exportPage"${hasData() ? '' : ' disabled'}>Export CSV</button>
       </div>
     </div>`;
   }
 
-  /* ---------- Amounts ---------- */
+  /* ---------- Amounts: an amount that opens its events reads as a link ---------- */
   function amount(r, kind, text, slot) {
-    return `<button type="button" class="ac-link" data-open="${r.id}:${kind}" data-key="${r.id}:${kind}${slot ? ':' + slot : ''}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(AC.railLabel(r))}, ${esc(KINDS[kind])}, ${esc(text.replace(AC.MINUS, 'minus '))}">${esc(text)}</button>`;
+    return `<a class="ac-amt" href="${railHash(r)}/${kind}" data-key="${r.id}:${kind}${slot ? ':' + slot : ''}" aria-label="${esc(AC.railLabel(r))}, ${esc(KINDS[kind])}, ${esc(text.replace(AC.MINUS, 'minus '))}">${esc(text)}</a>`;
   }
-  const processorHtml = tied => (tied ? '<span class="ac-status ac-status--ok">Tied</span>' : '<span class="ac-chip ac-chip--warn">Not tied</span>');
-  const reserveHtml = r => (r.reserve ? '<span class="ac-muted">reserve</span>' : '');
-  /* The orders difference is the break in this settlement. */
-  const breakChip = text => { const cleared = AC.breakCleared('po_Tk05'); return `<a class="ac-chip ${cleared ? 'ac-chip--wait' : 'ac-chip--warn'}" href="${esc(AC.hrefOf('settlements') + '#po_Tk05')}">${text}${cleared ? `<span class="ac-chip__more">&nbsp;· ${AC.EXCEPTION_STATUS[AC.exceptionStatus(AC.exceptionOf('po_Tk05'))]}</span>` : ''}</a>`; };
+  const quiet = text => `<span class="ac-muted">${esc(text)}</span>`;
+  const offBadge = (off, cur) => `<span class="badge ${AC.breakCleared('po_Tk05') ? 'badge-gray' : 'badge-yellow'} badge-sm">Off by ${esc(money(off, cur))}</span>`;
+  const zeroOr = (v, c) => (round2(v) ? esc(signed(v, c)) : `<span class="ac-zero">${esc(signed(v, c))}</span>`);
+  const processorCell = r => (r.native === undefined ? quiet('Tied') : offBadge(round2(Math.abs(r.native - r.end)), r.cur));
+  const ordersCell = r => (r.ordersEnding === null ? AC.none : ordersOff(r) ? offBadge(ordersOff(r), r.cur) : quiet('Tied'));
+  /* Processor first, then orders: the first check that does not tie, or Tied. */
+  const tieCell = r => {
+    const cleared = AC.breakCleared('po_Tk05') ? 'badge-gray' : 'badge-yellow';
+    if (r.native !== undefined) return `<span class="badge badge-yellow badge-sm">Processor off by ${esc(money(round2(Math.abs(r.native - r.end)), r.cur))}</span>`;
+    if (r.ordersEnding !== null && ordersOff(r)) return `<a class="badge ${cleared} badge-sm" href="${esc(AC.hrefOf('settlements'))}#po_Tk05">Orders off by ${esc(money(ordersOff(r), r.cur))}</a>`;
+    return quiet('Tied');
+  };
 
-  /* ---------- All tab, and a month with no data ---------- */
-  const COLUMNS = '<colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup><thead><tr><th scope="col">Rail</th><th scope="col" class="ac-num">Starting</th><th scope="col" class="ac-num">Activity</th><th scope="col" class="ac-num">Payouts</th><th scope="col" class="ac-num">Ending</th><th scope="col" class="ac-right">Processor</th></tr></thead>';
+  /* ---------- Charts: the library's KPI line, daily balance over the month ---------- */
+  const seriesOf = r => (AC.rollForward().find(x => x.rail === r.id) || {}).series || [r.start, r.end];
+  const railCard = r => `<div class="iris-kpi iris-kpi--line"><div style="min-width:0;"><a class="iris-kpi__label ac-kpi-link" href="${railHash(r)}" data-key="kpi:${r.id}">${esc(AC.railLabel(r))}</a><div class="iris-kpi__value">${esc(signed(r.end, r.cur))}</div><div class="iris-kpi__subtitle">Ending balance ${lastDay()}</div></div>${AC.kpiChart(seriesOf(r))}</div>`;
+  const railCards = () => { const list = AC.RAILS.filter(r => S.cur === 'all' || curOf(r) === S.cur); return `<div class="ac-kpis ac-kpis--rails" style="--n:${list.length};--half:${Math.ceil(list.length / 2)};">${list.map(railCard).join('')}</div>`; };
+
+  /* ---------- All tab: one card per currency, never mixed ---------- */
+  const HEAD_HTML = () => `<colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-tie"></colgroup><thead><tr>${AC.th('Rail', { cls:'ac-h-corner' })}${AC.th(`Starting <span class="ac-h-date">${firstDay()}</span>`, { right:true })}${AC.th('Activity', { right:true })}${AC.th('Payouts', { right:true })}${AC.th(`Ending <span class="ac-h-date">${lastDay()}</span>`, { right:true })}${AC.th('Tie-out', { right:true })}</tr></thead>`;
   function railRow(r) {
-    const off = ordersOff(r);
-    return `<tr class="ac-row--link" data-rail-row="${r.tab}" data-rail-cur="${curOf(r)}" data-drill>
-      <th scope="row"><div class="ac-name"><button type="button" class="ac-toggle" data-tab="${r.tab}" data-cur="${curOf(r)}">${esc(r.name)}</button>${reserveHtml(r)}${off ? breakChip(`Orders off by ${money(off, r.cur)}`) : ''}</div></th>
-      <td class="ac-num">${signed(r.start, r.cur)}</td>
-      <td class="ac-num">${amount(r, 'activity', signed(r.net, r.cur))}</td>
-      <td class="ac-num">${amount(r, 'payout', signed(-r.payouts, r.cur))}</td>
-      <td class="ac-num ac-end">${signed(r.end, r.cur)}</td>
-      <td class="ac-right">${processorHtml(r.native === undefined)}</td></tr>`;
+    return `<tr data-drill>
+      ${AC.td(esc(r.name), { head:true })}
+      ${AC.td(zeroOr(r.start, r.cur), { num:true })}
+      ${AC.td(amount(r, 'activity', signed(r.net, r.cur)), { num:true })}
+      ${AC.td(amount(r, 'payout', signed(-r.payouts, r.cur)), { num:true })}
+      ${AC.td(esc(signed(r.end, r.cur)), { num:true })}
+      ${AC.td(tieCell(r), { num:true })}</tr>`;
   }
   function totalRow(c) {
     const t = AC.totals(c), sep = isSep();
     const values = sep ? [t.start, t.net, -t.payouts, t.end] : [t.end, 0, 0, t.end];
-    return `<tr class="ac-total"><th scope="row">Total ${c}</th>${values.map(v => `<td class="ac-num${round2(v) ? '' : ' ac-zero'}"><span>${signed(v, c)}</span></td>`).join('')}<td class="ac-right">${sep && AC.railsIn(c).some(r => r.native !== undefined) ? processorHtml(false) : DASH}</td></tr>`;
+    return `<tr>${AC.td(`Total ${c}`, { head:true, row:'total' })}${values.map(v => AC.td(zeroOr(v, c), { num:true, row:'total' })).join('')}${AC.td('', { row:'total' })}</tr>`;
   }
   function noDataRow(r) {
-    const zero = `<td class="ac-num ac-zero">${money(0, r.cur)}</td>`;
-    return `<tr><th scope="row"><div class="ac-name"><span>${esc(r.name)}</span>${reserveHtml(r)}</div></th><td class="ac-num">${signed(r.end, r.cur)}</td>${zero}${zero}<td class="ac-num ac-end">${signed(r.end, r.cur)}</td><td class="ac-right"><span class="ac-status ac-status--quiet">No data</span></td></tr>`;
+    return `<tr>${AC.td(esc(r.name), { head:true })}${AC.td(zeroOr(r.end, r.cur), { num:true })}${AC.td(zeroOr(0, r.cur), { num:true })}${AC.td(zeroOr(0, r.cur), { num:true })}${AC.td(zeroOr(r.end, r.cur), { num:true })}${AC.td(quiet('No data'), { num:true })}</tr>`;
   }
-  function cardsHtml(rails, rowHtml, withTotal) {
+  function tableHtml(rails, rowHtml, withTotal) {
     const picked = AC.CURRENCIES.filter(c => (S.tab !== 'all' || S.cur === 'all' || S.cur === c) && rails.some(r => curOf(r) === c));
-    return `<div class="ac-stack">${picked.map(c => {
+    return picked.map(c => {
       const list = rails.filter(r => curOf(r) === c);
-      return `<section class="ac-card" aria-label="${c}"><div class="ac-card__head"><h2 class="ac-card__title">${c}</h2><span class="ac-note">${list.length} ${list.length === 1 ? 'rail' : 'rails'}</span></div><div class="ac-wrap"><table class="ac-table"><caption class="ac-sr">Balance by rail, ${c}</caption>${COLUMNS}<tbody>${list.map(rowHtml).join('')}${withTotal ? totalRow(c) : ''}</tbody></table></div></section>`;
-    }).join('')}</div>`;
+      return `<section class="card" aria-labelledby="cur-${c}">${AC.cardTitle('cur-' + c, c, `${list.length} ${list.length === 1 ? 'rail' : 'rails'}`)}<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin"><caption class="ac-sr">Balance by rail, ${c}</caption>${HEAD_HTML()}<tbody>${list.map(rowHtml).join('')}${withTotal ? totalRow(c) : ''}</tbody></table></div></section>`;
+    }).join('');
   }
 
-  /* ---------- Rail tab ---------- */
-  const tile = (label, value, key) => `<div class="ac-tile${key ? ' ac-tile--key' : ''}"><div class="ac-tile__label">${label}</div><div class="ac-tile__value">${value}</div></div>`;
-  const tieCell = (label, inner) => `<div class="ac-tie__cell"><span class="ac-tie__label">${label}</span>${inner}</div>`;
-  function tieValue(v, r, chip) {
-    const off = round2(Math.abs(v - r.end));
-    const text = `Off by ${money(off, r.cur)}`;
-    return `<span class="ac-num">${money(v, r.cur)}</span>${off > 0.01 ? (chip ? chip(text) : `<span class="ac-chip ac-chip--warn">${text}</span>`) : '<span class="ac-status ac-status--ok">Tied</span>'}`;
+  /* ---------- Rail tab: the roll-forward, top to bottom ---------- */
+  const line = (label, n, value, o = {}) => `<tr${o.kind ? ' data-drill' : ''}>${AC.td(o.raw ? label : esc(label), { head:true, row:o.row, cls:o.indent ? 'ac-indent' : '' })}${AC.td(n === undefined ? '' : `<span class="ac-zero">${AC.count(n)}</span>`, { num:true, row:o.row })}${AC.td(value, { num:true, row:o.row })}</tr>`;
+  const section = label => `<tr>${AC.td(esc(label), { head:true, row:'noncoll', span:3 })}</tr>`;
+  const linkLine = (r, kind, label, text, n) => line(label, n, amount(r, kind, text), { kind, indent:true });
+  const diffCell = (d, cur) => (Math.abs(d) < 0.005 ? `<span class="ac-zero">${esc(money(0, cur))}</span>` : `<span class="badge badge-yellow badge-sm">${esc(signed(round2(d), cur))}</span>`);
+  function tieRow(label, ours, theirs, cur) {
+    return `<tr>${AC.td(esc(label), { head:true })}${AC.td(esc(money(ours, cur)), { num:true })}${AC.td(esc(money(theirs, cur)), { num:true })}${AC.td(diffCell(theirs - ours, cur), { num:true })}</tr>`;
   }
-  const kvCount = n => ` <span class="ac-muted">(${AC.count(n)})</span>`;
-  const kvZero = (label, n, cur) => `<div class="ac-kv__row"><div class="ac-kv__label">${label}${kvCount(n)}</div><div class="ac-num ac-zero">${money(0, cur)}</div></div>`;
-  const kvLink = (r, kind, label, text) => `<div class="ac-kv__row ac-kv__row--link${kind === 'tax' ? ' ac-kv__row--indent' : ''}" data-drill><div class="ac-kv__label">${label}</div><div class="ac-num">${amount(r, kind, text)}</div></div>`;
-  const kvTotal = (label, text) => `<div class="ac-kv__row ac-kv__row--total"><div class="ac-kv__label">${label}</div><div class="ac-num">${text}</div></div>`;
   function railHtml() {
-    const r = curRail(), cur = r.cur;
-    return `<div class="ac-stack">
-      <section class="ac-card" aria-label="Summary">
-        <div class="ac-band">
-          ${tile('Starting balance Sep 1', signed(r.start, cur))}
-          ${tile('Net balance change from activity', amount(r, 'activity', signed(r.net, cur), 'tile'))}
-          ${tile(`Total payouts (${AC.count(r.n.payout)})`, amount(r, 'payout', signed(-r.payouts, cur), 'tile'))}
-          ${tile('Ending balance Sep 30', signed(r.end, cur), true)}
-        </div>
-        <div class="ac-tie">
-          ${tieCell('Processor', tieValue(r.native !== undefined ? r.native : r.end, r))}
-          ${tieCell('Orders', r.ordersEnding !== null ? tieValue(r.ordersEnding, r, breakChip) : NOT_YET)}
-          ${tieCell('Bank', NOT_YET)}
-          ${tieCell('GL', NOT_YET)}
-        </div>
+    const r = curRail(), cur = r.cur, native = r.native !== undefined ? r.native : r.end;
+    const notYet = label => `<tr>${AC.td(`<span class="ac-zero">${esc(label)}</span>`, { head:true })}${AC.td('<span class="ac-muted">Not available yet</span>', { num:true, span:3 })}</tr>`;
+    return `<div class="ac-rail2">
+      <section class="card" aria-labelledby="rollTitle">
+        ${AC.cardTitle('rollTitle', 'Roll-forward', `${firstDay()} to ${lastDay()}`)}
+        <div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin"><caption class="ac-sr">Roll-forward, ${esc(AC.railLabel(r))}</caption><colgroup><col><col style="width:96px"><col style="width:180px"></colgroup>
+          <thead><tr>${AC.th('', { cls:'ac-h-corner' })}${AC.th('Count', { right:true })}${AC.th('Amount', { right:true })}</tr></thead><tbody>
+          ${line(`Starting balance <span class="ac-h-date">${firstDay()}</span>`, undefined, esc(signed(r.start, cur)), { raw:true })}
+          ${section('Activity')}
+          ${linkLine(r, 'charge', 'Charges', signed(r.gross, cur), r.n.charge)}
+          ${linkLine(r, 'refund', 'Refunds', signed(-r.refunds, cur), r.n.refund)}
+          ${line('Disputes', r.n.dispute, zeroOr(0, cur), { indent:true })}
+          ${r.reserve ? line('Reserves', 0, zeroOr(0, cur), { indent:true }) : ''}
+          ${linkLine(r, 'fee', 'Fees', signed(-r.fees, cur), r.n.fee)}
+          ${linkLine(r, 'tax', 'Tax on fees', signed(-r.tax, cur))}
+          ${line('Net balance change from activity', undefined, esc(signed(r.net, cur)), { row:'derived' })}
+          ${section('Payouts')}
+          ${linkLine(r, 'payout', 'Payouts', signed(-r.payouts, cur), r.n.payout)}
+          ${line(`Ending balance <span class="ac-h-date">${lastDay()}</span>`, undefined, esc(signed(r.end, cur)), { row:'total', raw:true })}
+        </tbody></table></div>
       </section>
-      <div class="ac-grid">
-        <section class="ac-card ac-s6" aria-labelledby="activityTitle">
-          <div class="ac-card__head"><h2 class="ac-card__title" id="activityTitle">Balance change from activity</h2></div>
-          <div class="ac-kv">
-            ${kvLink(r, 'charge', 'Charges' + kvCount(r.n.charge), signed(r.gross, cur))}
-            ${kvLink(r, 'refund', 'Refunds' + kvCount(r.n.refund), signed(-r.refunds, cur))}
-            ${kvZero('Disputes', r.n.dispute, cur)}
-            ${r.reserve ? kvZero('Reserves', 0, cur) : ''}
-            ${kvLink(r, 'fee', 'Fees' + kvCount(r.n.fee), signed(-r.fees, cur))}
-            ${kvLink(r, 'tax', 'Tax', signed(-r.tax, cur))}
-            ${kvTotal('Net balance change from activity', signed(r.net, cur))}
-          </div>
-        </section>
-        <section class="ac-card ac-s6" aria-labelledby="payoutsTitle">
-          <div class="ac-card__head"><h2 class="ac-card__title" id="payoutsTitle">Payouts</h2></div>
-          <div class="ac-kv">
-            ${kvLink(r, 'payout', 'Payouts' + kvCount(r.n.payout), money(r.payouts, cur))}
-            ${kvTotal('Total paid out', money(r.payouts, cur))}
-          </div>
-        </section>
+      <div class="ac-side">
+      <div class="iris-kpi iris-kpi--line"><div style="min-width:0;"><div class="iris-kpi__label">Ending balance ${lastDay()}</div><div class="iris-kpi__value">${esc(signed(r.end, cur))}</div><div class="iris-kpi__subtitle">Daily balance, ${firstDay()} to ${lastDay()}</div></div>${AC.kpiChart(seriesOf(r))}</div>
+      <section class="card" aria-labelledby="tieTitle">
+        ${AC.cardTitle('tieTitle', 'Tie-out', `Ending balance ${lastDay()}`)}
+        <div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin"><caption class="ac-sr">Tie-out, ending balance ${lastDay()}</caption><colgroup><col><col style="width:132px"><col style="width:132px"><col style="width:112px"></colgroup>
+          <thead><tr>${AC.th('', { cls:'ac-h-corner' })}${AC.th('Iris', { right:true })}${AC.th('Source', { right:true })}${AC.th('Difference', { right:true })}</tr></thead><tbody>
+          ${tieRow('Processor', r.end, native, cur)}
+          ${r.ordersEnding !== null ? tieRow('Orders', r.end, r.ordersEnding, cur) : notYet('Orders')}
+          ${notYet('Bank')}
+          ${notYet('GL')}
+        </tbody></table></div>
+      </section>
       </div>
     </div>`;
   }
 
-  /* ---------- Events panel ---------- */
-  let panelRows = [], panelRail = null, openKey = null;
-  function pickRow(i) {
-    document.querySelectorAll('#panelBody tbody tr').forEach((tr, n) => {
-      tr.classList.toggle('ac-row--sel', n === i);
-      tr.querySelector('[data-src-btn]').setAttribute('aria-pressed', n === i);
-    });
-    document.getElementById('sourceSlot').innerHTML = AC.sourceRow(AC.sourcePairs(panelRows[i]));
+  /* ---------- Breakdown of one amount: a page, as in Stripe's Activity breakdown ---------- */
+  const dayOf = ev => Number(String(ev.date).replace(/^[A-Za-z]+ /, ''));
+  const drillRows = (r, kind) => AC.eventRows(r, kind).slice().sort((a, b) => dayOf(a) - dayOf(b));
+  const drillCols = kind => (kind === 'payout' ? ['Payout', 'Date', 'Transaction', 'Description', 'Amount', 'Fee', 'Net', 'Status'] : ['Date', 'Transaction', 'Description', 'Amount', 'Fee'].concat(kind === 'charge' || kind === 'activity' ? ['Tax'] : []).concat(['Net', 'Payout', 'Status']));
+  /* The totals of every event of this kind, not of the sample rows on view. */
+  function drillTotals(r, kind) {
+    const t = { charge:{ amount:r.gross, fee:-r.fees, tax:-r.tax, net:round2(r.gross - r.fees - r.tax) }, refund:{ amount:-r.refunds, fee:0, net:-r.refunds }, fee:{ amount:-r.fees, fee:0, net:-r.fees }, tax:{ amount:-r.tax, fee:0, net:-r.tax }, payout:{ amount:-r.payouts, fee:0, net:-r.payouts }, activity:{ amount:round2(r.gross - r.refunds), fee:-r.fees, tax:-r.tax, net:r.net } };
+    return t[kind];
   }
-  function openEvents(id, kind, payoutId) {
-    const dayOf = ev => Number(ev.date.replace('Sep ', ''));
-    const r = AC.rail(id), cur = r.cur, rows = AC.eventRows(r, kind).sort((a, b) => dayOf(a) - dayOf(b)), n = AC.kindCount(r, kind);
-    const isPayouts = kind === 'payout', withTax = kind === 'charge' || kind === 'activity';
-    const cols = ['Date','Transaction','Description','Amount','Fee'].concat(withTax ? ['Tax'] : []).concat(['Net','Payout','Status']);
-    const shown = isPayouts ? ['Payout'].concat(cols.filter(c => c !== 'Payout')) : cols;
-    const headCell = c => `<th scope="col"${['Amount','Fee','Tax','Net'].includes(c) ? ' class="ac-num"' : c === 'Status' ? ' class="ac-right"' : ''}>${c}</th>`;
-    const cell = (c, ev, i) => {
-      if (c === 'Date') return ['', `<button type="button" class="ac-toggle" data-src-btn="${i}" aria-pressed="false">${esc(ev.date)}</button>`];
-      if (c === 'Transaction') return ['ac-mono', esc(ev.txn)];
-      if (c === 'Description') return ['', esc(ev.desc)];
-      if (c === 'Status') return ['ac-right', `<span class="ac-status ac-status--quiet">${esc(ev.status)}</span>`];
-      if (c === 'Payout') {
-        if (!ev.payout) return ['ac-mono', DASH];
-        return ['ac-mono', isPayouts ? `<a class="ac-link" href="${esc(AC.hrefOf('settlements'))}#${esc(ev.payout)}">${esc(ev.payout)}</a>` : `<button type="button" class="ac-link" data-payout="${esc(ev.payout)}">${esc(ev.payout)}</button>`];
-      }
-      const v = ev[c.toLowerCase()];
-      return [`ac-num${round2(v) ? '' : ' ac-zero'}`, signed(v, cur)];
-    };
-    const rowCells = (ev, i) => shown.map((c, col) => {
-      const [cls, inner] = cell(c, ev, i);
-      const attr = cls ? ` class="${cls}"` : '';
-      return col ? `<td${attr}>${inner}</td>` : `<th scope="row"${attr}>${inner}</th>`;
-    }).join('');
+  let drillList = [];
+  function drillHtml(asDrawer, drawerKind, drawerRail) {
+    const r = drawerRail || curRail(), kind = drawerKind || S.drill, cur = r.cur, rows = drillRows(r, kind), cols = drillCols(kind), n = AC.kindCount(r, kind), tot = drillTotals(r, kind);
+    drillList = rows;
     const noun = n === 1 ? NOUNS[kind].replace(/s$/, '') : NOUNS[kind];
-    const showing = rows.length === n ? `Showing ${AC.count(n)} ${noun}` : `Showing ${rows.length} of ${AC.count(n)} ${NOUNS[kind]}`;
-    const inEvents = `${AC.hrefOf('events')}#rail=${r.id}${kind === 'activity' ? '' : '&cat=' + kind}`;
-    panelRows = rows;
-    panelRail = r;
+    const cell = (c, ev, i) => {
+      if (c === 'Date') return AC.td(esc(ev.date), { head:c === cols[0] });
+      if (c === 'Transaction') return AC.td(`<button type="button" class="ac-rec" data-ev="${i}" data-key="ev:${esc(ev.txn)}" aria-haspopup="dialog">${esc(ev.txn)}</button>`, {});
+      if (c === 'Description') return AC.td(esc(ev.desc), {});
+      if (c === 'Status') return AC.td(quiet(ev.status), { cls:'ac-wide' });
+      if (c === 'Payout') return AC.td(ev.payout ? `<a class="ac-rec" href="${esc(AC.hrefOf('settlements'))}#${esc(ev.payout)}">${esc(ev.payout)}</a>` : AC.none, { head:c === cols[0] });
+      return AC.td(zeroOr(ev[c.toLowerCase()], cur), { num:true });
+    };
+    const totalCell = c => { const key = c.toLowerCase(); return AC.td(key in tot ? esc(signed(tot[key], cur)) : '', { num:['Amount', 'Fee', 'Tax', 'Net'].includes(c), row:'total', cls:c === 'Status' ? 'ac-wide' : '' }); };
+    const WIDTH = { Date:'ac-dc-date', Transaction:'ac-dc-txn', Amount:'ac-dc-money', Fee:'ac-dc-fee', Tax:'ac-dc-fee', Net:'ac-dc-money', Payout:'ac-dc-po', Status:'ac-dc-status ac-wide' };
+    const colgroup = `<colgroup>${cols.map(c => `<col${WIDTH[c] ? ` class="${WIDTH[c]}"` : ''}>`).join('')}</colgroup>`;
+    const head = cols.map(c => AC.th(c, { right:['Amount', 'Fee', 'Tax', 'Net'].includes(c), cls:c === 'Status' ? 'ac-wide' : '' })).join('');
+    const body = rows.map((ev, i) => `<tr class="ac-row" data-ev-row="${i}">${cols.map(c => cell(c, ev, i)).join('')}</tr>`).join('');
+    const total = `<tr>${AC.td(`Total, ${AC.count(n)} ${noun}`, { head:true, row:'total', span:3 })}${cols.slice(3).map(totalCell).join('')}</tr>`;
+    const table = `<table class="ac-dst ac-dst--fin ac-dst--drill ac-keep"><caption class="ac-sr">${esc(KINDS[kind])}, ${esc(AC.railLabel(r))}, ${firstDay()} to ${lastDay()}</caption>${colgroup}<thead><tr>${head}</tr></thead><tbody>${body}${total}</tbody></table>`;
+    const showing = `Showing ${AC.count(rows.length)} of ${AC.count(n)} ${noun}`;
+    if (asDrawer) return { table, showing, n, r, kind };
+    return `<div class="ac-crumbs">${AC.crumb('#all', undefined, 'Balance', KINDS[kind]).replace('</a><span class="breadcrumb-sep"', `</a><span class="breadcrumb-sep"`).replace('<li class="breadcrumb-item active"', `<li class="breadcrumb-item"><a href="${railHash(r)}">${esc(AC.railLabel(r))}</a><span class="breadcrumb-sep" aria-hidden="true">${CRUMB_SEP}</span></li><li class="breadcrumb-item active"`)}</div>
+      <div class="ac-hero">
+        <div class="ac-hero__label">${esc(KINDS[kind])}</div>
+        <div class="ac-hero__value" id="drillTitle" tabindex="-1">${esc(signed(AC.kindTotal(r, kind), cur))}</div>
+        <div class="ac-muted">${firstDay()} to ${lastDay()}, 2026 · ${esc(AC.railLabel(r))} · ${esc(curOf(r))}</div>
+      </div>
+      <section class="card" aria-labelledby="drillTitle">
+        ${AC.cardBar(`<span class="ac-count">${AC.count(n)} ${noun}</span>`, AC.actionMenu({ name:'exportDrill', label:'Export', options:AC.EXPORTS, end:true }))}
+        <div class="ac-wrap-scroll">${table}</div>
+        ${AC.foot(showing)}
+      </section>`;
+  }
+  const CRUMB_SEP = '<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>';
+  function exportDrill(drawerKind, drawerRail, fmt) {
+    const r = drawerRail || curRail(), kind = drawerKind || S.drill, cols = drillCols(kind);
+    const rows = [cols.concat('Currency')].concat(drillList.map(x => cols.map(c => { const k = c.toLowerCase(); if (c === 'Date') return AC.isoDate(x.date); if (['amount', 'fee', 'tax', 'net'].includes(k)) return (x[k] || 0).toFixed(2); return x[k] || ''; }).concat(curOf(r))));
+    AC.exportAs(fmt || 'csv', `balance-${r.id}-${kind}-2026-09`, `${KINDS[kind]}, ${AC.railLabel(r)}`, `${firstDay()} to ${lastDay()}, 2026 · ${curOf(r)}`, rows);
+  }
+  /* Drawer variant: the same breakdown beside the roll-forward, the source row under the table. */
+  let drawerKind = '';
+  function pickSource(i) {
+    const ev = drillList[i];
+    if (!ev) return;
+    document.querySelectorAll('#panelBody [data-ev-row]').forEach(tr => tr.classList.toggle('ac-row--sel', tr.dataset.evRow === String(i)));
+    document.getElementById('sourceSlot').innerHTML = AC.sourceRow(AC.sourcePairs(ev));
+  }
+  function openDrawer(railId, kind, link) {
+    const rail = AC.rail(railId);
+    if (!rail) return;
+    drawerKind = kind;
+    const d = drillHtml(true, kind, rail), cur = rail.cur;
     AC.openPanel({
       title:KINDS[kind],
-      count:kind === 'activity' || kind === 'tax' ? null : n,
-      amount:signed(AC.kindTotal(r, kind), cur),
-      meta:`${r.name} · ${curOf(r)} · ${AC.MONTH}`,
-      body:`<div class="ac-wrap"><table class="ac-table ac-table--panel${isPayouts ? ' ac-table--payouts ac-table--lines' : withTax ? ' ac-table--tax' : ''}"><caption class="ac-sr">${esc(KINDS[kind])} in ${esc(AC.railLabel(r))}</caption><colgroup>${shown.map(() => '<col>').join('')}</colgroup><thead><tr>${shown.map(headCell).join('')}</tr></thead><tbody>${rows.map((ev, i) => `<tr class="ac-row--link" data-src="${i}">${rowCells(ev, i)}</tr>`).join('')}</tbody></table></div>
-        <div class="ac-name"><span class="ac-note">${esc(showing)}</span>${isPayouts ? '' : `<a class="ac-link" href="${esc(inEvents)}">View in Events</a>`}</div>
-        <div id="sourceSlot" role="status"></div>`,
-      onExport:() => {
-        AC.downloadCsv(`balance-${r.id}-${kind}-2026-09.csv`, [cols.concat('Currency')].concat(rows.map(x => [AC.isoDate(x.date), x.txn, x.desc, x.amount.toFixed(2), x.fee.toFixed(2)].concat(withTax ? [x.tax.toFixed(2)] : []).concat([x.net.toFixed(2), x.payout || '', x.status, curOf(r)]))));
-        AC.toast('CSV exported.');
-      },
-      onOpen:body => {
-        const start = payoutId ? Math.max(0, rows.findIndex(x => x.payout === payoutId)) : 0;
-        pickRow(start);
-        body.querySelector(`[data-src="${start}"]`).scrollIntoView({ block:'nearest' });
-      },
+      count:kind === 'activity' || kind === 'tax' ? null : d.n,
+      amount:signed(AC.kindTotal(rail, kind), cur),
+      meta:`${AC.railLabel(rail)} · ${curOf(rail)} · ${firstDay()} to ${lastDay()}`,
+      body:`<div class="ac-wrap-scroll ac-panel-table">${d.table}</div><p class="ac-muted ac-line">${esc(d.showing)}</p><div id="sourceSlot" role="status"></div>`,
+      onExport:() => exportDrill(kind, rail),
+      onOpen:() => pickSource(0),
     });
+    if (link) { link.setAttribute('aria-expanded', 'true'); AC.keepReturnFocus(link); const row = link.closest('tr'); if (row) row.classList.add('ac-row--sel'); }
   }
-  function openFrom(btn) {
-    const [id, kind] = btn.dataset.open.split(':');
-    openEvents(id, kind);
-    openKey = btn.dataset.key;
-    btn.setAttribute('aria-expanded', 'true');
-    AC.keepReturnFocus(btn);
-  }
-  /* The amount stays marked for as long as its panel is open. */
   new MutationObserver(() => {
-    if (!openKey || document.getElementById('modalBackdrop')) return;
-    const el = document.querySelector(`[data-key="${openKey}"]`);
-    if (el) el.setAttribute('aria-expanded', 'false');
-    openKey = null;
+    if (document.getElementById('modalBackdrop')) return;
+    drawerKind = '';
+    document.querySelectorAll('.ac-amt[aria-expanded="true"]').forEach(a => a.removeAttribute('aria-expanded'));
+    document.querySelectorAll('#app tr.ac-row--sel').forEach(tr => tr.classList.remove('ac-row--sel'));
   }).observe(document.getElementById('modalHost'), { childList:true });
+  function setDetails(mode) {
+    if (mode === DETAILS) return;
+    DETAILS = mode;
+    try { sessionStorage.setItem('ac-details', mode); } catch (err) { /* this page only */ }
+    const openKind = drawerKind;
+    if (mode === 'drawer' && S.drill) { const kind = S.drill; history.replaceState(null, '', location.pathname + location.search + railHash(curRail())); readHash(); AC.rerender(); openDrawer(curRail().id, kind); }
+    else if (mode === 'page' && openKind) { AC.closePanel(); location.hash = railHash(curRail()) + '/' + openKind; }
+    else AC.rerender();
+    const b = document.querySelector(`[data-key="details:${mode}"]`);
+    if (b) b.focus({ preventScroll:true });
+  }
+  /* One transaction and the raw row it came from. */
+  function openSource(i) {
+    const ev = drillList[i], r = curRail(), cur = r.cur;
+    if (!ev) return;
+    document.querySelectorAll('[data-ev-row]').forEach(tr => tr.classList.toggle('ac-row--sel', tr.dataset.evRow === String(i)));
+    AC.openPanel({
+      title:ev.desc,
+      amount:signed(ev.amount, cur),
+      meta:`${r.name} · ${curOf(r)} · ${ev.date}`,
+      body:`${AC.kv([
+        ['Transaction', esc(ev.txn)],
+        ['Fee', AC.amt(ev.fee, cur)],
+        ['Tax', AC.amt(ev.tax || 0, cur)],
+        ['Net', esc(signed(ev.net, cur))],
+        ['Payout', ev.payout ? esc(ev.payout) : AC.none],
+        ['Status', esc(ev.status)],
+        ev.order ? ['Order', esc(ev.order)] : null,
+      ], { only:true, caption:'Transaction' })}${AC.sourceRow(AC.sourcePairs(ev))}`,
+    });
+    AC.keepReturnFocus(document.querySelector(`[data-ev="${i}"]`));
+  }
+  new MutationObserver(() => { if (!document.getElementById('modalBackdrop')) document.querySelectorAll('[data-ev-row].ac-row--sel').forEach(tr => tr.classList.remove('ac-row--sel')); }).observe(document.getElementById('modalHost'), { childList:true });
 
   /* ---------- Export ---------- */
   function exportPage() {
@@ -297,42 +327,51 @@
   window.addEventListener('hashchange', () => {
     const hadPanel = !!document.getElementById('modalBackdrop');
     const hadFocus = document.activeElement !== document.body;
-    if (hadPanel) { openKey = null; AC.keepReturnFocus(null); AC.closePanel(); }
+    if (hadPanel) { AC.keepReturnFocus(null); AC.closePanel(); }
     readHash();
     AC.rerender();
+    window.scrollTo(0, 0);
+    if (S.drill) { const h = document.getElementById('drillTitle'); if (h) h.focus({ preventScroll:true }); return; }
     if (hadPanel || (hadFocus && document.activeElement === document.body)) { const b = document.querySelector(`[data-key="tab:${S.tab}"]`); if (b) b.focus(); }
   });
   document.addEventListener('click', e => {
     const t = e.target.closest('button');
     if (!t) return;
     if (t.dataset.tab) { if (e.detail < 2) setTab(t.dataset.tab, t.dataset.cur); return; }
-    if (t.dataset.open) { openFrom(t); return; }
-    if (t.dataset.payout) { openEvents(panelRail.id, 'payout', t.dataset.payout); return; }
-    if (t.dataset.srcBtn !== undefined) { pickRow(+t.dataset.srcBtn); return; }
+    if (t.dataset.details) { setDetails(t.dataset.details); return; }
+    if (t.dataset.ev !== undefined) { if (t.closest('#panelBody')) pickSource(+t.dataset.ev); else openSource(+t.dataset.ev); return; }
+    if (t.id === 'panelExport') return;
+    if (t.id === 'exportDrill' && e.detail < 2) { exportDrill(); return; }
     if (t.id === 'exportPage' && e.detail < 2) exportPage();
   });
-  document.addEventListener('change', e => {
-    if (e.target.id !== 'curSelect') return;
-    if (S.tab === 'all') S.cur = e.target.value;
-    else { S.rowCur = e.target.value; history.replaceState(null, '', hashFor(S.tab, S.rowCur)); }
+  AC.onMenuPick = (name, value) => {
+    if (name === 'exportDrill') { exportDrill(null, null, value); return; }
+    if (name !== 'currency') return;
+    if (S.tab === 'all') S.cur = value;
+    else { S.rowCur = value; history.replaceState(null, '', hashFor(S.tab, S.rowCur)); }
     AC.rerender();
+    const b = document.querySelector('[data-key="menu:currency"]');
+    if (b) b.focus();
+  };
+  AC.rowClick('[data-ev-row]', row => { if (row.closest('#panelBody')) pickSource(+row.dataset.evRow); else openSource(+row.dataset.evRow); });
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a.ac-amt');
+    if (!a || DETAILS !== 'drawer' || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    const [rail, kind] = a.dataset.key.split(':');
+    openDrawer(rail, kind, a);
   });
-  AC.rowClick('[data-rail-row]', row => setTab(row.dataset.railRow, row.dataset.railCur));
-  AC.rowClick('.ac-kv__row--link', row => openFrom(row.querySelector('[data-open]')));
-  AC.rowClick('#panelBody tbody tr', row => pickRow(+row.dataset.src));
 
   AC.start({
     current:'balance',
-    head:() => ({ actions:'<button type="button" class="btn btn-neutral btn-sm" id="exportPage" data-key="exportPage">Export CSV</button>' }),
-    render:() => barHtml() + (S.tab === 'all' ? cardsHtml(AC.RAILS, isSep() ? railRow : noDataRow, true) : isSep() ? railHtml() : cardsHtml([curRail()], noDataRow, false)),
-    after:() => {
-      const el = openKey && document.getElementById('modalBackdrop') && document.querySelector(`[data-key="${openKey}"]`);
-      if (!el) return;
-      el.setAttribute('aria-expanded', 'true');
-      AC.keepReturnFocus(el);
-      const row = el.closest('[data-drill]');
-      if (row) row.classList.add(row.matches('.ac-kv__row') ? 'ac-kv__row--sel' : 'ac-row--sel');
+    head:() => ({ extra:detailsSwitch() }),
+    render:() => {
+      if (!hasData()) return `<div class="ac-stack">${barHtml()}<section class="card"><div class="ac-empty"><span class="ac-muted">No sample figures for ${esc(AC.month())}</span></div></section></div>`;
+      if (S.drill && isSep()) return `<div class="ac-stack ac-stack--tight">${drillHtml()}</div>`;
+      if (S.tab === 'all') return `<div class="ac-stack">${barHtml()}${isSep() ? railCards() : ''}${tableHtml(AC.RAILS, isSep() ? railRow : noDataRow, true)}</div>`;
+      return `<div class="ac-stack">${barHtml()}${isSep() ? railHtml() : tableHtml([curRail()], noDataRow, false)}</div>`;
     },
+    after:() => {},
   });
 })();
 </script>

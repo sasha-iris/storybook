@@ -10,38 +10,14 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
-  <link rel="stylesheet" href="assets/accounting.css">
+  <link rel="stylesheet" href="assets/accounting-layout.css">
   <style>
-    /* Selects keep their width and only the search gives way. The text may run up to the chevron, so the longest rail name fits. */
-    body.ac .ac-bar .ac-select { flex:none; padding-right:24px; }
-    /* Search closes the filter bar on the card's right edge, its text on the baseline of the selects. */
-    body.ac .ac-input.ac-search { flex:0 1 280px; width:280px; min-width:0; margin-left:auto; padding-bottom:2px; font-family:inherit; -webkit-appearance:none; appearance:none; }
-    body.ac .ac-input.ac-search:disabled::placeholder { color:var(--ac-2); }
-    body.ac .ac-search::-webkit-search-cancel-button { position:relative; top:1px; }
-    /* One border grey in the row: the glass says what this field is. */
-    body.ac .ac-input.ac-search:not(:focus) { border-color:var(--ac-ctl); }
-    body.ac .ac-input.ac-search:not(:focus):hover { border-color:var(--ac-ctl-h); }
-    body.ac .ac-input.ac-search { padding-left:32px; background:#FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%234B5563'%3E%3Cpath fill-rule='evenodd' d='M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.45 4.39l3.08 3.08a.75.75 0 1 1-1.06 1.06l-3.08-3.08A7 7 0 0 1 2 9Z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat 12px 50% / 16px 16px; }
-    body.ac .ac-search:placeholder-shown::-webkit-search-cancel-button { display:none; }
-    body.ac .ac-search::-webkit-search-cancel-button { -webkit-appearance:none; appearance:none; width:16px; height:16px; cursor:pointer; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E") center / 16px no-repeat; }
-    body.ac .ac-search::-webkit-search-cancel-button:hover { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23111928'%3E%3Cpath d='M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z'/%3E%3C/svg%3E"); }
-    /* Facts in the panel share the left edge of its head and of the source row. */
-    .ac-panel__body .ac-kv { margin:0 -16px; padding-bottom:0; }
-    .ac-pager .ac-flip svg { transform:rotate(180deg); }
-    .ac-tile__note { letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; }
-    /* Row headers carry the same hairline as the cells beside them. */
-    .ac-table--lines tbody tr + tr th { position:relative; }
-    .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:0; right:0; top:0; height:1px; background:var(--ac-hair); }
-    .ac-table--lines tbody tr + tr th:first-child::after { left:8px; }
-    /* Settlement is the one left aligned column after a right aligned number: a double gutter keeps the two apart. */
-    .ac-table th.ac-gap, .ac-table td.ac-gap { padding-left:calc(var(--ac-gut) * 2); }
-    /* Transaction joins the table at 1280. Until 1440 Fee and Status keep their narrow width, so Description is not cut. */
-    @media (max-width:1439px) { #evResults { --ac-small:88px; } }
-    /* Under 1280 the money columns take the room the longest CAD payout needs from Fee, Status and Settlement, which have it to spare. */
-    @media (max-width:1279px) { #evResults { --ac-money:116px; --ac-small:80px; --ac-id:88px; } }
+    .ev-c0 { width:80px; } .ev-c1 { width:164px; } .ev-c2 { width:14%; } .ev-c3 { width:112px; } .ev-c4 { width:124px; }
+    @media (max-width:1439px) { .ev-c1 { width:148px; } .ev-c2 { width:128px; } .ev-c4 { width:112px; } }
+    @media (max-width:1279px) { .ev-c0 { width:76px; } .ev-c1 { width:152px; } .ev-c2 { width:120px; } .ev-c3 { width:104px; } .ev-c4 { width:104px; } }
   </style>
 </head>
-<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac ds" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
   <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
@@ -60,14 +36,13 @@
   const ALL = AC.allEvents();
   const bareAcct = s => String(s).replace('…', '');
   const ACCOUNTS = [...new Set(AC.RAILS.map(r => r.acct))];
-  const NO_VALUE = '<span class="ac-zero"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
+  const NO_VALUE = AC.none;
   const hasData = () => AC.month() === AC.MONTH;
   const CATEGORIES = [AC.CATEGORIES[0], AC.CATEGORIES[1], AC.CATEGORIES[2], AC.CATEGORIES[3], ['feetax', 'Fees and tax'], AC.CATEGORIES[4]];
   const inCategory = (e, cat) => (cat ? e.cat === cat || (cat === 'feetax' && (e.cat === 'fee' || e.cat === 'tax')) : e.cat !== 'fee' && e.cat !== 'tax');
   const kindsOf = cat => (cat === 'feetax' ? ['fee', 'tax'] : [cat || 'activity']);
   const FILTERS = ['rail', 'acct', 'cur', 'cat', 'q'];
   const NOUNS = { charge:['charge', 'charges'], refund:['refund', 'refunds'], fee:['fee', 'fees'], tax:['tax event', 'tax events'], feetax:['fee and tax event', 'fee and tax events'], payout:['payout', 'payouts'] };
-  const NOTE_SLOT = '<div class="ac-note ac-tile__note" aria-hidden="true">&nbsp;</div>';
 
   /* ---------- Filters live in the hash ---------- */
   function readHash() {
@@ -116,11 +91,11 @@
   }
   function tileHtml() {
     const label = f.cat ? CATEGORIES.find(c => c[0] === f.cat)[1] : 'Net balance change from activity';
-    if (f.q.trim()) return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)}</div><div class="ac-tile__value">${NO_VALUE}</div>${NOTE_SLOT}</div>`;
+    if (f.q.trim()) return `<div class="card-header"><div class="ac-name"><span class="card-header-title">${NO_VALUE}</span><span class="ac-muted">${esc(label)}</span></div></div>`;
     const { curs, total, count } = tileFacts();
-    const shown = c => (total(c) === 0 ? `<span class="ac-zero">${AC.money(0, c)}</span>` : AC.signed(total(c), c));
-    const notes = curs.slice(1).map(c => `<div class="ac-note ac-tile__note">${shown(c)}</div>`).join('');
-    return `<div class="ac-tile ac-tile--key"><div class="ac-tile__label">${esc(label)}${curs.length > 1 ? ', ' + esc(curs[0]) : ''} <span class="ac-muted">(${AC.count(count)})</span></div><div class="ac-tile__value">${shown(curs[0])}</div>${notes || NOTE_SLOT}</div>`;
+    const shown = c => (total(c) === 0 ? AC.money(0, c) : AC.signed(total(c), c));
+    const others = curs.slice(1).map(c => ' · ' + shown(c)).join('');
+    return `<div class="card-header"><div class="ac-name"><span class="card-header-title">${esc(shown(curs[0]))}</span><span class="ac-muted">${esc(label)}${curs.length > 1 ? ', ' + esc(curs[0]) : ''} (${AC.count(count)})${esc(others)}</span></div></div>`;
   }
   /* The foot counts what the tile counts. With no category it counts every event the rows can hold, payouts too. */
   function sampleText() {
@@ -130,68 +105,50 @@
   }
 
   /* ---------- Table ---------- */
-  const moneyCell = (n, cur, extra) => (n === 0
-    ? `<td class="ac-num ac-zero${extra ? ' ' + extra : ''}">${AC.money(0, cur)}</td>`
-    : `<td class="ac-num${extra ? ' ' + extra : ''}">${AC.signed(n, cur)}</td>`);
-  const payoutLink = (id, key) => `<a class="ac-link" href="${esc(AC.hrefOf('settlements') + '#' + id)}"${key ? ` data-key="${esc(key)}"` : ''}>${esc(id)}</a>`;
-  const rowHtml = e => `<tr class="ac-row--link" data-drill data-ev="${esc(e.txn)}">
-    <th scope="row"><button type="button" class="ac-toggle" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button></th>
-    <td>${esc(e.channel)}</td>
-    <td class="ac-mono ac-wide">${esc(e.txn)}</td>
-    <td>${esc(e.desc)}</td>
-    ${moneyCell(e.amount, e.cur)}
-    ${moneyCell(AC.round2(e.fee + (e.tax || 0)), e.cur)}
-    ${moneyCell(e.net, e.cur, 'ac-end')}
-    <td class="ac-mono ac-gap">${e.payout ? payoutLink(e.payout, 'po:' + e.txn) : NO_VALUE}</td>
-    <td class="ac-right"><span class="ac-status ac-status--quiet">${esc(e.status)}</span></td>
+  const payoutLink = (id, key) => `<a class="btn-link btn-link-semibold btn-sm" href="${esc(AC.hrefOf('settlements') + '#' + id)}"${key ? ` data-key="${esc(key)}"` : ''}>${esc(id)}</a>`;
+  const rowHtml = e => `<tr class="ac-row" data-drill data-ev="${esc(e.txn)}">
+    ${AC.td(`<button type="button" class="ac-rowlink" data-open data-key="ev:${esc(e.txn)}" aria-haspopup="dialog" aria-label="${esc(e.date)}, open ${esc(e.txn)}">${esc(e.date)}</button>`, { head:true })}
+    ${AC.td(esc(e.channel), {})}
+    ${AC.td(esc(e.txn), { cls:'ac-wide' })}
+    ${AC.td(esc(e.desc), {})}
+    ${AC.td(AC.amt(e.amount, e.cur), { num:true })}
+    ${AC.td(AC.amt(AC.round2(e.fee + (e.tax || 0)), e.cur), { num:true })}
+    ${AC.td(AC.amt(e.net, e.cur), { num:true })}
+    ${AC.td(e.payout ? payoutLink(e.payout, 'po:' + e.txn) : NO_VALUE, {})}
+    ${AC.td(`<span class="ac-muted">${esc(e.status)}</span>`, { cls:'ac-wide' })}
   </tr>`;
   function tableHtml(rows) {
     const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
     if (f.page > pages) f.page = pages;
     const start = (f.page - 1) * PAGE_SIZE;
     const shown = rows.slice(start, start + PAGE_SIZE);
-    return `<div class="ac-wrap ac-wrap--foot"><table class="ac-table ac-table--lines ac-table--sticky">
+    return `<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin">
       <caption class="ac-sr">Events</caption>
-      <colgroup><col class="ac-col-date"><col class="ac-col-chan"><col class="ac-col-id ac-wide"><col><col class="ac-col-money"><col class="ac-col-small"><col class="ac-col-money"><col class="ac-col-id"><col class="ac-col-small"></colgroup>
-      <thead><tr><th scope="col">Date</th><th scope="col">Rail</th><th scope="col" class="ac-wide">Transaction</th><th scope="col">Description</th><th scope="col" class="ac-num">Amount</th><th scope="col" class="ac-num">Fee and tax</th><th scope="col" class="ac-num">Net</th><th scope="col" class="ac-gap">Settlement</th><th scope="col" class="ac-right">Status</th></tr></thead>
+      <colgroup><col class="ev-c0"><col class="ev-c1"><col class="ac-wide" style="width:140px"><col><col class="ev-c2"><col class="ev-c3"><col class="ev-c2"><col class="ev-c4"><col class="ac-wide" style="width:96px"></colgroup>
+      <thead><tr>${AC.th('Date')}${AC.th('Rail')}${AC.th('Transaction', { cls:'ac-wide' })}${AC.th('Description')}${AC.th('Amount', { right:true })}${AC.th('Fee and tax', { right:true })}${AC.th('Net', { right:true })}${AC.th('Settlement')}${AC.th('Status', { cls:'ac-wide' })}</tr></thead>
       <tbody>${shown.map(rowHtml).join('')}</tbody>
     </table></div>
-    <div class="ac-foot"><span class="ac-note"><span id="evRange">${AC.count(start + 1)} to ${AC.count(start + shown.length)} of ${AC.count(rows.length)}</span> · ${sampleText()}</span><div class="ac-pager">
-      <button type="button" class="btn btn-neutral btn-sm ac-flip" id="evPrev" data-key="evPrev" aria-label="Previous page"${f.page === 1 ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
-      <button type="button" class="btn btn-neutral btn-sm" id="evNext" data-key="evNext" aria-label="Next page"${f.page === pages ? ' disabled' : ''}>${AC.ICON_CHEVRON}</button>
-    </div></div>`;
+    ${AC.foot(sampleText(), AC.pager({ start:start + 1, end:start + shown.length, total:rows.length, page:f.page, pages }))}`;
   }
   function resultsHtml() {
-    if (!hasData()) return `<section class="ac-card"><div class="ac-empty"><p class="ac-empty__title">No events for ${esc(AC.month())}</p></div></section>`;
+    if (!hasData()) return `<div class="ac-empty"><span class="ac-muted">${AC.MONTHS.includes(AC.month()) ? 'No events for ' : 'No sample figures for '}${esc(AC.month())}</span></div>`;
     const rows = rowsInFilter();
-    if (!rows.length) return `<section class="ac-card"><div class="ac-empty"><p class="ac-empty__title">No events match these filters</p><button type="button" class="btn btn-neutral btn-sm" id="evClear" data-key="evClear">Clear filters</button></div></section>`;
-    return `<section class="ac-card" aria-label="Events"><div class="ac-band ac-band--flush">${tileHtml()}</div>${tableHtml(rows)}</section>`;
+    if (!rows.length) return '<div class="ac-empty"><span class="ac-muted">No events match these filters</span><button type="button" class="btn btn-neutral btn-sm" id="evClear" data-key="evClear">Clear filters</button></div>';
+    return `${tileHtml()}${tableHtml(rows)}`;
   }
 
   /* ---------- Filter bar ---------- */
-  function selectHtml(id, label, width, key, options) {
-    return `<select class="form-input form-select ac-select ${width}" id="${id}" data-key="${id}" aria-label="${label}"${hasData() ? '' : ' disabled'}>${options.map(o => `<option value="${esc(o[0])}"${f[key] === o[0] ? ' selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
-  }
-  const barHtml = () => `<div class="ac-bar">
-    ${selectHtml('evRail', 'Rail', 'ac-w160', 'rail', [['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])))}
-    ${selectHtml('evAcct', 'Rail account', 'ac-w148', 'acct', [['', 'All accounts']].concat(ACCOUNTS.map(a => [bareAcct(a), a])))}
-    ${selectHtml('evCur', 'Currency', 'ac-w140', 'cur', [['', 'All currencies']].concat(AC.CURRENCIES.map(c => [c, c])))}
-    ${selectHtml('evCat', 'Category', 'ac-w160', 'cat', [['', 'All categories']].concat(CATEGORIES))}
-    <input type="search" class="ac-input ac-search" id="evSearch" data-key="evSearch" aria-label="Search by ID" placeholder="Search by ID" autocomplete="off" spellcheck="false" value="${esc(f.q)}"${hasData() ? '' : ' disabled'}>
-  </div>`;
+  const SEARCH_ICON = '<span class="form-search-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.45 4.39l3.08 3.08a.75.75 0 1 1-1.06 1.06l-3.08-3.08A7 7 0 0 1 2 9Z" clip-rule="evenodd"/></svg></span>';
+  const barHtml = () => AC.cardBar(`
+    ${AC.filterMenu({ name:'rail', label:'Rail', value:f.rail, options:[['', 'All rails']].concat(AC.RAILS.map(r => [r.id, AC.railLabel(r)])) })}
+    ${AC.filterMenu({ name:'acct', label:'Rail account', value:f.acct, options:[['', 'All accounts']].concat(ACCOUNTS.map(a => [bareAcct(a), a])) })}
+    ${AC.filterMenu({ name:'cur', label:'Currency', value:f.cur, options:[['', 'All currencies']].concat(AC.CURRENCIES.map(c => [c, c])) })}
+    ${AC.filterMenu({ name:'cat', label:'Category', value:f.cat, options:[['', 'All categories']].concat(CATEGORIES) })}
+    <div class="form-search-wrap ac-search">${SEARCH_ICON}<input type="search" class="form-input form-input-sm" id="evSearch" data-key="evSearch" aria-label="Search by ID" placeholder="Search by ID" autocomplete="off" spellcheck="false" value="${esc(f.q)}"${hasData() ? '' : ' disabled'}></div>`, exportHtml());
 
   /* ---------- Export ---------- */
-  function exportHtml() {
-    const off = !rowsInFilter().length;
-    return `<span class="ac-note" id="evExportWhy"${off ? '' : ' hidden'}>Nothing to export</span><button type="button" class="btn btn-neutral btn-sm" id="evExport" data-key="evExport"${off ? ' aria-disabled="true" aria-describedby="evExportWhy"' : ''}>Export CSV</button>`;
-  }
-  function syncExport() {
-    const off = !rowsInFilter().length;
-    const btn = document.getElementById('evExport');
-    document.getElementById('evExportWhy').hidden = !off;
-    if (off) { btn.setAttribute('aria-disabled', 'true'); btn.setAttribute('aria-describedby', 'evExportWhy'); }
-    else { btn.removeAttribute('aria-disabled'); btn.removeAttribute('aria-describedby'); }
-  }
+  const exportHtml = () => `<button type="button" class="btn btn-neutral btn-sm" id="evExport" data-key="evExport"${rowsInFilter().length ? '' : ' disabled'}>Export CSV</button>`;
+  function syncExport() { document.getElementById('evExport').disabled = !rowsInFilter().length; }
   function exportCsv() {
     const head = ['Date', 'Rail', 'Rail account', 'Transaction', 'Order', 'Description', 'Currency', 'Amount', 'Fee', 'Tax', 'Net', 'Settlement', 'Status'];
     const rows = rowsInFilter().map(e => [AC.isoDate(e.date), e.channel, AC.rail(e.rail).acct, e.txn, e.order || '', e.desc, e.cur || 'USD', e.amount.toFixed(2), e.fee.toFixed(2), (e.tax || 0).toFixed(2), e.net.toFixed(2), e.payout || '', e.status]);
@@ -201,27 +158,23 @@
   }
 
   /* ---------- Panel ---------- */
-  const factRow = (label, value) => `<div class="ac-kv__row"><span class="ac-kv__label">${label}</span>${value}</div>`;
-  const moneyFact = (n, cur) => (n === 0 ? `<span class="ac-num ac-zero">${AC.money(0, cur)}</span>` : `<span class="ac-num">${AC.signed(n, cur)}</span>`);
-  const idFact = v => `<span class="ac-mono">${esc(v)}</span>`;
   function openEvent(row) {
     const e = ALL.find(x => x.txn === row.dataset.ev);
     const rail = AC.rail(e.rail);
-    const facts = [
-      factRow('Fee', moneyFact(e.fee, e.cur)),
-      factRow('Tax', moneyFact(e.tax, e.cur)),
-      `<div class="ac-kv__row ac-kv__row--total"><span class="ac-kv__label">Net</span><span class="ac-num">${AC.signed(e.net, e.cur)}</span></div>`,
-      factRow('Settlement', e.payout ? `<span class="ac-mono">${payoutLink(e.payout)}</span>` : NO_VALUE),
-      factRow('Status', `<span class="ac-status ac-status--quiet">${esc(e.status)}</span>`),
-      factRow('Transaction', idFact(e.txn)),
-      e.order ? factRow('Order', `<span>${esc(e.order)}</span>`) : '',
-      factRow('Rail account', idFact(rail.acct)),
-    ].join('');
     AC.openPanel({
       title:e.desc,
       amount:AC.signed(e.amount, e.cur),
       meta:[rail.name, e.cur || 'USD', e.date].join(' · '),
-      body:`<div class="ac-kv">${facts}</div>${AC.sourceRow(AC.sourcePairs(e))}`,
+      body:`${AC.kv([
+        ['Fee', AC.amt(e.fee, e.cur)],
+        ['Tax', AC.amt(e.tax, e.cur)],
+        ['Net', esc(AC.signed(e.net, e.cur))],
+        ['Settlement', e.payout ? payoutLink(e.payout) : NO_VALUE],
+        ['Status', esc(e.status)],
+        ['Transaction', esc(e.txn)],
+        e.order ? ['Order', esc(e.order)] : null,
+        ['Rail account', esc(rail.acct)],
+      ], { only:true, caption:'Event' })}${AC.sourceRow(AC.sourcePairs(e))}`,
     });
     AC.keepReturnFocus(row.querySelector('[data-open]'));
   }
@@ -233,9 +186,8 @@
     if (!key) return;
     const el = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
     if (el && !el.disabled) { if (document.activeElement !== el) el.focus({ preventScroll:true }); return; }
-    const other = { evNext:'evPrev', evPrev:'evNext', evClear:'evRail' }[key];
-    const alt = other && document.querySelector(`[data-key="${other}"]`);
-    if (alt && !alt.disabled) AC.focusAfterAction(alt);
+    const alt = key === 'evClear' && document.querySelector('[data-key="menu:rail"]');
+    if (alt) AC.focusAfterAction(alt);
   }
   /* The live region stays through a redraw, so what is written to it is heard. */
   const live = document.createElement('div');
@@ -244,7 +196,7 @@
   live.setAttribute('role', 'status');
   document.body.appendChild(live);
   function announce(paged) {
-    const range = paged ? document.getElementById('evRange') : null;
+    const range = paged ? document.querySelector('[data-showing]') : null;
     const n = rowsInFilter().length;
     live.textContent = range ? range.textContent : n === 1 ? '1 event' : AC.count(n) + ' events';
   }
@@ -258,13 +210,15 @@
   function go(paged) { history.pushState(null, '', urlOf(f)); keepFocus(() => update(paged)); }
 
   const app = document.getElementById('app');
-  app.addEventListener('change', e => {
-    const key = { evRail:'rail', evAcct:'acct', evCur:'cur', evCat:'cat' }[e.target.id];
-    if (!key) return;
-    f[key] = e.target.value;
+  AC.onMenuPick = (name, value) => {
+    f[name] = value;
     f.page = 1;
-    go();
-  });
+    history.pushState(null, '', urlOf(f));
+    AC.rerender();
+    announce();
+    const b = document.querySelector(`[data-key="menu:${name}"]`);
+    if (b) b.focus();
+  };
   app.addEventListener('input', e => {
     if (e.target.id !== 'evSearch') return;
     f.q = e.target.value;
@@ -285,18 +239,18 @@
     const open = e.target.closest('[data-open]');
     if (open) { openEvent(open.closest('tr')); return; }
     const exp = e.target.closest('#evExport');
-    if (exp) { if (e.detail <= 1 && exp.getAttribute('aria-disabled') !== 'true') exportCsv(); return; }
+    if (exp) { if (e.detail <= 1 && !exp.disabled) exportCsv(); return; }
     if (e.target.closest('#evClear')) {
       f = { rail:'', acct:'', cur:'', cat:'', q:'', page:1 };
       history.pushState(null, '', urlOf(f));
       AC.rerender();
       announce();
-      document.getElementById('evRail').focus({ preventScroll:true });
+      document.querySelector('[data-key="menu:rail"]').focus({ preventScroll:true });
       return;
     }
-    const step = e.target.closest('#evPrev') ? -1 : e.target.closest('#evNext') ? 1 : 0;
-    if (!step) return;
-    f.page += step;
+    const pageBtn = e.target.closest('[data-page]');
+    if (!pageBtn) return;
+    f.page = Number(pageBtn.dataset.page);
     go(true);
     if (document.documentElement.classList.contains('pm-pointer')) window.scrollTo(0, 0);
   });
@@ -312,8 +266,7 @@
   AC.rowClick('tr[data-ev]', openEvent);
   AC.start({
     current:'events',
-    head:() => ({ actions:exportHtml() }),
-    render:() => `${barHtml()}<div id="evResults">${resultsHtml()}</div>`,
+    render:() => `<div class="ac-crumbs">${AC.crumb(AC.hrefOf('balance'), undefined, 'Balance', 'All events')}</div><div class="ac-stack"><section class="card" aria-label="Events">${barHtml()}<div id="evResults">${resultsHtml()}</div></section></div>`,
   });
 })();
 </script>

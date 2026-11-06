@@ -10,77 +10,17 @@
   <link rel="stylesheet" href="assets/iris-components.css">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/panorama-match.css">
-  <link rel="stylesheet" href="assets/accounting.css">
+  <link rel="stylesheet" href="assets/accounting-layout.css">
   <style>
-    /* Exceptions only. */
-    .ac-col-sev { width:72px; } .ac-col-subject { width:160px; }
-    @media (max-width:1279px) { .ac-col-sev { width:var(--ac-date); } .ac-col-subject { width:156px; } }
-    .ac-table .ac-high { font-weight:500; }
-
-    /* Bar: one row from 1024 with everything on it. Under 1280 the selects give up what the chevron does not use, and the primary drops a word beside its count. */
-    body.ac .ac-bar .ac-select { flex:none; }
-    .ac-bar .ac-actions { flex:none; }
-    body.ac #clearSel { margin:0 -4px; }
-    @media (max-width:1279px) {
-      body.ac .ac-bar .ac-select { padding-right:24px; }
-      body.ac .ac-sev-filter { width:124px; }
-      body.ac .ac-rail-filter { width:160px; }
-      .ac-bulk-more { display:none; }
-    }
-    /* The sum needs the room: at this width the count keeps its figure and its word stays for screen readers, and the segments and Clear give up 4 a side. A very long sum cuts before the page ever scrolls sideways. */
-    @media (min-width:1024px) and (max-width:1279px) {
-      .ac-sel-amt { display:none; }
-      body.ac .ac-seg__item, body.ac #clearSel { padding:0 8px; }
-      .ac-bar .ac-actions { flex:0 1 auto; min-width:0; }
-      #selCount { min-width:0; overflow:hidden; text-overflow:ellipsis; }
-    }
-    @media (max-width:1023px) { .ac-bar .ac-actions { flex:0 0 100%; min-height:36px; justify-content:flex-end; } #exportWhy { display:none; } }
-
-    /* The whole checkbox cell selects, so a near miss never opens the panel. */
-    .ac-check { display:flex; align-items:center; height:40px; margin-left:-8px; padding-left:8px; cursor:pointer; }
-    thead .ac-check { height:32px; }
-
-    /* A checked row. The shell clears ac-row--sel when a panel closes, so this keeps its own class. */
-    .ac-table .ac-row--picked td { background:var(--ac-sel); }
-    .ac-table .ac-row--picked:hover td { background:var(--ac-sel-h); }
-    .ac-row--picked .ac-link, .ac-table .ac-row--sel .ac-link { text-decoration-color:var(--ac-2); }
-    /* Neighbouring checked rows read as one band. */
-    .ac-table .ac-row--picked + .ac-row--picked td:first-child { border-top-left-radius:0; }
-    .ac-table .ac-row--picked + .ac-row--picked td:last-child { border-top-right-radius:0; }
-    .ac-table .ac-row--picked:has(+ .ac-row--picked) td:first-child { border-bottom-left-radius:0; }
-    .ac-table .ac-row--picked:has(+ .ac-row--picked) td:last-child { border-bottom-right-radius:0; }
-    .ac-table--lines tbody .ac-row--picked + .ac-row--picked td::after { background:var(--ac-sel-h); }
-    /* The row header holds the hairline and the picked band of its cells. */
-    .ac-table--lines tbody tr + tr th { position:relative; }
-    .ac-table--lines tbody tr + tr th::after { content:''; position:absolute; left:0; right:0; top:0; height:1px; background:var(--ac-hair); }
-    .ac-table .ac-row--picked th { background:var(--ac-sel); }
-    .ac-table .ac-row--picked:hover th { background:var(--ac-sel-h); }
-    .ac-table--lines tbody .ac-row--picked + .ac-row--picked th::after { background:var(--ac-sel-h); }
-
-    /* Kebab menu: one shadow layer, placed by script so no card or page ever clips or grows. */
-    body.ac .ac-menu { position:fixed; top:0; left:0; right:auto; z-index:20; width:160px; box-shadow:var(--ac-e1); }
-    .pm-kebab[aria-expanded="true"] { background:rgba(0,0,0,.06); color:var(--ac-ink); }
-    .ac-menu-wrap { vertical-align:middle; }
-    body.ac .ac-toggle:focus-visible { border-radius:2px; }
-
-    /* Dialog: the error line has its slot before it is needed. */
-    .ac-field-error--slot { min-height:20px; }
-    .ac-accept-facts { margin:0 0 12px; }
-
-    /* Panel: labels on one left edge with the panel head, values on a second. */
-    .ac-panel__body .ac-kv { margin:0 -8px; padding:0; }
-    .ac-panel__body .ac-kv__row { justify-content:flex-start; }
-    
-    .ac-kv__value { min-width:0; }
-    .ac-panel__body .ac-kv__row--note { align-items:flex-start; padding-top:10px; padding-bottom:10px; }
-    .ac-kv__row--note .ac-kv__value { white-space:pre-wrap; overflow-wrap:anywhere; }
-    .ac-history__title { padding-bottom:4px; font-size:14px; line-height:20px; letter-spacing:0; }
-    /* Facts only: the table behind stays readable. */
-    .ac-panel { width:min(560px,100%); }
-    body.ac.ac-panel-open #toastHost { right:calc(min(560px,100vw) + 16px); }
+    .ex-c0 { width:48px; } .ex-c1 { width:100px; } .ex-c2 { width:112px; } .ex-c3 { width:152px; } .ex-c4 { width:168px; } .ex-c5 { width:112px; } .ex-c6 { width:128px; } .ex-c7 { width:120px; } .ex-c8 { width:48px; }
+    @media (max-width:1439px) { .ex-c1 { width:88px; } .ex-c2 { width:108px; } .ex-c3 { width:136px; } .ex-c4 { width:168px; } .ex-c5 { width:96px; } .ex-c6 { width:120px; } }
+    @media (max-width:1279px) { .ex-c0 { width:44px; } .ex-c1 { width:80px; } .ex-c2 { width:100px; } .ex-c3 { width:144px; } .ex-c4 { width:164px; } .ex-c6 { width:108px; } .ex-c8 { width:40px; } }
+    .ac-menu { position:fixed; top:0; left:0; right:auto; z-index:20; width:160px; }
+    .ac-high { font-weight:600; }
+    @media (max-width:1279px) { .ac-narrow-hide { display:none; } }
   </style>
 </head>
-<body class="pm-journal ac" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
+<body class="pm-journal ac ds" style="margin:0;background:var(--color-bg-default);font-family:'Inter',sans-serif;">
 <div style="display:flex;min-height:100vh;">
   <aside class="sidebar sidebar--collapsed" aria-label="Main navigation" style="height:auto;"></aside>
   <main id="app" style="flex:1;min-width:0;box-sizing:border-box;"></main>
@@ -167,13 +107,13 @@
   const pruneSelection = () => { const ok = selectableIds(); selected = new Set([...selected].filter(id => ok.includes(id))); };
 
   const sumOf = ids => AC.money(AC.sum(ids, id => byId(id).amount));
-  const selectionHtml = () => (selected.size ? `${selected.size}<span class="ac-sel-word"> selected</span><span class="ac-sel-amt"> · ${sumOf([...selected])}</span>` : '');
+  const selectionHtml = () => (selected.size ? `${selected.size} selected · ${sumOf([...selected])}` : '');
   function bulkHtml() {
-    if (isLocked() && hasRows()) return `<span class="ac-note">${esc(AC.month())} is closed</span>`;
-    if (AC.VIEW_ONLY) return hasRows() ? '<span class="ac-note">View only</span>' : '';
-    return `<span class="ac-note" id="selCount" role="status">${selectionHtml()}</span>${selected.size ? bulkButtons() : ''}`;
+    if (isLocked() && hasRows()) return `<span class="ac-muted">${esc(AC.month())} is closed</span>`;
+    if (AC.VIEW_ONLY) return hasRows() ? '<span class="ac-muted">View only</span>' : '';
+    return `<span class="ac-muted" id="selCount" role="status">${selectionHtml()}</span>${selected.size ? bulkButtons() : ''}`;
   }
-  const bulkButtons = () => '<button type="button" class="btn btn-ghost btn-sm" id="clearSel" data-key="clearSel" aria-label="Clear selection">Clear</button><button type="button" class="btn btn-primary btn-sm" id="acceptSel" data-key="acceptSel" aria-label="Accept selected"><span>Accept<span class="ac-bulk-more"> selected</span></span></button>';
+  const bulkButtons = () => '<button type="button" class="btn btn-neutral btn-sm" id="clearSel" data-key="clearSel" aria-label="Clear selection">Clear</button><button type="button" class="btn btn-primary btn-sm" id="acceptSel" data-key="acceptSel">Accept selected</button>';
 
   /* Checkboxes change the bar without a redraw, so nothing flickers and focus stays put. */
   function syncSelection() {
@@ -196,12 +136,13 @@
 
   /* ---------- Page ---------- */
   function severityHtml(ex) { return ex.severity === 'High' ? `<span class="ac-high">${esc(ex.severity)}</span>` : esc(ex.severity); }
-  function statusHtml(status) {
+  function statusHtml(status, ex) {
+    /* An unmatched payment is settled by its decision on Journal entries, so it waits there, not here. */
+    if (ex && isUnmatched(ex) && isOpenLike(status) && !AC.state.journal.unmatchedDecision) return '<span class="badge badge-gray badge-sm">To decide</span>';
     const word = esc(AC.EXCEPTION_STATUS[status]);
-    if (status === 'open') return `<span class="ac-chip ac-chip--warn">${word}</span>`;
-    if (status === 'investigating') return `<span class="ac-chip ac-chip--wait">${word}</span>`;
-    if (status === 'resolved') return `<span class="ac-status ac-status--ok">${word}</span>`;
-    return `<span class="ac-status ac-status--plain">${word}</span>`;
+    if (status === 'open') return `<span class="badge badge-yellow badge-sm">${word}</span>`;
+    if (status === 'investigating') return `<span class="badge badge-gray badge-sm">${word}</span>`;
+    return `<span class="ac-muted">${word}</span>`;
   }
   function hrefOfLink(link) { return link.page === 'settlements' ? AC.hrefOf('settlements') + '#' + link.id : AC.hrefOf('journal') + '#entry-other'; }
   const orderHref = order => AC.hrefOf('events') + '#q=' + order.replace('#', '');
@@ -212,81 +153,60 @@
   }
   function subjectHtml(ex, inTable) {
     const href = subjectHref(ex);
-    const text = href ? `<a class="ac-link" href="${esc(href)}"${inTable ? ` data-key="subject-${ex.id}"` : ''}>${esc(ex.subject)}</a>` : esc(ex.subject);
-    return /^(po|txn)_/.test(ex.subject) ? `<span class="ac-mono">${text}</span>` : text;
+    return href ? `<a class="btn-link btn-link-semibold btn-sm" href="${esc(href)}"${inTable ? ` data-key="subject-${ex.id}"` : ''}>${esc(ex.subject)}</a>` : esc(ex.subject);
   }
 
   function rowHtml(ex) {
     const status = AC.exceptionStatus(ex);
     const locked = isReadOnly();
     const name = esc(typeOf(ex) + ', ' + ex.subject);
-    const box = !locked && isOpenLike(status) ? `<label class="ac-check"><input type="checkbox" class="form-check-input" data-pick="${ex.id}" data-key="pick-${ex.id}" aria-label="Select ${name}"${selected.has(ex.id) ? ' checked' : ''}></label>` : '';
-    const kebab = locked ? '' : `<div class="ac-menu-wrap"><button type="button" class="pm-kebab" data-kebab="${ex.id}" data-key="kebab-${ex.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for ${name}">${KEBAB_ICON}</button></div>`;
-    return `<tr class="ac-row--link${selected.has(ex.id) ? ' ac-row--picked' : ''}" data-drill data-ex="${ex.id}">
-      <td class="ac-ctl">${box}</td>
-      <th scope="row"><button type="button" class="ac-toggle" data-open="${ex.id}" data-key="open-${ex.id}" aria-haspopup="dialog">${esc(typeOf(ex))}</button></th>
-      <td>${severityHtml(ex)}</td>
-      <td class="ac-num">${esc(moneyOf(ex))}</td>
-      <td>${esc(ex.channel)}</td>
-      <td>${subjectHtml(ex, true)}</td>
-      <td class="ac-wide">${esc(ex.firstSeen)}</td>
-      <td>${statusHtml(status)}</td>
-      <td class="ac-wide">${esc(AC.exceptionAssignee(ex))}</td>
-      <td class="ac-ctl">${kebab}</td>
+    const box = !locked && isOpenLike(status) ? `<label class="ac-pick"><input type="checkbox" class="form-check-input" data-pick="${ex.id}" data-key="pick-${ex.id}" aria-label="Select ${name}"${selected.has(ex.id) ? ' checked' : ''}></label>` : '';
+    const kebab = locked ? '' : `<div class="ac-menu-host"><button type="button" class="pm-kebab" data-kebab="${ex.id}" data-key="kebab-${ex.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for ${name}">${KEBAB_ICON}</button></div>`;
+    return `<tr class="ac-row${selected.has(ex.id) ? ' ac-row--picked' : ''}" data-drill data-ex="${ex.id}">
+      ${AC.td(box, {})}
+      ${AC.td(`<button type="button" class="ac-rowlink" data-open="${ex.id}" data-key="open-${ex.id}" aria-haspopup="dialog">${esc(typeOf(ex))}</button>`, { head:true })}
+      ${AC.td(severityHtml(ex), {})}
+      ${AC.td(esc(moneyOf(ex)), { num:true })}
+      ${AC.td(esc(ex.channel), {})}
+      ${AC.td(subjectHtml(ex, true), {})}
+      ${AC.td(esc(ex.firstSeen), { cls:'ac-wide' })}
+      ${AC.td(statusHtml(status, ex), {})}
+      ${AC.td(esc(AC.exceptionAssignee(ex)), { cls:'ac-wide' })}
+      ${AC.td(kebab, {})}
     </tr>`;
   }
 
   function tableHtml(rows) {
-    const head = selectableIds().length ? `<label class="ac-check"><input type="checkbox" class="form-check-input" id="pickAll" data-key="pickAll" aria-label="Select all on view"></label>` : '';
-    return `<section class="ac-card"><div class="ac-wrap"><table class="ac-table ac-table--lines ac-table--sticky">
+    const head = selectableIds().length ? `<label class="ac-pick"><input type="checkbox" class="form-check-input" id="pickAll" data-key="pickAll" aria-label="Select all on view"></label>` : '';
+    return `<div class="ac-wrap-scroll"><table class="ac-dst ac-dst--fin ac-dst--ex">
       <caption class="ac-sr">Exceptions for ${esc(AC.month())}</caption>
-      <colgroup><col class="ac-col-check"><col><col class="ac-col-sev"><col class="ac-col-money"><col class="ac-col-chan"><col class="ac-col-subject"><col class="ac-col-date ac-wide"><col class="ac-col-state"><col class="ac-col-state ac-wide"><col class="ac-col-kebab"></colgroup>
-      <thead><tr>
-        <th scope="col" class="ac-ctl">${head}</th>
-        <th scope="col">Type</th>
-        <th scope="col">Severity</th>
-        <th scope="col" class="ac-num">Amount</th>
-        <th scope="col">Rail</th>
-        <th scope="col">Subject</th>
-        <th scope="col" class="ac-wide">First seen</th>
-        <th scope="col">Status</th>
-        <th scope="col" class="ac-wide">Assignee</th>
-        <th scope="col" class="ac-ctl"><span class="ac-sr">Actions</span></th>
-      </tr></thead>
+      <colgroup><col class="ex-c0"><col><col class="ex-c1"><col class="ex-c2"><col class="ex-c3"><col class="ex-c4"><col class="ex-c5 ac-wide"><col class="ex-c6"><col class="ex-c7 ac-wide"><col class="ex-c8"></colgroup>
+      <thead><tr>${AC.th(head)}${AC.th('Type')}${AC.th('Severity')}${AC.th('Amount', { right:true })}${AC.th('Rail')}${AC.th('Subject')}${AC.th('First seen', { cls:'ac-wide' })}${AC.th('Status')}${AC.th('Assignee', { cls:'ac-wide' })}${AC.th('<span class="ac-sr">Actions</span>')}</tr></thead>
       <tbody>${rows.map(rowHtml).join('')}</tbody>
-    </table></div></section>`;
+    </table></div>`;
   }
 
   function emptyHtml() {
-    const card = inner => `<section class="ac-card"><div class="ac-empty">${inner}</div></section>`;
-    const title = text => `<p class="ac-empty__title">${esc(text)}</p>`;
-    if (!hasRows()) return card(title('No exceptions for ' + AC.month()));
-    if (view.severity || view.rail) return card(title('No exceptions match these filters') + '<button type="button" class="btn btn-neutral btn-sm" id="clearFilters" data-key="clearFilters">Clear filters</button>');
+    const box = inner => `<div class="ac-empty">${inner}</div>`;
+    const title = text => `<span class="ac-muted">${esc(text)}</span>`;
+    if (!hasRows()) return box(title((AC.MONTHS.includes(AC.month()) ? 'No exceptions for ' : 'No sample figures for ') + AC.month()));
+    if (view.severity || view.rail) return box(title('No exceptions match these filters') + '<button type="button" class="btn btn-neutral btn-sm" id="clearFilters" data-key="clearFilters">Clear filters</button>');
     if (view.status === 'open') {
-      const elsewhere = AC.EXCEPTIONS.length > 0;
       const j = AC.state.journal;
       const left = !isLocked() && (j.open > 0 || j.total - j.posted > 0);
-      return card(title('No open exceptions') + (elsewhere ? '<p class="ac-empty__text"><a class="ac-link" href="#status=all" data-key="viewAll">View resolved and accepted</a></p>' : '') + (left ? `<p class="ac-empty__text"><a class="ac-link" href="${esc(AC.hrefOf('journal'))}" data-key="goJournal">Go to Journal entries</a></p>` : ''));
+      return box(title('No open exceptions') + (AC.EXCEPTIONS.length ? '<a class="btn-link btn-link-semibold btn-sm" href="#status=all" data-key="viewAll">View resolved and accepted</a>' : '') + (left ? `<a class="btn-link btn-link-semibold btn-sm" href="${esc(AC.hrefOf('journal'))}" data-key="goJournal">Go to Journal entries</a>` : ''));
     }
-    if (view.status === 'all') return card(title('No exceptions for ' + AC.month()));
-    return card(title('No ' + view.status + ' exceptions'));
+    if (view.status === 'all') return box(title('No exceptions for ' + AC.month()));
+    return box(title('No ' + view.status + ' exceptions'));
   }
 
   function barHtml() {
-    const segments = SEGMENTS.map(s => `<button type="button" class="ac-seg__item" data-seg="${s[0]}" data-key="seg-${s[0]}" aria-pressed="${view.status === s[0]}">${esc(s[1])} <span class="ac-muted">${countIn(s[0])}</span></button>`).join('');
-    const severities = `<option value="">All severities</option>${SEVERITIES.map(s => `<option value="${s}"${view.severity === s ? ' selected' : ''}>${s}</option>`).join('')}`;
-    const rails = `<option value="">All rails</option>${railOptions().map(o => `<option value="${esc(o.key)}"${view.rail === o.key ? ' selected' : ''}>${esc(o.label)}</option>`).join('')}`;
-    return `<div class="ac-bar">
-      <div class="ac-seg" role="group" aria-label="Status">${segments}</div>
-      <select class="form-input form-select ac-select ac-w140 ac-sev-filter" id="severityFilter" data-key="severityFilter" aria-label="Severity"${hasRows() ? '' : ' disabled'}>${severities}</select>
-      <select class="form-input form-select ac-select ac-w160 ac-rail-filter" id="railFilter" data-key="railFilter" aria-label="Rail"${hasRows() ? '' : ' disabled'}>${rails}</select>
-      <div class="ac-actions" id="bulkSlot">${bulkHtml()}</div>
-    </div>`;
-  }
-
-  function headActions() {
-    const button = extra => `<button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv"${extra}>Export CSV</button>`;
-    return visibleRows().length ? button('') : `<span class="ac-note" id="exportWhy">Nothing to export</span>${button(' aria-disabled="true" aria-describedby="exportWhy"')}`;
+    const segments = SEGMENTS.map(s => `<button type="button" class="btn${view.status === s[0] ? ' active' : ''}" data-seg="${s[0]}" data-key="seg-${s[0]}" aria-pressed="${view.status === s[0]}">${esc(s[1])}<span class="btn-group-stat-count">${countIn(s[0])}</span></button>`).join('');
+    const severity = AC.filterMenu({ name:'severity', label:'Severity', value:view.severity, options:[['', 'All severities']].concat(SEVERITIES.map(x => [x, x])) });
+    const rail = AC.filterMenu({ name:'rail', label:'Rail', value:view.rail, options:[['', 'All rails']].concat(railOptions().map(o => [o.key, o.label])) });
+    const left = `<div class="btn-group" role="group" aria-label="Status">${segments}</div>${hasRows() ? severity + rail : ''}`;
+    const right = `<div class="ac-toolbar" id="bulkSlot">${bulkHtml()}</div><button type="button" class="btn btn-neutral btn-sm" id="exportCsv" data-key="exportCsv"${visibleRows().length ? '' : ' disabled'}>Export CSV</button>`;
+    return AC.cardBar(left, right);
   }
 
   function exportCsv() {
@@ -307,7 +227,7 @@
     const active = document.activeElement;
     if (active && active !== document.body) return;
     const kebabs = [...document.querySelectorAll('[data-kebab]')];
-    AC.focusAfterAction(kebabs[Math.min(indexBefore, kebabs.length - 1)] || document.querySelector('.ac-seg__item[aria-pressed="true"]'));
+    AC.focusAfterAction(kebabs[Math.min(indexBefore, kebabs.length - 1)] || document.querySelector('.btn-group .btn[aria-pressed="true"]'));
   }
 
   /* After a change in the panel focus rests on Close, so a second Enter never presses the next status action. */
@@ -332,7 +252,7 @@
       });
       AC.save();
       AC.rerender();
-      AC.focusAfterAction(document.querySelector(`[data-kebab="${ids[0]}"]`) || document.querySelector('.ac-seg__item[aria-pressed="true"]'));
+      AC.focusAfterAction(document.querySelector(`[data-kebab="${ids[0]}"]`) || document.querySelector('.btn-group .btn[aria-pressed="true"]'));
     } });
   }
 
@@ -346,12 +266,14 @@
   function acceptDialog(ids) {
     const n = ids.length;
     const title = n === 1 ? 'Accept exception' : `Accept ${n} exceptions`;
-    const high = ids.filter(id => byId(id).severity === 'High').length;
-    const facts = sumOf(ids) + (high ? ` · ${high} High` : '');
+    const high = ids.map(byId).filter(ex => ex.severity === 'High');
+    const facts = n === 1 ? AC.money(byId(ids[0]).amount, byId(ids[0]).cur) : `Total ${sumOf(ids)}`;
+    /* High items are named before they are accepted with the rest. */
+    const highTable = high.length && n > 1 ? `<div class="ac-wrap-scroll ac-boxed ac-accept-high"><table class="ac-dst ac-dst--fin ac-dst--auto"><caption class="ac-sr">High severity in this selection</caption><thead><tr>${AC.th('High severity')}${AC.th('Subject')}${AC.th('Amount', { right:true })}</tr></thead><tbody>${high.map(ex => `<tr>${AC.td(`<span class="ac-name"><span class="badge badge-red badge-sm">High</span>${esc(typeOf(ex))}</span>`, { head:true })}${AC.td(esc(ex.subject), {})}${AC.td(esc(AC.money(ex.amount, ex.cur)), { num:true })}</tr>`).join('')}</tbody></table></div>` : '';
     if (panelId) returnToPanel = panelId;
     AC.openDialog({
       title,
-      body:`<p class="ac-note ac-accept-facts" id="acceptFacts">${esc(facts)}</p><label class="ac-label" for="acceptNote">Note</label><textarea class="ac-input" id="acceptNote" rows="3" required aria-describedby="acceptFacts acceptNoteError"></textarea><p class="ac-field-error ac-field-error--slot" id="acceptNoteError" aria-live="polite"></p>`,
+      body:`<p class="ac-line" id="acceptFacts" style="margin-bottom:12px;">${esc(facts)}</p>${highTable}<div class="ac-field"><label class="form-label" for="acceptNote">Note</label><textarea class="form-input" id="acceptNote" rows="3" required aria-describedby="acceptFacts acceptNoteError"></textarea><p class="ac-field-error" id="acceptNoteError" aria-live="polite"></p></div>`,
       actions:[
         { label:'Cancel', kind:'alternative', onClick:() => AC.closeDialog() },
         { label:title, kind:'primary', onClick:() => submitAccept(ids) },
@@ -359,8 +281,8 @@
     });
     const area = document.getElementById('acceptNote');
     area.addEventListener('input', () => {
-      if (!area.classList.contains('is-invalid')) return;
-      area.classList.remove('is-invalid');
+      if (!area.classList.contains('is-error')) return;
+      area.classList.remove('is-error');
       area.removeAttribute('aria-invalid');
       document.getElementById('acceptNoteError').textContent = '';
     });
@@ -371,7 +293,7 @@
     const area = document.getElementById('acceptNote');
     const note = area.value.trim();
     if (!note) {
-      area.classList.add('is-invalid');
+      area.classList.add('is-error');
       area.setAttribute('aria-invalid', 'true');
       document.getElementById('acceptNoteError').textContent = 'Enter a note';
       area.focus();
@@ -392,11 +314,9 @@
     const row = document.querySelector(`tr[data-ex="${panelId}"]`);
     if (row) row.classList.add('ac-row--sel');
     if (!document.getElementById('modalBackdrop')) return;
-    const back = row ? row.querySelector('[data-open]') : document.querySelector('.ac-seg__item[aria-pressed="true"]');
+    const back = row ? row.querySelector('[data-open]') : document.querySelector('.btn-group .btn[aria-pressed="true"]');
     if (back) AC.keepReturnFocus(back);
   }
-
-  function kvRow(label, value, extra = '') { return `<div class="ac-kv__row${extra}"><span class="ac-kv__label ac-muted">${esc(label)}</span><span class="ac-kv__value">${value}</span></div>`; }
 
   function panelActions(ex, status) {
     if (isReadOnly()) return '';
@@ -410,37 +330,33 @@
 
   /* What a settlement break needs to be judged: both nets and the order behind the gap. */
   function breakFacts(ex) {
-    if (ex.type !== 'settlement_waterfall_break') return '';
+    if (ex.type !== 'settlement_waterfall_break') return [];
     const s = AC.settlement(ex.link.id);
     const order = AC.ORDERS[s.rail].find(o => o[4] === s.id);
-    const net = v => `<span class="ac-num">${esc(AC.money(v, s.cur))}</span>`;
-    return kvRow('Reported net', net(s.reportedNet)) + kvRow('Expected net', net(s.expectedNet)) + (order ? kvRow('Order', `<a class="ac-link" href="${esc(orderHref(order[0]))}">${esc(order[0])}</a>`) : '');
+    return [['Reported net', esc(AC.money(s.reportedNet, s.cur))], ['Expected net', esc(AC.money(s.expectedNet, s.cur))]].concat(order ? [['Order', `<a class="btn-link btn-link-semibold btn-sm" href="${esc(orderHref(order[0]))}">${esc(order[0])}</a>`]] : []);
   }
 
   function panelBody(ex, status) {
     const note = AC.exceptionNote(ex);
     const who = AC.exceptionAssignee(ex);
-    const assignee = isReadOnly() ? esc(who) : `<select class="form-input form-select ac-select ac-select--row ac-w160" id="assigneeSelect" data-id="${ex.id}" data-key="assigneeSelect" aria-label="Assignee">${ASSIGNEES.map(a => `<option${a === who ? ' selected' : ''}>${a}</option>`).join('')}</select>`;
+    const assignee = isReadOnly() ? esc(who) : AC.filterMenu({ name:'assignee', label:'Assignee', value:who, options:ASSIGNEES.map(a => [a, a]) });
     const decision = isUnmatched(ex) ? AC.state.journal.unmatchedDecision : '';
     const entry = AC.state.exceptions[ex.id];
     const lines = (AC.state.exceptionLog[ex.id] || []).slice();
     if (entry && entry.by === 'journal') lines.push({ label:AC.EXCEPTION_STATUS[entry.status], by:'You', when:'just now' });
-    return `<div class="ac-kv">
-        ${kvRow('Severity', severityHtml(ex))}
-        ${kvRow('Subject', subjectHtml(ex))}
-        ${ex.type === 'payout_failed' ? kvRow('Reason', `<span class="ac-fault">${esc((AC.settlement(ex.subject) || {}).failureCode || '')}</span>`) : ''}
-        ${breakFacts(ex)}
-        ${kvRow('Status', statusHtml(status))}
-        ${kvRow('Assignee', assignee)}
-        ${decision && note === decision ? '' : kvRow('Note', note ? esc(note) : '<span class="ac-zero">–<span class="ac-sr"> not available</span></span>', ' ac-kv__row--note')}
-        ${decision ? kvRow('Decision', esc(decision), ' ac-kv__row--note') : ''}
-      </div>
+    return `${AC.kv([
+        ['Severity', severityHtml(ex)],
+        ['Subject', subjectHtml(ex)],
+        ex.type === 'payout_failed' ? ['Reason', esc((AC.settlement(ex.subject) || {}).failureText || '')] : null,
+        ...breakFacts(ex),
+        ['Status', statusHtml(status, ex)],
+        ['Assignee', assignee],
+        decision && note === decision ? null : ['Note', note ? `<span class="ac-note-text">${esc(note)}</span>` : AC.none],
+        decision ? ['Decision', `<span class="ac-note-text">${esc(decision)}</span>`] : null,
+      ], { only:true, caption:'Exception' })}
       <div>
-        <h2 class="ac-card__title ac-history__title">History</h2>
-        <div class="ac-kv">
-          ${kvRow('First seen', esc(ex.firstSeen))}
-          ${lines.map(l => kvRow(l.label, `<span class="ac-note">${esc(l.by)} · ${esc(l.when)}</span>`)).join('')}
-        </div>
+        <h2 class="ac-section-title">History</h2>
+        ${AC.kv([['First seen', esc(ex.firstSeen)]].concat(lines.map(l => [l.label, `<span class="ac-muted">${esc(l.by)} · ${esc(l.when)}</span>`])), { caption:'History' })}
       </div>`;
   }
 
@@ -482,7 +398,7 @@
     logLine(id, who === 'Unassigned' ? 'Unassigned' : 'Assigned to ' + (who === 'You' ? 'you' : who));
     AC.save();
     AC.rerender();
-    showPanel(id, 'assigneeSelect');
+    showPanel(id, 'menu:assignee');
   }
 
   /* ---------- Kebab menu ---------- */
@@ -560,12 +476,14 @@
 
   document.addEventListener('change', e => {
     const t = e.target;
-    if (t.id === 'severityFilter') setView({ severity:t.value });
-    if (t.id === 'railFilter') setView({ rail:t.value });
-    if (t.id === 'assigneeSelect') changeAssignee(t.dataset.id, t.value);
     if (t.id === 'pickAll') { selected = new Set(t.checked ? selectableIds() : []); syncSelection(); }
     if (t.dataset && t.dataset.pick) { if (t.checked) selected.add(t.dataset.pick); else selected.delete(t.dataset.pick); syncSelection(); }
   });
+
+  AC.onMenuPick = (name, value) => {
+    if (name === 'assignee') { changeAssignee(panelId, value); return; }
+    setView({ [name]:value });
+  };
 
   document.addEventListener('keydown', e => {
     if (menuFor) { menuKeys(e); return; }
@@ -577,7 +495,7 @@
   let swallowClick = false;
   window.addEventListener('mousedown', e => {
     swallowClick = false;
-    if (!menuFor || e.target.closest('.ac-menu-wrap')) return;
+    if (!menuFor || e.target.closest('.ac-menu-host')) return;
     swallowClick = !e.target.closest('[data-kebab]');
     closeMenu();
   }, true);
@@ -597,7 +515,7 @@
     else if (changed) {
       AC.rerender();
       const active = document.activeElement;
-      if (!active || active === document.body) { const seg = document.querySelector('.ac-seg__item[aria-pressed="true"]'); if (seg) seg.focus({ preventScroll:true }); }
+      if (!active || active === document.body) { const seg = document.querySelector('.btn-group .btn[aria-pressed="true"]'); if (seg) seg.focus({ preventScroll:true }); }
     }
     if (next.ex) { if (panelId !== next.ex) showPanel(next.ex); return; }
     if (document.getElementById('modalBackdrop')) { panelId = null; returnToPanel = null; pushedPanel = false; AC.closePanel(); }
@@ -606,12 +524,11 @@
   AC.start({
     current:'exceptions',
     noMonth:false,
-    head:() => ({ actions:headActions() }),
     render:() => {
       menuFor = null;
       pruneSelection();
       const rows = visibleRows();
-      return barHtml() + (rows.length ? tableHtml(rows) : emptyHtml());
+      return `<div class="ac-stack"><section class="card" aria-label="Exceptions">${barHtml()}${rows.length ? tableHtml(rows) : emptyHtml()}</section></div>`;
     },
     after:() => { syncSelection(); markPanelRow(); },
     ready:() => {

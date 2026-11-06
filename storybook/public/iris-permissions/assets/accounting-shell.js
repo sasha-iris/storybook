@@ -16,6 +16,8 @@
 (function () {
   const AC = window.AC;
   const esc = AC.esc;
+  /* A page opened by link shows no keyboard ring until a key is pressed. */
+  document.documentElement.classList.add('pm-pointer');
 
   /* With classic scrollbars a stable gutter is not in clientWidth, only in the root's own box. */
   AC.measureGutter = () => document.documentElement.style.setProperty('--ac-gutter', Math.max(0, window.innerWidth - document.documentElement.offsetWidth) + 'px');
@@ -31,14 +33,14 @@
 
   AC.PAGES = [
     { id:'overview', label:'Overview', href:'accounting-overview.html' },
+    { id:'journal', label:'Journal entries', href:'journal-entries.html' },
+    { id:'exceptions', label:'Exceptions', href:'accounting-exceptions.html' },
+    { id:'reconciliation', label:'Reconciliation', href:'accounting-reconciliation.html' },
     { id:'balance', label:'Balance', href:'balance.html' },
     { id:'settlements', label:'Settlements', href:'accounting-settlements.html' },
-    { id:'events', label:'Events', href:'accounting-events.html' },
-    { id:'reconciliation', label:'Reconciliation', href:'accounting-reconciliation.html' },
-    { id:'exceptions', label:'Exceptions', href:'accounting-exceptions.html' },
-    { id:'journal', label:'Journal entries', href:'journal-entries.html' },
-    { id:'close', label:'Close', href:'accounting-close.html' },
-    { id:'settings', label:'Settings', href:'accounting-settings.html' },
+    { id:'events', label:'Events', href:'accounting-events.html', hidden:true, parent:'balance' },
+    { id:'close', label:'Close', href:'accounting-close.html', hidden:true },
+    { id:'settings', label:'Account mapping', href:'accounting-settings.html', hidden:true },
   ];
   const hrefOf = page => {
     const p = AC.PAGES.find(x => x.id === page);
@@ -47,18 +49,100 @@
   AC.hrefOf = hrefOf;
 
   AC.navHtml = current => {
+    const page = AC.PAGES.find(p => p.id === current);
+    if (page && page.parent) return AC.navHtml(page.parent).replace(' aria-current="page"', '');
     const sep = AC.month() === AC.MONTH;
     const counts = { exceptions:sep ? AC.openExceptions().length : 0, journal:sep ? AC.state.journal.open : 0 };
     const words = { exceptions:'open', journal:'to decide' };
-    return `<nav class="ac-nav" aria-label="Accounting">${AC.PAGES.map(p => `<a class="ac-nav__item" href="${hrefOf(p.id)}"${p.id === current ? ' aria-current="page"' : ''}>${esc(p.label)}${counts[p.id] ? `<span class="ac-nav__count"><span class="ac-sr">, </span>${counts[p.id]}<span class="ac-sr"> ${words[p.id]}</span></span>` : (words[p.id] ? '<span class="ac-nav__count" style="visibility:hidden;" aria-hidden="true">0</span>' : '')}</a>`).join('')}</nav>`;
+    return `<nav class="iris-tab-bar pm-section-nav ac-nav" aria-label="Accounting">${AC.PAGES.filter(p => !p.hidden).map(p => `<a class="iris-tab ac-nav__item${p.id === current ? ' iris-tab--active' : ''}" href="${hrefOf(p.id)}"${p.id === current ? ' aria-current="page"' : ''}>${esc(p.label)}${counts[p.id] ? `<span class="iris-tab__counter"><span class="ac-sr">, </span>${counts[p.id]}<span class="ac-sr"> ${words[p.id]}</span></span>` : ''}</a>`).join('')}</nav>`;
   };
 
   /* ---------- Month: one value across the section ---------- */
-  AC.month = () => { try { return sessionStorage.getItem('ac-month') || AC.MONTH; } catch (err) { return AC.MONTH; } };
+  AC.month = () => { try { const m = sessionStorage.getItem('ac-month') || AC.MONTH; return document.body.classList.contains('ds') || AC.MONTHS.includes(m) ? m : AC.MONTH; } catch (err) { return AC.MONTH; } };
   AC.setMonth = m => { try { sessionStorage.setItem('ac-month', m); } catch (err) { /* this page only */ } };
   AC.monthSelect = () => `<select class="form-input form-select ac-select ac-w120" aria-label="Month" id="monthSelect" data-key="monthSelect" autocomplete="off">${AC.MONTHS.map(m => `<option${AC.month() === m ? ' selected' : ''}>${esc(m)}</option>`).join('')}</select>`;
 
-  AC.pageHead = o => { const here = AC.PAGES.find(p => p.id === o.current); if (here) document.title = here.label + ' · Accounting'; return `<div class="ac-top"><div class="ac-head"><h1 class="ac-head__title" tabindex="-1" data-key="pageTitle">Accounting${here ? `<span class="ac-sr">: ${esc(here.label)}</span>` : ''}</h1>${o.noMonth ? '' : AC.monthSelect()}<span class="ac-note">${esc(AC.TIMEZONE)} · Sample data</span><div class="ac-actions">${o.actions || ''}</div></div>${AC.navHtml(o.current)}</div>`; };
+  const CALENDAR = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>';
+  const CHEVRON_DOWN = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>';
+  const SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  AC.MONTH_OPTIONS = ['Jul 2026', 'Aug 2026', 'Sep 2026', 'Oct 2026'];
+  AC.monthControl = () => { const now = AC.month(); const cells = SHORT.map(m => { const name = m.charAt(0) + m.slice(1).toLowerCase() + ' 2026'; const ok = AC.MONTH_OPTIONS.includes(name); return `<button type="button"${ok ? ` data-month="${name}"` : ' disabled'}${name === now ? ' aria-current="date"' : ''}>${m}</button>`; }).join(''); return `<div class="ac-menu-wrap" data-menu="month"><button type="button" class="dropdown-trigger dropdown-trigger--outline dropdown-trigger--sm" data-menu-btn aria-haspopup="true" aria-expanded="false" aria-label="Month, ${esc(now)}" data-key="monthBtn"${AC.RAILS.length ? '' : ' disabled'}>${CALENDAR}<span>${esc(now)}</span>${CHEVRON_DOWN}</button><div class="dropdown-menu ac-month-panel" hidden><div class="ac-month-panel__head">2026</div><div class="ac-month-panel__grid">${cells}</div></div></div>`; };
+  /* One filter dropdown. Pages get the pick through AC.onMenuPick(name, value). */
+  AC.filterMenu = o => `<div class="ac-menu-wrap${o.end ? ' ac-menu-wrap--end' : ''}${o.quiet ? ' ac-cell-menu' : ''}" data-menu="${esc(o.name)}"><button type="button" class="dropdown-trigger dropdown-trigger--outline dropdown-trigger--sm${o.quiet && !o.value ? ' ac-cell-menu--empty' : ''}" data-menu-btn aria-haspopup="true" aria-expanded="false" aria-label="${esc(o.label)}" data-key="menu:${esc(o.name)}"${o.options.length < 2 && !o.always ? ' disabled' : ''}><span>${esc((o.options.find(x => x[0] === o.value) || o.options[0])[1])}</span>${o.options.length < 2 && !o.always ? '' : CHEVRON_DOWN}</button><div class="dropdown-menu" hidden>${o.options.map(x => `<button type="button" class="dropdown-item${x[0] === o.value ? ' active' : ''}" data-menu-pick="${esc(x[0])}"><span class="dropdown-item__text">${esc(x[1])}</span></button>`).join('')}</div></div>`;
+  const closeMenus = () => document.querySelectorAll('[data-menu] > .dropdown-menu:not([hidden])').forEach(m => { m.hidden = true; m.parentNode.querySelector('[data-menu-btn]').setAttribute('aria-expanded', 'false'); });
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-menu-btn]');
+    if (btn) { const m = btn.parentNode.querySelector('.dropdown-menu'), open = m.hidden; closeMenus(); m.hidden = !open; btn.setAttribute('aria-expanded', open); return; }
+    const month = e.target.closest('[data-month]');
+    if (month) { closeMenus(); if (AC.beforeMonth) AC.beforeMonth(month.dataset.month); AC.setMonth(month.dataset.month); AC.rerender(); AC.announce(month.dataset.month); const b = document.querySelector('[data-key="monthBtn"]'); if (b) b.focus(); return; }
+    const pick = e.target.closest('[data-menu-pick]');
+    if (pick) { const name = pick.closest('[data-menu]').dataset.menu; closeMenus(); if (AC.onMenuPick) AC.onMenuPick(name, pick.dataset.menuPick); return; }
+    if (!e.target.closest('[data-menu]')) closeMenus();
+  });
+  document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; const open = document.querySelector('[data-menu] > .dropdown-menu:not([hidden])'); if (open) { const b = open.parentNode.querySelector('[data-menu-btn]'); closeMenus(); b.focus(); } });
+  /* A menu of actions: the trigger always reads its label. Picks reach AC.onMenuPick(name, value). */
+  AC.actionMenu = o => `<div class="ac-menu-wrap${o.end ? ' ac-menu-wrap--end' : ''}" data-menu="${esc(o.name)}"><button type="button" class="dropdown-trigger dropdown-trigger--outline dropdown-trigger--sm" data-menu-btn aria-haspopup="true" aria-expanded="false" data-key="menu:${esc(o.name)}"><span>${esc(o.label)}</span>${CHEVRON_DOWN}</button><div class="dropdown-menu" hidden>${o.options.map(x => `<button type="button" class="dropdown-item" data-menu-pick="${esc(x[0])}"><span class="dropdown-item__text">${esc(x[1])}</span></button>`).join('')}</div></div>`;
+  AC.EXPORTS = [['csv', 'CSV'], ['xls', 'Excel'], ['pdf', 'PDF']];
+  /* Excel opens SpreadsheetML as a workbook. */
+  AC.downloadXls = (name, rows) => {
+    const cell = v => { const t = String(v === undefined || v === null ? '' : v); const n = /^-?\d+(\.\d+)?$/.test(t); return `<Cell><Data ss:Type="${n ? 'Number' : 'String'}">${esc(t)}</Data></Cell>`; };
+    const xml = `<?xml version="1.0"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Orders"><Table>${rows.map(r => `<Row>${r.map(cell).join('')}</Row>`).join('')}</Table></Worksheet></Workbook>`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([xml], { type:'application/vnd.ms-excel' }));
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  /* PDF: a print-ready page; the browser's print dialog saves it as PDF. */
+  AC.printPdf = (title, sub, rows) => {
+    const w = window.open('', '_blank');
+    if (!w) { AC.toast('Pop-up blocked. Allow pop-ups to save the PDF.'); return; }
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font:12px/1.5 Inter,Arial,sans-serif;margin:32px;color:#111928}h1{font-size:18px;margin:0 0 2px}p{margin:0 0 16px;color:#6B7280}table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #E5E7EB;padding:6px 8px;text-align:left}th{background:#F9FAFB;font-weight:600}</style></head><body><h1>${esc(title)}</h1><p>${esc(sub)}</p><table>${rows.map((r, i) => `<tr>${r.map(v => (i ? `<td>${esc(v)}</td>` : `<th>${esc(v)}</th>`)).join('')}</tr>`).join('')}</table></body></html>`);
+    w.document.close();
+    w.focus();
+    w.print();
+  };
+  AC.exportAs = (fmt, base, title, sub, rows) => {
+    if (fmt === 'xls') { AC.downloadXls(base + '.xls', rows); AC.toast('Excel exported.'); return; }
+    if (fmt === 'pdf') { AC.printPdf(title, sub, rows); return; }
+    AC.downloadCsv(base + '.csv', rows);
+    AC.toast('CSV exported.');
+  };
+  /* A trend line in a table cell, drawn like the library's KPI line. */
+  AC.sparkLine = (series, label) => {
+    if (!series || series.length < 2) return '';
+    const pts = Array.from({ length:12 }, (_, i) => series[Math.round(i * (series.length - 1) / 11)]);
+    const lo = Math.min(...pts), hi = Math.max(...pts), W = 96, H = 28;
+    const xy = pts.map((v, i) => [i * W / 11, hi === lo ? H / 2 : 3 + (hi - v) / (hi - lo) * (H - 6)]);
+    const d = xy.map((p, i) => { if (!i) return `M${p[0].toFixed(1)} ${p[1].toFixed(1)}`; const a = xy[i - 1], m = (a[0] + p[0]) / 2; return `C${m.toFixed(1)} ${a[1].toFixed(1)} ${m.toFixed(1)} ${p[1].toFixed(1)} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`; }).join('');
+    return `<svg class="ac-spark2" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label || 'Trend')}"><path d="${d}" fill="none" stroke="#5850EC" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  };
+  /* Library cells inside a native table. */
+  const ROW = { total:' ac-row-total', group:' ac-row-group', noncoll:' ac-row-sub', derived:' ac-row-derived', open:' ac-row-open', default:'' };
+  AC.th = (text, o = {}) => `<th scope="col" class="iris-th ac-h${o.right ? ' ac-num' : ''}${o.cls ? ' ' + o.cls : ''}"${o.span ? ` colspan="${o.span}"` : ''}>${text}</th>`;
+  AC.td = (inner, o = {}) => { const cls = `ac-c${o.num || o.right ? ' ac-num' : ''}${ROW[o.row || 'default'] || ''}${o.cls ? ' ' + o.cls : ''}`; const span = o.span ? ` colspan="${o.span}"` : ''; return o.head ? `<th scope="row" class="${cls}"${span}>${inner}</th>` : `<td class="${cls}"${span}>${inner}</td>`; };
+  AC.link = (inner, attrs) => `<button type="button" class="btn-link btn-link-semibold btn-sm" ${attrs}>${inner}</button>`;
+  /* The library's KPI line: a smooth 2 px path over a soft fill. */
+  let chartN = 0;
+  AC.kpiChart = series => { const pts = Array.from({ length:12 }, (_, i) => series[Math.round(i * (series.length - 1) / 11)]); const lo = Math.min(...pts), hi = Math.max(...pts); const xy = pts.map((v, i) => [i * 286 / 11, hi === lo ? 24 : 6 + (hi - v) / (hi - lo) * 34]); const line = xy.map((p, i) => { if (!i) return `M${p[0]} ${p[1].toFixed(2)}`; const a = xy[i - 1], mid = (a[0] + p[0]) / 2; return `C${mid} ${a[1].toFixed(2)} ${mid} ${p[1].toFixed(2)} ${p[0]} ${p[1].toFixed(2)}`; }).join(''); chartN += 1; return `<div class="iris-kpi__chart" aria-hidden="true"><svg style="width:100%;height:70px;display:block;" viewBox="0 0 286 70" preserveAspectRatio="none" fill="none"><defs><linearGradient id="acChart${chartN}" x1="143" y1="1" x2="143" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#E5E7EB"/><stop offset="1" stop-color="white"/></linearGradient></defs><path d="${line}V70H0Z" fill="url(#acChart${chartN})"/><path d="${line}" stroke="#5850EC" stroke-width="2" vector-effect="non-scaling-stroke"/></svg></div>`; };
+
+  /* A money cell: zero reads quiet, everything else signed. */
+  AC.amt = (n, cur) => (AC.round2(n) ? esc(AC.signed(n, cur)) : `<span class="ac-zero">${esc(AC.money(0, cur))}</span>`);
+  AC.none = '<span class="ac-muted"><span aria-hidden="true">–</span><span class="ac-sr">not available</span></span>';
+  /* Top bar of a card: filters on the left, actions on the right. */
+  AC.cardBar = (left, right) => `<div class="card-header"><div class="ac-toolbar">${left}</div><div class="card-header-controls">${right || ''}</div></div>`;
+  AC.cardTitle = (id, title, sub, right) => `<div class="card-header"><div class="ac-name"><h2 class="card-header-title" id="${id}" style="margin:0;">${title}</h2>${sub ? `<span class="ac-muted">${sub}</span>` : ''}</div><div class="card-header-controls">${right || ''}</div></div>`;
+  /* Label and value rows. Rows: [label, valueHtml, { row, num }]. */
+  AC.kv = (rows, o = {}) => `<table class="ac-dst ac-dst--kv${o.only ? ' ac-kv-only' : ''}"><caption class="ac-sr">${esc(o.caption || 'Details')}</caption><colgroup><col style="width:160px"><col></colgroup><tbody>${rows.filter(Boolean).map(r => `<tr>${AC.td(r[3] ? r[0] : `<span class="ac-muted">${esc(r[0])}</span>`, { head:true, row:(r[2] || {}).row })}${AC.td(r[1], { num:(r[2] || {}).num !== false, row:(r[2] || {}).row })}</tr>`).join('')}</tbody></table>`;
+  /* The library's pagination, with its Showing line. Buttons carry data-page. */
+  const PAGE_ARROW = dir => `<svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"${dir < 0 ? ' style="transform:rotate(180deg)"' : ''}><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg>`;
+  AC.pager = o => {
+    const btn = (n, dir, label, off) => `<button type="button" class="btn btn-neutral btn-sm pm-ptools__page" data-page="${n}" data-key="page:${dir < 0 ? 'prev' : 'next'}" aria-label="${label}"${off ? ' disabled' : ''}>${PAGE_ARROW(dir)}</button>`;
+    return `<div class="pm-ptools__pager"><span class="pm-ptools__count" role="status" data-showing>${AC.count(o.start)} to ${AC.count(o.end)} of ${AC.count(o.total)}</span>${o.pages > 1 ? btn(Math.max(1, o.page - 1), -1, 'Previous page', o.page === 1) + btn(Math.min(o.pages, o.page + 1), 1, 'Next page', o.page === o.pages) : ''}</div>`;
+  };
+  AC.foot = (left, right) => `<div class="pm-ptable__foot"><span class="pm-ptools__count ac-foot-left">${left || ''}</span>${right || ''}</div>`;
+  AC.crumb = (href, route, parent, here, idAttr) => `<nav aria-label="Breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="${esc(href)}"${route !== undefined ? ` data-route="${esc(route)}"` : ''}>${esc(parent)}</a><span class="breadcrumb-sep" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.17 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd"/></svg></span></li><li class="breadcrumb-item active" aria-current="page"><span${idAttr ? ` id="${idAttr}" tabindex="-1"` : ''}>${esc(here)}</span></li></ol></nav>`;
+
+  AC.pageHead = o => { const here = AC.PAGES.find(p => p.id === o.current); if (here) document.title = here.label + ' · Accounting'; if (o.standalone) return `<div class="ac-head"><h1 tabindex="-1" data-key="pageTitle">${esc(here.label)}</h1></div>`; if (document.body.classList.contains('ds')) return `<div class="ac-head"><h1 tabindex="-1" data-key="pageTitle">Accounting${here ? `<span class="ac-sr">: ${esc(here.label)}</span>` : ''}</h1>${o.noMonth ? '' : AC.monthControl()}${o.extra ? `<div class="ac-actions">${o.extra}</div>` : ''}</div>${AC.navHtml(o.current)}`; return `<div class="ac-top"><div class="ac-head"><h1 class="ac-head__title" tabindex="-1" data-key="pageTitle">Accounting${here ? `<span class="ac-sr">: ${esc(here.label)}</span>` : ''}</h1>${o.noMonth ? '' : AC.monthSelect()}<span class="ac-note">${esc(AC.TIMEZONE)}</span><div class="ac-actions">${o.actions || ''}</div></div>${AC.navHtml(o.current)}</div>`; };
 
   /* ---------- Toast ---------- */
   let toastTimer = null, toastReturn = null;
@@ -96,7 +180,7 @@
   document.addEventListener('click', e => { if (e.detail === 0 && e.isTrusted && e.target === movedTo && Date.now() - movedAt < 500) { e.preventDefault(); e.stopPropagation(); } }, true);
   document.addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const field = e.target.matches('textarea, input:not([type="checkbox"]):not([type="radio"])'); if (e.repeat ? !field : field && e.target === movedTo && Date.now() - movedAt < 500) e.preventDefault(); }, true);
   /* A table that scrolls inside itself brings the focused control into view. */
-  document.addEventListener('focusin', e => { const w = e.target.closest && e.target.closest('.ac-wrap'); if (!w) return; const r = e.target.getBoundingClientRect(), b = w.getBoundingClientRect(); if (r.left < b.left + 4) w.scrollLeft -= b.left + 4 - r.left; else if (r.right > b.right - 4) w.scrollLeft += r.right - b.right + 4; });
+  document.addEventListener('focusin', e => { const w = e.target.closest && e.target.closest('.ac-wrap-scroll'); if (!w) return; const r = e.target.getBoundingClientRect(), b = w.getBoundingClientRect(); if (r.left < b.left + 4) w.scrollLeft -= b.left + 4 - r.left; else if (r.right > b.right - 4) w.scrollLeft += r.right - b.right + 4; });
 
   /* ---------- Overlays ---------- */
   let closedAt = 0, openedAt = 0, returnFocus = null, lastClick = null, locked = false, rowTimer = null;
@@ -157,13 +241,13 @@
   AC.openPanel = o => {
     const first = !document.getElementById('modalBackdrop');
     beginOverlay();
-    if (first) { const origin = lastClick && lastClick.closest ? lastClick.closest('[data-drill]') : null; if (origin) origin.classList.add(origin.matches('.ac-kv__row') ? 'ac-kv__row--sel' : 'ac-row--sel'); }
+    if (first) { const origin = lastClick && lastClick.closest ? lastClick.closest('[data-drill]') : null; if (origin) origin.classList.add('ac-row--sel'); }
     document.body.classList.add('ac-panel-open');
     const count = o.count !== undefined && o.count !== null ? ` <span class="ac-muted">(${AC.count(o.count)})</span>` : '';
     const host = document.getElementById('modalHost');
-    host.innerHTML = `<div class="ac-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="ac-panel">
-      <div class="ac-panel__head"><div style="min-width:0;"><div class="ac-panel__label" id="modalTitle">${esc(o.title)}${count}</div>${o.amount ? `<div class="ac-panel__value">${esc(o.amount)}</div>` : ''}${o.meta ? `<div class="ac-note">${esc(o.meta)}</div>` : ''}</div><div class="ac-actions">${o.actions || ''}${o.onExport ? '<button type="button" class="btn btn-neutral btn-sm" id="panelExport">Export CSV</button>' : ''}<button type="button" class="modal-close" id="modalClose" aria-label="Close panel">${CLOSE_ICON}</button></div></div>
-      <div class="ac-panel__body" id="panelBody">${o.body}</div></aside></div>`;
+    host.innerHTML = `<div class="pm-drawer-backdrop" id="modalBackdrop"><aside role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="pm-drawer">
+      <div class="pm-drawer__head"><div class="pm-drawer__title"><h2 class="modal-title" id="modalTitle" style="margin:0;">${esc(o.title)}${count}${o.amount ? ' ' + esc(o.amount) : ''}</h2>${o.meta ? `<span class="pm-drawer__meta">${esc(o.meta)}</span>` : ''}</div><div class="ac-actions">${o.actions || ''}${o.onExport ? '<button type="button" class="btn btn-neutral btn-sm" id="panelExport">Export CSV</button>' : ''}<button type="button" class="modal-close" id="modalClose" aria-label="Close panel">${CLOSE_ICON}</button></div></div>
+      <div class="pm-drawer__body" id="panelBody">${o.body}</div></aside></div>`;
     document.getElementById('modalClose').onclick = closeOverlay;
     if (o.onExport) document.getElementById('panelExport').onclick = ev => { if (ev.detail > 1) return; o.onExport(); };
     backdropClose(host);
@@ -185,7 +269,7 @@
     if (first) AC.focusAfterAction(first);
     placeToast();
   };
-  AC.sourceRow = pairs => `<div class="ac-source"><div class="ac-source__head"><span>Source row</span><span class="ac-actions"><span class="ac-note">Sample data</span><button type="button" class="btn btn-neutral btn-sm ac-btn-row" data-copy-source>Copy</button></span></div><dl>${pairs.map(p => `<dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl></div>`;
+  AC.sourceRow = pairs => `<div class="pm-source"><div class="pm-source__head"><span>Source row</span><span class="ac-actions"><button type="button" class="btn btn-neutral btn-xs" data-copy-source>Copy</button></span></div><dl>${pairs.map(p => `<dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd>`).join('')}</dl></div>`;
 
   AC.downloadCsv = (name, rows) => {
     const csv = rows.map(r => r.map(v => '"' + String(v === null || v === undefined ? '' : v).replace(/"/g, '""') + '"').join(',')).join('\n');
@@ -205,12 +289,12 @@
   const LOAD = new URLSearchParams(location.search).get('load');
   let loading = LOAD === 'slow' ? 'slow' : LOAD === 'error' ? 'error' : '';
   AC.blockedCard = current => {
-    if (AC.ORG === 'noduck') return `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">DuckDB not enabled for this org</h2></div></section>`;
-    if (AC.ORG === 'norails' && current !== 'settings') return `<section class="ac-card"><div class="ac-empty"><h2 class="ac-empty__title">No rails connected</h2><a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a></div></section>`;
+    if (AC.ORG === 'noduck') return `<section class="card"><div class="ac-empty"><h2 class="ac-empty__title">DuckDB not enabled for this org</h2></div></section>`;
+    if (AC.ORG === 'norails' && current !== 'settings') return `<section class="card"><div class="ac-empty"><h2 class="ac-empty__title">No rails connected</h2><a class="btn btn-neutral btn-sm" href="custom-groups.html#connections">Go to Connections</a></div></section>`;
     return '';
   };
-  AC.skeletonHtml = () => `<section class="ac-card" role="status"><span class="ac-sr">Loading</span><div class="ac-wrap" style="padding-top:12px;"><table class="ac-table"><colgroup><col><col class="ac-col-money"><col class="ac-col-money"><col class="ac-col-money-l"><col class="ac-col-money"><col class="ac-col-status"></colgroup><tbody>${Array.from({ length:8 }, () => `<tr><td><span class="ac-skel" style="--w:120px;"></span></td>${[72, 88, 88, 72].map(w => `<td class="ac-num"><span class="ac-skel" style="--w:${w}px;"></span></td>`).join('')}<td class="ac-right"><span class="ac-skel" style="--w:32px;"></span></td></tr>`).join('')}</tbody></table></div></section>`;
-  AC.errorCard = () => `<section class="ac-card" role="alert"><div class="ac-empty"><h2 class="ac-empty__title">Could not load ${esc(AC.month())}</h2><button type="button" class="btn btn-neutral btn-sm" id="acRetry" data-key="acRetry">Try again</button></div></section>`;
+  AC.skeletonHtml = () => `<section class="card" role="status"><span class="ac-sr">Loading</span><div class="ac-skeleton-list">${Array.from({ length:8 }, () => '<div class="skeleton" style="height:20px;"></div>').join('')}</div></section>`;
+  AC.errorCard = () => `<section class="card" role="alert"><div class="ac-empty"><h2 class="ac-empty__title">Could not load ${esc(AC.month())}</h2><button type="button" class="btn btn-neutral btn-sm" id="acRetry" data-key="acRetry">Try again</button></div></section>`;
   AC.rerender = () => {
     const app = document.getElementById('app');
     const key = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
@@ -225,7 +309,9 @@
   AC.start = o => {
     page = o;
     /* Other rail items stay inert: this prototype is the Accounting section. */
-    document.querySelectorAll('.pm-rail__item[title="Settings"], .pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
+    document.querySelectorAll('.pm-rail__item[title="Connections"]').forEach(b => { b.onclick = null; b.setAttribute('tabindex', '-1'); b.setAttribute('aria-disabled', 'true'); });
+    document.querySelectorAll('.pm-rail__item[title="Settings"]').forEach(b => { b.onclick = () => { location.href = hrefOf('settings'); }; });
+    document.querySelectorAll('.pm-rail__item[title="Accounting"]').forEach(b => { b.onclick = () => { location.href = hrefOf('overview'); }; });
     window.addEventListener('scroll', placeToast, true);
     window.addEventListener('resize', placeToast);
     document.addEventListener('mousedown', () => document.documentElement.classList.add('pm-pointer'), true);
@@ -237,7 +323,7 @@
       if (e.target.closest('.ac-nav [aria-current="page"]')) { e.preventDefault(); return; }
       const copy = e.target.closest('[data-copy-source]');
       if (copy) {
-        const text = [...document.querySelectorAll('.ac-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n');
+        const text = [...document.querySelectorAll('.pm-source dt')].map(d => d.textContent + ': ' + d.nextElementSibling.textContent).join('\n');
         if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => AC.toast('Source row copied.'), () => AC.toast('Could not copy.')); else AC.toast('Could not copy.');
         return;
       }
@@ -262,7 +348,7 @@
       try { Object.assign(AC.state, JSON.parse(raw)); } catch (err) { /* keep what is on screen */ }
       AC.rerender();
     });
-    document.addEventListener('click', e => { if (e.target.closest('#acRetry')) { loading = 'slow'; AC.rerender(); setTimeout(() => { loading = ''; AC.rerender(); if (o.ready) o.ready(); const h = document.querySelector('.ac-head__title'); if (h) h.focus({ preventScroll:true }); }, 900); } });
+    document.addEventListener('click', e => { if (e.target.closest('#acRetry')) { loading = 'slow'; AC.rerender(); setTimeout(() => { loading = ''; AC.rerender(); if (o.ready) o.ready(); const h = document.querySelector('#app h1'); if (h) h.focus({ preventScroll:true }); }, 900); } });
     AC.rerender();
     if (loading === 'slow') setTimeout(() => { loading = ''; AC.rerender(); if (o.ready) o.ready(); }, 1400);
     else if (!loading && o.ready) o.ready();
